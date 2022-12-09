@@ -66,31 +66,31 @@ public interface ModelsService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
 
                 this.req_generateDatabaseProperties = this.baseProxy.request(
-                    "generateDatabaseProperties.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "generateDatabaseProperties.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_saveDraftModel = this.baseProxy.request(
-                    "saveDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_deleteDraftModel = this.baseProxy.request(
-                    "deleteDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_createDraftModel = this.baseProxy.request(
-                    "createDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "createDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_generateProtectedPathConfig = this.baseProxy.request(
-                    "generateProtectedPathConfig.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "generateProtectedPathConfig.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_updateDraftModelInfo = this.baseProxy.request(
-                    "updateDraftModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateDraftModelInfo.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_generateModelConfig = this.baseProxy.request(
-                    "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "generateModelConfig.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
-                    "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getPrimaryEntityTypes.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveModels = this.baseProxy.request(
-                    "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveModels.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
-                    "getModelReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getModelReferences.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_publishDraftModels = this.baseProxy.request(
-                    "publishDraftModels.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "publishDraftModels.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getLatestJobData = this.baseProxy.request(
-                    "getLatestJobData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getLatestJobData.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateDraftModelEntityTypes = this.baseProxy.request(
-                    "updateDraftModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateDraftModelEntityTypes.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -290,7 +290,7 @@ public interface ModelsService {
    * Save a draft model, where the input is a JSON model
    *
    * @param model	provides input
-   * 
+   *
    */
     void saveDraftModel(com.fasterxml.jackson.databind.JsonNode model);
 
@@ -298,7 +298,7 @@ public interface ModelsService {
    * Mark a draft entity model to be deleted
    *
    * @param entityName	The name of the primary entity in the model
-   * 
+   *
    */
     void deleteDraftModel(String entityName);
 
@@ -330,7 +330,7 @@ public interface ModelsService {
   /**
    * Invokes the generateModelConfig operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode generateModelConfig();
@@ -347,7 +347,7 @@ public interface ModelsService {
    * Save an array of entity models to only the database associated with the app server that receives this request
    *
    * @param models	The array of entity models
-   * 
+   *
    */
     void saveModels(com.fasterxml.jackson.databind.JsonNode models);
 
@@ -363,8 +363,8 @@ public interface ModelsService {
   /**
    * Moves draft entity models to the published collection and clear out the draft collection
    *
-   * 
-   * 
+   *
+   *
    */
     void publishDraftModels();
 
@@ -380,7 +380,7 @@ public interface ModelsService {
    * Update entity model types in the entity models draft collection.
    *
    * @param input	provides input
-   * 
+   *
    */
     void updateDraftModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
 

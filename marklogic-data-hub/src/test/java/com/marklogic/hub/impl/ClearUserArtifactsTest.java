@@ -30,7 +30,7 @@ class ClearUserArtifactsTest extends AbstractHubCoreTest {
         }
         catch (FailedRequestException e){
             //The complete message contains uri of artifact it deletes which could change, so just checking if the exception contains "SEC-PERMDENIED".
-            assertTrue(e.getMessage().contains("Local message: failed to POST at /data-hub/5/data-services/artifacts/clearUserArtifacts.sjs: Bad Request. Server Message: SEC-PERMDENIED"));
+            assertTrue(e.getMessage().contains("Local message: failed to POST at /data-hub/5/data-services/artifacts/clearUserArtifacts.mjs: Bad Request. Server Message: SEC-PERMDENIED"));
             logger.info("'data-hub-operator' cannot delete user artifacts");
         }
         new DataHubImpl(runAsDataHubDeveloper()).clearUserArtifacts();

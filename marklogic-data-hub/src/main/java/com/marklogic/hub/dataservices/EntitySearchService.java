@@ -64,25 +64,25 @@ public interface EntitySearchService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/entitySearch/", servDecl);
 
                 this.req_getMinAndMaxPropertyValues = this.baseProxy.request(
-                    "getMinAndMaxPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "getMinAndMaxPropertyValues.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getSavedQuery = this.baseProxy.request(
-                    "getSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getSavedQuery.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_deleteSavedQuery = this.baseProxy.request(
-                    "deleteSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteSavedQuery.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveSavedQuery = this.baseProxy.request(
-                    "saveSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveSavedQuery.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getSavedQueries = this.baseProxy.request(
-                    "getSavedQueries.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getSavedQueries.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_exportSearchAsCSV = this.baseProxy.request(
-                    "exportSearchAsCSV.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "exportSearchAsCSV.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getSemanticConceptInfo = this.baseProxy.request(
-                    "getSemanticConceptInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getSemanticConceptInfo.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getModelRelationships = this.baseProxy.request(
-                    "getModelRelationships.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getModelRelationships.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getRecord = this.baseProxy.request(
-                    "getRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getRecord.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
-                    "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "getMatchingPropertyValues.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -258,7 +258,7 @@ public interface EntitySearchService {
    * Invokes the deleteSavedQuery operation on the database server
    *
    * @param id	provides input
-   * 
+   *
    */
     void deleteSavedQuery(String id);
 
@@ -273,7 +273,7 @@ public interface EntitySearchService {
   /**
    * Invokes the getSavedQueries operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getSavedQueries();
@@ -304,7 +304,7 @@ public interface EntitySearchService {
   /**
    * Invokes the getModelRelationships operation on the database server
    *
-   * 
+   *
    * @return	The relationships between entity models
    */
     com.fasterxml.jackson.databind.JsonNode getModelRelationships();

@@ -61,21 +61,21 @@ public interface JobService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/job/", servDecl);
 
                 this.req_startStep = this.baseProxy.request(
-                    "startStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "startStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_finishStep = this.baseProxy.request(
-                    "finishStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "finishStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getJob = this.baseProxy.request(
-                    "getJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getJob.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_startJob = this.baseProxy.request(
-                    "startJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "startJob.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getJobWithDetails = this.baseProxy.request(
-                    "getJobWithDetails.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getJobWithDetails.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
-                    "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "getMatchingPropertyValues.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_finishJob = this.baseProxy.request(
-                    "finishJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "finishJob.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_findStepResponses = this.baseProxy.request(
-                    "findStepResponses.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "findStepResponses.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -275,7 +275,7 @@ public interface JobService {
     com.fasterxml.jackson.databind.JsonNode finishJob(String jobId, String jobStatus);
 
   /**
-   * 
+   *
    *
    * @param endpointConstants	provides input
    * @return	as output
