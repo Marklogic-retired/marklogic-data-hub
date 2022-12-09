@@ -59,17 +59,17 @@ public interface ArtifactService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/artifacts/", servDecl);
 
                 this.req_getArtifactsWithProjectPaths = this.baseProxy.request(
-                    "getArtifactsWithProjectPaths.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getArtifactsWithProjectPaths.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_setArtifact = this.baseProxy.request(
-                    "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "setArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteArtifact = this.baseProxy.request(
                     "deleteArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_clearUserArtifacts = this.baseProxy.request(
-                    "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "clearUserArtifacts.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
-                    "getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getList.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getArtifact = this.baseProxy.request(
-                    "getArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override

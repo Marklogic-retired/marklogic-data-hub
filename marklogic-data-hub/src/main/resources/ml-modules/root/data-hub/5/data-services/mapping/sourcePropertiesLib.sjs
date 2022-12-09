@@ -27,7 +27,7 @@ function addSourceProperties(sourceData, isJson, outputArr, outputArrKey = '', l
   let value, valueIsObject, valueIsArray, xpath;
   for (let key of Object.keys(sourceData)) {
     // sourceProperties is not to receive the #text properties.
-    if (key === require('./xmlToJsonForMapping.sjs').PROP_NAME_TEXT) { continue }
+    if (key === require('./xmlToJsonForMapping.mjs').PROP_NAME_TEXT) { continue }
 
     value = sourceData[key];
     valueIsObject = isObject(value);

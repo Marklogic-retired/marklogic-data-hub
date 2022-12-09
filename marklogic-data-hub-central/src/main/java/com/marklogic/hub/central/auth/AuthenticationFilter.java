@@ -98,7 +98,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                 if ("Failed Auth".equals(fre.getServerMessage()) || "Failed Auth".equals(fre.getServerStatus())) {
                     throw new BadCredentialsException("Unauthorized");
                 }
-                //In case user can't read the getAuthorities.sjs module, return an empty 'authorities' object
+                //In case user can't read the getAuthorities.mjs module, return an empty 'authorities' object
                 if(fre.getServerStatusCode() == 404 || fre.getServerStatusCode() == 403){
                     return new AuthenticationToken(username, password, authorities);
                 }

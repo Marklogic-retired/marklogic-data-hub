@@ -1,6 +1,6 @@
 {
     "functionName": "deleteProvenance",
-    "endpoint": "/data-hub/5/data-services/provenance/deleteProvenance.sjs",
+    "endpoint": "/data-hub/5/data-services/provenance/deleteProvenance.mjs",
     "desc": "Deletes provenance according to the retainDuration property provided in endpointConstants.",
     "params": [
         {

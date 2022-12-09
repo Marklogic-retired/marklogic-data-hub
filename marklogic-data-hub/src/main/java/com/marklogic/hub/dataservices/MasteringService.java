@@ -62,21 +62,21 @@ public interface MasteringService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mastering/", servDecl);
 
                 this.req_calculateMergingActivity = this.baseProxy.request(
-                    "calculateMergingActivity.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "calculateMergingActivity.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_validateMatchingStep = this.baseProxy.request(
-                    "validateMatchingStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "validateMatchingStep.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateMergeOptions = this.baseProxy.request(
-                    "updateMergeOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateMergeOptions.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_calculateMatchingActivity = this.baseProxy.request(
-                    "calculateMatchingActivity.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "calculateMatchingActivity.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateMatchOptions = this.baseProxy.request(
-                    "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateMatchOptions.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_previewMatchingActivity = this.baseProxy.request(
-                    "previewMatchingActivity.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "previewMatchingActivity.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getDefaultCollections = this.baseProxy.request(
-                    "getDefaultCollections.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getDefaultCollections.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_validateMergingStep = this.baseProxy.request(
-                    "validateMergingStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "validateMergingStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override
