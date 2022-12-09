@@ -66,31 +66,31 @@ public interface ModelsService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
 
                 this.req_generateDatabaseProperties = this.baseProxy.request(
-                    "generateDatabaseProperties.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "generateDatabaseProperties.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_saveDraftModel = this.baseProxy.request(
-                    "saveDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_deleteDraftModel = this.baseProxy.request(
-                    "deleteDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_createDraftModel = this.baseProxy.request(
-                    "createDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "createDraftModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_generateProtectedPathConfig = this.baseProxy.request(
-                    "generateProtectedPathConfig.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "generateProtectedPathConfig.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_updateDraftModelInfo = this.baseProxy.request(
-                    "updateDraftModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateDraftModelInfo.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_generateModelConfig = this.baseProxy.request(
-                    "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "generateModelConfig.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
-                    "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getPrimaryEntityTypes.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveModels = this.baseProxy.request(
-                    "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveModels.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
-                    "getModelReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getModelReferences.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_publishDraftModels = this.baseProxy.request(
-                    "publishDraftModels.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "publishDraftModels.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getLatestJobData = this.baseProxy.request(
-                    "getLatestJobData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getLatestJobData.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateDraftModelEntityTypes = this.baseProxy.request(
-                    "updateDraftModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateDraftModelEntityTypes.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
