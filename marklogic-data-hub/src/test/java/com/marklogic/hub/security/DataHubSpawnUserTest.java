@@ -25,7 +25,7 @@ public class DataHubSpawnUserTest extends AbstractHubCoreTest {
     private void useXdmpSpawn() {
         // We don't care about the response, just whether an error is thrown or not
         getHubClient().getFinalClient().newServerEval()
-            .javascript("xdmp.spawn('/data-hub/5/data-services/models/getPrimaryEntityTypes.sjs')")
+            .javascript("xdmp.spawn('/data-hub/5/data-services/models/getPrimaryEntityTypes.mjs')")
             .evalAs(String.class);
     }
 }
