@@ -2,12 +2,14 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
 import com.marklogic.client.io.Format;
+import java.io.Reader;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import java.io.Reader;
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Provides a set of operations on the database server
@@ -56,13 +58,13 @@ public interface SystemService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/system/", servDecl);
 
                 this.req_getVersions = this.baseProxy.request(
-                    "getVersions.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getVersions.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_createCustomRewriters = this.baseProxy.request(
                     "createCustomRewriters.xqy", BaseProxy.ParameterValuesKind.NONE);
                 this.req_finishHubDeployment = this.baseProxy.request(
-                    "finishHubDeployment.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "finishHubDeployment.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getDataHubConfig = this.baseProxy.request(
-                    "getDataHubConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "getDataHubConfig.mjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override

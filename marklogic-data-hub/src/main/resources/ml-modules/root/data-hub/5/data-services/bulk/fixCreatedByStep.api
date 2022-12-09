@@ -1,5 +1,5 @@
 {
-    "endpoint": "/data-hub/5/data-services/bulk/fixCreatedByStep.sjs",
+    "endpoint": "/data-hub/5/data-services/bulk/fixCreatedByStep.mjs",
     "params": [
         {
             "name": "endpointState",

@@ -1,5 +1,5 @@
 {
-  "endpoint": "/data-hub/5/data-services/job/findStepResponses.sjs",
+  "endpoint": "/data-hub/5/data-services/job/findStepResponses.mjs",
   "functionName": "findStepResponses",
   "desc": "",
   "params": [

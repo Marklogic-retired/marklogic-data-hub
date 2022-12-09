@@ -60,19 +60,19 @@ public interface MappingService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
 
                 this.req_getReferences = this.baseProxy.request(
-                    "getReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getReferences.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getEntitiesForMapping = this.baseProxy.request(
                     "getEntitiesForMapping.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_testMapping = this.baseProxy.request(
-                    "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "testMapping.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getDocument = this.baseProxy.request(
                     "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
-                    "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getUris.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(
-                    "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
+                    "generateMappingTransforms.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
-                    "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getMappingFunctions.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -165,19 +165,11 @@ public interface MappingService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
-                return getMappingFunctions(
-                    this.req_getMappingFunctions.on(this.dbClient), false
-                    );
-            }
-
-            @Override
             public com.fasterxml.jackson.databind.JsonNode getMappingFunctions(Boolean excludeMLMappingFunctions) {
                 return getMappingFunctions(
                     this.req_getMappingFunctions.on(this.dbClient), excludeMLMappingFunctions
-                );
+                    );
             }
-
             private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request, Boolean excludeMLMappingFunctions) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
@@ -227,7 +219,7 @@ public interface MappingService {
     com.fasterxml.jackson.databind.JsonNode getDocument(String stepName, String uri);
 
   /**
-   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter
+   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
    *
    * @param stepName	provides input
    * @param limit	provides input
@@ -238,8 +230,8 @@ public interface MappingService {
   /**
    * Generates a transform in the modules database for each legacy mapping or mapping step
    *
-   *
-   *
+   * 
+   * 
    */
     void generateMappingTransforms();
 
@@ -250,14 +242,5 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getMappingFunctions(Boolean excludeMLMappingFunctions);
-
-    /**
-     * Invokes the getMappingFunctions operation on the database server. This will include ML Mapping Functions.
-     * Keeping this method for compatibility with DHCCE.
-     *
-     * @param excludeMLMappingFunctions	provides input
-     * @return	as output
-     */
-    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
 
 }
