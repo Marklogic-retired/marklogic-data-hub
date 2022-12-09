@@ -55,7 +55,7 @@ public interface StepRunnerService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepRunner/", servDecl);
 
                 this.req_processBatch = this.baseProxy.request(
-                    "processBatch.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "processBatch.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
             @Override
             public SessionState newSessionState() {
