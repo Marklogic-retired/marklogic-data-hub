@@ -27,11 +27,11 @@ public interface GraphService {
 
 
                 this.req_searchNodes = this.baseProxy.request(
-                    "searchNodes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "searchNodes.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_nodeExpand = this.baseProxy.request(
-                    "nodeExpand.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "nodeExpand.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_EntitiesWithConceptsTypes = this.baseProxy.request(
-                    "entitiesWithConceptsTypes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "entitiesWithConceptsTypes.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
 
             }
 

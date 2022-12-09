@@ -51,22 +51,22 @@ public interface ConceptService {
             private BaseProxy.DBFunctionRequest req_deleteDraftModel;
             private BaseProxy.DBFunctionRequest req_saveConceptModels;
             private BaseProxy.DBFunctionRequest req_createDraftModel;
-            private BaseProxy.DBFunctionRequest req_getModelReferences;
+            private BaseProxy.DBFunctionRequest req_getConceptReferences;
 
             private ConceptServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/concept/", servDecl);
 
                 this.req_updateDraftModelInfo = this.baseProxy.request(
-                    "updateDraftConceptModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateDraftConceptModelInfo.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteDraftModel = this.baseProxy.request(
-                    "deleteDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "deleteDraftConceptModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveConceptModels = this.baseProxy.request(
-                    "saveConceptModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "saveConceptModels.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_createDraftModel = this.baseProxy.request(
-                    "createDraftConceptModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
-                this.req_getModelReferences = this.baseProxy.request(
-                    "getConceptReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "createDraftConceptModel.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getConceptReferences = this.baseProxy.request(
+                    "getConceptReferences.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -127,16 +127,17 @@ public interface ConceptService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getModelReferences(String conceptName) {
-                return getModelReferences(
-                    this.req_getModelReferences.on(this.dbClient), conceptName);
+            public com.fasterxml.jackson.databind.JsonNode getConceptReferences(String conceptName) {
+                return getConceptReferences(
+                    this.req_getConceptReferences.on(this.dbClient), conceptName
+                    );
             }
-            private com.fasterxml.jackson.databind.JsonNode getModelReferences(BaseProxy.DBFunctionRequest request, String conceptName) {
-                return BaseProxy.JsonDocumentType.toJsonNode(
-                    request
-                        .withParams(
-                            BaseProxy.atomicParam("conceptName", false, BaseProxy.StringType.fromString(conceptName))
-                        ).responseSingle(false, Format.JSON)
+            private com.fasterxml.jackson.databind.JsonNode getConceptReferences(BaseProxy.DBFunctionRequest request, String conceptName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("conceptName", false, BaseProxy.StringType.fromString(conceptName))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
         }
@@ -157,7 +158,7 @@ public interface ConceptService {
    * Mark a draft concept class to be deleted
    *
    * @param conceptName	The name of the concept in the model
-   *
+   * 
    */
     void deleteDraftModel(String conceptName);
 
@@ -165,7 +166,7 @@ public interface ConceptService {
    * Save an array of concept models
    *
    * @param models	The array of concept models
-   *
+   * 
    */
     void saveConceptModels(com.fasterxml.jackson.databind.JsonNode models);
 
@@ -177,12 +178,12 @@ public interface ConceptService {
    */
     com.fasterxml.jackson.databind.JsonNode createDraftModel(com.fasterxml.jackson.databind.JsonNode input);
 
+  /**
+   * Returns a json containing the names of the entities that reference the given concept class.
+   *
+   * @param conceptName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getConceptReferences(String conceptName);
 
-    /**
-     * Returns a json containing the names of the entities that reference the given concept class.
-     *
-     * @param conceptName	The name of the concept class
-     * @return	as output
-     */
-    com.fasterxml.jackson.databind.JsonNode getModelReferences(String conceptName);
 }
