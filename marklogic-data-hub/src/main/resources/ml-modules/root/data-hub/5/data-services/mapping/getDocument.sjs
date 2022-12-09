@@ -17,15 +17,16 @@
 
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
-const core = require('/data-hub/5/artifacts/core.sjs')
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const sourcePropsLib = require('/data-hub/5/data-services/mapping/sourcePropertiesLib.sjs');
-const FlowExecutionContext = require("/data-hub/5/flow/flowExecutionContext.sjs");
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+import core from "/data-hub/5/artifacts/core.mjs";
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
+import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import sourcePropsLib from "/data-hub/5/data-services/mapping/sourcePropertiesLib.mjs";
+import FlowExecutionContext from "/data-hub/5/flow/flowExecutionContext.mjs";
+import StepExecutionContext from "/data-hub/5/flow/stepExecutionContext.mjs";
 
-var stepName, uri;
+const stepName = external.stepName;
+const uri = external.uri;
 
 const response = {
   data: null,
@@ -97,7 +98,7 @@ if (isJson) {
     }
   }
 
-  const transformResult = require('/data-hub/5/data-services/mapping/xmlToJsonForMapping.sjs').transform(xmlNode);
+  const transformResult = require('/data-hub/5/data-services/mapping/xmlToJsonForMapping.mjs').transform(xmlNode);
   response.data = transformResult.data;
 
   response.namespaces = Object.assign({ "entity-services": "http://marklogic.com/entity-services"}, transformResult.namespaces);

@@ -16,7 +16,7 @@ class Matchable {
   constructor(matchStep, stepContext) {
     // update the match step if using the legacy format
     if (matchStep.scoring) {
-      const updateMatchOptions = hubUtils.requireFunction("/data-hub/5/data-services/mastering/updateMatchOptionsLib.sjs", "updateMatchOptions");
+      const updateMatchOptions = hubUtils.requireFunction("/data-hub/5/data-services/mastering/updateMatchOptionsLib.mjs", "updateMatchOptions");
       this.matchStep = updateMatchOptions(matchStep);
     } else {
       this.matchStep = matchStep;

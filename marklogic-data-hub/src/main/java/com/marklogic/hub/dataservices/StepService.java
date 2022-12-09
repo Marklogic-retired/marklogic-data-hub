@@ -61,13 +61,13 @@ public interface StepService {
                 this.req_getReferences = this.baseProxy.request(
                     "getReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStepsByType = this.baseProxy.request(
-                    "getStepsByType.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getStepsByType.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveStep = this.baseProxy.request(
-                    "saveStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "saveStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteStep = this.baseProxy.request(
-                    "deleteStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "deleteStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStep = this.baseProxy.request(
-                    "getStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
             }
 
             @Override

@@ -1,6 +1,6 @@
 {
   "functionName": "migrateProvenance",
-  "endpoint": "/data-hub/5/data-services/provenance/migrateProvenance.sjs",
+  "endpoint": "/data-hub/5/data-services/provenance/migrateProvenance.mjs",
   "desc": "Migrates provenance to provenance format starting in DH 5.7.",
   "params": [
     {
