@@ -14,7 +14,6 @@ import {ConfirmationType} from "../../support/types/modeling-types";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 import graphVis from "../../support/components/model/graph-vis";
-import table from "../../support/components/common/tables";
 
 describe("Concept classes in Modeling screen", () => {
   //Scenarios: create, edit, and save a new concept class, edit concept class description, duplicate concept class name check
@@ -328,8 +327,7 @@ describe("Concept classes in Modeling screen", () => {
     conceptClassModal.getAddButton().click();
     cy.waitForAsyncRequest();
     conceptClassModal.getAddButton().should("not.exist");
-    cy.scrollTo("bottom");
-    table.scrollToFooter();
+    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
     entityTypeTable.getConceptClass("TestConcept").should("exist").scrollIntoView();
 
 
@@ -357,6 +355,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
+    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
     entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});
     confirmationModal.getDeleteConceptClassText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
