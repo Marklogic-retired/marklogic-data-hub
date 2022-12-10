@@ -326,6 +326,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Add a new property to the Entity**");
+    cy.get("[aria-label='Last Processed sortable']").scrollIntoView().should("be.visible").click();
     propertyTable.getAddPropertyButton(entityName).scrollIntoView().should("be.visible").click();
     propertyModal.newPropertyName(propertyName);
     propertyModal.openPropertyDropdown();

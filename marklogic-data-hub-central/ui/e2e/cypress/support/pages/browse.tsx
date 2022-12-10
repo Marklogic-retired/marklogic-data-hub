@@ -712,7 +712,7 @@ class BrowsePage {
   }
 
   getDetailInstanceViewIcon(docUri: string) {
-    return cy.findByTestId(`${docUri}-detailOnSeparatePage`);
+    return cy.get(`[data-testid="${docUri}-detailOnSeparatePage"]`);
   }
 
   // common element
