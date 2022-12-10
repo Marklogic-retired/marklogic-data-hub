@@ -201,6 +201,9 @@ describe("Run Tile tests", () => {
 
 
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    if (cy.get(`[data-testid="accordion-testPersonXML"].collapsed`)) {
+      runPage.toggleExpandFlow("testPersonXML");
+    }
     runPage.runStep("mapPersonXML", flowName);
     cy.wait("@runResponse");
     runPage.verifyStepRunResult("mapPersonXML", "success");

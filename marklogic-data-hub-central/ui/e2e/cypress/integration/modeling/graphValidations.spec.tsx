@@ -41,8 +41,9 @@ describe("Graph Validations", () => {
     entityTypeTable.waitForTableToLoad();
   });
   after(() => {
-    cy.get("#switch-view-table").click({force: true});
-    cy.revertDataModel();
+    cy.log("**Publishing**");
+    cy.publishDataModel();
+    cy.waitForAsyncRequest();
   });
   it("can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Person");
@@ -210,7 +211,9 @@ describe("Graph Validations", () => {
   });
 
   it("Add entities, a relation, publish, delete the relation and check if it's possible to delete an entity", {defaultCommandTimeout: 120000}, () => {
+    cy.log("**Reverts changes**");
     cy.get("#switch-view-table").click({force: true});
+    cy.revertDataModel();
 
     cy.log("**Creating new entity Test2 in table view**");
     modelPage.getAddButton().click();
@@ -220,6 +223,7 @@ describe("Graph Validations", () => {
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
 
     cy.log("**Add attributes to Test2**");
+    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
     propertyTable.getAddPropertyButton("a-Test2").scrollIntoView().click();
     propertyModal.addTextInput("hc-input-component", "id-test2");
     propertyModal.openPropertyDropdown();
@@ -234,7 +238,6 @@ describe("Graph Validations", () => {
     entityTypeModal.getAddButton().click();
 
     cy.log("**Adding attributes to Test1**");
-    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
     propertyTable.getAddPropertyButton("a-Test1").scrollIntoView().click();
     propertyModal.addTextInput("hc-input-component", "id");
     propertyModal.openPropertyDropdown();
@@ -262,16 +265,69 @@ describe("Graph Validations", () => {
     cy.waitForAsyncRequest();
   });
 
+  it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
+    cy.log("**Opens a-Test2 details**");
+    entityTypeTable.viewEntityInGraphView("a-Test2");
+    graphViewSidePanel.getPropertiesTab().click();
+    graphViewSidePanel.getPropertyName("id-test2").should("be.visible");
+
+    cy.log("**Edits id-test2 property**");
+    propertyTable.editProperty("id-test2");
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName("test2-id");
+    propertyModal.getSubmitButton().click();
+    cy.wait(1000);
+    propertyTable.getProperty("test2-id").should("exist");
+
+    cy.log("**Opens a-Test1 details**");
+    cy.get("#switch-view-table").click({force: true});
+    entityTypeTable.viewEntityInGraphView("a-Test1");
+    graphViewSidePanel.getPropertiesTab().click();
+    graphViewSidePanel.getPropertyName("relTest1-Test2").should("be.visible");
+
+    cy.log("**Edist relTest1-Test2 property**");
+    propertyTable.editProperty("relTest1-Test2");
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName("rel-Test1-Test2");
+    cy.get(`[aria-label="test2-id-option"]`).should("exist");
+    propertyModal.getSubmitButton().click();
+    cy.wait(1000);
+    propertyTable.getProperty("rel-Test1-Test2").should("exist");
+
+    cy.log("**Checks that test2-id cannot be deleted because is being used as foreign key**");
+    cy.get("#switch-view-table").click({force: true});
+    entityTypeTable.viewEntityInGraphView("a-Test2");
+    graphViewSidePanel.getPropertiesTab().click();
+    propertyTable.getDeletePropertyIcon("a-Test2", "test2-id").should("be.visible").click();
+    confirmationModal.getDeletePropertyForeignKeyWarnText().should("be.visible");
+    cy.findByText("Close").should("be.visible").click();
+  });
+
+  it("can view Entity's relationship from graph ", {defaultCommandTimeout: 120000}, () => {
+    cy.get("[data-cy=graph-view]").click({force: true});
+    graphVis.getPositionOfEdgeBetween("a-Test2,a-Test1").then((edgePosition: any) => {
+      // Wait extended because of the delay of the animations
+      cy.wait(150);
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
+    });
+
+    relationshipModal.getModalHeader().should("be.visible");
+    relationshipModal.verifyRelationshipValue("rel-Test1-Test2");
+    relationshipModal.verifyForeignKeyValue("test2-id");
+    relationshipModal.cancelModal();
+  });
+
+
   it("Deleting relation, entities and publish", () => {
     cy.log("**Sort table by entities Name**");
     cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
     entityTypeTable.getExpandEntityIcon("a-Test1");
 
-    cy.log("**Deletes relTest1-Test2 relationship**");
-    propertyModal.getDeleteIcon("a-Test1-relTest1-Test2").should("exist").scrollIntoView().should("be.visible").click();
+    cy.log("**Deletes rel-Test1-Test2 relationship**");
+    propertyModal.getDeleteIcon("a-Test1-rel-Test1-Test2").should("exist").scrollIntoView().should("be.visible").click();
     propertyModal.confirmDeleteProperty("deletePropertyWarn-yes");
     cy.waitForAsyncRequest();
-    propertyModal.getDeleteIcon("a-Test1-relTest1-Test2").should("not.exist");
+    propertyModal.getDeleteIcon("a-Test1-rel-Test1-Test2").should("not.exist");
 
     cy.log("**Deletes a-Test2 Entity**");
     propertyTable.getEntityToDelete("a-Test2-trash-icon").should("exist").scrollIntoView().should("be.visible").click();
@@ -284,62 +340,5 @@ describe("Graph Validations", () => {
     propertyModal.confirmDeleteProperty("deleteEntity-yes");
     cy.waitForAsyncRequest();
     propertyTable.getEntityToDelete("a-Test1-trash-icon").should("not.exist");
-
-    cy.log("**Publishing**");
-    cy.publishDataModel();
-    cy.waitForAsyncRequest();
   });
-
-  it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
-    cy.log("**Opens Customer details**");
-    entityTypeTable.viewEntityInGraphView("Customer");
-    graphViewSidePanel.getPropertiesTab().click();
-    graphViewSidePanel.getPropertyName("customerId").should("be.visible");
-
-    cy.log("**Edits customerId property**");
-    propertyTable.editProperty("customerId");
-    propertyModal.clearPropertyName();
-    propertyModal.newPropertyName("customer-Id");
-    propertyModal.getSubmitButton().click();
-    cy.wait(1000);
-    propertyTable.getProperty("customer-Id").should("exist");
-
-    cy.log("**Opens BabyRegistry details**");
-    cy.get("#switch-view-table").click({force: true});
-    entityTypeTable.viewEntityInGraphView("BabyRegistry");
-    graphViewSidePanel.getPropertiesTab().click();
-    graphViewSidePanel.getPropertyName("ownedBy").should("be.visible");
-
-    cy.log("**Edist ownedBy property**");
-    propertyTable.editProperty("ownedBy");
-    propertyModal.clearPropertyName();
-    propertyModal.newPropertyName("owned-by");
-    cy.get(`[aria-label="customer-Id-option"]`).should("exist");
-    propertyModal.getSubmitButton().click();
-    cy.wait(1000);
-    propertyTable.getProperty("owned-by").should("exist");
-
-    cy.log("**Checks that customer-Id cannot be deleted because is being used as foreign key**");
-    cy.get("#switch-view-table").click({force: true});
-    entityTypeTable.viewEntityInGraphView("Customer");
-    graphViewSidePanel.getPropertiesTab().click();
-    propertyTable.getDeletePropertyIcon("Customer", "customer-Id").should("be.visible").click();
-    confirmationModal.getDeletePropertyForeignKeyWarnText().should("be.visible");
-    cy.findByText("Close").should("be.visible").click();
-  });
-
-  it("can view Entity's relationship from graph ", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("project-diagram");
-    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      // Wait extended because of the delay of the animations
-      cy.wait(150);
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
-    });
-
-    relationshipModal.getModalHeader().should("be.visible");
-    relationshipModal.verifyRelationshipValue("owned-by");
-    relationshipModal.verifyForeignKeyValue("customer-Id");
-    relationshipModal.cancelModal();
-  });
-
 });
