@@ -423,15 +423,20 @@ declare function hent:dump-search-options($entities as json:array, $for-explorer
   let $entity-model-map := hent:add-indexes-for-entity-properties($entities)
   let $sortable-properties := map:get($entity-model-map, "sortable-properties")
   let $uber-model :=
-    let $entities := map:get($entity-model-map, "updated-models")
-    return hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-
+      let $entities := map:get($entity-model-map, "updated-models")
+      return hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
-    if ($for-explorer = fn:true()) then
-      let $options := hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
-      return ext:post-process-search-options($options)
-    else
-      hent:fix-options(es:search-options-generate($uber-model))
+    try {
+      if ($for-explorer = fn:true()) then
+        let $options := hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
+        return ext:post-process-search-options($options)
+      else
+        hent:fix-options(es:search-options-generate($uber-model))
+    } catch * {
+      (: provide a validation error if the model is invalid or throw original error :)
+      let  $_validate-model := es:model-validate($uber-model)
+      return xdmp:rethrow()
+    }
 };
 
 declare private function fix-path-index($path-index as element(search:path-index)) as element(search:path-index)
