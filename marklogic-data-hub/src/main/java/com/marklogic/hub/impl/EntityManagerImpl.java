@@ -102,8 +102,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 FileUtils.writeStringToFile(expFinalFile, expOptions, Charset.defaultCharset());
                 logger.info("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
             }
-            return true;
-
+            return !(options == null || expOptions == null);
         } catch (IOException e) {
             logger.warn("Unable to generate search options, cause: " + e.getMessage(), e);
         }

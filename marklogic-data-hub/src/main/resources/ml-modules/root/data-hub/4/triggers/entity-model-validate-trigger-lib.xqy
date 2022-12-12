@@ -56,10 +56,10 @@ declare function entity-validate($entity-uri as xs:string) {
               map:put($prop, "datatype", "string")
             )
           else if (fn:starts-with($ref, "#/definitions/")) then
-            let $definiton-name := fn:QName("", fn:substring-after($ref, "#/definitions/"))
-            where fn:empty($entity-def/definitions/object-node()[fn:node-name(.) eq $definiton-name])
+            let $definition-name := fn:QName("", fn:substring-after($ref, "#/definitions/"))
+            where fn:empty($entity-def/definitions/object-node()[fn:node-name(.) eq $definition-name])
             return
-              fn:resolve-uri(fn:string($definiton-name) || "-" || $entity-version, fn:head(($entity-base-uri, "http://marklogic.com/data-hub/")[. ne '']))
+              fn:resolve-uri(fn:string($definition-name) || "-" || $entity-version, fn:head(($entity-base-uri, "http://marklogic.com/data-hub/")[. ne '']))
           else
             fn:string($ref)
         where fn:exists($entity-uri)

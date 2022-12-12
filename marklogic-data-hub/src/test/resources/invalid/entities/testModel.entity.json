@@ -1,0 +1,23 @@
+{
+  "info": {
+    "title": "testModel",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "testModel": {
+      "primaryKey": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "datatype": "string"
+        },
+        "name": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
