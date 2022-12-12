@@ -35,7 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EntityManagerTest extends AbstractHubCoreTest {
 
@@ -164,6 +163,19 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         assertTrue(finalDbOptions.exists());
         assertTrue(stagingDbOptions.exists());
+    }
+
+
+    @Test
+    public void generateExplorerOptionsWithInvalidModel() {
+        installEntities();
+        Path entitiesDir = getHubProject().getHubEntitiesDir();
+        // Testing that installing an invalid entity will still allow options creation
+        File invalidEntityFile = entitiesDir.resolve("testModel.entity.json").toFile();
+        FileUtil.copy(getResourceStream("invalid/entities/testModel.entity.json"), invalidEntityFile);
+
+        assertFalse(entityManager.saveQueryOptions());
+        invalidEntityFile.delete();
     }
 
     @Test
