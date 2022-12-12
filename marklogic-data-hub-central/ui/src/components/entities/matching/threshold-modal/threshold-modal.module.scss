@@ -21,7 +21,6 @@
 .footerNewRuleset {
   display: flex;
   justify-content: flex-end;
-  margin-left: 32vw;
 
   .saveButton {
     margin-left: 5px;
@@ -43,6 +42,7 @@
 
 .editFooter{
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 }
 
