@@ -13,7 +13,7 @@
     "height" : 517,
     "vertices" : { }
   },
-  "Provider" : {
+  "CMSProvider" : {
     "x" : 125,
     "y" : 10,
     "width" : 517,
