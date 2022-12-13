@@ -16,6 +16,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven {url "https://developer.marklogic.com/maven2/"}
 
         // This has to be configured here as Gradle 7 defaults to requiring https for accessing a repository.
         // allowInsecureProtocol is used to override this, but it cannot be used by the gradle-node-plugin

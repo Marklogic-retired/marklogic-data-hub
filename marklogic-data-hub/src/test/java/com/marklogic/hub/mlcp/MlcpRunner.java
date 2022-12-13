@@ -20,10 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
-import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 import com.marklogic.hub.legacy.job.Job;
 import com.marklogic.hub.legacy.job.JobStatus;
 import com.marklogic.hub.legacy.job.LegacyJobManager;
@@ -35,9 +33,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
 
@@ -155,34 +155,45 @@ public class MlcpRunner extends ProcessRunner {
     }
 
     private String buildLoggerconfig() {
-        return "<configuration>\n" +
-            "\n" +
-            "  <appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" +
-            "    <!-- encoders are assigned the type\n" +
-            "         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->\n" +
-            "    <encoder>\n" +
-            "      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>\n" +
-            "    </encoder>\n" +
-            "  </appender>\n" +
-            "\n" +
-            "  <logger name=\"org.apache.http\" level=\"WARN\"/>\n" +
-            "\n" +
-            "  <logger name=\"com.marklogic.spring.batch.core.repository.dao.MarkLogicStepExecutionDao\" level=\"WARN\"/>\n" +
-            "  <logger name=\"com.marklogic.spring.batch.core.repository.dao.MarkLogicJobExecutionDao\" level=\"WARN\"/>\n" +
-            "  <logger name=\"com.marklogic.client.impl.DocumentManagerImpl\" level=\"WARN\"/>\n" +
-            "  <logger name=\"com.marklogic.client.impl.DatabaseClientImpl\" level=\"WARN\"/>\n" +
-            "  <logger name=\"com.marklogic\" level=\"INFO\"/>\n" +
-            "  <logger name=\"com.marklogic.appdeployer\" level=\"INFO\"/>\n" +
-            "  <logger name=\"com.marklogic.hub\" level=\"DEBUG\"/>\n" +
-            "  <logger name=\"com.marklogic.contentpump\" level=\"DEBUG\"/>\n" +
-            "  <logger name=\"org.apache.catalina.webresources.Cache\" level=\"ERROR\"/>\n" +
-            "  <logger name=\"org.apache.hadoop.util.Shell\" level=\"OFF\"/>\n" +
-            "  <logger name=\"org.apache.hadoop.util.NativeCodeLoader\" level=\"ERROR\"/>\n" +
-            "\n" +
-            "  <root level=\"WARN\">\n" +
-            "    <appender-ref ref=\"STDOUT\" />\n" +
-            "  </root>\n" +
-            "</configuration>\n";
+        return "<Configuration status=\"WARN\">\n" +
+                "    <Appenders>\n" +
+                "        <!-- Console appender configuration -->\n" +
+                "        <Console name=\"Console\" target=\"SYSTEM_OUT\">\n" +
+                "            <PatternLayout pattern=\"%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\"/>\n" +
+                "        </Console>\n" +
+                "    </Appenders>\n" +
+                "    <Loggers>\n" +
+                "        <!-- Root logger configuration -->\n" +
+                "        <Root level=\"INFO\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Root>\n" +
+                "        <!-- To enable debug for mapreduce -->\n" +
+                "        <!--\n" +
+                "        <Logger name=\"com.marklogic.mapreduce\" level=\"DEBUG\" additivity=\"false\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Logger>\n" +
+                "        -->\n" +
+                "        <!-- To enable debug for contentpump -->\n" +
+                "        <!--\n" +
+                "        <Logger name=\"com.marklogic.contentpump\" level=\"DEBUG\" additivity=\"false\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Logger>\n" +
+                "        -->\n" +
+                "        <!-- To enable debug for tree -->\n" +
+                "        <!--\n" +
+                "        <Logger name=\"com.marklogic.tree\" level=\"TRACE\" additivity=\"false\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Logger>\n" +
+                "        -->\n" +
+                "        <!-- To supress not native warn on Mac and Solaris -->\n" +
+                "        <Logger name=\"org.apache.hadoop.util.NativeCodeLoader\" level=\"ERROR\" additivity=\"false\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Logger>\n" +
+                "        <Logger name=\"org.apache.hadoop.ipc.Client\" level=\"ERROR\" additivity=\"false\">\n" +
+                "            <AppenderRef ref=\"Console\"/>\n" +
+                "        </Logger>\n" +
+                "    </Loggers>\n" +
+                "</Configuration>\n";
     }
 
     private MlcpBean makeMlcpBean(Job job) throws Exception {
@@ -236,53 +247,18 @@ public class MlcpRunner extends ProcessRunner {
             File.separator + "bin" +
             File.separator + "java";
         String classpath = System.getProperty("java.class.path");
-
-        //logger.warn("Classpath before is: " + classpath);
-        // strip out non-essential entries to truncate classpath
-        List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
-        String filteredClasspathEntries = classpath;
-        int MAX_CLASSPATH_LENGTH = 10000;
-        // if classpath was not alrady shortened (say, by IDE) then strip to run mlcp
-        if (filteredClasspathEntries.length() > MAX_CLASSPATH_LENGTH)
-            filteredClasspathEntries = classpathEntries
-                .stream()
-                .filter(
-                    u -> (
-                        u.contains(System.getProperty("user.dir")) ||
-                            u.contains("jdk") ||
-                            u.contains("jre") ||
-                            u.contains("log") ||
-                            u.contains("xml") ||
-                            u.contains("json") ||
-                            u.contains("jackson") ||
-                            u.contains("xerces") ||
-                            u.contains("slf") ||
-                            u.contains("mlcp") ||
-                            u.contains("xcc") ||
-                            u.contains("xpp") ||
-                            u.contains("protobuf") ||
-                            u.contains("mapreduce") ||
-                            u.contains("guava") ||
-                            u.contains("apache") ||
-                            u.contains("commons") ||
-                            u.contains("hadoop") ||
-                            u.contains("thoughtworks"))
-                ).collect(Collectors.joining(File.pathSeparator));
-
-        //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
-
         File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
         FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
 
         args.add(javaBin);
-        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
+        args.add("-Dlog4j2.configurationFile=" + loggerFile.toURI());
         if (classpath.endsWith(".war")) {
             args.add("-jar");
             args.add(classpath);
             args.add("mlcp");
         } else {
             args.add("-cp");
-            args.add(filteredClasspathEntries);
+            args.add(classpath);
             args.add("com.marklogic.contentpump.ContentPump");
         }
         args.addAll(Arrays.asList(bean.buildArgs()));
