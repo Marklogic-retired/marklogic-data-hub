@@ -564,16 +564,109 @@ const GraphVis: React.FC<Props> = (props) => {
     };
   };
 
+  const oneToOneEdges = (title, entityName, parts, relationshipName, p, pObj, edges, structParent = "") => ({
+    ...graphConfig.defaultEdgeProps,
+    from: entityName,
+    structParent: structParent,
+    to: parts[parts.length - 1],
+    label: relationshipName,
+    predicate: p,
+    joinPropertyName: pObj.joinPropertyName,
+    id: entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName || structParent,
+    title: title,
+    arrows: {
+      to: {
+        enabled: true,
+        src: graphConfig.customEdgeSVG.oneToOne,
+        type: "image"
+      }
+    },
+    arrowStrikethrough: true,
+    color: "#666",
+    font: {
+      align: "top",
+    },
+    chosen: {
+      label: onChosen,
+      edge: onChosen,
+      node: false
+    },
+    smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges)
+  });
+
+  const oneToManyEdges = (title, entityName, parts, relationshipName, p, pObj, edges, structParent = "") => (
+    {
+      ...graphConfig.defaultEdgeProps,
+      from: entityName,
+      structParent: structParent,
+      to: parts[parts.length - 1],
+      label: relationshipName,
+      predicate: p,
+      joinPropertyName: pObj.items.joinPropertyName,
+      id: entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName || structParent,
+      title: title,
+      arrowStrikethrough: true,
+      arrows: {
+        to: {
+          enabled: true,
+          src: graphConfig.customEdgeSVG.oneToMany,
+          type: "image"
+        }
+      },
+      color: "#666",
+      font: {align: "top"},
+      chosen: {
+        label: onChosen,
+        edge: onChosen,
+        node: false
+      },
+      smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges)
+    }
+  );
+
+  const conceptEdges = (title, entityName, relationshipName, obj, edges) => (
+    {
+      ...graphConfig.defaultEdgeProps,
+      from: entityName,
+      to: obj.conceptClass,
+      label: relationshipName,
+      predicate: obj.predicate,
+      joinPropertyName: obj.context,
+      id: entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
+      title: title,
+      arrows: {
+        to: {
+          enabled: true,
+          src: graphConfig.customEdgeSVG.oneToOne,
+          type: "image"
+        }
+      },
+      arrowStrikethrough: true,
+      color: "#666",
+      font: {
+        align: "top",
+      },
+      chosen: {
+        label: onChosen,
+        edge: onChosen,
+        node: false
+      },
+      smooth: getSmoothOpts(entityName, obj.conceptClass, edges),
+      conceptExpression: obj.conceptExpression
+    }
+  );
+
   const getEdges = () => {
     let edges: any = [];
+    let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
+
     props.dataModel.forEach((e, i) => {
       if (e.model.definitions) {
         if (!e.model.definitions[e.entityName]) {
           return [];
         }
-
-
         let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
+
         properties.forEach((p, i) => {
           let pObj = e.model.definitions[e.entityName].properties[p];
           let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined :"Edit Relationship";
@@ -585,63 +678,11 @@ const GraphVis: React.FC<Props> = (props) => {
           //for one to one edges
           if (pObj.relatedEntityType) {
             let parts = pObj.relatedEntityType.split("/");
-            edges.push({
-              ...graphConfig.defaultEdgeProps,
-              from: e.entityName,
-              to: parts[parts.length - 1],
-              label: relationshipName,
-              predicate: p,
-              joinPropertyName: pObj.joinPropertyName,
-              id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
-              title: title,
-              arrows: {
-                to: {
-                  enabled: true,
-                  src: graphConfig.customEdgeSVG.oneToOne,
-                  type: "image"
-                }
-              },
-              arrowStrikethrough: true,
-              color: "#666",
-              font: {
-                align: "top",
-              },
-              chosen: {
-                label: onChosen,
-                edge: onChosen,
-                node: false
-              },
-              smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
-            });
+            edges.push(oneToOneEdges(title, e.entityName, parts, relationshipName, p, pObj, edges));
             //for one to many edges
           } else if (pObj.items?.relatedEntityType) {
             let parts = pObj.items.relatedEntityType.split("/");
-            edges.push({
-              ...graphConfig.defaultEdgeProps,
-              from: e.entityName,
-              to: parts[parts.length - 1],
-              label: relationshipName,
-              predicate: p,
-              joinPropertyName: pObj.items.joinPropertyName,
-              id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
-              title: title,
-              arrowStrikethrough: true,
-              arrows: {
-                to: {
-                  enabled: true,
-                  src: graphConfig.customEdgeSVG.oneToMany,
-                  type: "image"
-                }
-              },
-              color: "#666",
-              font: {align: "top"},
-              chosen: {
-                label: onChosen,
-                edge: onChosen,
-                node: false
-              },
-              smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
-            });
+            edges.push(oneToManyEdges(title, e.entityName, parts, relationshipName, p, pObj, edges));
           }
         });
         if (e.model.definitions[e.entityName].hasOwnProperty("relatedConcepts")) {
@@ -653,38 +694,36 @@ const GraphVis: React.FC<Props> = (props) => {
               relationshipName = relationshipName.substring(0, 20) + "...";
               title = obj.predicate + "\n" + (title || "");
             }
-            edges.push({
-              ...graphConfig.defaultEdgeProps,
-              from: e.entityName,
-              to: obj.conceptClass,
-              label: relationshipName,
-              predicate: obj.predicate,
-              joinPropertyName: obj.context,
-              id: e.entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
-              title: title,
-              arrows: {
-                to: {
-                  enabled: true,
-                  src: graphConfig.customEdgeSVG.oneToOne,
-                  type: "image"
-                }
-              },
-              arrowStrikethrough: true,
-              color: "#666",
-              font: {
-                align: "top",
-              },
-              chosen: {
-                label: onChosen,
-                edge: onChosen,
-                node: false
-              },
-              smooth: getSmoothOpts(e.entityName, obj.conceptClass, edges),
-              conceptExpression: obj.conceptExpression
-            });
+            edges.push(conceptEdges(title, e.entityName, relationshipName, obj, edges));
           });
         }
+        // structured properties with related entity types
+        for (const definition in e.model.definitions) {
+          if (definition !== e.entityName) {
+            if (!e.model.definitions[definition].properties) {
+              return;
+            }
+            const {properties} = e.model.definitions[definition];
+            for (const property in properties) {
+              const propertiesItem = properties[property];
+              let relationshipName = property;
+              if (relationshipName.length > 20) {
+                relationshipName = relationshipName.substring(0, 20) + "...";
+                if (title !== undefined) title = property + "\n" + title;
+              }
+              if (propertiesItem?.relatedEntityType) {
+                let parts = propertiesItem.relatedEntityType.split("/");
+                edges.push(oneToOneEdges(title, e.entityName, parts, relationshipName, property, propertiesItem, edges, definition));
+              } else if (propertiesItem.items?.relatedEntityType) {
+                let parts = propertiesItem.items.relatedEntityType.split("/");
+                edges.push(oneToManyEdges(title, e.entityName, parts, relationshipName, property, propertiesItem, edges, definition));
+              }
+            }
+
+          }
+        }
       }
+
     });
     return edges;
   };
@@ -724,7 +763,8 @@ const GraphVis: React.FC<Props> = (props) => {
       targetNodeColor: targetNodeColor,
       relationshipName: edge && edge.predicate ? edge.predicate : "",
       joinPropertyName: edge && edge.joinPropertyName ? edge.joinPropertyName : "",
-      isConcept: isConcept
+      isConcept: isConcept,
+      structParent: edge?.structParent ? edge.structParent : "",
     };
     if (isConcept) {
       let edge = network.body.data.edges.get(edgeInfo);

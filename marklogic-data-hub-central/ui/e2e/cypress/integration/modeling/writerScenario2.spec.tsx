@@ -6,6 +6,7 @@ import {
   entityTypeTable,
   propertyModal,
   propertyTable,
+  relationshipModal,
   structuredTypeModal,
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
@@ -13,6 +14,7 @@ import {Application} from "../../support/application.config";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
+import graphVis from "../../support/components/model/graph-vis";
 
 describe("Entity Modeling: Writer Role", () => {
   //Scenarios: can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property, delete structured type, and delete entity, can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, save all entities, delete an entity with relationship warning
@@ -166,6 +168,17 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
     //foreign key no longer exists
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("not.exist");
+    modelPage.selectView("project-diagram");
+    modelPage.scrollPageBottom();
+    graphVis.getPositionOfEdgeBetween("AddEntity,Customer").then((edgePosition: any) => {
+      // Wait extended because of the delay of the animations
+      cy.wait(150);
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
+    });
+    relationshipModal.getModalHeader().should("be.visible");
+    relationshipModal.verifyRelationshipValue("OrderedBy");
+    relationshipModal.cancelModal();
+    modelPage.selectView("table");
   });
   it("Add properties to nested structured type", () => {
     propertyTable.getAddPropertyToStructureType("zip").click();
