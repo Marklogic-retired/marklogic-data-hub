@@ -22,7 +22,7 @@
         },
         "providerID": {
           "datatype": "integer",
-          "relatedEntityType": "http://marklogic.com/Provider-0.0.1/Provider",
+          "relatedEntityType": "http://marklogic.com/CMSProvider-0.0.1/CMSProvider",
           "joinPropertyName": "NPI"
         },
         "specializationID": {
