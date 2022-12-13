@@ -18,9 +18,9 @@
 
 'use strict';
 
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 function validateDeleteRequest({ retainDuration, batchSize = 100 }) {
     if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "yearMonthDuration", retainDuration)) {
@@ -552,8 +552,9 @@ ORDER BY DESC(?time)`;
   };
 }
 
-module.exports = {
-  deleteProvenance: module.amp(deleteProvenance),
+export  {
+  //deleteProvenance: module.amp(deleteProvenance),
+  deleteProvenance,
   installProvTemplates,
   allAssociatedProvEntities,
   sourceInformationForDocument,

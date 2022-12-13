@@ -1,4 +1,4 @@
-module.exports = {
+module.export = {
   // Staging Database Properties
   STAGINGDATABASE: "%%mlStagingDbName%%",
   STAGING_PORT: "%%mlStagingPort%%",
