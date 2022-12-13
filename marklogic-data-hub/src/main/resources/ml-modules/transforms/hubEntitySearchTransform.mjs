@@ -15,10 +15,10 @@
  */
 'use strict';
 
-const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
 
 // Expects JSON content
-function transform(context, params, content) {
+export function transform(context, params, content) {
   let entityName = null;
   if(params.entityName) {
     entityName = params.entityName;
@@ -42,5 +42,3 @@ function transform(context, params, content) {
   }
   return contentObject;
 }
-
-exports.transform = transform;
