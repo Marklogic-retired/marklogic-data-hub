@@ -33,6 +33,10 @@ ext {
     thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
 }
 
+configurations {
+    mlcp
+}
+
 dependencies {
     api project(":marklogic-data-hub-api")
 
@@ -83,11 +87,11 @@ dependencies {
     testImplementation 'org.skyscreamer:jsonassert:1.5.0'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'org.easymock:easymock:3.4'
-    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.31'
-    // How MLCP handles errors in a transform changed between 10.0.4.2 and 10.0.5, such that these errors do not result
-    // in records counting as "failures". This seems like a bug with MLCP. For now, 10.0.4.2 is still used for testing
-    // as RunConnectedStepsWithMlcpTest expects transform errors to be counted as failures.
-    testImplementation("com.marklogic:mlcp:10.0.4.2") {
+    testImplementation 'org.apache.logging.log4j:log4j-api:2.17.2'
+    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.36'
+    testImplementation("com.marklogic:mlcp:10.0.9.5") {
+      exclude group: 'commons-modeler', module: 'commons-modeler'
+      exclude group: 'ch.qos.logback', module: 'logback-classic'
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
