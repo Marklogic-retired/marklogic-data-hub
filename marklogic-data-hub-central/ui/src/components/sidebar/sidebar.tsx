@@ -135,7 +135,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
       relatedConceptsValues["facetValues"].map((obj) => {
-        relatedConceptsList.set(obj.name, {...obj, checked: true});
+        relatedConceptsList.set(obj.name, {...obj, checked: checkAllRelatedConcepts});
       });
     }
 
