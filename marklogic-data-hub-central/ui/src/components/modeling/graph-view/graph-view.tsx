@@ -154,6 +154,7 @@ const GraphView: React.FC<Props> = (props) => {
     className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
     disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="publish-to-database"
+    data-testid="publish-changes"
     size="sm"
     variant="outline-light"
     onClick={() => {
