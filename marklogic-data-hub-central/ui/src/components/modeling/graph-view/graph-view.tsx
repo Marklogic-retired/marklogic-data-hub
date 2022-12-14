@@ -170,6 +170,7 @@ const GraphView: React.FC<Props> = (props) => {
     className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
     disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="revert-changes-graph-view"
+    data-testid="revert-changes"
     size="sm"
     variant="outline-light"
     onClick={() => {
