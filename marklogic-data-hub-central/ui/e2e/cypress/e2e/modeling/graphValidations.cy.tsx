@@ -263,10 +263,6 @@ describe("Graph Validations", () => {
     propertyModal.getDeleteIcon("a-Test2-id-test2").should("exist").scrollIntoView().should("be.visible").click();
     confirmationModal.getDeletePropertyForeignKeyWarnText().should("be.visible");
     cy.findByText("Close").should("be.visible").click();
-
-    cy.log("**Publishing**");
-    cy.publishDataModel();
-    cy.waitForAsyncRequest();
   });
 
   it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
