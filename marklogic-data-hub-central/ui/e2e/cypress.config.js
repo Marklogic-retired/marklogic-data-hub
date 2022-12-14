@@ -1,6 +1,6 @@
-import {defineConfig} from "cypress";
+const {defineConfig} = require("cypress");
 
-export default defineConfig({
+module.exports = defineConfig({
   video: true,
   videoCompression: 20,
   viewportWidth: 1680,
@@ -28,7 +28,6 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       return require("./cypress/plugins/index.js")(on, config);
     },
-    baseUrl: "http://localhost:8080",
     experimentalRunAllSpecs: true,
     specPattern: ["cypress/e2e/*/*/*.cy.{js,jsx,ts,tsx}", "cypress/e2e/*/*.cy.{js,jsx,ts,tsx}"],
     excludeSpecPattern: [],
