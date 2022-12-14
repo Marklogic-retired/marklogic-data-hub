@@ -41,8 +41,8 @@ describe("Graph Validations", () => {
     entityTypeTable.waitForTableToLoad();
   });
   after(() => {
-    cy.log("**Publishing**");
-    cy.publishDataModel();
+    cy.log("**Reverting**");
+    cy.revertDataModel();
     cy.waitForAsyncRequest();
   });
   it("can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
@@ -135,7 +135,8 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityTypeTab().should("exist");
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("exist");
   });
-  /* TODO: Graph context menu (DHFPROD-8284) */
+  // TODO: Graph context menu (DHFPROD-8284)
+
   it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     cy.wait(500);
@@ -264,12 +265,10 @@ describe("Graph Validations", () => {
     confirmationModal.getDeletePropertyForeignKeyWarnText().should("be.visible");
     cy.findByText("Close").should("be.visible").click();
 
-    cy.log("**Publishing**");
-    cy.publishDataModel();
-    cy.waitForAsyncRequest();
   });
 
   it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
+    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
     cy.log("**Opens a-Test2 details**");
     entityTypeTable.viewEntityInGraphView("a-Test2");
     graphViewSidePanel.getPropertiesTab().click();
