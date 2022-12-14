@@ -15,6 +15,7 @@ const stepType = "Custom";
 
 describe("Add Custom step to a flow", () => {
   before(() => {
+    cy.log(Cypress.config("baseUrl"));
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
@@ -32,6 +33,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Create new flow", () => {
+    cy.log(Cypress.config("baseUrl"));	
     toolbar.getRunToolbarIcon().should("be.visible").click();
     runPage.createFlowButton().click();
 
