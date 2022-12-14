@@ -12,13 +12,13 @@
  */
 'use strict';
 
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const consts = require('/data-hub/5/impl/consts.sjs');
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
-const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
-const prov = require("/data-hub/5/impl/prov.sjs");
-const {requireFunction} = require("../impl/hub-utils.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import esInstance from "/MarkLogic/entity-services/entity-services-instance";
+import ext from "/data-hub/extensions/entity/get-entity-details.mjs";
+import prov from "/data-hub/5/impl/prov.mjs";
+import {requireFunction} from "../impl/hub-utils.mjs";
 
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -680,7 +680,7 @@ function verifyExplorableModel(entityName) {
   return entityTypes.includes(entityModel.info.title);
 }
 
-module.exports = {
+export {
   addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
   buildPropertyMetadata,

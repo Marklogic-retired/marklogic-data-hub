@@ -15,20 +15,20 @@
  */
 'use strict';
 
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const Flow = require('./flow');
-const LoadData = require('./loadData');
-const Mapping = require('./mapping');
-const Matching = require('./matching');
-const Merging = require('./merging');
-const ExclusionList = require('./exclusionList');
-const Mastering = require('./mastering');
-const StepDef = require('./stepDefinition');
-const CustomStep = require('./customStep')
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import Flow from './flow.mjs';
+import LoadData from './loadData.mjs';
+import Mapping from './mapping.mjs';
+import Matching from './matching.mjs';
+import Merging from './merging.mjs';
+import ExclusionList from './exclusionList.mjs';
+import Mastering from './mastering.mjs';
+import StepDef from './stepDefinition.mjs';
+import CustomStep from './customStep.mjs';
 
-const consts = require('/data-hub/5/impl/consts.sjs');
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import consts from '/data-hub/5/impl/consts.mjs';
+import httpUtils from '/data-hub/5/impl/http-utils.mjs';
+import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
 
 // define constants for caching expensive operations
 const cachedArtifacts = {};
@@ -342,7 +342,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   return newFlowStep;
 }
 
-module.exports = {
+export {
     getArtifacts,
     deleteArtifact,
     getArtifact,

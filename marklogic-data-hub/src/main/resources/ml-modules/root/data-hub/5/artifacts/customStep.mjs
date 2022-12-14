@@ -16,31 +16,27 @@
 'use strict';
 
 const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
 
-const collections = ['http://marklogic.com/data-hub/steps/mastering', 'http://marklogic.com/data-hub/steps'];
+const collections = ['http://marklogic.com/data-hub/steps/custom', 'http://marklogic.com/data-hub/steps'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
-const permissions =
-  [
-    xdmp.permission(consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
-    xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
-  ];
-const requiredProperties = ['name'];
+const permissions = [xdmp.permission(consts.DATA_HUB_CUSTOM_WRITE_ROLE, 'update'), xdmp.permission(consts.DATA_HUB_CUSTOM_READ_ROLE, 'read')];
+const requiredProperties = ['name', 'selectedSource'];
 
 function getNameProperty() {
-    return 'name';
+  return 'name';
 }
 
 function getCollections() {
-    return collections;
+  return collections;
 }
 
 function getStorageDatabases() {
-    return databases;
+  return databases;
 }
 
 function getPermissions() {
-    return permissions;
+  return permissions;
 }
 
 function getFileExtension() {
@@ -48,7 +44,7 @@ function getFileExtension() {
 }
 
 function getDirectory() {
-  return "/steps/mastering/";
+  return "/steps/custom/";
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
@@ -61,31 +57,39 @@ function getArtifactUri(artifactName){
 }
 
 function validateArtifact(artifact) {
-    return artifact;
+  //Since custom steps are created manually, setting 'selectedSource' to 'query' if it isn't present
+  if(!artifact.selectedSource){
+    artifact.selectedSource = 'query';
+  }
+  const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
+  if (missingProperties.length) {
+    return new Error(`Custom step '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+  }
+  return artifact;
 }
 
-function defaultArtifact(artifactName) {
+function defaultArtifact(artifactName, entityTypeId) {
+  const defaultCollections =  [artifactName];
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
+
   return {
-    artifactName,
-    collections: ['default-mastering'],
-    additionalCollections: [],
-    sourceDatabase: config.FINALDATABASE,
-    targetDatabase: config.FINALDATABASE,
-    provenanceGranularityLevel: 'coarse',
+    collections: defaultCollections,
     permissions: defaultPermissions,
-    batchSize: 100
+    batchSize: 100,
+    sourceDatabase: config.STAGINGDATABASE,
+    targetDatabase: config.FINALDATABASE,
+    provenanceGranularityLevel: 'off',
   };
 }
 
-module.exports = {
-    getNameProperty,
-    getCollections,
-    getStorageDatabases,
-    getPermissions,
-    getArtifactNode,
-    validateArtifact,
-    defaultArtifact,
-    getFileExtension,
-    getDirectory
+export {
+  getNameProperty,
+  getCollections,
+  getStorageDatabases,
+  getPermissions,
+  getArtifactNode,
+  getDirectory,
+  validateArtifact,
+  getFileExtension,
+  defaultArtifact
 };

@@ -13,13 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
-const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+import mastering from "/com.marklogic.smart-mastering/process-records.xqy";
+import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -125,7 +125,7 @@ function buildResult(matchSummaryJson, options, collections) {
   return result;
 }
 
-module.exports = {
+export {
   main,
   buildResult,
   filterContentAlreadyProcessed

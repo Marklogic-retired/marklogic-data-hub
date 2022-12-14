@@ -15,10 +15,10 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
+import config from "/com.marklogic.hub/config.sjs";
+import consts from "/data-hub/5/impl/consts.mjs";
 
-const collections = ['http://marklogic.com/data-hub/steps/merging', 'http://marklogic.com/data-hub/steps'];
+const collections = ['http://marklogic.com/data-hub/steps/matching', 'http://marklogic.com/data-hub/steps'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const permissions =
   [
@@ -48,7 +48,7 @@ function getFileExtension() {
 }
 
 function getDirectory() {
-  return "/steps/merging/";
+  return "/steps/matching/";
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
@@ -67,29 +67,23 @@ function validateArtifact(artifact) {
 function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   let artifact = {
-    // defaulting to batch size one, since a single match summary document updates multiple other documents
-    batchSize: 1,
+    batchSize: 100,
     sourceDatabase: config.FINALDATABASE,
     targetDatabase: config.FINALDATABASE,
-    permissions: defaultPermissions,
     targetEntityType: "Change this to a valid entity type name; e.g. Customer",
-    sourceQuery: "cts.collectionQuery('mastering-summary')",
-    provenanceGranularityLevel: 'coarse',
-    collections: [],
+    sourceQuery: "cts.collectionQuery('Change this to a valid collection name; e.g. Customer')",
+    collections: [
+      "mastering-summary"
+    ],
+    permissions: defaultPermissions,
     targetFormat: "json"
   };
-  artifact["mergeRules"] = artifact.mergeRules || [];
-  artifact["mergeStrategies"] = artifact.mergeStrategies || [];
-  artifact["targetCollections"] = artifact.targetCollections || {
-    "onMerge": { "add": [], "remove": [] },
-    "onNoMatch": { "add": [], "remove": [] },
-    "onArchive": { "add": [], "remove": [] },
-    "onNotification": { "add": [], "remove": [] }
-  };
+  artifact["matchRulesets"] = artifact.matchRulesets || [];
+  artifact["thresholds"] = artifact.thresholds || [];
   return artifact;
 }
 
-module.exports = {
+export {
     getNameProperty,
     getCollections,
     getStorageDatabases,

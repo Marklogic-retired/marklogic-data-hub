@@ -15,9 +15,9 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubEs = require("/data-hub/5/impl/hub-es.sjs");
+import config from "/com.marklogic.hub/config.sjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubEs from "/data-hub/5/impl/hub-es.mjs";
 
 const collections = ['http://marklogic.com/data-hub/steps/mapping', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/mappings'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
@@ -96,7 +96,7 @@ function defaultArtifact(artifactName, entityTypeId) {
   };
 }
 
-module.exports = {
+export {
     getNameProperty,
     getCollections,
     getStorageDatabases,

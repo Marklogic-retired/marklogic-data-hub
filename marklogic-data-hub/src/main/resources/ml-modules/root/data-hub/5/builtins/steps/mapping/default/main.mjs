@@ -1,7 +1,7 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import lib from '/data-hub/5/builtins/steps/mapping/default/lib.mjs';
 const datahub = DataHubSingleton.instance();
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
 var entityModel = null;
@@ -112,7 +112,7 @@ function buildEnvelope(doc, instance, outputFormat, options) {
   return flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
-module.exports = {
-  main: main,
-  buildEnvelope: buildEnvelope
+export {
+  main,
+  buildEnvelope
 };

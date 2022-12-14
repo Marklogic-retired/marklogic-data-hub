@@ -1,12 +1,12 @@
-const consts = require('/data-hub/5/impl/consts.sjs');
-const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
-const mappingLibrary = require("/data-hub/5/mapping/mapping-lib.sjs");
-const entityValidationLib = require('entity-validation-lib.sjs');
-const xqueryLib = require('xquery-lib.xqy')
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import defaultLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import lib from "/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs";
+import mappingLibrary from "/data-hub/5/mapping/mapping-lib.mjs";
+import entityValidationLib from "entity-validation-lib.mjs";
+import xqueryLib from "xquery-lib.xqy";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
@@ -306,7 +306,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
   return nb.toNode();
 }
 
-module.exports = {
+export {
   buildEnvelope,
   main
 };

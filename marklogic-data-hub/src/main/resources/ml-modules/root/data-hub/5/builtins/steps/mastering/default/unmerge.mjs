@@ -1,6 +1,6 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
 const datahub = DataHubSingleton.instance();
-const merging = require('/com.marklogic.smart-mastering/merging.xqy');
+import merging from '/com.marklogic.smart-mastering/merging.xqy';
 
 function main(content, options) {
   let documentsAffected = [content];
@@ -21,6 +21,6 @@ function main(content, options) {
   return Sequence.from(documentsAffected);
 }
 
-module.exports = {
+export {
   main: main
 };

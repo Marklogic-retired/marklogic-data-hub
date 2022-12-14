@@ -15,10 +15,10 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
-const collections = ['http://marklogic.com/data-hub/step-definition'];
+import config from "/com.marklogic.hub/config.sjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+
+const collections = ['http://marklogic.com/data-hub/flow'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const requiredProperties = ['name'];
 
@@ -35,53 +35,46 @@ function getStorageDatabases() {
 }
 
 function getPermissions() {
-  let permsString = "%%mlStepDefinitionPermissions%%";
+  let permsString = "%%mlFlowPermissions%%";
   // Default to the given string in case the above token has not been replaced
-  permsString = permsString.indexOf("%mlStepDefinitionPermissions%") > -1 ?
-    "data-hub-step-definition-reader,read,data-hub-step-definition-writer,update" :
+  permsString = permsString.indexOf("%mlFlowPermissions%") > -1 ?
+    "data-hub-flow-reader,read,data-hub-flow-writer,update" :
     permsString;
   return hubUtils.parsePermissions(permsString);
 }
 
-function getArtifactNode(artifactName, artifactVersion) {
-    const stepDef = new StepDefinition().getStepDefinition(artifactName);
-    return stepDef;
-}
-
-function getDirectory(artifactName, artifact, artifactDirName) {
-    let doc = getArtifactNode(artifactName, null);
-    let dir = "/step-definitions/";
-    if(!doc && artifact && artifactName) {
-        dir = dir + artifact.type.toLowerCase() + "/" + (artifactDirName || artifact.name) +"/";
-    }
-    else if (doc) {
-        let stepDefinition = doc.toObject();
-        if (stepDefinition.type && stepDefinition.name) {
-            dir = dir + stepDefinition.type.toLowerCase() + "/" + stepDefinition.name + "/";
-        }
-    }
-    return dir;
-}
-
 function getFileExtension() {
-    return ".step.json";
+    return '.flow.json';
+}
+
+function getDirectory() {
+  return "/flows/";
+}
+
+function getArtifactNode(artifactName, artifactVersion) {
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+  return fn.head(results);
+}
+
+function getArtifactUri(artifactName){
+  return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
 function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
-        return new Error(`Step definition '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+        return new Error(`Flow '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     return artifact;
 }
 
-module.exports = {
+export {
   getNameProperty,
   getCollections,
   getStorageDatabases,
-  getDirectory,
   getPermissions,
   getFileExtension,
   getArtifactNode,
+  getDirectory,
   validateArtifact
 };

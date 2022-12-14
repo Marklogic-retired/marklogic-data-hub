@@ -13,11 +13,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const merger = require("/data-hub/5/mastering/merging/merger.sjs");
-const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
-const {Mergeable} = require("/data-hub/5/mastering/merging/mergeable.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import merger from "/data-hub/5/mastering/merging/merger.mjs";
+import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
+import {Mergeable} from "/data-hub/5/mastering/merging/mergeable.mjs";
 
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
@@ -124,7 +124,7 @@ function main(content, options, stepExecutionContext) {
         thisMatchSummary,
         mergeable,
         stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
-    );  
+    );
   }
 
   content["$delete"] = true;
@@ -157,7 +157,7 @@ function jobReport(jobID, stepResponse, options, outputContentArray) {
   return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
 }
 
-module.exports = {
+export {
   main,
   jobReport,
   applyPermissionsFromOptions

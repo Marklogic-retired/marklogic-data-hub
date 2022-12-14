@@ -1,7 +1,6 @@
-const consts = require('/data-hub/5/impl/consts.sjs');
-const sem = require("/MarkLogic/semantics.xqy");
-
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+import consts from '/data-hub/5/impl/consts.mjs';
+import sem from "/MarkLogic/semantics.xqy";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
 function main(content, options) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
@@ -43,6 +42,6 @@ function main(content, options) {
   return content;
 }
 
-module.exports = {
-  main: main
+export {
+  main
 };

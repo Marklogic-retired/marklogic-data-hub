@@ -250,14 +250,14 @@ function castDataType(dataType, value) {
   return convertedValue;
 }
 
-module.exports = {
+export {
   // exporting the caches so tests can avoid DB inserts
   cachedMappingByNameAndVersion,
   cachedEntityByTitleAndVersion,
-  castDataType: castDataType,
-  extractInstanceFromModel: extractInstanceFromModel,
-  getMapping: getMapping,
-  getMappingWithVersion: getMappingWithVersion,
-  processInstance: processInstance,
-  getModel: getModel
+  castDataType,
+  extractInstanceFromModel,
+  getMapping,
+  getMappingWithVersion,
+  processInstance,
+  getModel
 }

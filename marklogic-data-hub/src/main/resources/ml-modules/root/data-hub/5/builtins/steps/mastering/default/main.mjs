@@ -13,10 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
-const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
-const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+import mastering from "/com.marklogic.smart-mastering/process-records.xqy";
+import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
 const emptySequence = Sequence.from([]);
 
@@ -47,7 +45,7 @@ function jobReport(jobID, stepResponse, options, outputContentArray) {
    return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
 }
 
-module.exports = {
+export {
   main,
   jobReport
 };

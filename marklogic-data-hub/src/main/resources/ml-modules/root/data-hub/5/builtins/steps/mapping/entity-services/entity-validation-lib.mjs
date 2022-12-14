@@ -263,7 +263,7 @@ function removeValidationErrorsFromHeaders(options = {}) {
   }
 }
 
-module.exports = {
+export {
   addSchemaLocationToXmlInstance, // exported for unit testing
   removeValidationErrorsFromHeaders,
   shouldValidateEntity, // exported for unit testing

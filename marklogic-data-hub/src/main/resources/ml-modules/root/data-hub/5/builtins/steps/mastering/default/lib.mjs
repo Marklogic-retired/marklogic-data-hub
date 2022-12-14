@@ -13,13 +13,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const mergeImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
-const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
-const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
+import config from "/com.marklogic.hub/config.sjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import mergeImpl from "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
+import masteringCollections from "/com.marklogic.smart-mastering/impl/collections.xqy";
+import masteringConsts from "/com.marklogic.smart-mastering/constants.xqy";
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
-const emptySequence = Sequence.from([]);
 
 function matchDetailsByMergedQuery(mergedQuery) {
   const ps = require('/MarkLogic/provenance');
@@ -184,47 +183,47 @@ function getCollectionSetting(collectionsSettings, collectionType, defaultCollec
 }
 
 /**
- * 
- * @param jobID 
- * @param stepResponse 
- * @param options 
+ *
+ * @param jobID
+ * @param stepResponse
+ * @param options
  * @param outputContentArray will not be null when connected steps are being run
- * @param reqOptProperties 
- * @returns 
+ * @param reqOptProperties
+ * @returns
  */
 function jobReport(jobID, stepResponse, options, outputContentArray, reqOptProperties = requiredOptionProperties) {
   let collectionsInformation = checkOptions(null, options, null, reqOptProperties);
   let jobQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
 
-  const mergedCount = outputContentArray ? 
-    getContentInCollectionCount(outputContentArray, collectionsInformation.mergedCollection) : 
+  const mergedCount = outputContentArray ?
+    getContentInCollectionCount(outputContentArray, collectionsInformation.mergedCollection) :
     cts.estimate(cts.andQuery([
       jobQuery,
       cts.collectionQuery(collectionsInformation.mergedCollection),
       cts.collectionQuery(collectionsInformation.contentCollection)
     ]));
 
-  const archivedCount = outputContentArray ? 
-    getContentInCollectionCount(outputContentArray, collectionsInformation.archivedCollection) : 
+  const archivedCount = outputContentArray ?
+    getContentInCollectionCount(outputContentArray, collectionsInformation.archivedCollection) :
     cts.estimate(cts.andQuery([
       jobQuery,
       cts.collectionQuery(collectionsInformation.archivedCollection)
     ]));
-  
-  const masteredCount = outputContentArray ? 
-    getContentInCollectionCount(outputContentArray, collectionsInformation.contentCollection) : 
+
+  const masteredCount = outputContentArray ?
+    getContentInCollectionCount(outputContentArray, collectionsInformation.contentCollection) :
     cts.estimate(cts.andQuery([
       jobQuery,
       cts.collectionQuery(collectionsInformation.contentCollection)
     ]));
-  
-  const notificationCount = outputContentArray ? 
-    getContentInCollectionCount(outputContentArray, collectionsInformation.notificationCollection) : 
+
+  const notificationCount = outputContentArray ?
+    getContentInCollectionCount(outputContentArray, collectionsInformation.notificationCollection) :
     cts.estimate(cts.andQuery([
       jobQuery,
       cts.collectionQuery(collectionsInformation.notificationCollection)
     ]));
-  
+
   return {
     jobID,
     jobReportID: sem.uuidString(),
@@ -270,20 +269,20 @@ function jobReport(jobID, stepResponse, options, outputContentArray, reqOptPrope
 
 /**
  * Convenience function for getting the count of content objects in the given collection.
- * 
+ *
  * @param outputContentArray
- * @param collection 
- * @returns 
+ * @param collection
+ * @returns
  */
 function getContentInCollectionCount(outputContentArray, collection) {
   return outputContentArray.filter(content => {
-    return content.context && content.context.collections && 
-      Array.isArray(content.context.collections) && 
+    return content.context && content.context.collections &&
+      Array.isArray(content.context.collections) &&
       content.context.collections.includes(collection);
   }).length;
 }
 
-module.exports = {
+export {
   matchDetailsByMergedQuery,
   expectedCollectionEvents,
   checkOptions,

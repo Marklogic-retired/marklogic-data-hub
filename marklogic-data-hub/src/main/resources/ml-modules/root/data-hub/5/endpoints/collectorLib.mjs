@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 'use strict';
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 /**
  * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
@@ -54,7 +54,7 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
 }
 
 
-module.exports = {
+export {
   prepareSourceQuery
 };
 

@@ -15,12 +15,13 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import config from "/com.marklogic.hub/config.sjs";
+import consts from "/data-hub/5/impl/consts.mjs";
 
-const collections = ['http://marklogic.com/data-hub/flow'];
+const collections = ['http://marklogic.com/data-hub/steps/ingestion', 'http://marklogic.com/data-hub/steps'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
-const requiredProperties = ['name'];
+const permissions = [xdmp.permission(consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'update'), xdmp.permission(consts.DATA_HUB_LOAD_DATA_READ_ROLE, 'read')];
+const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
 
 function getNameProperty() {
     return 'name';
@@ -35,20 +36,7 @@ function getStorageDatabases() {
 }
 
 function getPermissions() {
-  let permsString = "%%mlFlowPermissions%%";
-  // Default to the given string in case the above token has not been replaced
-  permsString = permsString.indexOf("%mlFlowPermissions%") > -1 ?
-    "data-hub-flow-reader,read,data-hub-flow-writer,update" :
-    permsString;
-  return hubUtils.parsePermissions(permsString);
-}
-
-function getFileExtension() {
-    return '.flow.json';
-}
-
-function getDirectory() {
-  return "/flows/";
+    return permissions;
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
@@ -63,18 +51,46 @@ function getArtifactUri(artifactName){
 function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
-        return new Error(`Flow '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+        return new Error(`Ingestion step '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
+    if(artifact.hasOwnProperty('outputURIReplacement') && artifact.hasOwnProperty('outputURIPrefix')){
+      xdmp.trace(consts.TRACE_STEP, `Ingestion step ${artifact.name}'s 'outputURIReplacement' property will be unset as 'outputURIPrefix' is being set`);
+      delete artifact.outputURIReplacement;
+    }
+
     return artifact;
 }
 
-module.exports = {
+function defaultArtifact(artifactName) {
+  const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
+  return {
+    headers: {
+      sources: [{name: artifactName}],
+      createdOn: "currentDateTime",
+      createdBy: "currentUser"
+    },
+    collections: [artifactName],
+    permissions: defaultPermissions,
+    batchSize: 100
+  };
+}
+
+function getFileExtension() {
+  return '.step.json';
+}
+
+function getDirectory() {
+  return "/steps/ingestion/";
+}
+
+export {
   getNameProperty,
   getCollections,
   getStorageDatabases,
   getPermissions,
-  getFileExtension,
   getArtifactNode,
-  getDirectory,
-  validateArtifact
+  validateArtifact,
+  defaultArtifact,
+  getFileExtension,
+  getDirectory
 };
