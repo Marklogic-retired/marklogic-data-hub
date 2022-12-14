@@ -3,7 +3,6 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeModal,
   entityTypeTable,
-  graphView,
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
@@ -62,7 +61,7 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.viewEntityInGraphView("Employee");
 
     cy.log("**Clicking on revert change button to discard unpublished changes in graph view**");
-    graphView.getRevertButtonGraphView().click();
+    modelPage.getRevertButton().click();
     confirmationModal.getYesButton(ConfirmationType.RevertChanges);
     cy.waitForAsyncRequest();
     modelPage.selectView("table");

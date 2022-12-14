@@ -35,11 +35,11 @@ class ModelPage {
   }
 
   getPublishButton() {
-    return cy.findByLabelText("publish-to-database");
+    return cy.get("[data-testId=\"publish-changes\"]").scrollIntoView();
   }
 
   getRevertButton() {
-    return cy.get("[aria-label=\"revert-changes-table-view\"]").scrollIntoView();
+    return cy.get("[data-testId=\"revert-changes\"]").scrollIntoView();
   }
 
   getPublishButtonDisabledTooltip() {
