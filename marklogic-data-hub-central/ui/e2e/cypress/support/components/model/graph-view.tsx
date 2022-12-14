@@ -35,9 +35,6 @@ class GraphView {
     return cy.findByLabelText("graph-edit-mode-info");
   }
 
-  getRevertButtonGraphView() {
-    return cy.findByLabelText("revert-changes-graph-view");
-  }
 }
 
 const graphView = new GraphView();
