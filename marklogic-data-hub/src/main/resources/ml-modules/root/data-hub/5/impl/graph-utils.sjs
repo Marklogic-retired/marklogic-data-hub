@@ -98,7 +98,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                 }
               }
               GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
-            `);
+            `).where(collectionQuery);
     fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
   // Can't run concept specific queries before ML 10.0-9 due to BugTrack https://bugtrack.marklogic.com/57077
@@ -110,7 +110,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                           ?predicateIRI  ?firstObjectIRI;
                           rdfs:isDefinedBy ?docURI.
                         FILTER (isIRI(?predicateIRI) && ?predicateIRI = @predicateConceptList)
-                        }`)
+                        }`);
     if (ctsQueryCustom instanceof cts.query) {
       subjectPlanConcept = subjectPlanConcept.where(ctsQueryCustom);
     }
@@ -370,6 +370,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     }
     return distinctIriPredicateCombos[iri].size + (groupNodeCount[iri] || 0);
   };
+  let listOfURIs = [];
   for (const item of result) {
     const subjectIri = fn.string(item.subjectIRI);
     if (!distinctIriPredicateCombos[subjectIri]) {
@@ -379,6 +380,10 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     const objectIri = fn.string(item.firstObjectIRI);
     if (fn.exists(item.docURI)) {
       const subjectUri = fn.string(item.docURI);
+      if (!listOfURIs.includes(subjectUri)) {
+        listOfURIs.push(subjectUri);
+      }
+
       docUriToSubjectIri[subjectUri] = docUriToSubjectIri[subjectUri] || [];
       if (!docUriToSubjectIri[subjectUri].includes(subjectIri)) {
         docUriToSubjectIri[subjectUri].push(subjectIri);
@@ -392,6 +397,9 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       distinctIriPredicateCombos[subjectIri].add(`${predicateIri}-${objectIri}`);
       if (fn.exists(item.firstDocURI)) {
         const objectUri = fn.string(item.firstDocURI);
+        if (!listOfURIs.includes(objectUri)) {
+          listOfURIs.push(objectUri);
+        }
         docUriToSubjectIri[objectUri] = docUriToSubjectIri[objectUri] || [];
         if (!docUriToSubjectIri[objectUri].includes(objectIri)) {
           docUriToSubjectIri[objectUri].push(objectIri);
@@ -402,11 +410,25 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     }
   }
 
+  let entitiesArchived = [];
+  entityTypeIds.forEach( type => {
+    entitiesArchived.push("sm-" + type + "-archived");
+  })
+
+  const archivedURIs = cts.search(cts.andQuery([cts.documentQuery(listOfURIs), cts.collectionQuery(entitiesArchived)]))
+    .toArray().map(entityModel =>{
+      return fn.string(fn.documentUri(entityModel));
+    });
+
   const getUrisByIRI = (iri) => Object.keys(docUriToSubjectIri).filter(key => docUriToSubjectIri[key].includes(iri));
   for (const item of result) {
     let resultPropertiesOnHover = [];
     let newLabel = "";
     const docUri = fn.string(item.docURI);
+    if (archivedURIs.includes(docUri)) {
+      continue;
+    }
+
     const subjectIri = docUriToSubjectIri[docUri] ? docUriToSubjectIri[docUri][0] : fn.string(item.subjectIRI);
     const subjectArr = subjectIri.split("/");
     let subjectLabel = subjectArr[subjectArr.length - 1];
@@ -467,6 +489,9 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         let edge = {};
         const docUriToNodeKeys = getUrisByIRI(objectIRI);
         const buildNodesAndEdgesFunction = key => {
+          if (archivedURIs.includes(key)) {
+            return;
+          }
           const objectIRI = docUriToSubjectIri[key] ? docUriToSubjectIri[key][0] : key;
           const objectIRIArr = objectIRI.split("/");
           const isDocument = cts.exists(cts.documentQuery(key));
