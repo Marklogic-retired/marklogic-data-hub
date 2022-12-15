@@ -1,21 +1,12 @@
 import React from "react";
-import {mount} from "enzyme";
 import JsonView from "./json-view";
 import MockDocument from "../../assets/mock-data/explore/json-document-payload";
+import {render} from "@testing-library/react";
 
 
 describe("Json view component", () => {
-  let wrapper;
-
-  beforeAll(() => {
-    wrapper = mount(<JsonView document={MockDocument}/>);
-  });
-
   test("renders", () => {
-    expect(wrapper.exists()).toBe(true);
-  });
-
-  test("json-view renders", () => {
-    expect(wrapper.find(".react-json-view")).toHaveLength(1);
+    const infoRender = render(<JsonView document={MockDocument}/>);
+    expect(infoRender.container.getElementsByClassName("react-json-view")).toHaveLength(1);
   });
 });
