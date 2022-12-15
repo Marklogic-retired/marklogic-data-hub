@@ -327,7 +327,7 @@ describe("Concept classes in Modeling screen", () => {
     conceptClassModal.getAddButton().click();
     cy.waitForAsyncRequest();
     conceptClassModal.getAddButton().should("not.exist");
-    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
+    entityTypeTable.sortByNodeTypeConcept();
     entityTypeTable.getConceptClass("TestConcept").should("exist").scrollIntoView();
 
 
@@ -355,7 +355,6 @@ describe("Concept classes in Modeling screen", () => {
     cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
     entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});
     confirmationModal.getDeleteConceptClassText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);
