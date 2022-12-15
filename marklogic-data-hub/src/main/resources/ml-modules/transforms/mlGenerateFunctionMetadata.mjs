@@ -1,17 +1,17 @@
 'use strict';
-const es = require('/MarkLogic/entity-services/entity-services');
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+import es from "/MarkLogic/entity-services/entity-services";
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
 const datahub = DataHubSingleton.instance();
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import xqueryLib from "/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy";
 
-function mlGenerateFunctionMetadata(context, params, content) {
+export function mlGenerateFunctionMetadata(context, params, content) {
   const uri = context.uri;
   const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
 
   // The core.sjs is intended to be a pass through to support upgrades. Function Metadata is not generated so that there is no
   // overlap with the core mapping functions written in XQuery. Mappings may not behave correctly as a result
-  if (match !== null && uri !== "/data-hub/5/mapping-functions/core.sjs") {
+  if (match !== null && uri !== "/data-hub/5/mapping-functions/core.mjs") {
     const uriVal = match[1];
     const metadataXml = generateMetadata(uri);
 
@@ -77,7 +77,7 @@ function generateMetadata(uri) {
  * XSL stylesheet that is generated via es.mappingPut. And that ensures that the map:* references in the stylesheet
  * generated for DHF's core.sjs module are resolved correctly, no matter the context.
  */
-function addMapNamespaceToMetadata(xml) {
+export function addMapNamespaceToMetadata(xml) {
   let metadata = xml;
   try {
     let query = xdmp.quote(xml).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
@@ -93,6 +93,3 @@ function addMapNamespaceToMetadata(xml) {
   }
   return metadata;
 }
-
-exports.transform = mlGenerateFunctionMetadata;
-exports.addMapNamespaceToMetadata = addMapNamespaceToMetadata;
