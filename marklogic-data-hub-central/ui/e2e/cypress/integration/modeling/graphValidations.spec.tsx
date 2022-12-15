@@ -41,8 +41,8 @@ describe("Graph Validations", () => {
     entityTypeTable.waitForTableToLoad();
   });
   after(() => {
-    cy.log("**Publishing**");
-    cy.publishDataModel();
+    cy.log("**Reverting**");
+    cy.revertDataModel();
     cy.waitForAsyncRequest();
   });
   it("can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
@@ -131,7 +131,8 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityTypeTab().should("exist");
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("exist");
   });
-  /* TODO: Graph context menu (DHFPROD-8284) */
+  // TODO: Graph context menu (DHFPROD-8284)
+
   it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     cy.wait(500);
@@ -212,7 +213,6 @@ describe("Graph Validations", () => {
 
   it("Add entities, a relation, publish, delete the relation and check if it's possible to delete an entity", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Reverts changes**");
-    cy.get("#switch-view-table").click({force: true});
     cy.revertDataModel();
 
     cy.log("**Creating new entity Test2 in table view**");
@@ -260,12 +260,10 @@ describe("Graph Validations", () => {
     confirmationModal.getDeletePropertyForeignKeyWarnText().should("be.visible");
     cy.findByText("Close").should("be.visible").click();
 
-    cy.log("**Publishing**");
-    cy.publishDataModel();
-    cy.waitForAsyncRequest();
   });
 
   it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
+    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
     cy.log("**Opens a-Test2 details**");
     entityTypeTable.viewEntityInGraphView("a-Test2");
     graphViewSidePanel.getPropertiesTab().click();
@@ -316,7 +314,6 @@ describe("Graph Validations", () => {
     relationshipModal.verifyForeignKeyValue("test2-id");
     relationshipModal.cancelModal();
   });
-
 
   it("Deleting relation, entities and publish", () => {
     cy.log("**Sort table by entities Name**");
