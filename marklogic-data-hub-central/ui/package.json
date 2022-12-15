@@ -9,7 +9,6 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
     "@marklogic/react-compound-slider": "^3.0.0",
-    "@types/enzyme": "^3.10.3",
     "@types/jest": "24.0.23",
     "@types/node": "12.12.11",
     "@types/react": "16.9.34",
@@ -97,9 +96,7 @@
     "eventsource": "1.1.2"
   },
   "jest": {
-    "snapshotSerializers": [
-      "enzyme-to-json/serializer"
-    ],
+    "snapshotSerializers": [],
     "coverageReporters": [
       "text",
       "cobertura"
@@ -151,10 +148,8 @@
     "@types/daterangepicker": "^3.1.4",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
+    "ansi-regex": "^5.0.1",
     "customize-cra": "^0.9.1",
-    "enzyme": "3.10.0",
-    "enzyme-adapter-react-16": "1.15.1",
-    "enzyme-to-json": "^3.4.3",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-cypress": "^2.11.2",
@@ -163,18 +158,17 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.21.3",
     "eslint-plugin-standard": "^4.0.1",
+    "eventsource": "1.1.2",
+    "immer": "^9.0.7",
     "jest-canvas-mock": "^2.3.1",
+    "lodash": "4.17.21",
+    "minimist": "^1.2.6",
+    "nan": "2.14.1",
+    "node-gyp": "8.4.1",
     "path": "^0.12.7",
     "readable-stream": "3.5.0",
-    "nan": "2.14.1",
     "shell-quote": "^1.7.3",
     "string_decoder": "1.2.0",
-    "ansi-regex": "^5.0.1",
-    "immer": "^9.0.7",
-    "node-gyp": "8.4.1",
-    "minimist": "^1.2.6",
-    "lodash": "4.17.21",
-    "url-parse": "^1.5.10",
-    "eventsource": "1.1.2"
+    "url-parse": "^1.5.10"
   }
 }

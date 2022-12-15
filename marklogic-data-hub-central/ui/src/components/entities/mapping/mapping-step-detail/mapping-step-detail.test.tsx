@@ -1901,7 +1901,7 @@ describe("RTL Source-to-entity map tests", () => {
   });
 });
 
-describe("Enzyme Source-to-entity map tests", () => {
+describe("Source-to-entity map tests", () => {
 
   afterEach(cleanup);
 

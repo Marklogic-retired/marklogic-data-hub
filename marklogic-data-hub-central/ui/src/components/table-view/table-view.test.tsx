@@ -1,30 +1,18 @@
 import React from "react";
-import {mount} from "enzyme";
+import {act} from "react-dom/test-utils";
 import TableView from "./table-view";
 import jsonDocPayload from "../../assets/mock-data/explore/json-document-payload";
-import {render, cleanup} from "@testing-library/react";
+import {render} from "@testing-library/react";
 import {AuthoritiesContext, AuthoritiesService} from "@util/authorities";
 
-
-afterEach(() => {
-  cleanup();
-});
-describe("Table view component", () => {
-  let wrapper;
-  describe("Using JSON document payload", () => {
-    beforeEach(() => {
-      wrapper = mount(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" location={""} isEntityInstance={false} isSidePanel={false}/>);
+describe("Table view component",  () => {
+  test("renders", async() => {
+    let infoRender:any;
+    await act(async () => {
+      infoRender = render(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" />);
     });
-
-    test("renders", () => {
-      expect(wrapper.exists()).toBe(true);
-    });
-
-    test("table view renders", () => {
-      expect(wrapper.find(".react-bootstrap-table")).toHaveLength(1);
-    });
+    expect(infoRender.container.getElementsByClassName("react-bootstrap-table")).toHaveLength(1);
   });
-  // TODO add XML test cases
 });
 
 describe("Table view detail component - RTL", () => {
