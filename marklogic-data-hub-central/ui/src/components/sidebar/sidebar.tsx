@@ -125,8 +125,9 @@ const Sidebar: React.FC<Props> = (props) => {
     props.currentBaseEntities.forEach(base => {
       let entityName = base["name"];
       props.entityRelationships[entityName].map(entityName => {
+        const currentRelatedEntity = props.currentRelatedEntities.get(entityName);
         const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
-        relatedEntitiesList.set(entityName, {...relEntity, checked: true});
+        relatedEntitiesList.set(entityName, {...relEntity, checked: currentRelatedEntity?.checked || checkAllRelatedEntities});
       });
     });
 
@@ -135,7 +136,8 @@ const Sidebar: React.FC<Props> = (props) => {
 
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
       relatedConceptsValues["facetValues"].map((obj) => {
-        relatedConceptsList.set(obj.name, {...obj, checked: true});
+        const currentRelatedConcept = props.currentRelatedConcepts.get(obj.name);
+        relatedConceptsList.set(obj.name, {...obj, checked: currentRelatedConcept?.checked || checkAllRelatedConcepts});
       });
     }
 

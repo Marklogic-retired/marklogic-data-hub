@@ -83,7 +83,7 @@ describe("Group Nodes", () => {
 
       // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExploreSidePanel.getTableCellValueByName("productId").should("contain", "50");
+      graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "50");
 
     });
 
@@ -95,7 +95,7 @@ describe("Group Nodes", () => {
 
       // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExploreSidePanel.getTableCellValueByName("productId").should("contain", "60");
+      graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "60");
 
     });
 
@@ -107,7 +107,7 @@ describe("Group Nodes", () => {
 
       // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExploreSidePanel.getTableCellValueByName("productId").should("contain", "70");
+      graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "70");
 
     });
 
@@ -140,7 +140,7 @@ describe("Group Nodes", () => {
 
       // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExploreSidePanel.getTableCellValueByName("productId").should("contain", "80");
+      graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "80");
 
     });
 
@@ -154,7 +154,7 @@ describe("Group Nodes", () => {
 
       // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      graphExploreSidePanel.getTableCellValueByName("productId").should("contain", "90");
+      graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "90");
 
     });
 
