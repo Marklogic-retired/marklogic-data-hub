@@ -1,12 +1,12 @@
 'use strict';
-const consts = require("/data-hub/5/impl/consts.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const common = require("/data-hub/5/mastering/common.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import common from "/data-hub/5/mastering/common.mjs";
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-const {groupQueries} = require("./matcher.sjs");
+import { groupQueries } from "./matcher.mjs";
 
 const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
 const hashScorePredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingScore");
@@ -18,7 +18,7 @@ const hashScorePredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasM
    * @return {}
    * @since 5.8.0
    */
-function buildActionDetails(matchingDocumentSet, thresholdBucket) {
+export function buildActionDetails(matchingDocumentSet, thresholdBucket) {
   const action = thresholdBucket.action();
   const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
   const thresholdName = thresholdBucket.name();
@@ -60,7 +60,7 @@ function buildActionDetails(matchingDocumentSet, thresholdBucket) {
 /*
  * A class that encapsulates the configurable portions of the matching process.
  */
-class Matchable {
+export class Matchable {
   constructor(matchStep, stepContext) {
     // update the match step if using the legacy format
     if (matchStep.scoring) {
@@ -74,7 +74,7 @@ class Matchable {
     const targetEntityType = this.matchStep.targetEntityType;
     this._genericModel = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
     if (targetEntityType) {
-      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.mjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {
@@ -593,7 +593,7 @@ class MatchRulesetDefinition {
   }
 }
 
-class ThresholdDefinition {
+export class ThresholdDefinition {
   constructor(threshold, matchable) {
     this.threshold = threshold;
     this.matchable = matchable;
@@ -726,7 +726,7 @@ class ThresholdDefinition {
   }
 }
 
-module.exports = {
+export default {
   queryHashPredicate,
   hashScorePredicate,
   Matchable,

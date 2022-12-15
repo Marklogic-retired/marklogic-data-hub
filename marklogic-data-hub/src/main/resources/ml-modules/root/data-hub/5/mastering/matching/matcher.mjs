@@ -1,6 +1,6 @@
 'use strict';
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const getBlocksOfUris = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocksOfUris");
 
 const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
@@ -12,7 +12,7 @@ const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRA
 const pathJoinString = "##";
 const stepJoinString = "|";
 
-function groupQueries(queries, joinFunction) {
+export function groupQueries(queries, joinFunction) {
   queries = hubUtils.normalizeToArray(queries);
   if (queries.length === 0) {
     return null;
@@ -449,7 +449,7 @@ function buildMatchSummary(matchable, content) {
   return output;
 }
 
-module.exports = {
+export default {
   buildMatchSummary,
   groupQueries,
   optimizeCtsQueries
