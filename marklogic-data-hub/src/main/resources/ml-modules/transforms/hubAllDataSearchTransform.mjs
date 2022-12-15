@@ -15,17 +15,11 @@
  */
 'use strict';
 
-/**
- * This is the updated rest endpoint for searching and returning Job information.
- *
- * @param context
- * @param params
- * @returns {null}
- */
-function get(context, params) {
-    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/monitor-jobs", "execute");
-    const jobQueryLib = require("/data-hub/5/flow/job-query-lib.sjs");
-    return jobQueryLib.findJobs(params);
-};
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
 
-exports.GET = get;
+// Expects JSON content
+export function transform(context, params, content) {
+  const searchResponse = content.toObject();
+  entitySearchLib.addDocumentMetadataToSearchResults(searchResponse);
+  return searchResponse;
+}

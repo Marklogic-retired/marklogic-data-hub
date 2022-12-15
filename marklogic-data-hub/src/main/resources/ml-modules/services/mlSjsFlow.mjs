@@ -15,13 +15,13 @@
 */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/4/impl/consts.sjs");
-const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
-const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import config from "/com.marklogic.hub/config.mjs";
+import consts from "/data-hub/4/impl/consts.mjs";
+import flowlib from "/data-hub/4/impl/flow-lib.mjs";
+import tracelib from "/data-hub/4/impl/trace-lib.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
-function get(context, params) {
+export function get(context, params) {
   let entityName = params["entity-name"];
   let flowName = params["flow-name"];
   let flowType = params["flow-type"];
@@ -40,7 +40,7 @@ function get(context, params) {
   return resp;
 };
 
-function post(context, params, input) {
+export function post(context, params, input) {
   let entityName = params["entity-name"];
   let flowName = params["flow-name"];
   let flowType = consts.HARMONIZE_FLOW
@@ -138,11 +138,6 @@ function post(context, params, input) {
   return resp;
 };
 
-function put(context, params, input) {};
+export function put(context, params, input) {};
 
-function deleteFunction(context, params) {};
-
-exports.GET = get;
-exports.POST = post;
-exports.PUT = put;
-exports.DELETE = deleteFunction;
+export function deleteFunction(context, params) {};
