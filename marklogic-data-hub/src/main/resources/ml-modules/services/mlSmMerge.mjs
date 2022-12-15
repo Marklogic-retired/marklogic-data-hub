@@ -15,15 +15,15 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const config = require("/com.marklogic.hub/config.sjs");
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
-function get(context, params) {}
+export function get(context, params) {}
 
-function post(context, params, input) {
+export function post(context, params, input) {
   let inputOptions = input ? input.toObject() || {} : {};
   const datahub = DataHubSingleton.instance({
     performanceMetrics: !!inputOptions.performanceMetrics
@@ -65,10 +65,10 @@ function post(context, params, input) {
   };
 }
 
-function put(context, params, input) {
+export function put(context, params, input) {
 }
 
-function deleteFunction(context, params) {
+export function deleteFunction(context, params) {
   let flowName = 'unmerge-mastering';
   let stepNumber = 1;
   let options = Object.assign({blockFutureMerges: true, retainAuditTrail: true}, params);
@@ -103,8 +103,3 @@ function deleteFunction(context, params) {
     'documentsRestored': results.documents.map((doc) => doc.uri).filter((uri) => !mergeURIs.includes(uri))
   };
 }
-
-exports.GET = get;
-exports.POST = post;
-exports.PUT = put;
-exports.DELETE = deleteFunction;

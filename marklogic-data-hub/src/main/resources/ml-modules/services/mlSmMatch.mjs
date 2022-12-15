@@ -15,18 +15,18 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const config = require("/com.marklogic.hub/config.sjs")
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import matcher from '/com.marklogic.smart-mastering/matcher.xqy';
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-function get(context, params) {
+export function get(context, params) {
   return post(context, params, null);
 }
 
-function post(context, params, input) {
+export function post(context, params, input) {
   let inputBody = input ? input.root || {} : {};
   let inputOptions = inputBody.options || {};
   const datahub = DataHubSingleton.instance({
@@ -70,6 +70,3 @@ function post(context, params, input) {
     sourceDatabase
   ));
 }
-
-exports.GET = get;
-exports.POST = post;

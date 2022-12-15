@@ -13,10 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-var perf = require("/data-hub/4/impl/perflog-lib.xqy");
-var debug = require("/data-hub/4/impl/debug-lib.xqy");
+import perf from "/data-hub/4/impl/perflog-lib.xqy";
+import debug from "/data-hub/4/impl/debug-lib.xqy";
 
-function transform(context, params, content) {
+export function transform(context, params, content) {
   debug.dumpEnv();
 
   return perf.log('/transforms/job-search:transform', function() {
@@ -32,5 +32,3 @@ function transform(context, params, content) {
     return response;
   });
 }
-
-exports.transform = transform;
