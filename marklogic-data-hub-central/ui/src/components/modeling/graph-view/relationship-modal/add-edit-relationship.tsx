@@ -844,7 +844,11 @@ const AddEditRelationship: React.FC<Props> = ({
     for (let i = 0; i < dataModel.length; i++) {
       if (dataModel[i].entityName === sourceEntityName) {
         updatedDefinitions = {...dataModel[i].model};
-        entityTypeDefinition = dataModel[i].model.definitions[sourceEntityName];
+        if (relationshipInfo.structParent) {
+          entityTypeDefinition = dataModel[i].model.definitions[relationshipInfo.structParent];
+        } else {
+          entityTypeDefinition = dataModel[i].model.definitions[sourceEntityName];
+        }
       }
     }
     if (visibleSettings === eVisibleSettings.EntityToEntity) {
