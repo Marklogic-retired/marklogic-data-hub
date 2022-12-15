@@ -15,32 +15,30 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
 import Batch from "/data-hub/5/flow/batch.mjs";
-const defaultConfig = require("/com.marklogic.hub/config.sjs")
-const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
-const provLib = require("/data-hub/5/impl/prov.sjs");
+import defaultConfig from "/com.marklogic.hub/config.mjs"
+import flowProvenance from "/data-hub/5/flow/flowProvenance.mjs";
+import provLib from "/data-hub/5/impl/prov.mjs";
 import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
-const StepExecutionContext = require('/data-hub/5/flow/stepExecutionContext.sjs');
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
-const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import jobs from "/data-hub/5/impl/jobs.mjs";
+import StepExecutionContext from "/data-hub/5/flow/stepExecutionContext.mjs";
+import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
+import WriteQueue from "/data-hub/5/flow/writeQueue.mjs";
+// Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still
+// refer to datahub.flow.flowUtils .
+import consts from "/data-hub/5/impl/consts.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
 // define constants for caching expensive operations
 const cachedFlows = {};
 
-class Flow {
+export class Flow {
 
   constructor(config) {
     this.config = config;
     this.stepDefinition = new StepDefinition(config);
-
-    // Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still
-    // refer to datahub.flow.flowUtils .
-    this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-
-    this.consts = require("/data-hub/5/impl/consts.sjs");
   }
 
   getFlow(name) {
@@ -76,7 +74,7 @@ class Flow {
       httpUtils.throwBadRequest(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
     }
 
-    const combinedOptions = this.flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, options);
+    const combinedOptions = flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, options);
 
     let query;
     let uris = null;
@@ -87,7 +85,7 @@ class Flow {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
-          xdmp.trace(this.consts.TRACE_FLOW, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
+          xdmp.trace(consts.TRACE_FLOW, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
         }
         uris = filteredItems;
       }
@@ -190,7 +188,7 @@ class Flow {
     let outputContentArray;
     const writeQueue = new WriteQueue();
 
-    hubUtils.hubTrace(this.consts.TRACE_FLOW, `Running ${stepExecutionContext.describe()}; content array length: ${batchItems.length}`);
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Running ${stepExecutionContext.describe()}; content array length: ${batchItems.length}`);
 
     try {
       outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue);
@@ -208,7 +206,7 @@ class Flow {
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
         const contentToWrite = writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
-        writeTransactionInfo = this.flowUtils.writeContentArray(contentToWrite, stepExecutionContext.getTargetDatabase(), provLib.getProvenanceWriteQueue());
+        writeTransactionInfo = flowUtils.writeContentArray(contentToWrite, stepExecutionContext.getTargetDatabase(), provLib.getProvenanceWriteQueue());
       } catch (e) {
         this.handleWriteError(writeQueue, stepExecutionContext, e);
       }
@@ -253,11 +251,11 @@ class Flow {
         batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
         batch.persist();
       } else {
-        hubUtils.hubTrace(this.consts.TRACE_FLOW,
+        hubUtils.hubTrace(consts.TRACE_FLOW,
           "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
       }
-    } else if (xdmp.traceEnabled(this.consts.TRACE_FLOW)) {
-      hubUtils.hubTrace(this.consts.TRACE_FLOW, `Batch document insertion is disabled`);
+    } else if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW, `Batch document insertion is disabled`);
     }
   }
 
@@ -281,5 +279,3 @@ class Flow {
     stepExecutionContext.stepErrors.push(Object.assign(error, {"uri": uri}));
   }
 }
-
-module.exports = Flow;
