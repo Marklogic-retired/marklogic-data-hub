@@ -15,7 +15,7 @@
 */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
+import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
