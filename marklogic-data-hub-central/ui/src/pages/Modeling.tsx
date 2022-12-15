@@ -408,6 +408,7 @@ const Modeling: React.FC = () => {
     className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
     disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="publish-to-database"
+    data-testid="publish-changes"
     variant="outline-light"
     onClick={() => {
       setConfirmType(ConfirmationType.PublishAll);
@@ -426,6 +427,7 @@ const Modeling: React.FC = () => {
     className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
     disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="revert-changes-table-view"
+    data-testid="revert-changes"
     variant="outline-light"
     onClick={() => {
       toggleRevertConfirmModal(true);
