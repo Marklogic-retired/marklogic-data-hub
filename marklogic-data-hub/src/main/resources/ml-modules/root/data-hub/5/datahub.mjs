@@ -15,12 +15,12 @@
 */
 'use strict';
 
-const consts = require("/data-hub/5/impl/consts.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
 
 import Flow from "/data-hub/5/impl/flow.mjs";
-const Perf = require("/data-hub/5/impl/perf.sjs");
-const Debug = require("/data-hub/5/impl/debug.sjs");
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
+import Perf from "/data-hub/5/impl/perf.mjs";
+import Debug from "/data-hub/5/impl/debug.mjs";
+import defaultConfig from "/com.marklogic.hub/config.mjs";
 
 export class DataHub {
 
