@@ -18,7 +18,7 @@
  * Data Hub REST transform used when downloading a document. Only purpose so far is to pretty-print a JSON object or
  * array.
  */
-function transform(context, params, content) {
+export function transform(context, params, content) {
   // See https://docs.marklogic.com/Node.nodeType
   const isJsonArrayOrObject = content != null && (17 === content.root.nodeType || 18 === content.root.nodeType);
   const isXml = content != null && 1 === content.root.nodeType;
@@ -32,5 +32,3 @@ function transform(context, params, content) {
     return content;
   }
 }
-
-exports.transform = transform;

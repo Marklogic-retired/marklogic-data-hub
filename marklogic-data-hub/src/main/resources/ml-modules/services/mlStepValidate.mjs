@@ -14,15 +14,15 @@
  limitations under the License.
  */
 'use strict';
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-function get(context, params) {
+export function get(context, params) {
   return post(context, params, null);
 }
 
-function post(context, params, input) {
+export function post(context, params, input) {
   let flowName = params["flow-name"];
   let stepNumber = params["step"];
   if (!fn.exists(flowName)) {
@@ -70,7 +70,7 @@ function post(context, params, input) {
   }
 }
 
-function checkPermissions(modPerms, operatorRole) {
+export function checkPermissions(modPerms, operatorRole) {
   let readCapability = false, executeCapability = false;
   for (let i = 0; i < modPerms.length; i++) {
     if (modPerms[i].roleId === operatorRole) {
@@ -88,7 +88,7 @@ function checkPermissions(modPerms, operatorRole) {
   return true;
 }
 
-function staticCheck(modPath) {
+export function staticCheck(modPath) {
   let errResp;
   try{
     xdmp.eval("var x=require('" + modPath + "');", {"staticCheck":fn.true()})
@@ -107,8 +107,3 @@ function staticCheck(modPath) {
   }
   return errResp;
 }
-
-exports.GET = get;
-exports.POST = post;
-exports.checkPermissions = checkPermissions;
-exports.staticCheck = staticCheck;
