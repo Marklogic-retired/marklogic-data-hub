@@ -15,13 +15,10 @@
  */
 'use strict';
 
-const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
+import esMappingLib from "/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs";
 
-// Expects JSON content
-function transform(context, params, content) {
-  const searchResponse = content.toObject();
-  entitySearchLib.addDocumentMetadataToSearchResults(searchResponse);
-  return searchResponse;
+export function post(context, params, input) {
+  let uri = params["uri"];
+  return esMappingLib.validateAndTestMapping(input.toObject(), uri);
 }
 
-exports.transform = transform;

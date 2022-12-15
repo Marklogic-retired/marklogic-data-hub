@@ -14,10 +14,10 @@
   limitations under the License.
 */
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
+import DataHub from "/data-hub/5/datahub.mjs";
 const datahub = new DataHub();
 
-function get(context, params) {
+export function get(context, params) {
   let resp;
   let database = params.database ? params.database.trim() : null;
   let sourceQuery = params.sourceQuery ? params.sourceQuery.trim() : null;
@@ -56,5 +56,3 @@ function get(context, params) {
 
   return resp;
 }
-
-exports.GET = get;
