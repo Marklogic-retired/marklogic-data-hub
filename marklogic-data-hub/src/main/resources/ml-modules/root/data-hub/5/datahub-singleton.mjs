@@ -1,4 +1,4 @@
-const DataHub = require("/data-hub/5/datahub.sjs");
+import DataHub from "/data-hub/5/datahub.mjs";
 
 let dataHubInstance;
 
@@ -9,6 +9,6 @@ function instance(config = {}) {
   return dataHubInstance;
 }
 
-module.exports = {
-  instance
+export {
+    instance
 };

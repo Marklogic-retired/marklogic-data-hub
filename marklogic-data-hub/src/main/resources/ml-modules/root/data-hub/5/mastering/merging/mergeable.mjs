@@ -5,9 +5,9 @@ const common = require("/data-hub/5/mastering/common.sjs");
 /*
  * A class that encapsulates the configurable portions of the merging process.
  */
-const {requireFunction, normalizeToArray, parsePermissions} = require("../../impl/hub-utils.sjs");
-const consts = require("../../impl/consts.sjs");
-const sem = require("/MarkLogic/semantics.xqy");
+import {requireFunction, normalizeToArray, parsePermissions} from "../../impl/hub-utils.mjs";
+import consts from "../../impl/consts.mjs";
+import sem from "/MarkLogic/semantics.xqy";
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
@@ -692,7 +692,7 @@ class MergeRuleDefinition {
   }
 }
 
-module.exports = {
-  Mergeable,
-  MergeRuleDefinition
+export {
+    Mergeable,
+    MergeRuleDefinition
 }

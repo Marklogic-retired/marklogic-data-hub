@@ -1,8 +1,7 @@
 'use strict';
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const {ThresholdDefinition} = require("/data-hub/5/mastering/matching/matchable.sjs")
-const consts = require("../../impl/consts.sjs");
-const {buildActionDetails} = require("../matching/matchable.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import consts from "../../impl/consts.mjs";
+import {buildActionDetails, ThresholdDefinition} from "/data-hub/5/mastering/matching/matchable.mjs"
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
@@ -219,6 +218,6 @@ function  addHashMatchesToMatchSummary(matchSummary, uris) {
   }
 }
 
-module.exports = {
-  buildContentObjectsFromMatchSummary
+export default {
+    buildContentObjectsFromMatchSummary
 };
