@@ -13,9 +13,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-var trace = require("/data-hub/4/impl/trace-lib.xqy");
+import trace from "/data-hub/4/impl/trace-lib.xqy";
 
-function transform(context, params, content) {
+export function transform(context, params, content) {
   var response = content.toObject();
 
   for (var i = 0; i < response.results.length; i++) {
@@ -26,5 +26,3 @@ function transform(context, params, content) {
   }
   return response;
 }
-
-exports.transform = transform;
