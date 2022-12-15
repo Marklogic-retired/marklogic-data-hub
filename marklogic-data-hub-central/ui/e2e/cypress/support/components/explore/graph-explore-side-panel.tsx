@@ -11,8 +11,13 @@ class GraphExploreSidePanel {
     return cy.get("[data-cy=instance]");
   }
   getTableCellValueByName(text : String) {
-    return cy.get(".hc-table_tableCell__1pdIz").contains(`${text}`).parent().next();
+    return cy.get(`[title="${text}"]`).next();
   }
+
+  getTableCellValueBySidepanelQuery(propertyName : String) {
+    return cy.get("[id='mainTable']").findByText(`${propertyName}`).parent().next();
+  }
+
   closeGraphExploreSidePanel() {
     cy.get(`[aria-label="closeGraphExploreSidePanel"]`).scrollIntoView().click({force: true});
   }
