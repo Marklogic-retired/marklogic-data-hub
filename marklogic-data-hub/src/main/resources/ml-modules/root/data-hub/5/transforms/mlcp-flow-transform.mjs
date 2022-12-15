@@ -14,13 +14,13 @@
   limitations under the License.
 */
 'use strict';
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
 const datahub = DataHubSingleton.instance();
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import flowApi from "/data-hub/public/flow/flow-api.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 const urisInBatch = [];
 for (let requestField of xdmp.getRequestFieldNames()) {
@@ -147,4 +147,4 @@ function parseOptionsString(optionsString, contentUri) {
   }
 }
 
-exports.transform = transform;
+export {transform};

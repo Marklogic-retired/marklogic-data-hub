@@ -1,6 +1,6 @@
 'use strict';
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const consts = require("../../impl/consts.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import consts from "../../impl/consts.mjs";
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
@@ -128,6 +128,6 @@ function buildContentObjectsFromMatchSummary(
   return contentObjects;
 }
 
-module.exports = {
-  buildContentObjectsFromMatchSummary
+export {
+    buildContentObjectsFromMatchSummary
 };

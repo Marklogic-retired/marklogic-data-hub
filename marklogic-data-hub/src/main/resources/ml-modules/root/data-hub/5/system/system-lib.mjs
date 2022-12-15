@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
+import config from "/com.marklogic.hub/config.mjs";
 
 function saveHubConfigInDocumentsDatabase() {
   const uri = "/data-hub/5/datahubConfig.json";
@@ -78,6 +78,6 @@ function saveHubConfigInDocumentsDatabase() {
   );
 }
 
-module.exports = {
-  saveHubConfigInDocumentsDatabase
+export {
+    saveHubConfigInDocumentsDatabase
 };

@@ -1,13 +1,13 @@
 'use strict';
-const consts = require("/data-hub/5/impl/consts.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const common = require("/data-hub/5/mastering/common.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import common from "/data-hub/5/mastering/common.mjs";
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-const {groupQueries} = require("./matcher.sjs");
-const {requireFunction} = require("../../impl/hub-utils.sjs");
+import groupQueries from "./matcher.mjs";
+import requireFunction from "../../impl/hub-utils.mjs";
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -26,7 +26,7 @@ class Matchable {
     const targetEntityType = this.matchStep.targetEntityType;
     this._genericModel = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
     if (targetEntityType) {
-      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.mjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {
@@ -696,7 +696,7 @@ class ThresholdDefinition {
   }
 }
 
-module.exports = {
+export {
   Matchable,
   MatchRulesetDefinition
 }

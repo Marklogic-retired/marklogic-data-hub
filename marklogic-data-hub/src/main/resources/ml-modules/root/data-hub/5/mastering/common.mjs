@@ -1,4 +1,4 @@
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 const cachedInterceptorModules = {};
 
 function retrieveInterceptorFunction(interceptorObj, interceptorType) {
@@ -99,7 +99,7 @@ function propertyDefinitionsFromXPath(xpath, namespaces) {
       });
 }
 
-module.exports = {
+export {
     applyInterceptors,
     GenericMatchModel,
     propertyDefinitionsFromXPath
