@@ -14,8 +14,8 @@
  limitations under the License.
  */
 'use strict';
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const ps = require('/MarkLogic/provenance');
 const persistedIDs = [];
 
@@ -126,4 +126,4 @@ class ProvenanceWriteQueue {
 
 }
 
-module.exports = ProvenanceWriteQueue;
+export  {ProvenanceWriteQueue};

@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 'use strict';
-const temporal = require("/MarkLogic/temporal.xqy");
+import temporal from "/MarkLogic/temporal.xqy";
 
-module.exports.getTemporalCollections = module.amp(
+
+
   function getTemporalCollections() {
     return temporal.collections();
   }
-);
+
+  export  {
+      getTemporalCollections
+  }
 

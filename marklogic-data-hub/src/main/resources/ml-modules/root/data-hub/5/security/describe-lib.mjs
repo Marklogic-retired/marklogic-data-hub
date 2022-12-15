@@ -19,7 +19,7 @@
  * Defines functions for describing users and roles in a fashion similar to that of the "Describe" tab in the ML Admin UI.
  */
 
-const config = require("/com.marklogic.hub/config.sjs");
+import config from "/com.marklogic.hub/config.mjs";
 
 function describeRole(roleName) {
   const response = {
@@ -115,7 +115,8 @@ function sortPermissions(permissionsArray) {
   );
 }
 
-module.exports = {
-  describeRole,
-  describeUser
+
+export {
+    describeRole,
+    describeUser
 }
