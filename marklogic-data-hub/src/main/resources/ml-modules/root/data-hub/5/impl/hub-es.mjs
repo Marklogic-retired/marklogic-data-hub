@@ -15,10 +15,10 @@
  */
 
 'use strict';
-const sem = require("/MarkLogic/semantics.xqy");
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const hent = require("/data-hub/5/impl/hub-entities.xqy");
-const ext = require("/data-hub/extensions/entity/post-process-database-properties.sjs");
+import sem from "/MarkLogic/semantics.xqy";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import hent from "/data-hub/5/impl/hub-entities.xqy";
+import ext from "/data-hub/extensions/entity/post-process-database-properties.mjs";
 
 /**
  * Generates database properties based on the given entity models. This starts with the ES database-properties-generate
@@ -272,7 +272,7 @@ function getEntityInfoFromRecord(record) {
   return record.envelope && record.envelope.instance && record.envelope.instance.info;
 }
 
-module.exports = {
+export {
   buildPathReferenceParts,
   findEntityServiceTitle,
   generateDatabaseProperties,

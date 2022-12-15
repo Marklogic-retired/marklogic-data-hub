@@ -15,11 +15,11 @@
  */
 'use strict';
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const json = require('/MarkLogic/json/json.xqy');
-const sem = require("/MarkLogic/semantics.xqy");
+import consts from "/data-hub/5/impl/consts.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import json from "/MarkLogic/json/json.xqy";
+import sem from "/MarkLogic/semantics.xqy";
 
   /**
    : Determine the input document type from the root node.
@@ -808,7 +808,7 @@ function buildInvokeOptionsForCustomHook(user, database) {
   return options;
 }
 
-module.exports = {
+export {
   addMetadataToContent,
   buildInvokeOptionsForCustomHook,
   cleanData,

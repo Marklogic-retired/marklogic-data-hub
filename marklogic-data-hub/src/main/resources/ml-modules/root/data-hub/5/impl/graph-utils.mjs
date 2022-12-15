@@ -16,14 +16,14 @@
 
 'use strict';
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
+import consts from "/data-hub/5/impl/consts.mjs"
+import entityLib from "/data-hub/5/impl/entity-lib.mjs"
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs"
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
+import sem from "/MarkLogic/semantics.xqy";
+import op from "/MarkLogic/optic";
+import {getPredicatesByModel} from "./entity-lib.mjs"
 const hubCentralConfig = cts.doc("/config/hubCentral.json");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const sem = require("/MarkLogic/semantics.xqy");
-const op = require('/MarkLogic/optic');
-const {getPredicatesByModel} = require("./entity-lib.sjs");
 const graphDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH_DEBUG);
 const graphTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH) || graphDebugTraceEnabled;
 const graphTraceEvent = xdmp.traceEnabled(consts.TRACE_GRAPH) ? consts.TRACE_GRAPH : consts.TRACE_GRAPH_DEBUG;
@@ -730,7 +730,7 @@ function supportsGraphConceptsSearch() {
   return xdmp.effectiveVersion() >= 10000900;
 }
 
-module.exports = {
+export {
   describeIRI,
   getAllEntityIds,
   getAllPredicates,

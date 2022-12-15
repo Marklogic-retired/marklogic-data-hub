@@ -17,7 +17,7 @@
 
 const op = require('/MarkLogic/optic');
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-const config = require("/com.marklogic.hub/config.sjs");
+import config from "/com.marklogic.hub/config.mjs";
 
 function findStepResponses(query) {
   const start = query.start;

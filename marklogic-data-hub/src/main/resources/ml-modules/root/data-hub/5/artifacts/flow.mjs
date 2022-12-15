@@ -15,7 +15,7 @@
  */
 'use strict';
 
-import config from "/com.marklogic.hub/config.sjs";
+import config from "/com.marklogic.hub/config.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 const collections = ['http://marklogic.com/data-hub/flow'];

@@ -18,7 +18,7 @@
 const dataHubMetric = 'dataHubMetric';
 const stepMetric = 'stepMetric';
 
-class Performance {
+export class Performance {
   /**
    * @desc Performance Class constructor
    * @param {Object} [config]
@@ -83,5 +83,3 @@ class Performance {
     };
   }
 }
-
-module.exports = Performance;

@@ -15,11 +15,11 @@
 */
 'use strict';
 
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const cachedModules = {};
 
-class StepDefinition {
+export class StepDefinition {
 
   constructor(config = null) {
     const Perf = require("/data-hub/5/impl/perf.sjs");
@@ -71,4 +71,3 @@ class StepDefinition {
   }
 }
 
-module.exports = StepDefinition;

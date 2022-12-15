@@ -15,7 +15,7 @@
  */
 'use strict';
 
-import config from "/com.marklogic.hub/config.sjs";
+import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 
 const collections = ['http://marklogic.com/data-hub/steps/matching', 'http://marklogic.com/data-hub/steps'];

@@ -13,7 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import config from "/com.marklogic.hub/config.sjs";
+import config from "/com.marklogic.hub/config.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import mergeImpl from "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
 import masteringCollections from "/com.marklogic.smart-mastering/impl/collections.xqy";

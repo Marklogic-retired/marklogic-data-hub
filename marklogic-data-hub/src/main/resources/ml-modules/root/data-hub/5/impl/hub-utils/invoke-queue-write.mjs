@@ -18,14 +18,14 @@
 declareUpdate();
 
 // The array of content objects to write
-var contentArray;
+const contentArray = external.contentArray;
 // provenanceQueue to persist;
-var provenanceQueue;
+const provenanceQueue = external.provenanceQueue;
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const temporal = require("/MarkLogic/temporal.xqy");
-const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import temporal from "/MarkLogic/temporal.xqy";
+import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 
 const traceEvent = consts.TRACE_FLOW_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
@@ -49,7 +49,7 @@ function deleteContent(content, temporalCollection) {
 }
 
 // Create a map of all temporal collections for quick checks on whether or not a collection is a temporal one
-// Note that if this logic were to move elsewhere, we need to be careful to run it against the 
+// Note that if this logic were to move elsewhere, we need to be careful to run it against the
 // correct target database.
 const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
   collectionMap[collectionName] = true;

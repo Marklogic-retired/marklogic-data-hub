@@ -14,13 +14,13 @@
   limitations under the License.
 */
 'use strict';
-const consts = require("/data-hub/5/impl/consts.sjs");
-const config = require("/com.marklogic.hub/config.sjs");
-const hubES = require("/data-hub/5/impl/hub-es.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const ps = require('/MarkLogic/provenance');
-const op = require('/MarkLogic/optic');
-const ProvenanceWriteQueue = require("/data-hub/5/provenance/provenanceWriteQueue.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import hubES from "/data-hub/5/impl/hub-es.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import ps from "/MarkLogic/provenance";
+import op from "/MarkLogic/optic";
+import ProvenanceWriteQueue from "/data-hub/5/provenance/provenanceWriteQueue.mjs";
 
 const provenanceWriteQueue = new ProvenanceWriteQueue();
 
@@ -760,7 +760,7 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
   return resp;
 }
 
-module.exports = {
+export {
   getProvenanceWriteQueue,
   buildRecordEntity,
   commit,
@@ -768,6 +768,6 @@ module.exports = {
   createStepPropertyAlterationRecord,
   createStepPropertyRecords,
   createStepRecord,
-  findProvenance: module.amp(findProvenance)
+  module.amp(findProvenance)
 };
 

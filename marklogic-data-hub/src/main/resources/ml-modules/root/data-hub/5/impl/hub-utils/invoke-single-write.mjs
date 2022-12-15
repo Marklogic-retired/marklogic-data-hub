@@ -17,8 +17,14 @@
 
 declareUpdate();
 
-var docUri;
+const docUri = external.docUri;
+const content = external.content;
+const permissions = external.permissions;
+const collections = external.collections;
 
-if (fn.docAvailable(docUri)) {
-    xdmp.documentDelete(docUri);
-}
+xdmp.documentInsert(docUri, content, {permissions: permissions, collections: collections });
+let writeInfo = {
+    transaction: xdmp.transaction(),
+    dateTime: fn.currentDateTime()
+};
+writeInfo;

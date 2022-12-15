@@ -11,7 +11,7 @@
   limitations under the License.
 */
 'use strict';
-const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
+import core from "/data-hub/5/mapping-functions/core-functions.xqy";
 
 function parseDate(value, pattern) {
   return core.parseDate(value, pattern);
@@ -37,7 +37,7 @@ function hubURI(entityType) {
   return core.hubURI(entityType);
 }
 
-module.exports = {
+export {
   documentLookup,
   hubURI,
   lookup,

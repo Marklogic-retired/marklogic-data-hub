@@ -47,7 +47,7 @@ function throwMethodNotSupported(message) {
   fn.error(null, ERROR_CODE, Sequence.from([405, message]));
 }
 
-module.exports = {
+export {
   throwBadRequest,
   throwBadRequestWithArray,
   throwForbidden,

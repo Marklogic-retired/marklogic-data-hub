@@ -14,7 +14,7 @@
  limitations under the License.
  */
 'use strict';
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 function extractFriendlyErrorMessage(e){
   let errorMessage;
@@ -96,7 +96,7 @@ function extractIncorrectNumberOfArgumentsError(e) {
   return errorMessage;
 }
 
-module.exports = {
+export {
   extractErrorMessageForMappingUI,
   extractFriendlyErrorMessage
 };

@@ -12,12 +12,12 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
 
 const XS_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
 
@@ -324,7 +324,9 @@ function saveNewJob(job) {
     return provRecordUri;
   }
 
-module.exports = {
+
+
+export {
   buildJobPermissions,
   buildNewJob,
   createJob,

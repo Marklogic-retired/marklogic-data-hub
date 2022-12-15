@@ -19,14 +19,12 @@
  * This library is intended to encapsulate all logic specific to Concept Services models.
  */
 
-const sem = require("/MarkLogic/semantics.xqy");
-const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
-const config = require("/com.marklogic.hub/config.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
-const hent = require("/data-hub/5/impl/hub-entities.xqy");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+import config from "/com.marklogic.hub/config.mjs" ;
+import consts from "/data-hub/5/impl/consts.mjs" ;
+import hent from "/data-hub/5/impl/hub-entities.xqy";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs" ;
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs" ;
+import entityLib from "/data-hub/5/impl/entity-lib.mjs" ;
 
 function findDraftModelByConceptName(conceptName) {
   const assumedUri = "/concepts/" + conceptName + ".draft.concept.json";
@@ -355,7 +353,7 @@ function getModelName(model) {
   return null;
 }
 
-module.exports = {
+export {
   findDraftModelByConceptName,
   findModelByConceptName,
   getDraftConceptCollection,

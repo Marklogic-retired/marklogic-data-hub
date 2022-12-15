@@ -212,7 +212,7 @@ function requireFunction(modulePath, functionName) {
   return cachedLibraries[modulePath][functionName];
 }
 
-module.exports = {
+export {
   capitalize,
   deleteDocument,
   documentsToContentDescriptorArray,
