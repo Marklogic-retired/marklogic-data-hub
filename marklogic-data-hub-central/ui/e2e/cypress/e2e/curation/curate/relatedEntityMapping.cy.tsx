@@ -197,10 +197,16 @@ describe("Mapping", () => {
 
     mappingStepDetail.expandSpecificDropdownPagination(1);
     mappingStepDetail.selectPagination("5 / page");
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
 
     cy.log("**Go to another page, back and check elements**");
     toolbar.getLoadToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     toolbar.getCurateToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
 
     cy.log("**Verify and reset columns, delete relation**");
     mappingStepDetail.expandPopoverColumns();
