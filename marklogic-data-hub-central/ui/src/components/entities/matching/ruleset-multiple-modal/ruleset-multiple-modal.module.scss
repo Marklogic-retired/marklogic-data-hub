@@ -196,6 +196,12 @@ margin-bottom: 40px;
   @extend .modal1400w;
 }
 
+@media (max-width: 1400px) {
+  .modal1400w {
+    width: 98% !important
+  }
+}
+
 .switchReduceToggle {
   font-size: 1.5em;
 }
