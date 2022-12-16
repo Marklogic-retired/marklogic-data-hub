@@ -140,6 +140,13 @@
     @extend .modal1400w;
 }
 
+
+@media (max-width: 1400px) {
+    .modal1400w {
+      width: 98% !important
+    }
+  }
+  
 .footerText {
     width: 180px;
 }
