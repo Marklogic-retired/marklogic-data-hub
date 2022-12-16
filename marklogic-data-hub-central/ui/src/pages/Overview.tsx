@@ -31,14 +31,18 @@ const Overview: React.FC<Props> = (props) => {
   };
 
   const openDocumentation = (e, type) => {
-    if (e) e.stopPropagation(); // Stop click from also opening tile
-    let versionNum = parseVersion(props.environment.dataHubVersion);
-    window.open(overviewConfig.documentationLinks.tileSpecificLink(versionNum, type), "_blank");
+    if (e.type === "click" || e.key==="Enter") {
+      if (e) e.stopPropagation(); // Stop click from also opening tile
+      let versionNum = parseVersion(props.environment.dataHubVersion);
+      window.open(overviewConfig.documentationLinks.tileSpecificLink(versionNum, type), "_blank");
+    }
   };
 
   const openVideo = (e, type) => {
-    if (e) e.stopPropagation(); // Stop click from also opening tile
-    window.open(overviewConfig.videoLinks[type], "_blank");
+    if (e.type === "click" || e.key==="Enter") {
+      if (e) e.stopPropagation(); // Stop click from also opening tile
+      window.open(overviewConfig.videoLinks[type], "_blank");
+    }
   };
 
   const homePageInfo = <Popover id={`popover-overview`} className={styles.popoverHomePageInfo}><Popover.Body className={styles.popoverHomePageInfoBody}>
@@ -174,11 +178,11 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="load-icon"></span>Load
             </div>
             <div className={styles.body}>Create and configure steps that define how data should be loaded.
-              <div className={styles.docLink}>
-                <span onClick={(e) => { openDocumentation(e, "load"); }}>Documentation</span>
+              <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "load"); }}>
+                <span onClick={(e) => { openDocumentation(e, "load"); } }>Documentation</span>
               </div>
-              <div className={styles.vidLink}>
-                <span onClick={(e) => { openVideo(e, "load"); }}>Video Tutorial</span>
+              <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "load"); }}>
+                <span onClick={(e) => { openVideo(e, "load"); }} >Video Tutorial</span>
               </div>
               {props.enabled && !props.enabled.includes("load") &&
                 <div className={styles.permissions}>*additional permissions required</div>}
@@ -195,11 +199,11 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="model-icon"></span>Model
             </div>
             <div className={styles.body}>Define the entity models that describe and standardize your data.
-              <div className={styles.docLink}>
-                <span onClick={(e) => { openDocumentation(e, "model"); }}>Documentation</span>
+              <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "model"); }}>
+                <span onClick={(e) => { openDocumentation(e, "model"); }} >Documentation</span>
               </div>
-              <div className={styles.vidLink}>
-                <span onClick={(e) => { openVideo(e, "model"); }}>Video Tutorial</span>
+              <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "model"); }}>
+                <span onClick={(e) => { openVideo(e, "model"); }} >Video Tutorial</span>
               </div>
               {props.enabled && !props.enabled.includes("model") &&
                 <div className={styles.permissions}>*additional permissions required</div>}
@@ -216,10 +220,10 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="curate-icon"></span>Curate
             </div>
             <div className={styles.body}>Create and configure steps that curate and refine your data.
-              <div className={styles.docLink}>
-                <span onClick={(e) => { openDocumentation(e, "curate"); }}>Documentation</span>
+              <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "curate"); }}>
+                <span onClick={(e) => { openDocumentation(e, "curate"); }} >Documentation</span>
               </div>
-              <div className={styles.vidLink}>
+              <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "curate"); }}>
                 <span onClick={(e) => { openVideo(e, "curate"); }}>Video Tutorial</span>
               </div>
               {props.enabled && !props.enabled.includes("curate") &&
@@ -237,10 +241,10 @@ const Overview: React.FC<Props> = (props) => {
                 <span className={styles.icon} aria-label="run-icon"></span>Run
               </div>
               <div className={styles.body}>{tiles.run.intro}
-                <div className={styles.docLink}>
+                <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "run"); }}>
                   <span onClick={(e) => { openDocumentation(e, "run"); }}>Documentation</span>
                 </div>
-                <div className={styles.vidLink}>
+                <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "run"); }}>
                   <span onClick={(e) => { openVideo(e, "run"); }}>Video Tutorial</span>
                 </div>
                 {props.enabled && !props.enabled.includes("run") &&
@@ -258,10 +262,10 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="explore-icon"></span>
               <div className={styles.subtitle}>Explore</div>
               <div className={styles.body}>{tiles.explore.intro}
-                <div className={styles.docLink}>
+                <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "explore"); }}>
                   <span onClick={(e) => { openDocumentation(e, "explore"); }}>Documentation</span>
                 </div>
-                <div className={styles.vidLink}>
+                <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "explore"); }}>
                   <span onClick={(e) => { openVideo(e, "explore"); }}>Video Tutorial</span>
                 </div>
                 {props.enabled && !props.enabled.includes("explore") &&

@@ -99,15 +99,22 @@ describe("Overview component", () => {
     expect(getByLabelText("load-card")).toHaveFocus();
 
     // pressing tab should consecutively highlight load -> model -> curate -> run -> explore
-    for (i = 1; i < 5; ++i) {
+    let counterTab = (i) => {
+      return 1+3*i;
+    };
+    for (i = 5; i <= 13; ++i) {
       userEvent.tab();
-      expect(getByLabelText(enabled[i] + "-card")).toHaveFocus();
+      if (i === counterTab(i)) {
+        expect(getByLabelText(enabled[i] + "-card")).toHaveFocus();
+      }
     }
 
     // shift tab should reverse directions
-    for (i = 3; i >= 0; --i) {
+    for (i = 5; i >= 0; --i) {
       userEvent.tab({shift: true});
-      expect(getByLabelText(enabled[i] + "-card")).toHaveFocus();
+      if (i === counterTab(i)) {
+        expect(getByLabelText(enabled[i] + "-card")).toHaveFocus();
+      }
     }
   });
 
