@@ -4,6 +4,12 @@
     width: 1000vw;
 }
 
+@media (max-width: 1400px) {
+  .modal1400w {
+    width: 98% !important
+  }
+}
+
 .headerLabel {
   color: black;
 }
