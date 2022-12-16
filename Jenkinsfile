@@ -526,7 +526,7 @@ void cypressE2EOnPremLinuxTests(String type,String mlVersion){
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
       sed -i "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
-      npm run cy:run -- --config baseUrl="http://localhost:8080" 2>&1 |& tee -a e2e_err.log
+      npm run cy:run 2>&1 |& tee -a e2e_err.log
 
     '''
 
@@ -555,7 +555,7 @@ void cypressE2EOnPremMacTests(String type,String mlVersion){
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
       sed -i '.bak' "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
-      npm run cy:run-chrome -- --config baseUrl="http://localhost:8080" 2>&1 | tee -a e2e_err.log
+      npm run cy:run-chrome 2>&1 | tee -a e2e_err.log
 
    '''
 
@@ -590,7 +590,7 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
 
     bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
     bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
-    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run -- --config baseUrl=\"http://localhost:8080\" 2>&1 | tee -a e2e_err.log"
+    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
 
     junit '**/e2e/**/*.xml'
 
@@ -607,8 +607,8 @@ void cypressE2EOnPremWinChromeTests(){
                                  setlocal
                                  set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
-                                 set CYPRESS_BASE_URL=${cypressChBaseUrl};
-                                 set mlHost=${mlChHost};
+                                 set CYPRESS_BASE_URL=${cypressChBaseUrl}
+                                 set mlHost=${mlChHost}
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
                                  npm run cy:run-chrome-headed -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}   >> e2e_err.log
      """
@@ -825,8 +825,8 @@ def runFFTests(){
                                  setlocal
                                  set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
-                                 set CYPRESS_BASE_URL=${cypressFFBaseUrl};
-                                 set mlHost=${mlFFHost};
+                                 set CYPRESS_BASE_URL=${cypressFFBaseUrl}
+                                 set mlHost=${mlFFHost}
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
                                  npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  >> e2e_err.log
      """
@@ -925,7 +925,7 @@ pipeline{
         }
 		agent { label 'dhfLinuxAgent'}
         steps{timeout(time: 3,  unit: 'HOURS'){
-          catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run -- --config baseUrl=\"http://localhost:8080\"')}
+          catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run')}
         }}
         post{
 		   always{sh 'rm -rf $WORKSPACE/xdmp' }
