@@ -26,7 +26,7 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
 
   it("Switch views and validate they get updated correctly", () => {
     cy.log("**Select Table view and validate it switches correctly**");
-    browsePage.clickSwitchToTableView();
+    browsePage.clickTableView();
     //Graph and table should not appear anymore
     graphExplore.getGraphVisCanvas().should("not.exist");
     browsePage.getSnippetViewResult().should("not.exist");

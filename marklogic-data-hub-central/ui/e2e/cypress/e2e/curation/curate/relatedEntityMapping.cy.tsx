@@ -246,7 +246,7 @@ describe("Mapping", () => {
     runPage.explorerLink("mapRelation").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.clickSwitchToTableView();
+    browsePage.clickTableView();
     browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
