@@ -364,23 +364,19 @@ class BrowsePage {
   // common
   clickTableView() {
     cy.wait(1500);
-    return cy.get("[data-cy=table-view]").click({force: true});
-  }
-  // common
-  clickSwitchToTableView() {
-    return cy.get("#tableView").click();
+    return this.getTableView().click({force: true});
   }
 
   // common
   clickGraphView() {
-    this.getGraphView().click();
+    this.getGraphView().click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
 
   // common
   clickSnippetView() {
-    return this.getSnippetView().click();
+    return this.getSnippetView().click({force: true});
   }
 
   // common

@@ -110,7 +110,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getAppliedFacets("Adams Cole").should("exist");
 
     cy.log("**Checking table rows amount shown**");
-    browsePage.clickSwitchToTableView();
+    browsePage.clickTableView();
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Applying another facet**");
