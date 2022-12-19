@@ -356,40 +356,6 @@ describe("Merging cards view component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
-  it("can open step settings, edit and navigate to merge step details with WriteMatchMerge authority", async () => {
-    const {getByText, getByTestId, getByLabelText} = render(
-      <Router>
-        <MergingCard {...defaultProps}
-          mergingStepsArray={mergingStepsArray}
-          flows={defaultProps.flows}
-          entityName={defaultProps.entityName}
-          entityModel={defaultProps.entityModel}
-          canReadMatchMerge={true}
-          canWriteMatchMerge={true}
-          createMergingArtifact={jest.fn()}
-          updateMergingArtifact={jest.fn()}
-          addStepToFlow={jest.fn()}
-          addStepToNew={jest.fn()}
-          canWriteFlow={jest.fn()}
-        />
-      </Router>
-    );
-
-    expect(getByText("mergeCustomers")).toBeInTheDocument();
-    //open step settings
-    userEvent.click(getByTestId("mergeCustomers-edit"));
-    await wait(() => {
-      expect(getByText("Merging Step Settings")).toBeInTheDocument();
-      expect(getByTestId("merging-dialog-save")).toBeEnabled();
-    });
-    userEvent.click(getByLabelText("Cancel"));
-
-    //open step details
-    userEvent.click(getByTestId("mergeCustomers-stepDetails"));
-
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
-  });
-
   it("cannot edit merging step with ReadMatchMerge authority but the modal is enabled for view", async () => {
     const {getByTestId, getByText} = render(
       <Router>
@@ -417,5 +383,10 @@ describe("Merging cards view component", () => {
       expect(getByTestId("merging-dialog-save")).toBeDisabled();
     });
     userEvent.click(getByTestId("merging-dialog-cancel"));
+
+    //open step details
+    userEvent.click(getByTestId("mergeCustomers-stepDetails"));
+
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
   });
 });

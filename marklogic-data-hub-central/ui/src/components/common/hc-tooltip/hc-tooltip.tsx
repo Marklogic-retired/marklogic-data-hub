@@ -21,6 +21,7 @@ const HCTooltip: React.FC<Props> = (props) => {
     placement={placement}
     overlay={<Tooltip {...props} id={id}>{text}</Tooltip>}
     show={show}
+    delay={{show: 400, hide: 200}}
   >
     {children}
   </OverlayTrigger>;

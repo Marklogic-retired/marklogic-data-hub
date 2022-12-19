@@ -308,9 +308,9 @@ describe("Graph view page", () => {
     await expect(getByLabelText("add-relationship")).toBeInTheDocument();
 
     userEvent.hover(getByLabelText("publish-to-database"));
-    await expect(getByText(ModelingTooltips.publish)).toBeInTheDocument();
+    expect(await screen.findAllByText(ModelingTooltips.publish)).toHaveLength(1);
     userEvent.hover(getByLabelText("graph-export"));
-    await expect(getByText(ModelingTooltips.exportGraph)).toBeInTheDocument();
+    expect(await screen.findAllByText(ModelingTooltips.exportGraph)).toHaveLength(1);
   });
 
   it("Modeling: add button is disabled for model reader role", async () => {

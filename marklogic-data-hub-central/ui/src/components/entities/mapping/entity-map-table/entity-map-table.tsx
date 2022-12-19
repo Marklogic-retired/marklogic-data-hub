@@ -23,6 +23,7 @@ import {OverlayTrigger, Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 import {MappingStepDetailsMessages} from "@config/messages.config";
+import {delayTooltip} from "@util/common-utils";
 
 
 interface Props {
@@ -151,15 +152,32 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [targetDocLinksPopover, setTargetDocLinksPopover] = useState(null);
   const [deleteFromTable, setDeleteFromTable] = useState(false);
 
+  let time:any;
   const handleShowDocPopover = (event) => {
-    setShowDocPopover(!showDocPopover);
-    setTargetDocPopover(event.target);
-  };
-  const handleShowDocLinksPopover = (event) => {
-    setShowDocLinksPopover(!showDocLinksPopover);
-    setTargetDocLinksPopover(event.target);
+    event.persist();
+    time = delayTooltip(() => {
+      setShowDocPopover(!showDocPopover);
+      setTargetDocPopover(event.target);
+    });
+
   };
 
+  const handleMouseLeaveTooltipDoc = () => {
+    setShowDocPopover(false);
+    clearTimeout(time);
+  };
+  const handleShowDocLinksPopover = (event) => {
+    event.persist();
+    time= delayTooltip(() => {
+      setShowDocLinksPopover(!showDocLinksPopover);
+      setTargetDocLinksPopover(event.target);
+    });
+  };
+
+  const handleMouseLeaveDocLinksPopover = () => {
+    setShowDocLinksPopover(false);
+    clearTimeout(time);
+  };
   let directRelation = props.isRelatedEntity ? ("(" + props.entityMappingId.split(".")[0]) === props.entityTypeTitle.split(" ")[1] ? true : false : null;
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
@@ -1371,7 +1389,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
             <>
-              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => setShowDocPopover(false)} />
+              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => handleMouseLeaveTooltipDoc()} />
               {relatedInfo}
             </>
           }
@@ -1659,7 +1677,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       text: "XPath Expression",
       headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)} />
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} />
         {xPathDocLinks}
       </span>,
       dataField: "key",
@@ -1907,7 +1925,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       text: "XPath Expression",
       headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => setShowDocLinksPopover(false)} />
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} />
         {xPathDocLinks}
       </span>,
       dataField: "key",

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import RelatedEntitiesFacet from "./related-entities-facet";
 
@@ -19,7 +19,7 @@ describe("Related Entities Facet", () => {
 
   afterEach(cleanup);
 
-  test("Render base entities", () => {
+  test("Render base entities", async () => {
     const currentRelatedEntities = new Map<string, any>([["Customer", CUSTOMERS]]);
     const setCurrentRelatedEntities = () => {};
     const setActiveRelatedEntities = () => {};
@@ -41,7 +41,7 @@ describe("Related Entities Facet", () => {
 
     //To test tooltip over related entities in explore sideView panel
     fireEvent.mouseOver(option);
-    expect(getByLabelText("relatedEntityToolTip")).toBeVisible();
+    expect(await screen.findAllByLabelText("relatedEntityToolTip")).toHaveLength(1);
   });
 
   test("Should render filter and quantity bar", () => {

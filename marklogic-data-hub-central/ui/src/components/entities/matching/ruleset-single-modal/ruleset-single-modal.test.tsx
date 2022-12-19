@@ -23,7 +23,7 @@ describe("Matching Ruleset Single Modal component", () => {
     cleanup();
   });
 
-  it("can select an property to match and match type and click cancel", () => {
+  it("can select an property to match and match type and click cancel", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
@@ -57,7 +57,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle-values-ignore");
     userEvent.hover(reduceInfoCircleIcon);
-    expect(screen.getByLabelText("values-ignore-tooltip-text"));
+    expect(await screen.findAllByLabelText("values-ignore-tooltip-text"));
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("customerId")); });
@@ -248,7 +248,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle-reduce");
     userEvent.hover(reduceInfoCircleIcon);
-    expect(screen.getByLabelText("reduce-tooltip-text"));
+    expect(await screen.findAllByLabelText("reduce-tooltip-text"));
 
     userEvent.click(screen.getByLabelText("reduceToggle"));
 

@@ -1,6 +1,6 @@
 import React from "react";
 import {Router} from "react-router";
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, cleanup, wait, screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/extend-expect";
 import {createMemoryHistory} from "history";
@@ -112,9 +112,9 @@ describe("Flows component", () => {
 
     // test delete, create flow, add step buttons display correct tooltip when disabled
     fireEvent.mouseOver(getByLabelText("deleteFlowDisabled-"+flowName));
-    expect(getByText("Delete Flow: " + SecurityTooltips.missingPermission)).toBeInTheDocument();
+    expect(await screen.findAllByText("Delete Flow: " + SecurityTooltips.missingPermission)).toHaveLength(1);
     fireEvent.mouseOver(getAllByText("Add Step")[0]);
-    expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument();
+    expect(await screen.findAllByText(SecurityTooltips.missingPermission)).toHaveLength(1);
     fireEvent.mouseOut(getAllByText("Add Step")[0]);
     fireEvent.mouseOver(getByLabelText("create-flow-disabled"));
     await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
