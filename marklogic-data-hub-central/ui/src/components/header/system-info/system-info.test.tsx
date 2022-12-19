@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, waitForElement, wait} from "@testing-library/react";
+import {render, cleanup, fireEvent, waitForElement, wait, screen} from "@testing-library/react";
 import SystemInfo from "./system-info";
 import {AuthoritiesContext, AuthoritiesService} from "../../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -140,66 +140,65 @@ describe("Update data load settings component", () => {
 
     await(() => expect(axiosMock.get).toHaveBeenCalledTimes(1));
 
-    await wait(()  => {
-      expect(getByTestId("clearUserData")).toBeEnabled();
-      expect(getByTestId("deleteAll")).toBeChecked();
-      expect(getByText("Select a Database:")).toBeInTheDocument();
-      expect(getByLabelText("targetDatabase-select")).not.toBeEnabled();
-      expect(getByLabelText("targetBasedOn-select")).not.toBeEnabled();
 
-      fireEvent.click(getByTestId("deleteSubset"));
-      expect(getByTestId("deleteSubset")).toBeChecked();
+    expect(getByTestId("clearUserData")).toBeEnabled();
+    expect(getByTestId("deleteAll")).toBeChecked();
+    expect(getByText("Select a Database:")).toBeInTheDocument();
+    expect(getByLabelText("targetDatabase-select")).not.toBeEnabled();
+    expect(getByLabelText("targetBasedOn-select")).not.toBeEnabled();
 
-      expect(getByLabelText("targetDatabase-select")).toBeEnabled();
-      expect(getByLabelText("targetBasedOn-select")).toBeEnabled();
-      expect(getByTestId("targetBasedOnOptions-None")).toBeInTheDocument();
-      expect(getByTestId("clearUserData")).toBeEnabled();
+    fireEvent.click(getByTestId("deleteSubset"));
+    expect(getByTestId("deleteSubset")).toBeChecked();
 
-      // verify tooltips
-      fireEvent.mouseOver(getByLabelText("database-select-info"));
-      expect(getByText(ClearDataMessages.databaseSelectionTooltip)).toBeInTheDocument();
+    expect(getByLabelText("targetDatabase-select")).toBeEnabled();
+    expect(getByLabelText("targetBasedOn-select")).toBeEnabled();
+    expect(getByTestId("targetBasedOnOptions-None")).toBeInTheDocument();
+    expect(getByTestId("clearUserData")).toBeEnabled();
 
-      fireEvent.mouseOver(getByLabelText("based-on-info"));
-      expect(getByText(ClearDataMessages.basedOnTooltip)).toBeInTheDocument();
+    // verify tooltips
+    fireEvent.mouseOver(getByLabelText("database-select-info"));
+    expect(await screen.findAllByText(ClearDataMessages.databaseSelectionTooltip)).toHaveLength(1);
 
-      fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
-      expect(getByText("Collection")).toBeInTheDocument();
-      fireEvent.click(getByText("Collection"));
-      const collectionsInput = getByPlaceholderText("Search collections");
-      expect(collectionsInput).toBeInTheDocument();
+    fireEvent.mouseOver(getByLabelText("based-on-info"));
+    expect(await screen.findAllByText(ClearDataMessages.basedOnTooltip)).toHaveLength(1);
 
-      expect(getByTestId("clearUserData")).toBeEnabled();
-      fireEvent.click(getByTestId("clearUserData"));
-      expect(getByLabelText("collection-empty-error")).toBeInTheDocument();
+    fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
+    expect(getByText("Collection")).toBeInTheDocument();
+    fireEvent.click(getByText("Collection"));
+    const collectionsInput = getByPlaceholderText("Search collections");
+    expect(collectionsInput).toBeInTheDocument();
 
-      fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
-      expect(getByText("Entity")).toBeInTheDocument();
-      fireEvent.click(getByText("Entity"));
-      const entitiesInput = getByPlaceholderText("Search entities");
-      expect(entitiesInput).toBeInTheDocument();
-      expect(getByTestId("clearUserData")).toBeEnabled();
-      fireEvent.click(getByTestId("clearUserData"));
-      expect(getByLabelText("entities-empty-error")).toBeInTheDocument();
+    expect(getByTestId("clearUserData")).toBeEnabled();
+    fireEvent.click(getByTestId("clearUserData"));
+    expect(getByLabelText("collection-empty-error")).toBeInTheDocument();
 
-      userEvent.type(entitiesInput, "cust");
-      expect(getByLabelText("Customer")).toBeInTheDocument();
-      fireEvent.click(getByLabelText("Customer"));
+    fireEvent.keyDown(getByLabelText("targetBasedOn-select"), {key: "ArrowDown"});
+    expect(getByText("Entity")).toBeInTheDocument();
+    fireEvent.click(getByText("Entity"));
+    const entitiesInput = getByPlaceholderText("Search entities");
+    expect(entitiesInput).toBeInTheDocument();
+    expect(getByTestId("clearUserData")).toBeEnabled();
+    fireEvent.click(getByTestId("clearUserData"));
+    expect(getByLabelText("entities-empty-error")).toBeInTheDocument();
 
-      let clearBtn = getByTestId("clearUserData");
-      expect(clearBtn).toBeEnabled();
-      fireEvent.click(clearBtn);
+    userEvent.type(entitiesInput, "cust");
+    expect(getByLabelText("Customer")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("Customer"));
 
-      expect(getByLabelText("clear-entity-subset-confirm")).toBeInTheDocument();
+    let clearBtn = getByTestId("clearUserData");
+    expect(clearBtn).toBeEnabled();
+    fireEvent.click(clearBtn);
 
-      let confirm = getByLabelText("Yes");
-      fireEvent.click(confirm);
-      expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData",
-        {targetCollection: "Customer", targetDatabase: "data-hub-STAGING"});
+    expect(getByLabelText("clear-entity-subset-confirm")).toBeInTheDocument();
 
-      expect(getByText((content, node) => {
-        return getSubElements(content, node, "A subset of user data was cleared successfully");
-      })).toBeInTheDocument();
-    });
+    let confirm = getByLabelText("Yes");
+    fireEvent.click(confirm);
+    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData",
+      {targetCollection: "Customer", targetDatabase: "data-hub-STAGING"});
+
+    expect(getByText((content, node) => {
+      return getSubElements(content, node, "A subset of user data was cleared successfully");
+    })).toBeInTheDocument();
 
   });
 

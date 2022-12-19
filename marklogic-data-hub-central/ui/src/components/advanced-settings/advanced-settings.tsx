@@ -17,6 +17,7 @@ import Popover from "react-bootstrap/Popover";
 import {Overlay} from "react-bootstrap";
 import {getEnvironment} from "@util/environment";
 import {themeColors} from "@config/themes.config";
+import {delayTooltip} from "@util/common-utils";
 
 type Props = {
   tabKey: string;
@@ -819,9 +820,19 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     </Overlay>
   );
 
+  let time:any;
   const handleShowInterceptorPopover = (event) => {
-    setShowInterceptorPopover(!showInterceptorPopover);
-    setTargetInterceptorPopover(event.target);
+    event.persist();
+    time = delayTooltip(() => {
+      setShowInterceptorPopover(!showInterceptorPopover);
+      setTargetInterceptorPopover(event.target);
+    });
+  };
+
+  const handleMouseLeaveInterceptorPopover = () => {
+    setShowInterceptorPopover(false);
+    clearTimeout(time);
+
   };
 
   return (
@@ -1364,7 +1375,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     <div className={"p-2 d-flex align-items-center"}>
                       <div>
                         {content}
-                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => setShowInterceptorPopover(false)}/>
+                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => handleMouseLeaveInterceptorPopover()}/>
                       </div>
                     </div>
                   </span>

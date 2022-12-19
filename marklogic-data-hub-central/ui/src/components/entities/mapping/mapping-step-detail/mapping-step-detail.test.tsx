@@ -1592,8 +1592,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     // Click next, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-right"));
-    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("uriIndex")).toHaveTextContent("2"));
 
     // Going back to curate home page
     fireEvent.click(getByLabelText("Back"));
@@ -2348,8 +2347,9 @@ describe("RTL Source Selector/Source Search tests", () => {
     await wait(() => expect(getByLabelText("invalid-uri-message")).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("uri-edit"));
+    await wait(() => expect(getByTestId("pencil-icon")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("pencil-icon"));
-    await wait(() => expect(getByLabelText("edit-uri-tooltip")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("edit-uri-tooltip")).toBeInTheDocument(), {"timeout": 5000});
   });
 
 

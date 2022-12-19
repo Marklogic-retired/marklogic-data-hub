@@ -2,7 +2,7 @@
 import {RunToolTips} from "../../../config/tooltips.config";
 import React from "react";
 import {Router} from "react-router";
-import {render, fireEvent, wait} from "@testing-library/react";
+import {render, fireEvent, wait, screen} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import FlowPanel, {Props} from "./flowPanel";
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -56,7 +56,7 @@ const defaultProps: Props = {
 };
 describe("Flow Panel test suite", () => {
   // Faltan test de reorder
-  it("should open and close the panel onClick", () => {
+  it("should open and close the panel onClick", async () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router history={history}>
         <FlowPanel
@@ -78,7 +78,7 @@ describe("Flow Panel test suite", () => {
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByLabelText("deleteFlow-" + flowName));
-    expect(getByText("Delete Flow")).toBeInTheDocument();
+    expect(await screen.findAllByText("Delete Flow")).toHaveLength(1);
   });
   it("should be able to select steps to run", () => {
     // Select all

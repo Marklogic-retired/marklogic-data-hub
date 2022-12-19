@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, wait, cleanup, act} from "@testing-library/react";
+import {render, screen, wait, cleanup, act, fireEvent} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GraphView from "./graph-view";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -246,12 +246,11 @@ describe("Graph View Component", () => {
 
     // Hovers over color question icon to see tooltip
     const tooltips = getAllByLabelText("icon: question-circle");
-    act(() => {
-      // color tooltip has index 1 in the array
-      userEvent.hover(tooltips[1]);
-    });
-    expect(document.querySelector("[class='tooltip-inner']")?.firstChild?.textContent).toEqual("Select a color to associate it with the Product entity throughout your project.");
+    // color tooltip has index 1 in the array
+    fireEvent.mouseOver(tooltips[1]);
 
+    const tooltip = await screen.findAllByLabelText("colorToolTip");
+    expect(tooltip[0].lastChild?.textContent).toBe("Select a color to associate it with the Product entity throughout your project.");
     // Clicks on Add dropdown
     const addDropdown = getByText("Add");
     expect(addDropdown).toBeInTheDocument();

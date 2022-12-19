@@ -14,6 +14,7 @@ import {Overlay} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
+import {delayTooltip} from "@util/common-utils";
 
 type Props = {
   tabKey: string;
@@ -421,10 +422,18 @@ const CreateEditStep: React.FC<Props> = (props) => {
       }
     }
   };
-
+  let time:any;
   const handleShowQueryPopover = (event) => {
-    setShowQueryPopover(!showQueryPopover);
-    setTargetQueryPopover(event.target);
+    event.persist();
+    time = delayTooltip(() => {
+      setShowQueryPopover(true);
+      setTargetQueryPopover(event.target);
+    });
+  };
+
+  const handleMouseLeaveTooltip = () => {
+    setShowQueryPopover(false);
+    clearTimeout(time);
   };
 
   return (
@@ -564,7 +573,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span onMouseEnter={handleShowQueryPopover} onMouseLeave={() => setShowQueryPopover(false)}>
+                <span onMouseEnter={handleShowQueryPopover} onMouseLeave={() => handleMouseLeaveTooltip()}>
                   {collectionQueryInfo}
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
                 </span>

@@ -1,6 +1,6 @@
 import React from "react";
 import axiosMock from "axios";
-import {render, waitForElement, act, cleanup, wait, fireEvent} from "@testing-library/react";
+import {render, waitForElement, act, cleanup, wait, fireEvent, screen} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
@@ -217,12 +217,12 @@ describe("Job response modal", () => {
 
   test("Verify that action tooltip apears when hover on the info icon", async () => {
     mocks.runAPI(axiosMock);
-    let getByRole;
+
     let getByText;
     let getByLabelText;
     const stopRun = jest.fn();
     act(() => {
-      ({getByRole, getByText, getByLabelText} = render(
+      ({getByText, getByLabelText} = render(
         <Router>
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
@@ -242,6 +242,6 @@ describe("Job response modal", () => {
     const infoIcon = getByLabelText("icon: info-circle");
     expect(infoIcon).toBeInTheDocument();
     userEvent.hover(infoIcon);
-    expect(getByRole("tooltip")).toBeInTheDocument();
+    expect(await screen.findAllByRole("tooltip")).toHaveLength(1);
   });
 });

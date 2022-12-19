@@ -695,7 +695,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                 <EntityTypeColorPicker color={colorSelected} entityType={modelingOptions.selectedEntity} handleColorChange={handleColorChange} />
                 }
                 <div className={"d-flex align-items-center"}>
-                  <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
+                  <HCTooltip id="colo-selector" text={ModelingTooltips.colorField(modelingOptions.selectedEntity, isConceptNode)} placement="right" aria-label="colorToolTip">
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
                   </HCTooltip>
                 </div>
@@ -710,7 +710,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                   <HCIconPicker identifier={modelingOptions.selectedEntity} value={iconSelected} onChange={(value) => handleIconChange(value)} />
                 </div>
                 <div className={"d-flex align-items-center"}>
-                  <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity, isConceptNode)} placement="right">
+                  <HCTooltip id="icon-selector" text={ModelingTooltips.iconField(modelingOptions.selectedEntity, isConceptNode)} placement="right" >
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.iconPickerTooltip} />
                   </HCTooltip>
                 </div>
