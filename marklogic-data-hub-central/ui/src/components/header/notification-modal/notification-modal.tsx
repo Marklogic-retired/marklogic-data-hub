@@ -278,19 +278,19 @@ const NotificationModal = (props) => {
               </div>
               :
               notificationOptions?.notifications && <><HCTable
-              pagination={false}
-              columns={columns}
-              data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
-              rowKey="unique_key"
-            />
-            <SearchPaginationSimple
-              total={notificationOptions?.totalCount}
-              pageSize={pageLength}
-              pageNumber={pageTableNotification}
-              maxRowsPerPage={pageLength}
-              updatePage={updatePage}
-            />
-            </>
+                pagination={false}
+                columns={columns}
+                data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+                rowKey="unique_key"
+              />
+              <SearchPaginationSimple
+                total={notificationOptions?.totalCount}
+                pageSize={pageLength}
+                pageNumber={pageTableNotification}
+                maxRowsPerPage={pageLength}
+                updatePage={updatePage}
+              />
+              </>
             }
           </div>
         </Modal.Body>
