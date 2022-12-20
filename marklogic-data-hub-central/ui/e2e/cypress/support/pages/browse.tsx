@@ -12,6 +12,7 @@ class BrowsePage {
   // Can be moved to a common components
   waitForSpinnerToDisappear() {
     cy.waitUntil(() => this.getSpinner().should("have.length", 0, {timeout: 30000}));
+    cy.waitForAsyncRequest();
   }
 
   // Common table

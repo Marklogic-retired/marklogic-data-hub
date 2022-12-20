@@ -106,8 +106,8 @@ describe("Entity display settings in model tile", () => {
     homePage.getExploreCard().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
-
-    cy.log("**Click on babyRegistry node and verify that properties on hover show up in the tooltip**");
+  });
+  it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", () => {
     graphExplore.getGraphVisCanvas().should("exist");
     browsePage.search("3039");
     graphExplore.stopStabilization();
@@ -132,8 +132,8 @@ describe("Entity display settings in model tile", () => {
       cy.contains(propertiesOnHoverData.arrivalDate);
       cy.findByText(propertiesOnHoverData.ownedBy).should("exist");
     });
-
-    cy.log("**Check in the side bar the label of the node**");
+  });
+  it("Check in the side bar the label of the node", () => {
 
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
@@ -184,8 +184,8 @@ describe("Entity display settings in model tile", () => {
     cy.waitForAsyncRequest();
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
-
-    cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
+  });
+  it("Click on ${defaultEntityTypeData.name} entity to open side bar", () => {
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
       graphVis.getGraphVisCanvas().trigger("mouseover", babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
