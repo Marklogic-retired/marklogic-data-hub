@@ -22,13 +22,14 @@ const ListModal: React.FC<Props> = (props) => {
   const [listValuesErrorMessage, setListValuesErrorMessage] = useState("");
   const [listName, setListName] = useState(props?.listName);
   const [listValues, setListValues] = useState<any>(props?.listValues);
+  const [selected, setSelected] = useState<any>([]);
   let textModalHeader = "";
 
   const onSubmit = (event) => {
     resetModalValuesIgnore();
     let formError = false;
-    if (!listName) { setListNameErrorMessage("A name is required"); formError = true; }
-    if (!listValues || listValues.length === 0) { setListValuesErrorMessage("At least one value is required"); formError = true; }
+    if (!listName) { setListNameErrorMessage("A title for this list is required."); formError = true; }
+    if (!listValues || listValues.length === 0) { setListValuesErrorMessage("Values to ignore in this list are required."); formError = true; }
     if (formError) {
       event.stopPropagation();
     } else {
@@ -75,6 +76,21 @@ const ListModal: React.FC<Props> = (props) => {
     setListValues(props.listValues);
   }, [props?.listValues]);
 
+  const handleListValues = (selections) => {
+    if (Array.isArray(selections)) {
+      resetModalValuesIgnore();
+      // Remove duplicated values
+      const filteredSelections = selections.filter(
+        (item, index, arr) =>
+          index === arr.findIndex((t) => t.label === item.label)
+      );
+      if (selections.length !== filteredSelections.length) setListValuesErrorMessage("Duplicated values is not allowed");
+      setListValues(filteredSelections);
+      setSelected(filteredSelections);
+    }
+
+  };
+
   useEffect(() => {
     setListName(props.listName);
   }, [props?.listName]);
@@ -109,7 +125,7 @@ const ListModal: React.FC<Props> = (props) => {
             </Col>
             <Row>
               <Col xs={3}></Col>
-              <Col xs={9} className={styles.validationErrorIgnore} id="errorListName">{listNameErrorMessage}</Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListName" data-testid={"ListNameErrorMessage"}>{listNameErrorMessage}</Col>
             </Row>
           </Row>
 
@@ -128,18 +144,19 @@ const ListModal: React.FC<Props> = (props) => {
                 newSelectionPrefix="Add the new value: "
                 options={[]}
                 placeholder="Enter values to remove"
-                onChange={setListValues}
+                onChange={(e) => { handleListValues(e); }}
+                selected={selected}
               />
 
               <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{"Add values to ignore."}</span>} id="list-tooltip" placement="top">
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{"Documents containing these values will be ignored during matching."}</span>} id="list-tooltip" placement="top">
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
             </Col>
             <Row>
               <Col xs={3}></Col>
-              <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues">{listValuesErrorMessage}</Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues" data-testid={"ListValuesErrorMessage"}>{listValuesErrorMessage}</Col>
             </Row>
           </Row>
           <div className={styles.footer}>
