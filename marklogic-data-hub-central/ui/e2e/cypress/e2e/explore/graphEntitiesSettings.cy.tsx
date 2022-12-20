@@ -122,6 +122,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Verify no label are selected, select new one and check the selection**");
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+    cy.waitForAsyncRequest();
     dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 

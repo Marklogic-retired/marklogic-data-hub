@@ -50,12 +50,12 @@ describe("manage queries modal scenarios, developer role", () => {
     entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("newQuery");
-    browsePage.getSaveQueryDescription().should("be.visible");
-    browsePage.getSaveQueryDescription().type("newQuery description");
+    cy.waitForAsyncRequest();
+    browsePage.getSaveQueryName().should("be.visible").type("newQuery");
+    browsePage.getSaveQueryDescription().should("be.visible").type("newQuery description");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     // Creating another query
     browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();

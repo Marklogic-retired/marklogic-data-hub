@@ -167,7 +167,12 @@ describe("Mapping", () => {
     //A hard wait of 1 sec may be needed here.
 
     cy.log("**Open Person mapping step details**");
-    curatePage.getEntityTypePanel("Person").should("be.visible").click();
+    curatePage.getEntityTypePanel("Person").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Person");
+      }
+    });
     curatePage.openMappingStepDetail("Person", "mapRelation");//
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();

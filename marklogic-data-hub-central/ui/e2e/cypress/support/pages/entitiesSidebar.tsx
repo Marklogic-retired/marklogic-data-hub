@@ -104,7 +104,7 @@ class BaseEntitySidebar {
     cy.get("#graph-view-filter-input").should("be.visible").then((e) => {
       Cypress.$(e).click();
     });
-    cy.get("#graph-view-filter-input").type(input);
+    cy.get("#graph-view-filter-input").clear().type(input);
   }
 
   getApplyFacetsButton() {
