@@ -36,6 +36,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -249,16 +251,15 @@ public class MlcpRunner extends ProcessRunner {
         String classpath = System.getProperty("java.class.path");
         File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
         FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
-
+        Map<String, String> environment = new HashMap<>();
+        environment.put("CLASSPATH", classpath);
+        this.withEnvironment(environment);
         args.add(javaBin);
         args.add("-Dlog4j2.configurationFile=" + loggerFile.toURI());
         if (classpath.endsWith(".war")) {
             args.add("-jar");
-            args.add(classpath);
             args.add("mlcp");
         } else {
-            args.add("-cp");
-            args.add(classpath);
             args.add("com.marklogic.contentpump.ContentPump");
         }
         args.addAll(Arrays.asList(bean.buildArgs()));
