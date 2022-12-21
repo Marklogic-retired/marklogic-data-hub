@@ -19,7 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class ProcessRunner extends Thread {
@@ -29,6 +31,7 @@ public class ProcessRunner extends Thread {
     private ArrayList<String> processOutput = new ArrayList<>();
 
     private List<String> args;
+    private Map<String, String> environment = new HashMap<>();
     private Consumer<String> consumer;
 
     public String getProcessOutput() {
@@ -48,6 +51,11 @@ public class ProcessRunner extends Thread {
         return this;
     }
 
+    public ProcessRunner withEnvironment(Map<String, String> environment) {
+        this.environment = environment;
+        return this;
+    }
+
     public ProcessRunner withStreamConsumer(Consumer<String> consumer) {
         this.consumer = consumer;
         return this;
@@ -58,6 +66,7 @@ public class ProcessRunner extends Thread {
         try {
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
+            pb.environment().putAll(this.environment);
             Process process = pb.start();
 
             StreamGobbler gobbler = new StreamGobbler(process.getInputStream(), status -> {
