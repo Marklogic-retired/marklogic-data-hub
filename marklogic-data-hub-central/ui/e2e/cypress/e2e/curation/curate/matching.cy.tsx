@@ -536,7 +536,7 @@ describe("Matching", () => {
 
     // To test expanded uri table content
     cy.log("**To test expanded uri table content**");
-    cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click());
+    cy.waitUntil(() => cy.findAllByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click());
     for (let i in allDataMatchedResults) {
       cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
       cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);

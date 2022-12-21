@@ -20,6 +20,7 @@ import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/m
 import CompareValuesModal from "../../../components/entities/matching/compare-values-modal/compare-values-modal";
 import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
 import {UserContext} from "@util/user-context";
+import {AxiosResponse} from "axios";
 
 const NotificationModal = (props) => {
 
@@ -33,7 +34,7 @@ const NotificationModal = (props) => {
   const [compareModalVisible, setCompareModalVisible] = useState(false);
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
-  const [flowName, setFlowname] = useState<string>("");
+  const [flowName, setFlowName] = useState<string>("");
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
   const [loading, setToggleLoading] = useState<string>("");
   const [uriInfo, setUriInfo] = useState<any>();
@@ -211,16 +212,28 @@ const NotificationModal = (props) => {
   };
 
   const fetchCompareData = async (array, item) => {
-    const result1 = await getDocFromURI(array[0]);
-    const result2 = await getDocFromURI(array[1]);
+    let uriRequests: Promise<AxiosResponse<any>>[] = [];
+    array.forEach((uri) => {
+      uriRequests.push(getDocFromURI(uri));
+    });
+    const results = await Promise.all(uriRequests);
+    const result1 = results[0];
+    const result2 = results[1];
     const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
-      let result1Instance = result1.data.data.envelope.instance;
-      let result2Instance = result2.data.data.envelope.instance;
+      let urisInfo: any[] = [];
+      results.forEach((result, index) => {
+        const instanceKey = `result${index + 1}Instance`;
+        urisInfo.push({
+          [instanceKey]: result.data.data.envelope.instance,
+        });
+      });
       let previewInstance = preview.data.value.envelope.instance;
-      setFlowname(result1.data.recordMetadata.datahubCreatedInFlow);
-      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+      urisInfo.push({previewInstance});
+      setFlowName(result1.data.recordMetadata.datahubCreatedInFlow);
+      setUriInfo(urisInfo);
     }
 
     let testMatchData = {
