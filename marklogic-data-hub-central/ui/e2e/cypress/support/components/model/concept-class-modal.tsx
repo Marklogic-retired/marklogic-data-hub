@@ -19,6 +19,10 @@ class ConceptClassModal {
     return cy.findByLabelText("concept-class-name-error");
   }
 
+  conceptModalValidationError() {
+    return cy.get("div[class*='concept-class-modal_validationError']");
+  }
+
   getConceptClassDescription() {
     return cy.get("#description");
   }
