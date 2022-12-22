@@ -349,7 +349,11 @@ function getNodeLabel(objectIRIArr, objectUri) {
   }
 
   if (label.length === 0) {
-    label = objectIRIArr[objectIRIArr.length - 1];
+    if(fn.exists(objectUri)) {
+      label = objectUri;
+    } else {
+      label = objectIRIArr[objectIRIArr.length - 1];
+    }
   }
   return label;
 }
@@ -434,25 +438,17 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
 
     const subjectIri = docUriToSubjectIri[docUri] ? docUriToSubjectIri[docUri][0] : fn.string(item.subjectIRI);
     const subjectArr = subjectIri.split("/");
-    let subjectLabel = subjectArr[subjectArr.length - 1];
     const originHasDoc = docUri !== "";
-    const group = originHasDoc ? subjectIri.substring(0, subjectIri.length - subjectLabel.length - 1): subjectIri;
+    const group = originHasDoc ? subjectIri.substring(0, subjectIri.length - subjectArr[subjectArr.length - 1].length - 1): subjectIri;
     let entityType = subjectArr.length >= 2 ? subjectArr[subjectArr.length - 2]: "";
-    if (!item.subjectLabel || fn.string(item.subjectLabel).length === 0) {
-      //check if we have in central config new label loaded
-      if(originHasDoc) {
-        //get configuration values from Hub Central Config
-        let configurationLabel = getLabelFromHubConfigByEntityType(entityType);
-        //getting the value of the configuration property
-        newLabel = getValueFromProperty(configurationLabel, docUri, entityType);
-        //check if we have in central config properties on hover loaded
-        resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(docUri,entityType,hubCentralConfig);
-      } else {
-        newLabel = fn.string(item.predicateLabel);
-      }
+    if(originHasDoc) {
+      newLabel = getNodeLabel(subjectArr, docUri)
+      //check if we have in central config properties on hover loaded
+      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(docUri,entityType,hubCentralConfig);
     } else {
-      newLabel = fn.string(item.subjectLabel);
+      newLabel = fn.string(item.predicateLabel);
     }
+
     const objectIRI = fn.string(item.firstObjectIRI);
     const objectIRIArr = objectIRI.split("/");
     const objectUri = fn.string(item.firstDocURI);
@@ -465,11 +461,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       nodeOrigin.id = originId;
       nodeOrigin.docUri = docUri;
       nodeOrigin.docIRI = subjectIri;
-      if (!newLabel || newLabel.length === 0) {
-        nodeOrigin.label = subjectLabel;
-      } else {
-        nodeOrigin.label = newLabel;
-      }
+      nodeOrigin.label = newLabel;
       nodeOrigin.additionalProperties = null;
       nodeOrigin.group = group;
       nodeOrigin.isConcept = false;
