@@ -12,21 +12,9 @@ describe("Focus Defocus clusters", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  before(() => {
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
-  });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-
-  it("Validate focus and defocus cluster options are working correctly", () => {
     //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
@@ -34,7 +22,16 @@ describe("Focus Defocus clusters", () => {
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(2000);
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    //Saving Local Storage to preserve session
+    cy.saveLocalStorage();
+  });
+  beforeEach(() => {
+    //Restoring Local Storage to Preserve Session
+    cy.restoreLocalStorage();
+  });
 
+  it("Validate focus and defocus cluster options are working correctly", () => {
     cy.log("**Picking up customer node and validate it is available in canvas**");
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
@@ -44,8 +41,8 @@ describe("Focus Defocus clusters", () => {
       canvas.trigger("mouseover", customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
     });
-
-    cy.log("**View customer record type information**");
+  });
+  it("View customer record type information", () => {
     graphExplore.getRecordTab().click();
     graphExplore.getJsonRecordData().should("be.visible");
 
@@ -65,8 +62,8 @@ describe("Focus Defocus clusters", () => {
     graphExplore.showRecordsInCluster();
 
     graphExploreSidePanel.getSidePanel().should("not.exist");
-
-    cy.log("**Verify Customer node is not visible in the canvas**");
+  });
+  it("Verify Customer node is not visible in the canvas", () => {
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -78,7 +75,8 @@ describe("Focus Defocus clusters", () => {
       graphExploreSidePanel.getSidePanel().should("not.exist");
     });
     cy.wait(2000);
-    cy.log("**Again right-click on Baby Registry node to defocus and show all records from the query**");
+  });
+  it("Again right-click on Baby Registry node to defocus and show all records from the query", () => {
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
