@@ -106,7 +106,12 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.visit("/tiles/curate");
 
     cy.log("**Open Order to see steps**");
-    curatePage.getEntityTypePanel("Order").should("be.visible").click();
+    curatePage.getEntityTypePanel("Order").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Order");
+      }
+    });
 
     // Open step settings and switch to Advanced tab
     cy.log("**Open step settings and switch to Advanced tab**");
