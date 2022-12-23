@@ -80,7 +80,6 @@ describe("Concepts", () => {
     cy.log("**Turn OFF concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
 
-
     cy.wait(4000);
 
     cy.log("**Verify Kettle concept node is not visible in the canvas anymore**");
@@ -90,6 +89,29 @@ describe("Concepts", () => {
       cy.log("**Kettle coordinates should not exist because it was collapsed**");
       expect(kettleCoordinates).to.be.undefined;
     });
+
+    cy.log("**Validate show related doesn't show concepts when toggle is off");
+    graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click();
+
+    cy.wait(4000);
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+      const canvas = graphExplore.getGraphVisCanvas();
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
+      graphExplore.clickShowRelated();
+    });
+
+    cy.wait(4000);
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+      //it should not exist because the leaf node was collapsed
+      cy.log("**Jeans coordinates should not exist because toggle is off**");
+      expect(jeansCoordinates).to.be.undefined;
+    });
+
 
     cy.log("**Verify that Related Concepts Filter in sidebar is disabled since concepts are toggled OFF**");
     entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
@@ -113,6 +135,30 @@ describe("Concepts", () => {
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
     });
+
+    cy.log("**Validate related concepts appear when toggle back on");
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
+      graphExplore.clickShowRelated();
+    });
+
+    cy.wait(4000);
+
+    graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
+      let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      //Click on node to open side panel
+      canvas.trigger("mouseover", jeansCoordinates.x, jeansCoordinates.y, {force: true});
+      canvas.click(jeansCoordinates.x, jeansCoordinates.y, {force: true});
+      graphExploreSidePanel.getSidePanel().should("exist");
+    });
+
   });
 
   it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 200000}, () => {
