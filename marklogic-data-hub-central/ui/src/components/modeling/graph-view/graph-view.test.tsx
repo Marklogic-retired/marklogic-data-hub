@@ -6,7 +6,6 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getEntityTypes, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
 import {isModified} from "../../../assets/mock-data/modeling/modeling-context-mock";
-import "jest-canvas-mock";
 
 jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");

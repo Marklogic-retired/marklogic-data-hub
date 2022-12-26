@@ -15,6 +15,7 @@ jest.mock("../../../../api/matching");
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
 const mockGetAllExcludeValuesList = getAllExcludeValuesList as jest.Mock;
 
+jest.useRealTimers();
 describe("Matching Ruleset Single Modal component", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -476,5 +477,5 @@ describe("Matching Ruleset Single Modal component", () => {
       fireEvent.mouseOver(screen.getByText("Preset List 2"));
     });
     expect(await screen.findByText("word 1, word 2, word 3, word 3")).toBeInTheDocument();
-  });
+  }, 50000);
 });

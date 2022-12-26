@@ -7,6 +7,7 @@ import ListModal from "./list-modal";
 const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
 
 describe("Test input validation values to ignore", () => {
+  const globalAny:any = global;
   beforeEach(() => {
     cleanup();
   });
@@ -35,7 +36,7 @@ describe("Test input validation values to ignore", () => {
   });
 
   it("Verify that the user don't put duplicate values", async () => {
-    global.document.createRange = () => ({
+    globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
       commonAncestorContainer: {
@@ -63,7 +64,7 @@ describe("Test input validation values to ignore", () => {
   });
 
   it("Don't allow special characters on list of values", async () => {
-    global.document.createRange = () => ({
+    globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
       commonAncestorContainer: {
@@ -88,7 +89,7 @@ describe("Test input validation values to ignore", () => {
   });
 
   it("on list of values doesn't contain spaces", async () => {
-    global.document.createRange = () => ({
+    globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
       commonAncestorContainer: {

@@ -79,6 +79,8 @@ const renderWithRouterNoAuthorities = (curationContextValue) => {
   );
 };
 
+jest.useRealTimers();
+
 describe("RTL Source-to-entity map tests", () => {
 
   afterEach(() => {
@@ -107,7 +109,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
     expect(getByText("Entity Type: Person")).toBeInTheDocument();
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
-  });
+  }, 50000);
 
   test("Verify 'before' interceptor success messaging in source table", async () => {
     mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[4]);
@@ -262,7 +264,7 @@ describe("RTL Source-to-entity map tests", () => {
     await act(async () => { fireEvent.click(getByText("Clear")); });
     expect(getByText("Clear")).toBeEnabled();
     expect(getByText("concat(name,'-NEW')")).toBeInTheDocument();
-  });
+  }, 50000);
 
   test("Filtering Name column in Source data table for array type data", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -284,7 +286,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     expect(getAllByText("protein")).toHaveLength(4);
     expect(queryByText("whitespaceValue")).not.toBeInTheDocument();
-  });
+  }, 50000);
 
   test("Mapping expression for a nested entity property with same name should be saved appropriately", async () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDefSameNames});
@@ -425,7 +427,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("propName")).toBeInTheDocument();
     expect(getByText("itemTypes")).toBeInTheDocument();
     expect(getByText("itemCategory")).toBeInTheDocument();
-  });
+  }, 50000);
 
   test("Filtering of Name column in XML Source data", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -479,7 +481,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText(/withNuts:/)).toBeInTheDocument();
     expect(queryByText("NamePreferred")).not.toBeInTheDocument();
     expect(queryByText("LastName")).not.toBeInTheDocument();
-  });
+  }, 50000);
 
   test("Rendering of XML Namespaced Source Data", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -621,7 +623,7 @@ describe("RTL Source-to-entity map tests", () => {
     await act(async () => { fireEvent.click(document.querySelector("#submitSearch-entity")!); });
     expect(getByText("lineItems")).toBeInTheDocument();
     expect(getByText("lineItems")).toHaveStyle("background-color: yellow");
-  });
+  }, 50000);
 
   test("Column option selector in Entity table", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -679,7 +681,8 @@ describe("RTL Source-to-entity map tests", () => {
     await act(async () => { fireEvent.click(XPathExpression); }); //Check XPathExpression column
     //Props below should be available now
     expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
-  });
+  }, 50000);
+
 
   test("Verify view related entities with selection/deselection in filters", async () => {
     mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[1]);
@@ -1069,7 +1072,7 @@ describe("RTL Source-to-entity map tests", () => {
     // DEBUG
     // debug(onClosestTableRow(getByTestId('propName-value')))
     // debug(onClosestTableRow(getByTestId('propAttribute-value')))
-  });
+  }, 20000);
 
   test("Truncation in case of responses for Array datatype", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -1130,7 +1133,7 @@ describe("RTL Source-to-entity map tests", () => {
     // Verify tooltip shows full value when hovering Test values
     fireEvent.mouseOver(getByText("extremelylongusername@m..."));
     await waitForElement(() => getByText("extremelylongusername@marklogic.com"));
-  });
+  }, 50000);
 
   test("Verify evaluation of valid expression for mapping reader user", async () => {
     //Updating mapping expression as a mapping writer user first
@@ -1180,7 +1183,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify that fx/source-data list is disabled for mapping reader user
     expect(getByTestId("propId-102-functionIcon")).toBeDisabled();
-  }, 10000);
+  }, 50000);
 
   test("Verify evaluation of invalid expression for mapping writer user", async () => {
     const authorityService = new AuthoritiesService();
@@ -1344,7 +1347,8 @@ describe("RTL Source-to-entity map tests", () => {
     await (() => expect(queryByText("suffix")).not.toBeInTheDocument());
     await (() => expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument());
     await (() => expect(queryByText("LastName")).not.toBeInTheDocument());
-  });
+  }, 50000);
+
 
   test("CollapseAll/Expand All feature in JSON Entity table", async () => {
 
@@ -1390,7 +1394,8 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByText("artCraft")).not.toBeInTheDocument();
     await (() => expect(queryByText("itemTypes")).not.toBeInTheDocument());
     await (() => expect(queryByText("itemCategory")).not.toBeInTheDocument());
-  });
+  }, 50000);
+
 
   test("CollapseAll/Expand All feature in XML Source data table", async () => {
     const authorityService = new AuthoritiesService();
@@ -1440,7 +1445,8 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(collapseButtons[1]);
     expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument();
     expect(queryByText("LastName")).not.toBeInTheDocument();
-  });
+  }, 50000);
+
 
   test("Function selector dropdown in entity table", async () => {
     const authorityService = new AuthoritiesService();
@@ -1454,14 +1460,12 @@ describe("RTL Source-to-entity map tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
 
-    let getByText, getByTestId, queryByText, getAllByRole, queryByTestId, getByLabelText;
+    let getByText, getByTestId, queryByText, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       queryByText = renderResults.queryByText;
-      getAllByRole = renderResults.getAllByRole;
-      queryByTestId = renderResults.queryByTestId;
       getByLabelText = renderResults.getByLabelText;
     });
 
@@ -1474,7 +1478,6 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(functionSelector);
     let inputBox = getByLabelText("dropdownList-select-wrapper");
 
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByText("concat")).toBeInTheDocument();
     expect(getByText("documentLookup")).toBeInTheDocument();
 
@@ -1491,15 +1494,8 @@ describe("RTL Source-to-entity map tests", () => {
     //Map Expression is populated with function signature
     expect(propAttributeExpression).toHaveTextContent("concat(xs:anyAtomicType?)");
 
-    // Verify auto-save on population of function signature
-    await (waitForElement(() => (getByTestId("successMessage"))));
-    if (queryByTestId("successMessage")) {
-      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
-    }
-
     // Click the same function button again to verify it opens up with the same list of functions
     fireEvent.click(functionSelector);
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     fireEvent.click(inputBox);
 
     //Verify multiple matches
@@ -1513,9 +1509,9 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify if value appears in the Value column after clicking on Test button
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("Person-propAttribute-value")));
-    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
-  });
+    expect(getByTestId("Person-propAttribute-value")).toBeInTheDocument();
+  }, 50000);
+
 
   test("Reference selector dropdown in entity table", async () => {
     const authorityService = new AuthoritiesService();
@@ -1567,14 +1563,8 @@ describe("RTL Source-to-entity map tests", () => {
     // Verify map expression is populated with selected reference
     expect(propAttributeExpression).toHaveTextContent("$ZIP_POINTS");
     fireEvent.blur(propAttributeExpression);
+  }, 50000);
 
-    // Verify auto-save on population of reference
-    await (waitForElement(() => (getByTestId("successMessage"))));
-    if (queryByTestId("successMessage")) {
-      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
-    }
-
-  });
 
   test("URI nav index resets on close of mapping", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -1972,9 +1962,10 @@ describe("Source-to-entity map tests", () => {
     expect(getByTestId("nutFree:proteinDog-srcValue")).toHaveTextContent("retriever (2 more)");
     fireEvent.mouseOver(getByText("(2 more)"));
     await waitForElement(() => getByText("retriever, , golden, labrador"));
-  });
+  }, 50000);
 
-  test("Nested entity data renders properly", async () => { //////////////////////////////////////////
+
+  test("Nested entity data renders properly", async () => {
 
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
@@ -2005,7 +1996,7 @@ describe("Source-to-entity map tests", () => {
     //TO DO: Below tests can be done when working on E2E tests.
     //fireEvent.click(getByLabelText('icon: down'));
     //expect(queryByText('category')).not.toBeInTheDocument();
-  });
+  }, 50000);
 });
 
 describe("RTL Source Selector/Source Search tests", () => {
@@ -2070,7 +2061,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
     expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");
-  });
+  }, 50000);
 
   test("JSON source data with objects - Right display of objects and icons in source dropdown", async () => {
     const authorityService = new AuthoritiesService();
@@ -2109,8 +2100,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
     fireEvent.mouseOver(getByTestId("nutFreeName-optionIcon"));
     await waitForElement(() => getByTestId("nutFreeNameMultiple-option-tooltip"));
+  }, 50000);
 
-  });
 
   test("XML source data with objects - Right display of objects and icons in source dropdown", async () => {
     const authorityService = new AuthoritiesService();
@@ -2146,7 +2137,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("nutFree:name-optionIcon"));
     await waitForElement(() => getByTestId("nutFree:nameMultiple-option-tooltip"));
-  });
+  }, 50000);
 
   test("Nested JSON source data - Right XPATH expression", async () => {
     const authorityService = new AuthoritiesService();
@@ -2157,6 +2148,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    jest.setTimeout(20000);
 
     let getByText, getByTestId, getAllByText, getAllByRole;
     await act(async () => {
@@ -2199,8 +2191,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
     expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");
+  }, 50000);
 
-  });
 
   test("Nested XML source data - Right XPATH expression", async () => {
     const authorityService = new AuthoritiesService();
@@ -2276,8 +2268,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     await(async () => proteinDogOption[0] && fireEvent.click(proteinDogOption[0]));
     mapExp = getByTestId("items-mapexpression");
     await (() => expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog"));
+  }, 50000);
 
-  });
 
   test("Right XPATH with source context", async () => {
     const authorityService = new AuthoritiesService();
@@ -2289,10 +2281,9 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let queryByTestId, findByTestId, getByTestId, getAllByText, getAllByRole;
+    let findByTestId, getByTestId, getAllByText, getAllByRole;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      queryByTestId = renderResults.queryByTestId;
       findByTestId = renderResults.findByTestId;
       getByTestId = renderResults.getByTestId;
       getAllByText = renderResults.getAllByText;
@@ -2321,16 +2312,13 @@ describe("RTL Source Selector/Source Search tests", () => {
     let firstName = getAllByText("FirstNamePreferred");
     await(() => fireEvent.click(firstName[2]));
     //mapping is saved
-    await wait(() => expect(findByTestId("successMessage")));
-    if (queryByTestId("successMessage")) {
-      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
-    }
 
     mapExp = getByTestId("itemTypes-mapexpression");
 
     //Right Xpath is populated (and not nutFreeName/FirstNamePreferred since sourceContext is set)
     await (() => expect(mapExp).toHaveTextContent("FirstNamePreferred"));
-  });
+  }, 50000);
+
 
   test("verify invalid source URI error messaging", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
@@ -2388,7 +2376,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(getByTestId("navigate-uris-left"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
     wait(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
-  });
+  }, 50000);
 
   test("Verify legend visibility", async () => {
     let getByTestId;
@@ -2430,7 +2418,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(getByLabelText("icon: check"));
     await (waitForElement(() => getByText("/dummy/uri/person-102.json")));
     expect(getByText("/dummy/uri/person-102.json")).toBeInTheDocument();
-  });
+  }, 50000);
+
   test("Verify Keyboard Navigation focus and sequence", async () => {
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});

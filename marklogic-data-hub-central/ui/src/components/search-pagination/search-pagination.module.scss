@@ -24,7 +24,7 @@
             color: $primary;
             border-radius: 4px;
             padding: 1px 7px;
-            @extend li[class="page-item"];
+            @extend li, [class="page-item"];
             &:focus-visible {
                 outline: auto;
             }

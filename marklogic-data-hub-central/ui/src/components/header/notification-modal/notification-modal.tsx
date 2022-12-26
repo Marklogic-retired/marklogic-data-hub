@@ -285,25 +285,28 @@ const NotificationModal = (props) => {
           </Modal.Header>
           <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
             {notificationOptions.totalCount < 1 ?
+
               <div className={styles.emptyList}>
                 <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" /></i>
                 <div className={styles.emptyText}><strong>No Merge Notifications Present</strong></div>
               </div>
               :
-              notificationOptions?.notifications && <><HCTable
-              pagination={false}
-              columns={columns}
-              data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
-              rowKey="unique_key"
-            />
-            <SearchPaginationSimple
-              total={notificationOptions?.totalCount}
-              pageSize={pageLength}
-              pageNumber={pageTableNotification}
-              maxRowsPerPage={pageLength}
-              updatePage={updatePage}
-            />
-            </>
+              notificationOptions?.notifications &&
+              <>
+                <HCTable
+                  pagination={false}
+                  columns={columns}
+                  data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+                  rowKey="unique_key"
+                ></HCTable>
+                <SearchPaginationSimple
+                  total={notificationOptions?.totalCount}
+                  pageSize={pageLength}
+                  pageNumber={pageTableNotification}
+                  maxRowsPerPage={pageLength}
+                  updatePage={updatePage}
+                ></SearchPaginationSimple>
+              </>
             }
           </div>
         </Modal.Body>

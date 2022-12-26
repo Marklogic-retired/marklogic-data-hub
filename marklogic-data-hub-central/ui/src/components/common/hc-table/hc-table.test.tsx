@@ -11,7 +11,7 @@ describe("Hub Central Table component", () => {
 
   test("should render a HCTable component", () => {
     const {getByText} = render(<HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />);
-    const tableColumns = within(getByText("Name").closest("tr")!);
+    const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
 
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
     expect(tableColumns.getByText("Description")).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe("Hub Central Table component", () => {
 
   test("should allow sorting columns after clicking on the header", () => {
     const {getByText, container} = render(<HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />);
-    const tableColumns = within(getByText("Name").closest("tr")!);
+    const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
     const tableRowCells = container.querySelectorAll(".hc-table_row td");
 
     expect(tableRowCells[0]).toHaveTextContent("testLoadXML");
