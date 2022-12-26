@@ -115,7 +115,6 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify save button is always enabled and error messaging appears as needed", async () => {
     const {getByText, getByPlaceholderText, queryByText} = render(<CreateEditStep {...data.newMerging}
-
       tabKey={""}
       openStepSettings={false}
       setOpenStepSettings={false}

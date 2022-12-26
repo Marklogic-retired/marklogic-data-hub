@@ -19,7 +19,9 @@ interface BaseEntityProps {
 
 interface EntityIndicatorDataProps {
   max: number;
-  entities: Array<BaseEntityProps>;
+  entities: {
+    [entityName:string] : BaseEntityProps
+  };
 }
 
 interface Props {

@@ -62,7 +62,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
-    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props.rowKey === "string" && !row.children).map(element => typeof props.rowKey === "string" && typeof element[props.rowKey] !== undefined && element[props.rowKey]),
+    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props?.rowKey === "string" && !row.children).map(element => typeof props?.rowKey === "string" && typeof element[props?.rowKey] !== "undefined" && element[props?.rowKey]),
   };
 
   const generateIndentList = (data, indentLevel, indentArray) => {

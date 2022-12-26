@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import {cleanup, render, screen} from "@testing-library/react";
 
 describe("Footer component", () => {
-
+  const globalAny:any = global;
   beforeAll(() => {
     cleanup();
   });
@@ -24,7 +24,7 @@ describe("Footer component", () => {
 
   it("can focus and goto on privacy link", () => {
 
-    global.window = {location: {href: null}};
+    globalAny.window = {location: {href: null}};
     render(<Footer />);
     // get the actual link wrapper by traversing DOM tree
 

@@ -44,7 +44,7 @@ const validateTableRow = (dataTable, uris) => {
   });
 };
 
-const getSubElements=(content, node, title) => {
+export const getSubElements=(content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
   const childrenDontHaveText = Array.from(node.children).every(
@@ -63,5 +63,4 @@ export {
   onClosestDiv,
   validateTableRow,
   onHideMock,
-  getSubElements
 };

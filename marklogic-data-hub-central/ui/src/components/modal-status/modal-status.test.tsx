@@ -1,7 +1,5 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
 import {render, wait, waitForElement} from "@testing-library/react";
 import axiosMock from "axios";
 import userEvent from "@testing-library/user-event";
@@ -134,7 +132,7 @@ describe("Modal Status Component", () => {
   test("No response (middle tier crash) handled", async () => {
     mocks.noResponseAPI(axiosMock);
     const {getByText} = render(
-      <Router history={history}>
+      <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
@@ -146,5 +144,3 @@ describe("Modal Status Component", () => {
   });
 
 });
-
-
