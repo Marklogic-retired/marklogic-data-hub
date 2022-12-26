@@ -46,7 +46,7 @@ describe("Load data component", () => {
       sortOrderInfo={""}
       flowsLoading={false}
     /></MemoryRouter>);
-    const tableColumns = within(getByText("Name").closest("tr")!);
+    const tableColumns = within(getByText("Name").closest("tr")!  as HTMLElement);
 
     expect(getByText("Add New")).toBeInTheDocument();
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
@@ -70,7 +70,7 @@ describe("Load data component", () => {
       sortOrderInfo={""}
       flowsLoading={false}
     /></MemoryRouter>);
-    const dataRow = within(getByText("testLoadXML").closest("tr")!);
+    const dataRow = within(getByText("testLoadXML").closest("tr")!  as HTMLElement);
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();

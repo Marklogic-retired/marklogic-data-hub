@@ -4,6 +4,7 @@ import React from "react";
 import ListModal from "./list-modal";
 
 describe("Test input validation values to ignore", () => {
+  const globalAny:any = global;
   beforeEach(() => {
     cleanup();
   });
@@ -23,7 +24,7 @@ describe("Test input validation values to ignore", () => {
   });
 
   it("Verify that the user don't put duplicate values", async () => {
-    global.document.createRange = () => ({
+    globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
       commonAncestorContainer: {

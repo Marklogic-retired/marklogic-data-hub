@@ -15,7 +15,6 @@ import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
 import {getViewSettings} from "../util/user-context";
 import {act} from "react-dom/test-utils";
-import "jest-canvas-mock";
 
 jest.mock("../api/modeling");
 
@@ -278,19 +277,6 @@ describe("Graph view page", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-
-  //   beforeEach(() => {
-  //     const createElement = document.createElement.bind(document);
-  //     document.createElement = (tagName) => {
-  //         if (tagName === 'canvas') {
-  //             return {
-  //                 getContext: () => ({}),
-  //                 measureText: () => ({})
-  //             };
-  //         }
-  //         return createElement(tagName);
-  //     };
-  // });
 
   it("Modeling: graph view renders properly", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});

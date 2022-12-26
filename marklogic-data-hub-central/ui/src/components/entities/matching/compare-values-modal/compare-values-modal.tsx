@@ -16,7 +16,6 @@ import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "@util/search-context";
-import {isArray} from "util";
 import {delayTooltip} from "@util/common-utils";
 
 interface Props {
@@ -220,7 +219,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           },
           formatter: (property, key) => {
             let mergedOutput;
-            if (isArray(property.value) && property.value.length > 1) {
+            if (Array.isArray(property.value) && property.value.length > 1) {
               if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
                 //pretty print JSON if array of objects
                 mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
@@ -267,7 +266,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         },
         formatter: (property, key) => {
           let mergedOutput;
-          if (isArray(property.value) && property.value.length > 1) {
+          if (Array.isArray(property.value) && property.value.length > 1) {
             if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
               //pretty print JSON if array of objects
               mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;

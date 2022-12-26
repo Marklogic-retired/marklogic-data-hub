@@ -753,7 +753,7 @@ describe("Property Modal Component", () => {
 
     userEvent.click(getByLabelText("property-modal-submit"));
     expect(editMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(2);
   });
 
   test("can edit a basic property from a structured type", () => {
