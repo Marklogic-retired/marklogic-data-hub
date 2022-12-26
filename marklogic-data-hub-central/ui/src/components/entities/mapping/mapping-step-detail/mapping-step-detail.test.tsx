@@ -1178,7 +1178,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify that fx/source-data list is disabled for mapping reader user
     expect(getByTestId("propId-102-functionIcon")).toBeDisabled();
-  });
+  }, 10000);
 
   test("Verify evaluation of invalid expression for mapping writer user", async () => {
     const authorityService = new AuthoritiesService();
@@ -1290,8 +1290,8 @@ describe("RTL Source-to-entity map tests", () => {
   xtest("Verify evaluation of valid expression for XML source document", () => {
     // const { getByText } = render(<MappingStepDetail {...data.mapProps} sourceData={data.xmlSourceData} mappingVisible={true} />);
     /**
-         * TODO once DHFPROD-4845 is implemented
-         */
+           * TODO once DHFPROD-4845 is implemented
+           */
 
   });
 
@@ -1934,8 +1934,8 @@ describe("Source-to-entity map tests", () => {
 
     let noDataMessagePart1  = "Unable to find source records using the specified collection or query.";
     let noDataMessagePart2 = "Load some data that mapping can use as reference and/or edit the step settings to use a " +
-      "source collection or query that will return some results.";
-    //wrapper.setProps({sourceData: []});
+        "source collection or query that will return some results.";
+      //wrapper.setProps({sourceData: []});
     expect(await wrapper.findAllByTestId("noData")).toHaveLength(1);
     expect(await wrapper.queryAllByText(noDataMessagePart1)).toHaveLength(1);
     expect(await wrapper.queryAllByText(noDataMessagePart2)).toHaveLength(1);
@@ -2192,7 +2192,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(firstName[1]);
 
     //mapping is saved
-    expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
+    expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 1000})));
 
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
@@ -2256,24 +2256,24 @@ describe("RTL Source Selector/Source Search tests", () => {
     await (() => getByTestId("LastNameMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
-    await act(async () => lastName[1] && fireEvent.click(lastName[1]));
+    await (async () => lastName[1] && fireEvent.click(lastName[1]));
 
     //mapping is saved
-    expect(await (waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
+    await (() => expect((waitForElement(() => getByTestId("successMessage"), {"timeout": 1000}))));
 
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
-    expect(mapExp).toHaveTextContent("sampleProtein/nutFree:name/LastName");
+    await ((() => expect(mapExp).toHaveTextContent("sampleProtein/nutFree:name/LastName")));
 
     //Right Xpath population for namespaced option representing array of values
     sourceSelector = getByTestId("items-listIcon");
-    await act(async () => sourceSelector && fireEvent.click(sourceSelector));
+    await (async () => sourceSelector && fireEvent.click(sourceSelector));
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     let proteinDogOption = (getAllByTestId("nutFree:proteinDog-option"));
-    expect(proteinDogOption.length).toEqual(2);
-    await act(async () => proteinDogOption[0] && fireEvent.click(proteinDogOption[0]));
+    await ((() => expect(proteinDogOption.length).toEqual(2)));
+    await(async () => proteinDogOption[0] && fireEvent.click(proteinDogOption[0]));
     mapExp = getByTestId("items-mapexpression");
-    expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog");
+    await (() => expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog"));
 
   });
 
@@ -2296,7 +2296,6 @@ describe("RTL Source Selector/Source Search tests", () => {
       getAllByText = renderResults.getAllByText;
       getAllByRole = renderResults.getAllByRole;
     });
-
 
     let sourceSelector = await waitForElement(() => getByTestId("items-listIcon"));
 

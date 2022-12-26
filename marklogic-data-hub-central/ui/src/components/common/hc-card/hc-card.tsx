@@ -6,7 +6,9 @@ export interface HCCardProps extends CardProps {
   actions?: Array<JSX.Element>,
   titleExtra?: JSX.Element,
   bodyClassName?: string,
-  footerClassName?: string
+  footerClassName?: string,
+  children?: React.ReactNode;
+  title?: string,
 }
 
 function HCCard({className, actions, title, titleExtra, bodyClassName, footerClassName, children, ...others}: HCCardProps): JSX.Element {

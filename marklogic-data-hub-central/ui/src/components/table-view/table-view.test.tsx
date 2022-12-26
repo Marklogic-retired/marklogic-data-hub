@@ -9,7 +9,7 @@ describe("Table view component",  () => {
   test("renders", async() => {
     let infoRender:any;
     await act(async () => {
-      infoRender = render(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" />);
+      infoRender = render(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json"  location= {""} isEntityInstance={ true}/>);
     });
     expect(infoRender.container.getElementsByClassName("react-bootstrap-table")).toHaveLength(1);
   });
@@ -23,9 +23,7 @@ describe("Table view detail component - RTL", () => {
       // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
   });
-
 });
-
 
 describe("Unmerge record", () => {
   test("Unmerge button not available", async () => {

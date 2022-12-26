@@ -124,8 +124,7 @@ export const isModifiedTableView = {
 export const notModified = {
   modelingOptions: {
     isModified: false,
-    view: "",
-    //view: ViewType.table,
+    view: ViewType.table,
     entityPropertiesNamesArray: [],
     entityTypeNamesArray: [],
     modifiedEntitiesArray: [],

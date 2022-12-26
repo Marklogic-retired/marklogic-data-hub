@@ -11,22 +11,38 @@ describe("New/edit load step configuration", () => {
     tabKey: "1",
     isEditing: true,
     openStepSettings: true,
-    setOpenStepSettings: () => {},
-    createLoadArtifact: () => {},
+    setOpenStepSettings: () => { },
+    createLoadArtifact: () => { },
     stepData: {},
     canReadWrite: true,
     canReadOnly: false,
     currentTab: "1",
-    setIsValid: () => {},
-    resetTabs: () => {},
-    setHasChanged: () => {},
-    setPayload: () => {},
-    onCancel: () => {}
+    setIsValid: () => { },
+    resetTabs: () => { },
+    setHasChanged: () => { },
+    setPayload: () => { },
+    onCancel: () => { }
   };
 
   test("fields non-Delimited Text render", async () => {
     const {baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText, getByLabelText} = render(<BrowserRouter>
-      <CreateEditLoad {...loadProps} />
+      <CreateEditLoad {...loadProps}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        isEditing={false}
+        canReadWrite={false}
+        canReadOnly={false}
+        createLoadArtifact={jest.fn()}
+        updateLoadArtifact={jest.fn()}
+        stepData={{}}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />
     </BrowserRouter>);
     expect(getByLabelText("newLoadCardTitle")).toBeInTheDocument();
     expect(queryAllByPlaceholderText("Enter name")[0]).toBeInTheDocument();
@@ -41,7 +57,7 @@ describe("New/edit load step configuration", () => {
     expect(queryAllByPlaceholderText("Enter Source Type")[0]).toBeInTheDocument();
     expect(queryAllByText("Target URI Preview:").length).toEqual(0);
     expect(queryAllByPlaceholderText("Enter URI Prefix")[0]).toBeInTheDocument();
-    let tooltip  = getAllByLabelText("icon: question-circle");
+    let tooltip = getAllByLabelText("icon: question-circle");
 
     // Tooltip for name
     fireEvent.mouseOver(tooltip[0]);
@@ -69,31 +85,60 @@ describe("New/edit load step configuration", () => {
   test("fields with Delimited Text render", async () => {
     const stepData = {sourceFormat: "csv", separator: "||", targetFormat: "json"};
     const {baseElement, queryAllByPlaceholderText, getByLabelText, getByText} = render(<BrowserRouter>
-      <CreateEditLoad {...loadProps} stepData={stepData} />
+      <CreateEditLoad {...loadProps} stepData={stepData}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        isEditing={false}
+        canReadWrite={false}
+        canReadOnly={false}
+        createLoadArtifact={jest.fn()}
+        updateLoadArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />
     </BrowserRouter>);
     expect(getByLabelText("newLoadCardTitle")).toBeInTheDocument();
     expect(queryAllByPlaceholderText("Enter name")[0]).toBeInTheDocument();
     expect(queryAllByPlaceholderText("Enter description")[0]).toBeInTheDocument();
     expect(baseElement.querySelector("#sourceFormat")).toBeInTheDocument();
     // Field separator and other separator should show, since we've provided step data with Delimited Text and other separator
-    expect(baseElement.querySelector("#fieldSeparator")).toBeInTheDocument();
-    expect(baseElement.querySelector("#otherSeparator")).toBeInTheDocument();
-    expect(baseElement.querySelector("#targetFormat")).toBeInTheDocument();
-    expect(queryAllByPlaceholderText("Enter Source Name")[0]).toBeInTheDocument();
-    expect(queryAllByPlaceholderText("Enter Source Type")[0]).toBeInTheDocument();
-    expect(baseElement.querySelector("#outputUriReplacement")).not.toBeInTheDocument();
-    expect(baseElement.querySelector("#outputUriPrefix")).toBeInTheDocument();
+    await(() => expect(baseElement.querySelector("#fieldSeparator")).toBeInTheDocument());
+    await(() => expect(baseElement.querySelector("#otherSeparator")).toBeInTheDocument());
+    await(() => expect(baseElement.querySelector("#targetFormat")).toBeInTheDocument());
+    await(() => expect(queryAllByPlaceholderText("Enter Source Name")[0]).toBeInTheDocument());
+    await(() => expect(queryAllByPlaceholderText("Enter Source Type")[0]).toBeInTheDocument());
+    await(() => expect(baseElement.querySelector("#outputUriReplacement")).not.toBeInTheDocument());
+    await(() => expect(baseElement.querySelector("#outputUriPrefix")).toBeInTheDocument());
 
     // Tooltip for disabled name field
     fireEvent.mouseOver(queryAllByPlaceholderText("Enter name")[0]);
-    await waitForElement(() => getByText(NewLoadTooltips.nameField));
-
+    await(() => getByText(NewLoadTooltips.nameField));
   });
 
   test("targetFormat with Text should not display sourceName and sourceType", () => {
     const stepData = {sourceFormat: "csv", separator: "||", targetFormat: "txt"};
     const {baseElement, queryByText} = render(<BrowserRouter>
-      <CreateEditLoad {...loadProps} stepData={stepData} />
+      <CreateEditLoad {...loadProps} stepData={stepData}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        isEditing={false}
+        canReadWrite={false}
+        canReadOnly={false}
+        createLoadArtifact={jest.fn()}
+        updateLoadArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />
     </BrowserRouter>);
 
     expect(baseElement.querySelector("#sourceFormat")).toBeInTheDocument();
@@ -104,9 +149,24 @@ describe("New/edit load step configuration", () => {
 
   test("Verify name is required for form submission and error messaging appears as needed", async () => {
     const {queryByText, getByText, getByPlaceholderText} =
-    render(<BrowserRouter><CreateEditLoad {...loadProps} isEditing={false} /></BrowserRouter>);
-    const nameInput = getByPlaceholderText("Enter name");
+      render(<BrowserRouter><CreateEditLoad {...loadProps} isEditing={false}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        canReadWrite={false}
+        canReadOnly={false}
+        createLoadArtifact={jest.fn()}
+        updateLoadArtifact={jest.fn()}
+        stepData={{}}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      /></BrowserRouter>);
 
+    const nameInput = getByPlaceholderText("Enter name");
 
     // error should not appear before anything is touched
     expect(queryByText("Name is required")).toBeNull();
@@ -114,7 +174,7 @@ describe("New/edit load step configuration", () => {
     fireEvent.click(getByText("Save"));
 
     // message should appear when save button is clicked
-    expect(queryByText("Name is required")).toBeInTheDocument();
+    await (() => expect(queryByText("Name is required")).toBeInTheDocument());
 
     //error message should appear when name field does not lead with a letter
     fireEvent.change(nameInput, {target: {value: "123testLoadStep"}});
@@ -139,7 +199,23 @@ describe("New/edit load step configuration", () => {
 
   test("Verify 'Source Format' and 'Target Format' should have JSON as default value", async () => {
     const {baseElement} =
-    render(<BrowserRouter><CreateEditLoad {...loadProps} /></BrowserRouter>);
+      render(<BrowserRouter><CreateEditLoad {...loadProps}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        isEditing={false}
+        canReadWrite={false}
+        canReadOnly={false}
+        createLoadArtifact={jest.fn()}
+        updateLoadArtifact={jest.fn()}
+        stepData={{}}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      /></BrowserRouter>);
 
     expect(baseElement.querySelector("#sourceFormat-select-wrapper")).toHaveTextContent("JSON");
     expect(baseElement.querySelector("#targetFormat-select-wrapper")).toHaveTextContent("JSON");
