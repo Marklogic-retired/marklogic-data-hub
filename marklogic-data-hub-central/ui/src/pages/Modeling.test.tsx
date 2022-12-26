@@ -274,11 +274,23 @@ describe("getViewSettings", () => {
   });
 });
 
-
 describe("Graph view page", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
+  //   beforeEach(() => {
+  //     const createElement = document.createElement.bind(document);
+  //     document.createElement = (tagName) => {
+  //         if (tagName === 'canvas') {
+  //             return {
+  //                 getContext: () => ({}),
+  //                 measureText: () => ({})
+  //             };
+  //         }
+  //         return createElement(tagName);
+  //     };
+  // });
 
   it("Modeling: graph view renders properly", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
@@ -328,8 +340,8 @@ describe("Graph view page", () => {
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
-    let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
-    expect(addEntityOrRelationshipBtn.firstChild).toBeDisabled();
+    let addEntityOrRelationshipBtn:any = await(() => getByLabelText("add-entity-type-relationship"));
+    await(() => expect(addEntityOrRelationshipBtn.firstChild).toBeDisabled());
   });
 
   it("Modeling: add button is enabled for model writer role", async () => {
@@ -347,10 +359,8 @@ describe("Graph view page", () => {
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
-
-    let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
-
-    expect(addEntityOrRelationshipBtn.firstChild).toBeEnabled();
+    let addEntityOrRelationshipBtn:any = await(() => getByLabelText("add-entity-type-relationship"));
+    await(() => expect(addEntityOrRelationshipBtn.firstChild).toBeEnabled());
   });
 
   it("can toggle between graph view and table view properly", async () => {

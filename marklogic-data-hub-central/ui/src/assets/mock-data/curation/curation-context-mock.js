@@ -296,7 +296,8 @@ export const personMappingStepWithData = {
     activeStep: {
       stepArtifact: mappingStep.artifacts[0],
       entityName: mappingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -304,12 +305,21 @@ export const personMappingStepWithData = {
   mappingOptions: {
     openStepSettings: false,
     openStep: {},
-    isEditing: false
+    isEditing: false,
+    hasWarnings: []
   },
+  validateCalled: true,
+  validateMerge: true,
+  loadModalClicked: true,
+  setLoadModalClickedCalled: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
   setOpenStepSettings: jest.fn(),
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
-  setStepOpenOptions: jest.fn()
+  setStepOpenOptions: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  //mappingOptions: MappingOptionsInterface,
 };
 
 export const personMappingStepWithRelatedEntityData = {
