@@ -1,6 +1,8 @@
 const test = require("/test/test-helper.xqy");
 
-const map = require("/data-hub/5/impl/entity-lib.sjs").findEntityTypesAsMap();
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityLib = mjsProxy.requireMjsModule("/data-hub/5/impl/entity-lib.mjs");
+const map = entityLib.findEntityTypesAsMap();
 const entityTypeIds = Object.keys(map);
 
 [

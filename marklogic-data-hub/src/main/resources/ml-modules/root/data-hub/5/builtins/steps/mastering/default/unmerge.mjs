@@ -1,6 +1,9 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
 const datahub = DataHubSingleton.instance();
-const merging = require('/com.marklogic.smart-mastering/merging.xqy');
+const merging = sjsProxy.requireSjsModule('/com.marklogic.smart-mastering/merging.xqy');
 
 function main(content, options) {
   let documentsAffected = [content];
@@ -21,6 +24,6 @@ function main(content, options) {
   return Sequence.from(documentsAffected);
 }
 
-export {
+export default {
   main
 };

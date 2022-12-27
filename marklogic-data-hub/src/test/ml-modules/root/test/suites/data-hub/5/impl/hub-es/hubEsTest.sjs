@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const lib = require('/data-hub/5/impl/hub-es.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const lib = mjsProxy.requireMjsModule('/data-hub/5/impl/hub-es.mjs');
 let result = [];
 
 function verifyPropertyPathReference(entityIRI, propertyPath, expectedPathExpression) {

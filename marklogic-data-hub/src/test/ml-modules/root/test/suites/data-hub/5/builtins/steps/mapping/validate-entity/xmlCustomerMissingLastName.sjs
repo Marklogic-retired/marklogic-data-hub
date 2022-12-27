@@ -1,4 +1,3 @@
-const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const lib = require("lib/lib.sjs");
 const test = require("/test/test-helper.xqy");
 

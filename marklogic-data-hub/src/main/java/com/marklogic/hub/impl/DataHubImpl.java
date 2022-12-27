@@ -372,12 +372,12 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
             HashSet<String> dataHubServices = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
-                dataHubServices.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
+                dataHubServices.add(r.getFilename().replaceAll("\\.(sjs|mjs|xqy)$",""));
             }
 
             HashSet<String> dataHubTransforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                dataHubTransforms.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
+                dataHubTransforms.add(r.getFilename().replaceAll("\\.(sjs|mjs|xqy)$",""));
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -1127,7 +1127,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     private List<DocumentWriteOperation> readUserAndHubArtifacts(HubClient hubClientToUse) {
         List<DocumentWriteOperation> docs = new ArrayList<>();
         JSONDocumentManager mgr = hubClientToUse.getStagingClient().newJSONDocumentManager();
-        final String script = "const consts = require('/data-hub/5/impl/consts.sjs');\n" +
+        final String script = "const consts = require('/data-hub/5/impl/consts.mjs');\n" +
             "cts.uris(null, null, " +
             "   cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat(consts.HUB_ARTIFACT_COLLECTION).concat('http://marklogic.com/data-hub/mappings'))" +
             ")";

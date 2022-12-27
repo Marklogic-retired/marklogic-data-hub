@@ -552,9 +552,8 @@ ORDER BY DESC(?time)`;
   };
 }
 
-export  {
-  //deleteProvenance: module.amp(deleteProvenance),
-  deleteProvenance,
+export default {
+  deleteProvenance: import.meta.amp(deleteProvenance),
   installProvTemplates,
   allAssociatedProvEntities,
   sourceInformationForDocument,

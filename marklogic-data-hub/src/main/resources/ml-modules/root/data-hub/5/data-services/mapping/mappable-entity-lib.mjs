@@ -179,7 +179,7 @@ function findEntityModelsWithPropertyThatRefersToTargetEntity(targetEntityModel,
   return entityModelsWithPropertyThatRefersToTargetEntity;
 }
 
-module.exports = {
+export default {
   getEntitiesForUI,
   findEntityModelsWithPropertyThatRefersToTargetEntity,
   expandStructuredProperties

@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(entityType) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/mastering/getDefaultCollections.sjs",
+    "/data-hub/5/data-services/mastering/getDefaultCollections.mjs",
     {"entityType": entityType}
   ));
 }

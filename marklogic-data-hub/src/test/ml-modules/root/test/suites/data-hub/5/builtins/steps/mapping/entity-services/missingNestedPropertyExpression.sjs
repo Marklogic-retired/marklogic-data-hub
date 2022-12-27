@@ -1,5 +1,4 @@
 const lib = require("lib/lib.sjs");
-const mappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
 let result = lib.invokeTestMapping("/content/person1.json", "PersonMapping", "1");

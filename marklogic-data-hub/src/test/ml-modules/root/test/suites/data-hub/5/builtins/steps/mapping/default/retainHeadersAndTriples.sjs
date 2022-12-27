@@ -1,4 +1,5 @@
-const main = require("/data-hub/5/builtins/steps/mapping/default/main.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const main = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/default/main.mjs");
 const test = require("/test/test-helper.xqy");
 
 const docXML = fn.head(xdmp.unquote(`<envelope xmlns="http://marklogic.com/entity-services">

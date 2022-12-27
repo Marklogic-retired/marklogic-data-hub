@@ -1,4 +1,5 @@
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -30,6 +31,6 @@ const assertions = [
 ];
 
 assertions.concat(
-  test.assertEqual(false, hubTest.finalDocumentExists("/customer1.json"), 
+  test.assertEqual(false, hubTest.finalDocumentExists("/customer1.json"),
     "The doc should not exist in final since both steps write to staging")
 )

@@ -16,7 +16,10 @@
 'use strict';
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-const ps = require('/MarkLogic/provenance');
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const ps = sjsProxy.requireSjsModule("/MarkLogic/provenance.xqy", "http://marklogic.com/provenance-services");
+
 const persistedIDs = [];
 
 const provenanceNamespaces = {
@@ -35,7 +38,7 @@ const provenanceNamespaces = {
  * conflicting update errors and to facilitate incremental changes such as adding new PROV relationships.
  * Trace logging is used to record this so that a user can have visibility into when this happens.
  */
-class ProvenanceWriteQueue {
+export default class ProvenanceWriteQueue {
 
   constructor() {
     this.databaseToRecordQueue = {};
@@ -125,5 +128,3 @@ class ProvenanceWriteQueue {
   }
 
 }
-
-export  {ProvenanceWriteQueue};

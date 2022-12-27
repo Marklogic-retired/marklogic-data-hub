@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const validateMergeLib = require("/data-hub/5/data-services/mastering/validateMergingStepLib.mjs");
+import validateMergeLib from "/data-hub/5/data-services/mastering/validateMergingStepLib.mjs";
 
 const stepName = external.stepName;
 const view = external.view;

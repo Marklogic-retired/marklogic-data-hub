@@ -21,10 +21,12 @@
 
 import config from "/com.marklogic.hub/config.mjs" ;
 import consts from "/data-hub/5/impl/consts.mjs" ;
-import hent from "/data-hub/5/impl/hub-entities.xqy";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs" ;
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs" ;
 import entityLib from "/data-hub/5/impl/entity-lib.mjs" ;
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const hent = sjsProxy.requireSjsModule("/data-hub/5/impl/hub-entities.xqy");
 
 function findDraftModelByConceptName(conceptName) {
   const assumedUri = "/concepts/" + conceptName + ".draft.concept.json";
@@ -353,7 +355,7 @@ function getModelName(model) {
   return null;
 }
 
-export {
+export default {
   findDraftModelByConceptName,
   findModelByConceptName,
   getDraftConceptCollection,

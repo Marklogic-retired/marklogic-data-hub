@@ -89,7 +89,7 @@ function defaultArtifact(artifactName) {
   return artifact;
 }
 
-export {
+export default {
     getNameProperty,
     getCollections,
     getStorageDatabases,

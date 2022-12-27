@@ -1,4 +1,5 @@
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -24,7 +25,7 @@ const response = flowApi.runFlowOnContent(flowName, contentArray, jobId, runtime
 
 const assertions = [
   test.assertEqual("finished", response.jobStatus),
-  test.assertEqual(2, hubTest.getProvenanceCount(), 
+  test.assertEqual(2, hubTest.getProvenanceCount(),
     "Expecting 2 prov docs for the mapping step, and zero for the ingestion step since prov was disabled"
   )
 ];
@@ -32,7 +33,7 @@ const assertions = [
 const provIds = xdmp.invokeFunction(function() {
   return sem.sparql(
     "SELECT ?s WHERE {?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://marklogic.com/dhf#MappingStep>}");
-  }, 
+  },
   {database:xdmp.database("data-hub-JOBS")}
 ).toArray()
 

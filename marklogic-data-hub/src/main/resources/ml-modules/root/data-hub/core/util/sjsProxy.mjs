@@ -15,10 +15,15 @@
  */
 'use strict';
 
-import esMappingLib from "/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs";
+const sjsModules = {};
 
-export function post(context, params, input) {
-  let uri = params["uri"];
-  return esMappingLib.validateAndTestMapping(input.toObject(), uri);
+function requireSjsModule(modulePath) {
+  const cleanModulePath = modulePath.replace(/"/g, "");
+  if (!sjsModules[cleanModulePath]) {
+    sjsModules[cleanModulePath] = fn.head(evalScriptOrModule(`const sjsMod = require("${cleanModulePath}");
+sjsMod;`));
+  }
+  return sjsModules[cleanModulePath];
 }
 
+export default { requireSjsModule }

@@ -19,8 +19,9 @@ declareUpdate();
 
 // No privilege required: This endpoint is called by the spark connector.
 
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const consts = mjsProxy.requireMjsModule("/data-hub/5/impl/consts.mjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 const writeLib = require("writeLib.sjs");
 

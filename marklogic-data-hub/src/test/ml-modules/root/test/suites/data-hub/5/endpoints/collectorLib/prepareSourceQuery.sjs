@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const collectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const collectorLib = mjsProxy.requireMjsModule("/data-hub/5/endpoints/collectorLib.mjs");
 
 let assertions = [];
 
