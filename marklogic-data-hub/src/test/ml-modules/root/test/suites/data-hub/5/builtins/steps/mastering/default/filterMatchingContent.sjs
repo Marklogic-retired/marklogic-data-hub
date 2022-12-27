@@ -1,5 +1,6 @@
-const matching = require("/data-hub/5/builtins/steps/mastering/default/matching.sjs");
-const lib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const matching = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mastering/default/matching.mjs");
+const lib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mastering/default/lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 

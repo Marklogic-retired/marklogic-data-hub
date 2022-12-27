@@ -17,4 +17,6 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
-import('./flow-lib.mjs').getFlowsWithStepDetails();
+import flowUtils from "./flow-lib.mjs";
+
+flowUtils.getFlowsWithStepDetails();

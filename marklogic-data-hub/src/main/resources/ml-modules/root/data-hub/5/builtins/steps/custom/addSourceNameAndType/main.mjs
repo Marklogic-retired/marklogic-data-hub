@@ -60,6 +60,6 @@ function addSourceToJsonDocuments(content, sourceName, sourceType) {
   });
 }
 
-export {
+export default {
   main
 };

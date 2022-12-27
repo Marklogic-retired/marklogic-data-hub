@@ -25,7 +25,7 @@ import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
 /**
  * Captures state associated with the execution of a step.
  */
-export class StepExecutionContext {
+export default class StepExecutionContext {
 
   /**
    * Factory method for the normal approach of creating a step execution context, which uses data from the given

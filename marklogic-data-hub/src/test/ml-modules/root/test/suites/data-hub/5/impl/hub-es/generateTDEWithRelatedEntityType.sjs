@@ -1,5 +1,6 @@
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs")
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 const test = require("/test/test-helper.xqy");
 
 const orderModel = {

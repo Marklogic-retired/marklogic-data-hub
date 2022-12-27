@@ -15,8 +15,9 @@
  */
 'use strict';
 
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import jobs from "/data-hub/5/impl/jobs.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 /**
  * This is still supporting what's documented at https://docs.marklogic.com/datahub/5.4/tools/rest/rest-extensions.html
@@ -26,7 +27,7 @@ import jobs from "/data-hub/5/impl/jobs.mjs";
  * @param params
  * @returns {null}
  */
-export function get(context, params) {
+function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
   let flow = params["flow-name"];
@@ -57,8 +58,13 @@ export function get(context, params) {
 };
 
 
-export function post(context, params, input) {};
+function post(context, params, input) {};
 
-export function put(context, params, input) {};
+function put(context, params, input) {};
 
-export function deleteFunction(context, params) {};
+function deleteFunction(context, params) {};
+
+exports.GET = get;
+exports.POST =  post;
+exports.PUT = put;
+exports.DELETE =  deleteFunction;

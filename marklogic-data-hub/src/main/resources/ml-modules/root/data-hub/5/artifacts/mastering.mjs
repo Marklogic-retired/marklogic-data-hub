@@ -78,7 +78,7 @@ function defaultArtifact(artifactName) {
   };
 }
 
-export {
+export default {
     getNameProperty,
     getCollections,
     getStorageDatabases,

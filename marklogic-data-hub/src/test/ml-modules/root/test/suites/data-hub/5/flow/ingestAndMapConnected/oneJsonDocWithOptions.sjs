@@ -1,4 +1,5 @@
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -27,8 +28,8 @@ const assertions = [
   test.assertEqual("http://example.org/", finalCustomer.document.envelope.instance.info.baseUri),
   test.assertEqual(3, finalCustomer.collections.length),
   test.assertEqual("Customer", finalCustomer.collections[0]),
-  test.assertEqual("ingestCustomer", finalCustomer.collections[1], 
-    "By default, collections should be retained from previous steps, though any step in the flow " + 
+  test.assertEqual("ingestCustomer", finalCustomer.collections[1],
+    "By default, collections should be retained from previous steps, though any step in the flow " +
     "is free to modify the set of collections"),
   test.assertEqual("mapCustomer", finalCustomer.collections[2]),
   test.assertEqual("read", finalCustomer.permissions["data-hub-operator"][0],

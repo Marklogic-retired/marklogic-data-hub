@@ -7,7 +7,7 @@ const test = require("/test/test-helper.xqy");
 hubTestX.resetHub();
 // Clearing the schema databases so that the merge step does not pickup any TDE triples that might be left behind from any previous tests
 hubTestX.clearSchemasDatabases();
-hubTestX.loadArtifacts(test.__CALLER_FILE__);
+hubTestX.loadNonEntities(test.__CALLER_FILE__);
 
 const mappingStep = hubTest.makeSimpleMappingStep("mappingStep", {
   "headers": {

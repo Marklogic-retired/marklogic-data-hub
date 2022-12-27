@@ -23,7 +23,6 @@ const artifactName = external.artifactName;
 const artifact = external.artifact;
 const dirFileName = external.dirFileName;
 
-
 if ("ingestion" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
 } else if ("mapping" === artifactType) {

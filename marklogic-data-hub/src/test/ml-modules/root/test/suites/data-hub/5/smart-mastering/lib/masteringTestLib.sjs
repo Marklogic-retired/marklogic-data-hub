@@ -19,8 +19,9 @@
  * Contains helper functions for simplifying mastering unit tests.
  */
 
-const matching = require('/data-hub/5/builtins/steps/mastering/default/matching.sjs');
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const matching = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mastering/default/matching.mjs");
+const StepExecutionContext = mjsProxy.requireMjsModule("/data-hub/5/flow/stepExecutionContext.mjs");
 const test = require("/test/test-helper.xqy");
 
 // Prefixed with "/zzz" so it's almost certainly the last one in a match summary doc
@@ -46,10 +47,10 @@ function match(entityTypeName, entityProperties, options) {
 }
 
 /**
- * Matches on the entity instance that is passed in as a string of XML. 
- * 
+ * Matches on the entity instance that is passed in as a string of XML.
+ *
  * @param entityXmlString
- * @param options 
+ * @param options
  */
 function matchXml(entityXmlString, options) {
   const content = [{
@@ -87,10 +88,10 @@ function buildMatchingContent(entityTypeName, entityProperties) {
 }
 
 /**
- * Convenience function for verifying that the URIs in urisOfMatchingDocuments are each listed as matches along with the 
+ * Convenience function for verifying that the URIs in urisOfMatchingDocuments are each listed as matches along with the
  * TEST_DOC_URI that is used by the match/matchXml functions.
- * 
- * @param matchSummary 
+ *
+ * @param matchSummary
  * @param urisOfMatchingDocuments an array or a single URI string
  */
 function assertMatchExists(matchSummary, urisOfMatchingDocuments) {

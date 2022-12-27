@@ -116,7 +116,7 @@ function sortPermissions(permissionsArray) {
 }
 
 
-export {
+export default {
     describeRole,
     describeUser
 }

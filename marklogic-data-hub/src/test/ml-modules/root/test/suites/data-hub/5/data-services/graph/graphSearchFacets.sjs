@@ -1,4 +1,5 @@
-const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const graphUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/graph-utils.mjs");
 const test = require("/test/test-helper.xqy");
 
 function invoke(module, args) {
@@ -17,7 +18,7 @@ const queryOptions ="<search:options xml:lang=\"zxx\" xmlns:search=\"http://mark
   "</search:options>"
 
 function searchNodes(queryData) {
-  return invoke("searchNodes.sjs",
+  return invoke("searchNodes.mjs",
     {query: JSON.stringify(queryData), start: 0, limit: 20, structuredQuery: structuredQuery, queryOptions: queryOptions});
 }
 

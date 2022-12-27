@@ -26,7 +26,7 @@ import jobs from "/data-hub/5/impl/jobs.mjs";
  *
  * Note that nothing is written to the database until the "persist" function is called.
  */
-export class Batch {
+export default class Batch {
 
   constructor(jobId, flowName) {
     const timestamp = xdmp.requestTimestamp() ? xdmp.timestampToWallclock(xdmp.requestTimestamp()) : fn.currentDateTime();

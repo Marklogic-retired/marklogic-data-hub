@@ -311,5 +311,9 @@ function isObject(value) {
   return value !== null && typeof(value) === 'object';
 }
 
-exports.transform = transformXml;
-exports.PROP_NAME_TEXT = PROP_NAME_TEXT;
+
+
+export default {
+    transform: transformXml,
+    PROP_NAME_TEXT: PROP_NAME_TEXT
+};

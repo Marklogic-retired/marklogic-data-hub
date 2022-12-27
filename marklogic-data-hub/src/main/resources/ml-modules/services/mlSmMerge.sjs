@@ -15,15 +15,16 @@
  */
 'use strict';
 
-import Artifacts from "/data-hub/5/artifacts/core.mjs";
-import config from "/com.marklogic.hub/config.mjs";
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const Artifacts = mjsProxy.requireMjsModule("/data-hub/5/artifacts/core.mjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
-export function get(context, params) {}
+function get(context, params) {}
 
-export function post(context, params, input) {
+function post(context, params, input) {
   let inputOptions = input ? input.toObject() || {} : {};
   const datahub = DataHubSingleton.instance({
     performanceMetrics: !!inputOptions.performanceMetrics
@@ -90,10 +91,10 @@ export function post(context, params, input) {
   };
 }
 
-export function put(context, params, input) {
+function put(context, params, input) {
 }
 
-export function deleteFunction(context, params) {
+function deleteFunction(context, params) {
   let flowName = 'unmerge-mastering';
   let stepNumber = 1;
   let options = Object.assign({blockFutureMerges: true, retainAuditTrail: true}, params);
@@ -128,3 +129,8 @@ export function deleteFunction(context, params) {
     'documentsRestored': results.documents.map((doc) => doc.uri).filter((uri) => !mergeURIs.includes(uri))
   };
 }
+
+exports.GET = get;
+exports.POST =  post;
+exports.PUT = put;
+exports.DELETE =  deleteFunction;

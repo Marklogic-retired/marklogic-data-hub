@@ -5,11 +5,11 @@ function invoke(module, args) {
 }
 
 function getUris(mappingName, limit){
-  return invoke("getUris.sjs", {"stepName": mappingName, "limit":limit});
+  return invoke("getUris.mjs", {"stepName": mappingName, "limit":limit});
 }
 
 function getDoc(mappingName, uri){
-  return invoke("getDocument.sjs", {"stepName": mappingName, "uri":uri});
+  return invoke("getDocument.mjs", {"stepName": mappingName, "uri":uri});
 }
 
 const resp =[];

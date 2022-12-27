@@ -3,7 +3,8 @@
  * Also a good exercise of step-specific options.
  */
 
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -34,6 +35,6 @@ const assertions = [
 
 const ingestedCustomer = hubTest.getRecord("/customer1.json");
 assertions.concat(
-  test.assertEqual("1", ingestedCustomer.document.envelope.instance.customerId, 
+  test.assertEqual("1", ingestedCustomer.document.envelope.instance.customerId,
     "The ingestion step should write to the final database")
 );

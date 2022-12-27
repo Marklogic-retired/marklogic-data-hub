@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const DataHub = require("/data-hub/5/datahub.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHub = mjsProxy.requireMjsModule("/data-hub/5/datahub.mjs");
 const datahub = new DataHub();
 
 const assertions = [];
