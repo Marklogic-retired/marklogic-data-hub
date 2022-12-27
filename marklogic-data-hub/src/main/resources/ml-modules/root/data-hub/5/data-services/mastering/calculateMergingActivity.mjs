@@ -16,12 +16,13 @@
 'use strict';
 
 import calculateMergingActivityLib from "/data-hub/5/data-services/mastering/calculateMergingActivityLib.mjs";
+import core from "/data-hub/5/artifacts/core.mjs";
 
 const stepName = external.stepName;
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
-const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("merging", stepName);
+const step = core.getArtifact("merging", stepName);
 
 let result = calculateMergingActivityLib.calculateMergingActivity(step);
 

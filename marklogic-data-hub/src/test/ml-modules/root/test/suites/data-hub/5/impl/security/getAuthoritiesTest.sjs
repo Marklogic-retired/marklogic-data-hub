@@ -1,19 +1,21 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const security = mjsProxy.requireMjsModule("/data-hub/5/impl/security.sjs");
 
 const assertions = [];
 
 // Test minimal hub-central-user
 
 hubTest.runWithRolesAndPrivileges(['hub-central-user'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertEqual(1, authorities.length, 'hub-central-user should only have 1 authority'));
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-user should only have "loginToHubCentral"'));
 });
 
 // Test hub-central-load-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-load-reader'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-load-reader should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readIngestion'), 'hub-central-load-reader should have "readIngestion"'));
     assertions.push(test.assertFalse(authorities.includes('writeIngestion'), 'hub-central-load-reader should not have "writeIngestion"'));
@@ -21,7 +23,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-load-reader'], [], function() {
 
 // Test hub-central-load-writer
 hubTest.runWithRolesAndPrivileges(['hub-central-load-writer'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-load-writer should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readIngestion'), 'hub-central-load-writer should have "readIngestion"'));
     assertions.push(test.assertTrue(authorities.includes('writeIngestion'), 'hub-central-load-writer should  have "writeIngestion"'));
@@ -29,7 +31,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-load-writer'], [], function() {
 
 // Test hub-central-mapping-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-mapping-reader should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readMapping'), 'hub-central-mapping-reader should have "readMapping"'));
     assertions.push(test.assertFalse(authorities.includes('writeMapping'), 'hub-central-mapping-reader should not have "writeMapping"'));
@@ -37,7 +39,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [], function()
 
 // Test hub-central-mapping-writer
 hubTest.runWithRolesAndPrivileges(['hub-central-mapping-writer'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-mapping-writer should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readMapping'), 'hub-central-mapping-writer should have "readMapping"'));
     assertions.push(test.assertTrue(authorities.includes('writeMapping'), 'hub-central-mapping-writer should have "writeMapping"'));
@@ -45,7 +47,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-mapping-writer'], [], function()
 
 // Test hub-central-match-merge-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-reader'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-match-merge-reader should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readMatching'), 'hub-central-match-merge-reader should have "readMatching"'));
     assertions.push(test.assertFalse(authorities.includes('writeMatching'), 'hub-central-match-merge-reader should not have "writeMatching"'));
@@ -55,7 +57,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-reader'], [], functi
 
 // Test hub-central-match-merge-writer
 hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-match-merge-writer should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readMatching'), 'hub-central-match-merge-reader should have "readMatching"'));
     assertions.push(test.assertTrue(authorities.includes('writeMatching'), 'hub-central-match-merge-reader should have "writeMatching"'));
@@ -65,7 +67,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [], functi
 
 // Test hub-central-step-runner
 hubTest.runWithRolesAndPrivileges(['hub-central-step-runner'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-step-runner should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readFlow'), 'hub-central-step-runner should have "readFlow"'));
     assertions.push(test.assertTrue(authorities.includes('runStep'), 'hub-central-step-runner should have "runStep"'));
@@ -74,7 +76,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-step-runner'], [], function() {
 
 // Test hub-central-custom-reader
 hubTest.runWithRolesAndPrivileges(['hub-central-custom-reader'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-custom-reader should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readCustom'), 'hub-central-custom-reader should have "readStepDefinition"'));
     assertions.push(test.assertFalse(authorities.includes('writeStepDefinition'), 'hub-central-custom-reader should not have "writeStepDefinition"'));
@@ -82,7 +84,7 @@ hubTest.runWithRolesAndPrivileges(['hub-central-custom-reader'], [], function() 
 
 // Test hub-central-custom-writer
 hubTest.runWithRolesAndPrivileges(['hub-central-custom-writer'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-custom-writer should have "loginToHubCentral"'));
     assertions.push(test.assertTrue(authorities.includes('readCustom'), 'hub-central-custom-writer should have "readCustom"'));
     assertions.push(test.assertTrue(authorities.includes('writeCustom'), 'hub-central-custom-writer should have "writeCustom"'));
@@ -91,9 +93,9 @@ hubTest.runWithRolesAndPrivileges(['hub-central-custom-writer'], [], function() 
 
 // Test hub-central-job-monitor
 hubTest.runWithRolesAndPrivileges(['hub-central-job-monitor'], [], function() {
-    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    const authorities = security.getAuthorities();
     assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-custom-writer should have "loginToHubCentral"'));
-    assertions.push(test.assertTrue(authorities.includes('jobMonitor'), 
+    assertions.push(test.assertTrue(authorities.includes('jobMonitor'),
     'hub-central-job-monitor should have "jobMonitor"'));
 });
 

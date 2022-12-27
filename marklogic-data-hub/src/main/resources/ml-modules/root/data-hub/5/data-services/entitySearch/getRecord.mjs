@@ -17,7 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
-import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 function getDocumentType(nodeKind) {

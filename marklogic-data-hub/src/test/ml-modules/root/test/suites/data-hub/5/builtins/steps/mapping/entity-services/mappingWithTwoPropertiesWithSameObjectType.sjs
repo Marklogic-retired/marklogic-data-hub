@@ -1,6 +1,7 @@
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const lib = require("lib/lib.sjs");
-const mappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const mappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 // First verify that the nested object properties were processed correctly in the XML mapping template

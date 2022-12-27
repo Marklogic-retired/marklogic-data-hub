@@ -147,4 +147,4 @@ function parseOptionsString(optionsString, contentUri) {
   }
 }
 
-export {transform};
+export default{transform};

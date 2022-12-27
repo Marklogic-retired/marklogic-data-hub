@@ -5,10 +5,10 @@ function invoke(module, args) {
 }
 
 function nodeExpand(queryOptions) {
-  return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 20});
+  return invoke("nodeExpand.mjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 20});
 }
 function nodeExpandWithLimit4(queryOptions) {
-  return invoke("nodeExpand.sjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 4});
+  return invoke("nodeExpand.mjs", {nodeInfo: JSON.stringify(queryOptions), start: 0, limit: 4});
 }
 
 const expandQuery1 = {

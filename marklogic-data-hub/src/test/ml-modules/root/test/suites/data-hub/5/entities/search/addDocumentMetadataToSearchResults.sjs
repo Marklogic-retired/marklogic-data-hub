@@ -15,7 +15,8 @@
  */
 'use strict';
 declareUpdate();
-const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entitySearchLib = mjsProxy.requireMjsModule("/data-hub/5/entities/entity-search-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 function verifyMetadataForDocumentWithAllMetadata() {

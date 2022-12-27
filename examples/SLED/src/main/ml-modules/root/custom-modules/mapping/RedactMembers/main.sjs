@@ -6,7 +6,7 @@
    (such as declareUpdate()) or by setting the value of 'stepUpdate' as true in the options and it will be
    executed in update mode.
  */
-const DataHub = require("/data-hub/5/datahub.sjs");
+const DataHub = require("/data-hub/5/datahub.mjs");
 const rdt = require('/MarkLogic/redaction');
 
 const datahub = new DataHub();
@@ -47,7 +47,7 @@ function main(content, options) {
 
   //gets headers, return null if cannot be found
   let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
- 
+
   //---- insert code here to manipulate the instance, triples, headers, uri, context metadata, etc.
   let m = cts.doc(content.uri);
   let redactedMember = fn.head(rdt.redact(m, "member-redaction"));

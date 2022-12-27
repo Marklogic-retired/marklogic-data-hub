@@ -21,8 +21,8 @@ const stepName = external.stepName;
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
-
-const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);
+import core from "/data-hub/5/artifacts/core.mjs";
+const step = core.getArtifact("matching", stepName);
 
 let result = calculateMatchingActivityLib.calculateMatchingActivity(step);
 

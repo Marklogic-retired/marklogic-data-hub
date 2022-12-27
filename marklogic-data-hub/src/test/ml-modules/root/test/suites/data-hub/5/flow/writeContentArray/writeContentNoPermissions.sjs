@@ -14,7 +14,8 @@
  limitations under the License.
  */
 
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -24,8 +25,8 @@ const assertions = hubTest.runWithRolesAndPrivileges(['data-hub-developer'], [],
       flowUtils.writeContentArray([contentWithNoPermissions]);
 
       const record = hubTest.getRecord("/a.json");
-      const message = "In the absence of configured permissions, the user's default permissions should be used; " + 
-        "a user with data-hub-developer should have default tde-admin and tde-view permissions since it inherits " + 
+      const message = "In the absence of configured permissions, the user's default permissions should be used; " +
+        "a user with data-hub-developer should have default tde-admin and tde-view permissions since it inherits " +
         "the tde-admin role; record: " + xdmp.toJsonString(record);
       return [
         test.assertEqual("read", record.permissions["tde-admin"][0], message),
@@ -36,4 +37,4 @@ const assertions = hubTest.runWithRolesAndPrivileges(['data-hub-developer'], [],
     }
 );
 
-assertions 
+assertions

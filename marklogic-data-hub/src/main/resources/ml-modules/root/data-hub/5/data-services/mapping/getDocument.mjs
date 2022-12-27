@@ -24,6 +24,7 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import sourcePropsLib from "/data-hub/5/data-services/mapping/sourcePropertiesLib.mjs";
 import FlowExecutionContext from "/data-hub/5/flow/flowExecutionContext.mjs";
 import StepExecutionContext from "/data-hub/5/flow/stepExecutionContext.mjs";
+import xmlToJsonForMapping from "/data-hub/5/data-services/mapping/xmlToJsonForMapping.mjs";
 
 const stepName = external.stepName;
 const uri = external.uri;
@@ -98,7 +99,7 @@ if (isJson) {
     }
   }
 
-  const transformResult = require('/data-hub/5/data-services/mapping/xmlToJsonForMapping.mjs').transform(xmlNode);
+  const transformResult = xmlToJsonForMapping.transform(xmlNode);
   response.data = transformResult.data;
 
   response.namespaces = Object.assign({ "entity-services": "http://marklogic.com/entity-services"}, transformResult.namespaces);

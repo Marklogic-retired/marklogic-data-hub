@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityLib = mjsProxy.requireMjsModule("/data-hub/5/impl/entity-lib.mjs");
 
 const uris = ["/content/person1.json","/content/person2.json"];
 const entityType = "http://marklogic.com/example/PersonModel-0.0.1/Person";

@@ -15,8 +15,10 @@
  */
 'use strict';
 
-import mergingOptions from "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import common from "/data-hub/5/data-services/mastering/validateStepCommonLib.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const mergingOptions = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/survivorship/merging/options.xqy");
 
 function propertiesWarning(mergeStep, entityPropertyPath) {
     let compiledOptions = mergingOptions.compileMergeOptions(mergeStep, true);
@@ -44,6 +46,6 @@ In every merge rule for the property ${warningPropertiesStr} set Max Values or M
     }
 }
 
-module.exports = {
+export default {
     propertiesWarning
 };

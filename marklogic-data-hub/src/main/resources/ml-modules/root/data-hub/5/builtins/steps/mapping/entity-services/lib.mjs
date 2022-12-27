@@ -1,14 +1,16 @@
 'use strict';
 
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-const datahub = DataHubSingleton.instance();
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import mappingLib from "/data-hub/5/mapping/mapping-lib.mjs";
-import inst from '/MarkLogic/entity-services/entity-services-instance');
-import mappingStepLib from '/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+import mappingStepLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+
+const datahub = DataHubSingleton.instance();
+const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const infoEvent = datahub.consts.TRACE_MAPPING;
 const infoEnabled = xdmp.traceEnabled(infoEvent);
 const debugEvent = datahub.consts.TRACE_MAPPING_DEBUG;
@@ -774,7 +776,7 @@ function extractInstance(docNode) {
 
 function getXQueryLib() {
   if (!xqueryLib) {
-    xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+    xqueryLib = sjsProxy.requireSjsModule('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy', "");
   }
   return xqueryLib;
 }
@@ -864,7 +866,7 @@ function getSourceRecordForMapping(mappingStep, sourceRecord){
   return sourceRecordInstanceOnly ? extractInstance(sourceRecord) : sourceRecord;
 }
 
-export {
+export default {
   xsltPermissions,
   xmlMappingCollections,
   buildMappingXML,

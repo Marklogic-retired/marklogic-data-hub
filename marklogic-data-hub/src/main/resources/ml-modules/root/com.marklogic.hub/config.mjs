@@ -1,4 +1,4 @@
-module.export = {
+export default{
   // Staging Database Properties
   STAGINGDATABASE: "%%mlStagingDbName%%",
   STAGING_PORT: "%%mlStagingPort%%",
@@ -49,3 +49,6 @@ module.export = {
   HUB_SSL: "%%hubSsl%%",
   HUB_DHS: "%%hubDhs%%"
 };
+
+
+

@@ -1,4 +1,5 @@
-const entityValidationLib = require("/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityValidationLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 const assertions = [];

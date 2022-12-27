@@ -15,7 +15,8 @@
  */
  'use strict';
 
-const hubEs = require('/data-hub/5/impl/hub-es.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const hubEs = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-es.mjs");
 
 /**
  * Invoked when DHF needs to build a path reference based on a given entity type and property path; the path reference

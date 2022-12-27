@@ -99,7 +99,7 @@ function propertyDefinitionsFromXPath(xpath, namespaces) {
       });
 }
 
-export {
+export default {
     applyInterceptors,
     GenericMatchModel,
     propertyDefinitionsFromXPath

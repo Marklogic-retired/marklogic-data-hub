@@ -1,6 +1,5 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const ArtifactService = require('../lib/artifactService.sjs');
 
 function updateMergingConfig(artifactName) {

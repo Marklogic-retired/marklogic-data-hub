@@ -16,10 +16,10 @@
 'use strict';
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
-const consts = require('/data-hub/5/impl/consts.sjs');
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const Job = require("/data-hub/5/flow/job.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import Job from "/data-hub/5/flow/job.mjs";
+import jobs from "/data-hub/5/impl/jobs.mjs";
 
 const jobId = external.jobId;
 const flowName = external.flowName;

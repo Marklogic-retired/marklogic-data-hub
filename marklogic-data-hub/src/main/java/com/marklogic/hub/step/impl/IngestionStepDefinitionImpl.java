@@ -51,7 +51,7 @@ public class IngestionStepDefinitionImpl extends AbstractStepDefinition {
 
         options.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
 
-        setModulePath("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
+        setModulePath("/data-hub/5/builtins/steps/ingestion/default/main.mjs");
     }
 
     public JsonNode getFileLocations() {

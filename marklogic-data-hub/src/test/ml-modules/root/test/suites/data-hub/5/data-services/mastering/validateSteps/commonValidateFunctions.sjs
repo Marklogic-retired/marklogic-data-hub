@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const commonValidateLib = require("/data-hub/5/data-services/mastering/validateStepCommonLib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const commonValidateLib = mjsProxy.requireMjsModule("/data-hub/5/data-services/mastering/validateStepCommonLib.mjs");
 
 const testCollections = ['testCol'];
 [

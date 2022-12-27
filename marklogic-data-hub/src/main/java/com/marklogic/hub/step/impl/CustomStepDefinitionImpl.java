@@ -38,6 +38,6 @@ public class CustomStepDefinitionImpl extends AbstractStepDefinition {
         options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
 
-        setModulePath("/path/to/your/step/module/main.sjs");
+        setModulePath("/path/to/your/step/module/main.mjs");
     }
 }
