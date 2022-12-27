@@ -8,6 +8,7 @@ import RulesetSingleModal from "./ruleset-single-modal";
 import {CurationContext} from "../../../../util/curation-context";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {customerMatchingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {act} from "react-dom/test-utils";
 
 jest.mock("../../../../api/matching");
 
@@ -422,5 +423,33 @@ describe("Matching Ruleset Single Modal component", () => {
       userEvent.click(screen.getByText("Exact"));
       userEvent.click(getByText("Save"));
     });
+  });
+
+  test("Hover on Values to Ignore items", async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+    render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
+
+    fireEvent.focus(screen.getAllByRole("combobox")[2]);
+    fireEvent.keyDown(screen.getAllByRole("combobox")[2], {key: "ArrowDown", code: 40});
+    expect(screen.queryAllByTestId("tooltipListPreset")).toHaveLength(0);
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByText("Preset List 1"));
+    });
+    expect(await screen.findAllByTestId("tooltipListPreset")).toHaveLength(1);
+    expect(await screen.findAllByText("+ 3 more")).toHaveLength(1);
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByText("Preset List 2"));
+    });
+    expect(await screen.findAllByText("word 1, word 2, word 3, word 3")).toHaveLength(1);
   });
 });

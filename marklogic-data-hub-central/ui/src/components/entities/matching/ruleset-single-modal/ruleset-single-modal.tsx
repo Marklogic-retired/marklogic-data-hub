@@ -40,6 +40,13 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
+const presetListMock=[
+  {value: "Preset List 0", label: "Preset List 0", valuesToIgnore: []},
+  {value: "Preset List 1", label: "Preset List 1", valuesToIgnore: ["item one", "item two", "word three", "word 3", "word 4", "word 5", "word 6", "word 7"]},
+  {value: "Preset List 2", label: "Preset List 2", valuesToIgnore: ["word 1", "word 2", "word 3", "word 3"]},
+  {value: "Preset List 3", label: "Preset List 3", valuesToIgnore: ["word 1"]}
+];
+
 const MatchRulesetModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
 
@@ -790,24 +797,41 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     event.stopPropagation();
   };
 
+  const formatTextTooltip = (arrText) => {
+    if (Array.isArray(arrText)) {
+      const itemsToShow = 5;
+      if (arrText.length <= itemsToShow) {
+        return  arrText.join(", ");
+      }
+      return  (
+        <div data-testid="tooltipListPreset">
+          {arrText.slice(0, itemsToShow).join(", ")}<span style={{color: "#808080"}}>{" + " + (arrText.length - itemsToShow) + " more"  }</span>
+        </div>);
+    }
+  };
+
   const Option = (renderMatchOptions) => {
     return (
       <div>
         {renderMatchOptions.data.label === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
           <div className={styles.createNewListOption} id="createNewListOption" data-test-id="createNewListOption" onClick={(event) => { handleClick(event, "A"); }}>Create new list</div>
         </components.MenuList>}
-        {renderMatchOptions.data.label !== "Preset List 0" && <components.Option {...renderMatchOptions} >
-          {renderMatchOptions.data.label}
-          <div className={styles.optionsList}>
-            <i><FontAwesomeIcon className={styles.iconHover} id={`edit-${renderMatchOptions.data.label}`} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "E"); }} /></i>
-            <i><FontAwesomeIcon className={styles.iconHover} id={`copy-${renderMatchOptions.data.label}`} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "C"); }} /></i>
-            <i><FontAwesomeIcon className={styles.iconHover} id={`delete-${renderMatchOptions.data.label}`} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "D"); }} /></i>
-          </div>
-        </components.Option>
+        {renderMatchOptions.data.label !== "Preset List 0" &&
+              <components.Option {...renderMatchOptions}>
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesToIgnore)}</span>} id="reduce-tooltip" placement="top">
+                  <div>{renderMatchOptions.data.label} </div>
+                </HCTooltip>
+                <div className={styles.optionsList}>
+                  <i><FontAwesomeIcon className={styles.iconHover} id={`edit-${renderMatchOptions.data.label}`} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "E"); }} /></i>
+                  <i><FontAwesomeIcon className={styles.iconHover} id={`copy-${renderMatchOptions.data.label}`} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "C"); }} /></i>
+                  <i><FontAwesomeIcon className={styles.iconHover} id={`delete-${renderMatchOptions.data.label}`} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "D"); }} /></i>
+                </div>
+              </components.Option>
         }
       </div>
     );
   };
+
 
   return (
     <HCModal
@@ -815,7 +839,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       size={"lg"}
       onHide={closeModal}
     >
-      <Modal.Header className={"pb-0"}>
+      <Modal.Header className={"pb-0"} >
         <div>
           <div className={"fs-5"}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
         </div>
@@ -940,12 +964,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       //value={renderMatchOptions.find(oItem => oItem.value === matchType)}
                       //onChange={onMatchTypeSelect}
                       //options={renderMatchOptions}
-                      options={[
-                        {value: "Preset List 0", label: "Preset List 0"},
-                        {value: "Preset List 1", label: "Preset List 1"},
-                        {value: "Preset List 2", label: "Preset List 2"},
-                        {value: "Preset List 3", label: "Preset List 3"}
-                      ]}
+                      options={presetListMock}
                       styles={reactSelectThemeConfig}
                       formatOptionLabel={({value, label}) => {
                         return (
