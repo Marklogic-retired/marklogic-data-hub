@@ -3,10 +3,10 @@ function invoke(module, args) {
 }
 
 function getCustomStep(stepName) {
-  return invoke("getCustomStep.sjs", {stepName});
+  return invoke("getCustomStep.mjs", {stepName});
 }
 function getCustomSteps() {
-  return invoke("getCustomSteps.sjs");
+  return invoke("getCustomSteps.mjs");
 }
 
 module.exports = {

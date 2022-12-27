@@ -14,8 +14,9 @@
  limitations under the License.
  */
 'use strict';
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
 /**
  * DO NOT USE THIS; it is deprecated as of DHF 5.3.0.
@@ -23,11 +24,11 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
  * Use the processBatch.mjs DS endpoint in StepRunnerService instead.
  */
 
-export function get(context, params) {
+function get(context, params) {
   return post(context, params, null);
 }
 
-export function post(context, params, input) {
+function post(context, params, input) {
   let flowName = params["flow-name"];
   if (!fn.exists(flowName)) {
     httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify a flowName"]);
@@ -43,8 +44,13 @@ export function post(context, params, input) {
   }
 }
 
-export function put(context, params, input) {
+function put(context, params, input) {
 }
 
-export function deleteFunction(context, params) {
+function deleteFunction(context, params) {
 }
+
+exports.GET = get;
+exports.POST =  post;
+exports.PUT = put;
+exports.DELETE =  deleteFunction;

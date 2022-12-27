@@ -1,10 +1,12 @@
 'use strict';
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-const datahub = DataHubSingleton.instance();
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import provLib from "/data-hub/5/impl/prov.mjs";
 
-export function transform(context, params, content) {
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const datahub = DataHubSingleton.instance();
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const provLib = mjsProxy.requireMjsModule("/data-hub/5/impl/prov.mjs");
+
+function transform(context, params, content) {
   let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
   let flow = datahub.flow.getFlow(flowName);
   if (!flow) {
@@ -68,3 +70,5 @@ export function transform(context, params, content) {
    provLib.getProvenanceWriteQueue().persist();
    return Sequence.from(docs);
 }
+
+exports.transform = transform;

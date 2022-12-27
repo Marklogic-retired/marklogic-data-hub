@@ -1,4 +1,5 @@
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -32,7 +33,7 @@ const response = flowApi.runFlowOnContent(flowName,
         "instance": {
           "customerId": 1,
           "name": "New Jane",
-          "status": "new status"    
+          "status": "new status"
         }
       }
     }
@@ -60,13 +61,13 @@ const merges = mergedDoc.headers.merges;
 
 assertions.push(
   // Verify headers
-  test.assertEqual(true, mergedDoc.headers.headerFromMappingStep, 
+  test.assertEqual(true, mergedDoc.headers.headerFromMappingStep,
     "The header added by the mapping step should have been merged"),
-  test.assertEqual(true, mergedDoc.headers.headerFromIncomingCustomer, 
+  test.assertEqual(true, mergedDoc.headers.headerFromIncomingCustomer,
     "The header that already existed on the incoming customer should have been merged"),
   test.assertEqual(true, mergedDoc.headers.headerFromMatchingCustomer,
     "The header from the matching customer should have been merged"),
-  test.assertEqual(expectedMergedDocUri, mergedDoc.headers.id, 
+  test.assertEqual(expectedMergedDocUri, mergedDoc.headers.id,
     "Merging is expected to store the merged document URI in the 'id' header"),
   test.assertEqual(2, merges.length,
     "The merges array should have one entry for each of the 2 merged documents"),
@@ -86,9 +87,9 @@ assertions.push(
     "The customerId should be merged"),
   test.assertEqual("Existing nickname", mergedDoc.instance.Customer.nicknames[0],
     "The nickname from the matching customer should have been merged"),
-  test.assertEqual("new status", mergedDoc.instance.Customer.status, 
+  test.assertEqual("new status", mergedDoc.instance.Customer.status,
     "The status value from the incoming customer should have been merged"),
-  test.assertEqual(2, mergedDoc.instance.Customer.name.length, 
+  test.assertEqual(2, mergedDoc.instance.Customer.name.length,
     "Even though name is a single-value property, merging defaults to concatenating values"),
   test.assertEqual("Existing Jane", mergedDoc.instance.Customer.name[0]),
   test.assertEqual("New Jane", mergedDoc.instance.Customer.name[1]),
@@ -98,7 +99,7 @@ assertions.push(
   test.assertTrue(mergedRecord.collections.includes("sm-Customer-merged")),
   test.assertTrue(mergedRecord.collections.includes("sm-Customer-mastered")),
   test.assertTrue(mergedRecord.collections.includes("raw-content")),
-  test.assertTrue(mergedRecord.collections.includes("Customer"), 
+  test.assertTrue(mergedRecord.collections.includes("Customer"),
     "Customer should be from the incoming record (the mapping step added it to that record)")
 );
 
@@ -111,7 +112,7 @@ assertions.push(
 );
 
 // Verify the incoming customer was persisted and archived. While the user may not want this
-// document to be persisted by the merging step, it seems unavoidable since the merging step wants 
+// document to be persisted by the merging step, it seems unavoidable since the merging step wants
 // to make some update to collections on every document that it processes.
 const incomingCustomer = hubTest.getRecord("/incomingCustomer.json");
 assertions.push(
@@ -123,7 +124,7 @@ assertions.push(
 // Verify the audit record
 const auditRecord = hubTest.getRecordInCollection("sm-Customer-auditing");
 assertions.push(
-  test.assertTrue(auditRecord.uri.startsWith("/com.marklogic.smart-mastering/auditing/merge"), 
+  test.assertTrue(auditRecord.uri.startsWith("/com.marklogic.smart-mastering/auditing/merge"),
     "Expected a single audit document to have been created that captures prov details of the merge")
 );
 
@@ -136,7 +137,7 @@ assertions.push(
   test.assertEqual("step3", report.stepName),
   test.assertEqual(1, report.numberOfDocumentsProcessed),
   test.assertEqual(1, report.numberOfDocumentsSuccessfullyProcessed),
-  test.assertEqual(1, report.resultingMerges.count, 
+  test.assertEqual(1, report.resultingMerges.count,
     "Expecting the 1 merge to have been captured"),
   test.assertEqual(2, report.documentsArchived.count,
     "Both the incoming and existing customer documents should have been archived"),

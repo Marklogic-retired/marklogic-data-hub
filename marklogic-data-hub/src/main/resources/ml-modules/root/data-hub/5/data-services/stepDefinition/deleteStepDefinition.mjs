@@ -19,5 +19,6 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "exec
 import consts from "/data-hub/5/impl/consts.mjs";
 
 const name = external.name;
-import('/data-hub/5/artifacts/core.mjs').deleteArtifact("stepDefinition", name);
+import core from "/data-hub/5/artifacts/core.mjs";
+core.deleteArtifact("stepDefinition", name);
 xdmp.trace(consts.TRACE_STEP, `Finished deleting step definition ${name}`);

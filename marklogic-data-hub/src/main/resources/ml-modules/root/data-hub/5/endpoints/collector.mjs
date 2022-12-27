@@ -17,9 +17,11 @@
 
 import collectorLib from  "/data-hub/5/endpoints/collectorLib.mjs";
 import DataHub from  "/data-hub/5/datahub.mjs";
-const datahub = new DataHub();
 import httpUtils from  "/data-hub/5/impl/http-utils.mjs";
-import parameters from  "/MarkLogic/rest-api/endpoints/parameters.xqy";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const datahub = new DataHub();
+const parameters = sjsProxy.requireSjsModule("/MarkLogic/rest-api/endpoints/parameters.xqy", "http://marklogic.com/rest-api/endpoints/parameters");
 
 xdmp.securityAssert(['http://marklogic.com/xdmp/privileges/rest-reader'], 'execute');
 

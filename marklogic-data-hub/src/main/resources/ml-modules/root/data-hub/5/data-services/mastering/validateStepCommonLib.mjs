@@ -63,7 +63,7 @@ function parseEntityTypeTitle(targetEntityType) {
     return targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
 }
 
-module.exports = {
+export default  {
     targetEntityCollectionWarning,
     sourceCollectionWarning,
     temporalCollectionsWarning,

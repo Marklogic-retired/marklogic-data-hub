@@ -83,7 +83,7 @@ function getDirectory() {
   return "/steps/ingestion/";
 }
 
-export {
+export default {
   getNameProperty,
   getCollections,
   getStorageDatabases,

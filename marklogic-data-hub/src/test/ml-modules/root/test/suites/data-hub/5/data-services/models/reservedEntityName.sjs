@@ -1,4 +1,5 @@
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityLib = mjsProxy.requireMjsModule("/data-hub/5/impl/entity-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 const assertions = [];
@@ -17,7 +18,7 @@ function assertNameIsReserved(name) {
   }
 }
 
-// This list is based on knowledge of the constraint names in the search options generated for the Explore feature. 
+// This list is based on knowledge of the constraint names in the search options generated for the Explore feature.
 assertNameIsReserved("Collection");
 assertNameIsReserved("createdByJob");
 assertNameIsReserved("createdByJobWord");

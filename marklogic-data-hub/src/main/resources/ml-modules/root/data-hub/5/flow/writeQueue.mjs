@@ -31,7 +31,7 @@ import provLib from "/data-hub/5/impl/prov.mjs";
  * one step to replace the output of a previous step. Trace logging is used to record this so that a
  * user can have visibility into when this happens.
  */
-export class WriteQueue {
+export default class WriteQueue {
 
   constructor() {
     this.databaseToContentMap = {};
@@ -103,3 +103,4 @@ export class WriteQueue {
     return writeInfos;
   }
 }
+

@@ -41,7 +41,7 @@ public class StepDefinitionManagerTest extends AbstractHubCoreTest {
     @Test
     void saveStep() {
         StepDefinition stepDefinition = StepDefinition.create(mappingStepName, StepDefinition.StepDefinitionType.MAPPING);
-        Assertions.assertEquals("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs", stepDefinition.getModulePath());
+        Assertions.assertEquals("/data-hub/5/builtins/steps/mapping/entity-services/main.mjs", stepDefinition.getModulePath());
         stepDefinitionManager.saveStepDefinition(stepDefinition);
 
         String stepFileName = mappingStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION;

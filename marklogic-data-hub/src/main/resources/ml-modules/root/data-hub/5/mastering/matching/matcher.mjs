@@ -411,7 +411,7 @@ function buildMatchSummary(matchable, content) {
   return matchSummary;
 }
 
-export {
+export default {
   buildMatchSummary,
   groupQueries,
   optimizeCtsQueries

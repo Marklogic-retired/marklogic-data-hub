@@ -19,15 +19,15 @@
  * Defines public functions pertaining to DHF flows and steps.
  */
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
-const FlowExecutionContext = require("/data-hub/5/flow/flowExecutionContext.sjs");
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+import Artifacts from '/data-hub/5/artifacts/core.mjs';
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
+import FlowExecutionContext from "/data-hub/5/flow/flowExecutionContext.mjs";
+import StepExecutionContext from "/data-hub/5/flow/stepExecutionContext.mjs";
 
 /**
  * Returns an envelope based on the given arguments.
- * 
+ *
  * @param {object} instance the data to add to the "instance" section of the envelope
  * @param {object} headers the data to add to the "headers" section of the envelope
  * @param {array} triples the data to add to the "triples" section of the envelope
@@ -39,18 +39,18 @@ function makeEnvelope(instance, headers, triples, outputFormat = "json") {
 }
 
 /**
- * Runs a flow against the given array of content. Each step is run in-memory, with the output of one step becoming the 
- * input of the next step. The sourceQuery of each step is thus ignored, as the input to each step is either the 
- * given contentArray for the first step, or the output of the previous step for every other step. 
+ * Runs a flow against the given array of content. Each step is run in-memory, with the output of one step becoming the
+ * input of the next step. The sourceQuery of each step is thus ignored, as the input to each step is either the
+ * given contentArray for the first step, or the output of the previous step for every other step.
  *
  * @param {string} flowName required name of the flow to be run; if the flow is not found, an error is thrown
  * @param {array} contentArray array of objects conforming to ContentObject.schema.json; at a minimum, content.uri
- * must be specified. Typically, content.value will be set with the document to be processed, and content.uri is set to 
+ * must be specified. Typically, content.value will be set with the document to be processed, and content.uri is set to
  * provide an initial URI, which one of the steps may adjust. A client may also specify parts of content.context, though
  * it is more typical that a step will define this when it processes each content object.
  * @param {string} jobId optional identifier for the job that will be created; if not specified, will be a UUID
  * @param {object} runtimeOptions optional object defining options to adjust flow/step behavior
- * @param {array} stepNumbers optional array of the step numbers to run; if not specified, all steps are run; if any step number 
+ * @param {array} stepNumbers optional array of the step numbers to run; if not specified, all steps are run; if any step number
  * cannot be found, an error is thrown
  * @return a JSON object conforming to RunFlowResponse.schema.json
  */
@@ -59,14 +59,14 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
 }
 
 /**
- * Run the step identified by flowName and stepNumber against the given content, but do not persist anything - 
+ * Run the step identified by flowName and stepNumber against the given content, but do not persist anything -
  * instead, return the content array produced by execution of the step and the step response, which captures
  * metadata about the step execution.
- * 
+ *
  * @param {string} flowName identifies the flow, which must exist in the database, containing the step to be run
  * @param {string} stepNumber identifies the step in the flow to run
  * @param {array} contentArray array of objects conforming to ContentObject.schema.json; at a minimum, content.uri
- * must be specified. Typically, content.value will be set with the document to be processed, and content.uri is set to 
+ * must be specified. Typically, content.value will be set with the document to be processed, and content.uri is set to
  * provide an initial URI, which one of the steps may adjust. A client may also specify parts of content.context, though
  * it is more typical that a step will define this when it processes each content object.
  * @param {object} runtimeOptions optional object defining options to adjust step behavior
@@ -78,7 +78,7 @@ function runFlowStepOnContent(flowName, stepNumber, contentArray, runtimeOptions
   const flowExecutionContext = new FlowExecutionContext(flow, null, runtimeOptions, [stepNumber]);
   const stepExecutionContext = StepExecutionContext.newContext(flowExecutionContext, stepNumber);
   const writeQueue = null;
-  
+
   flowRunner.prepareContentBeforeStepIsRun(stepExecutionContext, contentArray);
   const outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue);
   return {
@@ -87,7 +87,7 @@ function runFlowStepOnContent(flowName, stepNumber, contentArray, runtimeOptions
   }
 }
 
-module.exports = {
+export default{
   makeEnvelope,
   runFlowOnContent,
   runFlowStepOnContent

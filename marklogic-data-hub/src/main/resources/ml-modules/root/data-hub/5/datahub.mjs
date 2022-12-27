@@ -22,7 +22,7 @@ import Perf from "/data-hub/5/impl/perf.mjs";
 import Debug from "/data-hub/5/impl/debug.mjs";
 import defaultConfig from "/com.marklogic.hub/config.mjs";
 
-export class DataHub {
+export default class DataHub {
 
   constructor(config = null){
     if(!config) {

@@ -20,5 +20,5 @@ xdmp.securityAssert("http://marklogic.com/xdmp/privileges/xdmp-role-roles", "exe
 
 const roleName = external.roleName;
 
-import describLib from "/data-hub/5/security/describe-lib.sjs";
+import describLib from "/data-hub/5/security/describe-lib.mjs";
 describLib.describeRole(roleName);

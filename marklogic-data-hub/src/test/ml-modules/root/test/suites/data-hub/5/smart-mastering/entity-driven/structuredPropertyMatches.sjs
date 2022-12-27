@@ -1,5 +1,6 @@
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const match = require('/data-hub/5/builtins/steps/mastering/default/matching.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+const match = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mastering/default/matching.mjs");
 const test = require("/test/test-helper.xqy");
 
 const assertions = [];

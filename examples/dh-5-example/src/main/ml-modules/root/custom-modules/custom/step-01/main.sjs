@@ -1,7 +1,8 @@
-const DataHub = require("/data-hub/5/datahub.sjs");
+const {requireMjsModule} = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHub = mjsProxy.requireMjsModule("/data-hub/5/datahub.mjs");
 const datahub = new DataHub();
 
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
 
 function main(content, options) {
 

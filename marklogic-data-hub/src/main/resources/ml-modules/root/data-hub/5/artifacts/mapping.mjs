@@ -96,7 +96,7 @@ function defaultArtifact(artifactName, entityTypeId) {
   };
 }
 
-export {
+export default {
     getNameProperty,
     getCollections,
     getStorageDatabases,

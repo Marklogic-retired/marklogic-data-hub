@@ -415,7 +415,7 @@ function insertDocument(uri, content, permissions, collections, targetDatabase) 
   )
 }
 
-export {
+export default {
   findJobs,
   findStepResponses,
   getMatchingPropertyValues,

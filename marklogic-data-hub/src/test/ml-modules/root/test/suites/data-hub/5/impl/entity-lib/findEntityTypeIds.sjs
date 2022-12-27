@@ -1,6 +1,8 @@
 const test = require("/test/test-helper.xqy");
 
-const entityTypeIds = require("/data-hub/5/impl/entity-lib.sjs").findEntityTypeIds();
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityLib = mjsProxy.requireMjsModule("/data-hub/5/impl/entity-lib.mjs");
+const entityTypeIds = entityLib.findEntityTypeIds();
 
 [
   test.assertTrue(entityTypeIds.includes("http://marklogic.com/example/PersonModel-0.0.1/Address")),

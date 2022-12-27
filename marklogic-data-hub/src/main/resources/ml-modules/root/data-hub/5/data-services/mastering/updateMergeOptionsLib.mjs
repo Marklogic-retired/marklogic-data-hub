@@ -197,7 +197,4 @@ function targetCollectionObject(parent) {
   }
 }
 
-
-module.exports = {
-  updateMergeOptions
-};
+export default { updateMergeOptions };

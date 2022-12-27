@@ -128,6 +128,6 @@ function buildContentObjectsFromMatchSummary(
   return contentObjects;
 }
 
-export {
+export default {
     buildContentObjectsFromMatchSummary
 };

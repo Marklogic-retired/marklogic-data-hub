@@ -15,8 +15,8 @@
  */
 'use strict';
 
-import * as config from "/com.marklogic.hub/config.mjs";
-import * as consts from "/data-hub/5/impl/consts.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
 
 const collections = ['http://marklogic.com/data-hub/exclusion-list'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
@@ -75,7 +75,7 @@ function defaultArtifact(artifactName, entityTypeId) {
   };
 }
 
-export {
+export default {
   getNameProperty,
   getCollections,
   getStorageDatabases,

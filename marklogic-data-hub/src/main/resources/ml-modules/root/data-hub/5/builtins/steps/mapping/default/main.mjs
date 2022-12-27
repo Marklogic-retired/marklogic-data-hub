@@ -1,7 +1,11 @@
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-const datahub = DataHubSingleton.instance();
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import lib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+
+const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+
+const datahub = DataHubSingleton.instance();
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
 var entityModel = null;
@@ -100,7 +104,7 @@ function buildEnvelope(doc, instance, outputFormat, options) {
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {
-      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+      triples.push(xdmp.toJSON(semXqy.rdfParse(JSON.stringify(triple), "rdfjson")));
     }
   }
 
@@ -112,7 +116,7 @@ function buildEnvelope(doc, instance, outputFormat, options) {
   return flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }
 
-export {
+export default {
   main,
   buildEnvelope
 };
