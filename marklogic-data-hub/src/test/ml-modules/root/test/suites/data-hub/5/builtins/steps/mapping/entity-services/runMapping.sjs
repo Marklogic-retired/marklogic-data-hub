@@ -1,5 +1,6 @@
 const lib = require("lib/lib.sjs");
-const mapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const mapping = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/main.mjs");
 const test = require("/test/test-helper.xqy");
 const serverTimezone = sem.timezoneString(fn.currentDateTime());
 const assertions = [];

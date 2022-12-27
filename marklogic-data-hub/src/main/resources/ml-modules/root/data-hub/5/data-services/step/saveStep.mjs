@@ -22,7 +22,7 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 
 const stepDefinitionType = external.stepDefinitionType.toLowerCase();
-const stepProperties = external.stepProperties;
+let stepProperties = external.stepProperties;
 const overwrite = external.overwrite;
 const throwErrorIfStepIsPresent = external.throwErrorIfStepIsPresent;
 

@@ -15,12 +15,14 @@
  */
 'use strict';
 
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+
 function capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 }
 
 function deleteDocument(docUri, database) {
-  xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.sjs', {docUri}, {
+  xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.mjs', {docUri}, {
     database: xdmp.database(database),
     commit: 'auto',
     update: 'true',
@@ -118,7 +120,7 @@ function documentToContentDescriptor(doc, options = {}) {
     };
 }
 
-function queryToContentDescriptorArray(query, options = {}, database) {
+/*function queryToContentDescriptorArray(query, options = {}, database) {
   let contentArray = [];
   invokeFunction(function () {
     let results = cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
@@ -127,7 +129,7 @@ function queryToContentDescriptorArray(query, options = {}, database) {
     }
   }, database);
   return contentArray;
-}
+}*/
 
 function documentsToContentDescriptorArray(documents, options = {}) {
   let contentArray = [];
@@ -159,7 +161,7 @@ function replaceLanguageWithLang(artifact) {
 }
 
 function writeDocument(docUri, content, permissions, collections, database) {
-  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.sjs', {
+  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.mjs', {
     content: content,
     docUri: docUri,
     permissions: permissions,
@@ -203,22 +205,18 @@ function getErrorMessage(e) {
   return errorMessage;
 }
 
-const cachedLibraries = {};
-
 function requireFunction(modulePath, functionName) {
-  if (!cachedLibraries[modulePath]) {
-    cachedLibraries[modulePath] = require(modulePath);
-  }
-  return cachedLibraries[modulePath][functionName];
+   return sjsProxy.requireSjsModule(modulePath)[functionName];
+  //  return sjsProxy.requireSjsModule(modulePath);
 }
 
-export {
+export default {
   capitalize,
   deleteDocument,
   documentsToContentDescriptorArray,
   documentToContentDescriptor,
   error,
-  evalInDatabase: module.amp(evalInDatabase),
+  evalInDatabase,
   getErrorMessage,
   getObjectValues,
   hubTrace,

@@ -1,5 +1,6 @@
-const config = require("/com.marklogic.hub/config.sjs");
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 

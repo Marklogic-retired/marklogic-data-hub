@@ -78,6 +78,6 @@ function saveHubConfigInDocumentsDatabase() {
   );
 }
 
-export {
+export default {
     saveHubConfigInDocumentsDatabase
 };

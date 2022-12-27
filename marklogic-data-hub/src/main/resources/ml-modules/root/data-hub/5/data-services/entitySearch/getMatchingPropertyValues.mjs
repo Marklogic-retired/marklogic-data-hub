@@ -17,7 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
-import ext from "/data-hub/extensions/entity/build-property-path-reference.mjs";
+const ext = require("/data-hub/extensions/entity/build-property-path-reference.sjs");
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const facetValuesSearchQuery = external.facetValuesSearchQuery;

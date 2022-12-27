@@ -1,6 +1,7 @@
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const assertions = []

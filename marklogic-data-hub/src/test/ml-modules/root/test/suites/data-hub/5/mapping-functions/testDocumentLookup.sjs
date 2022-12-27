@@ -1,5 +1,6 @@
 const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
-const coreSjs = require('/data-hub/5/mapping-functions/core.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const coreSjs = mjsProxy.requireMjsModule("/data-hub/5/mapping-functions/core.mjs");
 const test = require("/test/test-helper.xqy");
 
 const uri = "/test/dictionary.json";

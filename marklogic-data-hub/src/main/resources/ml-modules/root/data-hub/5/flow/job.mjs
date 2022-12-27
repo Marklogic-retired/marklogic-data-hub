@@ -26,7 +26,7 @@ import jobs from "/data-hub/5/impl/jobs.mjs";
  * Note that nothing is written to the database unless either "create" or "update"
  * is invoked.
  */
-export class Job {
+export default class Job {
 
   static newJob(flowName, jobId) {
     const job = jobs.buildNewJob(jobId, flowName);

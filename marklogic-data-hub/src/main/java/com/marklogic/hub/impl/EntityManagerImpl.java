@@ -34,7 +34,12 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.entity.*;
+import com.marklogic.hub.entity.DefinitionType;
+import com.marklogic.hub.entity.DefinitionsType;
+import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
+import com.marklogic.hub.entity.ItemType;
+import com.marklogic.hub.entity.PropertyType;
 import com.marklogic.hub.error.DataHubProjectException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +55,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component

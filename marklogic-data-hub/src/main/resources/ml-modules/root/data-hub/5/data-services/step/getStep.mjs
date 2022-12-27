@@ -16,6 +16,7 @@
 'use strict';
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import core from "/data-hub/5/artifacts/core.mjs";
 
 const stepDefinitionType = external.stepDefinitionType.toLowerCase();
 const stepName = external.stepName;
@@ -32,4 +33,4 @@ if ("ingestion" === stepDefinitionType) {
   httpUtils.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
 }
 
-require('/data-hub/5/artifacts/core.sjs').getArtifact(stepDefinitionType, stepName);
+core.getArtifact(stepDefinitionType, stepName);

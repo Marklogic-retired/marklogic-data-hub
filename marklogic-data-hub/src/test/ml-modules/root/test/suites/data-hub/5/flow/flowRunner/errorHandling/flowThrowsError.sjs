@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -14,19 +15,19 @@ const response = flowRunner.runFlowOnContent(flowName,
 );
 
 const assertions = [
-  test.assertEqual("finished_with_errors", response.jobStatus, 
-    "While the steps completed successfully, the writing of step output should have failed due to an invalid range index value error. " + 
+  test.assertEqual("finished_with_errors", response.jobStatus,
+    "While the steps completed successfully, the writing of step output should have failed due to an invalid range index value error. " +
     "This results in a status of finished with errors"),
-  
-  test.assertEqual(1, response.flowErrors.length, 
+
+  test.assertEqual(1, response.flowErrors.length,
     "flowErrors was added in 5.5 to capture flow-level errors when running connected steps"),
   test.assertEqual("XDMP-RANGEINDEX", response.flowErrors[0].name),
   test.assertEqual("Range index error", response.flowErrors[0].message),
-  test.assertTrue(response.flowErrors[0].description.includes('XDMP-LEXVAL: Invalid lexical value \"invalid value\"'), 
-    "The toString result for an ML error typically provides the most helpful information; users don't need to see a very complicated " + 
+  test.assertTrue(response.flowErrors[0].description.includes('XDMP-LEXVAL: Invalid lexical value \"invalid value\"'),
+    "The toString result for an ML error typically provides the most helpful information; users don't need to see a very complicated " +
     "stack that references code that they don't have the ability to modify"),
-  
-  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length, 
+
+  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length,
     "Since both docs are written to final and one failed, nothing should have been written to final"),
   test.assertEqual(0, hubTest.getUrisInCollection("customStepTwo").length),
 ];

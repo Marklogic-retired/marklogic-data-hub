@@ -13,8 +13,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import mastering from "/com.marklogic.smart-mastering/process-records.xqy";
 import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const mastering = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/process-records.xqy");
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
 const emptySequence = Sequence.from([]);
 

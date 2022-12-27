@@ -3,43 +3,43 @@ function invoke(module, args) {
 }
 
 function addStepToFlow(flowName, stepDefinitionType, stepName) {
-  return invoke("addStepToFlow.sjs", {flowName, stepDefinitionType, stepName});
+  return invoke("addStepToFlow.mjs", {flowName, stepDefinitionType, stepName});
 }
 
 function deleteFlow(name) {
-  return invoke("deleteFlow.sjs", {name});
+  return invoke("deleteFlow.mjs", {name});
 }
 
 function createFlow(name, description) {
-  return invoke("createFlow.sjs", {name, description});
+  return invoke("createFlow.mjs", {name, description});
 }
 
 function getFlow(name) {
-  return invoke("getFlow.sjs", {name});
+  return invoke("getFlow.mjs", {name});
 }
 
 function getFlowsWithStepDetails() {
-  return invoke("getFlowsWithStepDetails.sjs", {});
+  return invoke("getFlowsWithStepDetails.mjs", {});
 }
 
 function getFlowWithLatestJobInfo(name) {
-  return invoke("getFlowWithLatestJobInfo.sjs", {name});
+  return invoke("getFlowWithLatestJobInfo.mjs", {name});
 }
 
 function getFlowsWithLatestJobInfo(name) {
-  return invoke("getFlowsWithLatestJobInfo.sjs", {});
+  return invoke("getFlowsWithLatestJobInfo.mjs", {});
 }
 
 function getFullFlow(flowName) {
-  return invoke("getFullFlow.sjs", {flowName});
+  return invoke("getFullFlow.mjs", {flowName});
 }
 
 function removeStepFromFlow(flowName, stepNumber) {
-  return invoke("removeStepFromFlow.sjs", {flowName, stepNumber});
+  return invoke("removeStepFromFlow.mjs", {flowName, stepNumber});
 }
 
 function updateFlow(name, description, stepIds) {
-  return invoke("updateFlow.sjs", {name, description, stepIds});
+  return invoke("updateFlow.mjs", {name, description, stepIds});
 }
 
 module.exports = {

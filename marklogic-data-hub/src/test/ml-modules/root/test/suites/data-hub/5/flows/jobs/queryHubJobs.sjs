@@ -1,7 +1,8 @@
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs");
-const jobQueryLib = require("/data-hub/5/flow/job-query-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
+const jobQueryLib = mjsProxy.requireMjsModule("/data-hub/5/flow/job-query-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 xdmp.invokeFunction(function () {

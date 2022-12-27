@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
 
 function make(flow, stepDefOptions, stepNumber, runtimeOptions) {
   return flowUtils.makeCombinedOptions(flow, {"options": stepDefOptions}, stepNumber, runtimeOptions);
@@ -37,7 +38,7 @@ function stepSpecificOverridesRuntime() {
     "stepOptions": {
       "1": {
         "winner": "stepSpecific1"
-      }, 
+      },
       "2": {
         "winner": "stepSpecific2"
       }

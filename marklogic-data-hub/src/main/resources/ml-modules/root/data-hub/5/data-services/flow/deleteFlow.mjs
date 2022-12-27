@@ -17,5 +17,8 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 
+import Artifacts from '/data-hub/5/artifacts/core.mjs';
+
 const name = external.name;
-import('/data-hub/5/artifacts/core.mjs').deleteArtifact("flow", name);
+
+Artifacts.deleteArtifact("flow", name);

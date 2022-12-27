@@ -18,8 +18,10 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import json from "/MarkLogic/json/json.xqy";
-import sem from "/MarkLogic/semantics.xqy";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const json = sjsProxy.requireSjsModule('/MarkLogic/json/json.xqy');
+const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
 
   /**
    : Determine the input document type from the root node.
@@ -257,7 +259,7 @@ import sem from "/MarkLogic/semantics.xqy";
   }
 
   function tripleToXml(triple) {
-    return sem.rdfSerialize(triple, 'triplexml').xpath('*');
+    return semXqy.rdfSerialize(triple, 'triplexml').xpath('*');
   }
 
   function normalizeTriple(triple) {
@@ -265,6 +267,14 @@ import sem from "/MarkLogic/semantics.xqy";
       return triple;
     } else if (triple instanceof ObjectNode) {
       return sem.triple(triple.toObject());
+    } else if (triple instanceof ArrayNode) {
+      return normalizeTriple(triple.xpath("./node()"));
+    } if (triple[Symbol.iterator]) {
+      const triples = [];
+      for (const t of triple) {
+        triples.push(normalizeTriple(t));
+      }
+      return triples.length <= 1 ? triples[0]: triples;
     } else {
       return sem.triple(triple);
     }
@@ -632,7 +642,7 @@ import sem from "/MarkLogic/semantics.xqy";
 
   function normalizeValuesInNode(node) {
     if (node instanceof ObjectNode || node instanceof ArrayNode) {
-      return node.toObject();
+      return node;
     } else if (node instanceof Element) {
       return node.xpath('*');
     }
@@ -730,7 +740,7 @@ function writeContentArray(contentArray, databaseName, provenanceQueue) {
     options.database = xdmp.database(databaseName);
   }
   try {
-    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', vars, options));
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.mjs', vars, options));
   } catch (e) {
     handleWriteErrors(e, contentArray);
   }
@@ -808,7 +818,7 @@ function buildInvokeOptionsForCustomHook(user, database) {
   return options;
 }
 
-export {
+export default {
   addMetadataToContent,
   buildInvokeOptionsForCustomHook,
   cleanData,

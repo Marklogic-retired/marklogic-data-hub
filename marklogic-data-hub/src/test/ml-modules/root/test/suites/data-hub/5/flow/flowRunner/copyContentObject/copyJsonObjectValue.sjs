@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const test = require("/test/test-helper.xqy");
 
 const content = {
@@ -36,7 +37,7 @@ content.anotherThing.child = "modified";
 
 const assertions = [
   test.assertEqual("my-uri", copy.uri),
-  test.assertEqual("modified", copy.value.hello, "It's expected that value is modified because copyContentObject is doing a shallow copy; " + 
+  test.assertEqual("modified", copy.value.hello, "It's expected that value is modified because copyContentObject is doing a shallow copy; " +
     "see the comments on this function for why a deep copy is not yet being done"
   ),
   test.assertEqual(2, copy.context.collections.length),
@@ -49,9 +50,9 @@ const assertions = [
   test.assertEqual("data-hub-common-writer", xdmp.roleName(copy.context.permissions[1].roleId)),
   test.assertEqual("value1", copy.context.metadata.meta1),
   test.assertEqual("value2", copy.context.metadata.meta2),
-  test.assertEqual("modified", copy.context.somethingElse.child, "Any unknown property has the same issues as content.value, " + 
+  test.assertEqual("modified", copy.context.somethingElse.child, "Any unknown property has the same issues as content.value, " +
     "where it's not known if a deep copy can be reliably performed. So a shallow copy is expected."),
-  test.assertEqual("modified", copy.anotherThing.child, "Any unknown property has the same issues as content.value, " + 
+  test.assertEqual("modified", copy.anotherThing.child, "Any unknown property has the same issues as content.value, " +
     "where it's not known if a deep copy can be reliably performed. So a shallow copy is expected.")
 ];
 
