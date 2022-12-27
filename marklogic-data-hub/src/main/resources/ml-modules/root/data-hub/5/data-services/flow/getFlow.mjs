@@ -18,4 +18,5 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
 const name = external.name;
-import('/data-hub/5/artifacts/core.mjs').getArtifact("flow", name);
+import core from "/data-hub/5/artifacts/core.mjs";
+core.getArtifact("flow", name);

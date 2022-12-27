@@ -16,7 +16,7 @@
 'use strict';
 
 // No privilege required: Returns Datahub configuration data that is not sensitive
-const dhConfigUri = "/data-hub/5/datahubConfig.mson";
+const dhConfigUri = "/data-hub/5/datahubConfig.json";
 const dhConfig = xdmp.invokeFunction(function () {
   return cts.doc(dhConfigUri).toObject();
 }, {database: xdmp.modulesDatabase()});

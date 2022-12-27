@@ -86,7 +86,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             throw new IllegalArgumentException(format("A step definition already exists with the name '%s' and type '%s'", name, type));
         }
 
-        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.sjs", type.toLowerCase(), name));
+        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.mjs", type.toLowerCase(), name));
         stepDefinitionManager.saveStepDefinition(stepDef);
         createCustomModule(name, type, format);
 
@@ -153,7 +153,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
             try{
                 stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
-                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
+                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs");
                 stepDefinitionManager.saveStepDefinition(stepDefinition);
             }
             catch(Exception e){
@@ -162,7 +162,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             createCustomModule(stepDefName, stepType);
             messageBuilder.append(String.format("Created step definition '%s' of type '%s'.\n", stepName, stepType));
             messageBuilder.append("The module file for the step definition is available at "
-                + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs" + ". \n");
+                + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs" + ". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
         DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();

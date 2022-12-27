@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const mlcpTransform = require("/data-hub/5/transforms/mlcp-flow-transform.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const mlcpTransform = mjsProxy.requireMjsModule("/data-hub/5/transforms/mlcp-flow-transform.mjs");
 
 function testAddSourceNameAndSourceType() {
   const assertions = [];

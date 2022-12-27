@@ -23,7 +23,7 @@ function basicCsvParser(csv) {
 function invokeExportSearchService(schemaName, viewName, limit, structuredQuery, searchText, sortOrder, columns, retries=0) {
     try {
         return fn.head(xdmp.invoke(
-            "/data-hub/5/data-services/entitySearch/exportSearchAsCSV.sjs",
+            "/data-hub/5/data-services/entitySearch/exportSearchAsCSV.mjs",
             {
                 schemaName,
                 viewName,

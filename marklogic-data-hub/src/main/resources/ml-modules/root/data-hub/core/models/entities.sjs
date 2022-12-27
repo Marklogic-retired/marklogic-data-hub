@@ -1,6 +1,7 @@
 const { EntityModel } = require("/data-hub/core/models/entityModel.sjs");
 const sem = require("/MarkLogic/semantics");
-const {throwBadRequest} = require("/data-hub/5/impl/http-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const {throwBadRequest} = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
 const entityModelCollection = "http://marklogic.com/entity-services/models";
 const entityModelsByIRI = {};
@@ -51,7 +52,7 @@ function getEntityInstanceQuery(entityTypeIRI) {
   return cts.collectionQuery(getTitleAndParentIRI(entityTypeIRI).title);
 }
 
-module.exports = { 
+module.exports = {
   getEntityInstanceQuery,
   getEntityModel
 };

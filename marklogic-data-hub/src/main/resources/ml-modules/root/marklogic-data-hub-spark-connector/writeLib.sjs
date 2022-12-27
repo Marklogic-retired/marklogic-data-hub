@@ -19,9 +19,10 @@
  * Contains functions for both implementing the default endpoint for writing records and for supporting customization of
  * a new endpoint for writing records.
  */
-const consts = require("/data-hub/5/impl/consts.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const consts = mjsProxy.requireMjsModule("/data-hub/5/impl/consts.mjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 
 function buildHeaders(endpointConstants) {

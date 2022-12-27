@@ -16,10 +16,14 @@
 'use strict';
 
 
-const scoreMin = external.scoreMin;
-const scoreMax = external.scoreMax;
-const combinations = external.combinations;
-const thresholdScores = external.thresholdScores;
+const scoreMinParam = external.scoreMin;
+const scoreMaxParam = external.scoreMax;
+const combinationsParam = external.combinations;
+const thresholdScoresParam = external.thresholdScores;
+let thresholdScores = thresholdScoresParam;
+let scoreMin = scoreMinParam;
+let scoreMax = scoreMaxParam;
+let combinations = combinationsParam;
 var rulesetNameObjectMap;
 function calculateMatchingActivity(step)
 {
@@ -266,6 +270,5 @@ function rulesetsCombosAboveScoreRecursion(
   }
 }
 
-module.exports = {
-  calculateMatchingActivity
-};
+export default { calculateMatchingActivity };
+

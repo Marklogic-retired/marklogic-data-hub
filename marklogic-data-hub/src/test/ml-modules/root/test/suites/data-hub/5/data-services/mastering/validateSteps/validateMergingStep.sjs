@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(stepName, view, entityPropertyPath) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/mastering/validateMergingStep.sjs",
+    "/data-hub/5/data-services/mastering/validateMergingStep.mjs",
     { stepName, view, entityPropertyPath }
   ));
 }

@@ -5,7 +5,7 @@ let assertions = [];
 
 function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit) {
   return fn.head(xdmp.invoke(
-      "/data-hub/5/data-services/entitySearch/getMatchingPropertyValues.sjs",
+      "/data-hub/5/data-services/entitySearch/getMatchingPropertyValues.mjs",
       {
         "facetValuesSearchQuery": JSON.stringify({
           "entityTypeId": entityTypeId,

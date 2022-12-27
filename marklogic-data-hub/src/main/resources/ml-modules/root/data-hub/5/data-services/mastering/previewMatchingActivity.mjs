@@ -15,8 +15,11 @@
  */
 'use strict';
 
-const previewMatchingActivityLib = require("/data-hub/5/mastering/preview-matching-activity-lib.xqy");
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+import core from "/data-hub/5/artifacts/core.mjs";
+
+const previewMatchingActivityLib = sjsProxy.requireSjsModule("/data-hub/5/mastering/preview-matching-activity-lib.xqy");
 
 const stepName = external.stepName;
 const uris = external.uris;
@@ -27,7 +30,7 @@ const nonMatches = external.nonMatches;
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
 
-const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);
+const step = core.getArtifact("matching", stepName);
 const sourceQuery = hubUtils.evalInDatabase(step.sourceQuery, step.sourceDatabase);
 
 let resultFunction = function() { return previewMatchingActivityLib.previewMatchingActivity(step, sourceQuery, uris, restrictToUris, nonMatches, sampleSize); }

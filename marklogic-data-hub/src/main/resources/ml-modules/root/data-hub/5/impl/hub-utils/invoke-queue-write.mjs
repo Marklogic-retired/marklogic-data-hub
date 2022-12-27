@@ -24,9 +24,10 @@ const provenanceQueue = external.provenanceQueue;
 
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import temporal from "/MarkLogic/temporal.xqy";
 import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
 
+const temporal = sjsProxy.requireSjsModule("/MarkLogic/temporal.xqy", "http://marklogic.com/xdmp/temporal");
 const traceEvent = consts.TRACE_FLOW_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
 const databaseName = xdmp.databaseName(xdmp.database());

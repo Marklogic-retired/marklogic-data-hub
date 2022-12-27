@@ -14,10 +14,11 @@
   limitations under the License.
 */
 'use strict';
-import DataHub from "/data-hub/5/datahub.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHub = mjsProxy.requireMjsModule("/data-hub/5/datahub.mjs");
 const datahub = new DataHub();
 
-export function get(context, params) {
+function get(context, params) {
   let resp;
   let database = params.database ? params.database.trim() : null;
   let sourceQuery = params.sourceQuery ? params.sourceQuery.trim() : null;
@@ -56,3 +57,5 @@ export function get(context, params) {
 
   return resp;
 }
+
+exports.GET = get;

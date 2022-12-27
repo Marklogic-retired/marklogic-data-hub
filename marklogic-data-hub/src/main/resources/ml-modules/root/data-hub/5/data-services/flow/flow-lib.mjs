@@ -136,7 +136,7 @@ function getFlowWithLatestJobInfo(flowName) {
   return flowWithStepDetails;
 }
 
-module.exports = {
+export default {
   getFlowsWithStepDetails,
   getFlowWithLatestJobInfo
 };

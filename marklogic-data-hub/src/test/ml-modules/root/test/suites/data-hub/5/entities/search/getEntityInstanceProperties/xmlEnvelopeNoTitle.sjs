@@ -14,8 +14,8 @@
  limitations under the License.
  */
 'use strict';
-
-const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entitySearchLib = mjsProxy.requireMjsModule("/data-hub/5/entities/entity-search-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 const doc = fn.head(xdmp.unquote(`<envelope xmlns='http://marklogic.com/entity-services'>

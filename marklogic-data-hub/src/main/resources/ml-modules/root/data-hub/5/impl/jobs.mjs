@@ -326,7 +326,7 @@ function saveNewJob(job) {
 
 
 
-export {
+export default {
   buildJobPermissions,
   buildNewJob,
   createJob,
@@ -338,14 +338,12 @@ export {
   getJobDocsByFlow,
   getJobDocsForFlows,
   getRequiredJob,
-  saveNewJob
+  saveNewJob,
+  deleteJobs: import.meta.amp(deleteJobs),
+  updateJob: import.meta.amp(updateJob)
 }
 
-/**
- * This function is amped to allow for the Job document to be updated by users that do not have the required
- * roles that permit doing so.
- */
-module.exports.updateJob = module.amp(
+
   /**
    * Only updates the document, does not make any modifications to it, so nothing is returned.
    *
@@ -360,10 +358,9 @@ module.exports.updateJob = module.amp(
     }
     hubUtils.writeDocument(jobUri, jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
     return null;
-  }
-);
+  };
 
-module.exports.deleteJobs = module.amp(
+
   /**
    * Delete all job and batch document URIs passed in.
    *
@@ -375,4 +372,6 @@ module.exports.deleteJobs = module.amp(
     for (let uri of jobDocumentURIs) {
       xdmp.documentDelete(uri);
     }
-  });
+  };
+
+

@@ -9,6 +9,6 @@ function instance(config = {}) {
   return dataHubInstance;
 }
 
-export {
+export default {
     instance
 };

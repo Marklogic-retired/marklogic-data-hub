@@ -96,7 +96,7 @@ function extractIncorrectNumberOfArgumentsError(e) {
   return errorMessage;
 }
 
-export {
+export default {
   extractErrorMessageForMappingUI,
   extractFriendlyErrorMessage
 };

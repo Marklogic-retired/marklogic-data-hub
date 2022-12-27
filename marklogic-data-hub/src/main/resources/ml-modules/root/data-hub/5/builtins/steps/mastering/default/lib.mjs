@@ -15,15 +15,17 @@
  */
 import config from "/com.marklogic.hub/config.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import mergeImpl from "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
-import masteringCollections from "/com.marklogic.smart-mastering/impl/collections.xqy";
-import masteringConsts from "/com.marklogic.smart-mastering/constants.xqy";
+import op from '/MarkLogic/optic';
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const ps = sjsProxy.requireSjsModule("/MarkLogic/provenance.xqy", "http://marklogic.com/provenance-services");
+const mergeImpl = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
+const masteringCollections = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/impl/collections.xqy");
+const masteringConsts = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/constants.xqy");
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
 const emptySequence = Sequence.from([]);
 
 function matchDetailsByMergedQuery(mergedQuery) {
-  const ps = require('/MarkLogic/provenance');
-  const op = require('/MarkLogic/optic');
   let mergedURIs = cts.uris(null, [], mergedQuery);
   let output = {};
   hubUtils.invokeFunction(
@@ -283,7 +285,7 @@ function getContentInCollectionCount(outputContentArray, collection) {
   }).length;
 }
 
-export {
+export default {
   matchDetailsByMergedQuery,
   expectedCollectionEvents,
   checkOptions,

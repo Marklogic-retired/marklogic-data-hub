@@ -15,15 +15,12 @@
  */
 'use strict';
 
-/**
- * This is the updated rest endpoint for searching and returning Job information.
- *
- * @param context
- * @param params
- * @returns {null}
- */
-export function get(context, params) {
-    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/monitor-jobs", "execute");
-    import jobQueryLib from "/data-hub/5/flow/job-query-lib.mjs";
-    return jobQueryLib.findJobs(params);
-};
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const esMappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs");
+
+function post(context, params, input) {
+  let uri = params["uri"];
+  return esMappingLib.validateAndTestMapping(input.toObject(), uri);
+}
+
+exports.POST =  post;
