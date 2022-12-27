@@ -18,7 +18,7 @@
 
 import consts from "/data-hub/5/impl/consts.mjs"
 import entityLib from "/data-hub/5/impl/entity-lib.mjs"
-import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs"
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib"
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
 import sem from "/MarkLogic/semantics.xqy";
 import {getPredicatesByModel} from "./entity-lib.mjs"
@@ -740,7 +740,7 @@ function describeIRI(semanticConceptIRI) {
   return description;
 }
 
-export {
+export default {
   describeIRI,
   getAllEntityIds,
   getAllPredicates,

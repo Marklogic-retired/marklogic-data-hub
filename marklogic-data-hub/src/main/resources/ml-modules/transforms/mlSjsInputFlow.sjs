@@ -13,12 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-import consts from "/data-hub/4/impl/consts.mjs";
-import flowlib from "/data-hub/4/impl/flow-lib.mjs";
-import tracelib from "/data-hub/4/impl/trace-lib.mjs";
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const consts = require("/data-hub/4/impl/consts.sjs");
+const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
+const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
-export function transform(context, params, content) {
+function transform(context, params, content) {
   let jobId = params["job-id"] ||sem.uuidString();
   let entityName = params['entity-name'];
   let flowName = params['flow-name'];
@@ -45,3 +46,5 @@ export function transform(context, params, content) {
 
   return envelope;
 }
+
+exports.transform = transform;

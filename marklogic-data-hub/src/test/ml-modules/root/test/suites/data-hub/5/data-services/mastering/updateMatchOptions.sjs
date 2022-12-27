@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(options) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/mastering/updateMatchOptions.sjs",
+    "/data-hub/5/data-services/mastering/updateMatchOptions.mjs",
     {"options": options}
   ));
 }

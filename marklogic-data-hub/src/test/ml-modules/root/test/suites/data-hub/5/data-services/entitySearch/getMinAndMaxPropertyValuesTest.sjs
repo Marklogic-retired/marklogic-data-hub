@@ -5,7 +5,7 @@ let assertions = [];
 
 function invokeService(entityTypeId, propertyPath, referenceType) {
   return fn.head(xdmp.invoke(
-      "/data-hub/5/data-services/entitySearch/getMinAndMaxPropertyValues.sjs",
+      "/data-hub/5/data-services/entitySearch/getMinAndMaxPropertyValues.mjs",
       {
         "facetRangeSearchQuery": JSON.stringify({
           "entityTypeId": entityTypeId,

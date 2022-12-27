@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const Artifacts = mjsProxy.requireMjsModule("/data-hub/5/artifacts/core.mjs");
 const ArtifactService = require('../lib/artifactService.sjs');
 
 function createArtifact(artifactName, artifactType) {

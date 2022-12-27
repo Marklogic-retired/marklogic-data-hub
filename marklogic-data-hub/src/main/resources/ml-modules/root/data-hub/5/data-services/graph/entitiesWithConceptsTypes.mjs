@@ -20,10 +20,7 @@
 
 
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
-import sem from "/MarkLogic/semantics.xqy";
 import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
-
-
 
 let entityTypeIRIs = [];
 let predicateConceptList = [];

@@ -21,14 +21,15 @@
  * resides in this module to promote reuse and also simplify upgrades as Entity Services changes within MarkLogic.
  */
 
-import sem from "/MarkLogic/semantics.xqy";
-const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
-import hent from "/data-hub/5/impl/hub-entities.xqy";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
+const semXqy = require("/MarkLogic/semantics.xqy");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
+
+const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 /**
  * @return an array of strings, one for each EntityType
  */
@@ -58,7 +59,7 @@ function findModelForEntityTypeId(entityTypeId) {
   return fn.head(cts.search(
     cts.andQuery([
       cts.collectionQuery(getModelCollection()),
-      cts.tripleRangeQuery(sem.iri(entityTypeId), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType", semPrefixes))
+      cts.tripleRangeQuery(sem.iri(entityTypeId), semXqy.curieExpand("rdf:type"), semXqy.curieExpand("es:EntityType", semPrefixes))
     ])));
 }
 
@@ -596,7 +597,7 @@ function populatePredicateListWithReferencePredicates(entityNameIri, referencing
   }
 }
 
-function getPredicatesByModel(model, includeConceptPredicates = false) {
+export function getPredicatesByModel(model, includeConceptPredicates = false) {
   const predicateList = [];
   // predicates in model document
   for (const definitionName in model.definitions) {
@@ -832,7 +833,7 @@ function findModelAndPropertyReferencesInMappingSteps(entityName, entityTypeId, 
   return cts.search(stepQuery).toArray().map(step => step.toObject().name);
 }
 
-export {
+export default{
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
   findModelReferencesInSteps,

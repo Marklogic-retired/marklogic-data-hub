@@ -47,6 +47,6 @@ public class MasteringStepDefinitionImpl extends AbstractStepDefinition {
         collectionName.add(name);
         options.put("collections", collectionName);
 
-        setModulePath("/data-hub/5/builtins/steps/mastering/default/main.sjs");
+        setModulePath("/data-hub/5/builtins/steps/mastering/default/main.mjs");
     }
 }

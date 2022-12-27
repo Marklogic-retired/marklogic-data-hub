@@ -2,7 +2,8 @@
 
 const test = require('/test/test-helper.xqy');
 const lib = require('/test/suites/data-hub/5/smart-mastering/match-and-merge/lib/lib.xqy');
-const merge = require('/data-hub/5/builtins/steps/mastering/default/merging.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const merge = mjsProxy.requireMjsModule('/data-hub/5/builtins/steps/mastering/default/merging.mjs');
 
 const options = { mergeOptions: {}};
 const assertions = [];

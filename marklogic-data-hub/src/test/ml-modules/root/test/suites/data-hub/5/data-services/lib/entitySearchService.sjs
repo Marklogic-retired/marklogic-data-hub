@@ -3,27 +3,27 @@ function invokeEntitySearchModule(module, args) {
 }
 
 function saveQuery(saveQuery) {
-  return invokeEntitySearchModule("saveSavedQuery.sjs", {"saveQuery": saveQuery});
+  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": saveQuery});
 }
 
 function updateSavedQuery(updatedQuery) {
-  return invokeEntitySearchModule("saveSavedQuery.sjs", {"saveQuery": updatedQuery});
+  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": updatedQuery});
 }
 
 function getSavedQuery(id) {
-  return invokeEntitySearchModule("getSavedQuery.sjs", {id});
+  return invokeEntitySearchModule("getSavedQuery.mjs", {id});
 }
 
 function getSavedQueries() {
-  return invokeEntitySearchModule("getSavedQueries.sjs", {});
+  return invokeEntitySearchModule("getSavedQueries.mjs", {});
 }
 
 function deleteSavedQuery(id) {
-  return invokeEntitySearchModule("deleteSavedQuery.sjs", {id});
+  return invokeEntitySearchModule("deleteSavedQuery.mjs", {id});
 }
 
 function getRecord(docUri) {
-  return invokeEntitySearchModule("getRecord.sjs", {docUri});
+  return invokeEntitySearchModule("getRecord.mjs", {docUri});
 }
 
 module.exports = {

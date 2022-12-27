@@ -15,6 +15,8 @@
  */
 'use strict';
 
+import Mapping from './xmlToJsonForMapping.mjs';
+
 // Build and return the sourceProperties portion/array of getDocument's return.
 function buildSourceProperties(sourceData, isJson) {
   const outputArr = [];
@@ -27,7 +29,7 @@ function addSourceProperties(sourceData, isJson, outputArr, outputArrKey = '', l
   let value, valueIsObject, valueIsArray, xpath;
   for (let key of Object.keys(sourceData)) {
     // sourceProperties is not to receive the #text properties.
-    if (key === require('./xmlToJsonForMapping.mjs').PROP_NAME_TEXT) { continue }
+    if (key === Mapping.PROP_NAME_TEXT) { continue }
 
     value = sourceData[key];
     valueIsObject = isObject(value);
@@ -98,4 +100,4 @@ function isArray(value) {
   return value && value.hasOwnProperty('0') && typeof value !== 'string';
 }
 
-exports.buildSourceProperties = buildSourceProperties;
+export default { buildSourceProperties };

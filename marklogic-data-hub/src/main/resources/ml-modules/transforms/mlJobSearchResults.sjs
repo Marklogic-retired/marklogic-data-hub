@@ -13,16 +13,25 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-import trace from "/data-hub/4/impl/trace-lib.xqy";
+let perf = require("/data-hub/4/impl/perflog-lib.xqy");
+let debug = require("/data-hub/4/impl/debug-lib.xqy");
 
-export function transform(context, params, content) {
-  var response = content.toObject();
+function transform(context, params, content) {
+  debug.dumpEnv();
 
-  for (var i = 0; i < response.results.length; i++) {
-    var result = response.results[i];
-    var doc = cts.doc(result.uri);
-    result.content = trace.traceToJsonSlim(doc);
-    response.pageLength = response['page-length'];
-  }
-  return response;
+  return perf.log('/transforms/job-search:transform', function() {
+    var response = content.toObject();
+
+    for (var i = 0; i < response.results.length; i++) {
+      var result = response.results[i];
+      var doc = cts.doc(result.uri).root;
+      result.content = doc;
+      response.pageLength = response['page-length'];
+    }
+
+    return response;
+  });
 }
+
+
+exports.transform = transform;

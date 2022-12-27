@@ -1,5 +1,6 @@
-const defaultMappingLib = require("/data-hub/5/builtins/steps/mapping/default/lib.sjs");
-const mappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const defaultMappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/default/lib.mjs");
+const mappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs");
 const test = require("/test/test-helper.xqy");
 const baseCustomerMapping = xdmp.toJSON({
   "lang" : "zxx",

@@ -4,9 +4,8 @@ Contains helper functions that are best written in SJS instead of XQuery.
 
 'use strict';
 
-const Artifacts = require("/data-hub/5/artifacts/core.sjs");
-const config = require("/com.marklogic.hub/config.sjs");
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs")
+const [Artifacts, config, entityLib] = mjsProxy.requireMjsModules("/data-hub/5/artifacts/core.mjs", "/com.marklogic.hub/config.mjs", "/data-hub/5/impl/entity-lib.mjs");
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const test = require("/test/test-helper.xqy");
 

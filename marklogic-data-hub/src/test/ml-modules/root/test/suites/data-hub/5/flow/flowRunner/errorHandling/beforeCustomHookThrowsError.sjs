@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const test = require("/test/test-helper.xqy");
 
 const flowName = "myFlow";

@@ -15,20 +15,20 @@
  */
 'use strict';
 
-import * as entityLib from "/data-hub/5/impl/entity-lib.mjs";
-import * as Flow from './flow.mjs';
-import * as LoadData from './loadData.mjs';
-import * as Mapping from './mapping.mjs';
-import * as Matching from './matching.mjs';
-import * as Merging from './merging.mjs';
-import * as ExclusionList from './exclusionList.mjs';
-import * as Mastering from './mastering.mjs';
-import * as StepDef from './stepDefinition.mjs';
-import * as CustomStep from './customStep.mjs';
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import Flow from './flow.mjs';
+import LoadData from './loadData.mjs';
+import Mapping from './mapping.mjs';
+import Matching from './matching.mjs';
+import Merging from './merging.mjs';
+import ExclusionList from './exclusionList.mjs';
+import Mastering from './mastering.mjs';
+import StepDef from './stepDefinition.mjs';
+import CustomStep from './customStep.mjs';
 
-import * as consts from '/data-hub/5/impl/consts.mjs';
-import * as httpUtils from '/data-hub/5/impl/http-utils.mjs';
-import * as hubUtils from '/data-hub/5/impl/hub-utils.mjs';
+import consts from '/data-hub/5/impl/consts.mjs';
+import httpUtils from '/data-hub/5/impl/http-utils.mjs';
+import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
 
 // define constants for caching expensive operations
 const cachedArtifacts = {};
@@ -347,7 +347,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   return newFlowStep;
 }
 
-export {
+export default {
     getArtifacts,
     deleteArtifact,
     getArtifact,

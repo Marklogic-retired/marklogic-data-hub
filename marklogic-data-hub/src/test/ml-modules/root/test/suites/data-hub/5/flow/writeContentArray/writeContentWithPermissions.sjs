@@ -14,15 +14,16 @@
  limitations under the License.
  */
 
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 const assertions = hubTest.runWithRolesAndPrivileges(['data-hub-developer'], [],
     function() {
       const contentWithPermissions = {
-        uri: "/a.json", 
-        value: {"a":true}, 
+        uri: "/a.json",
+        value: {"a":true},
         context: {
           permissions: [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-common", "update")]
         }
@@ -30,7 +31,7 @@ const assertions = hubTest.runWithRolesAndPrivileges(['data-hub-developer'], [],
       flowUtils.writeContentArray([contentWithPermissions]);
 
       const record = hubTest.getRecord("/a.json");
-      const message = "Since the content has permissions, the user's default permissions (inherited from tde-admin) " + 
+      const message = "Since the content has permissions, the user's default permissions (inherited from tde-admin) " +
         "should not be included; record: " + xdmp.toJsonString(record);
       return [
         test.assertEqual("read", record.permissions["data-hub-common"][0], message),
@@ -40,4 +41,4 @@ const assertions = hubTest.runWithRolesAndPrivileges(['data-hub-developer'], [],
     }
 );
 
-assertions 
+assertions

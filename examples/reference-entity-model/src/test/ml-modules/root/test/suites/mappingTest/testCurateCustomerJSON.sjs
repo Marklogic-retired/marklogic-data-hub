@@ -1,7 +1,8 @@
 // Example of a test module that runs a step in a flow and verifies the output of the step, without any data
-// actually being written to MarkLogic. 
+// actually being written to MarkLogic.
 
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule('/data-hub/public/flow/flow-api.mjs');
 const test = require('/test/test-helper.xqy');
 
 const contentArray = [{

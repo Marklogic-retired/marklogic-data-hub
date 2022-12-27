@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -22,7 +23,7 @@ const firstStepResponse = response.stepResponses["1"];
 const secondStepResponse = response.stepResponses["2"];
 
 const assertions = [
-  test.assertEqual("failed", response.jobStatus, 
+  test.assertEqual("failed", response.jobStatus,
     "If any step fails and stops on error, the job is considered to have failed and no step output is written"),
   test.assertEqual("2", response.lastAttemptedStep),
   test.assertEqual("1", response.lastCompletedStep),
@@ -37,7 +38,7 @@ const assertions = [
   test.assertEqual(true, firstStepResponse.success),
 
   test.assertEqual("failed step 2", secondStepResponse.status),
-  test.assertEqual(1, secondStepResponse.stepOutput.length, 
+  test.assertEqual(1, secondStepResponse.stepOutput.length,
     "Should only have an error message for the first item; the second should not have been processed"),
   test.assertEqual("Throwing error on purpose", secondStepResponse.stepOutput[0]),
   test.assertEqual(1, secondStepResponse.totalEvents, "Only one item was processed"),
@@ -47,8 +48,8 @@ const assertions = [
   test.assertEqual(0, secondStepResponse.successfulBatches),
   test.assertEqual(false, secondStepResponse.success),
 
-  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length, 
-    "Even though step one succeeded, since step two failed with stopOnError=true, then the entire flow is " + 
+  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length,
+    "Even though step one succeeded, since step two failed with stopOnError=true, then the entire flow is " +
     "considered to have failed, and no content should have been written"),
   test.assertEqual(0, hubTest.getUrisInCollection("customStepTwo").length)
 ];

@@ -16,7 +16,7 @@ const queryOptions ="<search:options xml:lang=\"zxx\" xmlns:search=\"http://mark
   "</search:options>"
 
 function searchNodes(queryData) {
-  return invoke("searchNodes.sjs",
+  return invoke("searchNodes.mjs",
     {query: JSON.stringify(queryData), start: 0, limit: 20, structuredQuery: structuredQuery, queryOptions: queryOptions});
 }
 

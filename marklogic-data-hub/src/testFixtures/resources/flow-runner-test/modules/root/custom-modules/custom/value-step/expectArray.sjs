@@ -1,5 +1,6 @@
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 
 /**
  * Example of converting the "uri" value into an array.

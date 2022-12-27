@@ -1,4 +1,5 @@
-const matching = require("/data-hub/5/builtins/steps/mastering/default/matching.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const matching = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mastering/default/matching.mjs");
 const test = require("/test/test-helper.xqy");
 
 let result = matching.buildResult(

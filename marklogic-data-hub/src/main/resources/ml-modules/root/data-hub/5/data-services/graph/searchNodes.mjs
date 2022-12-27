@@ -17,11 +17,13 @@
 'use strict';
 
 // No privilege required: No special privilege is needed for this endpoint
-import sem from "/MarkLogic/semantics.xqy";
-import search from "/MarkLogic/appservices/search/search";
+const search = require('/MarkLogic/appservices/search/search');
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const sem = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -50,12 +52,16 @@ const stylesheet = fn.head(xdmp.unquote(`<xsl:stylesheet xmlns:xsl="http://www.w
    </xsl:template>
 </xsl:stylesheet>`));
 
+const queryParam = external.query;
+const startParam = external.start;
+const pageLengthParam = external.limit;
 
-var query;
-var start;
-var pageLength;
-var structuredQuery;
-var queryOptions;
+
+var query = queryParam;
+var start = startParam;
+var pageLength = pageLengthParam;
+var structuredQuery ;
+var queryOptions ;
 
 if(query == null) {
   httpUtils.throwBadRequest("Request cannot be empty");

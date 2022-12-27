@@ -1,35 +1,39 @@
-const common = require("/data-hub/5/mastering/common.sjs");
+import common from "/data-hub/5/mastering/common.mjs";
 
 'use strict';
 
 /*
  * A class that encapsulates the configurable portions of the merging process.
  */
-import {requireFunction, normalizeToArray, parsePermissions} from "../../impl/hub-utils.mjs";
+import hubUtil from '/data-hub/5/impl/hub-utils.mjs';
 import consts from "../../impl/consts.mjs";
-import sem from "/MarkLogic/semantics.xqy";
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+import hubUtils from "../../impl/hub-utils.mjs";
+
+const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
-const rdfType = sem.curieExpand("rdf:type");
-const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
+const rdfType = semXqy.curieExpand("rdf:type");
+const rdfsIsDefinedBy = semXqy.curieExpand("rdfs:isDefinedBy");
 
 
-class Mergeable {
+export default class Mergeable {
 
   constructor(mergeStep, stepExecutionContext) {
     if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
       this.memoryContent = stepExecutionContext.flowExecutionContext.matchingStepContentArray;
     }
     if (mergeStep.merging) {
-      const updateMergeOptions = requireFunction("/data-hub/5/data-services/mastering/updateMergeOptionsLib.mjs", "updateMergeOptions");
+      const updateMergeOptions = hubUtil.requireFunction("/data-hub/5/data-services/mastering/updateMergeOptionsLib.mjs", "updateMergeOptions");
       this.mergeStep = updateMergeOptions(mergeStep);
     } else {
       this.mergeStep = mergeStep;
     }
     const targetEntityType = this.mergeStep.targetEntityType;
     if (targetEntityType) {
-      const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+      const getEntityModel = hubUtil.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
       if (this._model && this._model.primaryEntityTypeIRI() !== targetEntityType) {
         this.mergeStep.targetEntityType = this._model.primaryEntityTypeIRI();
@@ -124,7 +128,7 @@ class Mergeable {
         properties.push([mergeXPathInformation, mergedProperties]);
       }
     }
-    const documentNodes = normalizeToArray(contentObjects).map(contentObj => contentObj.value);
+    const documentNodes = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.value);
     const distinctHeaderNodeNames = fn.distinctValues(Sequence.from(documentNodes.map((doc) => doc.xpath("*:envelope/*:headers/* ! fn:node-name(.)"))));
     // merge headers
     for (const topHeader of distinctHeaderNodeNames) {
@@ -137,7 +141,7 @@ class Mergeable {
     }
     let triples = null;
     if (this.mergeStep.tripleMerge) {
-      const tripleMergeFunction = requireFunction(this.mergeStep.tripleMerge.at, this.mergeStep.tripleMerge.function);
+      const tripleMergeFunction = hubUtils.requireFunction(this.mergeStep.tripleMerge.at, this.mergeStep.tripleMerge.function);
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
       const triplesArray = [
@@ -152,7 +156,7 @@ class Mergeable {
           }
       }))
       ];
-      const uris = normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
+      const uris = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
       const tdeTriples = cts.triples(null, [rdfType, rdfsIsDefinedBy], null, ["=","=","="], [], cts.documentQuery(uris));
       for (const tdeTriple of tdeTriples) {
         if (!fn.string(sem.tripleObject(tdeTriple)).startsWith("http://marklogic.com/view/")) {
@@ -397,14 +401,14 @@ class Mergeable {
     }
     // set permissions
     if (targetPermissions && targetPermissions[eventName] && targetPermissions[eventName].add) {
-      for (const perm of parsePermissions(targetPermissions[eventName].add)) {
+      for (const perm of hubUtil.parsePermissions(targetPermissions[eventName].add)) {
         if (!contentObject.context.permissions.includes(perm)) {
           contentObject.context.permissions.push(perm);
         }
       }
     }
     if (targetPermissions && targetPermissions[eventName] && targetPermissions[eventName].remove) {
-      const removePermissions = parsePermissions(targetPermissions[eventName].remove);
+      const removePermissions = hubUtil.parsePermissions(targetPermissions[eventName].remove);
       contentObject.context.permissions = contentObject.context.permissions.filter(perm => !removePermissions.includes(perm));
     }
     return common.applyInterceptors("Apply Document context interceptor", contentObject, this.mergeStep.customApplyDocumentContextInterceptors, actionDetails, targetEntity);
@@ -455,8 +459,8 @@ class Mergeable {
           pathCount++;
         }
         let values = [];
-        for (const output of normalizeToArray(propertyOutput)) {
-          values = values.concat(normalizeToArray(output.values));
+        for (const output of hubUtil.normalizeToArray(propertyOutput)) {
+          values = values.concat(hubUtil.normalizeToArray(output.values));
           this.setMergeInformation(merges, instanceXPath, output);
         }
         if (values.length <= 1 && !propertyOutput.retainArray) {
@@ -532,7 +536,7 @@ class Mergeable {
     nodeBuilder.endElement();
     nodeBuilder.startElement("es:triples", "http://marklogic.com/entity-services");
     if (triples) {
-      for (const tripleNode of sem.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
+      for (const tripleNode of semXqy.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
         nodeBuilder.addNode(tripleNode);
       }
     }
@@ -571,8 +575,8 @@ class Mergeable {
           propDefIndex++;
         }
         // add values
-        for (const output of normalizeToArray(propertyOutput)) {
-          for (const value of normalizeToArray(output.values)) {
+        for (const output of hubUtil.normalizeToArray(propertyOutput)) {
+          for (const value of hubUtil.normalizeToArray(output.values)) {
             if (value instanceof Node) {
               nodeBuilder.addNode(value);
             } else {
@@ -591,7 +595,7 @@ class Mergeable {
   }
 
   setMergeInformation(merges, instanceXPath, output) {
-    for (const source of normalizeToArray(output.sources)) {
+    for (const source of hubUtil.normalizeToArray(output.sources)) {
       let {documentUri, dateTime, name} = source instanceof Node ? source.toObject() : source;
       // following use of fn.string is so ML 9 will compare the strings properly
       documentUri = fn.string(documentUri), dateTime = fn.string(dateTime), name = fn.string(name);
@@ -639,7 +643,7 @@ class MergeRuleDefinition {
     }
     const convertToNode = /\.xq[yml]?$/.test(mergeModulePath);
     let isArray = false;
-    let propertiesByDocument = normalizeToArray(contentObjects).map((contentObject) => {
+    let propertiesByDocument = hubUtil.normalizeToArray(contentObjects).map((contentObject) => {
       const documentUri = contentObject.uri;
       const documentNode = fn.head(contentObject.value);
       if (fn.empty(documentNode)) {
@@ -681,8 +685,8 @@ class MergeRuleDefinition {
       passMergeRule = new NodeBuilder().addNode(passMergeRule).toNode();
       propertiesByDocument = Sequence.from(propertiesByDocument);
     }
-    const mergeFunction = requireFunction(mergeModulePath, mergeModuleFunction);
-    const results = normalizeToArray(mergeFunction(propertyName, propertiesByDocument, passMergeRule));
+    const mergeFunction = hubUtil.requireFunction(mergeModulePath, mergeModuleFunction);
+    const results = hubUtil.normalizeToArray(mergeFunction(propertyName, propertiesByDocument, passMergeRule));
     results.retainArray = isArray;
     return results;
   }
@@ -690,9 +694,4 @@ class MergeRuleDefinition {
   raw() {
     return this.mergeRule;
   }
-}
-
-export {
-    Mergeable,
-    MergeRuleDefinition
 }

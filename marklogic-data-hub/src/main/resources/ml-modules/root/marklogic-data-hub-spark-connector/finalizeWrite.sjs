@@ -20,7 +20,8 @@
 var jobId;
 var status;
 
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 try {
   const jobDoc = jobs.getJob(jobId);

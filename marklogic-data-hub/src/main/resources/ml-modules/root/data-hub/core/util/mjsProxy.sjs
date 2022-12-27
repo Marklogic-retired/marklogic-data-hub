@@ -15,11 +15,17 @@
  */
 'use strict';
 
-import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
+const mjsModules = {};
 
-// Expects JSON content
-export function transform(context, params, content) {
-  const searchResponse = content.toObject();
-  entitySearchLib.addDocumentMetadataToSearchResults(searchResponse);
-  return searchResponse;
+function requireMjsModule(modulePath) {
+  return requireMjsModules(modulePath)[0];
 }
+function requireMjsModules(...modulePaths) {
+  const cleanModulePaths = modulePaths.map(mp => mp.replace(/"/g, ""));
+  return fn.head(evalScriptOrModule(`'use strict';
+    ${cleanModulePaths.map((mp, i) => `import mjsMod${i} from "${mp}";`).join("\n")}
+[${cleanModulePaths.map((mp, i) => `mjsMod${i}`).join(", ")}];`));
+}
+
+exports.requireMjsModule = requireMjsModule;
+exports.requireMjsModules = requireMjsModules;
