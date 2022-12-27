@@ -16,8 +16,9 @@
 'use strict';
 declareUpdate();
 
-const esMappingLib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const esMappingLib = mjsProxy.requireMjsModule('/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs');
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
 var uri;
 
@@ -43,5 +44,5 @@ try {
     }, {database: xdmp.modulesDatabase(), update: "true", commit: "auto"}
   );
 } catch (e) {
-  httpUtils.throwBadRequest("Unable to generate mapping transform for mapping at URI: " + uri + "; cause: " + e.message);
+  httpUtils.throwBadRequestWithArray(["Unable to generate mapping transform for mapping at URI: " + uri + "; cause: " + e.message, xdmp.toJsonString(e.stackFrames)]);
 }

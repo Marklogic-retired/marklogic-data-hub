@@ -45,6 +45,6 @@ public class MatchingStepDefinitionImpl extends AbstractStepDefinition {
         collectionName.add(name);
         options.put("collections", collectionName);
 
-        setModulePath("/data-hub/5/builtins/steps/mastering/default/matching.sjs");
+        setModulePath("/data-hub/5/builtins/steps/mastering/default/matching.mjs");
     }
 }

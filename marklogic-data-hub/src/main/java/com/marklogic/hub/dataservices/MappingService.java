@@ -62,11 +62,11 @@ public interface MappingService {
                 this.req_getReferences = this.baseProxy.request(
                     "getReferences.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getEntitiesForMapping = this.baseProxy.request(
-                    "getEntitiesForMapping.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getEntitiesForMapping.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_testMapping = this.baseProxy.request(
                     "testMapping.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getDocument = this.baseProxy.request(
-                    "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getDocument.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
                     "getUris.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(

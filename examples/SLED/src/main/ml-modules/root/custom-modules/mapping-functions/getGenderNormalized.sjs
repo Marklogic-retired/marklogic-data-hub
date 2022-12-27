@@ -1,5 +1,5 @@
 'use strict';
-const core = require('/data-hub/5/mapping-functions/core.sjs');
+const core = require('/data-hub/5/mapping-functions/core.mjs');
 function getGenderNormalized(gender){
   gender = fn.string(gender);
   if (gender == ""){

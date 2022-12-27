@@ -15,10 +15,11 @@
  */
 'use strict';
 
-import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entitySearchLib = mjsProxy.requireMjsModule("/data-hub/5/entities/entity-search-lib.mjs");
 
 // Expects JSON content
-export function transform(context, params, content) {
+function transform(context, params, content) {
   let entityName = null;
   if(params.entityName) {
     entityName = params.entityName;
@@ -42,3 +43,5 @@ export function transform(context, params, content) {
   }
   return contentObject;
 }
+
+exports.transform = transform;

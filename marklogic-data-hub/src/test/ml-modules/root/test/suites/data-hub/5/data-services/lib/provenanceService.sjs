@@ -3,15 +3,15 @@ function invoke(module, args) {
 }
 
 function deleteProvenance(endpointConstants, endpointState) {
-    return invoke("deleteProvenance.sjs", {endpointConstants, endpointState});
+    return invoke("deleteProvenance.mjs", {endpointConstants, endpointState});
 }
 
 function migrateProvenance(endpointConstants, endpointState) {
-    return invoke("migrateProvenance.sjs", {endpointConstants, endpointState});
+    return invoke("migrateProvenance.mjs", {endpointConstants, endpointState});
 }
 
 function getProvenanceGraph(documentURI) {
-    return invoke("getProvenanceGraph.sjs", {documentURI});
+    return invoke("getProvenanceGraph.mjs", {documentURI});
 }
 
 module.exports = {

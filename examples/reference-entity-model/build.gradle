@@ -114,7 +114,7 @@ task importCustomersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     output_collections = "MlcpCustomer"
     input_file_path = "input/json"
     output_permissions = "data-hub-common,read,data-hub-common,update"
-    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.mjs"
     transform_param = "flow-name=CurateCustomerJSON,step=1"
 }
 

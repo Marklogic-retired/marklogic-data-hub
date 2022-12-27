@@ -23,92 +23,93 @@ const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definitio
 const STEP_COLLECTION = "http://marklogic.com/data-hub/steps";
 const ENTITY_MODEL_UI_CONFIG_COLLECTION = "http://marklogic.com/hub-central/ui-config";
 
-export {
-  XQUERY: "xqy",
-  JAVASCRIPT: "sjs",
-  XML: "xml",
-  JSON: "json",
-  BINARY: "binary",
-  TEXT: 'text',
-  DEFAULT_FORMAT: "json",
 
-  //predefined functions, may want to break this out soon
-  CURRENT_DATE_TIME: "currentDateTime",
-  CURRENT_USER: "currentUser",
+export default{
+    XQUERY: "xqy",
+    JAVASCRIPT: "sjs",
+    XML: "xml",
+    JSON: "json",
+    BINARY: "binary",
+    TEXT: 'text',
+    DEFAULT_FORMAT: "json",
 
-  //predefined metadata may want to break this out soon
-  CREATED_ON: "datahubCreatedOn",
-  CREATED_BY: "datahubCreatedBy",
+    //predefined functions, may want to break this out soon
+    CURRENT_DATE_TIME: "currentDateTime",
+    CURRENT_USER: "currentUser",
 
-  CREATED_IN_FLOW: "datahubCreatedInFlow",
-  CREATED_BY_STEP: "datahubCreatedByStep",
-  RAN_BY_STEPS: "datahubRanBySteps",
+    //predefined metadata may want to break this out soon
+    CREATED_ON: "datahubCreatedOn",
+    CREATED_BY: "datahubCreatedBy",
 
-  CREATED_BY_JOB: "datahubCreatedByJob",
+    CREATED_IN_FLOW: "datahubCreatedInFlow",
+    CREATED_BY_STEP: "datahubCreatedByStep",
+    RAN_BY_STEPS: "datahubRanBySteps",
 
-  PROPERTY_KEY_MAP: new Map([
+    CREATED_BY_JOB: "datahubCreatedByJob",
+
+    PROPERTY_KEY_MAP: new Map([
     ["currentDateTime", "currentDateTime"],
     ["createdOn", "currentDateTime"],
     ["datahubCreatedOn", "currentDateTime"],
     ["currentUser", "currentUser"],
     ["createdBy", "currentUser"],
     ["datahubCreatedBy", "currentUser"]
-  ]),
+]),
 
-  DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
-  DATA_HUB_DEVELOPER_ROLE: "data-hub-developer",
-  DATA_HUB_MODULE_READER_ROLE: "data-hub-module-reader",
-  DATA_HUB_MODULE_WRITER_ROLE: "data-hub-module-writer",
-  DATA_HUB_FLOW_READ_ROLE: "data-hub-flow-reader",
-  DATA_HUB_FLOW_WRITE_ROLE: "data-hub-flow-writer",
-  DATA_HUB_LOAD_DATA_READ_ROLE: "data-hub-ingestion-reader",
-  DATA_HUB_LOAD_DATA_WRITE_ROLE: "data-hub-ingestion-writer",
-  DATA_HUB_MAPPING_READ_ROLE: "data-hub-mapping-reader",
-  DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer",
-  DATA_HUB_MATCHING_READ_ROLE: "data-hub-match-merge-reader",
-  DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer",
-  DATA_HUB_CUSTOM_READ_ROLE: "data-hub-custom-reader",
-  DATA_HUB_CUSTOM_WRITE_ROLE: "data-hub-custom-writer",
-  DATA_HUB_STEP_DEFINITION_READ_ROLE: "data-hub-step-definition-reader",
-  DATA_HUB_STEP_DEFINITION_WRITE_ROLE: "data-hub-step-definition-writer",
+    DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
+    DATA_HUB_DEVELOPER_ROLE: "data-hub-developer",
+    DATA_HUB_MODULE_READER_ROLE: "data-hub-module-reader",
+    DATA_HUB_MODULE_WRITER_ROLE: "data-hub-module-writer",
+    DATA_HUB_FLOW_READ_ROLE: "data-hub-flow-reader",
+    DATA_HUB_FLOW_WRITE_ROLE: "data-hub-flow-writer",
+    DATA_HUB_LOAD_DATA_READ_ROLE: "data-hub-ingestion-reader",
+    DATA_HUB_LOAD_DATA_WRITE_ROLE: "data-hub-ingestion-writer",
+    DATA_HUB_MAPPING_READ_ROLE: "data-hub-mapping-reader",
+    DATA_HUB_MAPPING_WRITE_ROLE: "data-hub-mapping-writer",
+    DATA_HUB_MATCHING_READ_ROLE: "data-hub-match-merge-reader",
+    DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer",
+    DATA_HUB_CUSTOM_READ_ROLE: "data-hub-custom-reader",
+    DATA_HUB_CUSTOM_WRITE_ROLE: "data-hub-custom-writer",
+    DATA_HUB_STEP_DEFINITION_READ_ROLE: "data-hub-step-definition-reader",
+    DATA_HUB_STEP_DEFINITION_WRITE_ROLE: "data-hub-step-definition-writer",
 
-  HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
+    HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
 
-  FLOW_COLLECTION,
-  CONCEPT_COLLECTION,
-  DRAFT_CONCEPT_COLLECTION,
-  ENTITY_MODEL_COLLECTION,
-  DRAFT_ENTITY_MODEL_COLLECTION,
-  STEP_DEFINITION_COLLECTION,
-  STEP_COLLECTION,
-  ENTITY_MODEL_UI_CONFIG_COLLECTION,
+    FLOW_COLLECTION,
+    CONCEPT_COLLECTION,
+    DRAFT_CONCEPT_COLLECTION,
+    ENTITY_MODEL_COLLECTION,
+    DRAFT_ENTITY_MODEL_COLLECTION,
+    STEP_DEFINITION_COLLECTION,
+    STEP_COLLECTION,
+    ENTITY_MODEL_UI_CONFIG_COLLECTION,
 
-  USER_ARTIFACT_COLLECTIONS: [
+    USER_ARTIFACT_COLLECTIONS: [
     FLOW_COLLECTION,
     CONCEPT_COLLECTION,
     ENTITY_MODEL_COLLECTION,
     STEP_DEFINITION_COLLECTION,
     STEP_COLLECTION,
     ENTITY_MODEL_UI_CONFIG_COLLECTION
-  ],
+],
 
-  PROVENANCE_OFF: "off",
-  PROVENANCE_COARSE: "coarse",
-  PROVENANCE_FINE: "fine",
+    PROVENANCE_OFF: "off",
+    PROVENANCE_COARSE: "coarse",
+    PROVENANCE_FINE: "fine",
 
-  // Define all DH trace events here
-  TRACE_STEP: "hub-step",
-  TRACE_FLOW: "hub-flow",
-  TRACE_FLOW_DEBUG: "hub-flow-debug",
-  TRACE_MAPPING: "hub-mapping",
-  TRACE_ENTITY: "hub-entity",
-  TRACE_CONCEPT: "hub-concept",
-  TRACE_ENTITY_DEBUG: "hub-entity-debug",
-  TRACE_MAPPING_DEBUG: "hub-mapping-debug",
-  TRACE_MATCHING: "hub-matching",
-  TRACE_MATCHING_DEBUG: "hub-matching-debug",
-  TRACE_MERGING: "hub-merging",
-  TRACE_MERGING_DEBUG: "hub-merging-debug",
-  TRACE_GRAPH: "hub-graph",
-  TRACE_GRAPH_DEBUG: "hub-graph-debug"
-};
+    // Define all DH trace events here
+    TRACE_STEP: "hub-step",
+    TRACE_FLOW: "hub-flow",
+    TRACE_FLOW_DEBUG: "hub-flow-debug",
+    TRACE_MAPPING: "hub-mapping",
+    TRACE_ENTITY: "hub-entity",
+    TRACE_CONCEPT: "hub-concept",
+    TRACE_ENTITY_DEBUG: "hub-entity-debug",
+    TRACE_MAPPING_DEBUG: "hub-mapping-debug",
+    TRACE_MATCHING: "hub-matching",
+    TRACE_MATCHING_DEBUG: "hub-matching-debug",
+    TRACE_MERGING: "hub-merging",
+    TRACE_MERGING_DEBUG: "hub-merging-debug",
+    TRACE_GRAPH: "hub-graph",
+    TRACE_GRAPH_DEBUG: "hub-graph-debug"
+}

@@ -68,7 +68,7 @@ function validateArtifact(artifact) {
     return artifact;
 }
 
-export {
+export default {
   getNameProperty,
   getCollections,
   getStorageDatabases,
@@ -77,4 +77,4 @@ export {
   getArtifactNode,
   getDirectory,
   validateArtifact
-};
+}

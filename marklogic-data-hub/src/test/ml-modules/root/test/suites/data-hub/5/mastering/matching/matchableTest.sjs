@@ -1,5 +1,7 @@
-const { Matchable, MatchRulesetDefinition } = require('/data-hub/5/mastering/matching/matchable.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const MatchableModule = mjsProxy.requireMjsModule("/data-hub/5/mastering/matching/matchable.mjs");
 const test = require("/test/test-helper.xqy");
+const Matchable = MatchableModule.Matchable;
 
 function testMatchableClass() {
   const matchableInstance = new Matchable({}, {});

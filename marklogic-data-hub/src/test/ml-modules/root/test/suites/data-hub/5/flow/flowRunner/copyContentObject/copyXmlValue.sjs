@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const test = require("/test/test-helper.xqy");
 
 // Ignoring context, since that's tested in copyJsonObjectValue.sjs
@@ -9,7 +10,7 @@ const content = {
 
 const copy = flowRunner.copyContentObject(content);
 
-// Modify the original; note that with an XML document node, a shallow copy works fine because 
+// Modify the original; note that with an XML document node, a shallow copy works fine because
 // there's no way to directly modify a document node
 content.uri = "modified-uri";
 content.value = fn.head(xdmp.unquote("<modified>true</modified>"));

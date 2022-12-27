@@ -1,5 +1,6 @@
 'use strict';
-const config = require("/com.marklogic.hub/config.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
 
 function invokeModule(module, args) {
   return fn.head(xdmp.invoke("/data-hub/5/data-services/job/" + module, args));
@@ -8,7 +9,7 @@ function invokeModule(module, args) {
 function findStepResponses(endpointConstants) {
   return fn.head(xdmp.invokeFunction(
       function() {
-        return invokeModule("findStepResponses.sjs", {endpointConstants});
+        return invokeModule("findStepResponses.mjs", {endpointConstants});
       },
       {database: xdmp.database(config.JOBDATABASE)}
   ));
@@ -17,22 +18,22 @@ function findStepResponses(endpointConstants) {
 function getMatchingPropertyValues(facetValuesSearchQuery) {
     return fn.head(xdmp.invokeFunction(
         function() {
-            return invokeModule("getMatchingPropertyValues.sjs", {facetValuesSearchQuery});
+            return invokeModule("getMatchingPropertyValues.mjs", {facetValuesSearchQuery});
         },
         {database: xdmp.database(config.JOBDATABASE)}
     ));
 }
 
 function startJob(jobId, flowName, stepNumber) {
-  return invokeModule("startJob.sjs", {jobId, flowName});
+  return invokeModule("startJob.mjs", {jobId, flowName});
 }
 
 function finishJob(jobId, jobStatus) {
-  return invokeModule("finishJob.sjs", {jobId, jobStatus});
+  return invokeModule("finishJob.mjs", {jobId, jobStatus});
 }
 
 function startStep(jobId, stepNumber, flowName, runTimeOptions) {
-  return invokeModule("startStep.sjs", {jobId, stepNumber, flowName, runTimeOptions});
+  return invokeModule("startStep.mjs", {jobId, stepNumber, flowName, runTimeOptions});
 }
 
 module.exports = {

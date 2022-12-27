@@ -13,8 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const StepExecutionContext = mjsProxy.requireMjsModule("/data-hub/5/flow/stepExecutionContext.mjs");
 const test = require("/test/test-helper.xqy");
 
 const fakeFlow = {
@@ -50,7 +50,7 @@ verifyBatchOutputIsDisabled({"enableBatchOutput": "never"});
 
 verifyBatchOutputIsDisabled({"enableBatchOutput": "onFailure"}, "Since there are no failed items, batch output is disabled");
 context.failedItems = ["test failure"];
-assertions.push(test.assertEqual(true, context.batchOutputIsEnabled(), 
+assertions.push(test.assertEqual(true, context.batchOutputIsEnabled(),
   "Since there's now a failed item (even though it's not a real one), batch output is enabled"));
 
 assertions;

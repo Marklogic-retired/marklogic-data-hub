@@ -1,5 +1,4 @@
 const flowService = require("../lib/flowService.sjs");
-const hubTest = require("/test/data-hub-test-helper.xqy");
 const hubJsTest = require("/test/data-hub-test-helper.sjs");
 const stepService = require("../lib/stepService.sjs");
 const test = require("/test/test-helper.xqy");

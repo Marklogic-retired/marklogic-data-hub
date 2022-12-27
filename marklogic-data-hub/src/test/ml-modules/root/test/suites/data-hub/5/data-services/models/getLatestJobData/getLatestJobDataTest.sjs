@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 
 function invokeService(entityCollection) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/models/getLatestJobData.sjs",
+    "/data-hub/5/data-services/models/getLatestJobData.mjs",
     {"entityCollection": entityCollection}
   ));
 }

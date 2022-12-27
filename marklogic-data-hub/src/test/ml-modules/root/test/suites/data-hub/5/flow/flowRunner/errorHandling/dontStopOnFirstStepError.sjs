@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -41,7 +42,7 @@ const assertions = [
   test.assertEqual(false, firstStepResponse.success),
 
   test.assertEqual("completed step 2", secondStepResponse.status),
-  test.assertEqual(1, secondStepResponse.totalEvents, 
+  test.assertEqual(1, secondStepResponse.totalEvents,
     "The second step should have only received the successful item from the first step"),
   test.assertEqual(0, secondStepResponse.failedEvents),
   test.assertEqual(1, secondStepResponse.successfulEvents),
@@ -49,9 +50,9 @@ const assertions = [
   test.assertEqual(1, secondStepResponse.successfulBatches),
   test.assertEqual(true, secondStepResponse.success),
 
-  test.assertEqual(1, hubTest.getUrisInCollection("customStepOne").length, 
+  test.assertEqual(1, hubTest.getUrisInCollection("customStepOne").length,
     "The doc that didn't failed should have been written to the first step's collection"),
-  test.assertEqual(1, hubTest.getUrisInCollection("customStepTwo").length, 
+  test.assertEqual(1, hubTest.getUrisInCollection("customStepTwo").length,
     "The doc that didn't failed should have been written to the second step's collection")
 ];
 
@@ -59,7 +60,7 @@ const record = hubTest.getRecord("/customer2.json");
 assertions.push(
   test.assertEqual("customStepOne", record.collections[0]),
   test.assertEqual("customStepTwo", record.collections[1]),
-  test.assertEqual(2, record.document.customerId, 
+  test.assertEqual(2, record.document.customerId,
     "Just verifying the content of the doc; the steps aren't expected to transform it")
 );
 
