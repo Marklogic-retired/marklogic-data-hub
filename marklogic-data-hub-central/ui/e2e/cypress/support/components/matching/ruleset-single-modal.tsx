@@ -44,6 +44,10 @@ class RulesetSingleModal {
     return cy.findByLabelText("confirm-single-ruleset");
   }
 
+  closeButton() {
+    return cy.findByLabelText("Close");
+  }
+
   setDictionaryUri(str: string) {
     cy.get("#dictionary-uri-input").focus().type(str);
   }
@@ -81,6 +85,14 @@ class RulesetSingleModal {
 
   editFirstList() {
     return cy.get("[id^=edit-]").first();
+  }
+
+  selectValuesToIgnoreInput() {
+    return cy.get(`[id="valuesToIgnore"]`).click();
+  }
+
+  hoverItemPresetList() {
+    return cy.findByText("Preset List 1").trigger("mouseover");
   }
 
 }

@@ -562,4 +562,22 @@ describe("Matching", () => {
     });
     cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
+
+  it("Values to Ignore list tooltip", () => {
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
+    cy.findByLabelText("inputUriRadio").scrollIntoView().click();
+
+    //adding new multiple property
+    cy.log("**check tooltip on presetList**");
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getSinglePropertyOption();
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.hoverItemPresetList();
+    cy.findByTestId("tooltipListPreset");
+    rulesetSingleModal.closeButton().click();
+  });
 });
