@@ -6,7 +6,7 @@ function invoke(module, args) {
 }
 
 function conceptReference() {
-  return invoke("getConceptReferences.sjs", {conceptName: "ShoeType"}, {});
+  return invoke("getConceptReferences.mjs", {conceptName: "ShoeType"}, {});
 }
 
 

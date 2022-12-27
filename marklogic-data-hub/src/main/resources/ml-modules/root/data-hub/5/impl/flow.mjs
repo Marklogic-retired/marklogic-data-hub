@@ -34,7 +34,7 @@ import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 // define constants for caching expensive operations
 const cachedFlows = {};
 
-export class Flow {
+export default class Flow {
 
   constructor(config) {
     this.config = config;

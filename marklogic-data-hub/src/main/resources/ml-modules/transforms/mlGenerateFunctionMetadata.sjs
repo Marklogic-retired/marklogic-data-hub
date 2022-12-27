@@ -1,11 +1,13 @@
 'use strict';
-import es from "/MarkLogic/entity-services/entity-services";
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-const datahub = DataHubSingleton.instance();
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import xqueryLib from "/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy";
 
-export function mlGenerateFunctionMetadata(context, params, content) {
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const es = require('/MarkLogic/entity-services/entity-services');
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const datahub = DataHubSingleton.instance();
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+
+function mlGenerateFunctionMetadata(context, params, content) {
   const uri = context.uri;
   const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
 
@@ -77,7 +79,7 @@ function generateMetadata(uri) {
  * XSL stylesheet that is generated via es.mappingPut. And that ensures that the map:* references in the stylesheet
  * generated for DHF's core.sjs module are resolved correctly, no matter the context.
  */
-export function addMapNamespaceToMetadata(xml) {
+function addMapNamespaceToMetadata(xml) {
   let metadata = xml;
   try {
     let query = xdmp.quote(xml).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
@@ -93,3 +95,5 @@ export function addMapNamespaceToMetadata(xml) {
   }
   return metadata;
 }
+
+exports.transform = mlGenerateFunctionMetadata;

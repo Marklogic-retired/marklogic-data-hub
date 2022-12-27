@@ -1,9 +1,10 @@
-const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const esMappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 function invokeService(excludeMLMappingFunctions = false) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/mapping/getMappingFunctions.sjs",
+    "/data-hub/5/data-services/mapping/getMappingFunctions.mjs",
     {"excludeMLMappingFunctions": excludeMLMappingFunctions}
   ));
 }

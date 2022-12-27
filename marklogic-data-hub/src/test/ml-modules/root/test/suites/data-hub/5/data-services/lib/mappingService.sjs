@@ -29,7 +29,7 @@ const DocumentForTestingUtils = {
   },
   invokeService: function (stepName, uri) {
     return fn.head(require("/test/data-hub-test-helper.sjs").runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
-      "/data-hub/5/data-services/mapping/getDocument.sjs", {stepName, uri}
+      "/data-hub/5/data-services/mapping/getDocument.mjs", {stepName, uri}
     ));
   },
   // May return zero or more.

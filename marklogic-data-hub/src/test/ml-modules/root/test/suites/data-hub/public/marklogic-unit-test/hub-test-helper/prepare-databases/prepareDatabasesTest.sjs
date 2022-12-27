@@ -1,9 +1,10 @@
-const Batch = require("/data-hub/5/flow/batch.sjs");
-const consts = require("/data-hub/5/impl/consts.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const Batch = mjsProxy.requireMjsModule("/data-hub/5/flow/batch.mjs");
+const consts = mjsProxy.requireMjsModule("/data-hub/5/impl/consts.mjs");
 const dhmut = require("/data-hub/public/marklogic-unit-test/hub-test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
+const StepExecutionContext = mjsProxy.requireMjsModule("/data-hub/5/flow/stepExecutionContext.mjs");
 const test = require("/test/test-helper.xqy");
 
 const fakeFlow = {"name": "myFlow", "steps": {"1": {}}};

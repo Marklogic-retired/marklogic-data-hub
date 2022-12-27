@@ -459,7 +459,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     }
 
     protected boolean isCustomMapping(Step removedStep) {
-        String modulePath = "/custom-modules/mapping/"+removedStep.getStepDefinitionName()+"/main.sjs";
+        String modulePath = "/custom-modules/mapping/"+removedStep.getStepDefinitionName()+"/main.mjs";
         return stepDefinitionManager.getStepDefinition(removedStep.getStepDefinitionName(), StepDefinition.StepDefinitionType.MAPPING).getModulePath().equals(modulePath);
     }
 

@@ -1,6 +1,7 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
 const datahub = DataHubSingleton.instance();
 
 function flowWorksWithValues() {

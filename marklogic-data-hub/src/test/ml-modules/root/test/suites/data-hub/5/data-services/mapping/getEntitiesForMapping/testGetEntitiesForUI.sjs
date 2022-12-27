@@ -1,4 +1,5 @@
-const mappableEntityLib = require("/data-hub/5/data-services/mapping/mappable-entity-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const mappableEntityLib = mjsProxy.requireMjsModule("/data-hub/5/data-services/mapping/mappable-entity-lib.mjs");
 const test = require("/test/test-helper.xqy");
 const assertions = [];
 

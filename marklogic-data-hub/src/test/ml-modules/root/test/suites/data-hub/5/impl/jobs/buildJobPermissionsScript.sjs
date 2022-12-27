@@ -1,6 +1,7 @@
-const config = require("/com.marklogic.hub/config.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
 const test = require("/test/test-helper.xqy");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 const result = jobs.buildJobPermissions();
 const assertions = [

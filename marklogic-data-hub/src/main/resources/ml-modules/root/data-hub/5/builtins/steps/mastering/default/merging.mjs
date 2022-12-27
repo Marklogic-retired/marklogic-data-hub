@@ -17,7 +17,7 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import merger from "/data-hub/5/mastering/merging/merger.mjs";
 import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
-import {Mergeable} from "/data-hub/5/mastering/merging/mergeable.mjs";
+import Mergeable from "/data-hub/5/mastering/merging/mergeable.mjs";
 
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
@@ -160,7 +160,7 @@ function jobReport(jobID, stepResponse, options, outputContentArray) {
   return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
 }
 
-export {
+export default {
   main,
   jobReport,
   applyPermissionsFromOptions

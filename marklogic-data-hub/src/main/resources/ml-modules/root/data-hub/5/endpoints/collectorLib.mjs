@@ -54,7 +54,7 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
 }
 
 
-export {
+export default {
   prepareSourceQuery
 };
 

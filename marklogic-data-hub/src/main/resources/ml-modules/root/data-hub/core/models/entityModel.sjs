@@ -1,4 +1,6 @@
-const consts = require("/data-hub/5/impl/consts.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const consts = mjsProxy.requireMjsModule("/data-hub/5/impl/consts.mjs");
+
 const localDefinitionPrefix = "#/definitions/";
 const entityDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_ENTITY_DEBUG);
 

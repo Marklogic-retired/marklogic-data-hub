@@ -278,6 +278,4 @@ function getEntityPropertyPath(propName, propertyDefinitions = {})
   return propPath;
 }
 
-module.exports = {
-  updateMatchOptions
-};
+export default { updateMatchOptions };

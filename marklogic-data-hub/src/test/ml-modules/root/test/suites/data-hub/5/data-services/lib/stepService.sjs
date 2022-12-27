@@ -3,11 +3,11 @@ function invoke(module, args) {
 }
 
 function saveStep(stepDefinitionType, info) {
-  return invoke("saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: true});
+  return invoke("saveStep.mjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: true});
 }
 
 function updateStep(stepDefinitionType, info) {
-  return invoke("saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: false});
+  return invoke("saveStep.mjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: false});
 }
 
 function createDefaultMappingStep(name) {
@@ -30,11 +30,11 @@ function createDefaultIngestionStep(name) {
 }
 
 function getStep(stepDefinitionType, stepName) {
-  return invoke("getStep.sjs", {stepDefinitionType, stepName});
+  return invoke("getStep.mjs", {stepDefinitionType, stepName});
 }
 
 function deleteStep(stepDefinitionType, stepName) {
-  return invoke("deleteStep.sjs", {stepDefinitionType, stepName});
+  return invoke("deleteStep.mjs", {stepDefinitionType, stepName});
 }
 
 module.exports = {

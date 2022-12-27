@@ -3,11 +3,11 @@ function invoke(module, args) {
 }
 
 function describeRole(roleName) {
-  return invoke("describeRole.sjs", {roleName});
+  return invoke("describeRole.mjs", {roleName});
 }
 
 function describeUser(username) {
-  return invoke("describeUser.sjs", {username});
+  return invoke("describeUser.mjs", {username});
 }
 
 module.exports = {
