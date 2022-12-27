@@ -21,7 +21,9 @@ declareUpdate();
 
 var externalMetadata = externalMetadata != null ? fn.head(xdmp.fromJSON(externalMetadata)) : {};
 
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 const id = sem.uuidString();
 

@@ -5,7 +5,8 @@
  * doing on JSON->XML or XML->JSON mapping tests, so I kept this.
  */
 
-const flowApi = require("/data-hub/public/flow/flow-api.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule("/data-hub/public/flow/flow-api.mjs");
 const test = require("/test/test-helper.xqy");
 
 const emptySequence = Sequence.from([]);

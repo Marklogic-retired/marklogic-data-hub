@@ -1,7 +1,8 @@
 import consts from "/data-hub/5/impl/consts.mjs";
-import sem from "/MarkLogic/semantics.xqy";
-
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+
+const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
 
 function main(content, options) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
@@ -35,7 +36,7 @@ function main(content, options) {
 
   if (options.triples && Array.isArray(options.triples)) {
     for (let triple of options.triples) {
-      triples.push(xdmp.toJSON(sem.rdfParse(JSON.stringify(triple), "rdfjson")));
+      triples.push(xdmp.toJSON(semXqy.rdfParse(JSON.stringify(triple), "rdfjson")));
     }
   }
 
@@ -43,6 +44,6 @@ function main(content, options) {
   return content;
 }
 
-export {
+export default {
   main
 };

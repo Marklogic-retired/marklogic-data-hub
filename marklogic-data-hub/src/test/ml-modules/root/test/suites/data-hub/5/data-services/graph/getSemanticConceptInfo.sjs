@@ -4,7 +4,7 @@ function invoke(module, args) {
 }
 const assertions = [];
 
-const semanticConceptInfo = invoke("getSemanticConceptInfo.sjs", { semanticConceptIRI: "http://www.example.com/Category/Sneakers" });
+const semanticConceptInfo = invoke("getSemanticConceptInfo.mjs", { semanticConceptIRI: "http://www.example.com/Category/Sneakers" });
 
 assertions.push(
   test.assertExists(semanticConceptInfo.data),

@@ -40,7 +40,7 @@ public class MappingStepDefinitionImpl extends AbstractStepDefinition {
 
         options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
         options.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        setModulePath("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
+        setModulePath("/data-hub/5/builtins/steps/mapping/entity-services/main.mjs");
         options.put("validateEntity", false);
     }
 }

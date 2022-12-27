@@ -1,5 +1,6 @@
 const test = require("/test/test-helper.xqy");
-const hubEs = require('/data-hub/5/impl/hub-es.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const hubEs = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-es.mjs");
 
 function multipleProtectedPropertiesNoNamespace() {
   const result = hubEs.generateProtectedPathConfig([

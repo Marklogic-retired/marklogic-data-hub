@@ -11,7 +11,9 @@
   limitations under the License.
 */
 'use strict';
-import core from "/data-hub/5/mapping-functions/core-functions.xqy";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+
+const core = sjsProxy.requireSjsModule('/data-hub/5/mapping-functions/core-functions.xqy');
 
 function parseDate(value, pattern) {
   return core.parseDate(value, pattern);
@@ -37,7 +39,7 @@ function hubURI(entityType) {
   return core.hubURI(entityType);
 }
 
-export {
+export default {
   documentLookup,
   hubURI,
   lookup,

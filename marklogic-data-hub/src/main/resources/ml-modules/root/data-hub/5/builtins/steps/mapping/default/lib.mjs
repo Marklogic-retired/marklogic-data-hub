@@ -250,7 +250,7 @@ function castDataType(dataType, value) {
   return convertedValue;
 }
 
-export {
+export default {
   // exporting the caches so tests can avoid DB inserts
   cachedMappingByNameAndVersion,
   cachedEntityByTitleAndVersion,

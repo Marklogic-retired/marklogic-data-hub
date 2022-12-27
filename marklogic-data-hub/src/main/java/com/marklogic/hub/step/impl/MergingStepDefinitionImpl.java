@@ -44,6 +44,6 @@ public class MergingStepDefinitionImpl extends AbstractStepDefinition {
         collectionName.add(name);
         options.put("collections", collectionName);
 
-        setModulePath("/data-hub/5/builtins/steps/mastering/default/merging.sjs");
+        setModulePath("/data-hub/5/builtins/steps/mastering/default/merging.mjs");
     }
 }

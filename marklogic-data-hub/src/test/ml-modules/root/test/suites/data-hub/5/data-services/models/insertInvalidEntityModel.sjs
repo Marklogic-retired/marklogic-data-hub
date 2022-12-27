@@ -15,7 +15,8 @@
 */
 'use strict';
 
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const entityLib = mjsProxy.requireMjsModule("/data-hub/5/impl/entity-lib.mjs");
 const test = require("/test/test-helper.xqy");
 
 const model = {

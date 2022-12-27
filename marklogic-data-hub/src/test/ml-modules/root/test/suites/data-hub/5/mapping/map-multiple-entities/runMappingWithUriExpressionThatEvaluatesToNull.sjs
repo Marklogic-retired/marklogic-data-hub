@@ -1,4 +1,5 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
 const test = require("/test/test-helper.xqy");
 const datahub = DataHubSingleton.instance();
 

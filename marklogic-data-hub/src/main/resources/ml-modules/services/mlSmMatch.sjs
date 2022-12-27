@@ -15,18 +15,19 @@
  */
 'use strict';
 
-import Artifacts from "/data-hub/5/artifacts/core.mjs";
-import config from "/com.marklogic.hub/config.mjs";
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-import matcher from '/com.marklogic.smart-mastering/matcher.xqy';
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const Artifacts = mjsProxy.requireMjsModule("/data-hub/5/artifacts/core.mjs");
+const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
+const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 
-export function get(context, params) {
+function get(context, params) {
   return post(context, params, null);
 }
 
-export function post(context, params, input) {
+function post(context, params, input) {
   let inputBody = input ? input.root || {} : {};
   let inputOptions = inputBody.options || {};
   const datahub = DataHubSingleton.instance({
@@ -70,3 +71,6 @@ export function post(context, params, input) {
     sourceDatabase
   ));
 }
+
+exports.GET = get;
+exports.POST =  post;

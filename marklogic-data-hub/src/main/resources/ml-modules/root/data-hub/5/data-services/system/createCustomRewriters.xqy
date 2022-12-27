@@ -116,7 +116,7 @@ let $staging-routes := <wrapper xmlns="http://marklogic.com/xdmp/rewriter">
       <match-query-param name="database">
         <set-database checked="true">$0</set-database>
       </match-query-param>
-      <dispatch>/data-hub/5/endpoints/collector.sjs</dispatch>
+      <dispatch>/data-hub/5/endpoints/collector.mjs</dispatch>
     </match-method>
   </match-path>
   <match-path matches="^/(v1|LATEST)/resources/ml:hubversion/?$">

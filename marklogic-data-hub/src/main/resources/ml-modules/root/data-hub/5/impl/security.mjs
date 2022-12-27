@@ -52,6 +52,6 @@ function getAuthorities() {
   return authorities;
 }
 
-export {
+export default {
   getAuthorities
 };

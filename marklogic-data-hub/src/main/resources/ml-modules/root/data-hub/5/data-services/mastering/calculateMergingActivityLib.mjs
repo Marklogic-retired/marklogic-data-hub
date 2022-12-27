@@ -16,6 +16,7 @@
 'use strict';
 
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 
 const currentDatabaseName = xdmp.databaseName(xdmp.database());
 
@@ -38,7 +39,7 @@ function internalCalculateMergingActivity(step)
     if (targetEntityType) {
         let entityTypeTitle = targetEntityType;
         if (targetEntityType.includes('/')) {
-            entityTypeTitle = require("/data-hub/5/impl/entity-lib.sjs").getEntityTypeIdParts(targetEntityType).entityTypeTitle;
+            entityTypeTitle = entityLib.getEntityTypeIdParts(targetEntityType).entityTypeTitle;
         }
         query = cts.collectionQuery(entityTypeTitle);
     }
@@ -47,6 +48,6 @@ function internalCalculateMergingActivity(step)
         sourceNames
     };
 }
-module.exports = {
+export default  {
     calculateMergingActivity
 };

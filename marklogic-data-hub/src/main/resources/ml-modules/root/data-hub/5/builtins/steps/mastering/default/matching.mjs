@@ -129,7 +129,7 @@ function buildResult(matchSummaryJson, options, collections) {
   return result;
 }
 
-export {
+export default {
   main,
   buildResult,
   filterContentAlreadyProcessed

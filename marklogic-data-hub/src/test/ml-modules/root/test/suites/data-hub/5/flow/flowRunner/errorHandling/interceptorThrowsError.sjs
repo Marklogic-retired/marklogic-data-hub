@@ -1,4 +1,5 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowRunner = mjsProxy.requireMjsModule("/data-hub/5/flow/flowRunner.mjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -35,8 +36,8 @@ const assertions = [
   test.assertEqual(1, secondStepResponse.stepOutput.length),
   test.assertEqual("Error running JavaScript request", secondStepResponse.stepOutput[0],
     "This is the generic MarkLogic error message from calling xdmp.invoke. While it is not helpful by itself, " +
-    "it is expected that a user will look at the console.error logging or the Batch document for full details. " + 
-    "It is also not yet known how to improve this; i.e. if a new error is thrown with the data[0] value from the " + 
+    "it is expected that a user will look at the console.error logging or the Batch document for full details. " +
+    "It is also not yet known how to improve this; i.e. if a new error is thrown with the data[0] value from the " +
     "original error, the original stacktrace is lost."),
   test.assertEqual(2, secondStepResponse.totalEvents, "Both items are considered to have been processed"),
   test.assertEqual(2, secondStepResponse.failedEvents, "Both items are considered to have failed due to the hook failure"),
@@ -45,9 +46,9 @@ const assertions = [
   test.assertEqual(0, secondStepResponse.successfulBatches),
   test.assertEqual(false, secondStepResponse.success),
 
-  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length, 
+  test.assertEqual(0, hubTest.getUrisInCollection("customStepOne").length,
     "No step output should have been written due to the interceptor failure"),
-  test.assertEqual(0, hubTest.getUrisInCollection("customStepTwo").length, 
+  test.assertEqual(0, hubTest.getUrisInCollection("customStepTwo").length,
     "No step output should have been written due to the interceptor failure")
 ];
 

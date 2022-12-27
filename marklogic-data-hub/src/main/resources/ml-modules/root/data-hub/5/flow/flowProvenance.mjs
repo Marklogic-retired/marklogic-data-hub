@@ -151,7 +151,7 @@ function buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDef
   return provLib.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
 }
 
-export {
+export default {
   queueProvenanceData,
   writeProvenanceData
 }

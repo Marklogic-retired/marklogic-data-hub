@@ -15,10 +15,12 @@
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
-import esInstance from "/MarkLogic/entity-services/entity-services-instance");
-import ext from "/data-hub/extensions/entity/get-entity-details.mjs";
 import prov from "/data-hub/5/impl/prov.mjs";
-import { requireFunction } from "../impl/hub-utils.mjs";
+import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
+import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+
+const esInstance = sjsProxy.requireSjsModule('/MarkLogic/entity-services/entity-services-instance.xqy', "http://marklogic.com/entity-services-instance");
+const ext = sjsProxy.requireSjsModule("/data-hub/extensions/entity/get-entity-details.sjs");
 
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -538,7 +540,7 @@ function addDocumentMetadataToSearchResults(searchResponse) {
 }
 
 function getMatchStepFromModelName(entityName) {
-  const getEntityModel = requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
+  const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
   const entityModel = getEntityModel(entityName);
   const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
   const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
@@ -680,7 +682,7 @@ function verifyExplorableModel(entityName) {
   return entityTypes.includes(entityModel.info.title);
 }
 
-export {
+export default {
   addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
   buildPropertyMetadata,

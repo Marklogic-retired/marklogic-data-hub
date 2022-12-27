@@ -14,11 +14,12 @@
  limitations under the License.
  */
 'use strict';
+import defaultConfig from "/com.marklogic.hub/config.mjs";
 
-export class Debug {
+export default class Debug {
   constructor(config = null) {
     if(!config) {
-      config = require("/com.marklogic.hub/config.sjs");
+      config = defaultConfig;
     }
     this.logLevel   = config && config.HUBLOGLEVEL || 'default';
     this.logLevels  = ['default','notice','trace','info'];
@@ -90,3 +91,4 @@ export class Debug {
 //      })
   }
 }
+

@@ -1,6 +1,7 @@
 'use strict';
 // No privilege required: The xdmp.securityAssert call is in the migrateProvenance function.
-import provMigrateLib from "/data-hub/5/provenance/migrate-provenance.xqy";
+import sjsProxy from "/data-hub/core/util/sjsProxy";
+const provMigrateLib = sjsProxy.requireSjsModule("/data-hub/5/provenance/migrate-provenance.xqy");
 
 const endpointConstants = external.endpointConstants;
 const endpointState = external.endpointState;

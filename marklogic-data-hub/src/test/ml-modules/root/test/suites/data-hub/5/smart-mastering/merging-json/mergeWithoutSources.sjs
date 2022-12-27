@@ -11,9 +11,11 @@ let optionsName = lib['OPTIONS-NAME2'];
 let mergedDoc =
   fn.head(xdmp.xqueryEval(
     `
-      import module namespace merging = "http://marklogic.com/smart-mastering/merging"
+      const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const module namespace merging = "http://marklogic.com/smart-mastering/merging"
         at "/com.marklogic.smart-mastering/merging.xqy";
-      import module namespace const = "http://marklogic.com/smart-mastering/constants"
+      const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const module namespace const = "http://marklogic.com/smart-mastering/constants"
         at "/com.marklogic.smart-mastering/constants.xqy";
       declare variable $uri-str as xs:string external;
       declare variable $uris as xs:string* := fn:tokenize($uri-str, "##");

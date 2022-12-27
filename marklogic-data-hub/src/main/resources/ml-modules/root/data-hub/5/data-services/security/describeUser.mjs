@@ -20,5 +20,5 @@ xdmp.securityAssert("http://marklogic.com/xdmp/privileges/xdmp-role-privileges",
 
 const username = external.username;
 
-import describLib from "/data-hub/5/security/describe-lib.sjs";
+import describLib from "/data-hub/5/security/describe-lib.mjs";
 describLib.describeUser(username);
