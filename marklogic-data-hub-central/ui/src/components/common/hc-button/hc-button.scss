@@ -1,0 +1,7 @@
+@import "../../../theme/HCVariables.scss";
+
+
+.btn:focus {
+  outline: none !important;
+  box-shadow: 0 0 2px 2px #7f86b5 inset !important;
+}

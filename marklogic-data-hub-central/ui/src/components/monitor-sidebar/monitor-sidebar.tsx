@@ -37,6 +37,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
   const dateFormat = "YYYY-MM-DD";
   let initialDatePickerValue = monitorOptions.selectedFacets["startTime"] ? [dayjs(monitorOptions.selectedFacets["startTime"][0]), dayjs(monitorOptions.selectedFacets["startTime"][1])] : [null, null];
   const [datePickerValue, setDatePickerValue] = useState<any[]>(initialDatePickerValue);
+  const [startTimeTooltipVisible, setStartTimeTooltipVisible] = useState<boolean>(false);
 
   const timeWindow = (selectedDateRangeValue) => {
     let date = "";
@@ -251,17 +252,27 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     setAllMonitorGreyedOptions(newAllSelectedfacets);
   };
 
+  const serviceNameKeyDownHandler = async (event, component) => {
+    //Make seleection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "startTimeTooltip") setStartTimeTooltipVisible(!startTimeTooltipVisible);
+    }
+  };
+
+
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
 
   return (
     <div className={styles.container}>
       <div className={styles.facetContainer} style={{"marginLeft": "7px"}}>
         <div className={styles.name} data-testid="start-time-facet">Start Time
-          <HCTooltip text="Start time for a step that has run" id="start-time-tooltip" placement="bottom-start">
-            <i>
-              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" />
-            </i>
-          </HCTooltip>
+          <span tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "startTimeTooltip")}>
+            <HCTooltip text="Start time for a step that has run" id="start-time-tooltip" placement="bottom-start" show={startTimeTooltipVisible ? startTimeTooltipVisible : undefined}>
+              <i>
+                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" />
+              </i>
+            </HCTooltip>
+          </span>
         </div>
         <div className={"my-3"}>
           <Select

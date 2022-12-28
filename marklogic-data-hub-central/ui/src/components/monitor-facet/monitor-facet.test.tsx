@@ -1,7 +1,8 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
 import {flowNameFacetProps, stepNameFacetProps, stepTypeFacetProps} from "../../assets/mock-data/monitor/facet-props";
 import MonitorFacet from "./monitor-facet";
+import userEvent from "@testing-library/user-event";
 
 describe("Facet component", () => {
   it("Facet component renders with data properly", async() => {
@@ -49,4 +50,39 @@ describe("Facet component", () => {
     await(waitForElement(() => (getByText("Code that processes the data."))));
   });
 
+  it("Keyboard Navigation sequence is correct", async () => {
+    const {getByTestId} = render(<MonitorFacet {...stepTypeFacetProps} />);
+
+    let i: number;
+    let clearFacet = getByTestId("step-type-clear");
+    let toggleFacetPanel = getByTestId("step-type-toggle");
+    let showMoreLink = getByTestId("show-more-step-type");
+    let mappingType = getByTestId("step-type-mapping-checkbox");
+    let loadingType = getByTestId("step-type-ingestion-checkbox");
+    let customType = getByTestId("step-type-custom-checkbox");
+
+
+    const facetActions = [clearFacet, toggleFacetPanel, loadingType, mappingType, customType, showMoreLink];
+
+    // verify element exists and can be focused
+    facetActions.forEach((element, i) => async () => {
+      element.focus();
+      await wait(() => expect(element).toHaveFocus());
+    });
+
+    clearFacet.focus();
+
+    // verify elements tab in given order
+    for (i = 1; i < 5; ++i) {
+      userEvent.tab();
+      expect(facetActions[i]).toHaveFocus();
+    }
+
+
+    // verify elements tab backwards in same order
+    for (i = 3; i >= 0; --i) {
+      userEvent.tab({shift: true});
+      expect(facetActions[i]).toHaveFocus();
+    }
+  });
 });

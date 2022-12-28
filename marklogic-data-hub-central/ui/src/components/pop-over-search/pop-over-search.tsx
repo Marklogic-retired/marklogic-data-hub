@@ -23,7 +23,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
   const {handleError} = useContext(UserContext);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
-  const [popOverVisibility, setPopOverVisibilty] = useState(false);
+  const [popOverVisibility, setPopOverVisibility] = useState(false);
 
   const getFacetValues = async (e) => {
     if (e.target.value.length >= 2 && e.target.value.toLowerCase()) {
@@ -65,6 +65,13 @@ const PopOverSearch: React.FC<Props> = (props) => {
     }
   };
 
+  const serviceNameKeyDownHandler = (event, component) => {
+    //Make seleection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "seeAllLink") setPopOverVisibility(!popOverVisibility);
+    }
+  };
+
   const onSelectCheckboxes = (e) => {
     let index = checkedValues.indexOf(e.target.value);
     if (index === -1) {
@@ -79,12 +86,12 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const addFacetValues = () => {
     props.checkFacetValues(checkedValues);
-    setPopOverVisibilty(false);
+    setPopOverVisibility(false);
   };
 
 
   const handleChange = (visible) => {
-    setPopOverVisibilty(visible);
+    setPopOverVisibility(visible);
   };
 
   useEffect(() => {
@@ -133,7 +140,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       onToggle={handleChange}
       rootClose
       show={popOverVisibility}>
-      <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={(props.facetName)+"-popover-search-label"}>See all</div>
+      <div className={styles.search} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "seeAllLink")} data-testid={(props.facetName)+"-search-input"} aria-label={(props.facetName)+"-popover-search-label"}>See all</div>
     </OverlayTrigger>
   );
 };
