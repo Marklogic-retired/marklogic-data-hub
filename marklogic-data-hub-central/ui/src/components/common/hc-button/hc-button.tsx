@@ -1,6 +1,7 @@
 
 import React from "react";
 import {Button, ButtonProps, Spinner} from "react-bootstrap";
+import "./hc-button.scss";
 
 export interface HCButtonProps extends ButtonProps {
   loading?: boolean

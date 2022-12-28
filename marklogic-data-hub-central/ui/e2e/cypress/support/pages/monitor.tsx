@@ -55,11 +55,13 @@ class MonitorPage {
   validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
     // filter by checking "mapping" facet
     this.getFacetCheckbox(facetType, facetName).should("be.visible").check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.wait(1000);
+    cy.findByLabelText("facet-apply-button").click({force: true});
 
     cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`).should("be.visible").then(($btn) => {
       let facet = $btn.next("label").text();
-      cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
+      cy.pause();
+      cy.get("#selected-facets [data-testid=\"clear-" + $btn.val() + "\"]").should("exist");
       // On firefox it gets stuck and then tries everything at once
       cy.wait(1000);
       // Click expand all table rows to validate info inside

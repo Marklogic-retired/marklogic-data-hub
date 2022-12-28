@@ -95,6 +95,7 @@ const SearchPagination: React.FC<Props> = (props) => {
       return (
         <Pagination.Item
           key={pageNumber}
+          tabIndex={-1}
           data-testid={`pagination-item-${pageNumber}`}
           id={`pagination-item-${pageNumber}`}
           active={props.pageNumber === pageNumber}
@@ -109,7 +110,7 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const renderOptions = () => {
     const options = pageSizeOptions.map((item, index) => {
-      return <option key={index} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
+      return <option key={index} tabIndex={-1} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
     });
     return options;
   };
@@ -117,11 +118,11 @@ const SearchPagination: React.FC<Props> = (props) => {
   const renderPagination = (
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
-        <Pagination.Prev onClick={handlePrev} disabled={props.pageNumber === 1} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
+        <Pagination.Prev onClick={handlePrev} disabled={props.pageNumber === 1} tabIndex={-1} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
         {renderPages}
-        <Pagination.Next onClick={handleNext} disabled={props.pageNumber === totalPage} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
+        <Pagination.Next onClick={handleNext} disabled={props.pageNumber === totalPage} tabIndex={-1} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
       </Pagination>
-      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
+      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" tabIndex={-1} value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
         {renderOptions()}
       </Form.Select>
     </div>

@@ -6,6 +6,7 @@ interface Props {
   id: string;
   tooltip?: any;
   handleClick: Function;
+  handleKeyDown?: Function;
   value: any;
   label?: JSX.Element | string;
   checked?: boolean;
@@ -18,7 +19,7 @@ interface Props {
 }
 
 const HCCheckbox: React.FC<Props> = (props) => {
-  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled, placementTooltip, removeMargin} = props;
+  const {id, tooltip, handleClick, handleKeyDown, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled, placementTooltip, removeMargin} = props;
   const checkLabel = <FormCheck.Label style={{"marginLeft": removeMargin ? 0 : 5, "color": "#333333"}}>{label}</FormCheck.Label>;
 
   const getLabel = () => {
@@ -50,6 +51,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
             checked={checked}
             onChange={(e) => handleClick(e)}
             onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => { if (handleKeyDown) { handleKeyDown(e); } }}
             data-testid={dataTestId}
             aria-label={ariaLabel}
             style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
@@ -62,6 +64,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
           checked={checked}
           onChange={(e) => handleClick(e)}
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => { if (handleKeyDown) { handleKeyDown(e); } }}
           data-testid={dataTestId}
           aria-label={ariaLabel}
           style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}

@@ -673,14 +673,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const serviceNameKeyDownHandler = async (event, component) => {
     //Tooltip visible when user presses space or enter key
     if ((event.keyCode === 13) || (event.keyCode === 32)) {
-      if (component === "tgtDatabaseTooltip") setTgtDatabaseTooltipVisible2(true);
-      if (component === "tgtCollectionTooltip") setTgtCollectionTooltipVisible2(true);
-      if (component === "tgtPermissionTooltip") setTgtPermissionToolTipVisible(true);
-      if (component === "provGranularityTooltip") setProvGranTooltipVisible2(true);
-      if (component === "batchSizeTooltip") setBatchSizeToolTipVisible(true);
-      if (component === "headerContentTooltip") setHeaderContentTooltipVisible(true);
+      if (component === "tgtDatabaseTooltip") setTgtDatabaseTooltipVisible2(!tgtDatabaseTooltipVisible2);
+      if (component === "tgtCollectionTooltip") setTgtCollectionTooltipVisible2(!tgtCollectionTooltipVisible2);
+      if (component === "tgtPermissionTooltip") setTgtPermissionToolTipVisible(!tgtPermissionTooltipVisible);
+      if (component === "provGranularityTooltip") setProvGranTooltipVisible2(!provGranTooltipVisible2);
+      if (component === "batchSizeTooltip") setBatchSizeToolTipVisible(!batchSizeTooltipVisible);
+      if (component === "headerContentTooltip") setHeaderContentTooltipVisible(!headerContentTooltipVisible);
       if (component === "interceptorTooltip") { handleShowInterceptorPopover(event); }
-      if (component === "customHookTooltip") setCustomHookTooltipVisible(true);
+      if (component === "customHookTooltip") setCustomHookTooltipVisible(!customHookTooltipVisible);
     }
 
     //Tooltip not visible if user presses escape key
