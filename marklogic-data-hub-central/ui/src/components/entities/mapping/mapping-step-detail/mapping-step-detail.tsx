@@ -1752,10 +1752,12 @@ const MappingStepDetail: React.FC = () => {
               id="srcContainer"
               data-testid="srcContainer"
               className={styles.sourceContainer}>
-              <div id="srcDetails" data-testid="srcDetails">
-                <div className={styles.sourceTitle}
-                ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
+              <div id="srcDetails" data-testid="srcDetails" className={styles.srcDetailsContainer}>
+                <div className={styles.sourceTitle}>
+                  <span className={styles.sourceDataIcon}/>
+                  <strong>Source Data</strong>
                 </div>
+                {navigationButtons}
               </div>
               {isLoading === true ? <div className={styles.spinRunning}>
                 <Spinner animation="border" data-testid="spinTest" variant="primary" />
@@ -1804,7 +1806,6 @@ const MappingStepDetail: React.FC = () => {
                         </HCAlert> : null
                       }
                       <div className={styles.sourceButtons}>
-                        <span className={styles.navigationButtons}>{navigationButtons}</span>
                         <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
                       </div>
 
