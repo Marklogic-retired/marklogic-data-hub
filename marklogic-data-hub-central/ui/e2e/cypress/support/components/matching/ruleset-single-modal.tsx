@@ -69,7 +69,7 @@ class RulesetSingleModal {
   }
 
   saveModalButton(label: string) {
-    return cy.get(`[aria-label=${label}]`).click();
+    cy.get(`[aria-label=${label}]`).click();
   }
 
   addListTitle(id: string, title: string) {
@@ -88,11 +88,11 @@ class RulesetSingleModal {
   }
 
   selectValuesToIgnoreInput() {
-    return cy.get(`[id="valuesToIgnore"]`).click();
+    cy.get(`[id="valuesToIgnore"]`).click({force: true});
   }
 
   hoverItemPresetList() {
-    return cy.findByText("Preset List 1").trigger("mouseover");
+    cy.findByText("Preset List 1").trigger("mouseover");
   }
 
 }

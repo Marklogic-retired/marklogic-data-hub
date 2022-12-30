@@ -134,7 +134,7 @@ describe("Entity Modeling: Graph View", () => {
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let patientCoordinates: any = nodePositions["Patients"];
       graphVis.getGraphVisCanvas().click(patientCoordinates.x, patientCoordinates.y, {force: true});
-      cy.findByText("An entity for patients").should("exist");
+      cy.contains("An entity for patients").should("exist");
     });
     cy.waitForAsyncRequest();
     cy.wait(1500);

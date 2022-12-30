@@ -101,7 +101,7 @@ class BaseEntitySidebar {
     cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child").click({force: true});
   }
   getMainPanelSearchInput(input: string) {
-    cy.get("#graph-view-filter-input").should("be.visible").then((e) => {
+    cy.get("#graph-view-filter-input").scrollIntoView().should("be.visible").then((e) => {
       Cypress.$(e).click();
     });
     cy.get("#graph-view-filter-input").clear().type(input);

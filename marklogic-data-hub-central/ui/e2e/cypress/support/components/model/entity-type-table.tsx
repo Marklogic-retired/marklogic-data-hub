@@ -59,7 +59,7 @@ class EntityTypeTable {
   }
 
   getDeleteConceptClassIcon(conceptName: string) {
-    return cy.findByTestId(`${conceptName}-trash-icon`);
+    return cy.get(`[data-testid=${conceptName}-trash-icon]`);
   }
 
   sortByNodeTypeConcept() {

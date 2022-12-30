@@ -339,7 +339,12 @@ describe("Matching", () => {
     cy.visit("/tiles/curate");
 
     cy.log("**Open Person mapping steps**");
-    curatePage.getEntityTypePanel("Person").should("be.visible").click();
+    curatePage.getEntityTypePanel("Person").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Person");
+      }
+    });
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
 
