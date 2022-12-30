@@ -41,12 +41,12 @@ describe("Focus Defocus clusters", () => {
       canvas.trigger("mouseover", customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
     });
-  });
-  it("View customer record type information", () => {
+    cy.wait(3000);
+    cy.log("**View customer record type information**");
     graphExplore.getRecordTab().click();
     graphExplore.getJsonRecordData().should("be.visible");
-
-    cy.log("**Right click on a node to choose focus on cluster**");
+  });
+  it("Right click on a node to choose focus on cluster ", () => {
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];

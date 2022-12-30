@@ -287,17 +287,20 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getPropertiesTab().click();
     graphViewSidePanel.getPropertyName("relTest1-Test2").should("be.visible");
 
-    cy.log("**Edist relTest1-Test2 property**");
+    cy.log("**Edit relTest1-Test2 property**");
     propertyTable.editProperty("relTest1-Test2");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("rel-Test1-Test2");
     cy.get(`[aria-label="test2-id-option"]`).should("exist");
     propertyModal.getSubmitButton().click();
-    cy.wait(1000);
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
     propertyTable.getProperty("rel-Test1-Test2").should("exist");
 
     cy.log("**Checks that test2-id cannot be deleted because is being used as foreign key**");
     cy.get("#switch-view-table").click({force: true});
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
     entityTypeTable.viewEntityInGraphView("a-Test2");
     graphViewSidePanel.getPropertiesTab().click();
     propertyTable.getDeletePropertyIcon("a-Test2", "test2-id").should("be.visible").click();

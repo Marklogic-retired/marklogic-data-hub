@@ -380,7 +380,7 @@ describe("Concept classes in Modeling screen", () => {
     entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click({force: true});
     conceptClassModal.clearConceptClassDescription();
     conceptClassModal.newConceptClassDescription("Description has changed");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
+    conceptClassModal.getAddButton().click();
     conceptClassModal.getAddButton().should("not.exist");
     // check edited concept class description
     entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click();
