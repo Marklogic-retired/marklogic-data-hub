@@ -29,7 +29,6 @@ describe("Add Matching step to a flow", () => {
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("matching", matchStep);
     cy.deleteFlows(flowName1, flowName2);
     cy.resetTestUser();
   });
@@ -201,4 +200,22 @@ describe("Add Matching step to a flow", () => {
     runPage.closeFlowStatusModal(flowName1);
     cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
   });
+
+  it("Delete the match step", () => {
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.selectMatchTab("Customer");
+    curatePage.deleteMappingStepButton(matchStep).should("be.visible").click();
+    curatePage.deleteConfirmation("Yes").click();
+  });
+
+  it("Validate match step is removed from flows", () => {
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.expandFlow(flowName1);
+    runPage.verifyNoStepsInFlow();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.expandFlow(flowName2);
+    runPage.verifyNoStepsInFlow();
+  });
+
 });

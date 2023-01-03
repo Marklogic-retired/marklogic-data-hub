@@ -81,6 +81,10 @@ class RunPage {
     }
   }
 
+  verifyNoStepsInFlow() {
+    cy.get(".show").findByText("There are no steps in this flow. Add a step here to populate and run the flow.").should("be.visible");
+  }
+
   getFlowStatusModal() {
     return cy.get("[data-testid=job-response-modal]");
   }
