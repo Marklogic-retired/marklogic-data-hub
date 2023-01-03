@@ -109,7 +109,7 @@ declare private function load-artifacts(
   for $uri in get-artifact-uris($artifact-type, $test-data-path)
   let $path := fn:replace($uri, $test-data-path, "")
   let $artifact-uri := "/" || $path
-  let $content := test:get-test-file($path)
+  let $content := test:get-modules-file($uri,"text", "force-unquote")
   let $permissions := (
     xdmp:default-permissions(),
     map:get($TYPE-TO-PERMISSIONS-MAP, $artifact-type)

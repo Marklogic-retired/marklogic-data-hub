@@ -23,6 +23,8 @@ const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
 
+const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
+
 function main(content, options, stepExecutionContext) {
 
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
@@ -51,8 +53,7 @@ function main(content, options, stepExecutionContext) {
   const urisToProcess = [];
 
   let thisMatchSummary = content.value ? content.value : cts.doc(thisMatchSummaryURI);
-  if (!thisMatchSummary) {
-    xdmp.log(`matchSummary '${thisMatchSummaryURI}' not found`);
+  if (!(thisMatchSummary && thisMatchSummary.root.matchSummary)) {
     return [];
   }
   thisMatchSummary = thisMatchSummary.toObject();
@@ -72,15 +73,17 @@ function main(content, options, stepExecutionContext) {
     }
 
     let uriActionDetails = thisMatchSummary.matchSummary.actionDetails[uriToProcess];
+    const searchForAdditionalDetails = uriActionDetails && (uriActionDetails.uris || uriActionDetails.hashes);
     // If the action is merge, ensure we create the merge with the most URIs
-    if (uriActionDetails && uriActionDetails.action === 'merge') {
-      const urisQuery = cts.pathRangeQuery('/matchSummary/actionDetails/*/uris', '=', uriActionDetails.uris, ['score-function=zero'], 0)
+    if (searchForAdditionalDetails) {
+      const urisQuery = (uriActionDetails.uris && uriActionDetails.uris.length) ? cts.pathRangeQuery('/matchSummary/actionDetails/*/uris', '=', uriActionDetails.uris, ['score-function=zero'], 0): null;
       const positiveQuery =
         cts.andQuery([
           cts.jsonPropertyValueQuery('action', 'merge'),
           urisQuery,
           collectionQuery
         ]);
+      const detailsXPath = `/matchSummary/actionDetails/*[action = '${uriActionDetails.action}']`;
       const otherMergesForURI =
         cts.search(
           cts.andNotQuery(
@@ -92,7 +95,7 @@ function main(content, options, stepExecutionContext) {
         ).toArray()
           // get the actionNode for the URI
           .map(
-            (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
+            (result) => result.xpath(detailsXPath).toArray()
               .filter((actionNode) => cts.contains(actionNode, urisQuery))[0]
           )
           // filter out false positives that don't have merge actions for the given URI

@@ -1,0 +1,11 @@
+{
+  "name": "fuzzyMatchMerge",
+  "steps": {
+    "1": {
+      "stepId": "matchFuzzyCustomers-matching"
+    },
+    "2": {
+      "stepId": "mergeCustomers-merging"
+    }
+  }
+}

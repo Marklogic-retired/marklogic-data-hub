@@ -2,6 +2,10 @@
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const getBlocksOfUris = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocksOfUris");
+
+const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
+const hashBelongToPredicate = sem.iri("http://marklogic.com/data-hub/mastering#belongsTo");
+
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
@@ -267,9 +271,31 @@ function buildMatchSummary(matchable, content) {
   if (matchingTraceEnabled) {
     xdmp.trace(matchingTraceEvent, `Building match summary with matchable: ${xdmp.describe(matchable, Sequence.from([]), Sequence.from([]))} and content: ${xdmp.toJsonString(content)}`);
   }
+  const matchRulesetDefinitions = matchable.matchRulesetDefinitions();
+  const useFuzzyMatch = matchRulesetDefinitions.some(def => def.fuzzyMatch());
+  let hashMatchInfo = null;
   const urisToContentObjects = {};
+  const triplesByUri = {};
+  if (useFuzzyMatch) {
+    hashMatchInfo = {
+      matchRulesetScores: matchRulesetDefinitions.reduce((scores, def) => {
+        scores[def.name()] = def.weight();
+        return scores;
+      }, {}),
+      thresholds: matchable.thresholdDefinitions().map((def) => def.raw())
+    };
+  }
   for (const contentObject of content) {
     urisToContentObjects[contentObject.uri] = contentObject;
+    if (useFuzzyMatch) {
+      triplesByUri[contentObject.uri] = [];
+      for (const matchRuleset of matchRulesetDefinitions) {
+        for (const queryHash of matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch())) {
+          triplesByUri[contentObject.uri].push(sem.triple(contentObject.uri, queryHashPredicate, queryHash));
+          triplesByUri[contentObject.uri].push(sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name()));
+        }
+      }
+    }
   }
   matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
   const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
@@ -283,8 +309,9 @@ function buildMatchSummary(matchable, content) {
   const thresholdQueryFunctions =  thresholdDefinitions.map((def, index, array) => {
     const nextDef = array[index + 1];
     const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
+    const minimumCombos = def.minimumMatchCombinations();
     return (doc) => {
-      const positiveQuery = groupQueries(def.minimumMatchCombinations().map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery);
+      const positiveQuery = groupQueries(minimumCombos.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery);
       if (notQuery) {
         return cts.andNotQuery(
               positiveQuery,
@@ -308,24 +335,19 @@ function buildMatchSummary(matchable, content) {
       const total = cts.estimate(finalMatchQuery);
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
-        xdmp.trace(matchingTraceEvent, `Searching with format option: ${formatOption}.`);
+      }
+      if (total === 0) {
+        continue;
       }
       const maxScan = Math.min(matchable.maxScan(), total);
       let matchingUris;
-      let uriOptions = [`limit=${maxScan}`, "ascending", "score-zero", "concurrent"];
+      let uriOptions = ["score-zero", "concurrent"];
       if (total > matchable.maxScan()) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(matchingTraceEvent, `Large number of documents (${total}) matching ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
-        }
-        const allThresholdMatchingUris = cts.uris(null, ["score-zero", "descending", "concurrent"], finalMatchQuery, 0).toArray();
-        const urisPathReference = cts.pathReference("/matchSummary/actionDetails/*/uris");
-        const processedUris = cts.values(urisPathReference, null, ["score-zero", "descending", "concurrent"], cts.rangeQuery(urisPathReference, "=", allThresholdMatchingUris, ["score-function=zero"], 0), 0).toArray();
-        let begin = (allThresholdMatchingUris.filter((uri) => processedUris.includes(uri)).length) - 1;
-        if (begin < 0) {
-          begin = 0;
-        }
-        const end = begin + maxScan + 1;
-        matchingUris = allThresholdMatchingUris.slice(begin, end);
+        const halfMaxScan = Math.ceil(maxScan / 2);
+        matchingUris = fn.distinctValues(Sequence.from([
+            cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
+            cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
+        ])).toArray();
       } else {
         matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
       }
@@ -402,13 +424,29 @@ function buildMatchSummary(matchable, content) {
       matchStepName: matchable.matchStepNode.stepName,
       matchStepFlow: matchable.matchStep.flow,
       URIsToProcess: urisToActOn,
-      actionDetails: allActionDetails
+      actionDetails: allActionDetails,
+      useFuzzyMatch,
+      hashMatchInfo
     }
   };
+  const output = [matchSummary];
+  const fuzzyMatchUris = Object.keys(triplesByUri);
+  for (let fuzzyMatchUri of fuzzyMatchUris) {
+    output.push({
+      uri: `/matching/data-hub/fuzzy-hashes/${xdmp.hash64(fuzzyMatchUri)}.json`,
+      value: {
+        triples: triplesByUri[fuzzyMatchUri]
+      },
+      context: {
+        collections: ["http://marklogic.com/data-hub/matching/fuzzy-hashes"],
+        permissions: [xdmp.permission(consts.DATA_HUB_COMMON_ROLE, "read"), xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, "update")]
+      }
+    });
+  }
   if (matchingTraceEnabled) {
     xdmp.trace(matchingTraceEvent, `Match summary created: ${xdmp.toJsonString(matchSummary)}`);
   }
-  return matchSummary;
+  return output;
 }
 
 module.exports = {

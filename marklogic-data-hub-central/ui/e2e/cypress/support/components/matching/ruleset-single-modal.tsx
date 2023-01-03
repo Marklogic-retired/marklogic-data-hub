@@ -44,6 +44,10 @@ class RulesetSingleModal {
     return cy.findByLabelText("confirm-single-ruleset");
   }
 
+  fuzzyMatchToggle() {
+    return cy.findByLabelText("fuzzyMatching");
+  }
+
   closeButton() {
     return cy.findByLabelText("Close");
   }
