@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from "react";
+import React, {useContext, useState, useEffect, useRef} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter} from "../../util/date-conversion";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import JobResponse from "../job-response/job-response";
 import {CheckCircleFill, ClockFill, XCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCheckbox, HCDivider, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {Overlay} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 import ExpandCollapse from "../../../src/components/expand-collapse/expand-collapse";
 import {getViewSettings, setViewSettings} from "@util/user-context";
@@ -23,6 +23,9 @@ const JobResultsTableView = ({data}) => {
   const [orderColumnName, setOrderColumnName] = useState("");
   const [flagOrderManual, setFlagOrderManual] = useState(false);
   //const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
+
+  const [target, setTarget] = useState(null);
+  const containerRef = useRef(null);
 
   const handleOpenJobResponse = (jobId) => {
     setJobId(jobId);
@@ -395,9 +398,9 @@ const JobResultsTableView = ({data}) => {
             <HCDivider className={styles.divider} />
             <div className={styles.footer}>
               <div>
-                <HCButton size="sm" variant="outline-light" onClick={onCancel} data-testid={"cancel-column-selector"} >Cancel</HCButton>
+                <HCButton size="sm" tabIndex={0} variant="outline-light" onClick={onCancel} data-testid={"cancel-column-selector"} >Cancel</HCButton>
                 <span>  </span>
-                <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} data-testid={"apply-column-selector"} >Apply</HCButton>
+                <HCButton tabIndex={0} variant="primary" size="sm" onClick={onApply} disabled={false} data-testid={"apply-column-selector"} >Apply</HCButton>
               </div>
             </div>
           </footer>
@@ -477,20 +480,41 @@ const JobResultsTableView = ({data}) => {
   const columnFlowName = handleVisibleHeader(flowName) && !handleVisibleHeader(user);
   const noCustomColumns = !handleVisibleHeader(flowName) && !handleVisibleHeader(user);
 
+  const columnsKeyDownHandler = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleColumnSelectorViewClick(event);
+    }
+  };
+
+
+  const handleColumnSelectorViewClick = (event) => {
+    setPopoverVisibility(true);
+    setTarget(event.target);
+  };
+
   return (
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
-        <div className={styles.fixedPopup}>
+        <div className={styles.fixedPopup} ref={containerRef}>
           <ExpandCollapse handleSelection={(val) => toggleSourceTable(val, true)} currentSelection={""} />
-          <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
-            <span data-testid={"tooltip-wrapper"} className={styles.spanColumnIcon}>
-              <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
-                <i>
-                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="2x" data-testid="column-selector-icon" />
-                </i>
-              </HCTooltip>
-            </span>
-          </OverlayTrigger>
+          <span data-testid={"tooltip-wrapper"} className={styles.spanColumnIcon}>
+            <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+              <i>
+                <FontAwesomeIcon onClick={handleColumnSelectorViewClick} onKeyDown={columnsKeyDownHandler} tabIndex={0} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="2x" data-testid="column-selector-icon" />
+              </i>
+            </HCTooltip>
+          </span>
+
+          <Overlay
+            show={popoverVisibility}
+            target={target}
+            placement="left-start"
+            container={containerRef}
+            rootCloseEvent="click"
+          >
+            {content}
+          </Overlay>
         </div>
       </div>
       <div className={styles.tabular}>

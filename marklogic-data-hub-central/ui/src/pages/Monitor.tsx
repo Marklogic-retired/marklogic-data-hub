@@ -119,16 +119,6 @@ const Monitor: React.FC = () => {
               <p>{MissingPagePermission}</p>
             </div>
           }
-          <div id="top-search-pagination-bar" className={styles.monitorPagination}>
-            <SearchPagination
-              total={totalDocuments}
-              pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
-              pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
-              pageLength={monitorOptions.pageLength}
-              maxRowsPerPage={monitorOptions.maxRowsPerPage}
-            >
-            </SearchPagination>
-          </div>
           <div className={styles.selectedFacets}>
             <MonitorSelectedFacets
               selectedFacets={selectedFacets}
@@ -138,6 +128,16 @@ const Monitor: React.FC = () => {
               toggleApply={(clicked) => toggleApply(clicked)}
               toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
             />
+          </div>
+          <div id="top-search-pagination-bar" className={styles.monitorPagination}>
+            <SearchPagination
+              total={totalDocuments}
+              pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
+              pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
+              pageLength={monitorOptions.pageLength}
+              maxRowsPerPage={monitorOptions.maxRowsPerPage}
+            >
+            </SearchPagination>
           </div>
           <div>
             <JobResultsTableView data={data} />

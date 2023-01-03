@@ -81,6 +81,23 @@ const SearchPagination: React.FC<Props> = (props) => {
     }
   };
 
+  const pageKeyDownHandler = (event, pageNumber) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onPageChange(pageNumber);
+    }
+  };
+  const arrowNextKeyDownHandler = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      handleNext();
+    }
+  };
+  const arrowPreviousKeyDownHandler = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      handlePrev();
+    }
+  };
+
   const renderPages = [...new Array(totalPage)].map((_, index) => {
     const {pageNumber: currentPage} = props;
     const pageNumber = index + 1;
@@ -95,11 +112,12 @@ const SearchPagination: React.FC<Props> = (props) => {
       return (
         <Pagination.Item
           key={pageNumber}
-          tabIndex={-1}
+          tabIndex={0}
           data-testid={`pagination-item-${pageNumber}`}
           id={`pagination-item-${pageNumber}`}
           active={props.pageNumber === pageNumber}
-          onClick={() => onPageChange(pageNumber)}>
+          onClick={() => onPageChange(pageNumber)}
+          onKeyDown={(event) => pageKeyDownHandler(event, pageNumber)}>
           {pageNumber}
         </Pagination.Item>
       );
@@ -110,7 +128,7 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const renderOptions = () => {
     const options = pageSizeOptions.map((item, index) => {
-      return <option key={index} tabIndex={-1} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
+      return <option key={index} tabIndex={0} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
     });
     return options;
   };
@@ -118,11 +136,11 @@ const SearchPagination: React.FC<Props> = (props) => {
   const renderPagination = (
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
-        <Pagination.Prev onClick={handlePrev} disabled={props.pageNumber === 1} tabIndex={-1} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
+        <Pagination.Prev onClick={handlePrev} onKeyDown={arrowPreviousKeyDownHandler} disabled={props.pageNumber === 1} tabIndex={0} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
         {renderPages}
-        <Pagination.Next onClick={handleNext} disabled={props.pageNumber === totalPage} tabIndex={-1} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
+        <Pagination.Next onClick={handleNext} onKeyDown={arrowNextKeyDownHandler} disabled={props.pageNumber === totalPage} tabIndex={0} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
       </Pagination>
-      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" tabIndex={-1} value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
+      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" tabIndex={0} value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
         {renderOptions()}
       </Form.Select>
     </div>

@@ -35,17 +35,18 @@ const ExpandCollapse: React.FC<Props> = (props) => {
         onSelect("expand");
         break;
       default:
+        onSelect("expand");
         break;
       }
     }
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      if (enabled === "collapse") { onSelect("expand"); }
+      if (enabled === "collapse" || enabled === "") { onSelect("expand"); }
     }
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      if (enabled === "expand") { onSelect("collapse"); }
+      if (enabled === "expand" || enabled === "") { onSelect("collapse"); }
     }
     if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); }
   };
@@ -58,7 +59,7 @@ const ExpandCollapse: React.FC<Props> = (props) => {
           id={`expandBtn-${cmpRandomData}`}
           name={`expand-collapse-radiogroup-${cmpRandomData}`}
           defaultChecked={enabled === "expand"}
-          className={"mb-0 p-0"}
+          className={styles.expandArrow}
         >
           <FormCheck.Input
             type="radio"
@@ -82,14 +83,15 @@ const ExpandCollapse: React.FC<Props> = (props) => {
         </FormCheck>
         <FormCheck
           id={`collapseBtn-${cmpRandomData}`}
-          name={`expand-collapse-radiogroup-${cmpRandomData}`}
+          name={`collapse-radiogroup-${cmpRandomData}`}
           value={"collapse"}
           checked={enabled === "collapse"}
+          className={styles.collapseArrow}
         >
           <FormCheck.Input
             type="radio"
             id={`collapseBtn-${cmpRandomData}`}
-            name={`expand-collapse-radiogroup-${cmpRandomData}`}
+            name={`collapse-radiogroup-${cmpRandomData}`}
             value={"collapse"}
             checked={enabled === "collapse"}
             onChange={e => onSelect(e.target.value)}
