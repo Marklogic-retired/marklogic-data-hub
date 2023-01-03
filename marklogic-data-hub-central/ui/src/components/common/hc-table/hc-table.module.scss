@@ -66,6 +66,9 @@
     &:focus, &:focus-visible {
         box-shadow: none !important;
     }
+    &:focus-visible {
+        outline: auto !important;
+    }
 }
 .borderedIndicator {
     border: 1px solid #e8e8e8;

@@ -94,6 +94,9 @@ table table {
   &:focus, &:focus-visible {
       box-shadow: none !important;
   }
+  &:focus-visible {
+    outline: auto !important;
+  }
 }
 
 .iconIndicator {
