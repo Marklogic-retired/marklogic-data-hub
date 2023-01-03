@@ -49,6 +49,7 @@ public interface ArtifactService {
 
             private BaseProxy.DBFunctionRequest req_getArtifactsWithProjectPaths;
             private BaseProxy.DBFunctionRequest req_setArtifact;
+            private BaseProxy.DBFunctionRequest req_deleteArtifact;
             private BaseProxy.DBFunctionRequest req_clearUserArtifacts;
             private BaseProxy.DBFunctionRequest req_getList;
             private BaseProxy.DBFunctionRequest req_getArtifact;
@@ -61,6 +62,8 @@ public interface ArtifactService {
                     "getArtifactsWithProjectPaths.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_setArtifact = this.baseProxy.request(
                     "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_deleteArtifact = this.baseProxy.request(
+                    "deleteArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_clearUserArtifacts = this.baseProxy.request(
                     "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
@@ -95,6 +98,22 @@ public interface ArtifactService {
                           BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
                           BaseProxy.documentParam("artifact", false, BaseProxy.JsonDocumentType.fromJsonNode(artifact)),
                           BaseProxy.atomicParam("dirFileName", true, BaseProxy.StringType.fromString(dirFileName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode deleteArtifact(String artifactType, String artifactName) {
+                return deleteArtifact(
+                    this.req_deleteArtifact.on(this.dbClient), artifactType, artifactName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode deleteArtifact(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
+                          BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -162,6 +181,15 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact, String dirFileName);
+
+  /**
+   * Invokes the deleteArtifact operation on the database server
+   *
+   * @param artifactType	provides input
+   * @param artifactName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode deleteArtifact(String artifactType, String artifactName);
 
   /**
    * Invokes the clearUserArtifacts operation on the database server

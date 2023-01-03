@@ -75,6 +75,14 @@ public class MatchingStepController extends BaseController {
         return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).getArtifact("exclusionList", listName));
     }
 
+    @RequestMapping(value = "/exclusionList/{listName}", method = RequestMethod.DELETE)
+    @ResponseBody
+    @ApiOperation(value = "Delete an exclusion list")
+    @Secured("ROLE_writeMatching")
+    public ResponseEntity<JsonNode> deleteExclusionList(@PathVariable String listName) {
+        return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).deleteArtifact("exclusionList", listName));
+    }
+
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
     @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMatching")
