@@ -29,7 +29,6 @@ describe("Add Merge step to a flow", () => {
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("merging", mergeStep);
     cy.deleteFlows(flowName2, flowName1);
     cy.resetTestUser();
   });
@@ -172,11 +171,13 @@ describe("Add Merge step to a flow", () => {
     cy.waitForAsyncRequest();
     runPage.getRunStep(mergeStep, flowName1).should("be.visible");
   });
+
   it("Navigating to merge tab", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectMergeTab("Customer");
   });
+
   it("Run the Merge step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
@@ -188,4 +189,22 @@ describe("Add Merge step to a flow", () => {
     runPage.closeFlowStatusModal(flowName1);
     runPage.getRunStep(mergeStep, flowName1).should("be.visible");
   });
+
+  it("Delete the merge step", () => {
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.selectMergeTab("Customer");
+    curatePage.deleteMappingStepButton(mergeStep).should("be.visible").click();
+    curatePage.deleteConfirmation("Yes").click();
+  });
+
+  it("Validate merge step is removed from flows", () => {
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.expandFlow(flowName1);
+    runPage.verifyNoStepsInFlow();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.expandFlow(flowName2);
+    runPage.verifyNoStepsInFlow();
+  });
+
 });
