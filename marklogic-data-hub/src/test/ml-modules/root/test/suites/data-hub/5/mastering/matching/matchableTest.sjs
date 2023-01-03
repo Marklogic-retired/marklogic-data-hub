@@ -276,7 +276,7 @@ function testBuildActionDetails() {
     assertions.push(test.assertEqual(matchStep.thresholds[i].action, thresholdDefinitions[i].action(), "Action should be set for ThresholdDefinition"));
     assertions.push(test.assertEqualJson(matchStep.thresholds[i], thresholdDefinitions[i].raw(), "Raw value should be set for ThresholdDefinition"));
     const actionDetails = matchable.buildActionDetails([{uri: "/content/docA.json", value: docA}], thresholdDefinitions[i]);
-    const actionUri = Object.keys(actionDetails)[0];
+    const actionUri = Object.keys(actionDetails)[0] || "";
     let expectedPrefix;
     switch (thresholdDefinitions[i].action()) {
       case "merge":
@@ -288,7 +288,7 @@ function testBuildActionDetails() {
       default:
         expectedPrefix = "/content/";
     }
-    assertions.push(test.assertTrue(actionUri.startsWith(expectedPrefix), `action URI should have correct prefix: '${expectedPrefix}' is ${actionUri}`));
+    assertions.push(test.assertTrue(actionUri.startsWith(expectedPrefix), `action URI should have correct prefix: '${expectedPrefix}' is ${actionUri}. Action: ${thresholdDefinitions[i].action()}`));
     const actionBody = actionDetails[actionUri];
     assertions.push(test.assertEqual(1, actionBody.actions ? actionBody.actions[0].uris.length:  actionBody.uris.length, "Action details should have 1 uri "));
   }

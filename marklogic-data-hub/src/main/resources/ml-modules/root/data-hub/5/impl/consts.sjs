@@ -55,6 +55,8 @@ module.exports = {
     ["datahubCreatedBy", "currentUser"]
   ]),
 
+  DATA_HUB_COMMON_ROLE: "data-hub-common",
+  DATA_HUB_COMMON_WRITER_ROLE: "data-hub-common-writer",
   DATA_HUB_OPERATOR_ROLE: "data-hub-operator",
   DATA_HUB_DEVELOPER_ROLE: "data-hub-developer",
   DATA_HUB_MODULE_READER_ROLE: "data-hub-module-reader",

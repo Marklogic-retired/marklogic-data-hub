@@ -42,7 +42,7 @@ function match(entityTypeName, entityProperties, options) {
   const content = buildMatchingContent(entityTypeName, entityProperties);
   const fakeFlow = {"name":"fake", "steps": {"1": {}}};
   const stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {});
-  return fn.head(matching.main(content, options, stepExecutionContext)).value.matchSummary;
+  return matching.main(content, options, stepExecutionContext)[0].value.matchSummary;
 }
 
 /**
@@ -56,7 +56,7 @@ function matchXml(entityXmlString, options) {
     "uri": TEST_DOC_URI,
     "value": fn.head(xdmp.unquote(entityXmlString))
   }];
-  return fn.head(matching.main(content, options)).value.matchSummary;
+  return matching.main(content, options)[0].value.matchSummary;
 }
 
 

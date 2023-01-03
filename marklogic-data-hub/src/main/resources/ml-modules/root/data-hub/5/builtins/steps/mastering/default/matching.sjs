@@ -13,13 +13,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
+const consts = require("/data-hub/5/impl/consts.sjs");
+const mastering = require("/data-hub/5/mastering/matching/matcher.sjs");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const {Matchable} = require("/data-hub/5/mastering/matching/matchable.sjs");
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -38,6 +40,7 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
     const auditingOrNotificationDoc = collections.includes(collectionInfo.notificationCollection) || collections.includes(collectionInfo.auditingCollection);
     // skip auditing or notification documents
     if (auditingOrNotificationDoc) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Filtering out notification/auditing document '${item.uri}'.`);
       auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
       continue;
     }
@@ -49,6 +52,7 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
       for (const matchedDoc of cts.search(documentQuery, ["unfiltered", "score-zero"], 0)) {
         if (cts.contains(matchedDoc.xpath("/matchSummary/actionDetails/*"), actionDetailQuery)) {
           falsePositive = false;
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Filtering out document covered in other match summary '${item.uri}'.`);
           break;
         }
       }
@@ -94,18 +98,17 @@ function main(content, options, stepExecutionContext) {
   const jobId = stepExecutionContext ? stepExecutionContext.jobId : "";
   const filteredContent = filterContentAlreadyProcessed(content, summaryCollection, collectionInfo, jobId);
   if (fn.count(filteredContent) === 0) {
+    xdmp.trace(consts.TRACE_MATCHING_DEBUG, `No documents to process.`);
     return emptySequence;
   }
   const matchOptions = options.matchOptions || options;
   matchOptions.targetEntityType = matchOptions.targetEntityType || options.targetEntityType || options.targetEntity;
   matchOptions.stepName = stepExecutionContext && stepExecutionContext["flowStep"] ? stepExecutionContext["flowStep"]["name"] : "";
-  let matchSummaryJson = mastering.buildMatchSummary(
-    filteredContent,
-    options,
-    options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
-    stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
+  let matchSummaryOutput = mastering.buildMatchSummary(
+    new Matchable(matchOptions, stepExecutionContext),
+    filteredContent
   );
-  return buildResult(matchSummaryJson, options, collections);
+  return [buildResult(matchSummaryOutput[0], options, collections), ...matchSummaryOutput.slice(1)];
 }
 
 function buildResult(matchSummaryJson, options, collections) {

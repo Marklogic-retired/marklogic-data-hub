@@ -9,6 +9,54 @@ const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRA
 const {groupQueries} = require("./matcher.sjs");
 
 const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
+const hashScorePredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingScore");
+
+/*
+   * Returns a JSON Object with details to pass onto the merge step for use in taking action.
+   * @param {[]ContentObject} matchingDocumentSet
+   * @param {ThresholdDefinition} thresholdBucket
+   * @return {}
+   * @since 5.8.0
+   */
+function buildActionDetails(matchingDocumentSet, thresholdBucket) {
+  const action = thresholdBucket.action();
+  const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
+  const thresholdName = thresholdBucket.name();
+  const uris = matchingDocumentSet
+    .map((contentObj) => {
+      if (contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/")) {
+        return fn.distinctValues(contentObj.value.xpath("/*:envelope/*:headers/*:merges/*:document-uri")).toArray();
+      }
+      return contentObj.uri;
+    })
+    .reduce((acc, cur) => acc.concat(cur), [])
+    .filter((uri, index, uris) => index === uris.indexOf(uri))
+    .sort();
+  const thresholdScore = thresholdBucket.score();
+  let actionBody;
+  if (action === "custom") {
+    actionBody = {
+      action: "custom",
+      thresholdName,
+      thresholdScore,
+      uris,
+      actionModuleFunction: thresholdBucket.actionModuleFunction(),
+      actionModulePath: thresholdBucket.actionModulePath(),
+      matchResults: matchingDocumentSet.filter((match) => match.uri !== actionUri)
+    };
+  } else {
+    actionBody = {
+      action,
+      thresholdName,
+      threshold: thresholdName,
+      thresholdScore,
+      uris
+    };
+  }
+  return {
+    [actionUri]: actionBody
+  };
+}
 /*
  * A class that encapsulates the configurable portions of the matching process.
  */
@@ -160,75 +208,10 @@ class Matchable {
     }
     return common.applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
   }
-  /*
-   * Returns a JSON Object with details to pass onto the merge step for use in taking action.
-   * @param {[]ContentObject} matchingDocumentSet
-   * @param {ThresholdDefinition} thresholdBucket
-   * @return {}
-   * @since 5.8.0
-   */
-  buildActionDetails(matchingDocumentSet, thresholdBucket) {
-    const action = thresholdBucket.action();
-    const actionUri = thresholdBucket.generateActionURI(matchingDocumentSet);
-    const thresholdName = thresholdBucket.name();
-    const uris = matchingDocumentSet
-        .map((contentObj) => {
-          if (contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/")) {
-            return fn.distinctValues(contentObj.value.xpath("/*:envelope/*:headers/*:merges/*:document-uri")).toArray();
-          }
-          return contentObj.uri;
-        })
-        .reduce((acc, cur) => acc.concat(cur), [])
-        .filter((uri, index, uris) => index === uris.indexOf(uri))
-        .sort();
-    let hashes;
-    const fuzzyMatchRulesets = thresholdBucket.minimumMatchCombinations()
-      .map((combo) => combo.filter(matchRuleset => matchRuleset.fuzzyMatch()))
-      .filter(combo => combo.length)
-      .reduce((prev, curr) => prev.concat(curr), []);
-    if (fuzzyMatchRulesets.length > 0) {
-      const firstMatchingDoc = matchingDocumentSet[0];
-      const firstMatchingDocUri = firstMatchingDoc.uri;
-      const firstMatchingDocNode = firstMatchingDoc.value;
-      hashes = [];
-      for (const fuzzyMatchRuleset of fuzzyMatchRulesets) {
-        for (const queryHash of fuzzyMatchRuleset.queryHashes(firstMatchingDocNode)) {
-          hashes.push(sem.triple(firstMatchingDocUri, queryHashPredicate, queryHash));
-        }
-      }
-      hashes = fn.distinctValues(Sequence.from(hashes));
-    }
-    let actionBody;
-    // TODO: when we refactor merging code we can likely clean up the awkward "function", "at" property names and remove the namespace property
-    if (action === "custom") {
-      actionBody = {
-        action: "customActions",
-        actions: [
-          {
-            thresholdName,
-            uris,
-            "function": thresholdBucket.actionModuleFunction(),
-            "at": thresholdBucket.actionModulePath(),
-            "namespace": thresholdBucket.actionModuleNamespace(),
-            matchResults: matchingDocumentSet.filter((match) => match.uri !== actionUri)
-          }
-        ],
-        hashes
-      };
-    } else {
-      actionBody = {
-        action,
-        // TODO This should be consistent with thresholdName in custom actions
-        threshold: thresholdName,
-        uris,
-        hashes
-      };
-    }
-    return {
-      [actionUri]: actionBody
-    };
-  }
 
+  buildActionDetails(matchingDocumentSet, thresholdBucket) {
+    return buildActionDetails(matchingDocumentSet, thresholdBucket);
+  }
   /*
    * Returns a query given a property path a set of values based on the model associated with Matchable.
    * This will likely be reused and so can be moved to a common at some point.
@@ -321,7 +304,7 @@ class Matchable {
  */
   maxScan() {
     if (!this._maxScan) {
-      this._maxScan = 25;//fn.number((this.matchStep.tuning && this.matchStep.tuning.maxScan) || 500);
+      this._maxScan = fn.number((this.matchStep.tuning && this.matchStep.tuning.maxScan) || 500);
     }
     return this._maxScan;
   }
@@ -503,36 +486,46 @@ class MatchRulesetDefinition {
   }
 
   score(contentObjectA, contentObjectB) {
+    let score = 0;
     const query = this.buildCtsQuery(contentObjectA.value);
-    const model = this.matchable.model();
-
-    let pos = 1;
-    for (const matchRule of this.matchRuleset.matchRules) {
-      if (!matchRule.node) {
-        matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
+    if (fn.exists(query)) {
+      const model = this.matchable.model();
+      let pos = 1;
+      for (const matchRule of this.matchRuleset.matchRules) {
+        if (!matchRule.node) {
+          matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
+        }
+        pos++;
+        const valueFunction = this._valueFunction(matchRule, model);
+        const matchFunction = this._matchFunction(matchRule, model);
+        const values = valueFunction(contentObjectA.value);
+        const query = fn.exists(values) ? matchFunction(values) : null;
+        if (query instanceof Function) {
+          this._matchRuleFunctions.push(query);
+        }
       }
-      pos++;
-      const valueFunction = this._valueFunction(matchRule, model);
-      const matchFunction = this._matchFunction(matchRule, model);
-      const values = valueFunction(contentObjectA.value);
-      const query = fn.exists(values) ? matchFunction(values): null;
-      if(query instanceof Function) {
-        this._matchRuleFunctions.push(query);
-      }
-    }
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
-    }
-    if (fn.exists(query) && cts.contains(contentObjectB.value, query) && this._matchRuleFunctions.every((rule)=> rule(contentObjectB.value))) {
       if (matchingDebugTraceEnabled) {
-        xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
+        xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
       }
-      return this.weight();
+      let queryMatches = false;
+      if (this.fuzzyMatch()) {
+        const hashesA = this.queryHashes(contentObjectA.value);
+        const hashesB = this.queryHashes(contentObjectB.value);
+        queryMatches = hashesA.some((hash) => hashesB.includes(hash));
+      } else {
+        queryMatches = cts.contains(contentObjectB.value, query);
+      }
+      if (queryMatches && this._matchRuleFunctions.every((rule) => rule(contentObjectB.value))) {
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
+        }
+        score = this.weight();
+      }
     }
-    if (matchingDebugTraceEnabled) {
+    if (matchingDebugTraceEnabled && score === 0) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query didn't match!");
     }
-    return 0;
+    return score;
   }
 
   buildCtsQuery(documentNode) {
@@ -578,8 +571,11 @@ class MatchRulesetDefinition {
     const uri = xdmp.nodeUri(documentNode);
     if (!this._cachedQueryHashes[uri]) {
       const query = this.buildCtsQuery(documentNode);
+      if (!query) {
+        return [];
+      }
       const queryHasher = hubUtils.requireFunction("/data-hub/5/mastering/matching/queryHasher.xqy", "queryToHashes");
-      this._cachedQueryHashes[uri] = queryHasher(query);
+      this._cachedQueryHashes[uri] = hubUtils.normalizeToArray(queryHasher(query, this.fuzzyMatch()));
     }
     return this._cachedQueryHashes[uri];
   }
@@ -731,6 +727,10 @@ class ThresholdDefinition {
 }
 
 module.exports = {
+  queryHashPredicate,
+  hashScorePredicate,
   Matchable,
-  MatchRulesetDefinition
+  MatchRulesetDefinition,
+  ThresholdDefinition,
+  buildActionDetails
 }

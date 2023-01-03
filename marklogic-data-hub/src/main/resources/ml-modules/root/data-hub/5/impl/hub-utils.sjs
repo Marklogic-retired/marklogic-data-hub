@@ -118,17 +118,6 @@ function documentToContentDescriptor(doc, options = {}) {
     };
 }
 
-function queryToContentDescriptorArray(query, options = {}, database) {
-  let contentArray = [];
-  invokeFunction(function () {
-    let results = cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
-    for (let doc of results) {
-      contentArray.push(documentToContentDescriptor(doc, options));
-    }
-  }, database);
-  return contentArray;
-}
-
 function documentsToContentDescriptorArray(documents, options = {}) {
   let contentArray = [];
   for (let doc of documents) {

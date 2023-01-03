@@ -90,6 +90,7 @@
             {
               "name": "Last Name",
               "weight": 12,
+              "fuzzyMatch": true,
               "matchRules": [
                 {
                   "entityPropertyPath": "lastName",
