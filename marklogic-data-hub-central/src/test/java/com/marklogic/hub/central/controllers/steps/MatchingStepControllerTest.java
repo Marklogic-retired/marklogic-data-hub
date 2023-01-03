@@ -94,6 +94,18 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
                     assertEquals(1, array.size());
                     assertEquals("null", array.get(0).path("values").get(0).asText());
                 });
+        loginAsTestUserWithRoles("hub-central-match-merge-writer");
+        delete(PATH + "/exclusionList/myList");
+
+        loginAsTestUserWithRoles("hub-central-match-merge-reader");
+
+        getJson(PATH + "/exclusionList")
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    ArrayNode array = (ArrayNode) parseJsonResponse(result);
+                    assertEquals(0, array.size());
+                });
+
     }
 
     @Test
