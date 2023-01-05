@@ -812,7 +812,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
             eventKey="properties"
             aria-label="propertiesTabInSidePanel"
             id="propertiesTabInSidePanel"
-            title={<span className={styles.sidePanelTabLabel}>Properties</span>}
+            title={<span className={styles.sidePanelTabLabel}>Entity Properties</span>}
             tabClassName={`${styles.tab} ${currentTab === "properties" && styles.active}`}></Tab>
           <Tab
             eventKey="entityType"

@@ -271,7 +271,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           }
         }
 
-        setModalTitle("Edit Property");
+        setModalTitle("Edit Entity Property");
         setStructuredTypeLabel(structuredLabel);
         setName(props.editPropertyOptions.name);
         setErrorMessage("");
@@ -282,9 +282,9 @@ const PropertyModal: React.FC<Props> = (props) => {
         setJoinDisplayValue(joinDisplayValue === "" ? undefined : joinDisplayValue);
         setSelectedPropertyOptions(props.editPropertyOptions.propertyOptions);
       } else {
-        let modalTitle = "Add Property";
+        let modalTitle = "Add Entity Property";
         if (props.structuredTypeOptions.isStructured) {
-          modalTitle = "Add Structured Type Property";
+          modalTitle = "Add Structured Type Entity Property";
           setStructuredTypeLabel(props.structuredTypeOptions.name.split(",").slice(1).join("."));
         }
 
@@ -880,8 +880,8 @@ const PropertyModal: React.FC<Props> = (props) => {
             variant="warning"
           >{"Entity type is used in one or more steps."}</HCAlert>
           <p className={styles.stepWarning}>
-            The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this property,
-            you may need to modify these steps to correlate with your changes to this property.
+            The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this entity property,
+            you may need to modify these steps to correlate with your changes to this entity property.
           </p>
           <p
             aria-label="toggle-steps"
@@ -927,7 +927,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                 <HCInput
                   id="property-name"
                   ariaLabel="input-name"
-                  placeholder="Enter the property name"
+                  placeholder="Enter the entity property name"
                   className={styles.input}
                   value={name ? name : " "}
                   onChange={handleInputChange}
@@ -953,7 +953,7 @@ const PropertyModal: React.FC<Props> = (props) => {
               <Col className={typeErrorMessage ? "d-flex has-error" : "d-flex"}>
                 <Cascader
                   aria-label="type-dropdown"
-                  placeholder="Select the property type"
+                  placeholder="Select the entity property type"
                   options={dropdownOptions}
                   displayRender={(label, selectedOption) => {
                     if (label[label.length - 1]) {
@@ -972,7 +972,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   onChange={onPropertyTypeChange}
                   className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
                   style={{"width": "520px", "zIndex": 9000}}
-                  defaultValue={placeHolderOrEditValue ? ["Select the property type"] : editDisplayValue()}
+                  defaultValue={placeHolderOrEditValue ? ["Select the entity property type"] : editDisplayValue()}
                   allowClear={true}
                 />
               </Col>
