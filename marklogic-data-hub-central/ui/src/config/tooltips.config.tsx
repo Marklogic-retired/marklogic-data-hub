@@ -38,25 +38,25 @@ const ModelingTooltips = {
   viewGraph: (isConceptNode?: boolean) => !isConceptNode ? 'View entity in graph view.' : 'View concept class in graph view.',
 
   /* Icons for entity properties */
-  addStructuredProperty: 'Add a property to this structured property.',
+  addStructuredProperty: 'Add a entity property to this structured property.',
   deleteProperty: 'Delete this property.',
   structuredType: 'Structured Type',
   multipleIconTooltip: 'Multiple',
 
   /* Yes/No in modal; column headers in property list */
-  identifier: 'If enabled, uniquely identifies each instance of this entity type. Restricted to only one property per entity type.',
-  multiple: 'If enabled, the property holds an array of values.',
-  sort: 'If enabled, the property can be used to sort the results of queries and filters in ascending or descending order.',
-  facet: 'If enabled, the property can be used to filter, search for, and categorize documents.',
-  pii: 'If enabled, the property\'s value must be safeguarded and handled according to Personally Identifiable Information (PII) protection rules and policies.',
-  wildcard: 'If enabled, wildcards can be used to search values of the property.',
+  identifier: 'If enabled, uniquely identifies each instance of this entity type. Restricted to only one entity property per entity type.',
+  multiple: 'If enabled, the entity property holds an array of values.',
+  sort: 'If enabled, the entity property can be used to sort the results of queries and filters in ascending or descending order.',
+  facet: 'If enabled, the entity property can be used to filter, search for, and categorize documents.',
+  pii: 'If enabled, the entity property\'s value must be safeguarded and handled according to Personally Identifiable Information (PII) protection rules and policies.',
+  wildcard: 'If enabled, wildcards can be used to search values of the entity property.',
 
   /* Text fields */
   nameEntityType: 'The name of this entity type. ' +
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',  /* intended dupe: all names */
   descriptionEntityType: 'A description of this entity type.',
   nameEntityProperty: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. ' +
-    'Property names cannot use the same name as the associated entity type or its existing properties.',
+    'Entity property names cannot use the same name as the associated entity type or its existing entity properties.',
   descriptionEntityProperty: 'A description of this entity property.',
   namespace: 'You can use a namespace to differentiate between XML elements that use the same name. If you use a namespace, you must define both a namespace URI and prefix. If your record is in JSON format, the namespace will have no effect.',
   versionField: 'Change the version number of this entity type to organize your updates',
@@ -112,7 +112,7 @@ const ModelingTooltips = {
   targetEntityEmpty: function (nodeType: string) {
     return <span aria-label="targetNodeEmpty">Target {nodeType} is required</span>;
   },
-  foreignKeyInfo: "A foreign key is a property that can be used to connect two entity types in a relationship. Select a property in the target entity type to connect the source and target entity types. A foreign key cannot allow multiple values, be a structured type property, or be an unpublished property.",
+  foreignKeyInfo: "A foreign key is a property that can be used to connect two entity types in a relationship. Select a entity property in the target entity type to connect the source and target entity types. A foreign key cannot allow multiple values, be a structured type entity property, or be an unpublished entity property.",
   sourcePropertyKeyInfo: "A source entity property can be used as a context in a relationship between an entity type and a concept class.Select a property in the source entity type to connect the source entity type and target concept class. A related concept property cannot allow multiple values, be a structured type property, or be an unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
   editModeInfo: <span>To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
@@ -129,7 +129,7 @@ const ModelingTooltips = {
   relationshipNameInfo: function (entityName) {
     return (
       <span>
-        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br />Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Property names cannot use the same name as the associated entity type or its existing properties.
+        The name that identifies the relationship between the source and target entity types. The relationship is saved as a entity property in the <strong>{entityName}</strong> entity type.<br />Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Entity property names cannot use the same name as the associated entity type or its existing Entity properties.
       </span>
     )
   },
@@ -802,12 +802,12 @@ const AdvCustomTooltips = {
 
 const ToolbarBulbIconInfo = {
   modelingInfo: <div><strong>Effective data curation begins with defining an entity model.</strong><br /><br />
-    A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br /><br />
-    Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br /><br />
-    The entity type is comprised of properties, which can be of any of the following types:<br /><br />
+    A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of entity properties. Entity properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br /><br />
+    Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new entity properties to existing entity types, or add new entity types entirely.<br /><br />
+    The entity type is comprised of entity properties, which can be of any of the following types:<br /><br />
     <ul>
       <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br />
-      <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br />
+      <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> A <strong>structured</strong> type, which is comprised of its own entity properties, which can also be of other structured types. Use structured types to create hierarchies of entity properties within your entity type. For example, the structured type entity property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> entity properties within it. The depth of nested structured types is not limited.</li><br />
       <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
     </ul></div>,
   exploreInfo: <div>Use the <strong>Explore</strong> screen to view and query your data.<br /><br />

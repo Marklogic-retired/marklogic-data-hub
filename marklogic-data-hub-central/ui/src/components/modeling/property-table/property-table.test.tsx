@@ -54,8 +54,8 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    expect(getByText("Add Property")).toBeInTheDocument();
-    expect(getByText("Property Name")).toBeInTheDocument();
+    expect(getByText("Add Entity Property")).toBeInTheDocument();
+    expect(getByText("Entity Property Name")).toBeInTheDocument();
     expect(getByText("Multiple")).toBeInTheDocument();
     expect(getByText("Sort")).toBeInTheDocument();
     //expect(getByText('Wildcard Search')).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByText("Add Entity Property")).toBeInTheDocument();
     expect(getByLabelText("NewEntity-add-property")).toBeDisabled();
   });
 
@@ -96,7 +96,7 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByText("Add Entity Property")).toBeInTheDocument();
     expect(getByLabelText("NewEntity-add-property")).toBeEnabled();
   });
 
@@ -116,7 +116,7 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByText("Add Entity Property")).toBeInTheDocument();
     expect(queryByLabelText("propertyName-header")).toBeInTheDocument();
     expect(queryByLabelText("type-header")).toBeInTheDocument();
     expect(queryByLabelText("delete-header")).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe("Entity Modeling Property Table Component", () => {
     />
     );
 
-    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(getByText("Add Entity Property")).toBeInTheDocument();
     expect(queryByLabelText("propertyName-header")).toBeInTheDocument();
     expect(queryByLabelText("type-header")).toBeInTheDocument();
     expect(queryByLabelText("delete-header")).toBeInTheDocument();
@@ -277,7 +277,7 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getAllByText("state")).toHaveLength(1);
 
     // add property and add struct property display correct tooltip when disabled
-    fireEvent.mouseOver((getByText("Add Property")));
+    fireEvent.mouseOver((getByText("Add Entity Property")));
     await (() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver((getByTestId("add-struct-zip")));
     await (() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
