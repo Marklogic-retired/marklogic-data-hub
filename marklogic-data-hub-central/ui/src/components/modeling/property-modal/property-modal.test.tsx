@@ -170,7 +170,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    userEvent.type(getByPlaceholderText("Enter the property name"), "Entity-Property");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "Entity-Property");
 
     // Choose related entity type
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
@@ -300,7 +300,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    userEvent.type(getByPlaceholderText("Enter the property name"), "alternate-address");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "alternate-address");
 
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
     await(() => userEvent.click(getByText("Structured")));
@@ -344,7 +344,7 @@ describe("Property Modal Component", () => {
     expect(getByText("Structured Type:")).toBeInTheDocument();
     expect(getByText("Employee")).toBeInTheDocument();
 
-    userEvent.type(getByPlaceholderText("Enter the property name"), "email");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "email");
 
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
     await(() => userEvent.click(getByText("string")));
@@ -397,7 +397,7 @@ describe("Property Modal Component", () => {
     expect(getByText("Structured Type:")).toBeInTheDocument();
     expect(getByText("Employee")).toBeInTheDocument();
 
-    userEvent.type(getByPlaceholderText("Enter the property name"), "email");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "email");
 
     // Choose related entity type
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
@@ -445,7 +445,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    userEvent.type(getByPlaceholderText("Enter the property name"), "alternate-address");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "alternate-address");
 
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
     await(() => userEvent.click(getByText("Structured")));
@@ -496,7 +496,7 @@ describe("Property Modal Component", () => {
         />
       </ModelingContext.Provider>
     );
-    userEvent.type(getByPlaceholderText("Enter the property name"), "newId");
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "newId");
 
     await(() => userEvent.click(getByPlaceholderText("Select the property type")));
     await(() => userEvent.click(getByText("string")));
@@ -569,7 +569,7 @@ describe("Property Modal Component", () => {
     expect(getByText("Order-Load")).toBeInTheDocument();
     expect(getByText("Order-Map")).toBeInTheDocument();
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
 
     expect(screen.getByLabelText("multiple-no")).toBeChecked(); //default value
 
@@ -648,7 +648,7 @@ describe("Property Modal Component", () => {
     expect(queryByText("Show Steps...")).toBeNull();
     expect(queryByText("Hide Steps...")).toBeNull();
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
     await(() => expect(getByText("Relationship: Customer")).toBeInTheDocument());
 
     // Change Join Property
@@ -733,10 +733,10 @@ describe("Property Modal Component", () => {
     expect(getByText("Order-Load")).toBeInTheDocument();
     expect(getByText("Order-Map")).toBeInTheDocument();
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
 
-    userEvent.clear(getByPlaceholderText("Enter the property name"));
-    userEvent.type(getByPlaceholderText("Enter the property name"), "alt_shipping");
+    userEvent.clear(getByPlaceholderText("Enter the entity property name"));
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "alt_shipping");
 
     const multipleRadio = screen.getByLabelText("multiple-yes");
     expect(multipleRadio["value"]).toBe("yes");
@@ -812,11 +812,11 @@ describe("Property Modal Component", () => {
     expect(queryByText("Show Steps...")).toBeNull();
     expect(queryByText("Hide Steps...")).toBeNull();
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
     expect(getByText("Structured Type:")).toBeInTheDocument();
 
-    userEvent.clear(getByPlaceholderText("Enter the property name"));
-    userEvent.type(getByPlaceholderText("Enter the property name"), "county");
+    userEvent.clear(getByPlaceholderText("Enter the entity property name"));
+    userEvent.type(getByPlaceholderText("Enter the entity property name"), "county");
 
     const piiRadio = screen.getByLabelText("pii-yes");
     expect(piiRadio["value"]).toBe("yes");
@@ -879,7 +879,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
@@ -944,7 +944,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
@@ -1003,7 +1003,7 @@ describe("Property Modal Component", () => {
       </ModelingContext.Provider>
     );
 
-    expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Edit Entity Property")).toBeInTheDocument();
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);

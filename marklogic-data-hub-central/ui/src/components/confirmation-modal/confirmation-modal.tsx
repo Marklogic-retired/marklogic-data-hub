@@ -134,7 +134,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
                 variant="warning"
               >{"Entity type is used in one or more steps."}</HCAlert>
 
-              <p aria-label="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this property.</p>
+              <p aria-label="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this entity property.</p>
               <p
                 aria-label="toggle-steps"
                 className={styles.toggleSteps}
