@@ -154,7 +154,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       text: "Property Name",
       dataField: "propertyName",
       width: sidePanelView ? "60%" : "20%",
-      headerFormatter: () => <span aria-label="propertyName-header">Property Name</span>,
+      headerFormatter: () => <span aria-label="propertyName-header">Entity Property Name</span>,
       formatter: (text, record) => {
         let renderText = text;
         let recordKey = "";
@@ -1092,7 +1092,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     size="sm"
     className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : styles.addPropertyButton}
     onClick={() => addPropertyButtonClicked()}
-  >Add Property</HCButton>;
+  >Add Entity Property</HCButton>;
 
   return (
     <div className="ms-5 mt-3 me-2">
