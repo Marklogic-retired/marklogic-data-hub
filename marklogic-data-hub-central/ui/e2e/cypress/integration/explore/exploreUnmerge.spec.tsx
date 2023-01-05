@@ -113,4 +113,3 @@ describe("Test '/Explore' graph right panel", () => {
 
   });
 });
-
