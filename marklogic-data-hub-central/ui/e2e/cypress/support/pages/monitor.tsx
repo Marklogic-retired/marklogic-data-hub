@@ -46,7 +46,8 @@ class MonitorPage {
     // BUG: The page it's re-rendering twice. There's no request to intercept.
     cy.wait(1000);
     cy.get(`[data-testid=${testId}-facet] input`).eq(index).should("be.visible").check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.wait(1000);
+    cy.get(`[data-testid="facet-apply-button"]`).click({force: true});
   }
   getFacetCheckbox(facetType: string, facetName: string) {
     return cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`);
@@ -60,7 +61,6 @@ class MonitorPage {
 
     cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`).should("be.visible").then(($btn) => {
       let facet = $btn.next("label").text();
-      cy.pause();
       cy.get("#selected-facets [data-testid=\"clear-" + $btn.val() + "\"]").should("exist");
       // On firefox it gets stuck and then tries everything at once
       cy.wait(1000);
@@ -79,7 +79,7 @@ class MonitorPage {
   }
   validateAppliedFacet(facetType: string, index: number) {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.get(`[data-testid="facet-apply-button"]`).click({force: true});
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.val();
       cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]").should("exist");

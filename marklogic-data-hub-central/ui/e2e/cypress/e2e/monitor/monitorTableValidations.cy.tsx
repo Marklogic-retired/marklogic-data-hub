@@ -364,7 +364,7 @@ describe("Monitor Tile", () => {
     cy.wait("@stepResponses").should("have.property", "state", "Complete");
 
     monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
-    cy.scrollTo("left");
+    cy.scrollTo("left", {ensureScrollable: false});
     monitorPage.verifyTableRow("patientMerge").scrollIntoView().should("be.visible");
     monitorPage.verifyTableRow("patientMap").should("be.visible");
     monitorPage.verifyTableRow("patientMatch").should("be.visible");
