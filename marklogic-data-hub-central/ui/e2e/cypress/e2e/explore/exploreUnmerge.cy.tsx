@@ -31,13 +31,17 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
+
     graphExplore.getPersonJSONacordeon().click();
+    graphExplore.getMappingPerson().click();
+    cy.wait(8000);
+    graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMatchPerson().click();
     cy.wait(8000);
     graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMergePerson().click();
-    graphExplore.getCloseModalMergePerson().click();
     cy.wait(8000);
+    graphExplore.getCloseModalMergePerson().click();
     graphExplore.getTitleApp().click();
 
     cy.log("**Go to Explore section**");
@@ -50,6 +54,33 @@ describe("Test '/Explore' graph right panel", () => {
     browsePage.waitForSpinnerToDisappear();
 
 
+
+    cy.log("**Verify icon dont display when  node is not merged**");
+    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+    });
+    graphExplore.getUnmergeIcon().should("not.exist");
+
+
+
+    cy.log("**Verify unmerged option not visible in unmerged node**");
+    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
+    });
+
+    graphExplore.getUnmergeOption().should("not.exist");
+
+    graphExplore.getSearchBar().type("Jones");
+    graphExplore.getSearchButton().click();
+    cy.wait(6000);
 
     cy.log("**Picking up a node available to merge**");
     graphExplore.focusNode(ExploreGraphNodes.MERGED_RECORD);
@@ -74,17 +105,6 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getMergeModal().should("be.visible");
     graphExplore.getCloseCompareModal().last().click();
 
-    cy.log("**Verify icon dont display when  node is not merged**");
-    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-      const canvas = graphExplore.getGraphVisCanvas();
-      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-    });
-    graphExplore.getUnmergeIcon().should("not.exist");
-
-
     cy.log("**Verify unmerged option in merged node**");
     graphExplore.focusNode(ExploreGraphNodes.MERGED_RECORD);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.MERGED_RECORD).then((nodePositions: any) => {
@@ -95,21 +115,6 @@ describe("Test '/Explore' graph right panel", () => {
     });
 
     graphExplore.getUnmergeOption().should("be.visible");
-
-
-    cy.log("**Verify unmerged option not visible in unmerged node**");
-    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-      const canvas = graphExplore.getGraphVisCanvas();
-      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
-    });
-
-    graphExplore.getUnmergeOption().should("not.exist");
-
-
-
 
   });
 });

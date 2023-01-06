@@ -207,6 +207,15 @@ class GraphExplore {
     return cy.findAllByTestId("runStep-merge-person");
   }
 
+  getSearchBar() {
+    return cy.findByTestId("search-bar");
+  }
+
+  getSearchButton() {
+    return cy.get(`[aria-label="apply-facets-button"]`);
+  }
+
+
 
   getTitleApp() {
     return cy.get(`[aria-label="title-container"]`);
@@ -214,6 +223,10 @@ class GraphExplore {
 
   getCloseModalMergePerson() {
     return cy.get(`[aria-label="personJSON-close"]`);
+  }
+
+  getMappingPerson() {
+    return cy.findAllByTestId("runStep-mapPersonJSON");
   }
 
 
