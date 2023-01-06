@@ -42,6 +42,23 @@
     margin-left: 15px;
   }
 
+  .copyIcon:focus{
+   
+      outline: auto
+    
+  }
+
+  .focusTab:focus{ 
+    outline: none !important; 
+    box-shadow: 0 0 3px 3px #7f86b5  !important; 
+  }
+
+  .inputRadio input[type=radio]:focus{ 
+    outline: none !important; 
+    box-shadow: 0 0 3px 3px #7f86b5  !important; 
+  }
+
+
   .copyIcon:hover {
     cursor: pointer;
     color: var(--hoverColor);
@@ -176,3 +193,4 @@
 .disabledMain {
   z-index: 1 !important;
 }
+
