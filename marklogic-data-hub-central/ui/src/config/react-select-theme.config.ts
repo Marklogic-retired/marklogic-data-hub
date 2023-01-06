@@ -3,7 +3,7 @@ const reactSelectThemeConfig = {
   option: (provided, state) => ({
       ...provided,
       cursor:  state.isDisabled ? "not-allowed" : "pointer",
-      backgroundColor: state.isSelected ? "#fafafa" : "transparent",
+      backgroundColor: state.isFocused ? "#E9F7FE" : "transparent",
       ":hover": {
         backgroundColor:  state.isDisabled ? "transparent" : "#E9F7FE"
       },

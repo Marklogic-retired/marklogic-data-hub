@@ -52,7 +52,7 @@ const SystemInfo = (props) => {
   const [entitySelected, setEntitySelected] = useState<string>("");
   const [entitiesOptions, setEntitiesOptions] = useState<string[]>([]);
   const [allEntityNames, setAllEntityNames] = useState<string[]>([]);
-
+  const [showTooltipCopy, setShowTooltipCopy] = useState<boolean>(false);
   useEffect(() => {
     if (!user.authenticated && props.systemInfoVisible) {
       props.setSystemInfoVisible(false);
@@ -171,12 +171,14 @@ const SystemInfo = (props) => {
       });
   };
 
-  const copyToClipBoard = async copyMe => {
-    try {
-      await navigator.clipboard.writeText(copyMe);
-      setCopySuccess("Copied!");
-    } catch (err) {
-      setCopySuccess("Failed to copy!");
+  const copyToClipBoard = async (copyMe, event) => {
+    if (event.type === "click" || event.key==="Enter") {
+      try {
+        await navigator.clipboard.writeText(copyMe);
+        setCopySuccess("Copied!");
+      } catch (err) {
+        setCopySuccess("Failed to copy!");
+      }
     }
   };
 
@@ -265,15 +267,23 @@ const SystemInfo = (props) => {
   };
 
   const handleEntitiesSearch = async (value: any) => {
-    let entitiesSelected = allEntityNames.filter(e => e.toLowerCase().includes(value.toLowerCase()));
-    setEntitiesOptions(entitiesSelected);
-    if (entitiesSelected.includes(value)) {
-      setEntitySelected(value);
-      setEmptyError(false);
-    } else {
-      setEntitySelected("");
-      setEmptyError(true);
+    if (value) {
+      let entitiesSelected = allEntityNames.filter(e => {
+        if (e) {
+          return e.toLowerCase().includes(value.toLowerCase());
+        }
+        return false;
+      });
+      setEntitiesOptions(entitiesSelected);
+      if (entitiesSelected.includes(value)) {
+        setEntitySelected(value);
+        setEmptyError(false);
+      } else {
+        setEntitySelected("");
+        setEmptyError(true);
+      }
     }
+
   };
 
   const clearDataConfirmation = (
@@ -311,6 +321,7 @@ const SystemInfo = (props) => {
         data-testid="downloadHubCentralFiles"
         disabled={!authorityService.canDownloadProjectFiles()}
         onClick={downloadHubCentralFiles}
+        className={styles.focusTab}
       >Download</HCButton>
     </div>
   );
@@ -333,9 +344,19 @@ const SystemInfo = (props) => {
 
           <div className={styles.serviceName}>
             {serviceName}
-            <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"}>
+            <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"} show={showTooltipCopy}>
               <span>
-                {<FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/>}
+                {<FontAwesomeIcon
+                  icon={faCopy}
+                  data-testid="copyServiceName"
+                  className={styles.copyIcon}
+                  onClick={(event) => copyToClipBoard(serviceName, event)}
+                  tabIndex={0}
+                  onKeyPress={(event) => copyToClipBoard(serviceName, event)}
+                  onMouseEnter={() => setShowTooltipCopy(true)}
+                  onMouseLeave={() => setShowTooltipCopy(false)}
+
+                />}
               </span>
             </HCTooltip>
           </div>
@@ -374,6 +395,7 @@ const SystemInfo = (props) => {
                         data-testid="downloadProjectFiles"
                         onClick={downloadProjectFiles}
                         disabled={!authorityService.canDownloadProjectFiles()}
+                        className={styles.focusTab}
                       >Download</HCButton>
                     </div>
                   </HCCard>
@@ -399,7 +421,7 @@ const SystemInfo = (props) => {
                             onChange={handleSelectedDeleteOpt}
                             value={"deleteAll"}
                             aria-label={"deleteAll"}
-                            className={"mb-0"}
+                            className={["mb-0", styles.inputRadio].join(" ")}
                           />
                         </Col>
                         <Col>
@@ -419,7 +441,7 @@ const SystemInfo = (props) => {
                             onChange={handleSelectedDeleteOpt}
                             value={"deleteSubset"}
                             aria-label={"deleteSubset"}
-                            className={"mt-2"}
+                            className={["mt-2", styles.inputRadio].join(" ")}
                           />
                         </Col>
                         <FormLabel column
@@ -449,8 +471,8 @@ const SystemInfo = (props) => {
                               );
                             }}
                           />
-                          <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="">
-                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} />
+                          <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="" >
+                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0:-1}/>
                           </HCTooltip>
                         </Col>
                       </Row>
@@ -484,7 +506,7 @@ const SystemInfo = (props) => {
                             }}
                           />
                           <HCTooltip text={ClearDataMessages.basedOnTooltip} placement="bottom" id="">
-                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} />
+                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0:-1}/>
                           </HCTooltip>
                         </Col>
                       </Row>
@@ -531,6 +553,7 @@ const SystemInfo = (props) => {
                         data-testid="clearUserData"
                         onClick={handleClearData}
                         disabled={!authorityService.canClearUserData()}
+                        className={styles.focusTab}
                       >Clear</HCButton>
                     </div>
                   </HCCard>
