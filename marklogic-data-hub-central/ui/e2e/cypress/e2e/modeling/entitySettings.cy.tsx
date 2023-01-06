@@ -107,34 +107,32 @@ describe("Entity display settings in model tile", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
   });
-  it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", () => {
-    if (Cypress.isBrowser("!chrome")) {
-      graphExplore.getGraphVisCanvas().should("exist");
-      browsePage.search("3039");
-      graphExplore.stopStabilization();
-      cy.waitForAsyncRequest();
-      browsePage.waitForSpinnerToDisappear();
-      cy.wait(6000);
-      graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-      graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-        let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-        graphExplore.getGraphVisCanvas().scrollTo(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {ensureScrollable: false}).trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
-      });
-      cy.wait(1000);
+  it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", {browser: "!chrome"}, () => {
+    graphExplore.getGraphVisCanvas().should("exist");
+    browsePage.search("3039");
+    graphExplore.stopStabilization();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(6000);
+    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
+      let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+      graphExplore.getGraphVisCanvas().scrollTo(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {ensureScrollable: false}).trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y);
+    });
+    cy.wait(1000);
 
-      graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-        let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
-        cy.wait(150);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
+      let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+      cy.wait(150);
+      graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+      if (Cypress.isBrowser("!firefox")) {
         graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
-        if (Cypress.isBrowser("!firefox")) {
-          graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
-        }
+      }
 
-        cy.findByText(propertiesOnHoverData.babyRegistryId).should("exist");
-        cy.contains(propertiesOnHoverData.arrivalDate);
-        cy.findByText(propertiesOnHoverData.ownedBy).should("exist");
-      });
-    }
+      cy.findByText(propertiesOnHoverData.babyRegistryId).should("exist");
+      cy.contains(propertiesOnHoverData.arrivalDate);
+      cy.findByText(propertiesOnHoverData.ownedBy).should("exist");
+    });
   });
   it("Check in the side bar the label of the node", () => {
 

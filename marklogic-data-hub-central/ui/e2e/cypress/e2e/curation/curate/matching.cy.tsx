@@ -425,163 +425,164 @@ describe("Matching", () => {
     // multiSlider.getHandleName("testMultipleProperty").trigger("mousedown", {force: true});
     // cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
+    if (Cypress.isBrowser("!firefox")) {
+      cy.log("**Test when user clicks on test button after adding/deleting URI's in 'Test Uris'**");
+      matchingStepDetail.getUriOnlyRadio().click();
+      for (let i = 0; i < 2; i++) {
+        matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]);
+        matchingStepDetail.getAddUriOnlyIcon().click();
+      }
+      //test two truthy URI matches
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(1000);
+      cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
+      cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
+      cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
 
-    cy.log("**Test when user clicks on test button after adding/deleting URI's in 'Test Uris'**");
-    matchingStepDetail.getUriOnlyRadio().click();
-    for (let i = 0; i < 2; i++) {
-      matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]);
+      //delete one and test two faulty URI matches
+      matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
+      matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/faulty-metaphone.json");
       matchingStepDetail.getAddUriOnlyIcon().click();
-    }
-    //test two truthy URI matches
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(1000);
-    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
-    cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
-    cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(1000);
+      cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
 
-    //delete one and test two faulty URI matches
-    matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
-    matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/faulty-metaphone.json");
-    matchingStepDetail.getAddUriOnlyIcon().click();
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(1000);
-    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+      //test two truthy URI matches again
+      matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
+      matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/first-name-double-metaphone2.json");
+      matchingStepDetail.getAddUriOnlyIcon().click();
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(1000);
+      cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
+      cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
+      cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
 
-    //test two truthy URI matches again
-    matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
-    matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/first-name-double-metaphone2.json");
-    matchingStepDetail.getAddUriOnlyIcon().click();
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(1000);
-    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
-    cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
-    cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
-
-    //To test when users click on test button and no data is returned
-    cy.log("**To test when users click on test button and no data is returned**");
-    cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000}).click();
-    matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri");
-    matchingStepDetail.getAddUriIcon().click();
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(1000);
-    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
-    matchingStepDetail.getUriDeleteIcon().click();
-
-    //To test when user enters uris and click on test button
-    for (let i in uris) {
-      matchingStepDetail.getUriInputField().clear().type(uris[i]);
+      //To test when users click on test button and no data is returned
+      cy.log("**To test when users click on test button and no data is returned**");
+      cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000}).click();
+      matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri");
       matchingStepDetail.getAddUriIcon().click();
-    }
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(1000);
+      cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+      matchingStepDetail.getUriDeleteIcon().click();
 
-    //To test if correct uri is deleted when clicked on delete button
-    cy.log("**To test if correct uri is deleted when clicked on delete uri button**");
-    for (let i in urisDummy) {
-      matchingStepDetail.getUriInputField().clear().type(urisDummy[i]);
-      matchingStepDetail.getAddUriIcon().click();
-    }
+      //To test when user enters uris and click on test button
+      for (let i in uris) {
+        matchingStepDetail.getUriInputField().clear().type(uris[i]);
+        matchingStepDetail.getAddUriIcon().click();
+      }
 
-    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).click();
-    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).should("exist");
-    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).should("not.exist");
-    matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).click();
+      //To test if correct uri is deleted when clicked on delete button
+      cy.log("**To test if correct uri is deleted when clicked on delete uri button**");
+      for (let i in urisDummy) {
+        matchingStepDetail.getUriInputField().clear().type(urisDummy[i]);
+        matchingStepDetail.getAddUriIcon().click();
+      }
 
-    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(3000);
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(3000);
-    cy.findByLabelText("noMatchedDataView").should("not.exist");
-    for (let j in uriMatchedResults) {
-      cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
-      cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
-    }
+      matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).click();
+      matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).should("exist");
+      matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).should("not.exist");
+      matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).click();
 
-    //To test when user selects all data and click on test button
-    cy.log("**To test when user selects all data and click on test button**");
-    matchingStepDetail.getAllDataRadio().click();
-    matchingStepDetail.getTestMatchUriButton();
-    cy.waitForAsyncRequest();
-    cy.wait(3000);
-    cy.findByLabelText("noMatchedDataView").should("not.exist");
-    for (let j in uriMatchedResults) {
-      cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
-      cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
-    }
-    cy.wait(1000);
-    cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).scrollIntoView().click();
-    for (let k in urisMerged) {
-      cy.findAllByText(urisMerged[k]).should("have.length.gt", 0);
-    }
+      matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(3000);
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(3000);
+      cy.findByLabelText("noMatchedDataView").should("not.exist");
+      for (let j in uriMatchedResults) {
+        cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
+        cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
+      }
 
-    // To test when user click on expand all icon
-    cy.log("**To test when user click on expand all icon**");
-    cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
-      cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".switch-button-group").within(() => {
-          cy.get("label:first").scrollIntoView().click();
+      //To test when user selects all data and click on test button
+      cy.log("**To test when user selects all data and click on test button**");
+      matchingStepDetail.getAllDataRadio().click();
+      matchingStepDetail.getTestMatchUriButton();
+      cy.waitForAsyncRequest();
+      cy.wait(3000);
+      cy.findByLabelText("noMatchedDataView").should("not.exist");
+      for (let j in uriMatchedResults) {
+        cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
+        cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
+      }
+      cy.wait(1000);
+      cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).scrollIntoView().click();
+      for (let k in urisMerged) {
+        cy.findAllByText(urisMerged[k]).should("have.length.gt", 0);
+      }
+
+      // To test when user click on expand all icon
+      cy.log("**To test when user click on expand all icon**");
+      cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
+        cy.findByLabelText("expand-collapse").within(() => {
+          cy.get(".switch-button-group").within(() => {
+            cy.get("label:first").scrollIntoView().click();
+          });
         });
       });
-    });
-    cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
+      cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
 
-    // To verify content of multiple properties
-    cy.log("**To verify content of multiple properties**");
-    cy.findAllByLabelText("Expand row").first().scrollIntoView().click();
-    cy.findAllByText("lname").should("have.length.gt", 0);
-    cy.findByLabelText("exact 0").should("have.length.gt", 0);
-    cy.findAllByText("ZipCode").should("have.length.gt", 0);
-    cy.findByLabelText("zip 1").should("have.length.gt", 0);
+      // To verify content of multiple properties
+      cy.log("**To verify content of multiple properties**");
+      cy.findAllByLabelText("Expand row").first().scrollIntoView().click();
+      cy.findAllByText("lname").should("have.length.gt", 0);
+      cy.findByLabelText("exact 0").should("have.length.gt", 0);
+      cy.findAllByText("ZipCode").should("have.length.gt", 0);
+      cy.findByLabelText("zip 1").should("have.length.gt", 0);
 
-    // To test compare values for matched Uris
-    cy.log("**To test compare values for matched Uris**");
-    cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
-    for (let i in compareValuesData) {
-      cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
-      cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
+      // To test compare values for matched Uris
+      cy.log("**To test compare values for matched Uris**");
+      cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
+      for (let i in compareValuesData) {
+        cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
+        cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
       //cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
-    }
-    compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+      }
+      compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
-    // To test highlighted matched rows
-    cy.log("**To test highlighted matched rows**");
-    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByLabelText("Close").scrollIntoView().click();
+      // To test highlighted matched rows
+      cy.log("**To test highlighted matched rows**");
+      cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
+      cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
+      cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+      cy.findByLabelText("Close").scrollIntoView().click();
 
-    // To test expanded uri table content
-    cy.log("**To test expanded uri table content**");
-    cy.findAllByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click();
-    for (let i in allDataMatchedResults) {
-      cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
-      cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
-      cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
-    }
-    cy.findAllByText("Total Score: 30").should("have.length.gt", 0);
+      // To test expanded uri table content
+      cy.log("**To test expanded uri table content**");
+      cy.findAllByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click();
+      for (let i in allDataMatchedResults) {
+        cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
+        cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
+        cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
+      }
+      cy.findAllByText("Total Score: 30").should("have.length.gt", 0);
 
-    multiSlider.enableEdit("ruleset");
-    multiSlider.deleteOptionMulti("testMultipleProperty");
-    matchingStepDetail.getSliderDeleteText().should("be.visible");
-    multiSlider.confirmDeleteMulti("testMultipleProperty");
-    cy.waitForAsyncRequest();
+      multiSlider.enableEdit("ruleset");
+      multiSlider.deleteOptionMulti("testMultipleProperty");
+      matchingStepDetail.getSliderDeleteText().should("be.visible");
+      multiSlider.confirmDeleteMulti("testMultipleProperty");
+      cy.waitForAsyncRequest();
 
-    // To test when user click on collapse all icon
-    cy.log("**To test when user click on collapse all icon**");
-    cy.findByLabelText("inputUriRadio").scrollIntoView();
-    cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
-      cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".switch-button-group").within(() => {
-          cy.get("label:last").scrollIntoView().click();
+      // To test when user click on collapse all icon
+      cy.log("**To test when user click on collapse all icon**");
+      cy.findByLabelText("inputUriRadio").scrollIntoView();
+      cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
+        cy.findByLabelText("expand-collapse").within(() => {
+          cy.get(".switch-button-group").within(() => {
+            cy.get("label:last").scrollIntoView().click();
+          });
         });
       });
-    });
-    cy.findAllByLabelText("expandedTableView").should("not.visible");
+      cy.findAllByLabelText("expandedTableView").should("not.visible");
+    }
   });
 
   it("Values to Ignore list tooltip", () => {

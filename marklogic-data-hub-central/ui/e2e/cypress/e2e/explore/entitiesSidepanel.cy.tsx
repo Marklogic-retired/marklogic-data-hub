@@ -152,7 +152,7 @@ describe("Test '/Explore' left sidebar", () => {
     });
 
     cy.log("**Select Order Entity from dropdown and verify Customer node is gone**");
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
     cy.wait(1000);
     explorePage.getFinalDatabaseButton();
