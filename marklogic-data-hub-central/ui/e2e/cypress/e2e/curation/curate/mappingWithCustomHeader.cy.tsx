@@ -53,11 +53,12 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.stepDescriptionInput().type("load order with a custom header");
     loadPage.stepSourceNameInput().type("backup-ABC123");
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.findByText(loadStep).should("be.visible");
   });
   it("Edit load step and Run", {defaultCommandTimeout: 120000}, () => {
     // Open step settings and switch to Advanced tab
-    loadPage.editStepInCardView(loadStep).click({force: true});
+    loadPage.editStepInCardView(loadStep).should("be.visible").click({force: true});
     loadPage.switchEditAdvanced().click();
     // add custom header to load step
     advancedSettingsDialog.setHeaderContent("loadTile/customHeader");
