@@ -107,7 +107,7 @@ describe("Entity display settings in model tile", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
   });
-  it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", {browser: "!chrome"}, () => {
+  it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", () => {
     graphExplore.getGraphVisCanvas().should("exist");
     browsePage.search("3039");
     graphExplore.stopStabilization();
@@ -128,10 +128,11 @@ describe("Entity display settings in model tile", () => {
       if (Cypress.isBrowser("!firefox")) {
         graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
       }
-
-      cy.findByText(propertiesOnHoverData.babyRegistryId).should("exist");
-      cy.contains(propertiesOnHoverData.arrivalDate);
-      cy.findByText(propertiesOnHoverData.ownedBy).should("exist");
+      if (Cypress.isBrowser("!chrome")) {
+        cy.findByText(propertiesOnHoverData.babyRegistryId).should("exist");
+        cy.contains(propertiesOnHoverData.arrivalDate);
+        cy.findByText(propertiesOnHoverData.ownedBy).should("exist");
+      }
     });
   });
   it("Check in the side bar the label of the node", () => {
