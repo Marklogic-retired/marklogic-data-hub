@@ -159,7 +159,7 @@ const FlowPanel: React.FC<Props> = ({
     const countIngestionSteps = originLStorage === true ? flow?.steps?.reduce((acc, cur) =>
       cur?.stepDefinitionType.toLowerCase() === "ingestion" ? ++acc : acc, 0) : loadTypeCountAux;
 
-    let hasLoadSteps =  countIngestionSteps === 0 ? 1: countIngestionSteps === 1 ? 1:countIngestionSteps;
+    let hasLoadSteps = countIngestionSteps === 0 ? 1 : countIngestionSteps === 1 ? 1 : countIngestionSteps;
 
     if (selectedSteps.length === flow.steps.length - hasLoadSteps + 1) {
       setAllChecked(true);
@@ -176,6 +176,16 @@ const FlowPanel: React.FC<Props> = ({
     } else {
       // uncheck all
       setSelectedSteps([]);
+    }
+  };
+
+  const handleCheckDownCheckAll = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      if (event.key === " ") {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      handleCheckAll(event);
     }
   };
 
@@ -196,6 +206,16 @@ const FlowPanel: React.FC<Props> = ({
       });
       newSelectedSteps.push(checkedStep);
       setSelectedSteps(newSelectedSteps);
+    }
+  };
+
+  const handleCheckDownCheckStep = (event, step) => {
+    if (event.key === "Enter" || event.key === " ") {
+      if (event.key === " ") {
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      handleCheck(step);
     }
   };
 
@@ -280,7 +300,7 @@ const FlowPanel: React.FC<Props> = ({
       <Dropdown.Menu>
         <Dropdown.Header className="py-0 px-2 fs-6">Loading</Dropdown.Header>
         {steps && steps["ingestionSteps"] && steps["ingestionSteps"].length > 0 ? steps["ingestionSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "ingestion"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "ingestion"); }}
             >{elem.name}</div>
@@ -289,7 +309,7 @@ const FlowPanel: React.FC<Props> = ({
 
         <Dropdown.Header className="py-0 px-2 fs-6">Mapping</Dropdown.Header>
         {steps && steps["mappingSteps"] && steps["mappingSteps"].length > 0 ? steps["mappingSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "mapping"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "mapping"); }}
             >{elem.name}</div>
@@ -298,7 +318,7 @@ const FlowPanel: React.FC<Props> = ({
 
         <Dropdown.Header className="py-0 px-2 fs-6">Matching</Dropdown.Header>
         {steps && steps["matchingSteps"] && steps["matchingSteps"].length > 0 ? steps["matchingSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "matching"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "matching"); }}
             >{elem.name}</div>
@@ -307,7 +327,7 @@ const FlowPanel: React.FC<Props> = ({
 
         <Dropdown.Header className="py-0 px-2 fs-6">Merging</Dropdown.Header>
         {steps && steps["mergingSteps"] && steps["mergingSteps"].length > 0 ? steps["mergingSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "merging"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "merging"); }}
             >{elem.name}</div>
@@ -316,7 +336,7 @@ const FlowPanel: React.FC<Props> = ({
 
         <Dropdown.Header className="py-0 px-2 fs-6">Mastering</Dropdown.Header>
         {steps && steps["masteringSteps"] && steps["masteringSteps"].length > 0 ? steps["masteringSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "mastering"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "mastering"); }}
             >{elem.name}</div>
@@ -325,7 +345,7 @@ const FlowPanel: React.FC<Props> = ({
 
         <Dropdown.Header className="py-0 px-2 fs-6">Custom</Dropdown.Header>
         {steps && steps["customSteps"] && steps["customSteps"].length > 0 ? steps["customSteps"].map((elem, index) => (
-          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { handleStepAdd(elem.name, flowName, "custom"); } }}>
             <div
               onClick={() => { handleStepAdd(elem.name, flowName, "custom"); }}
             >{elem.name}</div>
@@ -334,6 +354,13 @@ const FlowPanel: React.FC<Props> = ({
       </Dropdown.Menu>
     </Dropdown>
   );
+
+  //on key press of enter, stop the flow
+  const handleKeyPress = (event, name) => {
+    if (event.key === "Enter" || event.key === " ") {
+      handleFlowDelete(name);
+    }
+  };
 
   const panelActions = (name, i) => {
     const flow = flows.filter((flow) => flow.name === name)[0];
@@ -396,6 +423,7 @@ const FlowPanel: React.FC<Props> = ({
                   dataTestId={"select-all-toggle"}
                   handleClick={handleCheckAll}
                   label={allChecked ? "Deselect All" : "Select All"}
+                  handleKeyDown={handleCheckDownCheckAll}
                 />
               </div>
               {/* This is working weird */}
@@ -414,6 +442,7 @@ const FlowPanel: React.FC<Props> = ({
                             id={step.stepName}
                             value={step.stepName}
                             handleClick={() => handleCheck(step)}
+                            handleKeyDown={(event) => { handleCheckDownCheckStep(event, step); }}
                             checked={isStepSelected(step.stepName)}
                             disabled={step.stepDefinitionType.toLowerCase() === "ingestion" ? controlDisabled(step) : false}
                             removeMargin={true}
@@ -440,6 +469,8 @@ const FlowPanel: React.FC<Props> = ({
                 onClick={() => { handleFlowDelete(name); }}
                 data-testid={`deleteFlow-${name}`}
                 className={styles.deleteIcon}
+                onKeyDown={(event) => { handleKeyPress(event, name); }}
+                tabIndex={0}
                 size="lg" />
             </i>
           </HCTooltip>
@@ -466,13 +497,21 @@ const FlowPanel: React.FC<Props> = ({
             <Accordion.Button data-testid={`accordion-${flow.name}`} onClick={() => handlePanelInteraction(idx)}>
               <span id={"flow-header-" + flow.name} className={styles.flowHeader}>
                 <HCTooltip text={canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails} id="open-edit-tooltip" placement="bottom">
-                  <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, idx)}>
+                  <span className={styles.flowName}
+                    tabIndex={0}
+                    onClick={(e) => OpenEditFlowDialog(e, idx)}
+                    onKeyDown={(keyEvent) => {
+                      if (keyEvent.key === "Enter" || keyEvent.key === " ") {
+                        keyEvent.stopPropagation();
+                        OpenEditFlowDialog(keyEvent, idx);
+                      }
+                    }}>
                     {flow.name}
                   </span>
                 </HCTooltip>
                 {latestJobData && latestJobData[flow.name] && latestJobData[flow.name].find(step => step.jobId) ?
                   <HCTooltip text={RunToolTips.flowName} placement="bottom" id="">
-                    <span onClick={(e) => OpenFlowJobStatus(e, idx, flow.name)} className={styles.infoIcon} data-testid={`${flow.name}-flow-status`}>
+                    <span tabIndex={0} onClick={(e) => OpenFlowJobStatus(e, idx, flow.name)} className={styles.infoIcon} data-testid={`${flow.name}-flow-status`} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { OpenFlowJobStatus(event, idx, flow.name); } }}>
                       <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.flowStatusIcon} />
                     </span>
                   </HCTooltip>
