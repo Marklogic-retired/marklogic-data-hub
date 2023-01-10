@@ -111,7 +111,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
               matchedPropArray.push(name[0]);
             }
           } else {
-            for (let i = 0; i < curationOptions.activeStep.stepArtifact.matchRulesets.length; i++) {
+            for (let i = 0; i < curationOptions?.activeStep?.stepArtifact?.matchRulesets?.length; i++) {
               let ruleset = curationOptions.activeStep.stepArtifact.matchRulesets[i];
               if (ruleset.name === matchRuleset) {
                 for (let j = 0; j < ruleset.matchRules.length; j++) {

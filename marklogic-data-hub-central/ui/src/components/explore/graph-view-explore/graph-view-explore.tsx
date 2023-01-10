@@ -19,6 +19,7 @@ import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/m
 import {unmergeUri} from "@api/merging";
 import CompareValuesModal from "@components/entities/matching/compare-values-modal/compare-values-modal";
 import {AuthoritiesContext} from "@util/authorities";
+import {AxiosResponse} from "axios";
 
 type Props = {
   entityTypeInstances: any;
@@ -29,8 +30,8 @@ type Props = {
   setGraphPageInfo: (pageInfo: any) => void;
   setIsLoading: (loading: boolean) => void;
   entitiesWithRelatedConcepts: any;
-  data:any;
-  entityDefArray:any[]
+  data: any;
+  entityDefArray: any[]
 };
 
 const {graphViewTooltips} = tooltipsConfig;
@@ -42,7 +43,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(storage.explore?.graphView?.relationshipLabels !== undefined ? storage.explore?.graphView?.relationshipLabels : true);
   const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
   const [viewConcepts, toggleConcepts] = useState(storage.explore?.graphView?.concepts !== undefined ? storage.explore?.graphView?.concepts : true);
-  const [physicsAnimation, togglePhysicsAnimation] = useState(storage.explore?.graphView?.physicsAnimation !== undefined? storage.explore?.graphView?.physicsAnimation : true);
+  const [physicsAnimation, togglePhysicsAnimation] = useState(storage.explore?.graphView?.physicsAnimation !== undefined ? storage.explore?.graphView?.physicsAnimation : true);
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
@@ -142,18 +143,18 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const isUnmergeAvailable = (nodeId) => {
     if (Object.keys(props.entityTypeInstances).length === 0) return false;
-    const filteredData= props.entityTypeInstances.nodes.filter((item) => item["id"] === nodeId);
+    const filteredData = props.entityTypeInstances.nodes.filter((item) => item["id"] === nodeId);
     if (filteredData.length === 0) return false;
     const item = props.data.filter((item) => item.uri === filteredData[0].docUri);
     if (item.length === 0) return false;
-    if (filteredData.length >0 && canReadMatchMerge) {
+    if (filteredData.length > 0 && canReadMatchMerge) {
       return filteredData[0].unmerge;
     }
     return false;
   };
 
   const openUnmergeCompare = async (uri) => {
-    const item = props.data.filter((item) => item.uri=== uri)[0];
+    const item = props.data.filter((item) => item.uri === uri)[0];
     let arrayUris;
     let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
@@ -170,17 +171,28 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   };
 
   const fetchCompareData = async (array, item) => {
-    const result1 = await getDocFromURI(array[0]);
-    const result2 = await getDocFromURI(array[1]);
+    let uriRequests: Promise<AxiosResponse<any>>[] = [];
+    array.forEach((uri) => {
+      uriRequests.push(getDocFromURI(uri));
+    });
+    const results = await Promise.all(uriRequests);
+    const result1 = results[0];
+    const result2 = results[1];
 
-    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
-      let result1Instance = result1?.data?.data?.envelope?.instance;
-      let result2Instance = result2?.data?.data?.envelope?.instance;
+      let urisInfo: any[] = [];
+      results.forEach((result, index) => {
+        const instanceKey = `result${index + 1}Instance`;
+        urisInfo.push({
+          [instanceKey]: result.data.data.envelope.instance,
+        });
+      });
       let previewInstance = preview.data.value.envelope.instance;
-      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+      urisInfo.push({previewInstance});
+      setUriInfo(urisInfo);
     }
 
     let testMatchData = {
@@ -337,7 +349,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       openUnmergeCompare={openUnmergeCompare}
       loadingCompare={loading}
       data={props.data}
-      isUnmergeAvailable={isUnmergeAvailable}/>
+      isUnmergeAvailable={isUnmergeAvailable} />
   </div>);
 
   return (
