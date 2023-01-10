@@ -32,6 +32,11 @@
     &:focus {
         box-shadow: none;
     }
+    &:focus-visible {
+        &::before {
+            outline: auto !important;
+        }
+    }
     // Accordion icon
     &::before {
         flex-shrink: 0;

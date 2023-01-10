@@ -16,21 +16,21 @@ import {faBan, faCheckCircle, faClock} from "@fortawesome/free-solid-svg-icons";
 export interface Props {
   step: Step;
   flow: Flow;
-  openFilePicker: ()=>void;
+  openFilePicker: () => void;
   setRunningStep: React.Dispatch<any>;
   setRunningFlow: React.Dispatch<any>;
-  handleStepDelete: (flowName: string, step: any)=>void;
-  handleRunSingleStep: (flowName: string, step: any)=>Promise<void>;
+  handleStepDelete: (flowName: string, step: any) => void;
+  handleRunSingleStep: (flowName: string, step: any) => Promise<void>;
   latestJobData: any;
-  reorderFlow: (id: number, flowName:string, direction:ReorderFlowOrderDirection)=>void;
+  reorderFlow: (id: number, flowName: string, direction: ReorderFlowOrderDirection) => void;
   canWriteFlow: boolean;
   hasOperatorRole: boolean;
-  getRootProps:any;
-  getInputProps:any;
+  getRootProps: any;
+  getInputProps: any;
   setSingleIngest: React.Dispatch<React.SetStateAction<any>>;
   showLinks: string;
   setShowLinks: React.Dispatch<React.SetStateAction<any>>;
-  setShowUploadError:React.Dispatch<React.SetStateAction<any>>;
+  setShowUploadError: React.Dispatch<React.SetStateAction<any>>;
   sourceFormatOptions: any;
   runningStep?: Step;
   flowRunning: Flow;
@@ -72,6 +72,15 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       event.preventDefault();
     }
   };
+  const runKeyDownHandler = (event, name) => {
+    if (event.key === "Enter" || event.key === " ") {
+      setShowUploadError(false);
+      setSingleIngest(true);
+      setRunningStep(step);
+      setRunningFlow(name);
+      openFilePicker();
+    }
+  };
 
   const handleMouseOver = (e, name) => {
     setShowLinks(name);
@@ -99,7 +108,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       stepEndTime = new Date(step.stepEndTime).toLocaleString();
     }
 
-    const flowLastRun =  latestJobData[flow];
+    const flowLastRun = latestJobData[flow];
 
     let canceled = flowLastRun?.some(function (stepObj) {
       return stepObj.lastRunStatus?.includes("canceled");
@@ -112,7 +121,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
     if (isRunning(flow.name, step.stepNumber)) {
       return (
         <HCTooltip text={RunToolTips.stepRunning} id="running-tooltip" placement="bottom">
-          <span>
+          <span tabIndex={0}>
             <i><FontAwesomeIcon aria-label="icon: clock-circle" icon={faClock} className={styles.runningIcon} size="lg" data-testid={`running-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
@@ -121,7 +130,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       return (
         <span>
           <HCTooltip text={RunToolTips.stepCanceled(stepEndTime)} id="canceled-tooltip" placement="bottom">
-            <span>
+            <span tabIndex={0}>
               <i><FontAwesomeIcon icon={faBan} aria-label="icon: canceled-circle" className={styles.canceledRun} /></i>
             </span>
           </HCTooltip>
@@ -131,7 +140,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       return (
         <span>
           <HCTooltip text={RunToolTips.stepCompleted(stepEndTime)} id="success-tooltip" placement="bottom">
-            <span>
+            <span tabIndex={0}>
               <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
             </span>
           </HCTooltip>
@@ -142,7 +151,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       return (
         <span>
           <HCTooltip text={RunToolTips.stepCompletedWithErrors(stepEndTime)} id="complete-with-errors-tooltip" placement="bottom">
-            <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
+            <ExclamationCircleFill tabIndex={0} aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
@@ -150,7 +159,7 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
       return (
         <span>
           <HCTooltip text={RunToolTips.stepFailed(stepEndTime)} id="step-last-failed-tooltip" placement="bottom">
-            <XCircleFill data-icon="failed-circle" aria-label="icon: failed-circle" className={styles.unSuccessfulRun} />
+            <XCircleFill tabIndex={0} data-icon="failed-circle" aria-label="icon: failed-circle" className={styles.unSuccessfulRun} />
           </HCTooltip>
         </span>
       );
@@ -247,6 +256,8 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
                       setRunningFlow(flow.name);
                       openFilePicker();
                     }}
+                    tabIndex={0}
+                    onKeyDown={(e) => { runKeyDownHandler(e, flow.name); }}
                   >
                     <HCTooltip text={RunToolTips.ingestionStep} id="run-ingestion-tooltip" placement="bottom">
                       <PlayCircleFill aria-label="icon: play-circle" color={themeColors.defaults.questionCircle} size={20} />
@@ -258,6 +269,12 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
                   className={styles.run}
                   onClick={() => {
                     handleRunSingleStep(flow.name, step);
+                  }}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleRunSingleStep(flow.name, step);
+                    }
                   }}
                   aria-label={`runStep-${step.stepName}`}
                   data-testid={`runStep-${step.stepName}`}
@@ -278,12 +295,22 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
             }
             {canWriteFlow ?
               <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
-                <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flow.name, step)}>
+                <div
+                  className={styles.delete}
+                  aria-label={`deleteStep-${step.stepName}`}
+                  tabIndex={0}
+                  onClick={() => handleStepDelete(flow.name, step)}
+                  onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") handleStepDelete(flow.name, step); }}>
                   <X aria-label="icon: close" color={themeColors.primary} size={27} />
                 </div>
               </HCTooltip> :
               <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
-                <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+                <div
+                  className={styles.disabledDelete}
+                  aria-label={`deleteStepDisabled-${step.stepName}`}
+                  tabIndex={0}
+                  onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
+                  onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") event.stopPropagation(); event.preventDefault(); }}>
                   <X aria-label="icon: close" color={themeColors.primary} size={27} />
                 </div>
               </HCTooltip>
@@ -293,6 +320,12 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
         footerClassName={styles.cardFooter}
       >
         <div aria-label={viewStepId + "-content"} className={styles.cardContent}
+          tabIndex={0}
+
+          onFocus={(e) => {
+            handleMouseOver(e, viewStepId);
+          }}
+
           onMouseOver={(e) => handleMouseOver(e, viewStepId)}
           onMouseLeave={(e) => setShowLinks("")} >
           {sourceFormat ?
@@ -304,12 +337,18 @@ const StepCard: React.FC<Props> = ({step, flow, openFilePicker,
             aria-label={viewStepId + "-cardlink"}
           >
             <Link id={"tiles-step-view-" + viewStepId}
+              tabIndex={0}
               to={{
                 pathname: `/tiles/${stepDefinitionType.toLowerCase() === "ingestion" ? "load" : "curate"}`,
                 state: {
                   stepToView: step.stepId,
                   stepDefinitionType: stepDefinitionType,
                   targetEntityType: step.targetEntityType
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Tab") {
+                  setShowLinks("");
                 }
               }}
             >

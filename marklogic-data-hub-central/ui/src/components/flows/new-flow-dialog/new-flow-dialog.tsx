@@ -163,7 +163,7 @@ const NewFlowDialog: React.FC<Props> = ({
                 <Col className={(flowName || !isFlowNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
                   {tobeDisabled ?
                     <HCTooltip id="disabled-namefield-tooltip" text={NewFlowTooltips.nameField} placement={"bottom"} >
-                      <span className={"w-100"}>
+                      <span className={"w-100"} tabIndex={0}>
                         <HCInput
                           id="name"
                           placeholder="Enter name"
@@ -184,7 +184,7 @@ const NewFlowDialog: React.FC<Props> = ({
                     />}
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>
                     </HCTooltip>
                   </div>
                 </Col>
@@ -208,7 +208,7 @@ const NewFlowDialog: React.FC<Props> = ({
               />
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>
                 </HCTooltip>
               </div>
             </Col>

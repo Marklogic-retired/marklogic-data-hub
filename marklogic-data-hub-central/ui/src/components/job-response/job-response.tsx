@@ -123,7 +123,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       });
   };
 
-  const isStepCanceled= (response) => {
+  const isStepCanceled = (response) => {
     // this step was canceled
     if (response.status?.includes("canceled")) return true;
     // the job was canceled and the step response is not on the responses because it didn't get to run
@@ -183,7 +183,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
       headerFormatter: (column) => <strong data-testid={`stepType-header`}>Step Type</strong>,
       formatter: (stepName, response) => {
         let stepType = response.stepDefinitionType === "ingestion" ? "loading" : response.stepDefinitionType;
-        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`}className={styles.stepType}>
+        return (<div data-testid={`${response.stepName}-${stepType}-type`} id={`${response.stepName}-${stepType}-type`} className={styles.stepType}>
           {stepType?.toLowerCase()}
         </div>);
       },
@@ -228,7 +228,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
           <strong>Action</strong>
           <HCTooltip text={RunToolTips.exploreStepData} id="explore-data" placement="top">
             <i>
-              <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon}/>
+              <FontAwesomeIcon icon={faInfoCircle} size="1x" aria-label="icon: info-circle" className={styles.infoIcon} />
             </i>
           </HCTooltip>
         </span>,
@@ -285,7 +285,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
 
   const composeData = (responsesArray) => {
     let data: any[] = [];
-    if (runningFlow===undefined || !runningFlow.steps || runningFlow.steps.length === 0) return responsesArray;
+    if (runningFlow === undefined || !runningFlow.steps || runningFlow.steps.length === 0) return responsesArray;
     for (let step of runningFlow.steps) {
       const result = responsesArray.find(response => (response.stepName === step.stepName || response.status.includes(`running step ${step.stepNumber}`)));
       if (result === undefined) {
@@ -343,13 +343,17 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
           The flow <strong>{jobResponse.flow}</strong> is running
           {stopRun && (<HCTooltip text={canStopFlow(jobResponse) ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission} id="stop-run" placement="bottom">
-            <span onClick={() => { stopRun(); }}>
+            <span tabIndex={0} onClick={() => { stopRun(); }} onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                stopRun();
+              }
+            }}>
               <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: stop-circle" className={canStopFlow(jobResponse) ? styles.stopIcon : styles.stopIconDisabled} />
             </span>
           </HCTooltip>)}
         </span>
         :
-        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus==="canceled" ? "was canceled" : "completed"}</span>}
+        <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus === "canceled" ? "was canceled" : "completed"}</span>}
       <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => onCloseModal()}></button>
     </Modal.Header>
     <Modal.Body>
