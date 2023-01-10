@@ -98,7 +98,9 @@
     "minimist": "^1.2.6",
     "lodash": "4.17.21",
     "url-parse": "^1.5.10",
-    "eventsource": "1.1.2"
+    "minimatch": "^3.1.2",
+    "eventsource": "1.1.2",
+    "loader-utils": "^1.4.2"
   },
   "jest": {
     "snapshotSerializers": [],
@@ -167,6 +169,8 @@
     "immer": "^9.0.7",
     "jest-canvas-mock": "^2.3.1",
     "lodash": "4.17.21",
+    "loader-utils": "^1.4.2",
+    "minimatch": "^3.1.2",
     "minimist": "^1.2.6",
     "nan": "2.14.1",
     "node-gyp": "8.4.1",
