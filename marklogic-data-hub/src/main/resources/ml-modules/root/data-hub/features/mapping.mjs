@@ -27,7 +27,7 @@ function onArtifactDelete(artifactType, artifactName) {
  return true;
 }
 
-export {
+export default {
     onArtifactSave,
     onArtifactDelete
 };

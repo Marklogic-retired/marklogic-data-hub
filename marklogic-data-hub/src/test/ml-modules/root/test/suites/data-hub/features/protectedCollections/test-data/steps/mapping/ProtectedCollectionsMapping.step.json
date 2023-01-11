@@ -1,0 +1,21 @@
+{
+  "name" : "ProtectedCollectionsMapping",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "ProtectedCollectionsMapping-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "collections" : [ "mapping", "protected-content" ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "sourceQuery" : "cts.collectionQuery('customer')",
+  "features": {
+    "protectedCollections": {
+      "enabled" : true,
+      "collections": ["myCollection"],
+      "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+    }
+  },
+  "customHook" : { },
+  "lang" : "zxx",
+  "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+}
