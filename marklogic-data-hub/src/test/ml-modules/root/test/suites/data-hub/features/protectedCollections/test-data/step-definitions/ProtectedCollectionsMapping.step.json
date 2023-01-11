@@ -1,17 +1,23 @@
 {
-  "name": "StepForCollections",
+  "name" : "ProtectedCollectionsMapping",
   "type" : "MAPPING",
   "version" : 1,
   "options" : {
-    "collections" : [ "mapping", "protected" ],
+    "collections" : [ "mapping", "protected-content" ],
     "sourceDatabase": "data-hub-FINAL",
     "targetDatabase": "data-hub-FINAL",
     "mapping" : {
-      "name" : "CustomerJSON-CustomerJSONMapping",
+      "name" : "ProtectedCollections-ProtectedCollectionsMapping",
       "version" : 0
     },
     "targetEntity" : "Customer",
     "sourceQuery" : "cts.collectionQuery('default-ingestion')"
+  },
+  "features": {
+    "protectedCollections": {
+      "collections": ["myCollection"],
+      "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+    }
   },
   "customHook" : { },
   "lang" : "zxx",

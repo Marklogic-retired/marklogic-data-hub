@@ -1,0 +1,23 @@
+{
+  "info" : {
+    "title" : "Office",
+    "version" : "0.0.1",
+    "description" : "An Office",
+    "baseUri": "http://www.marklogic.com/"
+  },
+  "definitions" : {
+    "Customer" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
