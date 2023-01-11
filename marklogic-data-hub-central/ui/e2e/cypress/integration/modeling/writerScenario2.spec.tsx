@@ -4,6 +4,7 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeModal,
   entityTypeTable,
+  graphViewSidePanel,
   propertyModal,
   propertyTable,
   relationshipModal,
@@ -82,6 +83,12 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("address-street"); // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
+    propertyTable.getPropertyName("street").should("exist");
+    entityTypeTable.viewEntityInGraphView("AddEntity");
+    graphViewSidePanel.getPropertiesTab().click();
+    propertyTable.getExpandIcon("address").should("exist").click();
+    propertyTable.getPropertyName("street").should("exist");
+    modelPage.selectView("table");
   });
   it("Create a property with name 'rowId' and get confirmation modal", () => {
     propertyTable.getAddPropertyButton("AddEntity").should("be.visible").click({force: true});
