@@ -27,7 +27,7 @@ function onInstanceSave(stepContext, model, contentObject) {
     return true;
 }
 
-export {
+export default {
     onArtifactSave,
     onInstanceSave
 };
