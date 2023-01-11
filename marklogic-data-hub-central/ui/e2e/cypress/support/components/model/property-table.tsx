@@ -102,6 +102,10 @@ class PropertyTable {
     return cy.findByTestId(`${testId}`);
   }
 
+  getPropertyName(property: string) {
+    return cy.findByText(property);
+  }
+
 }
 
 const propertyTable = new PropertyTable();

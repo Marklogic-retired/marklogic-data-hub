@@ -171,7 +171,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               editPropertyShowModal(record.propertyName, record);
             }}>
             <HCTooltip text={textTooltip(record.propertyName) } id={`property-${text}-tooltip`} placement="top">
-              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyNameUI}</span>
+              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyName}</span>
             </HCTooltip>
             {record.multiple === record.propertyName &&
               <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
