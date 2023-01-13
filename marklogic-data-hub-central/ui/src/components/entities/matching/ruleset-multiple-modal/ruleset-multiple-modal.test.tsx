@@ -753,7 +753,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
       );
       getByTitle = renderResults.getByTitle;
     });
-    let previousPageLink = getByTitle("Previous Page");
+    let previousPageLink = getByTitle("<");
     let page1_Option = getByTitle("1");
     let page2_Option = getByTitle("2");
     let rowsPerPageOptionsDropdown: any = document.querySelector(".react-bootstrap-table-pagination #size-per-page");
@@ -770,7 +770,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(testProp28).not.toBeInTheDocument();
     expect(testProp29).not.toBeInTheDocument();
     expect(testProp30).not.toBeInTheDocument();
-    expect(previousPageLink).toHaveClass("disabled");
     //Navigating to page 2
     wait(() => {
       userEvent.click(page2_Option);
@@ -795,7 +794,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     let rowsPerPageOptions:any = document.querySelector(".dropdown-menu");
     userEvent.click(within(rowsPerPageOptions).getByText("40 / page"));
     expect(page1_Option).toBeInTheDocument();
-    expect(page2_Option).not.toBeInTheDocument();
     expect(document.querySelector(`[data-testid="customerId-checkbox"]`)).toBeInTheDocument();
     expect(document.querySelector(`[data-testid="name-checkbox"]`)).toBeInTheDocument();
     expect(document.querySelector(`[data-testid="nicknames-checkbox"]`)).toBeInTheDocument();

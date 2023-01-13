@@ -76,6 +76,7 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
         <span className={styles.headerLabel}>Entity Type</span>
         <span className="position-absolute end-0 me-3">
           <HCPopoverSearch
+            inputId={`searchInput-settings`}
             inputValue={searchText}
             onSearch={(value) => {
               setSearchText(value);

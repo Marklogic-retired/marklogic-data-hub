@@ -64,6 +64,7 @@ const ExpandCollapse: React.FC<Props> = (props) => {
           <FormCheck.Input
             type="radio"
             id={`expandBtn-${cmpRandomData}`}
+            aria-label={"expandBtn"}
             name={`expand-collapse-radiogroup-${cmpRandomData}`}
             value={"expand"}
             checked={enabled === "expand"}
@@ -91,6 +92,7 @@ const ExpandCollapse: React.FC<Props> = (props) => {
           <FormCheck.Input
             type="radio"
             id={`collapseBtn-${cmpRandomData}`}
+            aria-label={"collapseBtn"}
             name={`collapse-radiogroup-${cmpRandomData}`}
             value={"collapse"}
             checked={enabled === "collapse"}

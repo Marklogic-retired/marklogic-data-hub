@@ -158,3 +158,30 @@ test("popover should not close when clicked outside passing prop closeOnClickOut
   fireEvent.click(document);
   expect(getByTestId(props.defaults.popoverId)).toBeInTheDocument();
 });
+
+
+test("keyboard navigation on popover search", () => {
+  const {getByTestId, getByLabelText} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} closeOnClickOutside={false} />);
+  let searchIcon = getByTestId(props.defaults.searchIconId);
+  searchIcon.focus();
+  fireEvent.keyDown(searchIcon, {key: "Enter", code: "Enter", keyCode: 13, charCode: 13});
+  expect(getByTestId(props.defaults.popoverId)).toBeInTheDocument();
+
+  let j: number;
+  let inputBox = getByLabelText(props.defaults.inputAriaLabel);
+  let searchButton = getByTestId(props.defaults.searchButtonId);
+  let resetButton = getByTestId(props.defaults.resetButtonId);
+  const popoverSearchActions = [inputBox, resetButton, searchButton];
+
+  userEvent.tab();
+
+  // verify elements tab in given order
+  for (j = 0; j < 3; ++j) {
+    userEvent.tab();
+    expect(popoverSearchActions[j]).toHaveFocus();
+  }
+
+  // verify elements tab in reverse order
+  userEvent.tab({shift: true});
+  expect(resetButton).toHaveFocus();
+});

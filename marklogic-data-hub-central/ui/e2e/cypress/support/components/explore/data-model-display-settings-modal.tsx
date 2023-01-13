@@ -78,7 +78,7 @@ class DataModelDisplaySettingsModal {
   }
 
   getSearchInput() {
-    return cy.get(`[id="hc-popover-search-input"]`);
+    return cy.get(`[id="searchInput-settings"]`);
   }
 
   getSearchSearchButton() {

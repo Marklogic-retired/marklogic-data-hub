@@ -387,6 +387,10 @@ class MappingStepDetail {
   }
 
   selectPageSourceTable(page: string) {
+    cy.get(`[data-testid="page-${page}"]`).contains(page).click();
+  }
+
+  selectCustomPageSourceTable(page: string) {
     cy.get(".pagination .page-item a").contains(page).click();
   }
 
@@ -406,7 +410,7 @@ class MappingStepDetail {
   }
 
   verifyPageSourceTable(page: string) {
-    cy.get(".pagination .page-item a").contains(page).should("exist");
+    cy.get(`[data-testid="page-${page}"]`).should("exist");
   }
 
   addFilter(text: string) {
