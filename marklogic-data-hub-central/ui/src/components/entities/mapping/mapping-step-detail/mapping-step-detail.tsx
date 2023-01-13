@@ -770,7 +770,7 @@ const MappingStepDetail: React.FC = () => {
   const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
     {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {mapData["sourceQuery"]}</div>}
     {!editingURI ?
-      <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>
+      <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri} tabIndex={0} onFocus={(e) => { handleMouseOver(e); }} onBlur={(e) => setShowEditURIOption(false)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "editUri"); }}>
         {!showEditURIOption ?
           (docNotFound ? <div>
             <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.invalidURIText}>{sourceURI}</span></span>
@@ -791,8 +791,8 @@ const MappingStepDetail: React.FC = () => {
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
-        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></HCInput>&nbsp;
-          <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} />
+        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriInput"); }}></HCInput>&nbsp;
+          <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "closeEditUri")}/>&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "submitEditUri"); }}/>
         </span>
       </div>
     }
@@ -1177,7 +1177,7 @@ const MappingStepDetail: React.FC = () => {
         return <div>
           {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ?
             row.children ?
-              <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon}>
+              <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>
                 {!extraData.sourceExpandedKeys?.includes(row.rowKey) ?
                   <span><ChevronRight /></span>
                   : <span><ChevronDown /></span>
@@ -1493,7 +1493,7 @@ const MappingStepDetail: React.FC = () => {
 
   const columnOptionsDropdown = (
     <Dropdown.Menu variant="secondary">
-      {Object.keys(checkedEntityColumns).map(entLabel => (
+      {Object.keys(checkedEntityColumns).map((entLabel, i) => (
         <Dropdown.Item
           as="span"
           key={entLabel}
@@ -1506,6 +1506,7 @@ const MappingStepDetail: React.FC = () => {
             label={columnOptionsLabel[entLabel]}
             checked={getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel]: checkedEntityColumns[entLabel]}
             dataTestId={`columnOptionsCheckBox-${entLabel}`}
+            handleKeyDown={(e) => { serviceCheckKeyDownHandler(e, i); }}
           />
         </Dropdown.Item>
       ))}
@@ -1514,7 +1515,7 @@ const MappingStepDetail: React.FC = () => {
 
   const columnOptionsSelector =
     <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
-      <Dropdown.Toggle id="columnOptionsSelectorButton" className={styles.columnOptionsSelector} variant="link">
+      <Dropdown.Toggle id="columnOptionsSelectorButton" aria-label={"columnOptionsSelectorButton"} className={styles.columnOptionsSelector} variant="link">
         <>
           <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
             <span>
@@ -1670,6 +1671,59 @@ const MappingStepDetail: React.FC = () => {
     setViewSettings(newStorage);
   };
 
+  const serviceCheckKeyDownHandler = async (event, index) => {
+    let numOptions = Object.keys(checkedEntityColumns).length;
+    if ((index === numOptions - 1 && event.keyCode === 9 && !event.shiftKey) || (index === 0 && event.keyCode === 9 && event.shiftKey)) {
+      setColOptMenuVisible(false);
+    }
+  };
+
+  const serviceRowDownHandler = async (event, row) => {
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      event.preventDefault();
+      toggleSourceRowExpanded(row, "", "rowKey");
+    }
+  };
+
+  const serviceNameKeyDownHandler = async (event, component) => {
+    if ((event.keyCode === 9)) {
+      if (!event.shiftKey) {
+        if (component === "submitEditUri") {
+          handleSubmitUri(sourceURI);
+          setShowEditURIOption(false);
+        }
+      } else if (event.shiftKey) {
+        if (component === "uriInput") {
+          handleSubmitUri(sourceURI);
+          setShowEditURIOption(false);
+        }
+      }
+    }
+    //Make selection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "stepSettings") {
+        handleStepSettings();
+      }
+
+      if (component === "editUri") {
+        event.preventDefault();
+        handleEditIconClick();
+      }
+
+      if (component === "closeEditUri") {
+        event.preventDefault();
+        handleCloseEditOption();
+        setShowEditURIOption(false);
+      }
+
+      if (component === "submitEditUri") {
+        event.preventDefault();
+        handleSubmitUri(sourceURI);
+        setShowEditURIOption(false);
+      }
+    }
+  };
+
   useEffect(() => {
     saveCurateMappingSourceSide();
   }, [searchedKey, pageNumberTableSourceSideXml, pageNumberTableSourceSideJson, pageSizeTableSourceSideXml, pageSizeTableSourceSideJson, sourceExpandedKeys]);
@@ -1716,15 +1770,15 @@ const MappingStepDetail: React.FC = () => {
 
       <div className={styles.srcDetails}>{srcDetails}</div>
       <div className={styles.mapContainer}>
-        <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
-          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
+        <div className={styles.stepSettingsLink} aria-label={"stepSettingsContainer"} onClick={() => handleStepSettings()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "stepSettings")}>
+          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"}/>
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
         <span className={styles.clearTestIcons} id="ClearTestButtons">
-          <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()} className={"me-2"}>
+          <HCButton id="Clear-btn" data-testid={"clearMappingBtn"} mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()} className={"me-2"}>
             Clear
           </HCButton>
-          <HCButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)} loading={loading}>
+          <HCButton className={styles.btn_test} id="Test-btn" data-testid={"testMappingBtn"} mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)} loading={loading}>
             Test
           </HCButton>
         </span>

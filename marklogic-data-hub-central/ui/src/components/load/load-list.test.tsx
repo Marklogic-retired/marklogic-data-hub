@@ -613,9 +613,9 @@ describe("Load data component", () => {
         </MemoryRouter>
       );
 
-      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
-      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).toBeInTheDocument();
-      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"3\"]")).not.toBeInTheDocument();
+      expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
+      expect(container.querySelector("[title=\"2\"]")).toBeInTheDocument();
+      expect(container.querySelector("[title=\"3\"]")).not.toBeInTheDocument();
       expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("10 / page");
       expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
     });
@@ -646,8 +646,8 @@ describe("Load data component", () => {
           </AuthoritiesContext.Provider>
         </MemoryRouter>
       );
-      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
-      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).not.toBeInTheDocument();
+      expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
+      expect(container.querySelector("[title=\"2\"]")).not.toBeInTheDocument();
       expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("20 / page");
       expect(container.querySelectorAll(".hc-table_row")).toHaveLength(12);
     });

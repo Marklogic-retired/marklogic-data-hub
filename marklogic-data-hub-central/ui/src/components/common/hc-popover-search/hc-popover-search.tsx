@@ -89,8 +89,36 @@ const HCPopoverSearch: React.FC<Props> = ({
     onSearch(searchText);
   };
 
+  const serviceNameKeyDownHandler = async (event, component) => {
+
+    //reset when user presses tab out of popover
+    if (event.keyCode === 9) {
+      if (!event.shiftKey) {
+        if (component === "submitSearch") toggleVisibility();
+      } else if (event.shiftKey) {
+        if (component === "searchInput") toggleVisibility();
+      }
+    }
+
+    //Make selection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "searchIcon") {
+        if (event.target !== document.getElementById("searchInput-source") && event.target !== document.getElementById("searchInput-entity") && event.target !== document.getElementById("searchInput-settingns")) {
+          event.preventDefault();
+          toggleVisibility();
+        }
+      }
+      if (component === "submitReset") {
+        handleOnReset(event);
+      }
+      if (component === "submitSearch") {
+        handleOnSearch(event);
+      }
+    }
+  };
+
   return (
-    <div onClick={e => e.stopPropagation()} className={"position-relative d-inline-block"}>
+    <div onClick={e => e.stopPropagation()} className={"position-relative d-inline-block"} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "searchIcon")}>
       <span>
         <FontAwesomeIcon
           className={isVisible || searchText ? styles.filterIconActive : styles.filterIcon}
@@ -118,22 +146,27 @@ const HCPopoverSearch: React.FC<Props> = ({
               value={searchText}
               onChange={handleOnChange}
               className={`${styles.searchInput} mb-2`}
+              onKeyDown={(e) => serviceNameKeyDownHandler(e, "searchInput")}
             />
             <HCButton
               id={resetButtonId}
+              data-testid={resetButtonId}
               variant="outline-light"
               size="sm"
               className={styles.resetButton}
               onClick={handleOnReset}
+              onKeyDown={(e) => serviceNameKeyDownHandler(e, "submitReset")}
             >
               {resetButtonText}
             </HCButton>
             <HCButton
               id={searchButtonId}
+              data-testid={searchButtonId}
               variant="primary"
               size="sm"
               className={styles.searchSubmitButton}
               onClick={handleOnSearch}
+              onKeyDown={(e) => serviceNameKeyDownHandler(e, "submitSearch")}
             >
               <Search className={styles.searchIcon}/>
               {searchButtonText}

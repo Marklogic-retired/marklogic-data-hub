@@ -773,7 +773,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.panelTitle}>
         {title}
         <HCTooltip text={disabled ? "" : tooltipTitle} id="entities-tooltip" placement="right">
-          <i><FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
+          <i><FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
         </HCTooltip>
       </div>
     );

@@ -1344,6 +1344,22 @@ const EntityMapTable: React.FC<Props> = (props) => {
     );
   };
 
+  const serviceNameKeyDownHandler = async (event, component) => {
+    //Make selection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "expandIcon") {
+        toggleEntityTable();
+      }
+    }
+  };
+
+  const serviceRowDownHandler = async (event, row) => {
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      event.preventDefault();
+      toggleRowExpanded(row, "", "key");
+    }
+  };
+
   const relatedEntitiesFilter = (
     <Select
       id={`${props.entityTypeTitle}-entities-filter-select-wrapper`}
@@ -1356,6 +1372,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
       value={filterValues.map(d => ({value: d, label: d}))}
       onChange={handleOptionSelect}
       isSearchable={false}
+      tabSelectsValue={false}
+      openMenuOnFocus={true}
+      closeMenuOnSelect={false}
       options={relatedEntitiesFilterOptions}
       styles={{
         ...reactSelectThemeConfig,
@@ -1379,7 +1398,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.expandTableIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}</a>
+    <a className={styles.expandTableIcon} onClick={() => toggleEntityTable()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "expandIcon")}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}</a>
   );
 
   const topRowDetails = (
@@ -1388,10 +1407,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
-            <>
+            <span tabIndex={0}>
               <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => handleMouseLeaveTooltipDoc()} />
               {relatedInfo}
-            </>
+            </span>
           }
         </div>
         <div className={styles.entitySettingsLink}>
@@ -1548,7 +1567,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
             <span>
               {props.initialEntityKeys.includes(row.key) || extraData ?
                 row.children ?
-                  <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>
+                  <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>
                     {!extraData.rowExpandedKeys?.includes(row.key) ?
                       <span><ChevronRight /></span>
                       : <span><ChevronDown /></span>
@@ -1677,7 +1696,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       text: "XPath Expression",
       headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} />
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} tabIndex={0}/>
         {xPathDocLinks}
       </span>,
       dataField: "key",
@@ -1812,7 +1831,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight /></span> : <span><ChevronDown /></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
+            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight /></span> : <span><ChevronDown /></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">

@@ -76,6 +76,7 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
         <span className={styles.headerLabel}>Entity Type</span>
         <span className="position-absolute end-0 me-3">
           <HCPopoverSearch
+            inputId={`searchInput-settings`}
             inputValue={searchText}
             onSearch={(value) => {
               setSearchText(value);
@@ -162,7 +163,7 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
             isForMerge={true}
             propertyDropdownOptions={entityTypeDefinition.properties}
             entityDefinitionsArray={definitions}
-            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.replace(/\./g, " > ")) : undefined}
             onValueSelected={(value) => {
               onEntityColumnValueChange(row, value, EntityTableColumns.PropertiesOnHover);
             }}

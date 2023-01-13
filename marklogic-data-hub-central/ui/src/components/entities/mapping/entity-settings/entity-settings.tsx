@@ -156,6 +156,15 @@ const EntitySettings: React.FC<Props> = (props) => {
     getSettings();
   };
 
+  const serviceNameKeyDownHandler = async (event, component) => {
+    //Make selection when user presses space or enter key
+    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (component === "settingsIcon") {
+        togglePopover();
+      }
+    }
+  };
+
   const togglePopover = () => {
     popoverVisibility ? setPopoverVisibilty(false) : setPopoverVisibilty(true);
   };
@@ -254,9 +263,9 @@ const EntitySettings: React.FC<Props> = (props) => {
 
   return (
     <OverlayTrigger placement="left-start" show={popoverVisibility} overlay={content} trigger="click">
-      <div id="entitySettings">
+      <div id="entitySettings" tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "settingsIcon")}>
         <div><div className={styles.entitySettingsLink}>
-          <FontAwesomeIcon data-testid={`${props.entityTitle}-entity-settings`} icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"} onClick={() => togglePopover()} /></div>
+          <FontAwesomeIcon data-testid={`${props.entityTitle}-entity-settings`} icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"} onClick={() => togglePopover()}/></div>
         </div>
       </div>
     </OverlayTrigger>

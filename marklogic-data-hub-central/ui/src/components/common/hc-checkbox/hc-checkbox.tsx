@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import FormCheck from "react-bootstrap/FormCheck";
 import HCTooltip from "../hc-tooltip/hc-tooltip";
 
@@ -21,6 +21,7 @@ interface Props {
 const HCCheckbox: React.FC<Props> = (props) => {
   const {id, tooltip, handleClick, handleKeyDown, value, label, checked, dataTestId, ariaLabel, children, disabled, cursorDisabled, placementTooltip, removeMargin} = props;
   const checkLabel = <FormCheck.Label style={{"marginLeft": removeMargin ? 0 : 5, "color": "#333333"}}>{label}</FormCheck.Label>;
+  const [focused, setFocused] = useState(false);
 
   const getLabel = () => {
     if (tooltip) {
@@ -63,11 +64,13 @@ const HCCheckbox: React.FC<Props> = (props) => {
           value={value}
           checked={checked}
           onChange={(e) => handleClick(e)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => { if (handleKeyDown) { handleKeyDown(e); } }}
           data-testid={dataTestId}
           aria-label={ariaLabel}
-          style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
+          style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : focused ? {marginTop: "0", verticalAlign: "middle", boxShadow: "0 0 2px 2px #7f86b5 inset"} : {marginTop: "0", verticalAlign: "middle"}}
         />
     }
     {label ? getLabel() : children}

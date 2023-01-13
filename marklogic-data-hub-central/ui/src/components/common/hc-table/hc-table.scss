@@ -302,3 +302,25 @@ tbody {
 #multipleRulesetsTableContainer .row-expansion-style .form-check-input {
      float: right;
 }
+
+#pageList {
+  text-align: right;
+}
+
+#pageList .btn {
+  color: #394494;
+  display: inline-block;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#pageList .btnActive {
+  border: 1px solid #394494;
+  display: inline-block;
+  color: #394494;
+  padding-left: 8px;
+  padding-right: 8px;
+  background-clip: border-box;
+  background-color: transparent;
+  border-radius: 4px;
+}
