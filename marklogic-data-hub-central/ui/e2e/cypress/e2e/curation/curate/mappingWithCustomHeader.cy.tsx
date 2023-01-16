@@ -102,11 +102,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
+    cy.waitForAsyncRequest();
 
   });
   it("Edit Map step", () => {
     //Go back to curate homepage
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
 
     cy.log("**Open Order to see steps**");
     curatePage.getEntityTypePanel("Order").then(($ele) => {
@@ -119,7 +121,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     // Open step settings and switch to Advanced tab
     cy.log("**Open step settings and switch to Advanced tab**");
     curatePage.editStep(mapStep).should("be.visible").click();
-    curatePage.switchEditAdvanced().click();
+    cy.waitForAsyncRequest();
+    curatePage.switchEditAdvanced().should("be.visible").click();
     // add custom header
     cy.intercept("PUT", "/api/steps/mapping/mapOrderCustomHeader").as("mapOrderCustomHeaderStep");
     cy.intercept("GET", "/api/steps/mapping").as("mappingSteps");
