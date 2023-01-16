@@ -16,6 +16,10 @@ import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 type Props = {
   onCloseSidePanel: () => void;
   graphView: boolean,
+  openUnmergeCompare:any;
+  loadingCompare:string;
+  data:any[];
+  isUnmergeAvailable:(nodeId:string) => boolean;
 };
 
 const DEFAULT_TAB = "instance";
@@ -139,7 +143,16 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     if (currentTab === DEFAULT_TAB) {
       return (
         <div aria-label="instance-view">
-          <TableView document={details} contentType="json" location={{}} isEntityInstance={true} isSidePanel={true} />
+          <TableView
+            document={details}
+            contentType="json"
+            location={{}}
+            isEntityInstance={true}
+            isSidePanel={true}
+            data={data.current}
+            openUnmergeCompare={props.openUnmergeCompare}
+            loadingCompare={props.loadingCompare}
+            isUnmergeAvailable={props.isUnmergeAvailable}/>
         </div>
       );
     } else {
@@ -265,6 +278,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             id="recordTabInSidePanel"
             title={RECORD_TITLE} />
         </Tabs>
+
         {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <div aria-label="instance-view">
           <TableView document={semanticConceptDescription} contentType="json" location={{}} isEntityInstance={false} isSidePanel={true} />
         </div>}</>

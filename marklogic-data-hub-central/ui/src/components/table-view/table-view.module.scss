@@ -10,3 +10,32 @@
   justify-content: flex-end;
   margin-bottom: 8px;
 }
+
+.unMergeIcon {
+  color: #44499c;
+  font-size: 19px;
+  margin-top: 1px;
+  margin-right: 2px;
+}
+
+.unMergeIconDisabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.unmergeContainer {
+display: flex;
+flex-direction: row;
+}
+
+.unMergeIcon:hover {
+  color: var(--hoverColor);
+  cursor: pointer;
+}
+
+.spinner {
+  font-size: 19px;
+  color: #44499c;
+  margin-top: 8px;
+  margin-right: 6px;
+}
