@@ -97,6 +97,12 @@ Cypress.Commands.add("loginAsDeveloper", () => {
   return cy.fixture("users/hub-user");
 });
 
+Cypress.Commands.add("loginAsDeveloperV2", () => {
+  setTestUserRoles(["hub-central-developer"]);
+  return cy.fixture("users/developer");
+});
+
+
 Cypress.Commands.add("loginAsOperator", () => {
   return cy.fixture("users/operator");
 });

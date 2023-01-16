@@ -77,7 +77,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           if (name.length > 1) {
             matchedPropArray.push(name[0]);
           } else {
-            for (let i = 0; i < curationOptions.activeStep.stepArtifact.matchRulesets.length; i++) {
+            for (let i = 0; i < curationOptions?.activeStep?.stepArtifact?.matchRulesets?.length; i++) {
               let ruleset = curationOptions.activeStep.stepArtifact.matchRulesets[i];
               if (ruleset.name === matchRuleset) {
                 for (let j = 0; j < ruleset.matchRules.length; j++) {
@@ -626,8 +626,8 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     aria-label={"compare-values-modal"}
     onHide={closeModal}
   >
-    <Modal.Header className={"bb-none"}>
-      <span className={styles.compareValuesModalHeading}>Compare</span>
+    <Modal.Header className={"bb-none"} >
+      <span className={styles.compareValuesModalHeading} data-testid="compareTitle">Compare</span>
       {
         !props.isPreview ?
           <HCTooltip text={"Delete"} id="delete-icon" placement="top-end">
