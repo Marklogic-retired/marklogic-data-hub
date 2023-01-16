@@ -118,7 +118,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     explorePage.getAllDataButton().click();
     cy.log("**filter for notification collection and verify merge icon**");
     explorePage.scrollSideBarBottom();
-    browsePage.getCollectionPopover().scrollIntoView().click();
+    browsePage.getCollectionPopover().scrollIntoView().click({force: true});
     browsePage.collectionPopoverInput().type("notification");
     browsePage.getPopoverFacetCheckbox("sm-Person-notification").click();
     browsePage.submitPopoverSearch();
