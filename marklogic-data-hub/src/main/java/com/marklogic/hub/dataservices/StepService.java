@@ -2,8 +2,8 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import java.util.stream.Stream;
 import com.marklogic.client.io.Format;
+import java.util.stream.Stream;
 
 
 import com.marklogic.client.DatabaseClient;
@@ -48,6 +48,7 @@ public interface StepService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getReferences;
             private BaseProxy.DBFunctionRequest req_getStepsByType;
             private BaseProxy.DBFunctionRequest req_saveStep;
             private BaseProxy.DBFunctionRequest req_deleteStep;
@@ -57,6 +58,8 @@ public interface StepService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/step/", servDecl);
 
+                this.req_getReferences = this.baseProxy.request(
+                    "getReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStepsByType = this.baseProxy.request(
                     "getStepsByType.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveStep = this.baseProxy.request(
@@ -65,6 +68,22 @@ public interface StepService {
                     "deleteStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStep = this.baseProxy.request(
                     "getStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getReferences(String searchProperty, String referenceName) {
+                return getReferences(
+                    this.req_getReferences.on(this.dbClient), searchProperty, referenceName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getReferences(BaseProxy.DBFunctionRequest request, String searchProperty, String referenceName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("searchProperty", false, BaseProxy.StringType.fromString(searchProperty)),
+                          BaseProxy.atomicParam("referenceName", false, BaseProxy.StringType.fromString(referenceName))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -133,6 +152,15 @@ public interface StepService {
 
         return new StepServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Invokes the getReferences operation on the database server
+   *
+   * @param searchProperty	provides input
+   * @param referenceName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getReferences(String searchProperty, String referenceName);
 
   /**
    * Invokes the getStepsByType operation on the database server

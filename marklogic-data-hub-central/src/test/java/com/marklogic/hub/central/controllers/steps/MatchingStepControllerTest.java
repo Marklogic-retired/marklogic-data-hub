@@ -95,6 +95,23 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
                     assertEquals("null", array.get(0).path("values").get(0).asText());
                 });
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
+        // Test references endpoint
+        ObjectNode matchStep = objectMapper.createObjectNode().put("name", "stepWithReference");
+        ObjectNode matchRule = objectMapper.createObjectNode().set("exclusionLists",objectMapper.createArrayNode().add("myList"));
+        ArrayNode matchRulesets = objectMapper.createArrayNode().add(matchRule);
+        matchStep.set("matchRulesets", matchRulesets);
+        postJson(PATH, matchStep);
+
+        getJson(PATH + "/exclusionList/myList/references")
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode references = parseJsonResponse(result);
+                    ArrayNode array = (ArrayNode) references.path("stepNames");
+                    assertEquals(1, array.size());
+                    assertEquals("stepWithReference", array.get(0).asText());
+                });
+
+        delete(PATH + "/stepWithReference");
 
         myList.put("name", "myListRename");
         putJson(PATH + "/exclusionList/myList", myList);
@@ -104,6 +121,8 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
 
         getJson(PATH + "/exclusionList/myListRename")
                 .andExpect(status().isOk());
+
+
 
         delete(PATH + "/exclusionList/myListRename");
 
