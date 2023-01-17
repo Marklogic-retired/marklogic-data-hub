@@ -8,7 +8,15 @@ describe("Test input validation values to ignore", () => {
     cleanup();
   });
   it("Show error Messages when fields are empty ", async() => {
-    render(<ListModal isVisible={true} toggleModal={() => {}} action={"C"} confirmAction={() => {}} />);
+    render(<ListModal
+      isVisible={true}
+      toggleModal={() => {}}
+      action={"A"}
+      confirmAction={() => {}}
+      checkIfExistInList={() => { return false; }}
+      updateListValues={() => {}}
+      listValues={[]}
+    />);
 
     expect(screen.queryAllByText("A title for this list is required.")).toHaveLength(0);
     expect(screen.queryAllByText("Values to ignore in this list are required.")).toHaveLength(0);
@@ -31,7 +39,15 @@ describe("Test input validation values to ignore", () => {
         ownerDocument: document,
       },
     });
-    render(<ListModal isVisible={true} toggleModal={() => {}} action={"C"} confirmAction={() => {}} />);
+    render(<ListModal
+      isVisible={true}
+      toggleModal={() => {}}
+      action={"A"}
+      confirmAction={() => {}}
+      checkIfExistInList={() => { return false; }}
+      updateListValues={() => {}}
+      listValues={["One"]}
+    />);
     expect(screen.queryAllByText("Duplicated values is not allowed")).toHaveLength(0);
     const inputListValues =screen.getByPlaceholderText("Enter values to remove");
     fireEvent.change(inputListValues, {target: {value: "abcd"}});
@@ -39,6 +55,22 @@ describe("Test input validation values to ignore", () => {
     fireEvent.change(inputListValues, {target: {value: "abcd"}});
     fireEvent.click(screen.getByRole("option"));
     expect(screen.queryAllByText("Duplicated values is not allowed")).toHaveLength(1);
-    screen.debug();
+  });
+
+  it("Don't allow List Name duplicated", () => {
+    render(<ListModal
+      isVisible={true}
+      toggleModal={() => {}}
+      action={"A"}
+      confirmAction={() => {}}
+      checkIfExistInList={() => { return true; }}
+      updateListValues={() => {}}
+      listValues={["One"]}
+    />);
+    expect(screen.queryAllByText("This list name already exists.")).toHaveLength(0);
+    const inputListName =screen.getByPlaceholderText("Enter title");
+    fireEvent.change(inputListName, {target: {value: "abcd"}});
+    fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
+    expect(screen.queryAllByText("This list name already exists.")).toHaveLength(1);
   });
 });

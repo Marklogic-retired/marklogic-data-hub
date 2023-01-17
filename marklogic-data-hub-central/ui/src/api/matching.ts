@@ -50,3 +50,26 @@ export const getPreviewFromURIs = async (flowName, uris = []) => {
   let parameters = uris.map(uri => `uri=${uri}`).join("&");
   return await axios.get(`/api/steps/merging/preview?flowName=${flowName}&${parameters}`);
 };
+
+export const getAllExcludeValuesList = async() => {
+  return await axios.get(`/api/steps/matching/exclusionList`);
+};
+
+export const createEditExcludeValuesList = async(listName, listValues, oldName="") => {
+  const body = {
+    name: listName,
+    values: listValues
+  };
+  try {
+    let response =  await axios.put(`/api/steps/matching/exclusionList/${oldName !== "" ? oldName:listName}`, body);
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error creating list!", message);
+    return false;
+  }
+};
