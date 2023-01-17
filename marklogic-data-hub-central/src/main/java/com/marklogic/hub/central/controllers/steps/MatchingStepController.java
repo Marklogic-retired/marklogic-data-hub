@@ -3,6 +3,7 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
+import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MasteringService;
@@ -81,6 +82,12 @@ public class MatchingStepController extends BaseController {
     @Secured("ROLE_writeMatching")
     public ResponseEntity<JsonNode> deleteExclusionList(@PathVariable String listName) {
         return ResponseEntity.ok(ArtifactService.on(getHubClient().getFinalClient()).deleteArtifact("exclusionList", listName));
+    }
+
+    @RequestMapping(value = "/exclusionList/{listName}/references", method = RequestMethod.GET)
+    @ApiOperation(value = "Get step names that refer to this exclusion list.", response = ModelController.ModelReferencesInfo.class)
+    public ResponseEntity<JsonNode> getListReferences(@PathVariable String listName) {
+        return ResponseEntity.ok(newService().getReferences("exclusionLists", listName));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
