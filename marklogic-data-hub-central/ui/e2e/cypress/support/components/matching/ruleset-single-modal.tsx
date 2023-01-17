@@ -91,8 +91,20 @@ class RulesetSingleModal {
     cy.get(`[id="valuesToIgnore"]`).click({force: true});
   }
 
-  hoverItemPresetList() {
-    cy.findByText("Preset List 1").trigger("mouseover");
+  hoverItemPresetList(listName:string) {
+    return cy.findByText(listName).trigger("mouseover");
+  }
+
+  createNewList() {
+    return  cy.findByText("Create new list").click({force: true});
+  }
+
+  editListButton(listName:string) {
+    return cy.get(`[id="edit-${listName}"]`).click({force: true});
+  }
+
+  copyListButton(listName:string) {
+    return cy.get(`[id="copy-${listName}"]`).click();
   }
 
 }

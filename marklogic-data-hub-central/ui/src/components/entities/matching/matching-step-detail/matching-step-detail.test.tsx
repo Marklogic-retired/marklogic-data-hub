@@ -5,13 +5,13 @@ import MatchingStepDetail from "./matching-step-detail";
 
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMatchingStep, customerMatchingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
-import {calculateMatchingActivity} from "../../../../api/matching";
+import {calculateMatchingActivity, getAllExcludeValuesList} from "../../../../api/matching";
 import {matchingActivity} from "../../../../assets/mock-data/curation/matching.data";
 
 jest.mock("../../../../api/matching");
 
 const mockCalculateMatchingActivity = calculateMatchingActivity as jest.Mock;
-
+const mockGetAllExcludeValuesList = getAllExcludeValuesList as jest.Mock;
 
 describe("Matching Step Detail view component", () => {
   afterEach(() => {
@@ -69,7 +69,7 @@ describe("Matching Step Detail view component", () => {
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
-
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const {getByLabelText, getByText, queryByLabelText, getAllByPlaceholderText, getByTestId} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>
@@ -114,6 +114,7 @@ describe("Matching Step Detail view component", () => {
 
   it("can render possible combinations of matched rulesets", async() => {
     mockCalculateMatchingActivity.mockResolvedValue({status: 200, data: matchingActivity});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const {getByLabelText, rerender} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>

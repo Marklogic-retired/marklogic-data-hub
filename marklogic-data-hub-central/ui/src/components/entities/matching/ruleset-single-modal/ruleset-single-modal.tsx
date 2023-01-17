@@ -12,7 +12,7 @@ import {CurationContext} from "@util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "@config/tooltips.config";
-import {updateMatchingArtifact} from "@api/matching";
+import {getAllExcludeValuesList, updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
@@ -40,12 +40,7 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const presetListMock=[
-  {value: "Preset List 0", label: "Preset List 0", valuesToIgnore: []},
-  {value: "Preset List 1", label: "Preset List 1", valuesToIgnore: ["item one", "item two", "word three", "word 3", "word 4", "word 5", "word 6", "word 7"]},
-  {value: "Preset List 2", label: "Preset List 2", valuesToIgnore: ["word 1", "word 2", "word 3", "word 3"]},
-  {value: "Preset List 3", label: "Preset List 3", valuesToIgnore: ["word 1"]}
-];
+const presetListMock=[{name: "Preset List 0", value: []}];
 
 const MatchRulesetModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -93,6 +88,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [actionListModal, setActionListModal] = useState("C");
   const [listName, setListName] = useState("");
   const [listValues, setListValues] = useState<string[]>([]);
+  const [excludeList, setExcludeList] = useState(presetListMock);
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -105,7 +101,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
     }
-
     if (Object.keys(curationRuleset).length !== 0 && props.isVisible) {
       let editRuleset = curationRuleset;
       setSelectedProperty(editRuleset.name.split(" ")[0].split(".").join(" > "));
@@ -133,6 +128,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       }
     }
   }, [props.isVisible]);
+
+  useEffect(() => {
+    if (props.isVisible) {
+      fetchExcludeValueList();
+    }
+  }, [props.isVisible]);
+
+  const fetchExcludeValueList = async() => {
+    const  excludeValuesList =  await getAllExcludeValuesList();
+    const fixData = excludeValuesList.data.map((item) => {
+      return {
+        name: item.name,
+        value: item.name,
+        valuesIgnore: item.values
+      };
+    });
+    setExcludeList([presetListMock[0], ...fixData]);
+  };
 
   const handleInputChange = (event) => {
     switch (event.target.id) {
@@ -778,17 +791,17 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  const handleClick = (event, btn) => {
+  const handleClick = (event, btn, itemInfo) => {
     setShowListModal(true);
     if (btn === "A") {
       setActionListModal("A");
       resetModalValuesIgnore();
     } else if (btn === "C") {
       setActionListModal("C");
-      resetModalValuesIgnore();
+      setListValues(itemInfo.valuesIgnore);
     } else if (btn === "E") {
-      setListName("Preset List 1");
-      setListValues(["Word 1", "word 2", "word 3"]);
+      setListName(itemInfo.name);
+      setListValues(itemInfo.valuesIgnore);
       setActionListModal("E");
     } else if (btn === "D") {
       setActionListModal("D");
@@ -813,18 +826,44 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const Option = (renderMatchOptions) => {
     return (
       <div>
-        {renderMatchOptions.data.label === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
-          <div className={styles.createNewListOption} id="createNewListOption" data-test-id="createNewListOption" onClick={(event) => { handleClick(event, "A"); }}>Create new list</div>
+        {renderMatchOptions.data.name === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
+          <div className={styles.createNewListOption} id="createNewListOption" data-test-id="createNewListOption" onClick={(event) => { handleClick(event, "A", renderMatchOptions.data); }}>Create new list</div>
         </components.MenuList>}
-        {renderMatchOptions.data.label !== "Preset List 0" &&
+        {renderMatchOptions.data.name !== "Preset List 0" &&
               <components.Option {...renderMatchOptions}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesToIgnore)}</span>} id="reduce-tooltip" placement="top">
-                  <div>{renderMatchOptions.data.label} </div>
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesIgnore)}</span>} id="reduce-tooltip" placement="top">
+                  <div>{renderMatchOptions.data.name} </div>
                 </HCTooltip>
                 <div className={styles.optionsList}>
-                  <i><FontAwesomeIcon className={styles.iconHover} id={`edit-${renderMatchOptions.data.label}`} icon={faPencilAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "E"); }} /></i>
-                  <i><FontAwesomeIcon className={styles.iconHover} id={`copy-${renderMatchOptions.data.label}`} icon={faCopy} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "C"); }} /></i>
-                  <i><FontAwesomeIcon className={styles.iconHover} id={`delete-${renderMatchOptions.data.label}`} icon={faTrashAlt} color={themeColors.info} size="sm" onClick={(event) => { handleClick(event, "D"); }} /></i>
+                  <i>
+                    <FontAwesomeIcon
+                      className={styles.iconHover}
+                      id={`edit-${renderMatchOptions.data.name}`}
+                      icon={faPencilAlt}
+                      color={themeColors.info}
+                      size="sm" onClick={(event) => { handleClick(event, "E", renderMatchOptions.data); }}
+                    />
+                  </i>
+                  <i>
+                    <FontAwesomeIcon
+                      className={styles.iconHover}
+                      id={`copy-${renderMatchOptions.data.name}`}
+                      icon={faCopy}
+                      color={themeColors.info}
+                      size="sm"
+                      onClick={(event) => { handleClick(event, "C", renderMatchOptions.data); }}
+                    />
+                  </i>
+                  <i>
+                    <FontAwesomeIcon
+                      className={styles.iconHover}
+                      id={`delete-${renderMatchOptions.data.name}`}
+                      icon={faTrashAlt}
+                      color={themeColors.info}
+                      size="sm"
+                      onClick={(event) => { handleClick(event, "D", renderMatchOptions.data); }}
+                    />
+                  </i>
                 </div>
               </components.Option>
         }
@@ -832,6 +871,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     );
   };
 
+  const checkIfExistInList = (name) => {
+    return excludeList.some((item) => item.name === name);
+  };
 
   return (
     <HCModal
@@ -964,13 +1006,13 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       //value={renderMatchOptions.find(oItem => oItem.value === matchType)}
                       //onChange={onMatchTypeSelect}
                       //options={renderMatchOptions}
-                      options={presetListMock}
+                      options={excludeList}
                       styles={reactSelectThemeConfig}
-                      formatOptionLabel={({value, label}) => {
+                      formatOptionLabel={({value, name}) => {
                         return (
                           <span aria-label={`${value}-option`} style={{backgroundColor: "silver", width: "100%"}}>
                             <div>
-                              {label}
+                              {name}
                             </div>
                           </span>
                         );
@@ -1000,6 +1042,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           listName={listName}
           listValues={listValues}
           confirmAction={confirmAction}
+          updateListValues={fetchExcludeValueList}
+          checkIfExistInList={checkIfExistInList}
         />
         <DeleteModal
           isVisible={showDeleteConfirmModal}

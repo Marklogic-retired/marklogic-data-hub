@@ -7,6 +7,7 @@ import {HCTooltip} from "@components/common";
 import {HCButton} from "@components/common";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {HCInput} from "@components/common";
+import {createEditExcludeValuesList} from "@api/matching";
 
 type Props = {
   isVisible: boolean;
@@ -15,25 +16,68 @@ type Props = {
   listName?: string;
   listValues?: string[];
   confirmAction: () => void;
+  updateListValues:()=> void;
+  checkIfExistInList:(name:string)=> boolean
 };
 
 const ListModal: React.FC<Props> = (props) => {
   const [listNameErrorMessage, setListNameErrorMessage] = useState("");
   const [listValuesErrorMessage, setListValuesErrorMessage] = useState("");
-  const [listName, setListName] = useState(props?.listName);
-  const [listValues, setListValues] = useState<any>(props?.listValues);
+  const [listName, setListName] = useState<any>("");
+  const [listNameOrigin, setListNameOrigin] = useState<any>("");
+  const [listValues, setListValues] = useState<any>([]);
   const [selected, setSelected] = useState<any>([]);
   let textModalHeader = "";
 
-  const onSubmit = (event) => {
+  useEffect(() => {
+    if (props.isVisible) {
+      const fixData = props.listValues?.map((item) => {
+        return {label: item};
+      });
+      switch (props.action) {
+      case "A":
+        setListName("");
+        setListValues([]);
+        setSelected([]);
+        break;
+      case "E":
+        setListName(props.listName);
+        setListNameOrigin(props.listName);
+        setListValues(fixData);
+        setSelected(fixData);
+        break;
+      case "C":
+        setListName("");
+        setListValues(fixData);
+        setSelected(fixData);
+        break;
+
+      }
+    }
+    return () => { setListName(""); };
+  }, [props.isVisible, props.action]);
+
+  const onSubmit = async (event) => {
     resetModalValuesIgnore();
     let formError = false;
     if (!listName) { setListNameErrorMessage("A title for this list is required."); formError = true; }
     if (!listValues || listValues.length === 0) { setListValuesErrorMessage("Values to ignore in this list are required."); formError = true; }
-    if (formError) {
+    if (props.checkIfExistInList(listName) && (props.action === "A" || props.action === "C")) {
+      setListNameErrorMessage("This list name already exists.");
+      formError = true;
+    }
+    let responseCreateList = true;
+    if (props.action === "A"  || props.action === "C") {
+      responseCreateList = await createEditExcludeValuesList(listName, listValues.map((item) => item.label));
+    }
+    if (props.action === "E") {
+      responseCreateList = await createEditExcludeValuesList(listName, listValues.map((item) => item.label), listNameOrigin);
+    }
+    if (formError && responseCreateList) {
       event.stopPropagation();
     } else {
       confirmAction();
+      props.updateListValues();
     }
   };
 
@@ -72,9 +116,6 @@ const ListModal: React.FC<Props> = (props) => {
     setListValuesErrorMessage("");
   };
 
-  useEffect(() => {
-    setListValues(props.listValues);
-  }, [props?.listValues]);
 
   const handleListValues = (selections) => {
     if (Array.isArray(selections)) {
@@ -90,10 +131,6 @@ const ListModal: React.FC<Props> = (props) => {
     }
 
   };
-
-  useEffect(() => {
-    setListName(props.listName);
-  }, [props?.listName]);
 
   return (
     <Modal
@@ -119,7 +156,7 @@ const ListModal: React.FC<Props> = (props) => {
                 ariaLabel={`${textModalHeader}-values-to-ignore-input`}
                 placeholder="Enter title"
                 className={styles.inputTitle}
-                value={props?.listName ? props.listName : ""}
+                value={listName}
                 onChange={(e) => setListName(e.target.value.trim())}
               />
             </Col>
@@ -139,8 +176,6 @@ const ListModal: React.FC<Props> = (props) => {
                 allowNew
                 id="custom-selections"
                 multiple
-                defaultSelected={props.action !== "E" ? [] :
-                  props?.listValues ? props.listValues : []}
                 newSelectionPrefix="Add the new value: "
                 options={[]}
                 placeholder="Enter values to remove"

@@ -585,6 +585,76 @@ describe("Matching", () => {
     }
   });
 
+  it("Create new List in values to ignore", () => {
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getSinglePropertyOption();
+
+    // OpenModal
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.createNewList();
+
+
+    // Try to save with empty fields
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.findByText("A title for this list is required.");
+    cy.findByText("Values to ignore in this list are required.");
+
+
+    // Create new List
+
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.wait(500);
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    cy.findByText("TitleList1");
+
+    // try to create with the same name of the last one list
+    rulesetSingleModal.createNewList();
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 1");
+    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.findByText("This list name already exists.");
+
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "Test");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.wait(500);
+    rulesetSingleModal.selectValuesToIgnoreInput();
+
+    // Edit list of values to ignore
+
+    rulesetSingleModal.editListButton("TitleList1");
+    cy.findByText("Edit List");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "22");
+    rulesetSingleModal.addValuesToListToIgnore("Word 3");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.wait(500);
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.hoverItemPresetList("TitleList122");
+    cy.findByText("Word 1, Word 2, Word 3");
+
+
+    // Copy List
+    rulesetSingleModal.copyListButton("TitleList122");
+    cy.findByText("List");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "MyCopy");
+    rulesetSingleModal.addValuesToListToIgnore("dog");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.wait(500);
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    cy.findByText("MyCopy");
+    rulesetSingleModal.hoverItemPresetList("MyCopy");
+    cy.findByText("Word 1, Word 2, Word 3, dog");
+    rulesetSingleModal.closeButton().click();
+  });
+
   it("Values to Ignore list tooltip", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
@@ -598,11 +668,12 @@ describe("Matching", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectValuesToIgnoreInput();
+    cy.wait(500);
     //Will be checked manually, due to intermittent failure
     if (Cypress.isBrowser("!chrome")) {
-      rulesetSingleModal.hoverItemPresetList();
-      cy.findByTestId("tooltipListPreset");
+      rulesetSingleModal.hoverItemPresetList("MyCopy");
+      cy.findByText("Word 1, Word 2, Word 3, dog");
+      rulesetSingleModal.closeButton().click();
     }
-    rulesetSingleModal.closeButton().click();
   });
 });

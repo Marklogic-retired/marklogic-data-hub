@@ -361,6 +361,20 @@ const clearUserDataAPI = (axiosMock) => {
   });
 };
 
+const getAllExcludeValuesList = (axiosMock) => {
+  return  axiosMock.get["mockImplementation"]((url) => {
+    switch (url) {
+    case "/api/steps/matching/exclusionList":
+      return Promise.resolve({
+        "data": {"name": "Preset List 1", "values": ["one", "two", "one", "two", "one", "two", "one", "two"]},
+        "status": 200
+      });
+    default:
+      return Promise.reject(new Error("not found"));
+    }
+  });
+};
+
 const mocks = {
   loadAPI: loadAPI,
   curateAPI: curateAPI,
@@ -374,7 +388,8 @@ const mocks = {
   advancedAPI: advancedAPI,
   systemInfoAPI: systemInfoAPI,
   noResponseAPI: noResponseAPI,
-  clearUserDataAPI: clearUserDataAPI
+  clearUserDataAPI: clearUserDataAPI,
+  getAllExcludeValuesList: getAllExcludeValuesList
 };
 
 export default mocks;

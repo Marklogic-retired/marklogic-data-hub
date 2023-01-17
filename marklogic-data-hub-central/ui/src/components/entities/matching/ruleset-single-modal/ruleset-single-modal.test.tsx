@@ -6,13 +6,14 @@ import userEvent from "@testing-library/user-event";
 import RulesetSingleModal from "./ruleset-single-modal";
 
 import {CurationContext} from "../../../../util/curation-context";
-import {updateMatchingArtifact} from "../../../../api/matching";
+import {updateMatchingArtifact, getAllExcludeValuesList} from "../../../../api/matching";
 import {customerMatchingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {act} from "react-dom/test-utils";
 
 jest.mock("../../../../api/matching");
 
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
+const mockGetAllExcludeValuesList = getAllExcludeValuesList as jest.Mock;
 
 describe("Matching Ruleset Single Modal component", () => {
   afterEach(() => {
@@ -26,6 +27,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select an property to match and match type and click cancel", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText, rerender} = render(
@@ -80,6 +82,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select an property to match and Zip match type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText, rerender} = render(
@@ -125,6 +128,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select Synonym ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
@@ -161,6 +165,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select Double Metaphone ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
@@ -197,6 +202,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select Custom ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
@@ -233,6 +239,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can toggle Reduce ruleset, select Exact ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId} = render(
@@ -271,6 +278,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can do input validation", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, rerender} = render(
@@ -309,6 +317,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can edit a double metaphone ruleset and change to an exact ruleset", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
     let editSynonym = {
       ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[0],
@@ -348,6 +357,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select structured property and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
@@ -384,6 +394,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can expand/collapse structured property by simply clicking on its label", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText} = render(
@@ -425,7 +436,21 @@ describe("Matching Ruleset Single Modal component", () => {
     });
   });
 
-  test("Hover on Values to Ignore items", async () => {
+  test("Render list to ignore and tooltip when hover list items", async () => {
+    jest.resetAllMocks();
+    mockGetAllExcludeValuesList.mockResolvedValue(
+      {
+        data: [
+          {
+            "name": "Preset List 1",
+            "values": ["one", "two", "one", "two", "one", "two", "one", "two"]
+          },
+          {
+            "name": "Preset List 2",
+            "values": ["word 1, word 2, word 3, word 3"]
+          }
+        ]
+      });
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
     render(
@@ -442,14 +467,14 @@ describe("Matching Ruleset Single Modal component", () => {
     fireEvent.keyDown(screen.getAllByRole("combobox")[2], {key: "ArrowDown", code: 40});
     expect(screen.queryAllByTestId("tooltipListPreset")).toHaveLength(0);
     await act(async () => {
-      fireEvent.mouseOver(screen.getByText("Preset List 1"));
+      fireEvent.mouseOver(await screen.findByText("Preset List 1"));
     });
-    expect(await screen.findAllByTestId("tooltipListPreset")).toHaveLength(1);
+    expect(await screen.findByRole("tooltip")).toBeInTheDocument();
     expect(await screen.findAllByText("+ 3 more")).toHaveLength(1);
 
     await act(async () => {
       fireEvent.mouseOver(screen.getByText("Preset List 2"));
     });
-    expect(await screen.findAllByText("word 1, word 2, word 3, word 3")).toHaveLength(1);
+    expect(await screen.findByText("word 1, word 2, word 3, word 3")).toBeInTheDocument();
   });
 });
