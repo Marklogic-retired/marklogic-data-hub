@@ -491,10 +491,10 @@ const FlowPanel: React.FC<Props> = ({
 
   return (
     <Accordion className={"w-100"} flush key={idx} id={flow.name} activeKey={openFlows.includes(idx) ? idx.toString() : ""} defaultActiveKey={openFlows.includes(idx) ? idx.toString() : ""}>
-      <Accordion.Item eventKey={idx.toString()}>
+      <Accordion.Item  eventKey={idx.toString()}>
         <Card>
           <Card.Header className={"p-0 pe-3 d-flex bg-white"}>
-            <Accordion.Button data-testid={`accordion-${flow.name}`} onClick={() => handlePanelInteraction(idx)}>
+            <Accordion.Button className={styles.focusFlow} data-testid={`accordion-${flow.name}`} onClick={() => handlePanelInteraction(idx)}>
               <span id={"flow-header-" + flow.name} className={styles.flowHeader}>
                 <HCTooltip text={canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails} id="open-edit-tooltip" placement="bottom">
                   <span className={styles.flowName}

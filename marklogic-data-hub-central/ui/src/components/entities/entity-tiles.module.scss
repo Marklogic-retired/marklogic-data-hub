@@ -36,3 +36,7 @@ ul.entityTabs {
     justify-content: flex-start;
     font-size: 14px;
 }
+
+.focusEntity:focus-visible {
+    outline: auto !important;
+  }

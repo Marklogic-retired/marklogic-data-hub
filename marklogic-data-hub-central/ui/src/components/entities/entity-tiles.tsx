@@ -540,7 +540,7 @@ const EntityTiles = (props) => {
           <Accordion.Item eventKey={entityModels[entityType].entityTypeId}>
             <Card>
               <Card.Header className={"p-1 d-flex bg-white"}>
-                <Accordion.Button data-testid={entityType} onClick={() => handleAccordionChange(entityModels[entityType].entityTypeId)}>
+                <Accordion.Button className={styles.focusEntity} data-testid={entityType} onClick={() => handleAccordionChange(entityModels[entityType].entityTypeId)}>
                   {entityType}
                 </Accordion.Button>
               </Card.Header>
@@ -569,7 +569,7 @@ const EntityTiles = (props) => {
           <Accordion.Item eventKey={"No Entity Type"}>
             <Card>
               <Card.Header className={"p-1 d-flex bg-white"}>
-                <Accordion.Button data-testid={"noEntityType"} onClick={() => handleAccordionChange("No Entity Type")}>
+                <Accordion.Button className={styles.focusEntity} data-testid={"noEntityType"} onClick={() => handleAccordionChange("No Entity Type")}>
                   No Entity Type
                 </Accordion.Button>
               </Card.Header>
