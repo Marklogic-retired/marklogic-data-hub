@@ -449,7 +449,7 @@ const MergingCard: React.FC<Props> = (props) => {
               <p className={styles.addNewContent}>Add New</p>
             </HCCard>
           </Col>
-        ) : <Col>
+        ) : <Col xs={"auto"}>
           <HCTooltip id="curate-tooltip" text={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled} onClick={OpenAddNew}/></div>
