@@ -20,37 +20,39 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
   return (<div id="switch-view" aria-label="switch-view" >
     {loadTile ? (
       <div className={"switch-button-group outline"}>
-        <span
-          className={styles.leftButton} tabIndex={0} onKeyDown={(event) => {
-            if (event.key === "Enter"|| event.key === " ") { handleViewChange("card"); }
-          }}
-        >
+        <span>
           <input
             type="radio"
             id="switch-view-card"
-            name="switch-view-radiogroupA"
+            name="switch-view-radiogroup"
             key={ViewType.card}
             value={"card"}
             checked={selectedView === ViewType.card}
             onChange={e => handleViewChange(e.target.value)}
-            tabIndex={-1}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleViewChange(ViewType.card);
+              }
+            }}
           />
           <label aria-label="switch-view-card" htmlFor="switch-view-card" className={`${className} ${styles.leftButton}`} style={{height: "40px", fontSize: "22px"}}>
-            <i>{<FontAwesomeIcon icon={faThLarge}   />}</i>
+            <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
           </label>
         </span>
-        <span tabIndex={0} className={styles.leftButton} onKeyDown={(event) => {
-          if (event.key === "Enter"|| event.key === " ") { handleViewChange("list"); }
-        }}>
+        <span>
           <input
             type="radio"
             id="switch-view-list"
-            name="switch-view-radiogroupB"
+            name="switch-view-radiogroup-list"
             key={ViewType.list}
             value={"list"}
             checked={selectedView === ViewType.list}
             onChange={e => handleViewChange(e.target.value)}
-            tabIndex={-1}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleViewChange(ViewType.list);
+              }
+            }}
           />
           <HCTooltip text="List View" id="list-view-tooltip" placement="top">
             <label aria-label="switch-view-list" htmlFor="switch-view-list" className={`${className} ${styles.rightButton}`} id={"listView"} style={style}>
@@ -66,7 +68,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         <input
           type="radio"
           id="switch-view-graph"
-          name="switch-view-radiogroup"
+          name="switch-view-radiogroup-graph"
           key={"graph-view"}
           value={"graph"}
           checked={selectedView === ViewType.graph}
@@ -84,7 +86,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         <input
           type="radio"
           id="switch-view-table"
-          name="switch-view-radiogroup"
+          name="switch-view-radiogroup-table"
           key={ViewType.table}
           value={"table"}
           checked={selectedView === ViewType.table}
@@ -104,7 +106,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
           <input
             type="radio"
             id="switch-view-snippet"
-            name="switch-view-radiogroup"
+            name="switch-view-radiogroup-sippet"
             value={"snippet"}
             checked={selectedView === ViewType.snippet}
             key={ViewType.snippet}

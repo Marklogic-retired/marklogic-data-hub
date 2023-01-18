@@ -248,7 +248,15 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
                 color: $primary;
             }
         }
+        input {
+            &:focus-visible {
+                + label {
+                    outline: auto !important;
+                }
+            }
+        }
     }
+    
 }
 
 .form-switch {

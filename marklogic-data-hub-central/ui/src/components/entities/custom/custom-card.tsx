@@ -66,11 +66,12 @@ const CustomCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
-            (e.target.className === "card-body" ||
-             e.target.className.startsWith("custom-card_cardContainer") ||
-             e.target.className.startsWith("custom-card_formatFileContainer") ||
-             e.target.className.startsWith("custom-card_sourceQuery") ||
-             e.target.className.startsWith("custom-card_lastUpdatedStyle"))
+      (e.target.className === "card-body" ||
+        e.target.className === "ContentContainer" ||
+        e.target.className.startsWith("custom-card_cardContainer") ||
+        e.target.className.startsWith("custom-card_formatFileContainer") ||
+        e.target.className.startsWith("custom-card_sourceQuery") ||
+        e.target.className.startsWith("custom-card_lastUpdatedStyle"))
     ) {
       setShowLinks(name);
     }
@@ -81,7 +82,7 @@ const CustomCard: React.FC<Props> = (props) => {
     setTooltipVisible(false);
   }
 
-  const OpenStepSettings = async (name : String) => {
+  const OpenStepSettings = async (name: String) => {
     setStepData(await props.getArtifactProps(name));
     setOpenStepSettings(true);
   };
@@ -116,7 +117,7 @@ const CustomCard: React.FC<Props> = (props) => {
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
-          { isStepInFlow(stepName, flowName) ?
+          {isStepInFlow(stepName, flowName) ?
             <p aria-label="step-in-flow">The step <strong>{stepName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{stepName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
@@ -148,7 +149,7 @@ const CustomCard: React.FC<Props> = (props) => {
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -161,7 +162,11 @@ const CustomCard: React.FC<Props> = (props) => {
           props && props.data.length > 0 ? props.data.map((elem, index) => (
 
             <Col xs={"auto"} key={index}>
-              <div
+              <div className="ContentContainer"
+                tabIndex={0}
+                onFocus={(e: React.FocusEvent<HTMLElement>) => {
+                  handleMouseOver(e, elem.name);
+                }}
                 data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                 onMouseOver={(e) => handleMouseOver(e, elem.name)}
                 onMouseLeave={handleMouseLeave}
@@ -169,7 +174,21 @@ const CustomCard: React.FC<Props> = (props) => {
                 <HCCard
                   actions={[
                     <HCTooltip text={CustomStepTooltips.viewCustom} id="custom-card-tooltip" placement="bottom">
-                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(elem.name)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
+                      <span
+                        className={styles.viewStepSettingsIcon}
+                        onClick={() => OpenStepSettings(elem.name)}
+                        role="edit-custom button"
+                        data-testid={elem.name + "-edit"}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            OpenStepSettings(elem.name);
+                          }
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faCog} />
+                        Edit Step Settings
+                      </span>
                     </HCTooltip>,
                   ]}
                   className={styles.cardStyle}
@@ -204,11 +223,11 @@ const CustomCard: React.FC<Props> = (props) => {
                         </div>
                     }
                     <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
-                        Add step to an existing flow
+                      Add step to an existing flow
                       {
                         /** dropdown of flow names to add this custom step to */
                         selectVisible ?
-                          <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="select-flow-tooltip" placement="top" show={tooltipVisible && !props.canWriteFlow}>
+                          <HCTooltip text={"Curate: " + SecurityTooltips.missingPermission} id="select-flow-tooltip" placement="top" show={tooltipVisible && !props.canWriteFlow}>
                             <div className={styles.cardLinkSelect} data-testid={`add-${elem.name}-select`}>
                               <Select
                                 id={`${elem.name}-flowsList-select-wrapper`}
@@ -229,6 +248,8 @@ const CustomCard: React.FC<Props> = (props) => {
                                     </span>
                                   );
                                 }}
+                                tabSelectsValue={false}
+                                openMenuOnFocus={true}
                               />
                             </div>
                           </HCTooltip>

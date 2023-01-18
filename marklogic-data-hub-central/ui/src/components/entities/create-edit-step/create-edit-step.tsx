@@ -195,16 +195,16 @@ const CreateEditStep: React.FC<Props> = (props) => {
   const [targetQueryPopover, setTargetQueryPopover] = useState(null);
 
   const collectionQueryInfo =
-  <Overlay
-    show={showQueryPopover}
-    target={targetQueryPopover}
-    placement="left"
-  >
-    <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
-      <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioQuery}</div></Popover.Body></Popover>
-  </Overlay>;
+    <Overlay
+      show={showQueryPopover}
+      target={targetQueryPopover}
+      placement="left"
+    >
+      <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
+        <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioQuery}</div></Popover.Body></Popover>
+    </Overlay>;
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: {preventDefault: () => void;}) => {
     if (!stepName) {
       // missing name
       setStepNameTouched(true);
@@ -436,7 +436,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
       }
     }
   };
-  let time:any;
+  let time: any;
   const handleShowQueryPopover = (event) => {
     event.persist();
     time = delayTooltip(() => {
@@ -503,16 +503,16 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   onBlur={sendPayload}
                 />}
                 <div className={"p-2 d-flex align-items-center"}>
-                  { props.stepType === StepType.Mapping ?
+                  {props.stepType === StepType.Mapping ?
                     <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
-                    </HCTooltip>:
+                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                    </HCTooltip> :
                     props.stepType === StepType.Matching ?
                       <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
-                      </HCTooltip>:
+                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                      </HCTooltip> :
                       <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
+                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                       </HCTooltip>
                   }
                 </div>
@@ -536,16 +536,16 @@ const CreateEditStep: React.FC<Props> = (props) => {
               onBlur={sendPayload}
             />
             <div className={"p-2 d-flex align-items-center"}>
-              { props.stepType === StepType.Mapping ?
+              {props.stepType === StepType.Mapping ?
                 <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
-                </HCTooltip>:
+                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                </HCTooltip> :
                 props.stepType === StepType.Matching ?
                   <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
-                  </HCTooltip>:
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                  </HCTooltip> :
                   <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/>
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </HCTooltip>
               }
             </div>
@@ -570,9 +570,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span  id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}>
+                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover"} className={"me-4"}>
                   <HCTooltip text={CommonStepTooltips.radioCollection} id="radio-collection-tooltip" placement={"top"}>
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip" />
                   </HCTooltip>  </span>
                 <Form.Check
                   inline
@@ -587,9 +587,19 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span onMouseEnter={handleShowQueryPopover} onMouseLeave={() => handleMouseLeaveTooltip()}>
+                <span
+                  tabIndex={0}
+                  onMouseEnter={handleShowQueryPopover}
+                  onMouseLeave={() => handleMouseLeaveTooltip()}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      handleShowQueryPopover(event);
+                    }
+                  }}
+                  onBlur={() => handleMouseLeaveTooltip()}
+                >
                   {collectionQueryInfo}
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip" />
                 </span>
               </Col>
               <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
@@ -640,7 +650,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip>
               </div>
             </Col>

@@ -97,6 +97,7 @@ const MatchingCard: React.FC<Props> = (props) => {
     setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
       (e.target.className === "card-body" ||
+        e.target.className === "ContentContainer" ||
         e.target.className.startsWith("matching-card_cardContainer") ||
         e.target.className.startsWith("matching-card_formatFileContainer") ||
         e.target.className.startsWith("matching-card_sourceQuery") ||
@@ -119,7 +120,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   }
 
   const countStepInFlow = (matchingName) => {
-    let result : string[] = [];
+    let result: string[] = [];
     if (props.flows) props.flows.forEach(f => f["steps"].findIndex(s => s.stepName === matchingName) > -1 ? result.push(f.name) : "");
     return result;
   };
@@ -246,7 +247,7 @@ const MatchingCard: React.FC<Props> = (props) => {
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
-          { isStepInFlow(matchingArtifactName, flowName) ?
+          {isStepInFlow(matchingArtifactName, flowName) ?
             <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance of the step?</p> :
             <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{matchingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
           }
@@ -309,12 +310,14 @@ const MatchingCard: React.FC<Props> = (props) => {
           </Col>
           <Col>
             <Link data-testid="link" id="tiles-add-run-new-flow" to={
-              {pathname: "/tiles/run/add-run",
+              {
+                pathname: "/tiles/run/add-run",
                 state: {
                   stepToAdd: matchingArtifactName,
                   stepDefinitionType: "matching",
                   existingFlow: false
-                }}}><div className={styles.stepLink} data-testid={`${matchingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
+                }
+              }}><div className={styles.stepLink} data-testid={`${matchingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow} />New flow</div></Link>
           </Col>
         </Row>
       </Modal.Body>
@@ -363,16 +366,18 @@ const MatchingCard: React.FC<Props> = (props) => {
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>
           <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{matchingArtifactName}</strong>.</div>
-          <div className = {styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
+          <div className={styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
             <Link data-testid="link" id="tiles-run-step" key={i} to={
-              {pathname: "/tiles/run/run-step",
+              {
+                pathname: "/tiles/run/run-step",
                 state: {
                   flowName: flowName,
                   stepToAdd: matchingArtifactName,
                   stepDefinitionType: "matching",
                   existingFlow: false,
                   flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
-                }}}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
+                }
+              }}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
           ))}
           </div>
         </div>
@@ -389,39 +394,79 @@ const MatchingCard: React.FC<Props> = (props) => {
     return [
       <HCTooltip id="step-details-tooltip" text={"Step Details"} placement="bottom">
         <i className={styles.stepDetails}>
-          <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
+          <FontAwesomeIcon
+            icon={faPencilAlt}
+            data-testid={`${step.name}-stepDetails`}
+            onClick={() => openStepDetails(step)}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                openStepDetails(step);
+              }
+            }}
+          />
         </i>
       </HCTooltip>,
       <HCTooltip id="step-settings-tooltip" text={"Step Settings"} placement="bottom">
-        <i className={styles.editIcon} key ="last" role="edit-merging button">
-          <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
+        <i className={styles.editIcon} key="last" role="edit-merging button">
+          <FontAwesomeIcon
+            icon={faCog}
+            data-testid={step.name + "-edit"}
+            onClick={() => OpenStepSettings(index)}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                OpenStepSettings(index);
+              }
+            }}
+          />
         </i>
       </HCTooltip>,
 
       props.canWriteMatchMerge ? (
         <HCTooltip id="run-tooltip" text={RunToolTips.runStep} placement="bottom">
           <i aria-label="icon: run">
-            <PlayCircleFill className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/>
+            <PlayCircleFill
+              className={styles.runIcon}
+              data-testid={step.name + "-run"}
+              onClick={() => handleStepRun(step.name)}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleStepRun(step.name);
+                }
+              }}
+            />
           </i>
         </HCTooltip>
       ) : (
         <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
           <i aria-label="icon: run">
-            <PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-matching button" data-testid={step.name+"-disabled-run"} onClick={(event) => event.preventDefault()}/>
+            <PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-matching button" data-testid={step.name + "-disabled-run"} onClick={(event) => event.preventDefault()} />
           </i>
         </HCTooltip>
       ),
 
       props.canWriteMatchMerge ? (
         <HCTooltip id="delete-tooltip" text={"Delete"} placement="bottom">
-          <i key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
-            <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
+          <i key="last"
+            role="delete-merging button"
+            data-testid={step.name + "-delete"}
+            onClick={() => deleteStepClicked(step.name)}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                deleteStepClicked(step.name);
+              }
+            }}
+          >
+            <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
           </i>
         </HCTooltip>
       ) : (
         <HCTooltip id="delete-disabled-tooltip" text={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
-          <i className={styles.deleteIcon} role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
-            <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
+          <i className={styles.deleteIcon} role="disabled-delete-merging button" data-testid={step.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}>
+            <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg" />
           </i>
         </HCTooltip>
       ),
@@ -430,7 +475,7 @@ const MatchingCard: React.FC<Props> = (props) => {
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -443,23 +488,39 @@ const MatchingCard: React.FC<Props> = (props) => {
           <Col xs={"auto"}>
             <HCCard
               className={styles.addNewCard}>
-              <div><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIcon} onClick={OpenAddNew}/></div>
-              <br/>
+              <div>
+                <PlusCircleFill
+                  aria-label="icon: plus-circle"
+                  className={styles.plusIcon}
+                  onClick={OpenAddNew}
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      OpenAddNew();
+                    }
+                  }}
+                />
+              </div>
+              <br />
               <p className={styles.addNewContent}>Add New</p>
             </HCCard>
           </Col>
         ) : <Col xs={"auto"}>
-          <HCTooltip id="curate-disabled-tooltip" text={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
+          <HCTooltip id="curate-disabled-tooltip" text={"Curate: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
             className={styles.addNewCardDisabled}>
-            <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled}/></div>
-            <br/>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled} /></div>
+            <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard></HCTooltip>
         </Col>}
         {props.matchingStepsArray.length > 0 ? (
           props.matchingStepsArray.map((step, index) => (
             <Col xs={"auto"} key={index}>
-              <div
+              <div className="ContentContainer"
+                tabIndex={0}
+                onFocus={(e: React.FocusEvent<HTMLElement>) => {
+                  handleMouseOver(e, step.name);
+                }}
                 data-testid={`${props.entityName}-${step.name}-step`}
                 onMouseOver={(e) => handleMouseOver(e, step.name)}
                 onMouseLeave={(e) => handleMouseLeave()}
@@ -488,16 +549,17 @@ const MatchingCard: React.FC<Props> = (props) => {
                           state: {
                             stepToAdd: step.name,
                             stepDefinitionType: "matching"
-                          }}}
+                          }
+                        }}
                       >
                         <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
                       </Link>
                     ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div>
                     }
                     <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
-                    Add step to an existing flow
+                      Add step to an existing flow
                       {selectVisible ? (
-                        <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="add-matching-step-to-flow-tooltip" placement={"top"} show={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
+                        <HCTooltip text={"Curate: " + SecurityTooltips.missingPermission} id="add-matching-step-to-flow-tooltip" placement={"top"} show={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                           <Select
                             id={`${step.name}-flowsList-select-wrapper`}
                             inputId={`${step.name}-flowsList`}
@@ -517,6 +579,8 @@ const MatchingCard: React.FC<Props> = (props) => {
                                 </span>
                               );
                             }}
+                            tabSelectsValue={false}
+                            openMenuOnFocus={true}
                           />
                         </div></HCTooltip>
                       ) : null}

@@ -15,22 +15,22 @@ import {ConfirmYesNo, HCTooltip} from "@components/common";
 import {CurationContext} from "@util/curation-context";
 
 interface Props {
-    isEditing: boolean;
-    createStep?: any;
-    updateStep?: any;
-    stepData: any;
-    sourceDatabase?: any;
-    canReadWrite: any;
-    canReadOnly: any;
-    tooltipsData: any;
-    openStepSettings: any;
-    setOpenStepSettings: any;
-    activityType: string;
-    canWrite?: any;
-    targetEntityType?: any;
-    targetEntityName?: any;
-    toggleModal?: any;
-    openStepDetails?: any;
+  isEditing: boolean;
+  createStep?: any;
+  updateStep?: any;
+  stepData: any;
+  sourceDatabase?: any;
+  canReadWrite: any;
+  canReadOnly: any;
+  tooltipsData: any;
+  openStepSettings: any;
+  setOpenStepSettings: any;
+  activityType: string;
+  canWrite?: any;
+  targetEntityType?: any;
+  targetEntityName?: any;
+  toggleModal?: any;
+  openStepDetails?: any;
 }
 
 const DEFAULT_TAB = "1";
@@ -227,7 +227,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
-    preloadTypeahead = {preloadTypeahead(props.stepData)}
+    preloadTypeahead={preloadTypeahead(props.stepData)}
   />);
 
   const createEditMatching = (<CreateEditStep
@@ -238,7 +238,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
-    preloadTypeahead = {preloadTypeahead(props.stepData)}
+    preloadTypeahead={preloadTypeahead(props.stepData)}
   />);
 
   const createEditMerging = (<CreateEditStep
@@ -249,7 +249,7 @@ const Steps: React.FC<Props> = (props) => {
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
     updateStepArtifact={updateStep}
-    preloadTypeahead = {preloadTypeahead(props.stepData)}
+    preloadTypeahead={preloadTypeahead(props.stepData)}
   />);
 
   const viewCustom = (<CreateEditStep
@@ -258,7 +258,7 @@ const Steps: React.FC<Props> = (props) => {
     editStepArtifactObject={props.stepData}
     stepType={StepType.Custom}
     targetEntityType={props.targetEntityType}
-    createStepArtifact={() => {} /** custom steps cannot be created through hub central */}
+    createStepArtifact={() => { } /** custom steps cannot be created through hub central */}
     updateStepArtifact={updateStep}
   />);
 
@@ -355,11 +355,16 @@ const Steps: React.FC<Props> = (props) => {
           </Tabs>
         </div>
         {/* Step Details link for Mapping steps */}
-        { (props.isEditing && props.activityType === StepType.Mapping) ?
-          <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>
-            <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"}/>
+        {(props.isEditing && props.activityType === StepType.Mapping) ?
+          <div
+            className={styles.stepDetailsLink}
+            onClick={() => handleStepDetails(props.stepData.name)}
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleStepDetails(props.stepData.name); }}
+          >
+            <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"} />
             <span className={styles.stepDetailsLabel}>Step Details</span>
-          </div> : null }
+          </div> : null}
         {discardChanges}
         {errorModal}
       </div>
