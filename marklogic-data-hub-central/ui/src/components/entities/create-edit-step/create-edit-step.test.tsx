@@ -354,6 +354,49 @@ describe("Create Edit Step Dialog component", () => {
     expect(saveButton.onclick).toHaveBeenCalled();
   });
 
+  test("Verify able to type in input fields and typeahead search in collections field", async () => {
+    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    const {getByText, queryByText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging}
+      tabKey={""}
+      openStepSettings={false}
+      setOpenStepSettings={false}
+      isEditing={false}
+      stepType={StepType.Custom}
+      editStepArtifactObject={{}}
+      targetEntityType={""}
+      canReadWrite={false}
+      canReadOnly={false}
+      createStepArtifact={jest.fn()}
+      updateStepArtifact={jest.fn()}
+      currentTab={""}
+      setIsValid={jest.fn()}
+      resetTabs={jest.fn()}
+      setHasChanged={jest.fn()}
+      setPayload={jest.fn()}
+      onCancel={jest.fn()}/>);
+
+    const descInput = getByPlaceholderText("Enter description");
+    const collInput = document.querySelector(("#collList .ant-input"));
+    const saveButton = getByText("Save");
+    saveButton.onclick = jest.fn();
+
+    fireEvent.change(descInput, {target: {value: "test description"}});
+    expect(descInput).toHaveValue("test description");
+
+    await wait(() => {
+      if (collInput) {
+        fireEvent.change(collInput, {target: {value: "testRandomCollection"}});
+      }
+    });
+    await(() => expect(collInput).toHaveValue("testRandomCollection"));
+
+    fireEvent.click(saveButton);
+    expect(saveButton.onclick).toHaveBeenCalled();
+
+    //confirm error is no longer showing
+    expect(queryByText("Collection or Query is required")).not.toBeInTheDocument();
+  });
+
   test("Verify collection and query tooltips appear when hovered", async () => {
     const {getByText, getByTestId, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
 
