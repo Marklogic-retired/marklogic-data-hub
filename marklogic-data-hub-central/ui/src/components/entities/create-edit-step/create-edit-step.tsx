@@ -266,9 +266,23 @@ const CreateEditStep: React.FC<Props> = (props) => {
         console.error(error);
         handleError(error);
       }
-
     } else {
       setCollectionOptions([]);
+    }
+    if (value.length > 0) {
+      if (stepName) {
+        setIsValid(true);
+        props.setIsValid(true);
+      }
+      if (value.replace(/\s+/g, " ").trim() === " ") {
+        setCollectionsTouched(false);
+      } else {
+        setCollectionsTouched(true);
+        setCollections(value);
+      }
+    } else {
+      setIsValid(false);
+      props.setIsValid(false);
     }
   };
 
