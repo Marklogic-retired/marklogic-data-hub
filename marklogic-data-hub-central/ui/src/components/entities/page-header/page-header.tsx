@@ -14,7 +14,19 @@ const PageHeader: React.FC<Props> = (props) => {
     <div className={styles.customHeader}>
       <Row id="back-button" className={"py-3 px-3 header-heading-title"}>
         <Col>
-          <span className={`d-flex align-items-center`} data-testid="arrow-left"><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-1 header-back-button cursor-pointer"} onClick={props.handleOnBack}/>{props.title}</span>
+          <span className={`d-flex align-items-center`} data-testid="arrow-left">
+            <ArrowLeftShort
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  props.handleOnBack();
+                }
+              }}
+              aria-label="Back"
+              className={"d-inline-block me-2 fs-1 header-back-button cursor-pointer"}
+              onClick={props.handleOnBack} />
+            {props.title}
+          </span>
         </Col>
       </Row>
     </div>

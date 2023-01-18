@@ -118,7 +118,7 @@ const LoadCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     if (typeof e.target.className === "string" &&
       (e.target.className === "card-body" ||
-
+        e.target.className === "ContentContainer" ||
         e.target.className.startsWith("load-card_formatFileContainer") ||
 
         e.target.className.startsWith("load-card_stepNameStyle"))
@@ -338,7 +338,7 @@ const LoadCard: React.FC<Props> = (props) => {
                   stepDefinitionType: "ingestion",
                   existingFlow: false
                 }
-              }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
+              }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow} />New flow</div></Link>
           </Col>
         </Row>
       </Modal.Body>
@@ -413,7 +413,7 @@ const LoadCard: React.FC<Props> = (props) => {
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -424,57 +424,112 @@ const LoadCard: React.FC<Props> = (props) => {
       <Row>
         {props.canReadWrite ? <Col xs={"auto"}>
           <HCCard className={styles.addNewCard}>
-            <div aria-label="add-new-card"><PlusCircleFill className={styles.plusIcon} onClick={OpenAddNew}/></div>
+            <div aria-label="add-new-card">
+              <PlusCircleFill
+                className={styles.plusIcon}
+                tabIndex={0}
+                onClick={OpenAddNew}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    OpenAddNew();
+                  }
+                }} />
+            </div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard>
         </Col> : <Col xs={"auto"}>
-          <HCTooltip id="disabled-load-tooltip" placement={"top"} text={"Load: "+SecurityTooltips.missingPermission} className={styles.tooltipOverlayStyle}>
+          <HCTooltip id="disabled-load-tooltip" placement={"top"} text={"Load: " + SecurityTooltips.missingPermission} className={styles.tooltipOverlayStyle}>
             <span>
               <HCCard
                 className={styles.addNewCardDisabled}
                 data-testid="disabledAddNewCard">
-                <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
+                <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled} /></div>
                 <br />
                 <p className={styles.addNewContentDisabled}>Add New</p>
               </HCCard>
             </span>
           </HCTooltip>
-        </Col>}{ props.data && props.data.length > 0 ? props.data.map((elem, index) => (
+        </Col>}{props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col xs={"auto"} key={index}>
-            <div
+            <div className="ContentContainer"
+              tabIndex={0}
+
+              onFocus={(e: React.FocusEvent<HTMLElement>) => {
+                handleMouseOver(e, elem.name);
+              }}
               onMouseOver={(e) => handleMouseOver(e, elem.name)}
-              onMouseLeave={(e) => handleMouseLeave()}
-            >
+              onMouseLeave={(e) => handleMouseLeave()}>
 
               <HCCard
                 className={styles.cardStyle}
                 actions={[
                   <HCTooltip text="Step Settings" id="step-settings-tooltip" placement="bottom">
                     <i key="edit" className={styles.editIcon}>
-                      <FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
+                      <FontAwesomeIcon
+                        icon={faCog}
+                        data-testid={elem.name + "-edit"}
+                        tabIndex={0}
+                        onClick={() => OpenStepSettings(index)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            OpenStepSettings(index);
+                          }
+                        }} />
                     </i>
                   </HCTooltip>,
                   props.canReadWrite ?
                     <HCTooltip text={RunToolTips.runStep} id="run-tooltip" placement="bottom">
                       <i aria-label="icon: run">
-                        <PlayCircleFill data-testid={elem.name+"-run"} size={20} onClick={() => handleStepRun(elem.name)}/>
+                        <PlayCircleFill
+                          data-testid={elem.name + "-run"}
+                          size={20}
+                          onClick={() => handleStepRun(elem.name)}
+                          tabIndex={0}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              handleStepRun(elem.name);
+                            }
+                          }} />
                       </i>
                     </HCTooltip> :
                     <HCTooltip text={"Run: " + SecurityTooltips.missingPermission} id="run-tooltip" placement="bottom">
-                      <i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}>
-                        <PlayCircleFill data-testid={elem.name+"-run"} size={23} onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/>
+                      <i role="disabled-run-load button" data-testid={elem.name + "-disabled-run"}>
+                        <PlayCircleFill
+                          data-testid={elem.name + "-run"}
+                          size={23}
+                          onClick={(event) => event.preventDefault()}
+                          className={styles.disabledIcon}
+                          tabIndex={0}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                            }
+                          }}
+                        />
                       </i>
                     </HCTooltip>,
                   props.canReadWrite ?
                     <HCTooltip text="Delete" id="delete-tooltip" placement="bottom">
                       <i aria-label="icon: delete">
-                        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}/>
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          className={styles.deleteIcon}
+                          size="lg"
+                          data-testid={elem.name + "-delete"}
+                          onClick={() => handleCardDelete(elem.name)}
+                          tabIndex={0}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              handleCardDelete(elem.name);
+                            }
+                          }}
+                        />
                       </i>
                     </HCTooltip> :
                     <HCTooltip text={"Delete: " + SecurityTooltips.missingPermission} id="delete-tooltip" placement="bottom" >
-                      <i data-testid={elem.name+"-disabled-delete"}>
-                        <FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/>
+                      <i data-testid={elem.name + "-disabled-delete"}>
+                        <FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg" />
                       </i>
                     </HCTooltip>,
                 ]}
@@ -502,9 +557,9 @@ const LoadCard: React.FC<Props> = (props) => {
 
 
                   <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
-                                    Add step to an existing flow
-                    {selectVisible ? <HCTooltip id={`${elem.name}missing-permission-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow: undefined}
-                      text={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
+                    Add step to an existing flow
+                    {selectVisible ? <HCTooltip id={`${elem.name}missing-permission-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow : undefined}
+                      text={"Load: " + SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                         <Select
                           id={`${elem.name}-flowsList-select-wrapper`}
                           inputId={`${elem.name}-flowsList`}
@@ -524,6 +579,8 @@ const LoadCard: React.FC<Props> = (props) => {
                               </span>
                             );
                           }}
+                          tabSelectsValue={false}
+                          openMenuOnFocus={true}
                         />
                       </div></div></HCTooltip> : null}
                   </div>

@@ -111,6 +111,7 @@ const MappingCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     if (typeof e.target.className === "string" &&
       (e.target.className === "card-body" ||
+        e.target.className === "ContentContainer" ||
         e.target.className.startsWith("mapping-card_cardContainer") ||
         e.target.className.startsWith("mapping-card_formatFileContainer") ||
         e.target.className.startsWith("mapping-card_sourceQuery") ||
@@ -350,7 +351,7 @@ const MappingCard: React.FC<Props> = (props) => {
                   targetEntityType: props.entityModel.entityTypeId,
                   existingFlow: false
                 }
-              }}><div className={styles.stepLink} data-testid={`${mappingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
+              }}><div className={styles.stepLink} data-testid={`${mappingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow} />New flow</div></Link>
           </Col>
         </Row>
       </Modal.Body>
@@ -426,7 +427,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -435,17 +436,25 @@ const MappingCard: React.FC<Props> = (props) => {
   return (
     <div className={styles.loadContainer}>
       <Row>
-        {props.canReadWrite ?<Col xs={"auto"}>
+        {props.canReadWrite ? <Col xs={"auto"}>
           <HCCard
             className={styles.addNewCard}>
-            <div><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIcon} onClick={OpenAddNew}/></div>
+            <div>
+              <PlusCircleFill
+                aria-label="icon: plus-circle"
+                className={styles.plusIcon}
+                tabIndex={0}
+                onClick={OpenAddNew}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { OpenAddNew(); } }}
+              />
+            </div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard>
         </Col> : <Col xs={"auto"}>
-          <HCTooltip id="curate-tooltip" text={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
+          <HCTooltip id="curate-tooltip" text={"Curate: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
             className={styles.addNewCardDisabled}>
-            <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled} /></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard></HCTooltip>
@@ -454,17 +463,105 @@ const MappingCard: React.FC<Props> = (props) => {
           props.data && props.data.length > 0 ?
             props.data.map((elem, index) => (
               <Col xs={"auto"} key={index}>
-                <div
+                <div className="ContentContainer"
+                  tabIndex={0}
+                  onFocus={(e: React.FocusEvent<HTMLElement>) => {
+                    handleMouseOver(e, elem.name);
+                  }}
                   data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                   onMouseOver={(e) => handleMouseOver(e, elem.name)}
                   onMouseLeave={(e) => handleMouseLeave()}
                 >
                   <HCCard
                     actions={[
-                      <HCTooltip id="details-tooltip" text={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openMapStepDetails(elem.name, index)} data-testid={`${elem.name}-stepDetails`} /></i></HCTooltip>,
-                      <HCTooltip id="settings-tooltip" text={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name + "-edit"} onClick={() => OpenStepSettings(index)} /></i></HCTooltip>,
-                      props.canReadWrite ? <HCTooltip id="run-tooltip" text={RunToolTips.runStep} placement="bottom"><i aria-label="icon:run"><PlayCircleFill className={styles.runIcon} data-testid={elem.name + "-run"} onClick={() => handleStepRun(elem.name)} /></i></HCTooltip> : <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><i aria-label="icon: run"><PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-mapping button" data-testid={elem.name + "-disabled-run"} onClick={(event) => event.preventDefault()}/></i></HCTooltip>,
-                      props.canReadWrite ? <HCTooltip id="delete-tooltip" text={"Delete"} placement="bottom"><i key="last" role="delete-mapping button" data-testid={elem.name + "-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" /></i></HCTooltip> : <HCTooltip id="delete-disabled-tooltip" text={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><i role="disabled-delete-mapping button" data-testid={elem.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg" /></i></HCTooltip>,
+                      <HCTooltip
+                        id="details-tooltip"
+                        text={"Step Details"}
+                        placement="bottom">
+                        <i className={styles.stepDetails}>
+                          <FontAwesomeIcon
+                            icon={faPencilAlt}
+                            onClick={() => openMapStepDetails(elem.name, index)}
+                            data-testid={`${elem.name}-stepDetails`}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                openMapStepDetails(elem.name, index);
+                              }
+                            }}
+                          />
+                        </i>
+                      </HCTooltip>,
+                      <HCTooltip
+                        id="settings-tooltip"
+                        text={"Step Settings"}
+                        placement="bottom">
+                        <i className={styles.editIcon}
+                          role="edit-mapping button"
+                          key="last">
+                          <FontAwesomeIcon
+                            icon={faCog}
+                            data-testid={elem.name + "-edit"}
+                            onClick={() => OpenStepSettings(index)}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                OpenStepSettings(index);
+                              }
+                            }}
+                          />
+                        </i>
+                      </HCTooltip>,
+                      props.canReadWrite ?
+                        <HCTooltip id="run-tooltip" text={RunToolTips.runStep} placement="bottom">
+                          <i aria-label="icon:run">
+                            <PlayCircleFill
+                              className={styles.runIcon}
+                              data-testid={elem.name + "-run"}
+                              onClick={() => handleStepRun(elem.name)}
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  handleStepRun(elem.name);
+                                }
+                              }}
+                            />
+                          </i>
+                        </HCTooltip> :
+                        <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
+                          <i aria-label="icon: run">
+                            <PlayCircleFill
+                              className={styles.disabledRunIcon}
+                              role="disabled-run-mapping button"
+                              data-testid={elem.name + "-disabled-run"}
+                              onClick={(event) => event.preventDefault()} />
+                          </i>
+                        </HCTooltip>,
+                      props.canReadWrite ?
+                        <HCTooltip id="delete-tooltip" text={"Delete"} placement="bottom">
+                          <i key="last"
+                            role="delete-mapping button"
+                            data-testid={elem.name + "-delete"}
+                            onClick={() => handleCardDelete(elem.name)}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                handleCardDelete(elem.name);
+                              }
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
+                          </i>
+                        </HCTooltip>
+                        :
+                        <HCTooltip
+                          id="delete-disabled-tooltip"
+                          text={"Delete: " + SecurityTooltips.missingPermission}
+                          placement="bottom" className={styles.tooltipOverlay}>
+                          <i role="disabled-delete-mapping button" data-testid={elem.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}>
+                            <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg" />
+                          </i>
+                        </HCTooltip>,
                     ]}
                     className={styles.cardStyle}
                   >
@@ -501,7 +598,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         Add step to an existing flow
                         {
                           selectVisible ?
-                            <HCTooltip id={`${elem.name}curate-disabled-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow: undefined} text={"Curate: " + SecurityTooltips.missingPermission} placement={"bottom"} ><div className={styles.cardLinkSelect}>
+                            <HCTooltip id={`${elem.name}curate-disabled-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow : undefined} text={"Curate: " + SecurityTooltips.missingPermission} placement={"bottom"} ><div className={styles.cardLinkSelect}>
                               <Select
                                 id={`${elem.name}-flowsList-select-wrapper`}
                                 inputId={`${elem.name}-flowsList`}
@@ -521,6 +618,8 @@ const MappingCard: React.FC<Props> = (props) => {
                                     </span>
                                   );
                                 }}
+                                tabSelectsValue={false}
+                                openMenuOnFocus={true}
                               />
                             </div></HCTooltip>
                             :

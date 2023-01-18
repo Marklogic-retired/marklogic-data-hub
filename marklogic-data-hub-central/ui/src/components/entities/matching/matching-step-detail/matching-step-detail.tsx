@@ -56,9 +56,9 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
 
 const MatchingStepDetail: React.FC = () => {
   const storage = getViewSettings();
-  const expandedRulesetStorage = storage.match?.rulesetExpanded? storage.match.rulesetExpanded : false;
-  const rulesetToggleStorage = storage.match?.editRulesetTimeline? storage.match.editRulesetTimeline : false;
-  const thresholdToggleStorage = storage.match?.editThresholdTimeline? storage.match.editThresholdTimeline : false;
+  const expandedRulesetStorage = storage.match?.rulesetExpanded ? storage.match.rulesetExpanded : false;
+  const rulesetToggleStorage = storage.match?.editRulesetTimeline ? storage.match.editRulesetTimeline : false;
+  const thresholdToggleStorage = storage.match?.editThresholdTimeline ? storage.match.editThresholdTimeline : false;
   const rulesetTextStorage = storage.match?.rulesetTextExpanded ? storage.match.rulesetTextExpanded : false;
   const thresholdTextStorage = storage.match?.thresholdTextExpanded ? storage.match.thresholdTextExpanded : false;
   const testRadioStorage = storage.match?.testRadioSelection ? storage.match.testRadioSelection : 1;
@@ -71,7 +71,7 @@ const MatchingStepDetail: React.FC = () => {
   const uriData1Storage = storage.match?.uriTableData1 ? storage.match.uriTableData1 : [];
   const uriData2Storage = storage.match?.uriTableData2 ? storage.match.uriTableData2 : [];
   const inputUriDisabledStorage = storage.match?.hasOwnProperty("inputUriState") ? storage.match?.inputUriState : false;
-  const inputUriDisabled2Storage = storage.match?.hasOwnProperty("inputUri2State") ? storage.match?.inputUri2State  : true;
+  const inputUriDisabled2Storage = storage.match?.hasOwnProperty("inputUri2State") ? storage.match?.inputUri2State : true;
 
   // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
   clearSessionStorageOnRefresh();
@@ -167,31 +167,35 @@ const MatchingStepDetail: React.FC = () => {
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   useEffect(() => {
-      refMatchingRuleset.current! = matchingStep.matchRulesets;
+    refMatchingRuleset.current! = matchingStep.matchRulesets;
   }, [matchingStep]);
 
   useEffect(() => { setColourElementAdded(false); }, [uriContent]);
   useEffect(() => { setColourElementAdded2(false); }, [uriContent2]);
 
   useEffect(() => {
-    setViewSettings({...storage, match: {...storage.match,
-      rulesetExpanded: expandRuleset,
-      editRulesetTimeline: displayRulesetTimeline,
-      editThresholdTimeline: displayThresholdTimeline,
-      rulesetTextExpanded: moreRulesetText,
-      thresholdTextExpanded: moreThresholdText,
-      testRadioSelection: value,
-      previewMatchedDataValue: previewMatchedData,
-      previewMatchedDataActivity: previewMatchedActivity,
-      previewNonMatchedDataValue: previewNonMatchedData,
-      previewNonMatchedDataActivity: previewNonMatchedActivity,
-      uriTestClicked: uriTestMatchClicked,
-      rulesetData: rulesetDataList,
-      rulesetNonMatchedData: rulesetNonMatchedDataList,
-      inputUriState: inputUriDisabled,
-      inputUri2State: inputUriDisabled2,
-      uriTableData1: UriTableData,
-      uriTableData2: UriTableData2}});
+    setViewSettings({
+      ...storage, match: {
+        ...storage.match,
+        rulesetExpanded: expandRuleset,
+        editRulesetTimeline: displayRulesetTimeline,
+        editThresholdTimeline: displayThresholdTimeline,
+        rulesetTextExpanded: moreRulesetText,
+        thresholdTextExpanded: moreThresholdText,
+        testRadioSelection: value,
+        previewMatchedDataValue: previewMatchedData,
+        previewMatchedDataActivity: previewMatchedActivity,
+        previewNonMatchedDataValue: previewNonMatchedData,
+        previewNonMatchedDataActivity: previewNonMatchedActivity,
+        uriTestClicked: uriTestMatchClicked,
+        rulesetData: rulesetDataList,
+        rulesetNonMatchedData: rulesetNonMatchedDataList,
+        inputUriState: inputUriDisabled,
+        inputUri2State: inputUriDisabled2,
+        uriTableData1: UriTableData,
+        uriTableData2: UriTableData2
+      }
+    });
   }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, previewNonMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
 
 
@@ -202,7 +206,7 @@ const MatchingStepDetail: React.FC = () => {
 
   const handlePreviewMatchingActivity = async (testMatchData, previewActivity = previewMatchedActivity, thresholds = curationOptions.activeStep.stepArtifact.thresholds, setDataFunction = setPreviewMatchedData, setActivityFunction = setPreviewMatchedActivity, setDataList = setRulesetDataList) => {
     const test = () => {
-      let localRulesetDataList:any = [];
+      let localRulesetDataList: any = [];
       for (let i = 0; i < thresholds.length; i++) {
         let ruleset = thresholds[i].thresholdName.concat(" - ") + thresholds[i].action;
         let score = thresholds[i].score;
@@ -348,7 +352,19 @@ const MatchingStepDetail: React.FC = () => {
     dataField: "uriValue",
     formatter: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-        <FontAwesomeIcon data-testid={`${text}-delete`} icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg" /></i>
+        <FontAwesomeIcon
+          data-testid={`${text}-delete`}
+          icon={faTrashAlt}
+          className={styles.deleteIcon}
+          onClick={() => handleDeleteUri(key)} size="lg"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleDeleteUri(key);
+            }
+          }}
+        />
+      </i>
       </span>
     ),
     formatExtraData: {UriTableData}
@@ -359,8 +375,21 @@ const MatchingStepDetail: React.FC = () => {
     text: "uriValues",
     dataField: "uriValue",
     formatter: (text, key) => (
-      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-        <FontAwesomeIcon data-testid={`${text}-delete`} icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri2(key)} size="lg"/></i>
+      <span className={styles.tableRow}>{text}
+        <i className={styles.positionDeleteIcon} aria-label="deleteIcon">
+          <FontAwesomeIcon
+            data-testid={`${text}-delete`}
+            icon={faTrashAlt}
+            className={styles.deleteIcon}
+            onClick={() => handleDeleteUri2(key)} size="lg"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleDeleteUri2(key);
+              }
+            }}
+          />
+        </i>
       </span>
     ),
     formatExtraData: {UriTableData2}
@@ -541,7 +570,7 @@ const MatchingStepDetail: React.FC = () => {
     const uris = [arr[0], arr[1]];
     setUris(uris);
 
-    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, arr) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
@@ -703,19 +732,19 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const renderRulesetTimeline = () => {
-    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} borderMargin="0px"/></div>;
+    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} borderMargin="0px" /></div>;
   };
 
   const renderDefaultRulesetTimeline = () => {
-    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} borderMargin="0px"/></div>;
+    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} borderMargin="0px" /></div>;
   };
 
   const renderDefaultThresholdTimeline = () => {
-    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} borderMargin="0px"/></div>;
+    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} borderMargin="0px" /></div>;
   };
 
   const renderThresholdTimeline = () => {
-    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} borderMargin="0px"/></div>;
+    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} borderMargin="0px" /></div>;
   };
 
   const updateThresholdItems = async (id, newvalue) => {
@@ -842,9 +871,35 @@ const MatchingStepDetail: React.FC = () => {
                 The action could be the merging of those entities, the creation of a match notification, or a custom action that is defined programmatically.
                 Click the <span className={styles.bold}>Add</span> button to create a threshold. If most of the values in the entities should match to trigger the action associated with your threshold,
                 then move the threshold higher on the scale. If only some of the values in the entities must match, then move the threshold lower.
-              <span aria-label="threshold-less" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>less</span>
+              {moreThresholdText && <span
+                aria-label="threshold-less"
+                className={styles.link}
+                onClick={() => toggleMoreThresholdText(!moreThresholdText)}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    toggleMoreThresholdText(!moreThresholdText);
+                  }
+                }}
+              >
+                  less
+              </span>}
               </p>
-              {!moreThresholdText && <span aria-label="threshold-more" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>more</span>}
+              {!moreThresholdText &&
+                <span
+                  aria-label="threshold-more"
+                  className={styles.link}
+                  onClick={() => toggleMoreThresholdText(!moreThresholdText)}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      toggleMoreThresholdText(!moreThresholdText);
+                    }
+                  }}
+                >
+                  more
+                </span>
+              }
             </div>
             <div className={styles.addButtonContainer}>
               <HCButton
@@ -861,7 +916,14 @@ const MatchingStepDetail: React.FC = () => {
           <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={displayThresholdTimeline} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
+                <QuestionCircleFill
+                  aria-label="icon: question-circle"
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={styles.scaleTooltip}
+                  data-testid={"info-tooltip-threshold"}
+                  tabIndex={0}
+                />
               </HCTooltip>
               <br />
             </span>
@@ -881,9 +943,37 @@ const MatchingStepDetail: React.FC = () => {
                 The way you define your rulesets, and where you place them on the scale, influences whether the entities are considered a match.
                 Click the <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a major influence over whether entities are qualified as a "match",
                 move it higher on the scale. If you want it to have only some influence, then move the ruleset lower.
-              <span aria-label="ruleset-less" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>less</span>
+              {moreRulesetText &&
+                  <span
+                    aria-label="ruleset-less"
+                    className={styles.link}
+                    onClick={() => toggleMoreRulesetText(!moreRulesetText)}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        toggleMoreRulesetText(!moreRulesetText);
+                      }
+                    }}
+                  >
+                    less
+                  </span>
+              }
               </p>
-              {!moreRulesetText && <span aria-label="ruleset-more" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>more</span>}
+              {!moreRulesetText
+                && <span
+                  aria-label="ruleset-more"
+                  className={styles.link}
+                  onClick={() => toggleMoreRulesetText(!moreRulesetText)}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      toggleMoreRulesetText(!moreRulesetText);
+                    }
+                  }}
+                >
+                  more
+                </span>
+              }
             </div>
             <div
               id="panelActionsMatch"
@@ -899,7 +989,14 @@ const MatchingStepDetail: React.FC = () => {
           <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={displayRulesetTimeline} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={`${styles.scaleTooltip} ps-0`} data-testid={`info-tooltip-ruleset`} />
+                <QuestionCircleFill
+                  aria-label="icon: question-circle"
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={`${styles.scaleTooltip} ps-0`}
+                  data-testid={`info-tooltip-ruleset`}
+                  tabIndex={0}
+                />
               </HCTooltip>
               <br />
             </span></div>
@@ -927,10 +1024,11 @@ const MatchingStepDetail: React.FC = () => {
                 value={1}
                 aria-label={"inputUriOnlyRadio"}
                 className={"mb-0"}
+                tabIndex={0}
               />
               <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
                 <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip><br />
               </span>
               <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -943,7 +1041,18 @@ const MatchingStepDetail: React.FC = () => {
                   disabled={inputUriDisabled}
                   classNameFull={colourElementAdded ? styles.uriInputColor : ""}
                 />
-                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
+                <FontAwesomeIcon
+                  icon={faPlusSquare}
+                  className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon}
+                  onClick={handleClickAddUri}
+                  aria-label="addUriOnlyIcon"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleClickAddUri(e);
+                    }
+                  }}
+                />
               </div>
               {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
               {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
@@ -977,10 +1086,11 @@ const MatchingStepDetail: React.FC = () => {
               value={2}
               aria-label={"inputUriRadio"}
               className={"mb-0"}
+              tabIndex={0}
             />
             <span aria-label="testUriTooltip">
               <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span><br />
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -993,7 +1103,18 @@ const MatchingStepDetail: React.FC = () => {
                 disabled={inputUriDisabled2}
                 classNameFull={colourElementAdded2 ? styles.uriInputColor : ""}
               />
-              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
+              <FontAwesomeIcon
+                icon={faPlusSquare}
+                className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon}
+                onClick={handleClickAddUri2}
+                aria-label="addUriIcon"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleClickAddUri2(e);
+                  }
+                }}
+              />
             </div>
             {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
             {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
@@ -1026,10 +1147,11 @@ const MatchingStepDetail: React.FC = () => {
               value={3}
               aria-label={"allDataRadio"}
               className={"mb-0"}
+              tabIndex={0}
             />
             <span aria-label={"allDataTooltip"}>
               <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span>
             <div aria-label="allDataContent" className={styles.allDataContent}>
@@ -1045,8 +1167,8 @@ const MatchingStepDetail: React.FC = () => {
           }
         </div>
         <div className={styles.matchedTab}>
-          { uriTestMatchClicked ?
-            <Tabs defaultActiveKey={testMatchTab} onSelect={(eventKey) => setTestMatchTab(eventKey ? eventKey:"matched")} className={styles.previewTabs}>
+          {uriTestMatchClicked ?
+            <Tabs defaultActiveKey={testMatchTab} onSelect={(eventKey) => setTestMatchTab(eventKey ? eventKey : "matched")} className={styles.previewTabs}>
               <Tab title="Matched Entities" eventKey="matched">
                 {(previewMatchedData === 0) && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
                   <div className={styles.noMatchedDataContent}>
@@ -1166,7 +1288,7 @@ const MatchingStepDetail: React.FC = () => {
                     ))}
                   </div> : ""}
               </Tab>
-            </Tabs>: ""}
+            </Tabs> : ""}
         </div>
       </div>
       <RulesetSingleModal
