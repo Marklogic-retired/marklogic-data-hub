@@ -19,13 +19,6 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.deleteSavedQueries();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     //clearing all the saved queries

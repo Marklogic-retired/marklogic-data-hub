@@ -22,17 +22,6 @@ describe("json scenario for table on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.resetTestUser();
@@ -40,10 +29,22 @@ describe("json scenario for table on browse documents page", () => {
   });
   it("select \"all entities\" and verify table default columns", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTableView().should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     table.getColumnTitle(2).should("contain", "Identifier");
     table.getColumnTitle(3).should("contain", "Entity Type");
@@ -71,7 +72,6 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
-    cy.saveLocalStorage();
     //check table rows. Validates the records were filtered
     browsePage.getHCTableRows().should("have.length.lt", 52);
     //check table columns

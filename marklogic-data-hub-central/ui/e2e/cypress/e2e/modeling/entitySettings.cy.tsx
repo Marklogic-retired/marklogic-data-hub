@@ -49,13 +49,6 @@ describe("Entity display settings in model tile", () => {
     homePage.getModelCard().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  //login with valid account
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   it("can change entity display settings in model tile and change in explore", () => {
     //TempFix

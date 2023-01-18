@@ -25,15 +25,9 @@ describe("Entity Modeling: Reader Role", () => {
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   //login with valid account
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     cy.visit("/tiles/model");
     cy.wait(2000);
     modelPage.selectView("table");

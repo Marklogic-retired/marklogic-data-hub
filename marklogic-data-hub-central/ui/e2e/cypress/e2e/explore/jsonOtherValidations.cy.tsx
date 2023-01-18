@@ -17,16 +17,6 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.resetTestUser();

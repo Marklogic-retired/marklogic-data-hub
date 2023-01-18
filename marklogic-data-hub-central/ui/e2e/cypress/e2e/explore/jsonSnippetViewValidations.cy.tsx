@@ -18,12 +18,10 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.resetTestUser();

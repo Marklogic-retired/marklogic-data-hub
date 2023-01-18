@@ -32,7 +32,8 @@
   "devDependencies": {
     "@testing-library/cypress": "^6.0.0",
     "chokidar": "^3.5.3",
-    "cypress": "^11.2.0",
+    "cy2": "^4.0.6",
+    "cypress": "^12.3.0",
     "cypress-fail-fast": "^2.3.1",
     "cypress-file-upload": "^5.0.3",
     "cypress-plugin-tab": "^1.0.5",

@@ -24,6 +24,8 @@ describe("login", () => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
     cy.waitForAsyncRequest();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   after(() => {

@@ -19,13 +19,10 @@ describe("Group Nodes", () => {
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   it("Validate group nodes are working correctly in the graph", () => {
     //Graph view

@@ -22,17 +22,11 @@ describe("Validate pagination for the Monitor tile", () => {
 
     cy.log("**Go to the Monitor page**");
     cy.visit("/tiles/monitor");
+  });
 
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
   afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Validate the default amount for pagination it's 20", () => {

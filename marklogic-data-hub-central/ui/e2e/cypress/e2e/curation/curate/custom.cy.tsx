@@ -18,20 +18,7 @@ describe("Custom step settings: ", () => {
     LoginPage.postLogin();
     toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-
   it("Validate step name is disabled, changes are discarded on cancel", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");

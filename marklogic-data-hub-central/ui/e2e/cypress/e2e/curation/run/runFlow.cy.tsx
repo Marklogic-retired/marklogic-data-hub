@@ -16,12 +16,10 @@ describe("Run Tile tests", () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
@@ -244,7 +242,6 @@ describe("Run Tile tests", () => {
 
     cy.log("**loginAsTestUserWithRoles**");
     LoginPage.postLogin();
-    cy.saveLocalStorage();
 
     cy.log("**postLogin**");
     toolbar.getRunToolbarIcon().click();
@@ -303,7 +300,6 @@ describe("Run Tile tests", () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
-    cy.saveLocalStorage();
 
     cy.log("**Go to Run Page**");
     toolbar.getRunToolbarIcon().click();

@@ -339,6 +339,10 @@ class BrowsePage {
     cy.get("#hub-properties .accordion-button").scrollIntoView().should("be.visible").click({force: true});
   }
 
+  getHubProperties() {
+    return cy.get("#hub-properties .accordion-button");
+  }
+
   // common
   //table, facet view
   clickFacetView() {
@@ -436,7 +440,7 @@ class BrowsePage {
   }
 
   getTableCell(rowIndex: number, columnIndex: number) {
-    return cy.get(`.hc-table_row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
+    return cy.get(`tbody > :nth-child(${rowIndex}) > :nth-child(${columnIndex})`).invoke("text");
   }
 
   getColumnSelectorIcon() {

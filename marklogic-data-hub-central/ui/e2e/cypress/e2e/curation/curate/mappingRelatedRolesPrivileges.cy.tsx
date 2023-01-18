@@ -12,7 +12,6 @@ describe("Mapping", () => {
     cy.visit("/");
     cy.waitForAsyncRequest();
   });
-
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();

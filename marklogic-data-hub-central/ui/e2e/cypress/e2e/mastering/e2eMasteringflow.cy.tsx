@@ -36,16 +36,10 @@ describe("Validate E2E Mastering Flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -348,6 +342,12 @@ describe("Validate E2E Mastering Flow", () => {
   it("Create a new merge step ", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
+    curatePage.getEntityTypePanel("Patient").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Patient");
+      }
+    });
     curatePage.selectMergeTab("Patient");
     curatePage.addNewStep("Patient").should("be.visible").click();
     createEditStepDialog.stepNameInput().clear().type(mergeStep, {timeout: 2000});
@@ -400,6 +400,12 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.goBackToCurateHomePage();
   });
   it("Add Merge step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
+    curatePage.getEntityTypePanel("Patient").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Patient");
+      }
+    });
     curatePage.selectMergeTab("Patient");
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");

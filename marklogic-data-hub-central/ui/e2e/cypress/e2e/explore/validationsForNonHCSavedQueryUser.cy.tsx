@@ -15,19 +15,17 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   it("verifies user without hub-central-saved-query-user role can explore data", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
   });
   it("verifies user without hub-central-saved-query-user can not save query", () => {
     browsePage.getSaveQueriesDropdown().should("exist");

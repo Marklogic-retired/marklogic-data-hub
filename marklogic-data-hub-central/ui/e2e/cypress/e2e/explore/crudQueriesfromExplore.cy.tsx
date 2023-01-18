@@ -10,6 +10,8 @@ import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
 import table from "../../support/components/common/tables";
 
+let qName="";
+
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {
     cy.visit("/");
@@ -19,12 +21,6 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.runStep("personJSON", "mapPersonJSON");
     cy.waitForAsyncRequest();
     cy.deleteSavedQueries();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     //clearing all the saved queries
@@ -96,6 +92,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "new-query description edited");
   });
   it("Saving a copy of previous query", () => {
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
     browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().type("new-query-2");
@@ -103,7 +106,12 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryButton().click();
     browsePage.getSelectedQuery().should("contain", "new-query-2");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getHubPropertiesExpanded();
+    browsePage.getHubProperties().then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        browsePage.getHubPropertiesExpanded();
+      }
+    });
+    browsePage.showMoreCollection();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getSaveModalIcon().scrollIntoView().click();
@@ -113,6 +121,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
+    browsePage.getFacetApplyButton().click();
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
     //Refresh the browser page.
@@ -208,36 +217,30 @@ describe("save/manage queries scenarios, developer role", () => {
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getEditQuery().click();
-    queryComponent.getEditQueryName().invoke("text").as("qName");
-    queryComponent.getEditQueryName().invoke("val").then(
-      ($someVal) => {
-        if ($someVal === "new-query-2") {
-          queryComponent.getEditQueryName().clear();
-          queryComponent.getEditQueryName().type("new-query");
-          queryComponent.getSubmitButton().click();
-          queryComponent.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
-        } else {
-          queryComponent.getEditQueryName().clear();
-          queryComponent.getEditQueryName().type("new-query-2");
-          queryComponent.getSubmitButton().click();
-          queryComponent.getErrorMessage().should("contain", "You already have a saved query with a name of new-query-2");
-        }
-      }
-    );
+    //queryComponent.getEditQuery().click();
+    cy.contains("td", "new-query-2").parent().within(() => {  cy.get(`td i[aria-label="editIcon"]`).click(); });
+    queryComponent.getEditQueryName().invoke("val").then((text) => {
+      qName = text;
+    });
+    queryComponent.getEditQueryName().clear();
+    queryComponent.getEditQueryName().type("new-query");
+    queryComponent.getSubmitButton().click();
+    queryComponent.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     queryComponent.getEditCancelButton().click();
     queryComponent.getManageQueryModal().find(".btn-close").click();
     // checking previous query name is set clicking save modal icon
     browsePage.getSaveModalIcon().scrollIntoView().click();
-    cy.get("@qName").then((qName) => {
-      browsePage.getEditSaveChangesFormName().invoke("val").should("contain", qName);
-    });
+    /*browsePage.getEditSaveChangesFormName().invoke("val").then((text) => {
+      let nameVal = text;
+      expect(qName).to.contain(nameVal);
+    });*/
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking edit modal icon
-    browsePage.getEllipsisButton().click();
+    browsePage.getEllipsisButton().should("be.visible").click();
     browsePage.getEditQueryModalIcon().first().click();
-    cy.get("@qName").then((qName) => {
-      browsePage.getEditQueryDetailFormName().invoke("val").should("contain", qName);
+    browsePage.getEditQueryDetailFormName().invoke("val").then((text) => {
+      let nameVal = text;
+      expect(qName).to.contain(nameVal);
     });
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon

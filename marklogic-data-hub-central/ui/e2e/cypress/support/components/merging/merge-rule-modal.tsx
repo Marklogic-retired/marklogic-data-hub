@@ -84,6 +84,10 @@ class MergeRuleModal {
   maxSourcesOtherRadio() {
     return cy.findByLabelText("maxSourcesOtherRadio");
   }
+
+  mergeRuleClick (value: string) {
+    cy.get("#property-name-link").contains(value).click();
+  }
 }
 
 const mergeRuleModal = new MergeRuleModal();

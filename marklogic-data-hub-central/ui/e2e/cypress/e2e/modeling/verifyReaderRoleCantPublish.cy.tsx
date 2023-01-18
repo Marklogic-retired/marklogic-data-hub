@@ -29,6 +29,10 @@ describe("Entity Modeling: Graph View", () => {
     cy.setupHubCentralConfig();
 
   });
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities(entityName);

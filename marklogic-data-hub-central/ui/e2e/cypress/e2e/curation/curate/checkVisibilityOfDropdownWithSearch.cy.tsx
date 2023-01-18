@@ -18,12 +18,6 @@ describe("Check visibility of dropdown with search in mapping step details table
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

@@ -44,14 +44,9 @@ describe("Entity Type Settings Modal", () => {
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
 
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
     cy.visit("/");
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click({force: true});

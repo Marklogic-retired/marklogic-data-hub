@@ -32,5 +32,6 @@ module.exports = defineConfig({
     experimentalRunAllSpecs: true,
     specPattern: ["cypress/e2e/*/*/*.cy.{js,jsx,ts,tsx}", "cypress/e2e/*/*.cy.{js,jsx,ts,tsx}"],
     excludeSpecPattern: ["cypress/e2e/explore/graphFocusDefocusCluster.cy.tsx"],
+    testIsolation: false
   },
 });

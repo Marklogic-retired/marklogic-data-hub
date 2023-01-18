@@ -20,14 +20,10 @@ describe("Entity Modeling: Graph View", () => {
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  //login with valid account
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

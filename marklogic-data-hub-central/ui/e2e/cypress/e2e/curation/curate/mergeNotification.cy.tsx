@@ -14,12 +14,6 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -114,8 +108,17 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     runPage.closeFlowStatusModal("personJSON");
   });
   it("Navigate to Explore tile All Data View", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
     explorePage.getAllDataButton().click();
+    browsePage.waitForSpinnerToDisappear();
     cy.log("**filter for notification collection and verify merge icon**");
     explorePage.scrollSideBarBottom();
     browsePage.getCollectionPopover().scrollIntoView().click({force: true});
