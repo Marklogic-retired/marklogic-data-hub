@@ -23,7 +23,6 @@ describe("Monitor Tile", () => {
   beforeEach(() => {
     //Restoring Local Storage to Preserve Session
     cy.restoreLocalStorage();
-    //cy.wrap(idJob).as('idJob');
   });
   afterEach(() => {
     // update local storage

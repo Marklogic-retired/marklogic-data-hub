@@ -42,7 +42,8 @@ describe("Leaf Nodes", () => {
     cy.wait(2000);
 
     graphExplore.fit();
-    cy.log("**Clicking Show related on '101' leaf node to expand**");
+  });
+  it("Clicking Show related on '101' leaf node to expand", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
@@ -55,23 +56,23 @@ describe("Leaf Nodes", () => {
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
-
+  });
+  it("Right click and expand the remaining records of the node", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand the remaining records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.clickShowRelated();
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
-
-    // TODO: COMMENTED SINCE WE NEED TO PERFORM A CLICK AND HOVER TO MAKE THE TOOLTIP APPEARS
-    // AND THAT COLLAPSES THE PRODUCT NODE, AND THE LEAF NODE DISAPPEARS
-    // Wait needed for the graph to get stabilized
-    /*cy.wait(2000);
+  });
+  // TODO: COMMENTED SINCE WE NEED TO PERFORM A CLICK AND HOVER TO MAKE THE TOOLTIP APPEARS
+  // AND THAT COLLAPSES THE PRODUCT NODE, AND THE LEAF NODE DISAPPEARS
+  // Wait needed for the graph to get stabilized
+  /*cy.wait(2000);
     cy.log("**Click the product node and check tooltip text to ensure it's the right node**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
@@ -86,7 +87,7 @@ describe("Leaf Nodes", () => {
 
     });*/
 
-    cy.log("**Clicking collapse all records**");
+  it("Clicking collapse all records", () => {
     cy.wait(3000); //wait for graph to stabilize
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
@@ -105,7 +106,8 @@ describe("Leaf Nodes", () => {
     // Wait needed for the graph to get stabilized
     cy.wait(2000);
     graphView.physicsAnimationToggle();
-    cy.log("**Try opening the Product Node to make sure it's was collapsed**");
+  });
+  it("Try opening the Product Node to make sure it's was collapsed", () => {
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
@@ -113,8 +115,8 @@ describe("Leaf Nodes", () => {
       cy.log("**Coordinates should not exist because it was collapsed**");
       expect(orderCoordinates).to.be.undefined;
     });
-
-    cy.log("**Verify if concepts leaf can be expanded properly. Select 'Product' entity**");
+  });
+  it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
     browsePage.removeBaseEntity("Customer");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
@@ -141,8 +143,8 @@ describe("Leaf Nodes", () => {
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
-
-    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
+  });
+  it("Verify expanded node leaf node is expanded and expanded node is visible in the canvas", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];

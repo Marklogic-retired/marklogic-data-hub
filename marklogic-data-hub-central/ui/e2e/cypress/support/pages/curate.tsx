@@ -201,7 +201,7 @@ class CuratePage {
   }
 
   deleteConfirmation(option: string) {
-    return cy.findByLabelText(option);
+    return cy.get(".modal-content button").contains(option);
   }
 
   addStepToFlowConfirmationMessage() {

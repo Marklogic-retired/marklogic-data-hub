@@ -53,8 +53,8 @@ describe("Matching", () => {
     cy.resetTestUser();
   });
   it("Navigate to curate tab and Open Product Detail entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("ProductDetail").should("be.visible"));
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("ProductDetail").should("be.visible");
     curatePage.toggleEntityTypeId("ProductDetail");
     cy.findByLabelText("mappingNoTitleDisplay").should("be.visible");
     curatePage.selectMatchTab("ProductDetail");
@@ -63,11 +63,11 @@ describe("Matching", () => {
     cy.findByLabelText("mergingNoTitleDisplay").should("be.visible");
   });
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
-    cy.waitUntil(() => curatePage.addNewStep("Customer"));
+    curatePage.addNewStep("Customer");
   });
   it("Create a new match step with a collection and review the preloaded value", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
@@ -154,7 +154,7 @@ describe("Matching", () => {
     thresholdModal.selectActionDropdown("Merge");
     thresholdModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByText("test - merge").should("have.length.gt", 0));
+    cy.findByText("test - merge").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("test", "merge").should("be.visible");
   });
   it("Edit threshold Property to Match", () => {
@@ -164,7 +164,7 @@ describe("Matching", () => {
     thresholdModal.setThresholdName("testing");
     thresholdModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByText("testing - merge").should("have.length.gt", 0));
+    cy.findByText("testing - merge").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("testing", "merge").should("be.visible");
   });
   it("Edit threshold Match Type", () => {
@@ -173,7 +173,7 @@ describe("Matching", () => {
     thresholdModal.saveButton().click();
     thresholdModal.getModalDialog().should("not.exist");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByText("testing - notify").should("have.length.gt", 0));
+    cy.findByText("testing - notify").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("testing", "notify").should("be.visible");
   });
   //TODO: Will be handled as part of DHFPROD-7815
@@ -190,7 +190,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("customerId - Exact").should("have.length.gt", 0));
+    cy.contains("customerId - Exact").should("have.length.gt", 0);
     multiSlider.getRulesetHandleNameAndType("customerId", "Exact").should("exist");
     //multiSlider.getHandleName("customerId").should("be.visible");
   });
@@ -209,9 +209,8 @@ describe("Matching", () => {
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("email - Exact").should("have.length.gt", 0));
+    cy.contains("email - Exact").should("have.length.gt", 0);
     multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
-    //multiSlider.getHandleName("email").should("be.visible");
   });
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
     multiSlider.getHandleName("email").trigger("mousedown", {force: true});
@@ -227,7 +226,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("shipping.street - Exact").should("have.length.gt", 0));
+    cy.contains("shipping.street - Exact").should("have.length.gt", 0);
     multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("be.visible");
     //multiSlider.getHandleName("shipping.street").should("be.visible");
   });
@@ -246,7 +245,7 @@ describe("Matching", () => {
     rulesetMultipleModal.selectMatchTypeDropdown("customerId", "exact");
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0));
+    cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0);
     //multiSlider.getHandleName("customerMultiplePropertyRuleset").should("be.visible");
   });
   it("Edit ruleset with multiple properties", () => {
@@ -260,14 +259,14 @@ describe("Matching", () => {
     rulesetMultipleModal.selectMatchTypeDropdown("email", "zip");
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0));
+    cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0);
   });
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("shipping.street", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("shipping.street", "Exact");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByTestId("rulesetName-testing-shipping.street - Exact").should("have.length", 0));
+    cy.findByTestId("rulesetName-testing-shipping.street - Exact").should("have.length", 0);
     multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("shipping.street", "Exact").should("not.exist");
   });
@@ -276,7 +275,7 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("email", "Exact");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByTestId("rulesetName-testing-email - Exact").should("have.length", 0));
+    cy.findByTestId("rulesetName-testing-email - Exact").should("have.length", 0);
     //multiSlider.getHandleName("email").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email").should("not.exist");
   });
@@ -285,7 +284,7 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteMulti("customerMultiplePropertyRuleset");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByTestId("rulesetName-testing-customerMultiplePropertyRuleset").should("have.length", 0));
+    cy.findByTestId("rulesetName-testing-customerMultiplePropertyRuleset").should("have.length", 0);
     multiSlider.getHandleName("customerMultiplePropertyRuleset").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRulesetMulti("customerMultiplePropertyRuleset").should("not.exist");
   });
@@ -294,7 +293,7 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteThreshold("testing");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByLabelText("rulesetName-testing-notify").should("have.length", 0));
+    cy.findByLabelText("rulesetName-testing-notify").should("have.length", 0);
     multiSlider.getHandleName("testing").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "notify").should("not.exist");
   });
@@ -304,7 +303,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.contains("customerId - Exact").should("have.length.gt", 0));
+    cy.contains("customerId - Exact").should("have.length.gt", 0);
   });
   it("Delete ruleset", () => {
     multiSlider.deleteOption("customerId", "Exact");
@@ -312,16 +311,23 @@ describe("Matching", () => {
     multiSlider.confirmDelete("customerId", "Exact");
     cy.waitForAsyncRequest();
     cy.findByLabelText("noMatchedCombinations").scrollIntoView().trigger("mouseover");
-    cy.waitUntil(() => cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0));
+    cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0);
     //multiSlider.getHandleName("customerId").should("not.exist");
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
-    cy.waitUntil(() => cy.visit("/tiles"));
+    cy.visit("/tiles");
+    cy.waitForAsyncRequest();
   });
   it("Edit test match URIs", () => {
     cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
 
     cy.log("**Open Person mapping steps**");
-    curatePage.getEntityTypePanel("Person").should("be.visible").click();
+    curatePage.getEntityTypePanel("Person").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Person");
+      }
+    });
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
 
@@ -332,10 +338,14 @@ describe("Matching", () => {
 
     // to test validation checks when user selects test among URIs only radio
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().clear().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
@@ -356,6 +366,8 @@ describe("Matching", () => {
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByText("At least one URI is required.").should("be.visible");
     matchingStepDetail.getUriInputField().clear().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
@@ -398,27 +410,33 @@ describe("Matching", () => {
     cy.log("**Test when user clicks on test button after adding/deleting URI's in 'Test Uris'**");
     matchingStepDetail.getUriOnlyRadio().click();
     for (let i = 0; i < 2; i++) {
-      cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]));
+      matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]);
       matchingStepDetail.getAddUriOnlyIcon().click();
     }
     //test two truthy URI matches
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
     cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
     cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
 
     //delete one and test two faulty URI matches
-    matchingStepDetail.getUriDeleteIcon().last().click();
-    cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/faulty-metaphone.json"));
+    matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
+    matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/faulty-metaphone.json");
     matchingStepDetail.getAddUriOnlyIcon().click();
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
 
     //test two truthy URI matches again
-    matchingStepDetail.getUriDeleteIcon().last().click();
-    cy.waitUntil(() => matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/first-name-double-metaphone2.json"));
+    matchingStepDetail.getUriDeleteIcon().last().scrollIntoView().click();
+    matchingStepDetail.getUriOnlyInputField().clear().type("/json/persons/first-name-double-metaphone2.json");
     matchingStepDetail.getAddUriOnlyIcon().click();
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
     cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[0].ruleName).should("have.length.gt", 0);
     cy.findByText("(Threshold: " + uriMatchedResults[0].threshold + ")").should("have.length.gt", 0);
@@ -426,22 +444,24 @@ describe("Matching", () => {
     //To test when users click on test button and no data is returned
     cy.log("**To test when users click on test button and no data is returned**");
     cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000}).click();
-    cy.waitUntil(() => matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri"));
+    matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri");
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
     matchingStepDetail.getUriDeleteIcon().click();
 
     //To test when user enters uris and click on test button
     for (let i in uris) {
-      cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(uris[i]));
+      matchingStepDetail.getUriInputField().clear().type(uris[i]);
       matchingStepDetail.getAddUriIcon().click();
     }
 
     //To test if correct uri is deleted when clicked on delete button
     cy.log("**To test if correct uri is deleted when clicked on delete uri button**");
     for (let i in urisDummy) {
-      cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(urisDummy[i]));
+      matchingStepDetail.getUriInputField().clear().type(urisDummy[i]);
       matchingStepDetail.getAddUriIcon().click();
     }
 
@@ -477,7 +497,7 @@ describe("Matching", () => {
     cy.wait(1000);
     cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).scrollIntoView().click();
     for (let k in urisMerged) {
-      cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));
+      cy.findAllByText(urisMerged[k]).should("have.length.gt", 0);
     }
 
     // To test when user click on expand all icon
@@ -494,10 +514,10 @@ describe("Matching", () => {
     // To verify content of multiple properties
     cy.log("**To verify content of multiple properties**");
     cy.findAllByLabelText("Expand row").first().scrollIntoView().click();
-    cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
+    cy.findAllByText("lname").should("have.length.gt", 0);
+    cy.findByLabelText("exact 0").should("have.length.gt", 0);
+    cy.findAllByText("ZipCode").should("have.length.gt", 0);
+    cy.findByLabelText("zip 1").should("have.length.gt", 0);
 
     // To test compare values for matched Uris
     cy.log("**To test compare values for matched Uris**");
@@ -518,7 +538,7 @@ describe("Matching", () => {
 
     // To test expanded uri table content
     cy.log("**To test expanded uri table content**");
-    cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click());
+    cy.findAllByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click();
     for (let i in allDataMatchedResults) {
       cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
       cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);

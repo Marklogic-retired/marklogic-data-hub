@@ -80,6 +80,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getNoRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();
     propertyModal.getSubmitButton().click();
+    cy.waitForAsyncRequest();
     propertyTable.getProperty("address-street"); // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");

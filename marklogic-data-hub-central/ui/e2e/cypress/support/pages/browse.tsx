@@ -12,6 +12,7 @@ class BrowsePage {
   // Can be moved to a common components
   waitForSpinnerToDisappear() {
     cy.waitUntil(() => this.getSpinner().should("have.length", 0, {timeout: 30000}));
+    cy.waitForAsyncRequest();
   }
 
   // Common table
@@ -334,8 +335,8 @@ class BrowsePage {
 
   // common
   getHubPropertiesExpanded() {
-    cy.wait(500);
-    cy.get("#hub-properties .accordion-button").click({force: true});
+    cy.wait(1000);
+    cy.get("#hub-properties .accordion-button").scrollIntoView().should("be.visible").click({force: true});
   }
 
   // common
@@ -364,23 +365,19 @@ class BrowsePage {
   // common
   clickTableView() {
     cy.wait(1500);
-    return cy.get("[data-cy=table-view]").click({force: true});
-  }
-  // common
-  clickSwitchToTableView() {
-    return cy.get("#tableView").click();
+    return this.getTableView().click({force: true});
   }
 
   // common
   clickGraphView() {
-    this.getGraphView().click();
+    this.getGraphView().click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
 
   // common
   clickSnippetView() {
-    return this.getSnippetView().click();
+    return this.getSnippetView().click({force: true});
   }
 
   // common

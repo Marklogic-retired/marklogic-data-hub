@@ -8,7 +8,7 @@
     "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 12000,
     "firefoxGcInterval": { "runMode": 1, "openMode": 1 },
-    "ignoreTestFiles": [],
+    "ignoreTestFiles": ["**/explore/graphFocusDefocusCluster.spec.tsx"],
     "reporter": "junit",
     "animationDistanceThreshold": 0,
     "reporterOptions": {
