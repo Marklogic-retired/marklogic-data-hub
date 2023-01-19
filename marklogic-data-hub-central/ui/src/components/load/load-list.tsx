@@ -130,7 +130,7 @@ const LoadList: React.FC<Props> = (props) => {
     handleStepAdd(obj.loadName, obj.flowName);
   }
 
-  const handleTableChange = (type, sorter: {columnKey: string; order: string}) => {
+  const handleTableChange = (type, sorter: { columnKey: string; order: string }) => {
     setSortedInfo({columnKey: sorter.columnKey, order: sorter.order});
   };
 
@@ -295,7 +295,7 @@ const LoadList: React.FC<Props> = (props) => {
                   stepDefinitionType: "ingestion",
                   existingFlow: false
                 }
-              }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
+              }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow} />New flow</div></Link>
           </Col>
         </Row>
       </Modal.Body>
@@ -370,7 +370,7 @@ const LoadList: React.FC<Props> = (props) => {
 
   const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -379,19 +379,21 @@ const LoadList: React.FC<Props> = (props) => {
   const addToFlow = (name) => (
     <Dropdown align="end" className="d-inline" autoClose="outside">
       <Dropdown.Toggle
-        as="span"
-        aria-label="user-dropdown">
-        { props.canWriteFlow ?
+        className="addToFlowBtn"
+        tabIndex={-1}
+        aria-label="user-dropdown"
+      >
+        {props.canWriteFlow ?
           <HCTooltip id="add-to-flow-tooltip" text={"Add to Flow"} placement="bottom">
-            <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"}></span>
+            <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"} tabIndex={0}></span>
           </HCTooltip>
           :
           <HCTooltip id="missing-permission-tooltip" text={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltip}>
             <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span>
           </HCTooltip>}
       </Dropdown.Toggle>
-      <Dropdown.Menu className={styles.dropdownMenu}>
-        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0" as="div">
+      <Dropdown.Menu className={styles.dropdownMenu} >
+        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0" as="div" tabIndex={-1}>
           {<Link data-testid="link" id="tiles-run-add" to={
             {
               pathname: "/tiles/run/add",
@@ -404,9 +406,9 @@ const LoadList: React.FC<Props> = (props) => {
                 sortOrderInfo: sortedInfo,
                 existingFlow: false
               }
-            }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
+            }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`} tabIndex={-1}>Add step to a new flow</div></Link>}
         </Dropdown.Item>
-        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="1" key="1">
+        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="1" key="1" tabIndex={-1}>
           <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
             <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
               <Select
@@ -421,6 +423,7 @@ const LoadList: React.FC<Props> = (props) => {
                 aria-label={`${name}-flowsList`}
                 options={flowOptions}
                 styles={reactSelectThemeConfig}
+                openMenuOnFocus
                 formatOptionLabel={({value, label}) => {
                   return (
                     <span aria-label={value}>
@@ -471,7 +474,7 @@ const LoadList: React.FC<Props> = (props) => {
         <><span data-testid="loadTableName">Name</span>{sortElement}</>
       ),
       formatter: (text: any, record: any) => (
-        <span><span onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
+        <span><span tabIndex={0} onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
       ),
       sortFunc: columnSorter,
     },
@@ -534,27 +537,27 @@ const LoadList: React.FC<Props> = (props) => {
           {props.canReadWrite ?
             <HCTooltip text="Run" id="run-action-tooltip" placement="bottom">
               <i aria-label="icon: run">
-                <PlayCircleFill size={27} className={styles.runIcon} data-testid={row.name + "-run"} onClick={() => handleStepRun(row.name)}/>
+                <PlayCircleFill size={27} tabIndex={0} className={styles.runIcon} data-testid={row.name + "-run"} onClick={() => handleStepRun(row.name)} onKeyDown={(event) => { handleIconsEvent(event, "R", row); }} />
               </i>
             </HCTooltip> :
             <HCTooltip text={"Run: " + SecurityTooltips.missingPermission} id="disabled-run-action-tooltip" placement="bottom">
               <i role="disabled-run-load-list button" data-testid={row.name + "-disabled-run"}>
-                <PlayCircleFill size={27} onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/>
+                <PlayCircleFill tabIndex={0} size={27} onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon} />
               </i>
             </HCTooltip>
           }
           {addToFlow(row.name)}
           {/* <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip> */}
-                    &nbsp;
+          &nbsp;
           {props.canReadWrite ?
             <HCTooltip text="Delete" id="delete-action-tooltip" placement="bottom">
               <i aria-label="icon: delete">
-                <FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-delete"} onClick={() => { showDeleteConfirm(row.name); }} className={styles.deleteIcon} size="lg" />
+                <FontAwesomeIcon tabIndex={0} icon={faTrashAlt} data-testid={row.name + "-delete"} onClick={() => { showDeleteConfirm(row.name); }} onKeyDown={(event) => { handleIconsEvent(event, "D", row); }} className={styles.deleteIcon} size="lg" />
               </i>
             </HCTooltip> :
             <HCTooltip text={"Delete: " + SecurityTooltips.missingPermission} id="disabled-delete-action-tooltip" placement="bottom">
               <i aria-label="icon: delete">
-                <FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg" />
+                <FontAwesomeIcon tabIndex={0} icon={faTrashAlt} data-testid={row.name + "-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg" />
               </i>
             </HCTooltip>
           }
@@ -570,6 +573,14 @@ const LoadList: React.FC<Props> = (props) => {
 
   const handlePageSizeChange = (pageSize, current) => {
     setPageSize(current, pageSize);
+  };
+
+  const handleIconsEvent = (event, action, row?) => {
+    if (action === "R") {
+      if (event.key === "Enter" || event.key === " ") { handleStepRun(row.name); }
+    } else {
+      if (event.key === "Enter" || event.key === " ") { showDeleteConfirm(row.name); }
+    }
   };
 
   return (

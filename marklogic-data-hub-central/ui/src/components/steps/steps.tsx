@@ -321,14 +321,14 @@ const Steps: React.FC<Props> = (props) => {
         <div className="tabs-container">
           <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange} className={"ms-auto me-5"}>
             <Tab title={(
-              <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Basic</span></HCTooltip>
-            )} key="1" eventKey="1" disabled={!isValid && currentTab !== "1"}>
+              <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span tabIndex={0}>Basic</span></HCTooltip>
+            )}  eventKey="1" disabled={!isValid && currentTab !== "1"}>
               <TabPane mountOnEnter={false}>
                 {getCreateEditStep(props.activityType)}
               </TabPane>
             </Tab>
             <Tab title={(
-              <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span>Advanced</span></HCTooltip>
+              <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span tabIndex={0}>Advanced</span></HCTooltip>
             )} key="2" eventKey="2" disabled={!isValid && currentTab !== "2"}>
               <TabPane>
                 <AdvancedSettings
