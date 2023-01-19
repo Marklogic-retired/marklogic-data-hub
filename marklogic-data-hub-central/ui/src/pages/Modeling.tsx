@@ -10,7 +10,7 @@ import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
 import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, deleteConceptClass, conceptClassReferences} from "@api/modeling";
-import {UserContext} from "@util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
 import {AuthoritiesContext} from "@util/authorities";
@@ -254,6 +254,12 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const resetCurateTabs = () => {
+    let viewSettings = getViewSettings();
+    viewSettings.curateTile = {activeAccordeon: [], activeTabs: []};
+    setViewSettings(viewSettings);
+  };
+
   const editConceptClassDescription = (conceptClassName: string, conceptClassDescription: string, conceptClassColor: string, conceptClassIcon: string) => {
     if (canWriteEntityModel) {
       toggleIsEditConceptClassModal(true);
@@ -270,6 +276,7 @@ const Modeling: React.FC = () => {
       publishDraftModelToServer();
     } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntity) {
       deleteEntityFromServer();
+      resetCurateTabs();
     } else if (confirmType === ConfirmationType.DeleteConceptClass) {
       deleteConceptClassFromServer();
     } else if (confirmType === ConfirmationType.RevertChanges) {
