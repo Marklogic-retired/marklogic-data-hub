@@ -755,7 +755,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                   isForMerge={true}
                   propertyDropdownOptions={entityTypeDefinition?.properties}
                   entityDefinitionsArray={definitions}
-                  value={selectedEntityPropOnHover?.length ? selectedEntityPropOnHover.map(property => property.replaceAll(".", " > ")) : undefined}
+                  value={selectedEntityPropOnHover?.length ? selectedEntityPropOnHover.map(property => property.replace(/\./g, " > ")) : undefined}
                   onValueSelected={handlePropertiesOnHoverChange}
                   multiple={true}
                   identifier={modelingOptions.selectedEntity}
