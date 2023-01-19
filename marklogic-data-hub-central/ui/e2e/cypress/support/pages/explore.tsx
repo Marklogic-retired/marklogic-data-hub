@@ -73,7 +73,7 @@ class ExplorePage {
     cy.wait(6000);
   }
   getFinalDatabaseButton() {
-    cy.get(`[aria-label="switch-database-final"] ~ label`).click();
+    cy.get(`[aria-label="switch-database-final"] ~ label`).scrollIntoView().click();
     // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
     // cy.wait("@entitySearchFinal");
     //tried intercept + wait on request but didn't work. Leaving comment as reference

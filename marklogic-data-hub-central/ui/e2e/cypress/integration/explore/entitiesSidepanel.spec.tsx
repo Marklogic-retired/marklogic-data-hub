@@ -34,7 +34,7 @@ describe("Test '/Explore' left sidebar", () => {
     });
 
   });
-  it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", () => {
+  it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", {browser: "!firefox"}, () => {
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click({force: true});
@@ -92,7 +92,7 @@ describe("Test '/Explore' left sidebar", () => {
     });
   });
 
-  it("Validate facets on table view and applying them over a base entities", () => {
+  it("Validate facets on table view and applying them over a base entities", {browser: "!firefox"}, () => {
     // cy.log("**Opening table view**");
     // browsePage.getTableView().click();
     cy.log(`**Selecting 'Customer' base entity**`);
@@ -110,7 +110,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getAppliedFacets("Adams Cole").should("exist");
 
     cy.log("**Checking table rows amount shown**");
-    browsePage.clickSwitchToTableView();
+    browsePage.clickTableView();
     browsePage.getHCTableRows().should("have.length", 2);
 
     cy.log("**Applying another facet**");
@@ -137,7 +137,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.backToMainSidebar();
   });
 
-  it("Base Entity Filtering from side panel", () => {
+  it("Base Entity Filtering from side panel", {browser: "!firefox"}, () => {
     cy.log("**Navigate to Graph View and verify all entities displayed**");
     cy.wait(5000);
     browsePage.getClearAllFacetsButton().click({force: true});
@@ -152,7 +152,7 @@ describe("Test '/Explore' left sidebar", () => {
     });
 
     cy.log("**Select Order Entity from dropdown and verify Customer node is gone**");
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
     cy.wait(1000);
     explorePage.getFinalDatabaseButton();

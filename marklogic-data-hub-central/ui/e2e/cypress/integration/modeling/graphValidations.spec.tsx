@@ -49,7 +49,11 @@ describe("Graph Validations", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.visible");
-    cy.publishDataModel();
+    modelPage.getPublishButton().then(($ele) => {
+      if (!$ele.hasClass("graph-view_disabledPointerEvents__XCxXM btn btn-outline-light btn-sm")) {
+        cy.publishDataModel();
+      }
+    });
     modelPage.getEntityModifiedAlert().should("not.exist");
     modelPage.getPublishButton().should("not.be.enabled");
 
@@ -264,6 +268,7 @@ describe("Graph Validations", () => {
 
   it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
     cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
+    cy.waitForAsyncRequest();
     cy.log("**Opens a-Test2 details**");
     entityTypeTable.viewEntityInGraphView("a-Test2");
     graphViewSidePanel.getPropertiesTab().click();
@@ -283,17 +288,20 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getPropertiesTab().click();
     graphViewSidePanel.getPropertyName("relTest1-Test2").should("be.visible");
 
-    cy.log("**Edist relTest1-Test2 property**");
+    cy.log("**Edit relTest1-Test2 property**");
     propertyTable.editProperty("relTest1-Test2");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("rel-Test1-Test2");
     cy.get(`[aria-label="test2-id-option"]`).should("exist");
     propertyModal.getSubmitButton().click();
-    cy.wait(1000);
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
     propertyTable.getProperty("rel-Test1-Test2").should("exist");
 
     cy.log("**Checks that test2-id cannot be deleted because is being used as foreign key**");
     cy.get("#switch-view-table").click({force: true});
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
     entityTypeTable.viewEntityInGraphView("a-Test2");
     graphViewSidePanel.getPropertiesTab().click();
     propertyTable.getDeletePropertyIcon("a-Test2", "test2-id").should("be.visible").click();

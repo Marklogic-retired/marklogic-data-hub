@@ -155,7 +155,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       if (props.uriInfo) {
         property1 = props.uriInfo[0]["result1Instance"][activeEntityName];
         property2 = props.uriInfo[1]["result2Instance"][activeEntityName];
-        previewValues = props.uriInfo[2]["previewInstance"][activeEntityName];
+        previewValues = props.uriInfo[props.uriInfo.length - 1]["previewInstance"][activeEntityName];
       }
       if (property.datatype === "structured") {
         const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys, allParentKeys, propertyPath, indexArray?: number, localParentKey?: string) => {

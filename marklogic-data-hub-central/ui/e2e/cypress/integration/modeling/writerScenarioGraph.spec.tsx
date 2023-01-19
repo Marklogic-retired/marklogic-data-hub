@@ -17,7 +17,6 @@ import {confirmationModal, toolbar} from "../../support/components/common/index"
 import {ConfirmationType} from "../../support/types/modeling-types";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
-import table from "../../support/components/common/tables";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Graph View", () => {
@@ -53,28 +52,27 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
-    entityTypeModal.newEntityName("ThisIsVeryLongNameHavingMoreThan20Characters");
+    entityTypeModal.newEntityName("AThisIsVeryLongNameHavingMoreThan20Characters");
     entityTypeModal.newEntityDescription("entity description");
     cy.waitUntil(() => entityTypeModal.getAddButton().click());
     cy.waitForAsyncRequest();
     entityTypeModal.getAddButton().should("not.exist");
-    cy.scrollTo("bottom");
-    table.scrollToFooter();
-    entityTypeTable.viewEntityInGraphView("ThisIsVeryLongNameHavingMoreThan20Characters");
+    cy.scrollTo("top");
+    entityTypeTable.viewEntityInGraphView("AThisIsVeryLongNameHavingMoreThan20Characters");
     cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let longNameCoordinates: any = nodePositions["ThisIsVeryLongNameHavingMoreThan20Characters"];
+      let longNameCoordinates: any = nodePositions["AThisIsVeryLongNameHavingMoreThan20Characters"];
       cy.wait(150);
       graphVis.getGraphVisCanvas().trigger("mouseover", longNameCoordinates.x, longNameCoordinates.y, {force: true});
       // Node shows full name on hover
-      cy.contains("ThisIsVeryLongNameHavingMoreThan20Characters");
+      cy.contains("AThisIsVeryLongNameHavingMoreThan20Characters");
     });
 
-    graphViewSidePanel.getDeleteIcon("ThisIsVeryLongNameHavingMoreThan20Characters").click();
+    graphViewSidePanel.getDeleteIcon("AThisIsVeryLongNameHavingMoreThan20Characters").click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityText().should("not.exist");
     cy.waitForAsyncRequest();
-    graphViewSidePanel.getSelectedEntityHeading("ThisIsVeryLongNameHavingMoreThan20Characters").should("not.exist");
+    graphViewSidePanel.getSelectedEntityHeading("AThisIsVeryLongNameHavingMoreThan20Characters").should("not.exist");
     cy.publishDataModel();
   });
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
@@ -136,7 +134,7 @@ describe("Entity Modeling: Graph View", () => {
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let patientCoordinates: any = nodePositions["Patients"];
       graphVis.getGraphVisCanvas().click(patientCoordinates.x, patientCoordinates.y, {force: true});
-      cy.findByText("An entity for patients").should("exist");
+      cy.contains("An entity for patients").should("exist");
     });
     cy.waitForAsyncRequest();
     cy.wait(1500);

@@ -42,8 +42,9 @@ class EntityTypeTable {
   }
 
   viewEntityInGraphView(entityName: string) {
-    cy.get(`[data-testid="${entityName}-graphView-icon"]`).should("exist").scrollIntoView().click({force: true});
+    cy.get(`[data-testid="${entityName}-graphView-icon"]`).scrollIntoView().should("be.visible").click({force: true});
     cy.wait(2000);
+    cy.waitForAsyncRequest();
   }
 
   getRevertButtonTableView() {
@@ -58,7 +59,7 @@ class EntityTypeTable {
   }
 
   getDeleteConceptClassIcon(conceptName: string) {
-    return cy.findByTestId(`${conceptName}-trash-icon`);
+    return cy.get(`[data-testid=${conceptName}-trash-icon]`);
   }
 
   sortByNodeTypeConcept() {

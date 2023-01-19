@@ -56,24 +56,24 @@ describe("Test '/Explore' graph right panel", () => {
 
 
     cy.log("**Verify icon dont display when  node is not merged**");
-    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+    graphExplore.focusNode(ExploreGraphNodes.PRODUCT_70);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_70).then((nodePositions: any) => {
+      let prodCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_70];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.trigger("mouseover", prodCoordinates.x, prodCoordinates.y, {force: true});
+      canvas.click(prodCoordinates.x, prodCoordinates.y, {force: true});
     });
     graphExplore.getUnmergeIcon().should("not.exist");
 
 
 
     cy.log("**Verify unmerged option not visible in unmerged node**");
-    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+    graphExplore.focusNode(ExploreGraphNodes.PRODUCT_70);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_70).then((nodePositions: any) => {
+      let prodCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_70];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.trigger("mouseover", prodCoordinates.x, prodCoordinates.y, {force: true});
+      canvas.rightclick(prodCoordinates.x, prodCoordinates.y, {force: true});
     });
 
     graphExplore.getUnmergeOption().should("not.exist");

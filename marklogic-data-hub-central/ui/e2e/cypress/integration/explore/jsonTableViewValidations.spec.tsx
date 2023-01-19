@@ -91,10 +91,13 @@ describe("json scenario for table on browse documents page", () => {
     cy.wait(2000);
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 2);
     browsePage.getFirstTableViewInstanceIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Person");
     detailPage.getDocumentTimestamp().should("exist");
@@ -107,7 +110,6 @@ describe("json scenario for table on browse documents page", () => {
     //Verify navigating back from detail view should persist search options
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
     explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
     browsePage.getSearchBar().should("have.value", "Alice");
@@ -116,7 +118,8 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.wait(3000);
     cy.visit("/tiles/explore");
-    cy.waitForAsyncRequest();
+    cy.wait(3000);
+    browsePage.waitForSpinnerToDisappear();
   });
 
   it("verify instance view of the document with pk", () => {
@@ -145,24 +148,29 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     explorePage.getFinalDatabaseButton();
     browsePage.getClearAllFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getMainPanelSearchInput("Adams Cole");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("email", "coleadams39@nutralab.com").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getGreySelectedFacets("coleadams39@nutralab.com").should("exist");
     entitiesSidebar.backToMainSidebar();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 2);
 
     //Refresh the browser page at Browse table view.
     cy.reload();
-    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
 
     //Verify if the facet, search text and view persists.
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
@@ -175,8 +183,7 @@ describe("json scenario for table on browse documents page", () => {
 
     //Navigating to detail view
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getTableViewSourceIcon()).click();
-    cy.waitForAsyncRequest();
+    browsePage.getTableViewSourceIcon().scrollIntoView().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     detailPage.getDocumentJSON().should("exist");
     detailPage.getDocumentEntity().should("contain", "Customer");
@@ -186,7 +193,6 @@ describe("json scenario for table on browse documents page", () => {
 
     //Refresh the browser page at Detail view.
     cy.reload();
-    cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     //Verify if the detail view is intact after page refresh
     detailPage.getDocumentEntity().should("contain", "Customer");
@@ -196,7 +202,6 @@ describe("json scenario for table on browse documents page", () => {
 
     detailPage.clickBackButton(); //Click on Back button to navigate back to the browse table view.
 
-    cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -249,19 +254,24 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
     cy.wait(1000);
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click({force: true});
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("exist");
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("be.checked");
 
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("be.checked");
 
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("exist");
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("be.checked");
 
@@ -270,14 +280,17 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("CustomerSourceType").should("exist");
 
     browsePage.clickClearFacetSearchSelection("Adams Cole");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("CurateCustomerJSON").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceName").should("exist");
     browsePage.getGreySelectedFacets("CustomerSourceType").should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedFacet("CurateCustomerJSON").should("exist");
     browsePage.getSelectedFacet("Adams Cole").should("exist");
     entitiesSidebar.backToMainSidebar();
@@ -289,6 +302,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
     browsePage.getClearAllFacetsButton().click();
     cy.wait(3000);
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").click();
@@ -296,11 +310,13 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Jacqueline Knowles").should("exist");
     browsePage.getGreySelectedFacets("Lola Dunn").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").should("be.checked");
     browsePage.getFacetItemCheckbox("name", "Lola Dunn").should("be.checked");
     browsePage.getFacetItemCheckbox("email", "jacquelineknowles@nutralab.com").click();
     browsePage.getGreySelectedFacets("jacquelineknowles@nutralab.com").should("exist");
     browsePage.getClearGreyFacets().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Jacqueline Knowles").should("be.checked");
     browsePage.getFacetItemCheckbox("name", "Lola Dunn").should("be.checked");
     browsePage.getFacetItemCheckbox("email", "jacquelineknowles@nutralab.com").should("not.be.checked");
@@ -319,25 +335,31 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.checked");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.selectDateRange();
     browsePage.getSelectedFacet("birthDate:").should("exist");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickClearFacetSearchSelection("birthDate");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").should("be.checked");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").should("not.be.checked");
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("not.exist");
-    cy.waitForAsyncRequest();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickClearFacetSearchSelection("Adams Cole");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickClearFacetSearchSelection("adamscole@nutralab.com");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").should("not.be.checked");
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
@@ -354,8 +376,10 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Gary").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("Gary").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("fname", "Gary").should("be.checked");
     browsePage.getFacetSearchSelectionCount("fname").should("contain", "1");
     browsePage.getClearFacetSelection("fname").click();
@@ -373,18 +397,24 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getShowMoreLink("name").click();
     browsePage.getFacetItemCheckbox("name", "Mcgee Burch").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getGreySelectedFacets("Mcgee Burch").should("exist");
     browsePage.getGreySelectedFacets("Powers Bauer").should("exist");
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Mcgee Burch").should("be.checked");
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").should("be.checked");
     browsePage.getFacetItemCheckbox("email", "mcgeeburch@nutralab.com").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Mcgee Burch").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getShowMoreLink("email").click();
     browsePage.getFacetItemCheckbox("email", "mcgeeburch@nutralab.com").click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("name", "Mcgee Burch").should("not.be.checked");
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").should("not.be.checked");
     browsePage.getFacetItemCheckbox("email", "mcgeeburch@nutralab.com").should("not.be.checked");

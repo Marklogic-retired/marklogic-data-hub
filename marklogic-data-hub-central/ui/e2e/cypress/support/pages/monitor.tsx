@@ -46,7 +46,8 @@ class MonitorPage {
     // BUG: The page it's re-rendering twice. There's no request to intercept.
     cy.wait(1000);
     cy.get(`[data-testid=${testId}-facet] input`).eq(index).should("be.visible").check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.wait(1000);
+    cy.get(`[data-testid="facet-apply-button"]`).click({force: true});
   }
   getFacetCheckbox(facetType: string, facetName: string) {
     return cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`);
@@ -55,11 +56,12 @@ class MonitorPage {
   validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
     // filter by checking "mapping" facet
     this.getFacetCheckbox(facetType, facetName).should("be.visible").check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.wait(1000);
+    cy.get(`[data-testid="facet-apply-button"]`).click({force: true});
 
     cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`).should("be.visible").then(($btn) => {
       let facet = $btn.next("label").text();
-      cy.get("#selected-facets [data-cy=\"clear-" + $btn.val() + "\"]").should("exist");
+      cy.get("#selected-facets [data-testid=\"clear-" + $btn.val() + "\"]").should("exist");
       // On firefox it gets stuck and then tries everything at once
       cy.wait(1000);
       // Click expand all table rows to validate info inside
@@ -77,7 +79,7 @@ class MonitorPage {
   }
   validateAppliedFacet(facetType: string, index: number) {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
-    cy.findByTestId("facet-apply-button").click({force: true});
+    cy.get(`[data-testid="facet-apply-button"]`).click({force: true});
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.val();
       cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]").should("exist");
@@ -147,7 +149,7 @@ class MonitorPage {
   }
 
   getColumnSelectorPopover() {
-    return cy.get(`[data-testid="column-selector-popover"]`).scrollIntoView();
+    return cy.get(`[data-testid="column-selector-popover"]`);
   }
 
   getColumnSelectorColumns() {

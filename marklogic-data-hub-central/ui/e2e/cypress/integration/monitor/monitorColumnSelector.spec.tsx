@@ -44,7 +44,7 @@ describe("Monitor Tile", () => {
       );
     }).then((options) => { // here is the array of elements
       cy.log("** Close column selector popover **");
-      monitorPage.getColumnSelectorCancelButton().click();
+      monitorPage.getColumnSelectorCancelButton().scrollIntoView().click({force: true});
       monitorPage.getColumnSelectorPopover().should("not.exist");
 
       cy.log("** Check the existence of the columns in the table header**");

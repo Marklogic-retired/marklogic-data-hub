@@ -44,6 +44,10 @@ class RulesetSingleModal {
     return cy.findByLabelText("confirm-single-ruleset");
   }
 
+  closeButton() {
+    return cy.findByLabelText("Close");
+  }
+
   setDictionaryUri(str: string) {
     cy.get("#dictionary-uri-input").focus().type(str);
   }
