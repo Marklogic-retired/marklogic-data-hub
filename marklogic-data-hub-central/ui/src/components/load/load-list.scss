@@ -29,3 +29,20 @@
     display: inline-block;
     cursor: not-allowed;
 }
+
+.addToFlowBtn {
+    background-color: transparent !important;
+    padding: 0px !important;
+    border: none !important;
+    height: 35px;
+    width: 30px;
+}
+
+.addToFlowBtn:focus-visible {
+    outline:auto !important;
+}
+
+.addToFlowBtn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
