@@ -356,8 +356,8 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
             configs.addConfig(privilegeConfig);
         }
         Configuration roleConfig = new Configuration();
-        for (String roleName : roleMap.keySet()) {
-            roleConfig.addRole(roleMap.get(roleName).toObjectNode());
+        for (Map.Entry<String, Role> roleEntry : roleMap.entrySet()) {
+            roleConfig.addRole(roleEntry.getValue().toObjectNode());
         }
         configs.addConfig(roleConfig);
 

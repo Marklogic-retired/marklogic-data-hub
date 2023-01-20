@@ -230,7 +230,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         // options being generated and loaded over and over
         if (loadQueryOptions) {
             String gerProjectDir = hubConfig.getHubProject().getProjectDirString();
-            String decodedFileName=new String();
+            String decodedFileName = null;
             try {
                 URLDecoder fileNameDecoder = new URLDecoder();
                 //This handles the decoding of special characters in a file location path

@@ -94,7 +94,6 @@ public class MakeCombinedOptionsTest {
 
     @Test
     void invalidStepOptions() {
-        Map<String, Object> stepOptions = new HashMap<>();
         runtimeOptions.put("stepOptions", "this is invalid");
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> makeCombinedOptions(),

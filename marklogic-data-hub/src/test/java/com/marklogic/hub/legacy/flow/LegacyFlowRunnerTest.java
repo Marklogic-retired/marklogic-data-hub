@@ -332,7 +332,7 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
      * REST API that is used to convert those into mlFlow and mlSjsFlow. Starting in 5.5, the staging rewriter is
      * expected to have explicit routes for these endpoints.
      */
-    class TestLegacyFlowResource extends ResourceManager {
+    static class TestLegacyFlowResource extends ResourceManager {
         public TestLegacyFlowResource(DatabaseClient client, String extensionName) {
             client.init(extensionName, this);
         }

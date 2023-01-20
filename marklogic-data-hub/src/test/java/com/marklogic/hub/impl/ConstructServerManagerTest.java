@@ -1,7 +1,6 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.resource.appservers.ServerManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,9 +11,6 @@ public class ConstructServerManagerTest {
 
     private DataHubImpl dataHub = new DataHubImpl();
     private HubConfigImpl hubConfig = new HubConfigImpl();
-
-    // A valid ManageClient isn't needed for the purposes of this test class
-    private ManageClient manageClient = null;
 
     @Test
     public void appConfigIsNull() {

@@ -7,14 +7,10 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IngestToJobsTest extends AbstractHubCoreTest {
-    final String docUri = "/customers/customer1.json";
+    final static String docUri = "/customers/customer1.json";
     /**
      * This is a test cover the scenario of ingesting to a database that isn't a Data Hub content DB (e.g., STAGING or FINAL).
      * We use JOBS, since it is a database we know must exist.
@@ -31,7 +27,6 @@ public class IngestToJobsTest extends AbstractHubCoreTest {
         makeInputFilePathsAbsoluteInFlow(flowName);
         FlowInputs flowInputs = new FlowInputs(flowName).withSteps("1");
         // Using runtime options, change the target DB to JOBS
-        Map<String,Object> options = new HashMap<>();
         flowInputs.withOption("targetDatabase", getHubConfig().getDbName(DatabaseKind.JOB));
         RunFlowResponse runFlowResponse = runFlow(flowInputs);
         assertEquals("finished", runFlowResponse.getJobStatus());

@@ -741,10 +741,11 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     private void addFileToZip(String basePath, File fileToZip, ZipOutputStream zout) throws  IOException {
-        FileInputStream fin = new FileInputStream(fileToZip);
-        zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
-        IOUtils.copy(fin, zout);
-        IOUtils.closeQuietly(fin);
+        try (FileInputStream fin = new FileInputStream(fileToZip)) {
+            zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
+            IOUtils.copy(fin, zout);
+            IOUtils.closeQuietly(fin);
+        }
     }
 
     protected void updateStepDefinitionTypeForInlineMappingSteps(FlowManager flowManager) {
