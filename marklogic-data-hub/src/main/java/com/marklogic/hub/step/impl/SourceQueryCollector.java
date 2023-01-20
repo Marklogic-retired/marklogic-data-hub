@@ -82,7 +82,7 @@ public class SourceQueryCollector {
     }
 
     private DiskQueue<String> readItems(Response response) throws IOException {
-        DiskQueue<String> results = new DiskQueue<>(5000);
+        DiskQueue<String> results = new DiskQueue<>();
         try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
             String line;
             while ((line = reader.readLine()) != null) {

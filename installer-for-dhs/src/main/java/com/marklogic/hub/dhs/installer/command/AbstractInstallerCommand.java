@@ -43,8 +43,8 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
 
         Map<String, String> params = options.getParams();
         if (params != null) {
-            for (String key : params.keySet()) {
-                props.setProperty(key, params.get(key));
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                props.setProperty(entry.getKey(), entry.getValue());
             }
         }
 

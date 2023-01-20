@@ -38,6 +38,7 @@ import java.io.FileInputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -151,14 +152,14 @@ public class LegacyFlowManagerImpl implements LegacyFlowManager {
             File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
             if (propertiesFile.exists()) {
                 Properties properties = new Properties();
-                FileInputStream fis = new FileInputStream(propertiesFile);
-                properties.load(fis);
+                try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+                    properties.load(fis);
+                }
 
                 // trim trailing whitespaces for properties.
-                for (String key : properties.stringPropertyNames()) {
-                    properties.put(key, properties.get(key).toString().trim());
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                    properties.put(entry.getKey(), entry.getValue().toString().trim());
                 }
-                fis.close();
 
                 LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
                     .withEntityName(entityName)

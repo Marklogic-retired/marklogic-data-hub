@@ -12,7 +12,6 @@ import com.marklogic.hub.dataservices.ConceptService;
 import com.marklogic.hub.dataservices.ModelsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -112,7 +111,7 @@ public class ConceptTest extends AbstractHubCoreTest {
             assertTrue(ex.getMessage().contains("document does not exist"));
         }
         try{
-            JsonNode modelDraft = getModel("TestNameForDelete", getHubClient().getFinalClient(), false);
+            getModel("TestNameForDelete", getHubClient().getFinalClient(), false);
         } catch (Exception ex) {
             logger.info("Caught expected exception: " + ex.getMessage());
             assertTrue(ex.getMessage().contains("document does not exist"));

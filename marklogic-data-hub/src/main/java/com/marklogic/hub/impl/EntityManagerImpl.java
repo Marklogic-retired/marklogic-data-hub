@@ -230,9 +230,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
                     for (File entityDef : entityDefs) {
-                        FileInputStream fileInputStream = new FileInputStream(entityDef);
-                        entities.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
+                        try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
+                            entities.add(objectMapper.readTree(fileInputStream));
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -313,7 +313,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         List<HubEntity> flattenedModels = new ArrayList<>();
         for (HubEntity model : modelFilesInProject) {
             Map<String, DefinitionType> map = model.getDefinitions().getDefinitions();
-            for (String entityTitle : map.keySet()) {
+            for (Map.Entry<String, DefinitionType> entityEntry : map.entrySet()) {
+                String entityTitle = entityEntry.getKey();
                 InfoType newInfo = new InfoType();
                 newInfo.setBaseUri(model.getInfo().getBaseUri());
                 newInfo.setDescription(model.getInfo().getDescription());
@@ -321,7 +322,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 newInfo.setVersion(model.getInfo().getVersion());
 
                 DefinitionsType definitionsType = new DefinitionsType();
-                definitionsType.addDefinition(entityTitle, map.get(entityTitle));
+                definitionsType.addDefinition(entityTitle, entityEntry.getValue());
 
                 HubEntity newModel = new HubEntity();
                 newModel.setFilename(model.getFilename());
@@ -344,8 +345,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
      */
     protected void addSubProperties(HubEntity entity, List<HubEntity> entityDefinitions, String version) {
         Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
-        for (String definitionName : definitions.keySet()) {
-            DefinitionType definition = definitions.get(definitionName);
+        for (Map.Entry<String, DefinitionType> definitionEntry : definitions.entrySet()) {
+            DefinitionType definition = definitionEntry.getValue();
             // Remove properties that are external references
             List<PropertyType> propertiesToRemove = new ArrayList<>();
             for (PropertyType property : definition.getProperties()) {
@@ -484,7 +485,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
-    private class QueryOptionsGenerator extends ResourceManager {
+    private static class QueryOptionsGenerator extends ResourceManager {
         QueryOptionsGenerator(DatabaseClient client) {
             super();
             client.init("mlSearchOptionsGenerator", this);

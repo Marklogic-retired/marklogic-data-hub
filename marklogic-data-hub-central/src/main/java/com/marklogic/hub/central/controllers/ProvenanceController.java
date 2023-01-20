@@ -1,7 +1,6 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.ProvenanceService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
@@ -29,23 +28,23 @@ public class ProvenanceController extends BaseController {
         return ResponseEntity.ok(ProvenanceService.on(getHubClient().getFinalClient()).getProvenanceGraph(documentURI));
     }
 
-    class ProvenanceGraph {
+    static class ProvenanceGraph {
         public List<Activity> activities;
     }
-    class Activity {
+    static class Activity {
         public String activityID;
         public String provID;
         public Date time;
         public List<Node> nodes;
         public List<Link> links;
     }
-    class Node {
+    static class Node {
         public String id;
         public String label;
         public String entityName;
         public ChangeType changeType;
     }
-    class Link {
+    static class Link {
         public String to;
         public String from;
         public String label;

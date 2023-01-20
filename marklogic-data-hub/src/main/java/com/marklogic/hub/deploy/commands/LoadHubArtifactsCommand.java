@@ -106,8 +106,8 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
             // one copy is loaded, thus avoiding conflicting update errors.
             DocumentWriteSet stagingWriteSet = stagingDocMgr.newWriteSet();
             DocumentWriteSet finalWriteSet = finalDocMgr.newWriteSet();
-            for (String uri : writeOps.keySet()) {
-                DocumentWriteOperation op = writeOps.get(uri);
+            for (Map.Entry<String, DocumentWriteOperation> writeEntry : writeOps.entrySet()) {
+                DocumentWriteOperation op = writeEntry.getValue();
                 stagingWriteSet.add(op);
                 finalWriteSet.add(op);
             }

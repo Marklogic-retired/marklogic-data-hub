@@ -64,8 +64,6 @@ class AllStepsReferencedTest extends AbstractHubCoreTest {
     private void validateFullyReferencedFlowsAndSteps() {
         HubProject hubProject = getHubConfig().getHubProject();
 
-        ArrayList<StepDefinition.StepDefinitionType> stepDefTypes = StepDefinition.StepDefinitionType.getStepDefinitionTypes();
-
         File[] flowFiles = hubProject.getFlowsDir().toFile().listFiles();
         assertEquals(flowFiles.length, 1);
 
