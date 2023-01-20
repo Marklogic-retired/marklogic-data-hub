@@ -386,4 +386,37 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(magnifyingGlassSearchIcon.onclick).toHaveBeenCalled();
 
   });
+
+/*   test("Keyboard navigation sequence is correct", () => {
+    const {getByTestId} = render(
+      <Sidebar
+        entityDefArray={entityDefArray}
+        facets={searchPayloadFacets}
+        selectedEntities={["Customer"]}
+        facetRender={jest.fn()}
+        checkFacetRender={jest.fn()}
+        setDatabasePreferences={jest.fn()}
+        cardView={true}
+        hideDataHubArtifacts={true}
+        setHubArtifactsVisibilityPreferences={jest.fn()}
+        currentRelatedEntities={new Map<string, any>()}
+        currentRelatedConcepts={conceptsMap}
+        viewConcepts={true}
+        setCurrentRelatedConcepts={jest.fn()}
+        graphView={true}
+        greyFacets={[]}
+        setEntitySpecificPanel={jest.fn()}
+        entitiesWithRelatedConcepts={{}}
+        entityRelationships={{}}
+        setCurrentRelatedEntities={jest.fn()}
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
+        entityIndicatorData={entityIndicatorData}
+        graphConceptsSearchSupported={true}
+      />
+    );
+
+
+
+  }); */
 });

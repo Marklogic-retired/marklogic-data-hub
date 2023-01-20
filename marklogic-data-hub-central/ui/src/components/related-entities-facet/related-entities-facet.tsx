@@ -74,8 +74,11 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
     setShowMore(!showMore);
   };
 
-  const handleColOptionsChecked = ({target}) => {
-    const {value, checked} = target;
+  const handleColOptionsChecked = (event) => {
+    if (event.key && event.key === "Enter") {
+      event.target.checked = !event.target.checked;
+    }
+    const {value, checked} = event.target;
     const entity = currentRelatedEntities.get(value);
     const entitiesUpdated = currentRelatedEntities.set(value, {...entity, checked});
     setCurrentRelatedEntities(entitiesUpdated);
@@ -117,6 +120,7 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
                     id={name}
                     checked={checked}
                     cursorDisabled={relatedEntitiesDisabled.includes(option)}
+                    handleKeyDown={relatedEntitiesDisabled.includes(option) ? () => { return; } : handleColOptionsChecked}
                     handleClick={relatedEntitiesDisabled.includes(option) ? () => { return; } : handleColOptionsChecked}
                     value={name}
                     ariaLabel={`related-entity-check-${name}`}>

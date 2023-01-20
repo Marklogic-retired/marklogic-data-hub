@@ -438,7 +438,28 @@ const Query: React.FC<Props> = (props) => {
     </span>
   </>;
 
-  const isEnabledSaveButton = () => props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
+
+  //this part is for making any tooltip accessible thru keyboard
+
+  const [isTooltipVisible, setTooltipVisible] = useState({
+    saveQuery: false
+  });
+
+  const onFocusTooltip = (tooltipName: string) => {
+    setTooltipVisible({
+      ...isTooltipVisible,
+      [tooltipName]: true
+    });
+  };
+
+  const onBlurTooltip = (tooltipName: string) => {
+    setTooltipVisible({
+      ...isTooltipVisible,
+      [tooltipName]: false
+    });
+  };
+
+  const isEnabledSaveButton = props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
 
   return (
     <>
@@ -466,6 +487,12 @@ const Query: React.FC<Props> = (props) => {
             <div className={styles.iconBar}>
               <div>
                 {showSaveNewIcon &&
+                <span
+                  className="p-1"
+                  tabIndex={0}
+                  onFocus={() => onFocusTooltip("saveQuery")}
+                  onBlur={() => onBlurTooltip("saveQuery")}
+                  onKeyDown={(event) => { if (event.key === "Enter") { isEnabledSaveButton ? setOpenSaveModal(true) : setOpenSaveModal(false); } }}>
                   <HCTooltip
                     text={
                       props.isSavedQueryUser ? (((props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) ?
@@ -474,19 +501,21 @@ const Query: React.FC<Props> = (props) => {
                       ) :
                         exploreSidebarQueries.saveWithoutPermisions
                     }
+                    show={isTooltipVisible.saveQuery ? isTooltipVisible.saveQuery : undefined}
                     id="save-current-query-tooltip"
                     placement="top"
                   >
                     <span className="p-1">
                       <FontAwesomeIcon
                         icon={faSave}
-                        onClick={isEnabledSaveButton() ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
-                        className={isEnabledSaveButton() ? styles.enabledSaveIcon : styles.disabledSaveIcon}
+                        onClick={() => isEnabledSaveButton ? setOpenSaveModal(true) : setOpenSaveModal(false)}
+                        className={isEnabledSaveButton ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                         data-testid="save-modal"
                         size="lg"
                       />
                     </span>
                   </HCTooltip>
+                </span>
                 }
                 <div id={"savedQueries"}>
                   {openSaveModal &&
@@ -510,6 +539,7 @@ const Query: React.FC<Props> = (props) => {
 
               <div>
                 {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
+                <span className="p-1" tabIndex={0} onFocus={() => onFocusTooltip("saveQuery")} onBlur={() => onBlurTooltip("saveQuery")}>
                   <HCTooltip text={exploreSidebarQueries.saveChanges} id="save-changes-tooltip" placement="top">
                     <span className="p-1">
                       <FontAwesomeIcon
@@ -523,6 +553,7 @@ const Query: React.FC<Props> = (props) => {
                       />
                     </span>
                   </HCTooltip>
+                </span>
                 }
                 <div id={"saveChangedQueries"}>
                   {openSaveChangesModal &&
@@ -619,7 +650,17 @@ const Query: React.FC<Props> = (props) => {
                   {clearQueryOption(true)}
                 </span>
               </HCTooltip>
-              : <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
+              : <span
+                id="reset-changes"
+                className={styles.clearQueryLink}
+                onClick={() => resetIconClicked()}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    resetIconClicked();
+                  }
+                }}
+              >
                 {clearQueryOption(false)}
               </span>
             }

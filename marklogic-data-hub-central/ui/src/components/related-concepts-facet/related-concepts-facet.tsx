@@ -69,8 +69,11 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
     setShowMore(!showMore);
   };
 
-  const handleColOptionsChecked = ({target}) => {
-    const {value, checked} = target;
+  const handleColOptionsChecked = (event) => {
+    if (event.key && event.key === "Enter") {
+      event.target.checked = !event.target.checked;
+    }
+    const {value, checked} = event.target;
     const concept = currentRelatedConcepts.get(value);
     const conceptsUpdated = currentRelatedConcepts.set(value, {...concept, checked});
     setCurrentRelatedConcepts(conceptsUpdated);
@@ -100,6 +103,7 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
                   id={name}
                   checked={checked}
                   handleClick={handleColOptionsChecked}
+                  handleKeyDown={handleColOptionsChecked}
                   value={name}
                   ariaLabel={`related-concept-check-${name}`}>
                   <DynamicIcons name={finalIcon}/>

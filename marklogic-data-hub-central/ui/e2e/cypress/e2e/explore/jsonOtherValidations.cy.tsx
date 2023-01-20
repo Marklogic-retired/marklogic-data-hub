@@ -103,7 +103,6 @@ describe("Verify numeric/date facet can be applied", () => {
 
     cy.log("**Remove Customer entity and select Person entity to facet");
     entitiesSidebar.removeSelectedBaseEntity();
-    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.clickMoreLink("fname");
@@ -136,7 +135,6 @@ describe("Verify numeric/date facet can be applied", () => {
     toolbar.getExploreToolbarIcon().click();
     cy.wait(1000);
     entitiesSidebar.removeSelectedBaseEntity();
-    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Client");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CLIENT);
     browsePage.selectDateRange({time: "updated"});
