@@ -108,7 +108,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
     @Deprecated
     public DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options) {
         try {
-            DiskQueue<String> results = new DiskQueue<>(5000);
+            DiskQueue<String> results = new DiskQueue<>();
 
             // Important design info:
             // The collector is invoked with a regular http client due to streaming limitations in OkHttp.

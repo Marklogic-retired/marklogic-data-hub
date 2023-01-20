@@ -79,7 +79,7 @@ public class MappingImpl implements Mapping {
     @SuppressWarnings("unchecked")
     public Mapping deserialize(JsonNode json) {
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<String, ObjectNode> jsonProperties = new HashMap<>();
+        HashMap<String, ObjectNode> jsonProperties;
         try {
             jsonProperties = mapper.treeToValue(json.get("properties"), HashMap.class);
         } catch (JsonProcessingException e) {

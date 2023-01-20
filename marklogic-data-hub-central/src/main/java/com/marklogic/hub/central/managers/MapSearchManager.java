@@ -135,7 +135,7 @@ public class MapSearchManager {
         return docMgr.readAs(docUri, String.class, new ServerTransform("mlPrettifyXML"));
     }
 
-    public class Collections extends ResourceManager {
+    public static class Collections extends ResourceManager {
         private static final String NAME = "mlCollections";
 
         private RequestParameters params;

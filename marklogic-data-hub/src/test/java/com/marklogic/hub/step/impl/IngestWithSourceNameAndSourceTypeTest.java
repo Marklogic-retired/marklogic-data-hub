@@ -11,19 +11,17 @@ import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.flow.impl.JobStatus;
-import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
 
-    ReferenceModelProject project;
-
     @BeforeEach
     void beforeEach() {
-        project = installReferenceModelProject();
+        installReferenceModelProject();
     }
 
     @Test

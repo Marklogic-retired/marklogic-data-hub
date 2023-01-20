@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -151,9 +152,9 @@ public class AllArtifactsProject extends TestObject {
         if (entry.getName().endsWith(".xml")) {
             // To allow for easily verifying the count, just toss an empty JSON object into zipEntries for XML documents
             hubCentralFilesZipEntries.put(entry.getName(), objectMapper.createObjectNode());
-            String xml = new String(buffer);
+            String xml = new String(buffer, StandardCharsets.UTF_8);
             assertTrue(xml.startsWith("<search:options"), "Entries ending in XML are expected to be " +
-                "XML search options documents; actual content: " + new String(xml));
+                "XML search options documents; actual content: " + xml);
             assertContentIsPrettyPrinted(xml);
         } else if (entry.getName().endsWith(".json")){
             assertContentIsPrettyPrinted(new String(buffer));

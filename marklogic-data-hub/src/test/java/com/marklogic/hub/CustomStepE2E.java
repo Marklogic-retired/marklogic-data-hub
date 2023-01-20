@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomStepE2E extends AbstractHubCoreTest {
 
-    final String resourceName = "mapping-test/modules/root/custom-modules/ingestion/LabsCore/main.sjs";
-    final String moduleUri = "/custom-modules/ingestion/LabsCore/main.sjs";
+    final static String resourceName = "mapping-test/modules/root/custom-modules/ingestion/LabsCore/main.sjs";
+    final static String moduleUri = "/custom-modules/ingestion/LabsCore/main.sjs";
 
     @BeforeEach
     void setup() {
