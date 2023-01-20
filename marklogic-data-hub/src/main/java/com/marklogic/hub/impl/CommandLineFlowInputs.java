@@ -49,8 +49,8 @@ public class CommandLineFlowInputs {
         flowInputs.setOptions(flowOptions);
         if (showOptions && flowOptions != null) {
             runFlowString.append("\n\tand options:");
-            for (String key : flowOptions.keySet()) {
-                runFlowString.append("\n\t\t" + key + " = " + flowOptions.get(key));
+            for (Map.Entry<String, Object> entry : flowOptions.entrySet()) {
+                runFlowString.append("\n\t\t" + entry.getKey() + " = " + entry.getValue());
             }
         }
 

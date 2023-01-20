@@ -1,14 +1,18 @@
 package com.marklogic.hub.step.impl;
 
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.util.DiskQueue;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class FileCollector extends LoggingObject {
@@ -30,15 +34,12 @@ public class FileCollector extends LoggingObject {
         fileFormats.put("xml", xmlExts);
     }
 
-    public DiskQueue<String> run(Path dirPath) {
+    public Iterator<String> run(Path dirPath) {
         if (!(Files.exists(dirPath)) || !(Files.isDirectory(dirPath))) {
             throw new RuntimeException("The path doesn't exist or is not a directory: " + dirPath);
         }
 
-        DiskQueue<String> results;
         try {
-            results = new DiskQueue<>(10000);
-
             if (logger.isInfoEnabled()) {
                 logger.info("Finding files in directory: " + dirPath);
             }
@@ -46,17 +47,17 @@ public class FileCollector extends LoggingObject {
             try (Stream<Path> files = Files.find(dirPath,
                 Integer.MAX_VALUE,
                 (filePath, fileAttr) -> fileAttr.isRegularFile())) {
-                files.forEach(path -> {
+                return files.map(path -> {
                     File file = path.toFile();
                     if (acceptFile(file.getName())) {
-                        results.add(file.getAbsolutePath());
+                        return file.getAbsolutePath();
                     }
-                });
+                    return null;
+                }).filter(s -> s != null).iterator();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return results;
     }
 
     protected boolean acceptFile(String filename) {

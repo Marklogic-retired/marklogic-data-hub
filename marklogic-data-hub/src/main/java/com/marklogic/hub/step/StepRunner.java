@@ -15,11 +15,9 @@
  */
 package com.marklogic.hub.step;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.Flow;
 
-
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -138,7 +136,7 @@ public interface StepRunner {
      *
      * @return RunStepResponse object for the flow that is run
      */
-    RunStepResponse run(Collection<String> uris);
+    RunStepResponse run(Iterator<String> uris);
 
     /**
      * Stops the step run

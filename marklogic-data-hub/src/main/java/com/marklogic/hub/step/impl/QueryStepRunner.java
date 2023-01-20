@@ -18,7 +18,11 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatch;
+import com.marklogic.client.datamovement.QueryBatchException;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
@@ -27,15 +31,26 @@ import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.JobStatus;
-import com.marklogic.hub.step.*;
-import com.marklogic.hub.util.DiskQueue;
+import com.marklogic.hub.step.ResponseHolder;
+import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepItemCompleteListener;
+import com.marklogic.hub.step.StepItemFailureListener;
+import com.marklogic.hub.step.StepRunner;
+import com.marklogic.hub.step.StepStatusListener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class QueryStepRunner extends LoggingObject implements StepRunner {
@@ -198,7 +213,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
 
-        DiskQueue<String> uris;
+        Iterator<String> uris;
         try {
             final String sourceDatabase = combinedOptions.get("sourceDatabase") != null ?
                 StepRunnerUtil.objectToString(combinedOptions.get("sourceDatabase")) :
@@ -234,7 +249,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     }
 
     @Override
-    public RunStepResponse run(Collection<String> uris) {
+    public RunStepResponse run(Iterator<String> uris) {
         runningThread = null;
         if (jobOutputIsEnabled()) {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
@@ -248,7 +263,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
         return this.batchSize;
     }
 
-    private DiskQueue<String> runCollector(String sourceDatabase) {
+    private Iterator<String> runCollector(String sourceDatabase) {
         SourceQueryCollector collector = new SourceQueryCollector(hubClient, sourceDatabase);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
@@ -258,47 +273,13 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
         return !isStopped.get() ? collector.run(this.flow.getName(), step, combinedOptions) : null;
     }
 
-    private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection<String> uris) {
+    private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Iterator<String> uris) {
         StepMetrics stepMetrics = new StepMetrics();
-        final int urisCount = uris != null ? uris.size() : 0;
+        AtomicLong urisCount = new AtomicLong();
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
         });
-
-        if (urisCount == 0) {
-            logger.info("No items found to process");
-            final String stepStatus = isStopped.get() ?
-                JobStatus.CANCELED_PREFIX + step :
-                JobStatus.COMPLETED_PREFIX + step;
-
-            stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, 0, 0,
-                    (stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? "collector returned 0 items" : "job was stopped"));
-            });
-            runStepResponse.setCounts(0,0,0,0,0);
-            runStepResponse.withStatus(stepStatus);
-
-            if (jobOutputIsEnabled()) {
-                JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
-                try {
-                    return StepRunnerUtil.getResponse(jobDoc, step);
-                }
-                catch (Exception ex) {
-                    logger.warn("Unexpected error getting step response: " + ex.getMessage(), ex);
-                    return runStepResponse;
-                }
-            } else {
-                return runStepResponse;
-            }
-        }
-
-        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
-        if (batchCount == 1) {
-            logger.info(format("Count of items collected: %d; will be processed in a single batch based on batchSize of %d", urisCount, batchSize));
-        } else {
-            logger.info(format("Count of items collected: %d; will be processed in %d batches based on batchSize of %d", urisCount, (int)batchCount, batchSize));
-        }
 
         Vector<String> errorMessages = new Vector<>();
 
@@ -311,11 +292,15 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         Map<String,JsonNode> fullOutputMap = new HashMap<>();
-        queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
+        queryBatcher = dataMovementManager.newQueryBatcher(uris)
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
             .withJobId(runStepResponse.getJobId())
             .onUrisReady((QueryBatch batch) -> {
+                urisCount.addAndGet(batch.getItems().length);
+                for (String item: batch.getItems()) {
+                    logger.info("item: %s", item);
+                }
                 try {
                     // Create the inputs for the processBatch DS
                     ObjectNode inputs = objectMapper.createObjectNode();
@@ -327,7 +312,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                     Map<String, Object> batchOptions = new HashMap<>(combinedOptions);
                     batchOptions.put("uris", batch.getItems());
                     inputs.set("options", objectMapper.valueToTree(batchOptions));
-                    logger.debug(String.format("Processing %d items in batch %d of %d", batch.getItems().length, batch.getJobBatchNumber(),(int) batchCount));
                     // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
                     // with the batch to help distribute load, per DHFPROD-1172.
                     StepRunnerService stepRunner = StepRunnerService.on(batch.getClient());
@@ -368,7 +352,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                     } else {
                         stepMetrics.getFailedBatches().addAndGet(1);
                     }
-
+                    int batchCount = (int) Math.ceil(urisCount.get() / batchSize);
                     int percentComplete = (int) (((double) stepMetrics.getSuccessfulBatchesCount() / batchCount) * 100.0);
 
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
@@ -437,11 +421,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             queryBatcher.awaitCompletion();
             logger.info(String.format("Finished processing of items for step '%s' in flow '%s'", this.step, this.flow.getName()));
 
-            // now that the job has completed we can close the resource
-            if (uris instanceof DiskQueue) {
-                ((DiskQueue<String>)uris).close();
-            }
-
             String stepStatus = determineStepStatus(stepMetrics);
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
@@ -449,8 +428,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             });
 
             dataMovementManager.stopJob(queryBatcher);
-
-            runStepResponse.setCounts(urisCount, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
+            runStepResponse.setCounts(urisCount.get(), stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);

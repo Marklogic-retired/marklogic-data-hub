@@ -35,7 +35,6 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
@@ -66,7 +65,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -254,7 +252,7 @@ public class WriteStepRunner implements StepRunner {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
 
-        Collection<String> uris;
+        Iterator<String> uris;
         try {
             uris = runFileCollector();
         } catch (Exception e) {
@@ -278,7 +276,7 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
-    public RunStepResponse run(Collection<String> uris) {
+    public RunStepResponse run(Iterator<String> uris) {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         if (jobOutputIsEnabled()) {
@@ -394,11 +392,11 @@ public class WriteStepRunner implements StepRunner {
         return inputPath;
     }
 
-    private Collection<String> runFileCollector() {
+    private Iterator<String> runFileCollector() {
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "fetching files");
         });
-        final DiskQueue<String> uris;
+        final Iterator<String> uris;
         if(!isStopped.get()) {
             uris = new FileCollector(inputFileType).run(determineInputFilePath(this.inputFilePath));
         }
@@ -408,13 +406,13 @@ public class WriteStepRunner implements StepRunner {
         return uris;
     }
 
-    private RunStepResponse runIngester(RunStepResponse runStepResponse, Collection<String> uris) {
+    private RunStepResponse runIngester(RunStepResponse runStepResponse, Iterator<String> uris) {
         StepMetrics stepMetrics = new StepMetrics();
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
 
-        if (uris == null || uris.size() == 0 ) {
+        if (uris == null || !uris.hasNext()) {
             JsonNode jobDoc = null;
             final String stepStatus;
             if(isStopped.get()) {
@@ -453,8 +451,6 @@ public class WriteStepRunner implements StepRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        double uriSize = uris.size();
-
         ServerTransform serverTransform = new ServerTransform("mlRunIngest");
         serverTransform.addParameter("job-id", jobId);
         serverTransform.addParameter("step", step);
@@ -472,7 +468,7 @@ public class WriteStepRunner implements StepRunner {
                 stepMetrics.getSuccessfulEvents().addAndGet(batch.getItems().length-1);
                 stepMetrics.getSuccessfulBatches().addAndGet(1);
                 logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount()));
-                runStatusListener(uriSize, stepMetrics);
+                runStatusListener(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(), stepMetrics);
                 if (stepItemCompleteListeners.size() > 0) {
                     Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
                         stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
@@ -484,7 +480,7 @@ public class WriteStepRunner implements StepRunner {
             .onBatchFailure((batch, ex) -> {
                 stepMetrics.getFailedEvents().addAndGet(batch.getItems().length-1);
                 stepMetrics.getFailedBatches().addAndGet(1);
-                runStatusListener(uriSize, stepMetrics);
+                runStatusListener(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(), stepMetrics);
                 if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                     errorMessages.add(ex.getLocalizedMessage());
                 }
@@ -549,13 +545,12 @@ public class WriteStepRunner implements StepRunner {
                 format = Format.BINARY;
         }
         final Format fileFormat = format;
-        Iterator itr = uris.iterator();
         if(!isStopped.get()){
             JobTicket jobTicket = dataMovementManager.startJob(writeBatcher);
             ticketWrapper.put("jobTicket", jobTicket);
-            while(itr.hasNext()) {
+            while(uris.hasNext()) {
                 try {
-                    File file = new File((String) itr.next());
+                    File file = new File((String) uris.next());
                     addToBatcher(file, fileFormat);
                 }
                 catch (Exception e) {

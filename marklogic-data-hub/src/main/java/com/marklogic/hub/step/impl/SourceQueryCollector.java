@@ -18,16 +18,18 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.util.DiskQueue;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayDeque;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SourceQueryCollector {
 
@@ -44,7 +46,7 @@ public class SourceQueryCollector {
         this.sourceDatabase = sourceDatabase;
     }
 
-    public DiskQueue<String> run(String flow, String step, Map<String, Object> options) {
+    public Iterator<String> run(String flow, String step, Map<String, Object> options) {
         final DatabaseClient stagingClient = hubClient.getStagingClient();
 
         try {
@@ -81,16 +83,10 @@ public class SourceQueryCollector {
         }
     }
 
-    private DiskQueue<String> readItems(Response response) throws IOException {
-        DiskQueue<String> results = new DiskQueue<>(5000);
-        try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                results.add(line);
-            }
-        } finally {
-            IOUtils.closeQuietly(response.body());
-        }
-        return results;
+    private Iterator<String> readItems(Response response) throws IOException {
+        BufferedReader reader = new BufferedReader(response.body().charStream());
+        Stream<String> stream = reader.lines();
+        ArrayDeque<String> deque = stream.collect(Collectors.toCollection(ArrayDeque::new));
+        return deque.iterator();
     }
 }
