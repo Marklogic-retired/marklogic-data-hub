@@ -25,6 +25,7 @@ const FacetName: React.FC<Props> = ({category, name, facet, checked, index, hand
       <HCCheckbox
         id={id}
         handleClick={handleClick}
+        handleKeyDown={handleClick}
         value={facet.value}
         label={facetLabel}
         checked={isActive}

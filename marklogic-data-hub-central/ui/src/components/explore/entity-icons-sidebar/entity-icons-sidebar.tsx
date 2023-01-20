@@ -22,6 +22,12 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
     onClose(false);
   };
 
+  const handleKeyDownMain = (event) => {
+    if (event.key === "Enter") {
+      closeSpecificSidebar(event);
+    }
+  };
+
   const handleBaseEntityClicked = (index) => {
     const entity = currentBaseEntities[index];
     updateSelectedEntity(entity);
@@ -32,17 +38,32 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
     updateSelectedEntity(entity);
   };
 
+  const handleKeyDownBaseEntities = (event, index) => {
+    if (event.key === "Enter") {
+      handleBaseEntityClicked(index);
+    }
+  };
+
   return (
     <>
       <div className={styles.closeEntityIconsSidebar}>
         <HCTooltip id="reference-tooltip" text="Return to the main side panel." placement="top">
-          <ChevronDoubleRight aria-label="base-entity-icons-list-close" className={styles.chevronBack} onClick={closeSpecificSidebar} />
+          <ChevronDoubleRight aria-label="base-entity-icons-list-close" className={styles.chevronBack} onClick={closeSpecificSidebar} tabIndex={0} onKeyDown={(event) => handleKeyDownMain(event)} />
         </HCTooltip>
       </div>
       <div className={styles.iconsContainer}>
         <div className={styles.entityIconList} aria-label="base-entity-icons-list">
           {currentBaseEntities.map(({color, icon, name}, index) => name &&
-          <div key={name} aria-label={`base-entity-icon-${name}`} data-icon={icon || defaultIcon} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
+          <div
+            tabIndex={0}
+            key={name}
+            aria-label={`base-entity-icon-${name}`}
+            data-icon={icon || defaultIcon}
+            style={{backgroundColor: color}}
+            className={styles.entityIconListItem}
+            onClick={() => handleBaseEntityClicked(index)}
+            onKeyDown={(event) => handleKeyDownBaseEntities(event, index)}
+          >
             {icon ? <DynamicIcons name={icon} /> : <DynamicIcons name={defaultIcon} />}
           </div>
           )}

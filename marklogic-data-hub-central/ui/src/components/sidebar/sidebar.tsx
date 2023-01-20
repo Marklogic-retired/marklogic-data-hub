@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
 import dayjs from "dayjs";
 import Select from "react-select";
-import {Accordion, FormCheck, Form} from "react-bootstrap";
+import {Accordion, Form} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
@@ -160,12 +160,10 @@ const Sidebar: React.FC<Props> = (props) => {
     setCheckAllRelatedConcepts(list.length === props.currentRelatedConcepts.size);
   };
 
-  const onCheckAllChanges = ({target}) => {
-    const {checked} = target;
-    setCheckAllRelatedEntities(checked);
+  const onCheckAll = (checked: boolean) => {
     let relatedEntitiesList = new Map();
     Array.from(props.currentRelatedEntities.values()).forEach(entity => {
-      relatedEntitiesList.set(entity.name, {...entity, checked});
+      relatedEntitiesList.set(entity.name, {...entity, checked: checked});
     });
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
@@ -173,9 +171,22 @@ const Sidebar: React.FC<Props> = (props) => {
     props.setCurrentRelatedEntities(relatedEntitiesList);
   };
 
-  const onCheckAllRelatedConcepts = ({target}) => {
+  const onCheckAllChanges = ({target}) => {
     const {checked} = target;
-    setCheckAllRelatedConcepts(checked);
+    setCheckAllRelatedEntities(checked);
+    onCheckAll(checked);
+  };
+
+  const onCheckAllRelatedEntities = (event) => {
+    if (event.key === "Enter" && activeRelatedEntities) {
+      const {target} = event;
+      const {checked} = target;
+      setCheckAllRelatedEntities(!checked);
+      onCheckAll(!checked);
+    }
+  };
+
+  const onCheckAllRelatedConcepts = (checked) => {
     let relatedConceptsList = new Map();
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
       relatedConceptsValues["facetValues"].map((obj) => {
@@ -191,6 +202,27 @@ const Sidebar: React.FC<Props> = (props) => {
     }
     props.setCurrentRelatedConcepts(relatedConceptsList);
   };
+
+  const onCheckAllRelatedConceptsKeyDown = (event) => {
+    if (event.key === "Enter" && activeRelatedConcepts) {
+      const {target} = event;
+      const {checked} = target;
+      setCheckAllRelatedConcepts(!checked);
+      onCheckAllRelatedConcepts(!checked);
+    }
+  };
+
+  const onCheckAllRelatedConceptsClick = (event) => {
+    if (activeRelatedConcepts) {
+      const {target} = event;
+      const {checked} = target;
+      setCheckAllRelatedConcepts(checked);
+      onCheckAllRelatedConcepts(checked);
+    }
+  };
+
+
+
 
   useEffect(() => {
     if (props.facets) {
@@ -766,20 +798,144 @@ const Sidebar: React.FC<Props> = (props) => {
     updateUserPreferences(user.name, options);
   };
 
+  const [isTooltipVisible, setTooltipVisible] = useState({
+    baseEntities: false,
+    relatedEntities: false,
+    relatedConcepts: false,
+    finalDb: false,
+    stagingDb: false,
+    createdOn: false,
+    sourceName: false,
+    sourceType: false,
+    collection: false,
+    flow: false,
+    step: false,
+    artifacts: false,
+  });
 
-  const panelTitle = (title, tooltipTitle) => {
+  const onLostFocusEventHandlerTooltip = (event, title) => {
+    switch (title) {
+    case "base entities":
+      setTooltipVisible({...isTooltipVisible, baseEntities: false});
+      break;
+    case "related entities":
+      if (props.graphView) {
+        setTooltipVisible({...isTooltipVisible, relatedEntities: false});
+      }
+      break;
+    case "related concepts":
+      if (props.graphView) {
+        setTooltipVisible({...isTooltipVisible, relatedConcepts: false});
+      }
+      break;
+    case "created on":
+      setTooltipVisible({...isTooltipVisible, createdOn: false});
+      break;
+    case "Source Name":
+      setTooltipVisible({...isTooltipVisible, sourceName: false});
+      break;
+    case "Source Type":
+      setTooltipVisible({...isTooltipVisible, sourceType: false});
+      break;
+    case "Collection":
+      setTooltipVisible({...isTooltipVisible, collection: false});
+      break;
+    case "Flow":
+      setTooltipVisible({...isTooltipVisible, flow: false});
+      break;
+    case "Step":
+      setTooltipVisible({...isTooltipVisible, step: false});
+      break;
+    case "artifacts":
+      setTooltipVisible({...isTooltipVisible, artifacts: false});
+      break;
+    default:
+      break;
+    }
+  };
+
+  const onFocusHandlerTooltip = (event, title) => {
+    switch (title) {
+    case "base entities":
+      setTooltipVisible({...isTooltipVisible, baseEntities: true});
+      break;
+    case "related entities":
+      if (props.graphView) {
+        setTooltipVisible({...isTooltipVisible, relatedEntities: true});
+      }
+      break;
+    case "related concepts":
+      if (props.graphView) {
+        setTooltipVisible({...isTooltipVisible, relatedConcepts: true});
+      }
+      break;
+    case "created on":
+      setTooltipVisible({...isTooltipVisible, createdOn: true});
+      break;
+    case "Source Name":
+      setTooltipVisible({...isTooltipVisible, sourceName: true});
+      break;
+    case "Source Type":
+      setTooltipVisible({...isTooltipVisible, sourceType: true});
+      break;
+    case "Collection":
+      setTooltipVisible({...isTooltipVisible, collection: true});
+      break;
+    case "Flow":
+      setTooltipVisible({...isTooltipVisible, flow: true});
+      break;
+    case "Step":
+      setTooltipVisible({...isTooltipVisible, step: true});
+      break;
+    case "artifacts":
+      setTooltipVisible({...isTooltipVisible, artifacts: true});
+      break;
+    default:
+      break;
+    }
+  };
+
+  const panelTitle = (title, tooltipTitle, stringTitle) => {
     let disabled = !props.graphView && (tooltipTitle === ExploreGraphViewToolTips.relatedEntities || tooltipTitle === ExploreGraphViewToolTips.relatedConcepts);
     return (
       <div className={styles.panelTitle}>
         {title}
-        <HCTooltip text={disabled ? "" : tooltipTitle} id="entities-tooltip" placement="right">
-          <i><FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
-        </HCTooltip>
+        <span
+          tabIndex={props.graphView || stringTitle==="base entities" ? 0 : undefined}
+          onBlur={(e) => onLostFocusEventHandlerTooltip(e, stringTitle)}
+          onFocus={(e) => onFocusHandlerTooltip(e, stringTitle)}>
+          <HCTooltip
+            text={disabled ? "" : tooltipTitle}
+            id="entities-tooltip"
+            placement="right"
+            show={
+              stringTitle === "base entities" ? isTooltipVisible.baseEntities ? isTooltipVisible.baseEntities : undefined :
+                stringTitle === "related entities" ? isTooltipVisible.relatedEntities ? isTooltipVisible.relatedEntities : undefined :
+                  stringTitle === "related concepts" ? isTooltipVisible.relatedConcepts ? isTooltipVisible.relatedConcepts : undefined
+                    : undefined
+            }>
+            <i>
+              <FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" />
+            </i>
+          </HCTooltip>
+        </span>
+
       </div>
     );
   };
-  const handleToggleDataHubArtifacts = ({target}) => {
-    props.setHubArtifactsVisibilityPreferences(!target.checked);
+
+  const handleToggleDataHubArtifacts = (event) => {
+    const {target, type, key} = event;
+    if (target) {
+      if (type === "keydown") {
+        if (key === "Enter") {
+          target.checked = !target.checked;
+          props.setHubArtifactsVisibilityPreferences(target.checked);
+        }
+      } else {
+        props.setHubArtifactsVisibilityPreferences(!target.checked);
+      }
+    }
   };
 
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
@@ -802,6 +958,12 @@ const Sidebar: React.FC<Props> = (props) => {
 
   const handleSearchFromInput = () => {
     setSearchOptions({...searchOptions, query: greyedOptions.query});
+  };
+
+  const onKeyDownEnter = (e, functionToRunOnEnter, datasource) => {
+    if (e.key === "Enter") {
+      functionToRunOnEnter(datasource !== "final" || datasource !== "staging" ? datasource : e.target.value);
+    }
   };
 
   return (
@@ -830,21 +992,23 @@ const Sidebar: React.FC<Props> = (props) => {
       <Form className={"m-3 switch-button-group"}>
 
         <Form.Check
+          tabIndex={-1}
           id="switch-datasource-entities"
           name="switch-datasource"
           type={"radio"}
           checked={searchOptions.datasource === "entities"}
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-entities"
-          label={<span>
-            <span id="all-entities" className="curateIcon"></span>
-            <span>Entities</span>
-          </span>}
+          label={
+            <span className="w-100 h-100" tabIndex={0} onKeyDown={(e) => onKeyDownEnter(e, setDatasourcePreferences, "entities")}>
+              <span id="all-entities" className="curateIcon"/>
+              <span>Entities</span>
+            </span>}
           value={"entities"}
           className={`mb-0 p-0  ${styles.datasourceSwitch}`}
         />
-
         <Form.Check
+          tabIndex={-1}
           id="switch-datasource-all-data"
           name="switch-datasource"
           type={"radio"}
@@ -852,10 +1016,11 @@ const Sidebar: React.FC<Props> = (props) => {
           checked={searchOptions.datasource === "all-data"}
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-all-data"
-          label={<span>
-            <span id="all-data" className="loadIcon"></span>
-            <span>All Data</span>
-          </span>
+          label={
+            <span className="w-100 h-100" tabIndex={0} onKeyDown={(e) => onKeyDownEnter(e, setDatasourcePreferences, "all-data")}>
+              <span id="all-data" className="loadIcon"></span>
+              <span>All Data</span>
+            </span>
           }
           className={`mb-0 p-0 ${styles.datasourceSwitch}`}
         />
@@ -864,35 +1029,66 @@ const Sidebar: React.FC<Props> = (props) => {
       <Accordion aria-label="switch-database" id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
         <Accordion.Item eventKey="database" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
-            <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}>Database</Accordion.Button>
+            <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}><span tabIndex={0}>Database</span></Accordion.Button>
           </div>
           <Accordion.Body>
             <Form className={"switch-button-group"}>
               <Form.Check
+                tabIndex={-1}
                 id="switch-database-final"
                 name="switch-database"
                 type={"radio"}
                 value={"final"}
-                defaultChecked={searchOptions.database === "final"}
+                checked={searchOptions.database === "final"}
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-final"
-                label={<HCTooltip text={finalDbName} id={`${finalDbName}-tooltip`} placement="top-start">
-                  <span>{getFinalDbLabel()}</span>
-                </HCTooltip>}
+                label={
+                  <span
+                    tabIndex={0}
+                    onKeyDown={(e) => onKeyDownEnter(e, props.setDatabasePreferences, "final")}
+                    onFocus={() => setTooltipVisible({...isTooltipVisible, finalDb: true})}
+                    onBlur={() => setTooltipVisible({...isTooltipVisible, finalDb: false})}
+                  >
+                    <HCTooltip
+                      text={finalDbName}
+                      id={`${finalDbName}-tooltip`}
+                      placement="top-start"
+                      show={
+                        isTooltipVisible.finalDb ? isTooltipVisible.finalDb : undefined
+                      }>
+                      <span>
+                        {getFinalDbLabel()}
+                      </span>
+                    </HCTooltip>
+                  </span>
+                }
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
-
               <Form.Check
+                tabIndex={-1}
                 id="switch-database-staging"
                 name="switch-database"
                 value={"staging"}
                 type={"radio"}
-                defaultChecked={searchOptions.database === "staging"}
+                checked={searchOptions.database === "staging"}
                 onChange={e => props.setDatabasePreferences(e.target.value)}
                 aria-label="switch-database-staging"
-                label={<HCTooltip text={stagingDbName} id={`${stagingDbName}-tooltip`} placement="top-start">
-                  <span>{getStagingDbLabel()}</span>
-                </HCTooltip>}
+                label={
+                  <span
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter") { props.setDatabasePreferences("staging"); } }}
+                    onFocus={() => setTooltipVisible({...isTooltipVisible, stagingDb: true})}
+                    onBlur={() => setTooltipVisible({...isTooltipVisible, stagingDb: false})}>
+                    <HCTooltip text={stagingDbName} id={`${stagingDbName}-tooltip`} placement="top-start"
+                      show={
+                        isTooltipVisible.stagingDb ? isTooltipVisible.stagingDb : undefined
+                      }>
+                      <span>
+                        {getStagingDbLabel()}
+                      </span>
+                    </HCTooltip>
+                  </span>
+                }
                 className={`mb-0 p-0 ${styles.databaseSwitch}`}
               />
             </Form>
@@ -904,7 +1100,12 @@ const Sidebar: React.FC<Props> = (props) => {
         <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
           <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, ExploreGraphViewToolTips.baseEntities)}</Accordion.Button>
+              <Accordion.Button
+                tabIndex={-1}
+                className={`after-indicator ${styles.titleBaseEntities}`}
+                onClick={() => setActiveAccordion("baseEntities")}>
+                {panelTitle(<span tabIndex={0}>base entities</span>, ExploreGraphViewToolTips.baseEntities, "base entities")}
+              </Accordion.Button>
             </div>
             <Accordion.Body>
               <BaseEntitiesFacet
@@ -926,8 +1127,18 @@ const Sidebar: React.FC<Props> = (props) => {
               <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
                 <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
-                    <Accordion.Button className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
-                      panelTitle(<span><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-entities-checkbox" id="check-all" value="check-all" disabled={!props.graphView} cursorDisabled={!activeRelatedEntities} handleClick={activeRelatedEntities ? onCheckAllChanges : () => { return; }} checked={checkAllRelatedEntities} /></span>related entities</span>, ExploreGraphViewToolTips.relatedEntities)}
+                    <Accordion.Button tabIndex={-1} className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
+                      panelTitle(<span tabIndex={0}><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}>
+                        <HCCheckbox
+                          ariaLabel="related-entities-checkbox"
+                          id="check-all"
+                          value="check-all"
+                          disabled={!props.graphView}
+                          cursorDisabled={!activeRelatedEntities}
+                          handleClick={activeRelatedEntities ? (event) => onCheckAllChanges(event) : () => { return; }}
+                          handleKeyDown={onCheckAllRelatedEntities}
+                          checked={checkAllRelatedEntities} />
+                      </span>related entities</span>, ExploreGraphViewToolTips.relatedEntities, "related entities")}
                     </Accordion.Button>
                   </div>
                   <Accordion.Body>
@@ -952,8 +1163,8 @@ const Sidebar: React.FC<Props> = (props) => {
               <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
                 <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
-                    <Accordion.Button className={`after-indicator ${styles.disabledTitleCheckbox}`}>{
-                      panelTitle(<span><span className={styles.disabledCheckbox}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphConceptsSearchSupported} cursorDisabled={!props.graphConceptsSearchSupported} handleClick={() => { return; }} checked={true} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                    <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.disabledTitleCheckbox}`}>{
+                      panelTitle(<span tabIndex={0}><span className={styles.disabledCheckbox}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphConceptsSearchSupported} cursorDisabled={!props.graphConceptsSearchSupported} handleClick={() => { return; }} checked={true} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts, "related concepts")}
                     </Accordion.Button>
                   </div>
                 </Accordion.Item>
@@ -968,8 +1179,8 @@ const Sidebar: React.FC<Props> = (props) => {
               <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
                 <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
-                    <Accordion.Button className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
-                      panelTitle(<span><span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphView || !props.viewConcepts} cursorDisabled={!activeRelatedConcepts} handleClick={activeRelatedConcepts ? onCheckAllRelatedConcepts : () => { return; }} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts)}
+                    <Accordion.Button tabIndex={-1} className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
+                      panelTitle(<span tabIndex={0}><span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphView || !props.viewConcepts} cursorDisabled={!activeRelatedConcepts} handleClick={onCheckAllRelatedConceptsClick} handleKeyDown={onCheckAllRelatedConceptsKeyDown} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts, "related concepts")}
                     </Accordion.Button>
                   </div>
                   <Accordion.Body>
@@ -990,36 +1201,63 @@ const Sidebar: React.FC<Props> = (props) => {
       </>}
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-        <FormCheck
+        <Form.Check
           type="switch"
           data-testid="toggleHubArtifacts"
           defaultChecked={!props.hideDataHubArtifacts}
+          tabIndex={0}
           onChange={handleToggleDataHubArtifacts}
+          onKeyDown={(event) => handleToggleDataHubArtifacts(event)}
           className={styles.switchToggleDataHubArtifacts}
           label={
             <div>
               <span>Include Data Hub artifacts</span>
-              <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
-                <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
-              </HCTooltip>
+              <span tabIndex={props.cardView ? 0 : undefined} onFocus={(e) => onFocusHandlerTooltip(e, "artifacts")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "artifacts")}>
+                <HCTooltip text={tooltips.includingDataHubArtifacts} aria-label="toggle-data-hub-artifacts-tooltip" id="toggle-data-hub-artifacts-tooltip" placement="bottom">
+                  <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+                </HCTooltip>
+              </span>
             </div>
           }
-        />
+        ></Form.Check>
+        {/* <FormCheck
+          type="switch"
+          data-testid="toggleHubArtifacts"
+          defaultChecked={!props.hideDataHubArtifacts}
+          tabIndex={0}
+          onClick={handleToggleDataHubArtifacts}
+          onKeyDown={(event) => { if (event.key === "Enter") { props.setHubArtifactsVisibilityPreferences(!event.target.value); } }}
+          className={styles.switchToggleDataHubArtifacts}
+          label={
+            <div>
+              <span>Include Data Hub artifacts</span>
+              <span tabIndex={props.cardView ? 0 : undefined} onFocus={(e) => onFocusHandlerTooltip(e, "artifacts")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "artifacts")}>
+                <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom" show={isTooltipVisible.artifacts ? isTooltipVisible.artifacts : undefined}>
+                  <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
+                </HCTooltip>
+              </span>
+            </div>
+          }
+        /> */}
       </div> : ""}
       <Accordion id="hub-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("hubProperties") ? "hubProperties" : ""} defaultActiveKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}>
         <Accordion.Item eventKey="hubProperties" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
-            <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("hubProperties")}>Hub Properties</Accordion.Button>
+            <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("hubProperties")}><span tabIndex={0}>Hub Properties</span></Accordion.Button>
           </div>
           <Accordion.Body>
             <div className={styles.facetName} data-cy="created-on-facet">
               Created On
-              <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start">
-                <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
-              </HCTooltip>
+              <span tabIndex={0} onFocus={(e) => onFocusHandlerTooltip(e, "created on")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "created on")}>
+                <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start" show={isTooltipVisible.createdOn ? isTooltipVisible.createdOn : undefined}>
+                  <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
+                </HCTooltip>
+              </span>
             </div>
             <div className={"my-3"}>
               <Select
+                tabSelectsValue={false}
+                openMenuOnFocus={true}
                 id="date-select-wrapper"
                 inputId="date-select"
                 placeholder="Select time"
@@ -1034,7 +1272,8 @@ const Sidebar: React.FC<Props> = (props) => {
             <div className={styles.dateTimeWindow} >
               {timeWindow(dateRangeValue)}
             </div>
-            {dateRangeValue === "Custom" && <HCDateTimePicker
+            {dateRangeValue === "Custom" &&
+            <HCDateTimePicker
               name="range-picker"
               className={styles.datePicker}
               value={datePickerValue}
@@ -1056,6 +1295,9 @@ const Sidebar: React.FC<Props> = (props) => {
                   entityTypeId={facet.entityTypeId}
                   propertyPath={facet.propertyPath}
                   maxQuantityOnFacets={maxQuantityOnFacets}
+                  isTooltipVisible={isTooltipVisible}
+                  onFocusHandlerTooltip={onFocusHandlerTooltip}
+                  onLostFocusEventHandlerTooltip={onLostFocusEventHandlerTooltip}
                 />
               );
             })}

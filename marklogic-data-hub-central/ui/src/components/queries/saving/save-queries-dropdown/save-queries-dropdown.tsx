@@ -87,6 +87,8 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
   return (
     <div>
       <Select
+        tabSelectsValue={false}
+        openMenuOnFocus={true}
         id="dropdownList-select-wrapper"
         inputId="dropdownList"
         components={{MenuList: props => MenuList("query", props)}}

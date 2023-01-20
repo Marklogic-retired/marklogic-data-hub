@@ -1,7 +1,8 @@
 import React from "react";
-import {render, fireEvent, waitForElement} from "@testing-library/react";
+import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
 import Facet from "./facet";
 import {facetProps, sourceNameFacetProps, sourceTypeFacetProps} from "../../assets/mock-data/explore/facet-props";
+import userEvent from "@testing-library/user-event";
 
 describe("Facet component", () => {
   it("Facet component renders with data properly", () => {
@@ -24,6 +25,7 @@ describe("Facet component", () => {
     expect(getByText(/999/i)).toBeInTheDocument();
     // Search link not shown for facets < 20
     expect(queryByLabelText("popover-search-label")).not.toBeInTheDocument();
+
   });
 
   it("Facet component renders with nested data properly", () => {
@@ -97,6 +99,38 @@ describe("Facet component", () => {
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceName"));
     await(waitForElement(() => (getByText("The name of the source of the files."))));
+
+    let i: number;
+
+    let clearFacet = getByTestId("sourcename-clear");
+    let sourceNameTooltip = getByTestId("SourceName-facet-tooltip");
+    let toggleFacetPanel = getByTestId("sourcename-toggle");
+    let showMoreLink = getByTestId("span-show-more-sourcename");
+    let loadPersonJSONSourceName = getByTestId("sourcename-loadPersonJSON-checkbox");
+    let ingestOrdersSourceName = getByTestId("sourcename-ingest-orders-checkbox");
+
+    const facetActions = [sourceNameTooltip, clearFacet, toggleFacetPanel, loadPersonJSONSourceName, ingestOrdersSourceName, showMoreLink];
+
+    // verify element exists and can be focused
+    facetActions.forEach((element, i) => async () => {
+      element.focus();
+      await wait(() => expect(element).toHaveFocus());
+    });
+
+    sourceNameTooltip.focus();
+
+    // verify elements tab in given order
+    for (i = 1; i < 5; ++i) {
+      userEvent.tab();
+      expect(facetActions[i]).toHaveFocus();
+    }
+
+
+    // verify elements tab backwards in same order
+    for (i = 3; i >= 0; --i) {
+      userEvent.tab({shift: true});
+      expect(facetActions[i]).toHaveFocus();
+    }
   });
 
   it("SourceType facets renders properly", async () => {

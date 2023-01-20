@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import FormCheck from "react-bootstrap/FormCheck";
 import HCTooltip from "../hc-tooltip/hc-tooltip";
+import "./hc-checkbox.scss";
 
 interface Props {
   id: string;
@@ -41,6 +42,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
         onClick={(e) => e.stopPropagation()}
         data-testid={dataTestId}
         aria-label={ariaLabel}
+        tabIndex={0}
         style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
       />
       :
@@ -55,6 +57,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
             onKeyDown={(e) => { if (handleKeyDown) { handleKeyDown(e); } }}
             data-testid={dataTestId}
             aria-label={ariaLabel}
+
             style={cursorDisabled ? {marginTop: "0", verticalAlign: "middle", cursor: "not-allowed"} : {marginTop: "0", verticalAlign: "middle"}}
           />
         </HCTooltip>

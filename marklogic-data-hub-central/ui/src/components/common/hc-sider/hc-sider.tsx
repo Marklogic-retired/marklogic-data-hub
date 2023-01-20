@@ -3,7 +3,6 @@ import styles from "./hc-sider.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleRight, faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
 
-
 export interface HCSiderProps {
   identity?: string,
   show: boolean,
@@ -44,12 +43,34 @@ function HCSider({identity, show, footer, children, closeIcon, openIcon, labelBu
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      handleOpen(event);
+    }
+  };
+
   const HCSiderStyle = color ? {width: size, backgroundColor: color} : {width: size};
 
   return (
     <div data-testid={`${identity ? identity + "-" : ""}hc-sider-component`} className={`${styles.siderContainer} ${containerClassName && containerClassName}`} style={HCSiderStyle}>
-      <a data-testid={`${identity ? identity + "-" : ""}sider-action`} aria-label={`${identity ? identity + "-" : ""}sider-action`} onClick={handleOpen} className={`${styles.siderIndicatorContainer} ${indicatorCLassName && indicatorCLassName}`} style={buttonPlacement}>{icon}{showButtonLabel && button}</a>
-      {open && <div data-testid={`${identity ? identity + "-" : ""}hc-sider-content`} id={`${identity ? identity + "-" : ""}hc-sider-content`} className={`${styles.siderContentContainer} ${footer && styles.containerWithFooter} ${contentClassName && contentClassName}`}>{children}</div>}
+      <a
+        data-testid={`${identity ? identity + "-" : ""}sider-action`}
+        aria-label={`${identity ? identity + "-" : ""}sider-action`}
+        onClick={(event) => handleOpen(event)}
+        tabIndex={0}
+        onKeyDown={(event) => handleKeyDown(event)}
+        className={`${styles.siderIndicatorContainer} ${indicatorCLassName && indicatorCLassName}`}
+        style={buttonPlacement}>
+        {icon}{showButtonLabel && button}
+      </a>
+      {open &&
+      <div
+        data-testid={`${identity ? identity + "-" : ""}hc-sider-content`}
+        id={`${identity ? identity + "-" : ""}hc-sider-content`}
+        className={`${styles.siderContentContainer} ${footer && styles.containerWithFooter} ${contentClassName && contentClassName}`}
+      >
+        {children}
+      </div>}
       {open && (footer && <div className={styles.siderFooterContainer}>{footer}</div>)}
     </div>
   );
