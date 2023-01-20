@@ -114,7 +114,7 @@ public class RawStructuredQueryDefinitionHandler implements StructuredQueryDefin
      */
     @Override
     public void setOptionsName(String name) {
-        this.setOptionsName(name);
+        this.rawStructuredQueryDefinition.setOptionsName(name);
     }
 
     /**

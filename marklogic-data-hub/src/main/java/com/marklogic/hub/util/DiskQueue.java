@@ -24,14 +24,23 @@
  */
 package com.marklogic.hub.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.AbstractQueue;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,8 +82,19 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
     // back an element into the file, just cache it in cachedElement.
     private String cachedElement;
     private File fileQueue;
-
-    private int nextCount = 0;
+    private static int safeIntCast(float f) {
+        if (f > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE - 1;
+        }
+        return (int) f;
+    }
+    /**
+     * Construct a disk-backed queue that keeps at most
+     * <code>maxInMemorySize</code> elements in memory.
+     */
+    public DiskQueue() {
+        this(safeIntCast((Runtime.getRuntime().freeMemory() / 40) * DEFAULT_REFILL_RATIO), null);
+    }
 
     /**
      * Construct a disk-backed queue that keeps at most
@@ -305,7 +325,6 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
                 memoryQueue.clear();
                 loadMemoryQueue();
             }
-            nextCount++;
             return next;
         }
 
@@ -313,38 +332,17 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
             memoryIterator.remove();
         }
 
-//        @Override
-//        @SuppressWarnings("unchecked")
-//        public void forEachRemaining(Consumer<String> consumer) {
-//            Objects.requireNonNull(consumer);
-//            final int size = ArrayList.this.size;
-//            int i = cursor;
-//            if (i >= size) {
-//                return;
-//            }
-//            final Object[] elementData = ArrayList.this.elementData;
-//            if (i >= elementData.length) {
-//                throw new ConcurrentModificationException();
-//            }
-//            while (i != size && modCount == expectedModCount) {
-//                consumer.accept((E) elementData[i++]);
-//            }
-//            // update once at end of iteration to reduce heap write traffic
-//            cursor = i;
-//            lastRet = i - 1;
-//            checkForComodification();
-//        }
     }
 
     private static class MemoryQueue<E> extends AbstractQueue<String> {
 
-        private final List<String> queue;
+        private final Deque<String> queue;
         private final int capacity;
 
         public MemoryQueue(int capacity) {
             super();
             this.capacity = capacity;
-            queue = new ArrayList<>(capacity);
+            queue = new ArrayDeque<>(10000);
         }
 
         @Override
@@ -383,7 +381,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
             if (queue.isEmpty()) {
                 return null;
             } else {
-                return queue.get(0);
+                return queue.peek();
             }
         }
 
@@ -392,13 +390,13 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
             if (queue.isEmpty()) {
                 return null;
             } else {
-                return queue.remove(0);
+                return queue.poll();
             }
         }
 
         @Override
         public String remove() {
-            return queue.remove(0);
+            return queue.remove();
         }
     }
 

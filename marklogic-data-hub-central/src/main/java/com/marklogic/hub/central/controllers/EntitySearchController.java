@@ -273,7 +273,7 @@ public class EntitySearchController extends BaseController {
         public ArrayList<DocumentSourceMetadata> sources;
     }
 
-    public class DocumentSourceMetadata {
+    public static class DocumentSourceMetadata {
         String name;
     }
 }

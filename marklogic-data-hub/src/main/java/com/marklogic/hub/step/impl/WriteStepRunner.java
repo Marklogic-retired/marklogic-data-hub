@@ -35,7 +35,6 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
@@ -46,6 +45,7 @@ import com.marklogic.hub.step.StepItemCompleteListener;
 import com.marklogic.hub.step.StepItemFailureListener;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepStatusListener;
+import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -69,15 +69,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class WriteStepRunner implements StepRunner {
 
@@ -320,8 +322,8 @@ public class WriteStepRunner implements StepRunner {
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> stepDefFileLocation = new HashMap<>();
-        Map<String, Object> stepFileLocation = new HashMap<>();
+        Map<String, Object> stepDefFileLocation;
+        Map<String, Object> stepFileLocation;
         Map<String, Object> fileLocations = new HashMap<>();
         if(stepDef.getFileLocations() != null) {
             stepDefFileLocation = mapper.convertValue(stepDef.getFileLocations(), Map.class);
@@ -549,19 +551,19 @@ public class WriteStepRunner implements StepRunner {
                 format = Format.BINARY;
         }
         final Format fileFormat = format;
-        Iterator itr = uris.iterator();
+        Spliterator itr = Spliterators.spliteratorUnknownSize(uris.iterator(), 0);
         if(!isStopped.get()){
             JobTicket jobTicket = dataMovementManager.startJob(writeBatcher);
             ticketWrapper.put("jobTicket", jobTicket);
-            while(itr.hasNext()) {
+            StreamSupport.stream(itr, true).forEach((uri) -> {
                 try {
-                    File file = new File((String) itr.next());
+                    File file = new File((String) uri);
                     addToBatcher(file, fileFormat);
                 }
                 catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-            }
+            });
         }
 
         runningThread = new Thread(() -> {

@@ -293,10 +293,10 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         try (InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile)) {
             assert inputStream != null;
             fileContents = IOUtils.toString(inputStream);
-            for (String key : customTokens.keySet()) {
-                String value = customTokens.get(key);
+            for (Map.Entry<String, String> entry : customTokens.entrySet()) {
+                String value = entry.getValue();
                 if (value != null) {
-                    fileContents = fileContents.replace(key, value);
+                    fileContents = fileContents.replace(entry.getKey(), value);
                 }
             }
         }

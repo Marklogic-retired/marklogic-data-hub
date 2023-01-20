@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -251,7 +252,7 @@ public class DiskQueueTest {
 
     @Test
     public void testRemove_whenEmpty() {
-        assertThrows(IndexOutOfBoundsException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             Queue<String> instance = new DiskQueue<String>(1);
             instance.remove();
         });

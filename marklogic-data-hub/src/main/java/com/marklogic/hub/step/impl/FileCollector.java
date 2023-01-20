@@ -37,7 +37,7 @@ public class FileCollector extends LoggingObject {
 
         DiskQueue<String> results;
         try {
-            results = new DiskQueue<>(10000);
+            results = new DiskQueue<>();
 
             if (logger.isInfoEnabled()) {
                 logger.info("Finding files in directory: " + dirPath);

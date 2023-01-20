@@ -15,9 +15,7 @@
  */
 package com.marklogic.hub.step;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.flow.*;
-
+import com.marklogic.hub.flow.Flow;
 
 import java.util.Collection;
 import java.util.Map;
