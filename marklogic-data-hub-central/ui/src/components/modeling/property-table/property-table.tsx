@@ -146,7 +146,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const textTooltip = (name) => (
     <div>
       {ModelingTooltips.entityPropertyName} <br />
-      {name.length > 20 ? name:null}
+      {name.length > 20 ? name : null}
     </div>
   );
   const columns = [
@@ -170,8 +170,10 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(record.propertyName, record);
             }}>
-            <HCTooltip text={textTooltip(record.propertyName) } id={`property-${text}-tooltip`} placement="top">
-              <span data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyName}</span>
+            <HCTooltip text={textTooltip(record.propertyName)} id={`property-${text}-tooltip`} placement="top">
+              <span tabIndex={0} onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") { editPropertyShowModal(record.propertyName, record); }
+              }} data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyName}</span>
             </HCTooltip>
             {record.multiple === record.propertyName &&
               <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
@@ -212,7 +214,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             //relationship complete with foreign key populated
             let foreignKeyTooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, record.delete);
             let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
-            renderText= <div>
+            renderText = <div>
               {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
               <div className={styles.dualIconsContainer}>
                 <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
@@ -229,7 +231,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             //relationship complete with no foreign key populated
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
 
-            renderText= <span>
+            renderText = <span>
               {sidePanelView ? " (" + record.joinPropertyType + ")" : renderText}
               <div className={styles.relationshipIconContainer}>
                 <HCTooltip className={styles.relationshipTooltip} text={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
@@ -372,7 +374,16 @@ const PropertyTable: React.FC<Props> = (props) => {
 
         return <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
           <span className="p-2 inline-block cursor-pointer">
-            <FontAwesomeIcon className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
+            <FontAwesomeIcon tabIndex={0} className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  if (!canWriteEntityModel && canReadEntityModel) {
+                    return event.preventDefault();
+                  } else {
+                    deletePropertyShowModal(text, record, definitionName);
+                  }
+                }
+              }}
               icon={faTrashAlt}
               size="2x"
               data-testid={id}

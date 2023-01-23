@@ -835,6 +835,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   };
 
+  const expandCollapseInterceptors = () => {
+    setInterceptorsExpanded(!interceptorsExpanded);
+  };
+
+  const expandCollapseCustomHook = () => {
+    setCustomHookExpanded(!customHookExpanded);
+  };
+
   return (
     <div>
       {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
@@ -1346,8 +1354,12 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <span>
               {interceptorsExpanded ?
                 <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} /> :
-                <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} />}
-              <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
+                <ChevronRight className={styles.rightArrow} onClick={() => expandCollapseInterceptors() } />}
+              <span aria-label="interceptors-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseInterceptors()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter"|| event.key === " ") { expandCollapseInterceptors(); }
+                }}
+              >Interceptors</span>
             </span>
           </Col>
         </Row>
@@ -1395,7 +1407,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               {customHookExpanded ?
                 <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} /> :
                 <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />}
-              <span aria-label="custom-hook-expand" className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
+              <span aria-label="custom-hook-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseCustomHook()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter"|| event.key === " ") { expandCollapseCustomHook(); }
+                }}
+              >Custom Hook</span>
               <HCTooltip
                 text={tooltips.customHookDeprecated}
                 id="custom-hook-deprecated-tooltip"

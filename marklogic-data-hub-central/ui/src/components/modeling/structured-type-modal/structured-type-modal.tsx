@@ -192,7 +192,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.nameRegex} id="structured-name-tooltip" placement="top">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                   </HCTooltip>
                 </div>
               </Col>
@@ -227,7 +227,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div>
               </Col>
