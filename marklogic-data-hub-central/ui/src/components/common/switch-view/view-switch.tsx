@@ -79,7 +79,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         />
         <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
           <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`${className} ${styles.leftButton}`} id={"graphView"} style={style}>
-            <i data-cy="graph-view">
+            <i data-cy="graph-view" tabIndex={-1}>
               <FontAwesomeIcon icon={faProjectDiagram} size={"2x"} />
             </i>
           </label>
@@ -100,7 +100,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         />
         <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
           <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`${className} ${!snippetView && styles.rightButton}`} id={"tableView"} style={style}>
-            <i data-cy="table-view">
+            <i data-cy="table-view" tabIndex={-1}>
               <FontAwesomeIcon icon={faTable} size={"2x"} />
             </i>
           </label>
@@ -108,7 +108,9 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
       </span>
 
       {snippetView &&
-        (<span>
+        (<span tabIndex={0} onKeyDown={(event) => {
+          if (event.key === "Enter"|| event.key === " ") { handleViewChange(ViewType.snippet); }
+        }}>
           <input
             type="radio"
             id="switch-view-snippet"
@@ -117,10 +119,11 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
             checked={selectedView === ViewType.snippet}
             key={ViewType.snippet}
             onChange={e => handleViewChange(e.target.value)}
+            tabIndex={-1}
           />
           <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
             <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`${className} ${styles.rightButton}`} id={"snippetView"} style={style}>
-              <i data-cy="facet-view">
+              <i data-cy="facet-view" tabIndex={-1}>
                 <FontAwesomeIcon icon={faStream} size={"2x"} />
               </i>
             </label>

@@ -65,7 +65,20 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const headerButtons = <span className={styles.buttons}>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-icon-tooltip" placement="top">
-      <i>{<FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }} />}</i>
+      <i>{
+        <FontAwesomeIcon
+          className={styles.graphExportIcon}
+          icon={faFileExport}
+          aria-label="graph-export"
+          onClick={() => { setExportPngButtonClicked(true); }}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              setExportPngButtonClicked(true);
+            }
+          }}
+        />
+      }</i>
     </HCTooltip>
   </span>;
 
@@ -228,7 +241,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     />
   </FormCheck>
   <HCTooltip id="relationship-label" text={graphViewTooltips.relationshipLabel} placement="top">
-    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
   </HCTooltip>
   </div>;
 
@@ -260,7 +273,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     }
   </FormCheck>
   <HCTooltip id="concept" text={graphViewTooltips.concept} placement="top">
-    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
   </HCTooltip>
   </div>;
 
@@ -278,7 +291,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     />
   </FormCheck>
   <HCTooltip id="physics-animation-tooltip" text={graphViewTooltips.physicsAnimation} placement="top">
-    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
+    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
   </HCTooltip>
   </div>;
 

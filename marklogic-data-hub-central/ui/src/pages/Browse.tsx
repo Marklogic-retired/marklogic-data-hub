@@ -678,7 +678,7 @@ const Browse: React.FC<Props> = ({location}) => {
     <span>
       <HCTooltip text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
         {graphPageInfo["pageLength"] > 100 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
-          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />}
+          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>}
       </HCTooltip>
     </span>
   );

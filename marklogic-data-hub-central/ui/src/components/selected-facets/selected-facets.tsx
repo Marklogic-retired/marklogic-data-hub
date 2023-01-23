@@ -116,7 +116,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-testid="clear-date-facet"
             >
               {dateValues.join(" ~ ")}
-              <XLg className={styles.closeTime}/>
+              <XLg className={styles.closeTime} />
             </HCButton>
           );
         } else if (item.rangeValues) {
@@ -134,7 +134,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid={`clear-${item.displayName}`}
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                <XLg className={styles.close}/>
+                <XLg className={styles.close} />
               </HCButton>
             );
           } else {
@@ -149,7 +149,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid="clear-range-facet"
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                <XLg className={styles.close}/>
+                <XLg className={styles.close} />
               </HCButton>
             );
           }
@@ -165,7 +165,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-testid={`clear-${facetLabel}`}
           >
             {facetName + ": " + facetLabel}
-            <XLg className={styles.close}/>
+            <XLg className={styles.close} />
           </HCButton>
         );
       })}
@@ -192,7 +192,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-testid="clear-date-facet"
             >
               {dateValues.join(" ~ ")}
-              <XLg className={styles.close}/>
+              <XLg className={styles.close} />
             </HCButton>
           );
         } else if (item.rangeValues) {
@@ -209,7 +209,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                <XLg className={styles.close}/>
+                <XLg className={styles.close} />
               </HCButton>
             );
           } else {
@@ -224,7 +224,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid="clear-range-facet"
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                <XLg className={styles.close}/>
+                <XLg className={styles.close} />
               </HCButton>
             );
           }
@@ -248,7 +248,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid={`clear-grey-${facetLabel}`}
               >
                 {facetName + ": " + facetLabel}
-                <XLg className={styles.close}/>
+                <XLg className={styles.close} />
               </HCButton>
             </span>
           </HCTooltip>
@@ -262,7 +262,14 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-cy="clear-all-grey-button"
             data-testid="clear-all-grey-button"
             className={styles.closeIcon}
-            size="lg" /></i>
+            size="lg"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                clearGreyFacets();
+              }
+            }}
+          /></i>
         </HCTooltip>
       }
       {props.greyFacets.length > 0 &&
@@ -274,6 +281,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
             className={styles.checkIcon}
             data-cy="facet-apply-button"
             data-testid="facet-apply-button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                applyFacet();
+              }
+            }}
           /></i>
         </HCTooltip>
       }

@@ -150,7 +150,31 @@ const SearchResult: React.FC<Props> = (props) => {
     <>
       <div className={"w-100"}>
         <div className={`d-flex align-items-center ${styles.title}`} onClick={() => showTableEntityProperties()}>
-          {show ? <ChevronDown className={styles.expandableIcon} aria-label="icon: chevron-down" data-cy="expandable-icon" data-testid="expandable-icon"/> : <ChevronRight className={styles.expandableIcon} aria-label="icon: chevron-right" data-cy="expandable-icon" data-testid="expandable-icon" />}
+          {show
+            ?<ChevronDown
+              className={styles.expandableIcon}
+              aria-label="icon: chevron-down"
+              data-cy="expandable-icon"
+              data-testid="expandable-icon"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  showTableEntityProperties();
+                }
+              }}
+            />
+            :<ChevronRight
+              className={styles.expandableIcon}
+              aria-label="icon: chevron-right"
+              data-cy="expandable-icon"
+              data-testid="expandable-icon"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  showTableEntityProperties();
+                }
+              }}
+            />}
           <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
           {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
           <span data-cy="primary-key-value" aria-label={itemEntityName + "-" + primaryKeyValue}>{primaryKeyValue}</span>
@@ -195,7 +219,13 @@ const SearchResult: React.FC<Props> = (props) => {
                 }
               </HCTooltip>
             </Link>
-            <div className={styles.graphIcon}>
+            <div className={styles.graphIcon} tabIndex={0} onKeyDown={
+              (event) => {
+                if (event.key === "Enter") {
+                  navigateToGraphView(props.item);
+                }
+              }
+            }>
               <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
                 <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
                   size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(props.item)}/></i>
@@ -204,7 +234,14 @@ const SearchResult: React.FC<Props> = (props) => {
             {
               props.item.unmerge ?
                 <div>
-                  <div className={styles.unMergeIcon}>
+                  <div className={styles.unMergeIcon} tabIndex={0} onKeyDown={
+                    (event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        openUnmergeCompare(props.item, event);
+                      }
+                    }
+
+                  }>
                     {
                       canReadMatchMerge ?
                         <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
