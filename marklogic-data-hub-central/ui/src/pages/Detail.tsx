@@ -577,7 +577,19 @@ const Detail: React.FC<Props> = ({history, location}) => {
           <div className={styles.detailContent}>
             <Row id="back-button" className={"py-4 header-heading-title"} onClick={() => history.push(selectedSearchOptions)}>
               <Col>
-                <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-2 header-back-button"} />Back to results</span>
+                <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}>
+                  <ArrowLeftShort
+                    aria-label="Back"
+                    className={"d-inline-block me-2 fs-2 header-back-button"}
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        history.push(selectedSearchOptions);
+                      }
+                    }}
+                  />
+                  Back to results
+                </span>
               </Col>
             </Row>
             <div className={styles.header}>

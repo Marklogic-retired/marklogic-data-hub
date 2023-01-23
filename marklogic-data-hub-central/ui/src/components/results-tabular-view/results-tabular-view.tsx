@@ -374,7 +374,12 @@ const ResultsTabularView = (props) => {
             }
           </HCTooltip>
         </Link>
-        <div className={styles.graphIcon}>
+        <div className={styles.graphIcon}  tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              navigateToGraphView(item);
+            }
+          }}>
           <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
             <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
               size="sm" data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)} /></i>
@@ -386,7 +391,20 @@ const ResultsTabularView = (props) => {
               {canReadMatchMerge ?
                 <div className={styles.unMergeIcon}>
                   <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                    <i><MdCallSplit className={styles.unMergeIcon} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`} onClick={() => openUnmergeCompare(item)}/></i>
+                    <i>
+                      <MdCallSplit
+                        className={styles.unMergeIcon}
+                        data-testid={`unmergeIcon`}
+                        aria-label={`unmerge-icon`}
+                        onClick={() => openUnmergeCompare(item)}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            openUnmergeCompare(item);
+                          }
+                        }}
+                      />
+                    </i>
                   </HCTooltip>
                 </div>
                 :

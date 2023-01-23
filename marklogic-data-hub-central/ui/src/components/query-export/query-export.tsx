@@ -66,9 +66,30 @@ const QueryExport = (props) => {
 
   return (
     <div>
-      <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+      <ExportQueryModal
+        hasStructured={hasStructured}
+        getPreview={getPreview}
+        tableColumns={tableColumns}
+        tableData={tableData}
+        exportModalVisibility={exportModalVisibility}
+        setExportModalVisibility={setExportModalVisibility}
+        columns={props.columns} />
       <HCTooltip text="Export results with the displayed columns to CSV." id="export-results-tooltip" placement="top-end">
-        <span><FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" /></span>
+        <span>
+          <FontAwesomeIcon
+            className={styles.fileExportIcon}
+            icon={faFileExport}
+            size="lg"
+            onClick={displayModal}
+            data-testid="query-export"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                displayModal();
+              }
+            }}
+          />
+        </span>
       </HCTooltip>
     </div>
   );

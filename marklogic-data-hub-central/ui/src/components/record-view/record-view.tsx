@@ -98,7 +98,7 @@ const RecordCardView = (props) => {
 
   const displayRecordMetadata = (item) => {
     return (
-      <Popover id={`popover-positioned-record-view-${item?.index ? item.index: ""}`} className={styles.popoverWrap}>
+      <Popover id={`popover-positioned-record-view-${item?.index ? item.index : ""}`} className={styles.popoverWrap}>
         <Popover.Body>
           <div className={styles.popover} data-testid={item.uri + "-popover"}>
             <div className={styles.colKey}>
@@ -113,7 +113,7 @@ const RecordCardView = (props) => {
                   text={displayRecordSources(item)}
                   id="source-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
                 ><span>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
@@ -121,7 +121,7 @@ const RecordCardView = (props) => {
                   text={item.hubMetadata?.lastProcessedByFlow}
                   id="last-processed-by-flow-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
                 ><span>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
@@ -129,7 +129,7 @@ const RecordCardView = (props) => {
                   text={item.hubMetadata.lastProcessedByStep}
                   id="last-processed-by-step-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
                 ><span>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
@@ -208,7 +208,7 @@ const RecordCardView = (props) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
 
-    const flowName= item.hubMetadata.lastProcessedByFlow;
+    const flowName = item.hubMetadata.lastProcessedByFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
@@ -252,7 +252,7 @@ const RecordCardView = (props) => {
                 <div className={styles.cardMetadataContainer}>
                   <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>URI: <span className={styles.uri}>
                     <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
-                      <span>{displayUri(elem.uri)}</span>
+                      <span tabIndex={0}>{displayUri(elem.uri)}</span>
                     </HCTooltip>
                   </span></span>
                   <span className={styles.cardIcons}>
@@ -264,7 +264,7 @@ const RecordCardView = (props) => {
                       <span>
                         <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
                           <span className={styles.infoIcon}>
-                            <i><FontAwesomeIcon icon={faInfoCircle} size="1x" data-testid={elem.uri + "-InfoIcon"}/></i>
+                            <i><FontAwesomeIcon tabIndex={0} icon={faInfoCircle} size="1x" data-testid={elem.uri + "-InfoIcon"} /></i>
                           </span>
                         </HCTooltip>
                       </span>
@@ -277,14 +277,15 @@ const RecordCardView = (props) => {
                       <span id={"instance"}
                         data-cy="instance">
                         <HCTooltip text="View details" id="binary-detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare}/>
+                          <ArrowRightSquare className={styles.arrowRightSquare} />
                         </HCTooltip>
                       </span>
                       :
-                      <Link to={getLinkProperties(elem)} id={"instance"}
+                      <Link to={getLinkProperties(elem)}
+                        id={"instance"}
                         data-cy="instance">
                         <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}/>
+                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"} />
                         </HCTooltip>
                       </Link>
                     }
@@ -311,11 +312,23 @@ const RecordCardView = (props) => {
                       {
                         canReadMatchMerge ?
                           <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
-                            <i><MdCallMerge className={styles.mergeIcon} data-testid={"merge-icon"} onClick={() => openMergeCompare(elem)}/></i>
+                            <i>
+                              <MdCallMerge
+                                className={styles.mergeIcon}
+                                data-testid={"merge-icon"}
+                                onClick={() => openMergeCompare(elem)}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    openMergeCompare(elem);
+                                  }
+                                }}
+                              />
+                            </i>
                           </HCTooltip>
                           :
                           <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                            <i><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"}/></i>
+                            <i><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"} /></i>
                           </HCTooltip>
                       }
 
@@ -323,7 +336,17 @@ const RecordCardView = (props) => {
                     : null}
                 <span className={styles.downloadIcon}>
                   <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom" >
-                    <Download onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"}  size={18} />
+                    <Download
+                      onClick={() => download(elem.uri)}
+                      data-testid={elem.uri + "-download-icon"}
+                      size={18}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          download(elem.uri);
+                        }
+                      }}
+                    />
                   </HCTooltip>
                 </span>
               </HCCard>
