@@ -655,7 +655,7 @@ describe("Property Modal Component", () => {
     wait(() => {
       expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
       expect(getByText("customerId")).toBeInTheDocument();
-      userEvent.click(getByLabelText("foreignKey-select"));
+      //userEvent.click(getByLabelText("foreignKey-select"));
       userEvent.click(getByText("name"));
       const multipleRadio = screen.getByLabelText("multiple-yes");
       expect(multipleRadio["value"]).toBe("yes");

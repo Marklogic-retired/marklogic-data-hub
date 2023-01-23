@@ -175,6 +175,27 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   };
 
+  const clickEnterEvent = (isConceptClass, entityName) => {
+    if (!isConceptClass) {
+      editEntityTypeDescription(
+        entityName,
+        getEntityTypeProp(entityName, "description", isConceptClass),
+        getEntityTypeProp(entityName, "namespace", isConceptClass),
+        getEntityTypeProp(entityName, "namespacePrefix", isConceptClass),
+        getEntityTypeProp(entityName, "version", isConceptClass),
+        getEntityTypeProp(entityName, "color", isConceptClass),
+        getEntityTypeProp(entityName, "icon", isConceptClass),
+      );
+    } else {
+      editConceptClassDescription(
+        entityName,
+        getEntityTypeProp(entityName, "description", isConceptClass),
+        getEntityTypeProp(entityName, "color", isConceptClass),
+        getEntityTypeProp(entityName, "icon", isConceptClass),
+      );
+    }
+  };
+
   const columns = [
     {
       text: "Name",
@@ -194,26 +215,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           <>
             {canWriteEntityModel && canReadEntityModel ? (
               <HCTooltip text={ModelingTooltips.nodeName(nodeType)} id="entity-name-tooltip" placement="top">
-                <span data-testid={entityName + "-span"} className={styles.link}
-                  onClick={() => {
-                    if (!isConceptClass) {
-                      editEntityTypeDescription(
-                        entityName,
-                        getEntityTypeProp(entityName, "description", isConceptClass),
-                        getEntityTypeProp(entityName, "namespace", isConceptClass),
-                        getEntityTypeProp(entityName, "namespacePrefix", isConceptClass),
-                        getEntityTypeProp(entityName, "version", isConceptClass),
-                        getEntityTypeProp(entityName, "color", isConceptClass),
-                        getEntityTypeProp(entityName, "icon", isConceptClass),
-                      );
-                    } else {
-                      editConceptClassDescription(
-                        entityName,
-                        getEntityTypeProp(entityName, "description", isConceptClass),
-                        getEntityTypeProp(entityName, "color", isConceptClass),
-                        getEntityTypeProp(entityName, "icon", isConceptClass),
-                      );
+                <span data-testid={entityName + "-span"} tabIndex={0} className={styles.link}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      clickEnterEvent(isConceptClass, entityName);
                     }
+                  }}
+                  onClick={() => {
+                    clickEnterEvent(isConceptClass, entityName);
                   }}>
                   {entityName}</span>
               </HCTooltip>
@@ -341,7 +350,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
           <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> {nodeType} throughout your project.</span>}>
-            <div style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
+            <div tabIndex={0} style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
           </HCTooltip>
         );
       }
@@ -359,7 +368,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
           <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> {nodeType} throughout your project.</span>}>
-            <div style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
+            <div tabIndex={0} style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
               <DynamicIcons name={icon} />
             </div>
           </HCTooltip>
@@ -382,11 +391,29 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   className={styles.iconViewGraph}
                   icon={faProjectDiagram}
                   onClick={() => navigateToGraphView(text)}
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") { navigateToGraphView(text); }
+                  }}
                 /></span>
             </HCTooltip>
             <HCTooltip text={canWriteEntityModel ? ModelingTooltips.deleteIcon(isConceptClass) : (!isConceptClass ? "Delete Entity: " : "Delete Concept Class: ") + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
               <span className="p-2 inline-block cursor-pointer">
                 <FontAwesomeIcon
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      if (!canWriteEntityModel && canReadEntityModel) {
+                        return event.preventDefault();
+                      } else {
+                        if (row.nodeType === "Entity Type") {
+                          getEntityReferences(text);
+                        } else {
+                          deleteConceptClass(text);
+                        }
+                      }
+                    }
+                  }}
                   data-testid={text + "-trash-icon"}
                   className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
                   icon={faTrashAlt}
@@ -424,13 +451,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
     if (!isConceptClass) {
       return (node.hasOwnProperty("model") &&
-      node.model.hasOwnProperty("definitions") &&
-      node.model.definitions.hasOwnProperty(node.entityName) &&
-      node.model.definitions[node.entityName].hasOwnProperty(prop)) ? node.model.definitions[node.entityName][prop] : "";
+        node.model.hasOwnProperty("definitions") &&
+        node.model.definitions.hasOwnProperty(node.entityName) &&
+        node.model.definitions[node.entityName].hasOwnProperty(prop)) ? node.model.definitions[node.entityName][prop] : "";
     } else {
       return (node.hasOwnProperty("model") &&
-      node.model.hasOwnProperty("info") &&
-      node.model.info.hasOwnProperty(prop)) ? node.model.info[prop] : "";
+        node.model.hasOwnProperty("info") &&
+        node.model.info.hasOwnProperty(prop)) ? node.model.info[prop] : "";
     }
   };
 
@@ -485,7 +512,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     if (colorExistsOnServer) {
       color = hubCentralConfig.modeling[modelCategory][nodeName]["color"];
     } else {
-      color = !isConcept ? themeColors.defaults.entityColor: themeColors.defaults.conceptColor;
+      color = !isConcept ? themeColors.defaults.entityColor : themeColors.defaults.conceptColor;
     }
     return color;
   };

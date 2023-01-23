@@ -270,7 +270,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
                 />}
                 <div className={"p-2 d-flex"}>
                   {isEditModal ? null : <HCTooltip text={ModelingTooltips.nameConceptClass} id="concept-class-name-tooltip" placement="top">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>}
                 </div>
               </Col>
@@ -292,7 +292,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
             />
             <div className={"p-2 d-flex align-items-center"}>
               <HCTooltip text={ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
               </HCTooltip>
             </div>
           </Col>
@@ -306,7 +306,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="select-color-tooltip" text={isEditModal ? <span>The selected color will be associated with the <b>{conceptName}</b> concept class throughout your project</span> : <span>The selected color will be associated with this concept class throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill className={styles.questionCircle} size={13} />
+                <QuestionCircleFill  tabIndex={0} className={styles.questionCircle} size={13} />
               </HCTooltip>
             </div>
           </Col>
@@ -319,7 +319,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{conceptName}</b> concept class throughout your project.</span>} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
           </Col>

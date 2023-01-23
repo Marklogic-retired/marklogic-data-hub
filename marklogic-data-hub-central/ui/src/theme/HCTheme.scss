@@ -415,6 +415,9 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 }
 .rc-cascader-focused {
     border-radius: 4px;
+    -webkit-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.6);// rgba(191,191,191,1);//    inset 1px 1px 1px 0px rgba(191,191,191,1);
+    -moz-box-shadow: inset 0px 0px 1px 1px rgba(0,0,0,0.6);//rgba(191,191,191,1);//inset 1px 1px 1px 0px rgba(191,191,191,1);
+    box-shadow: inset 0px 0px 1px 1px rgba(215,215,255,0.63);//#5B69AF;//rgba(191,191,191,1);//inset 1px 1px 1px 0px rgba(191,191,191,1);
 }
 .rc-cascader-menus {
     min-height: 360px;

@@ -395,10 +395,14 @@ const Modeling: React.FC = () => {
         onSelect={handleAddMenu}
         className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
         disabled={!canWriteEntityModel}>
-        <Dropdown.Item eventKey="addNewEntityType">
+        <Dropdown.Item eventKey="addNewEntityType" onKeyDown={(event) => {
+          if (event.key === "Enter"|| event.key === " ") { handleAddMenu("addNewEntityType"); }
+        }}>
           <span aria-label={"add-entity-type"}>Add new entity type</span>
         </Dropdown.Item>
-        <Dropdown.Item eventKey="addNewConceptClass">
+        <Dropdown.Item eventKey="addNewConceptClass"  onKeyDown={(event) => {
+          if (event.key === "Enter"|| event.key === " ") { handleAddMenu("addNewConceptClass"); }
+        }}>
           <span aria-label={"add-concept-class"}>Add new concept class</span>
         </Dropdown.Item>
       </DropdownButton>

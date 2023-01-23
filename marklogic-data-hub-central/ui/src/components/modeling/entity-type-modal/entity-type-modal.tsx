@@ -316,9 +316,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                   onChange={handleChange}
                   onBlur={handleChange}
                 />}
-                <div className={"p-2 d-flex"}>
+                <div className={"p-2 d-flex"} >
                   {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>}
                 </div>
               </Col>
@@ -340,7 +340,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             />
             <div className={"p-2 d-flex align-items-center"}>
               <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
-                <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
               </HCTooltip>
             </div>
           </Col>
@@ -369,7 +369,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-                    <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle}/>
+                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle}/>
                   </HCTooltip>
                 </div>
               </Col>
@@ -384,11 +384,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex"}>
             <div className={styles.colorContainer}>
-              <EntityTypeColorPicker color={colorSelected} entityType={name} handleColorChange={handleColorChange} />
+              <EntityTypeColorPicker color={colorSelected} entityType={name} handleColorChange={handleColorChange}/>
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity throughout your project</span> : <span>The selected color will be associated with this entity throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill className={styles.questionCircle} size={13}/>
+                <QuestionCircleFill tabIndex={0} className={styles.questionCircle} size={13}/>
               </HCTooltip>
             </div>
           </Col>
@@ -401,7 +401,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity throughout your project.</span>} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
           </Col>
@@ -416,10 +416,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               onChange={handleChange}
               onBlur={handleChange}
               style={{width: "8.8%"}}
+              tabIndex={0}
             />
             <div className={"p-2 ps-3 d-flex align-items-center"}>
               <HCTooltip id="version-tooltip" text={ModelingTooltips.versionField} placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
+                <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
           </Col>

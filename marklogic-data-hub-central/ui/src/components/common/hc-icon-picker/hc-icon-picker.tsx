@@ -44,7 +44,8 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
   return (
     <div className={styles.pickerWrapper} ref={ref} data-testid={`${identifier}-hc-icon-picker-wrapper`} onClick={() => setIsVisible(isVisible => !isVisible)}>
       <div className={styles.pickerIcon} data-testid={`${identifier}-${value}-icon-selected`}>
-        <DynamicIcons name={value}/>
+        <DynamicIcons name={value} />
+        <div tabIndex={0} onFocus={() => setIsVisible(isVisible => !isVisible)}></div>
       </div>
       {isVisible && (
         <div
@@ -59,6 +60,13 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
               onChange={event => setSearchString(event.target.value)}
               value={searchString}
               placeholder="Search"
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  setIsVisible(false);
+                  setSearchString("");
+                  event.preventDefault();
+                }
+              }}
             />
           )}
           {iconList
@@ -70,13 +78,25 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
                 data-testid={`${identifier}-${icon}-icon-option`}
                 key={icon}
                 className={styles.pickerIcon}
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setIsVisible(false);
+                    setSearchString("");
+                    event.preventDefault();
+                  } else if (event.key === "Enter" || event.key === " ") {
+                    onChange(icon);
+                    setIsVisible(false);
+                    setSearchString("");
+                  }
+                }}
                 onClick={() => {
                   onChange(icon);
                   setIsVisible(false);
                   setSearchString("");
                 }}
               >
-                <DynamicIcons name={icon}/>
+                <DynamicIcons name={icon} />
               </div>
             ))}
         </div>

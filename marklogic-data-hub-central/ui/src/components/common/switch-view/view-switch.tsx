@@ -64,7 +64,9 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         </span>
       </div>
     ) : (<div className={"switch-button-group outline"}>
-      <span>
+      <span tabIndex={0} onKeyDown={(event) => {
+        if (event.key === "Enter"|| event.key === " ") { handleViewChange("graph"); }
+      }}>
         <input
           type="radio"
           id="switch-view-graph"
@@ -73,6 +75,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
           value={"graph"}
           checked={selectedView === ViewType.graph}
           onChange={e => handleViewChange(e.target.value)}
+          tabIndex={-1}
         />
         <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
           <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`${className} ${styles.leftButton}`} id={"graphView"} style={style}>
@@ -82,7 +85,9 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
           </label>
         </HCTooltip>
       </span>
-      <span>
+      <span tabIndex={0} onKeyDown={(event) => {
+        if (event.key === "Enter"|| event.key === " ") { handleViewChange("table"); }
+      }}>
         <input
           type="radio"
           id="switch-view-table"
@@ -91,6 +96,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
           value={"table"}
           checked={selectedView === ViewType.table}
           onChange={e => handleViewChange(e.target.value)}
+          tabIndex={-1}
         />
         <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
           <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`${className} ${!snippetView && styles.rightButton}`} id={"tableView"} style={style}>

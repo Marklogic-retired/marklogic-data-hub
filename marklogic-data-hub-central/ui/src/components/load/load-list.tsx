@@ -474,7 +474,8 @@ const LoadList: React.FC<Props> = (props) => {
         <><span data-testid="loadTableName">Name</span>{sortElement}</>
       ),
       formatter: (text: any, record: any) => (
-        <span><span tabIndex={0} onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
+        <span><span tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter"|| event.key === " ") { OpenStepSettings(record); } }}
+          onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
       ),
       sortFunc: columnSorter,
     },
