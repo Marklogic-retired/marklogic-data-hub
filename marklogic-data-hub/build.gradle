@@ -3,9 +3,9 @@ plugins {
     id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
-    id 'com.marklogic.ml-gradle' version '4.3.6'
+    id 'com.marklogic.ml-gradle' version '4.4.0'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'com.marklogic.ml-development-tools' version '5.5.0'
+    id 'com.marklogic.ml-development-tools' version '6.0.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
     // not being able to resolve its "dataFiles" configuration
@@ -41,17 +41,22 @@ dependencies {
     api project(":marklogic-data-hub-api")
 
     implementation "org.apache.commons:commons-lang3:3.12.0"
-    implementation "org.apache.httpcomponents:httpclient:4.5.13"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.11.1"
-    implementation "org.slf4j:slf4j-api:1.7.31"
-    implementation "org.jdom:jdom2:2.0.6"
+
+    // Required by the 'legacy' collector implementation
+    implementation "org.apache.httpcomponents:httpclient:4.5.14"
+
+    // Required for CSV support in ingestion steps
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.14.1"
+
+    implementation "org.slf4j:slf4j-api:1.7.36"
+    implementation "org.jdom:jdom2:2.0.6.1"
 
     // Required for some code that accesses OkHttp APIs directly; intended to match the version of
     // OkHttp that the Java Client brings in
-    implementation "com.squareup.okhttp3:okhttp:4.7.2"
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
 
-    implementation 'com.marklogic:mlcp-util:1.0'
-    implementation 'com.marklogic:marklogic-data-movement-components:2.4.0'
+    // Required for 'legacy' job support
+    implementation 'com.marklogic:marklogic-data-movement-components:2.5.0'
 
     implementation 'commons-io:commons-io:2.11.0'
 
@@ -71,6 +76,8 @@ dependencies {
     testFixturesApi "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.2"
     testFixturesImplementation 'commons-io:commons-io:2.11.0'
+
+    testImplementation 'com.marklogic:mlcp-util:1.0.1'
 
     // Projects that depend on this project's testFixtures will have access to these resources.
     // But this project apparently needs to use testImplementation to reference them in tests.

@@ -23,11 +23,11 @@ dependencies {
     api "org.slf4j:slf4j-api:1.7.36"
 
     // This is an API dependency due to the test methods that return a class that depends on a JDOM2 class
-    api "org.jdom:jdom2:2.0.6"
+    api "org.jdom:jdom2:2.0.6.1"
 
-    api "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+    api "com.fasterxml.jackson.core:jackson-databind:2.14.1"
 
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
