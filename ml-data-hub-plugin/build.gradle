@@ -38,9 +38,9 @@ snyk {
 dependencies {
     implementation gradleApi()
     implementation (project(':marklogic-data-hub'))
-    implementation 'com.marklogic:ml-gradle:4.3.6'
+    implementation 'com.marklogic:ml-gradle:4.4.0'
     implementation "org.apache.commons:commons-lang3:3.12.0"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.14.1"
     implementation 'commons-io:commons-io:2.11.0'
 
     testImplementation localGroovy()
@@ -53,9 +53,9 @@ dependencies {
     testImplementation('org.spockframework:spock-core:2.0-groovy-3.0') {
         exclude module: 'groovy-all'
     }
-    testImplementation 'org.springframework:spring-test:5.3.22'
+    testImplementation 'org.springframework:spring-test:5.3.24'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
-    testImplementation 'org.jdom:jdom2:2.0.6'
+    testImplementation 'org.jdom:jdom2:2.0.6.1'
 
     // Confusingly, junit4 is needed on the classpath, even though JUnit 5 is used for all tests / assertions.
     // Without it, running "test" will throw a class-not-found exception for junit.framework.Assert

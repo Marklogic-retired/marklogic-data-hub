@@ -17,10 +17,10 @@ snyk {
 
 dependencies {
     implementation project(":marklogic-data-hub")
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.14.1"
     implementation "com.beust:jcommander:1.81"
     implementation 'commons-io:commons-io:2.11.0'
-    implementation "org.slf4j:slf4j-api:1.7.31"
+    implementation "org.slf4j:slf4j-api:1.7.36"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
 }
