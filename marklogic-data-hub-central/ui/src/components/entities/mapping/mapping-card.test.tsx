@@ -9,6 +9,7 @@ import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities"
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import dayjs from "dayjs";
+import {getSubElements} from "@util/test-utils";
 
 jest.mock("axios");
 
@@ -21,14 +22,6 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
-const getSubElements=(content, node, title) => {
-  const hasText = node => node.textContent === title;
-  const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
-  return nodeHasText && childrenDontHaveText;
-};
 
 describe("Mapping Card component", () => {
 

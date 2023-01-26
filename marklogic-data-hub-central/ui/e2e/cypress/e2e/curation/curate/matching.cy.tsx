@@ -214,9 +214,9 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     rulesetSingleModal.getElementWithID("errorListName").should("exist");
     rulesetSingleModal.getElementWithID("errorListValues").should("exist");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title list 1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "Titlelist1");
+    rulesetSingleModal.addValuesToListToIgnore("Word1");
+    rulesetSingleModal.addValuesToListToIgnore("Word2");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
 
     //cy.log("**Edit existing list - commented until the Backend is available**");
@@ -605,11 +605,30 @@ describe("Matching", () => {
     cy.findByText("Values to ignore in this list are required.");
 
 
+
+    // Don't allow values to ignore with special characters
+    rulesetSingleModal.addValuesToListToIgnore("Word$1");
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+    rulesetSingleModal.clearValuesToIgnoreList();
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    // Don't allow values to ignore with spaces
+    rulesetSingleModal.addValuesToListToIgnore("Word1 Word2");
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+    rulesetSingleModal.clearValuesToIgnoreList();
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    // Vales to ignore name must start with a letter
+    rulesetSingleModal.addValuesToListToIgnore("1Word1");
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+    rulesetSingleModal.clearValuesToIgnoreList();
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
     // Create new List
 
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.addValuesToListToIgnore("Word1");
+    rulesetSingleModal.addValuesToListToIgnore("Word2");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
@@ -618,14 +637,45 @@ describe("Matching", () => {
     // try to create with the same name of the last one list
     rulesetSingleModal.createNewList();
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 1");
-    rulesetSingleModal.addValuesToListToIgnore("Word 2");
+    rulesetSingleModal.addValuesToListToIgnore("Word1");
+    rulesetSingleModal.addValuesToListToIgnore("Word2");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("This list name already exists.");
 
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Test");
+    cy.findByText((content, node) => {
+      const hasText = (node) => node.textContent === "An existing list is already using the name TitleList1.";
+      const nodeHasText = hasText(node);
+      const childrenDontHaveText = Array.from(node.children).every(
+        (child) => !hasText(child)
+      );
+
+      return nodeHasText && childrenDontHaveText;
+    });
+
+    // Special Characters not allowed
+    rulesetSingleModal.clearListTitle("values-to-ignore-input");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title$List1");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.wait(500);
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+
+    // Name List must start with a letter
+    rulesetSingleModal.clearListTitle("values-to-ignore-input");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore"); // change error text
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "1TitleList1");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+
+    // Name list doesn't contain spaces
+    rulesetSingleModal.clearListTitle("values-to-ignore-input");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title List1");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
+
+    // create and close valid list
+    rulesetSingleModal.clearListTitle("values-to-ignore-input");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1Test");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    cy.wait(1000);
     rulesetSingleModal.selectValuesToIgnoreInput();
 
     // Edit list of values to ignore
@@ -633,12 +683,12 @@ describe("Matching", () => {
     rulesetSingleModal.editListButton("TitleList1");
     cy.findByText("Edit List");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "22");
-    rulesetSingleModal.addValuesToListToIgnore("Word 3");
+    rulesetSingleModal.addValuesToListToIgnore("Word3");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.hoverItemPresetList("TitleList122");
-    cy.findByText("Word 1, Word 2, Word 3");
+    cy.findByText("Word1, Word2, Word3");
 
 
     // Copy List
@@ -651,7 +701,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     cy.findByText("MyCopy");
     rulesetSingleModal.hoverItemPresetList("MyCopy");
-    cy.findByText("Word 1, Word 2, Word 3, dog");
+    cy.findByText("Word1, Word2, Word3, dog");
     rulesetSingleModal.closeButton().click();
   });
 
@@ -672,7 +722,7 @@ describe("Matching", () => {
     //Will be checked manually, due to intermittent failure
     if (Cypress.isBrowser("!chrome")) {
       rulesetSingleModal.hoverItemPresetList("MyCopy");
-      cy.findByText("Word 1, Word 2, Word 3, dog");
+      cy.findByText("Word1, Word2, Word3, dog");
       rulesetSingleModal.closeButton().click();
     }
   });
