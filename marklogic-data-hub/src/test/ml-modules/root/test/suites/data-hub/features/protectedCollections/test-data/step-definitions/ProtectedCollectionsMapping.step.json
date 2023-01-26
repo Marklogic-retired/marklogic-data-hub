@@ -15,6 +15,7 @@
   },
   "features": {
     "protectedCollections": {
+      "enabled" : true,
       "collections": ["myCollection"],
       "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
     }
