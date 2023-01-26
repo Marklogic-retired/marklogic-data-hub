@@ -154,16 +154,21 @@ function setArtifact(artifactType, artifactName, artifact, dirFileName) {
     }
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     const artifactDatabases = artifactLibrary.getStorageDatabases();
+    const artifactNameProperty = artifactLibrary.getNameProperty ? artifactLibrary.getNameProperty(): "";
     const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact, dirFileName);
     const artifactFileExtension = getArtifactFileExtension(artifactType);
     const artifactPermissions = artifactLibrary.getPermissions();
     const artifactCollections = artifactLibrary.getCollections();
+    const renamingArtifact = artifactNameProperty && artifact[artifactNameProperty] && artifactName !== artifact[artifactNameProperty];
     let existingArtifact;
     try {
         existingArtifact = getArtifactNode(artifactType, artifactName);
     } catch (e) {}
     if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
+    } else if (fn.exists(existingArtifact) && renamingArtifact) {
+        deleteArtifact(artifactType, artifactName);
+        artifactName = artifact[artifactNameProperty];
     }
 
     artifact.lastUpdated = fn.string(fn.currentDateTime());

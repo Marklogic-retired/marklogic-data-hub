@@ -140,7 +140,7 @@ export default class Mergeable {
     }
     let triples = null;
     if (this.mergeStep.tripleMerge) {
-      const tripleMergeFunction = hubUtil.requireFunction(tripleMerge.at, tripleMerge.function);
+      const tripleMergeFunction = hubUtil.requireFunction(this.mergeStep.tripleMerge.at, this.mergeStep.tripleMerge.function);
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
       const triplesArray = [
