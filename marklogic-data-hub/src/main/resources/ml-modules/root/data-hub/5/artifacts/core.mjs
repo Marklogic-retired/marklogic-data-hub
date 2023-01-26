@@ -167,8 +167,8 @@ function setArtifact(artifactType, artifactName, artifact, dirFileName) {
     if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
     } else if (fn.exists(existingArtifact) && renamingArtifact) {
-      deleteArtifact(artifactType, artifactName);
-      artifactName = artifact[artifactNameProperty];
+        deleteArtifact(artifactType, artifactName);
+        artifactName = artifact[artifactNameProperty];
     }
 
     artifact.lastUpdated = fn.string(fn.currentDateTime());
