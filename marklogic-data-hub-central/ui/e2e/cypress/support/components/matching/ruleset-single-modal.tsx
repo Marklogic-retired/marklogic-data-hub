@@ -76,11 +76,19 @@ class RulesetSingleModal {
     cy.get(`[id$=${id}]`).type(title);
   }
 
+  clearListTitle(id: string) {
+    cy.get(`[id$=${id}]`).clear();
+  }
+
   addValuesToListToIgnore(word: string) {
     cy.get(`*[class^="rbt-input-main"]`).click();
     cy.get(`*[class^="rbt-input-main"]`).type(word).then(() => {
       cy.get(`[id^=custom-selections-item]`).click();
     });
+  }
+
+  clearValuesToIgnoreList() {
+    cy.get(`*[class^="rbt-input-main"]`).focus().clear();
   }
 
   editFirstList() {

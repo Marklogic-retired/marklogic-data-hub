@@ -21,8 +21,8 @@ type Props = {
 };
 
 const ListModal: React.FC<Props> = (props) => {
-  const [listNameErrorMessage, setListNameErrorMessage] = useState("");
-  const [listValuesErrorMessage, setListValuesErrorMessage] = useState("");
+  const [listNameErrorMessage, setListNameErrorMessage] = useState<any>("");
+  const [listValuesErrorMessage, setListValuesErrorMessage] = useState<any>("");
   const [listName, setListName] = useState<any>("");
   const [listNameOrigin, setListNameOrigin] = useState<any>("");
   const [listValues, setListValues] = useState<any>([]);
@@ -57,20 +57,28 @@ const ListModal: React.FC<Props> = (props) => {
     return () => { setListName(""); };
   }, [props.isVisible, props.action]);
 
+  const checkListNameRules = (listName) => {
+    const regex = /^[a-zA-Z][a-zA-Z0-9_-]*$/; // Start with a letter and detect special characters excluding "_" and "-"
+    return !regex.test(listName);
+  };
   const onSubmit = async (event) => {
     resetModalValuesIgnore();
     let formError = false;
-    if (!listName) { setListNameErrorMessage("A title for this list is required."); formError = true; }
-    if (!listValues || listValues.length === 0) { setListValuesErrorMessage("Values to ignore in this list are required."); formError = true; }
+    if (!listName) { setListNameErrorMessage({id: "titleRequired", highlight: ""}); formError = true; }
+    if (!listValues || listValues.length === 0) { setListValuesErrorMessage({id: "valuesRequired", highlight: ""}); formError = true; }
+    if (checkListNameRules(listName) && listName !== "") {
+      setListNameErrorMessage({id: "stringRule", highlight: ""});
+      formError = true;
+    }
     if (props.checkIfExistInList(listName) && (props.action === "A" || props.action === "C")) {
-      setListNameErrorMessage("This list name already exists.");
+      setListNameErrorMessage({id: "listAlreadyExists", highlight: listName});
       formError = true;
     }
     let responseCreateList = true;
-    if (props.action === "A"  || props.action === "C") {
+    if ((props.action === "A"  || props.action === "C") && !formError) {
       responseCreateList = await createEditExcludeValuesList(listName, listValues.map((item) => item.label));
     }
-    if (props.action === "E") {
+    if (props.action === "E" && !formError) {
       responseCreateList = await createEditExcludeValuesList(listName, listValues.map((item) => item.label), listNameOrigin);
     }
     if (formError && responseCreateList) {
@@ -120,16 +128,55 @@ const ListModal: React.FC<Props> = (props) => {
   const handleListValues = (selections) => {
     if (Array.isArray(selections)) {
       resetModalValuesIgnore();
+      let ruleError  =false;
       // Remove duplicated values
       const filteredSelections = selections.filter(
-        (item, index, arr) =>
-          index === arr.findIndex((t) => t.label === item.label)
+        (item, index, arr) => {
+          if (checkListNameRules(item.label)) {
+            ruleError = true;
+            setListValuesErrorMessage({id: "stringRule", highlight: ""});
+            return false;
+          }
+          return index === arr.findIndex((t) => t.label === item.label);
+        }
       );
-      if (selections.length !== filteredSelections.length) setListValuesErrorMessage("Duplicated values is not allowed");
+      if (selections.length !== filteredSelections.length && !ruleError) setListValuesErrorMessage({id: "DuplicatedValue", highlight: selections[selections.length - 1].label});
       setListValues(filteredSelections);
       setSelected(filteredSelections);
     }
 
+  };
+
+  const processListValueErrorMessage = (listValuesErrorMessage) => {
+    let errorMessage;
+    switch (listValuesErrorMessage.id) {
+    case "DuplicatedValue":
+      errorMessage = (<>The value <b>{listValuesErrorMessage.highlight}</b> already exists in this list.</>);
+      break;
+    case "stringRule":
+      errorMessage = (<>Names must start with a letter and can contain letters, numbers, hyphens, and underscores.</>);
+      break;
+    case "valuesRequired":
+      errorMessage = (<>Values to ignore in this list are required.</>);
+      break;
+    }
+    return errorMessage;
+  };
+
+  const processListNameErrorMessage = (listNameErrorMessage) => {
+    let errorMessage;
+    switch (listNameErrorMessage.id) {
+    case "stringRule":
+      errorMessage = (<>Names must start with a letter and can contain letters, numbers, hyphens, and underscores.</>);
+      break;
+    case "titleRequired":
+      errorMessage = (<>A title for this list is required.</>);
+      break;
+    case "listAlreadyExists":
+      errorMessage = (<>An existing list is already using the name <b>{listNameErrorMessage.highlight}</b>.</>);
+      break;
+    }
+    return errorMessage;
   };
 
   return (
@@ -162,7 +209,7 @@ const ListModal: React.FC<Props> = (props) => {
             </Col>
             <Row>
               <Col xs={3}></Col>
-              <Col xs={9} className={styles.validationErrorIgnore} id="errorListName" data-testid={"ListNameErrorMessage"}>{listNameErrorMessage}</Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListName" data-testid={"ListNameErrorMessage"}>{processListNameErrorMessage(listNameErrorMessage)}</Col>
             </Row>
           </Row>
 
@@ -191,7 +238,7 @@ const ListModal: React.FC<Props> = (props) => {
             </Col>
             <Row>
               <Col xs={3}></Col>
-              <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues" data-testid={"ListValuesErrorMessage"}>{listValuesErrorMessage}</Col>
+              <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues" data-testid={"ListValuesErrorMessage"}>{processListValueErrorMessage(listValuesErrorMessage)}</Col>
             </Row>
           </Row>
           <div className={styles.footer}>
