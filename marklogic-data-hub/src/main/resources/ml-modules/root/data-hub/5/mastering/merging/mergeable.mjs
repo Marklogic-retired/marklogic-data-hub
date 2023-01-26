@@ -8,7 +8,6 @@ import common from "/data-hub/5/mastering/common.mjs";
 import hubUtil from '/data-hub/5/impl/hub-utils.mjs';
 import consts from "../../impl/consts.mjs";
 import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
-import hubUtils from "../../impl/hub-utils.mjs";
 
 const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
 
@@ -141,7 +140,7 @@ export default class Mergeable {
     }
     let triples = null;
     if (this.mergeStep.tripleMerge) {
-      const tripleMergeFunction = hubUtils.requireFunction(this.mergeStep.tripleMerge.at, this.mergeStep.tripleMerge.function);
+      const tripleMergeFunction = hubUtil.requireFunction(this.mergeStep.tripleMerge.at, this.mergeStep.tripleMerge.function);
       triples = tripleMergeFunction(this.mergeStep, documentNodes, properties.map(prop => prop[1].sources), this.mergeStep.tripleMerge);
     } else {
       const triplesArray = [
