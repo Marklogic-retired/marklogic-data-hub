@@ -72,6 +72,24 @@ describe("Test '/Explore' view selector", () => {
     explorePage.getEntities().click();
     table.getMainTableContainer().should("be.visible");
   });
+
+  it(`persist table items`, () => {
+    cy.log(`**expands item**`);
+    browsePage.expandItemTableView("/json/persons/last-name-dob-custom1.json");
+
+    cy.log(`**Go to Monitor section**`);
+    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.getMonitorContainer().should("be.visible");
+
+    cy.log(`**Return to Explore section**`);
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.switchView("table");
+    table.getMainTableContainer().should("be.visible");
+
+    cy.log(`**table view item is still spanded**`);
+    cy.findByText("Alice").should("be.visible");
+  });
+
   it(`Validate that the 'Snippet' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);
     toolbar.getExploreToolbarIcon().click();
@@ -94,6 +112,23 @@ describe("Test '/Explore' view selector", () => {
     cy.log(`**Select 'Entities' button**`);
     explorePage.getEntities().click();
     browsePage.getSnippetContainer().should("be.visible");
+  });
+
+  it(`persist snippet items`, () => {
+    cy.log(`**expands item**`);
+    browsePage.expandItemSnippetView("Person", "/json/persons/last-name-dob-custom1.json");
+
+    cy.log(`**Go to Monitor section**`);
+    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.getMonitorContainer().should("be.visible");
+
+    cy.log(`**Return to Explore section**`);
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.switchView("snippet");
+    browsePage.getSnippetContainer().should("be.visible");
+
+    cy.log(`**snippet item is still spanded**`);
+    browsePage.getSnippetItem("/json/persons/last-name-dob-custom1.json").should("be.visible");
   });
 
 });

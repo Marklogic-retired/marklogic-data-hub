@@ -5,9 +5,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
-import {SearchContext} from "../../util/search-context";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
-import {searchContextInterfaceByDefault, defaultSearchOptions} from "@util/uiTestCommonInterface";
 
 describe("Search Result view component", () => {
   const parsedModelData = entityFromJSON(modelResponse);
@@ -21,9 +19,10 @@ describe("Search Result view component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <SearchResult
             entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
+            item={searchPayloadResults[0] as any}
             tableView={false}
-            handleViewChange={""}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
           />
         </AuthoritiesContext.Provider>
       </Router>
@@ -48,41 +47,5 @@ describe("Search Result view component", () => {
 
     fireEvent.mouseOver(getByTestId("unmerge-icon"));
     await (waitForElement(() => (getByText("Unmerge Documents"))));
-  });
-
-  test("Verify expandable icon closes if page number changes", async () => {
-    const {rerender, getByTestId, getByLabelText} = render(
-      <SearchContext.Provider value={{...searchContextInterfaceByDefault}
-      }>
-        <Router>
-          <SearchResult
-            entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
-            tableView={false}
-            handleViewChange={""}
-          />
-        </Router>
-      </SearchContext.Provider>
-    );
-    expect(getByTestId("expandable-icon")).toBeInTheDocument();
-    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
-    fireEvent.click(getByLabelText("icon: chevron-right"));
-    expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
-
-    rerender(
-      <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
-        <Router>
-          <SearchResult
-            entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
-            tableView={false}
-            handleViewChange={""}
-
-          />
-        </Router>
-      </SearchContext.Provider>
-    );
-
-    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
   });
 });

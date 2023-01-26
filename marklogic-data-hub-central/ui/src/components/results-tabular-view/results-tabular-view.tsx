@@ -18,6 +18,7 @@ import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/m
 import {unmergeUri} from "@api/merging";
 import {Spinner} from "react-bootstrap";
 import {AxiosResponse} from "axios";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 
 /* eslint-disable */
 interface Props {
@@ -80,6 +81,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 const ResultsTabularView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [primaryKey, setPrimaryKey] = useState<string>("");
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
   const [expandedNestedTableColumn, setExpandedNestedTableColumn] = useState<string[]>([]);
   const [compareModalVisible, setCompareModalVisible] = useState(false);
@@ -577,6 +579,41 @@ const ResultsTabularView = (props) => {
     }));
   }, [props.selectedEntities, searchOptions.selectedTableProperties]);
 
+  const saveExpandedTableKeys = (isNested: boolean, expandedRowAux) => {
+    const storage = getViewSettings();
+    let newDataStorage;
+    newDataStorage = {
+      ...storage, explore: {
+        ...storage.explore,
+        resultsTable: !isNested ? {
+          ...storage.explore?.resultsTable,
+          expandedTableKeys: expandedRowAux,
+        } : {
+          ...storage.explore?.resultsTable,
+          expandedNestedTableKeys: expandedRowAux,
+        }
+      }};
+    setViewSettings(newDataStorage);
+  };
+
+  const getExpandedTableKeys = (isNested: boolean) => {
+    const storage = getViewSettings();
+    let storageAux = (!isNested ? storage?.explore?.resultsTable?.expandedTableKeys : storage?.explore?.resultsTable?.expandedNestedTableKeys) || [];
+    if (storageAux.length > 0) {
+      let expandedTableKeys = storageAux;
+      return expandedTableKeys;
+    } else return [];
+  };
+
+  useEffect(() => {
+    const expandedRows = getExpandedTableKeys(false);
+    const expandedNestedRows = getExpandedTableKeys(true);
+    if (expandedRows.length > 0) {
+      setExpandedRows(expandedRows);
+      setExpandedNestedTableRows(expandedNestedRows);
+    }
+  }, []);
+
   const expandedRowRender = (rowId) => {
     const nestedColumns = [
       {
@@ -675,6 +712,7 @@ const ResultsTabularView = (props) => {
       }
 
       setExpandedNestedTableRows(newExpandedNestedTableRows);
+      saveExpandedTableKeys(true, newExpandedNestedTableRows);
     };
 
     return (
@@ -709,6 +747,21 @@ const ResultsTabularView = (props) => {
       </span>
     </HCTooltip>;
 
+  const onExpandMainTable = (record, expanded, rowIndex) => {
+    let newExpandedTableRows = [...expandedRows];
+
+    if (expanded) {
+      if (newExpandedTableRows.indexOf(record.uri) === -1) {
+        newExpandedTableRows.push(record.uri);
+      }
+    } else {
+      newExpandedTableRows = newExpandedTableRows.filter(row => row !== record.uri);
+    }
+
+    setExpandedRows(newExpandedTableRows);
+    saveExpandedTableKeys(false, newExpandedTableRows);
+  };
+
   return (
     <>
       {!props.groupNodeTableView &&
@@ -741,7 +794,9 @@ const ResultsTabularView = (props) => {
           pagination={false}
           showExpandIndicator={true}
           bordered
+          expandedRowKeys={expandedRows}
           dynamicSortColumns
+          onExpand={onExpandMainTable}
         />}
       </div>
       <CompareValuesModal

@@ -10,39 +10,7 @@ import {HCDivider, HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/
 import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/explore.config";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {themeColors} from "@config/themes.config";
-
-interface InfoProps {
-  title: string;
-  draft: boolean;
-  version: string;
-  baseUri: string;
-}
-
-interface RelatedConceptProps {
-  context: string;
-  conceptExpression: string;
-  conceptClass: string;
-  predicate: string;
-}
-
-interface PropertyProps {
-  name: string;
-  ref: string;
-  related: string
-  datatype: string;
-  collation: any;
-}
-
-interface EntityProps {
-  color: string;
-  icon: string;
-  name: string;
-  primaryKey: string;
-  properties: PropertyProps[];
-  relatedConcepts: RelatedConceptProps[];
-  relatedEntities: string[];
-  info: InfoProps;
-}
+import {EntityProps} from "types/entity-types";
 
 interface BaseEntityProps {
   filter: number;

@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext} from "react";
 import {Link, withRouter, RouteComponentProps} from "react-router-dom";
 import styles from "./search-result.module.scss";
 import ReactHtmlParser from "react-html-parser";
@@ -16,21 +16,47 @@ import {unmergeUri} from "@api/merging";
 import {AuthoritiesContext} from "@util/authorities";
 import {Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
+import {EntityProps} from "types/entity-types";
+
+interface ItemProps {
+  confidence: number;
+  createdBy: string;
+  createdOn: string;
+  entityInstance: any; //props needed
+  entityName: string[];
+  fitness: number;
+  format: string;
+  href: string;
+  identifier: any //props needed
+  index: number;
+  matches: any; //props needed
+  mimetype: string;
+  path: string;
+  primaryKey: any; //props needed
+  score: number;
+  sources: any; //props needed
+  unmerge: boolean;
+  unmergeUris?: any; //unkown so far
+  uri: string;
+}
 
 interface Props extends RouteComponentProps {
-    item: any;
-    entityDefArray: any[];
+    item: ItemProps;
+    entityDefArray: EntityProps[];
     tableView: boolean;
-    handleViewChange: any
+    handleViewChange: (view: string) => void;
+    isExpanded?: boolean;
+    onExpand: () => void;
 }
 
 const SearchResult: React.FC<Props> = (props) => {
+  const {item, entityDefArray, tableView, handleViewChange, isExpanded, onExpand} = props;
+
   const {
     searchOptions,
     setGraphViewOptions,
     setSavedNode
   } = useContext(SearchContext);
-  const [show, toggleShow] = useState(false);
   const [activeEntityArray, setActiveEntityArray] = useState<any[]>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
@@ -45,27 +71,23 @@ const SearchResult: React.FC<Props> = (props) => {
   let primaryKeyValue: any = "-";
   let createdOnVal: string = "";
   let sourcesVal: string = "";
-  let recordTypeVal: string = props.item.format;
+  let recordTypeVal: string = item.format;
 
-  useEffect(() => {
-    toggleShow(false);
-  }, [searchOptions.pageNumber, searchOptions.entityTypeIds]);
-
-  if (props.item.primaryKey && Object.keys(props.item.primaryKey).length) {
-    primaryKeyValue = props.item.primaryKey.propertyValue;
-    primaryKey = props.item.primaryKey.propertyPath === "uri" ? "URI": props.item.primaryKey.propertyPath;
+  if (item.primaryKey && Object.keys(item.primaryKey).length) {
+    primaryKeyValue = item.primaryKey.propertyValue;
+    primaryKey = item.primaryKey.propertyPath === "uri" ? "URI": item.primaryKey.propertyPath;
   }
 
-  if (props.item.hasOwnProperty("entityName")) {
-    itemEntityName = props.item.entityName;
+  if (item.hasOwnProperty("entityName")) {
+    itemEntityName = item.entityName;
   }
 
-  if (props.item.hasOwnProperty("createdOn")) {
-    createdOnVal = props.item.createdOn;
+  if (item.hasOwnProperty("createdOn")) {
+    createdOnVal = item.createdOn;
   }
 
-  if ((props.item.format === "json" || props.item.format === "xml") && props.item.hasOwnProperty("sources")) {
-    sourcesVal = props.item.sources.map(src => {
+  if ((item.format === "json" || item.format === "xml") && item.hasOwnProperty("sources")) {
+    sourcesVal = item.sources.map(src => {
       return src.datahubSourceName;
     }).join(", ");
   }
@@ -76,7 +98,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
   function getSnippet() {
     let str = "";
-    props.item.matches.forEach(item => {
+    item.matches.forEach(item => {
       item["match-text"].forEach(element => {
         if (typeof element === "object") {
           str = str.concat("<b>").concat(element.highlight).concat("</b>");
@@ -91,22 +113,19 @@ const SearchResult: React.FC<Props> = (props) => {
 
   const snippet = getSnippet();
 
-  function showTableEntityProperties() {
-    toggleShow(!show);
-  }
   const navigateToGraphView = (item) => {
     item["navigatingFromOtherView"] = true;
     setSavedNode(item);
     setGraphViewOptions(`${item.entityName}-${primaryKeyValue}`);
-    props.handleViewChange("graph");
+    handleViewChange("graph");
   };
 
   const openUnmergeCompare = async (item, event) => {
     let arrayUris;
     event.stopPropagation();
     event.preventDefault();
-    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
-    setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
+    let activeEntityIndex = entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    setActiveEntityArray([entityDefArray[activeEntityIndex]]);
     if (typeof item.unmergeUris[0] === "string") {
       arrayUris = item.unmergeUris;
     } else {
@@ -149,8 +168,8 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
     <>
       <div className={"w-100"}>
-        <div className={`d-flex align-items-center ${styles.title}`} onClick={() => showTableEntityProperties()}>
-          {show
+        <div className={`d-flex align-items-center ${styles.title}`} onClick={() => onExpand()}>
+          {isExpanded
             ?<ChevronDown
               className={styles.expandableIcon}
               aria-label="icon: chevron-down"
@@ -159,7 +178,7 @@ const SearchResult: React.FC<Props> = (props) => {
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
-                  showTableEntityProperties();
+                  onExpand();
                 }
               }}
             />
@@ -171,7 +190,7 @@ const SearchResult: React.FC<Props> = (props) => {
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
-                  showTableEntityProperties();
+                  onExpand();
                 }
               }}
             />}
@@ -185,12 +204,12 @@ const SearchResult: React.FC<Props> = (props) => {
               start: searchOptions.start,
               searchFacets: searchOptions.selectedFacets,
               query: searchOptions.query,
-              tableView: props.tableView,
+              tableView: tableView,
               sortOrder: searchOptions.sortOrder,
-              sources: props.item.sources,
+              sources: item.sources,
               primaryKey: primaryKeyValue,
-              uri: props.item.uri,
-              entityInstance: props.item.entityInstance,
+              uri: item.uri,
+              entityInstance: item.entityInstance,
               targetDatabase: searchOptions.database
             }}} id={"instance"} data-cy="instance" >
               <HCTooltip text="Show the processed data" id="instance-icon-tooltip" placement="top-start">
@@ -203,12 +222,12 @@ const SearchResult: React.FC<Props> = (props) => {
               start: searchOptions.start,
               searchFacets: searchOptions.selectedFacets,
               query: searchOptions.query,
-              tableView: props.tableView,
+              tableView: tableView,
               sortOrder: searchOptions.sortOrder,
-              sources: props.item.sources,
+              sources: item.sources,
               primaryKey: primaryKeyValue,
-              uri: props.item.uri,
-              entityInstance: props.item.entityInstance,
+              uri: item.uri,
+              entityInstance: item.entityInstance,
               targetDatabase: searchOptions.database
             }}} id={"source"} data-cy="source" >
               <HCTooltip text={"Show the complete " + recordTypeVal.toUpperCase()} id="source-icon-tooltip" placement="top-start">
@@ -228,11 +247,11 @@ const SearchResult: React.FC<Props> = (props) => {
             }>
               <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
                 <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
-                  size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(props.item)}/></i>
+                  size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(item)}/></i>
               </HCTooltip>
             </div>
             {
-              props.item.unmerge ?
+              item.unmerge ?
                 <div>
                   <div className={styles.unMergeIcon} tabIndex={0} onKeyDown={
                     (event) => {
@@ -245,7 +264,7 @@ const SearchResult: React.FC<Props> = (props) => {
                     {
                       canReadMatchMerge ?
                         <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                          <i><MdCallSplit className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(props.item, e)}/></i>
+                          <i><MdCallSplit className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(item, e)}/></i>
                         </HCTooltip>
                         :
                         <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
@@ -255,7 +274,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
                   </div>
                   {
-                    loading === props.item.uri ?
+                    loading === item.uri ?
                       <Spinner
                         data-testid="hc-button-component-spinner"
                         as="span"
@@ -271,7 +290,7 @@ const SearchResult: React.FC<Props> = (props) => {
           </div>
         </div>
         <div className={styles.snippet} data-cy="snippet">
-          {props.item.matches.length >= 1 && snippet}
+          {item.matches.length >= 1 && snippet}
         </div>
         <div className={styles.metadata}>
           {createdOnVal && (
@@ -293,8 +312,8 @@ const SearchResult: React.FC<Props> = (props) => {
             </div>
           )}
         </div>
-        <div style={{display: (show) ? "block" : "none"}} data-cy="expandable-view">
-          <ExpandableTableView item={props.item} entityDefArray={props.entityDefArray} tableView={props.tableView}/>
+        <div style={{display: (isExpanded) ? "block" : "none"}} data-cy="expandable-view" aria-label={`expandable-view-${primaryKeyValue}`}>
+          <ExpandableTableView item={item} entityDefArray={entityDefArray} tableView={tableView}/>
         </div>
       </div>
       <CompareValuesModal
@@ -312,7 +331,7 @@ const SearchResult: React.FC<Props> = (props) => {
         isMerge={false}
         mergeUris={() => void 0}
         unmergeUri={submitUnmergeUri}
-        originalUri={props.item.uri}
+        originalUri={item.uri}
         flowName={""}
       />
     </>

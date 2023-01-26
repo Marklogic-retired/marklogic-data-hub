@@ -103,6 +103,13 @@ export type ViewSettingsType = {
             relationshipLabels?: boolean,
             concepts?: boolean,
             physicsAnimation?: boolean,
-        }
+        },
+        resultsTable?: {
+            expandedTableKeys: Array<any>,
+            expandedNestedTableKeys: Array<any>,
+        },
+        snippetView?: {
+            expandedItems: Array<any>,
+        },
     }
 };
