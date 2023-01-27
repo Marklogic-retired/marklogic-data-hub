@@ -45,7 +45,12 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
     <div className={styles.pickerWrapper} ref={ref} data-testid={`${identifier}-hc-icon-picker-wrapper`} onClick={() => setIsVisible(isVisible => !isVisible)}>
       <div className={styles.pickerIcon} data-testid={`${identifier}-${value}-icon-selected`}>
         <DynamicIcons name={value} />
-        <div tabIndex={0} onFocus={() => setIsVisible(isVisible => !isVisible)}></div>
+        <div tabIndex={0}
+          onFocus={() => setIsVisible(isVisible => !isVisible)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") { setIsVisible(isVisible => !isVisible); e.preventDefault(); }
+          }}
+        ></div>
       </div>
       {isVisible && (
         <div

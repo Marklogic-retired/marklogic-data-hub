@@ -757,7 +757,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   };
 
   const onCheckboxChange = (event, checkboxName) => {
-    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event.target.checked});
+    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName]: event.target.checked});
   };
 
   const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
@@ -773,7 +773,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
             onChange={(event) => onRadioChange(event, radio.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter"|| event.key === " ") { onRadioChange(event, radio.value); }
+              if (event.key === "Enter"|| event.key === " ") { onRadioChange("t", radio.value); }
             }}
             label={"Yes"}
             value={"yes"}
@@ -818,6 +818,10 @@ const PropertyModal: React.FC<Props> = (props) => {
               value={checkbox.value}
               checked={selectedPropertyOptions[checkbox.value]}
               onChange={(event) => onCheckboxChange(event, checkbox.value)}
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter"|| event.key === " ") { onCheckboxChange("keyboard", checkbox.value); }
+              }}
             />
             <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
           </FormCheck>
