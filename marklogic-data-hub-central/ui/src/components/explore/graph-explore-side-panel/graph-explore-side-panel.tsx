@@ -256,7 +256,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           </HCTooltip>}
         </span>
         <span>
-          <i className={styles.close} aria-label="closeGraphExploreSidePanel" onClick={onCloseSidePanel}>
+          <i className={styles.close} tabIndex={0} aria-label="closeGraphExploreSidePanel" onClick={onCloseSidePanel} onKeyDown={(event) => { if (event.key === "Enter") onCloseSidePanel(); }}>
             <XLg />
           </i>
         </span>
