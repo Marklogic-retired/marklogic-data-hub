@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from "react";
 import styles from "./list-modal.module.scss";
-import {Modal, Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Modal, Row, Col, Form, FormLabel, Overlay, Tooltip} from "react-bootstrap";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {themeColors} from "@config/themes.config";
-import {HCTooltip} from "@components/common";
 import {HCButton} from "@components/common";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {HCInput} from "@components/common";
@@ -16,8 +15,8 @@ type Props = {
   listName?: string;
   listValues?: string[];
   confirmAction: () => void;
-  updateListValues:()=> void;
-  checkIfExistInList:(name:string)=> boolean
+  updateListValues: () => void;
+  checkIfExistInList: (name: string) => boolean
 };
 
 const ListModal: React.FC<Props> = (props) => {
@@ -28,6 +27,10 @@ const ListModal: React.FC<Props> = (props) => {
   const [listValues, setListValues] = useState<any>([]);
   const [selected, setSelected] = useState<any>([]);
   let textModalHeader = "";
+
+  const [show, setShow] = useState(false);
+  const target = React.useRef(null);
+  const container = React.useRef(null);
 
   useEffect(() => {
     if (props.isVisible) {
@@ -147,6 +150,27 @@ const ListModal: React.FC<Props> = (props) => {
 
   };
 
+  const listValueTooltip = (
+    <>
+      <i ref={target}>
+        <QuestionCircleFill
+          color={themeColors.defaults.questionCircle}
+          className={styles.icon}
+          size={13} aria-label="icon: question-circle"
+          onMouseOver={(e) => setShow(true)}
+          onMouseLeave={(e) => setShow(false)}
+        />
+      </i>
+      <Overlay target={target.current} show={show} placement="top" container={container}>
+        {(props) => (
+          <Tooltip id="list-tooltip" {...props}>
+            <span aria-label="reduce-tooltip-text">{"Documents containing these values will be ignored during matching."}</span>
+          </Tooltip>
+        )}
+      </Overlay>
+    </>
+  );
+
   const processListValueErrorMessage = (listValuesErrorMessage) => {
     let errorMessage;
     switch (listValuesErrorMessage.id) {
@@ -192,8 +216,9 @@ const ListModal: React.FC<Props> = (props) => {
       <Modal.Body className={"pt-4 px-3"}>
         <Form
           id="form-modal-values-to-ignore"
-          onSubmit={() => {}}
+          onSubmit={() => { }}
           className={"container-fluid"}
+          ref={container}
         >
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Title:"}<span className={styles.asterisk}>*</span></FormLabel>
@@ -231,9 +256,7 @@ const ListModal: React.FC<Props> = (props) => {
               />
 
               <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{"Documents containing these values will be ignored during matching."}</span>} id="list-tooltip" placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
-                </HCTooltip>
+                {listValueTooltip}
               </div>
             </Col>
             <Row>
