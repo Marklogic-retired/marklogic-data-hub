@@ -272,13 +272,35 @@ const DetailPageNonEntity = (props) => {
         <div className={styles.detailContentNonEntityHeader}>
           <Row id="back-button" className={"p-4 header-heading-title"} onClick={() => history.push(props.selectedSearchOptions)}>
             <Col>
-              <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-2 header-back-button"} />Back to results</span>
+              <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}>
+                <ArrowLeftShort
+                  aria-label="Back"
+                  className={"d-inline-block me-2 fs-2 header-back-button"}
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      history.push(props.selectedSearchOptions);
+                    }
+                  }}
+                />
+                Back to results
+              </span>
             </Col>
           </Row>
         </div>
         <div>{nonEntityMenu()}</div>
         <div className={styles.download}>
-          <a data-testid="download-link" onClick={download}><Download className={styles.downloadIcon} /> <span>{displayFileSize()}</span></a>
+          <a data-testid="download-link"
+            onClick={download}
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                download();
+              }
+            }}
+          >
+            <Download className={styles.downloadIcon} /> <span>{displayFileSize()}</span>
+          </a>
         </div>
         <div className={styles.documentContainer}>
           <div className={styles.contentElements}>{contentElements}</div>

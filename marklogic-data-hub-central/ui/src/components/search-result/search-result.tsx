@@ -178,6 +178,7 @@ const SearchResult: React.FC<Props> = (props) => {
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
                   onExpand();
                 }
               }}
@@ -190,6 +191,7 @@ const SearchResult: React.FC<Props> = (props) => {
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
                   onExpand();
                 }
               }}
@@ -256,6 +258,7 @@ const SearchResult: React.FC<Props> = (props) => {
                   <div className={styles.unMergeIcon} tabIndex={0} onKeyDown={
                     (event) => {
                       if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
                         openUnmergeCompare(props.item, event);
                       }
                     }

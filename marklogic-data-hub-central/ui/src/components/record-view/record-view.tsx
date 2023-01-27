@@ -4,7 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactHtmlParser from "react-html-parser";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import sourceFormatOptions from "@config/formats.config";
 import {AuthoritiesContext} from "@util/authorities";
 import {formatCardUri} from "@util/conversionFunctions";
@@ -24,6 +24,7 @@ import CompareValuesModal from "../../components/entities/matching/compare-value
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);
+  const history: any = useHistory();
   const {
     searchOptions
   } = useContext(SearchContext);
@@ -167,6 +168,11 @@ const RecordCardView = (props) => {
 
     return linkObject;
   };
+  const navigateUsingKey = (event, elem) => {
+    if (event.key === "Enter" || event.key === " ") {
+      history.push(getLinkProperties(elem));
+    }
+  };
 
   const download = async (docUri) => {
     try {
@@ -281,7 +287,7 @@ const RecordCardView = (props) => {
                         </HCTooltip>
                       </span>
                       :
-                      <Link to={getLinkProperties(elem)}
+                      <Link to={getLinkProperties(elem)} onKeyDown={(e) => navigateUsingKey(e, elem)}
                         id={"instance"}
                         data-cy="instance">
                         <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">

@@ -8,7 +8,7 @@ import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibi
 import {SearchContext} from "@util/search-context";
 import {HCSearch, HCButton, HCDivider, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {Overlay} from "react-bootstrap";
 
 interface Props {
   entityPropertyDefinitions: any[];
@@ -25,6 +25,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const {
     setSelectedTableProperties,
   } = useContext(SearchContext);
+  const target = React.useRef(null);
+  const container = React.useRef(null);
 
 
   let allProperties = treeConverter(props.entityPropertyDefinitions);
@@ -37,7 +39,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [checkedKeys, setCheckedKeys] = useState<any[]>(selectedPropertyKeys);
 
   let primaryKey = treeColumns.find((prop => { return prop.title === props.primaryKey; }));
-  const dataList : any[] = [];
+  const dataList: any[] = [];
 
   useEffect(() => {
     allProperties = treeConverter(props.entityPropertyDefinitions);
@@ -97,13 +99,13 @@ const ColumnSelector: React.FC<Props> = (props) => {
         }
       }
       if (item.visible === false) {
-        return <TreeNode style={{display: "none"}} title={title} key={item.key} aria-label="column-option"/>;
+        return <TreeNode style={{display: "none"}} title={title} key={item.key} aria-label="column-option" />;
       } else {
         if (item && primaryKey && item.key === primaryKey.key) {
           let pkTitle = <HCTooltip text="The column identified as the unique identifier must always be displayed." id="column-identifier-tooltip" placement="top">
             <div data-testid="pk-tooltip">{title}</div>
           </HCTooltip>;
-          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option"/>;
+          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />;
         } else {
           return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />;
         }
@@ -176,15 +178,32 @@ const ColumnSelector: React.FC<Props> = (props) => {
   );
 
   return (
-    <OverlayTrigger placement="left-start" show={props.popoverVisibility} overlay={content} trigger="click">
-      <div className={styles.fixedPopup}>
-        <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
-          <span>
-            <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector-tooltip"/>
-          </span>
-        </HCTooltip>
-      </div>
-    </OverlayTrigger>
+    <div ref={container}>
+      <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+        <i ref={target}>
+          <FontAwesomeIcon
+            className={styles.columnIcon}
+            icon={faColumns}
+            size="lg"
+            data-testid="column-selector-tooltip"
+            tabIndex={0}
+            onClick={() => props.setPopoverVisibility(true)}
+            onKeyPress={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                props.setPopoverVisibility(true);
+              }
+            }}
+          />
+        </i>
+      </HCTooltip>
+      <Overlay
+        container={container}
+        target={target.current}
+        placement="left-start"
+        show={props.popoverVisibility}>
+        {content}
+      </Overlay>
+    </div>
   );
 };
 
