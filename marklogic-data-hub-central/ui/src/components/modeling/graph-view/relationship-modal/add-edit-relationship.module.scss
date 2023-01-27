@@ -333,7 +333,7 @@
   padding: 0 !important;
   text-align: center;
   margin-top: 4px;
-  background-color: #fff !important;
+  background-color: $white !important;
   &:hover{
     color: var(--hoverColor);
   }
@@ -342,4 +342,11 @@
 .relationshipTypeToggleDisabled {
   opacity: 0.5;
   cursor: not-allowed !important;
+}
+
+.chevron:focus-visible {
+  border: 1px solid $border-input !important;
+  box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+  -webkit-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+  -moz-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
 }

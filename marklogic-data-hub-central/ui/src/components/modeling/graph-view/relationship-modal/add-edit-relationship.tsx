@@ -659,6 +659,10 @@ const AddEditRelationship: React.FC<Props> = ({
             eventKey={index}
             role={"option"}
             key={index}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") { handleMenuClick(item.value); }
+            }}
           >
             {item.value}
           </Dropdown.Item>
@@ -706,6 +710,8 @@ const AddEditRelationship: React.FC<Props> = ({
       aria-label="foreignKey-dropdown"
       options={foreignKeyOptions}
       styles={reactSelectThemeConfig}
+      tabIndex={0}
+      openMenuOnFocus
       formatOptionLabel={({value, label}) => {
         return (
           <span aria-label={`${label}-option`}>
@@ -716,12 +722,9 @@ const AddEditRelationship: React.FC<Props> = ({
     />
   );
 
-
   //new property select
   const [, setDisplayPropertyMenu] = useState(false);
   const [, setDisplayPropertyList] = useState(false);
-
-
 
   const onEntityPropertySelect = ({value}) => {
     setSourcePropertyValue(value);
@@ -731,9 +734,6 @@ const AddEditRelationship: React.FC<Props> = ({
     //simulate a click event to handle simultaneous event propagation of dropdown and select
     simulateMouseClick(dummyNode.current);
   };
-
-
-
 
   const propertyDropdown = () => {
     const dataOptions = [{value: ".", key: ".", label: " - instance - ", type: "string"}, ...sourcePropertyOptions];
@@ -802,19 +802,29 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
+  const handleDelete = (e) => {
+    if (!canWriteEntityModel && canReadEntityModel) {
+      return e.preventDefault();
+    } else {
+      handleRelationshipDeletion();
+    }
+  };
+
   const modalFooter = <>
     <div className={styles.deleteTooltip}>
       <HCTooltip text={ModelingTooltips.deleteRelationshipIcon} id="delete-relationship-tooltip" placement="top">
         <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
-          <FontAwesomeIcon className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
+          <FontAwesomeIcon tabIndex={0} className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
             icon={faTrashAlt}
             onClick={(event) => {
-              if (!canWriteEntityModel && canReadEntityModel) {
-                return event.preventDefault();
-              } else {
-                handleRelationshipDeletion();
+              handleDelete(event);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                handleDelete(event);
               }
-            }} />
+            }}
+          />
         </i>
       </HCTooltip>
     </div>
@@ -1007,7 +1017,7 @@ const AddEditRelationship: React.FC<Props> = ({
   const sourceDropdown = () => {
     return (
 
-      <Dropdown  as={ButtonGroup} autoClose="outside"
+      <Dropdown as={ButtonGroup} autoClose="outside"
       >
         <Dropdown.Toggle id="sourcePropertyIcon" variant="outline-light" className={styles.sourceDrop}
           size="sm">
@@ -1081,7 +1091,7 @@ const AddEditRelationship: React.FC<Props> = ({
                   aria-label={"entityToEntity"}
                   className={"mb-0"}
                   style={isEditing ? {cursor: "not-allowed"} : {cursor: "default"}}
-                //disabled={isEditing}
+                  disabled={isEditing}
                 />
                 <Form.Check
                   inline
@@ -1095,7 +1105,7 @@ const AddEditRelationship: React.FC<Props> = ({
                   aria-label={"entityToConceptClass"}
                   className={"mb-0"}
                   style={{cursor: "not-allowed"}}
-                //disabled={isEditing}
+                  disabled={isEditing}
                 />
               </Col>
             </Row>
@@ -1167,8 +1177,8 @@ const AddEditRelationship: React.FC<Props> = ({
               </HCCard>
               {!isEditing ?
                 <Dropdown>
-                  <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.dropdownButtonMenu}`}>
-                    <ChevronDown />
+                  <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.chevron} ${styles.dropdownButtonMenu}`}>
+                    <ChevronDown className={styles.test}/>
                   </Dropdown.Toggle>
                   {DropdownMenu}
                 </Dropdown>
@@ -1183,7 +1193,9 @@ const AddEditRelationship: React.FC<Props> = ({
             :
             <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick={(e) => toggleOptionalIcon()} />
           }
-          <span id={"toggleOptional"} className={styles.optionalText} onClick={(e) => toggleOptionalIcon()}>Optional</span>
+          <span id={"toggleOptional"} className={styles.optionalText} tabIndex={0} onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") { toggleOptionalIcon(); }
+          }} onClick={(e) => toggleOptionalIcon()}>Optional</span>
         </div>
         {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToConceptClass && <div data-testid={"optionalContent"} className={styles.expressionContainer}>{optionalExpressionField}</div>}
         {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToEntity && (<div data-testid={"optionalContent"} className={styles.foreignKeyContainer}>
@@ -1191,7 +1203,7 @@ const AddEditRelationship: React.FC<Props> = ({
           <div className={`mx-3 mb-3 ${styles.foreignKeyDropdownContainer}`}>
             {foreignKeyDropdown}
             <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
+              <QuestionCircleFill color={themeColors.defaults.questionCircle} tabIndex={0} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
             </HCTooltip>
           </div>
         </div>
