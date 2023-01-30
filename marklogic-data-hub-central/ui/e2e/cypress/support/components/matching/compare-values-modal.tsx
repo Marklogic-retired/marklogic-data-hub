@@ -31,8 +31,8 @@ class CompareValuesModal {
     return cy.get(`[aria-label="Yes"]`);
   }
 
-  getUnmergedPreview(index: number) {
-    return cy.findByText(`Unmerged: Preview ${index}`);
+  getUnmergedPreview() {
+    return cy.findByText(`Preview`);
   }
 }
 

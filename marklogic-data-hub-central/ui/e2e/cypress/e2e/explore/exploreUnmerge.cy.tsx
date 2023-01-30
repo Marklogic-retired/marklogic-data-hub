@@ -3,8 +3,9 @@ import {toolbar} from "../../support/components/common";
 import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import {compareValuesModal} from "../../support/components/matching/index";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import browsePage from "../../support/pages/browse";
-
 
 
 describe("Test '/Explore' graph right panel", () => {
@@ -27,7 +28,6 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Validate Unmerge from nodes and table on graph view", () => {
-
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
@@ -55,13 +55,13 @@ describe("Test '/Explore' graph right panel", () => {
 
 
 
-    cy.log("**Verify icon dont display when  node is not merged**");
-    graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
+    cy.log("**Verify icon dont display when node is not merged**");
+    graphExplore.focusNode(ExploreGraphNodes.PRODUCT_70);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_70).then((nodePositions: any) => {
+      let prodCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_70];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.trigger("mouseover", prodCoordinates.x, prodCoordinates.y, {force: true});
+      canvas.click(prodCoordinates.x, prodCoordinates.y, {force: true});
     });
     graphExplore.getUnmergeIcon().should("not.exist");
 
@@ -116,5 +116,49 @@ describe("Test '/Explore' graph right panel", () => {
 
     graphExplore.getUnmergeOption().should("be.visible");
 
+  });
+
+  it("Navigate to Table View and Filter Person entity", () => {
+    browsePage.clickTableView();
+    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    cy.log("** unmerge icon should be visible on merged records in table view**");
+    browsePage.getUnmergeIcon().should("be.visible");
+    cy.log("** verify compare values modal when clicking unmerge icon **");
+    browsePage.getUnmergeIcon().should("have.length", 1);
+    browsePage.getUnmergeIcon().first().click();
+    compareValuesModal.getModal().should("be.visible");
+    cy.log("** unmerged previews and original doc uri should exist **");
+    compareValuesModal.getUnmergedPreview().should("be.visible");
+    compareValuesModal.getUnmergeButton().should("be.visible");
+
+    cy.log("** cancel button closes modal **");
+    compareValuesModal.getCancelButton().click();
+    compareValuesModal.getModal().should("not.exist");
+  });
+
+  it("Switch to Snippet View", () => {
+    browsePage.clickSnippetView();
+    cy.log("** unmerge icon should be visible on merged records in snippet view**");
+    browsePage.getUnmergeIcon().should("have.length", 1);
+    browsePage.getUnmergeIcon().first().scrollIntoView().should("be.visible");
+    cy.log("** verify compare values modal when clicking unmerge icon **");
+    browsePage.getUnmergeIcon().first().click();
+    compareValuesModal.getModal().should("be.visible");
+    compareValuesModal.getUnmergeButton().should("be.visible");
+
+    cy.log("** cancel button closes modal **");
+    compareValuesModal.getCancelButton().click();
+    compareValuesModal.getModal().should("not.exist");
+
+    cy.log("** reopen modal and submit unmerge **");
+    browsePage.getUnmergeIcon().first().scrollIntoView().click();
+    compareValuesModal.getModal().should("be.visible");
+    compareValuesModal.getUnmergeButton().click();
+    compareValuesModal.confirmationYes().click();
+    compareValuesModal.getModal().should("not.exist");
+
+    cy.log("** confirm merged record is unmerged **");
+    browsePage.getUnmergeIcon().should("not.exist");
   });
 });
