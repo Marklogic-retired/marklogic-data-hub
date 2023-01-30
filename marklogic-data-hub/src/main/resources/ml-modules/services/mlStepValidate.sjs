@@ -109,7 +109,31 @@ function staticCheck(modPath) {
   return errResp;
 }
 
+function staticCheckMJS(modPath) {
+  xdmp.log("modPath: " + modPath)
+  let errResp;
+  try{
+    evalScriptOrModule("import x from '" + modPath + "';")
+  }
+  catch (err){
+    xdmp.log("err: " + err)
+    if(err.stack) {
+      let stackLines = err.stack.split("\n");
+      errResp = stackLines[0] + " " + stackLines[1];
+    }
+    else if (err.stackFrames) {
+      errResp =  err.message + ": " + err.data[0] + " in " + err.stackFrames[0].uri + " at " + err.stackFrames[0].line;
+    }
+    else {
+      errResp = "Invalid Module";
+    }
+  }
+  xdmp.log("errResp: " + errResp)
+  return errResp;
+}
+
 exports.GET = get;
 exports.POST =  post;
 exports.checkPermissions = checkPermissions;
 exports.staticCheck = staticCheck;
+exports.staticCheckMJS = staticCheckMJS;

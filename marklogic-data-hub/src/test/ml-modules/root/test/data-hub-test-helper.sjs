@@ -303,5 +303,6 @@ module.exports = {
   stagingDocumentExists,
   verifyJson,
   getUrisInCollection,
-  runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
+  runWithRolesAndPrivileges
+  //runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
 };

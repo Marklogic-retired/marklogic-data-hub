@@ -54,7 +54,7 @@ const invalidMapping = {
 
 function invokeService(jsonMapping, uri, database) {
     return fn.head(hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
-        "/data-hub/5/data-services/mapping/testMapping.sjs",
+        "/data-hub/5/data-services/mapping/testMapping.mjs",
         {uri, database, jsonMapping: xdmp.toJSON(jsonMapping)}
     ));
 }

@@ -4,7 +4,7 @@ const stepValidate = require("/marklogic.rest.resource/mlStepValidate/assets/res
 
 function checkPermissions() {
   let operatorRole = xdmp.role("data-hub-module-reader").toString();
-  let modPerms = fn.head(xdmp.eval('xdmp.documentGetPermissions("/data-hub/5/impl/flow.sjs")', null,
+  let modPerms = fn.head(xdmp.eval('xdmp.documentGetPermissions("/data-hub/5/impl/flow.mjs")', null,
     {
       "database" : xdmp.database(xdmp.databaseName(xdmp.modulesDatabase()))
     }));
@@ -16,12 +16,11 @@ function checkPermissions() {
 
 
 function moduleStaticCheck() {
-xdmp.log(stepValidate.staticCheck("/test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs"));
   return [
-    test.assertEqual("JS-JAVASCRIPT: let id = content.uri; -- Error running JavaScript request: SyntaxError: Unexpected identifier in /test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs, at 33:2 [javascript]"
+    test.assertEqual("JS-JAVASCRIPT: let id = content.uri; -- Error running JavaScript request: SyntaxError: Unexpected identifier in /test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs, at 34:2 [javascript]"
     , stepValidate.staticCheck("/test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs"),
       "Invalid module"),
-    test.assertEqual(null, stepValidate.staticCheck("/data-hub/5/impl/flow.sjs"),
+    test.assertEqual(null, stepValidate.staticCheckMJS("/data-hub/5/impl/flow.mjs"),
       "Valid module")
   ];
 }

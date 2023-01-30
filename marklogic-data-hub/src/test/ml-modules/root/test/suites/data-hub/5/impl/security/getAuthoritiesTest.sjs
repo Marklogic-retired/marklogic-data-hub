@@ -1,7 +1,7 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const security = mjsProxy.requireMjsModule("/data-hub/5/impl/security.sjs");
+const security = mjsProxy.requireMjsModule("/data-hub/5/impl/security.mjs");
 
 const assertions = [];
 
