@@ -27,16 +27,9 @@ describe("Entity Modeling: Graph View", () => {
     //login with valid account
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
 
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
   });

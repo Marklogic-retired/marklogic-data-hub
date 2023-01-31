@@ -22,17 +22,11 @@ describe("Test '/Explore' left sidebar", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest().then(() => {
       LoginPage.postLogin();
-      //Saving Local Storage to preserve session
-      cy.saveLocalStorage();
     });
   });
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage().then(() => {
-      cy.log(`**Go to Explore section**`);
-      cy.visit("/tiles/explore");
-    });
-
+    cy.log(`**Go to Explore section**`);
+    cy.visit("/tiles/explore");
   });
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", {browser: "!firefox"}, () => {
     cy.log(`**Selecting 'Customer' base entity**`);

@@ -24,14 +24,9 @@ describe("Graph Validations", () => {
     LoginPage.postLogin();
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   //login with valid account
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     cy.visit("/tiles/model");
     cy.contains(Application.title);
     toolbar.getModelToolbarIcon().should("have.length.gt", 0).click({force: true});

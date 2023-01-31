@@ -10,19 +10,13 @@ describe("Run Tile tests", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     cy.visit("/");
     cy.contains(Application.title);
     toolbar.getRunToolbarIcon().click({force: true});
     runPage.getFlowName("personJSON").should("be.visible");
   });
-
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
     cy.deleteFlows("testPerson");

@@ -18,20 +18,14 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
 
     cy.log("**Deleting hubCentralConfig file in STAGING**");
     cy.deleteFiles("STAGING", "/config/hubCentral.json");
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
     cy.visit("/tiles/explore");
   });
   afterEach(() => {
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
-
   after(() => {
     // Visiting Modeling so hubCentralConfig file gets created again
     cy.visit("/tiles/model");

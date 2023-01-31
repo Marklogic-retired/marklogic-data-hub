@@ -27,16 +27,6 @@ describe("Mapping", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -328,7 +318,11 @@ describe("Mapping", () => {
   });
   it("Delete related entity from mapping via close icon", () => {
     // Reselect deleted related entity
-    mappingStepDetail.relatedFilterMenu("Person");
+    mappingStepDetail.mapRelatedEntities("Person").invoke("attr", "aria-expanded").then(($ele) => {
+      if ($ele === "false") {
+        mappingStepDetail.relatedFilterMenu("Person");
+      }
+    });
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
     mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
     // Related entity exists before deletion

@@ -17,12 +17,6 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-match-merge-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

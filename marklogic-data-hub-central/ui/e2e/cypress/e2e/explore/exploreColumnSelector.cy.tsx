@@ -16,14 +16,11 @@ describe("Monitor Tile", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
-
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -34,6 +31,10 @@ describe("Monitor Tile", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickTableView();
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Open base entities dropdown and select an entity**");
     entitiesSidebar.openBaseEntityDropdown();

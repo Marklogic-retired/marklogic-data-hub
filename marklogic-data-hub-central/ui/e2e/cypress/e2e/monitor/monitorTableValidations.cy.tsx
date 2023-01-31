@@ -16,19 +16,15 @@ describe("Monitor Tile", () => {
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
     cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
     monitorPage.waitForMonitorTableToLoad();
   });
   afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.resetTestUser();

@@ -15,13 +15,10 @@ describe("Test navigation with facets from graph side panel to details twice", (
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Validate that with aplied facet can navigate from snipet view to graph and details from right side go back, repeat last one without fail", () => {

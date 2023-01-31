@@ -19,12 +19,10 @@ describe("Test '/Explore' view selector", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   it(`Validate that the 'graph' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);

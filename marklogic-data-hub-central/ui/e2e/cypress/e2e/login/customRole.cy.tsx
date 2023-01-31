@@ -17,6 +17,8 @@ describe("customRole", () => {
   afterEach(() => {
     cy.logout();
     cy.waitForAsyncRequest();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   after(() => {

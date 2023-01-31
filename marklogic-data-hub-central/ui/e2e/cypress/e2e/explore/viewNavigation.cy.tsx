@@ -3,6 +3,7 @@ import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
 import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 describe("Navigation through all the Explore views (Table, Snippet, Graph and Details)", () => {
   before(() => {
@@ -10,18 +11,28 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
 
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
     cy.wait(2000);
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
+  });
+
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Switch views and validate they get updated correctly", () => {

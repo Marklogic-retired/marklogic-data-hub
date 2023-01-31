@@ -3,6 +3,7 @@ import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 import detailPage from "../../support/pages/detail";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 describe("Test graph export to png", () => {
   before(() => {
@@ -12,24 +13,20 @@ describe("Test graph export to png", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-
   afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Validate existing relationships for a record", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to Detail page**");
     browsePage.getDetailInstanceViewIcon("101").scrollIntoView().should("be.visible").click();

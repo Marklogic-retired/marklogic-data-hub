@@ -16,16 +16,6 @@ describe("Validate Merge warnings", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -117,13 +107,13 @@ describe("Validate Merge warnings", () => {
     cy.contains(mergeStep1);
   });
   it("Click on merge rule Address and validate warnings", () => {
-    cy.findAllByText("Address").first().click();
+    mergeRuleModal.mergeRuleClick("Address");
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxValuesInput("0");
     mergeRuleModal.ruleMaxScoreInput("1");
     mergeRuleModal.saveButton();
     curatePage.alertContent().should("not.exist");
-    cy.findAllByText("Address").first().click();
+    mergeRuleModal.mergeRuleClick("Address");
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxScoreInput("0");
     mergeRuleModal.saveButton();
@@ -133,7 +123,7 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.ruleMaxScoreInput("2");
     mergeRuleModal.saveButton();
     curatePage.alertContent().should("not.exist");
-    cy.findAllByText("Address").first().click();
+    mergeRuleModal.mergeRuleClick("Address");
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxValuesInput("2");
     mergeRuleModal.ruleMaxScoreInput("2");
@@ -152,7 +142,7 @@ describe("Validate Merge warnings", () => {
     cy.findAllByText("retain-single-value").eq(0).click();
     mergeStrategyModal.strategyMaxScoreInput("1");
     mergeStrategyModal.saveButton().click();
-    cy.findByText("Address").click();
+    mergeRuleModal.mergeRuleClick("Address");
     mergeRuleModal.alertContent().should("not.exist");
     mergeRuleModal.saveButton();
     mergeRuleModal.alertContent().contains("Warning: The current merge settings might produce merged documents that are inconsistent with the entity type In the entity type Person, the property or properties Address allows only a single value. In every merge rule for the property Address set Max Values or Max Sources to 1.");
@@ -163,7 +153,7 @@ describe("Validate Merge warnings", () => {
     mergeStrategyModal.strategyMaxScoreInput("2");
     mergeStrategyModal.saveButton().click();
     cy.wait(1000);
-    cy.findByText("Address").click();
+    mergeRuleModal.mergeRuleClick("Address");
     mergeRuleModal.saveButton();
     mergeRuleModal.alertContent().contains("Warning: The current merge settings might produce merged documents that are inconsistent with the entity type In the entity type Person, the property or properties Address allows only a single value. In every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertContent().contains("Please set max values for property to 1 on merge to avoid an invalid entity instance.");
@@ -174,7 +164,7 @@ describe("Validate Merge warnings", () => {
     mergeStrategyModal.maxValue("1");
     mergeStrategyModal.strategyMaxScoreInput("0");
     mergeStrategyModal.saveButton().click();
-    cy.findByText("Address").click();
+    mergeRuleModal.mergeRuleClick("Address");
     mergeRuleModal.selectMergeTypeDropdown("Property-specific");
     mergeRuleModal.ruleMaxValuesInput("1");
     mergeRuleModal.ruleMaxScoreInput("0");

@@ -14,12 +14,6 @@ describe("Disabled Merge/Unmerge Permissions on All Screens", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -27,7 +21,19 @@ describe("Disabled Merge/Unmerge Permissions on All Screens", () => {
     cy.waitForAsyncRequest();
   });
   it("Filter Person Entity in Explore", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    explorePage.getAllDataButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    explorePage.getEntities().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickTableView();
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Person");
