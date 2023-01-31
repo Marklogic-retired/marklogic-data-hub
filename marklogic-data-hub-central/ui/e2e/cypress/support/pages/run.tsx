@@ -99,7 +99,7 @@ class RunPage {
 
   closeFlowStatusModal(flowName: string) {
     cy.wait(2000);
-    return cy.get(`[aria-label=${flowName}-close]`).click({force: true, multiple: true});
+    cy.get(`[aria-label=${flowName}-close]`).click({force: true, multiple: true});
   }
 
   getRunStep(stepName: string, flowName: string) {
