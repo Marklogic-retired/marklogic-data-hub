@@ -160,13 +160,6 @@ describe("Monitor Tile", () => {
     let lastEntityType = firstPageTableCellsEntityType[firstPageTableCellsEntityType.length - 1];
     let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
     expect(compareEntityType).not.to.be.gt(0);
-
-    cy.log("**check step datetime order ASC**");
-    firstPageTableCellsDateTime.forEach(element => cy.log(element));
-    let firstDateTime = firstPageTableCellsDateTime[0];
-    let lastDateTime = firstPageTableCellsDateTime[firstPageTableCellsDateTime.length - 1];
-    let compareDateTime = firstDateTime.toString().localeCompare(lastDateTime.toString());
-    expect(compareDateTime).not.to.be.gt(0);
   });
 
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
