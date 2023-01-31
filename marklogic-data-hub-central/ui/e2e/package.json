@@ -9,7 +9,7 @@
     "cy:run": "npm install && cypress run",
     "cy:run-chrome": "npm install && cypress run --browser chrome --headless",
     "cy:run-firefox": "npm install && cypress run --browser firefox --headless",
-    "cy:run-sanity": "npm install && cypress run --spec cypress/integration/mastering/e2eMasteringflow.spec.tsx",
+    "cy:run-sanity": "npm install && cypress run --spec cypress/e2e/mastering/e2eMasteringflow.cy.tsx",
     "cy:local": "cypress open --config baseUrl=http://localhost:3000",
     "cy:run-chrome-headed": "npm install && cypress run --browser chrome --headed",
     "cy:run-firefox-headed": "npm install && cypress run --browser firefox --headed",
@@ -25,20 +25,23 @@
     "@cypress/webpack-preprocessor": "^4.1.3",
     "json-schema": "^0.4.0",
     "minimist": "^1.2.6",
-    "ts-loader": "^6.2.0",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.6.3",
     "webpack": "^5.75.0"
   },
   "devDependencies": {
     "@testing-library/cypress": "^6.0.0",
-    "cypress": "^7.7.0",
+    "chokidar": "^3.5.3",
+    "cypress": "^12.3.0",
     "cypress-fail-fast": "^2.3.1",
     "cypress-file-upload": "^5.0.3",
     "cypress-plugin-tab": "^1.0.5",
     "cypress-wait-until": "^1.7.1",
-    "mochawesome": "^7.1.3",
-    "mochawesome-merge": "^4.2.2",
+    "json-schema": "^0.4.0",
+    "lodash": "^4.17.21",
+    "minimatch": "^5.1.2",
     "minimist": "^1.2.6",
-    "json-schema": "^0.4.0"
+    "mochawesome": "^7.1.3",
+    "mochawesome-merge": "^4.2.2"
   }
 }
