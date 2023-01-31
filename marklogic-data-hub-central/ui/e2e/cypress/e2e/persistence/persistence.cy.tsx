@@ -32,16 +32,10 @@ describe("Validate persistence across Hub Central", () => {
     LoginPage.postLogin();
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.resetTestUser();

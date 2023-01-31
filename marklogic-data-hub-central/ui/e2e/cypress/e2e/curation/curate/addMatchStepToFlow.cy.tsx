@@ -20,12 +20,6 @@ describe("Add Matching step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

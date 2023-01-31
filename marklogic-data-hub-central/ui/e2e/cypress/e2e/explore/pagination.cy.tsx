@@ -36,14 +36,10 @@ describe("Validate scenarios for pagination in the explore page table", () => {
           .map((el) => firstPageTableCells.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")))
       );
     });
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Change page number and verify the updated result", () => {

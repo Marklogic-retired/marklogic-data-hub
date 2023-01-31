@@ -17,12 +17,6 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -58,7 +52,6 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     curatePage.verifyStepDetailsOpen(mapStep);
   });
   it("Edit Mapping step with parameter module path", () => {
-    cy.restoreLocalStorage();
     //Go back to curate homepage
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();

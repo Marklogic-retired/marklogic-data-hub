@@ -11,18 +11,12 @@ describe("Verify ingestion for all filetypes", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
   beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     cy.waitForAsyncRequest();
   });
-
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "cyZIPTest", "cyCSVTest", "cyXMTest");//'cyCSVTest', 'cyXMTest',

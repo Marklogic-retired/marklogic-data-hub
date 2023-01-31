@@ -18,16 +18,6 @@ describe("Mapping validations for session storage and table filtering", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -49,8 +39,6 @@ describe("Mapping validations for session storage and table filtering", () => {
     cy.findAllByText("more").should("have.length.gt", 1);
     cy.findAllByText("more").first().click();
     cy.findByText("less").should("be.visible");
-    // update local storage
-    cy.saveLocalStorage();
   });
   it("Validate session storage is working for source table", () => {
     mappingStepDetail.expandDropdownPagination();

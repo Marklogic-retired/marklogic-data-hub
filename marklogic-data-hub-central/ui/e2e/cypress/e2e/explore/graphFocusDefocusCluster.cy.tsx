@@ -23,12 +23,10 @@ describe("Focus Defocus clusters", () => {
     cy.wait(2000);
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   it("Validate focus and defocus cluster options are working correctly", () => {

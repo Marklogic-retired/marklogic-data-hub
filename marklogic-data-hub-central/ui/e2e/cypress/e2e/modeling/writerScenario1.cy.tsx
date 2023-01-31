@@ -24,13 +24,10 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
 
     //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

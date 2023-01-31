@@ -17,16 +17,10 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.setupHubCentralConfig();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   afterEach(() => {
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.resetTestUser();
@@ -36,6 +30,18 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.wait(6000);
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    entitiesSidebar.toggleEntitiesView();
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.toggleAllDataView();
     browsePage.search("Adams");
     //verify the query data for final database on explore page

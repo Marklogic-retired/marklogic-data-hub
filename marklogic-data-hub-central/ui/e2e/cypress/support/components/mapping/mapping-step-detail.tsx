@@ -99,6 +99,10 @@ class MappingStepDetail {
     cy.get(`#${entityName}-entities-filter-select-wrapper`).click();
   }
 
+  mapRelatedEntities(entityName: string) {
+    return cy.get(`#${entityName}-entities-filter-select`);
+  }
+
   deleteConfirmationButtonYes() {
     return cy.get(".modal-content button").contains("Yes");
   }

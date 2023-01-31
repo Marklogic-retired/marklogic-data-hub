@@ -16,12 +16,6 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-match-merge-reader").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
   });
   it("Navigate to curate tab and Open Customer entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();

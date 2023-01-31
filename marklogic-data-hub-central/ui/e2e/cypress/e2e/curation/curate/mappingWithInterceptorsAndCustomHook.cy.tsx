@@ -23,16 +23,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // Updating Local Storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -80,6 +70,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.duplicateStepErrorMessage();
     loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
+    cy.waitForAsyncRequest();
   });
   it("Add step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
@@ -179,7 +170,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.lessLink().click();
     mappingStepDetail.searchIcon("Order").click({force: true});
     mappingStepDetail.resetEntitySearch().click();
-    cy.saveLocalStorage();
   });
   it("Edit Map step", () => {
     //Go back to curate

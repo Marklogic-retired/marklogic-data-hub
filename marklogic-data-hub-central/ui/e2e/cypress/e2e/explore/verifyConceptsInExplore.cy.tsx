@@ -13,20 +13,10 @@ describe("Concepts", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-  });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
-  });
-  afterEach(() => {
-    // update local storage
-    cy.saveLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

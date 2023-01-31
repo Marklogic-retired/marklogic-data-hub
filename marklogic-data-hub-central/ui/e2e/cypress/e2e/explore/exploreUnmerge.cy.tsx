@@ -14,12 +14,10 @@ describe("Test '/Explore' graph right panel", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
     LoginPage.postLogin();
-    //Saving Local Storage to preserve session
-    cy.saveLocalStorage();
   });
-  beforeEach(() => {
-    //Restoring Local Storage to Preserve Session
-    cy.restoreLocalStorage();
+  afterEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
   after(() => {
     cy.loginAsDeveloperV2().withRequest();
