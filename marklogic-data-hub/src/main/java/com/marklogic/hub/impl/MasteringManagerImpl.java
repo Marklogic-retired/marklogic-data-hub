@@ -17,12 +17,14 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.hub.*;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MasteringManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -161,10 +163,10 @@ public class MasteringManagerImpl implements MasteringManager {
 
         public JsonNode mergePreview(String flowName, List<String> uris) {
             JsonNode resp;
-            JsonNode jsonOptions = new ObjectMapper().createObjectNode();
-            ((ObjectNode) jsonOptions).put("preview", "true");
+            JsonNode jsonOptions = new ObjectMapper().createObjectNode().put("preview", "true");
             RequestParameters params = new RequestParameters();
             params.put("flowName", flowName);
+            params.put("preview", "true");
             params.put("uri", uris);
             params.put("targetDatabase", targetDatabase);
             params.put("sourceDatabase", targetDatabase);

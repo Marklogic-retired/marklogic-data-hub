@@ -44,6 +44,9 @@ describe("Run Tile tests", () => {
     runPage.addStepToFlow("mapPersonXML");
     runPage.verifyStepInFlow("Mapping", "mapPersonXML", flowName);
     runPage.addStep(flowName);
+    runPage.addStepToFlow("generate-dictionary");
+    runPage.addStep(flowName);
+    runPage.verifyStepInFlow("Custom", "generate-dictionary", flowName);
     runPage.addStepToFlow("match-xml-person");
     runPage.verifyStepInFlow("Matching", "match-xml-person", flowName);
     runPage.addStep(flowName);
@@ -51,22 +54,16 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Merging", "merge-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("ingest-orders");
-    runPage.verifyStepInFlow("Loading", "ingest-orders", flowName);
+    runPage.verifyStepInFlow("Loading", "ingest-orders", flowName, true);
     runPage.addStep(flowName);
-
-    cy.log("**Add Master Step**");
-    runPage.addStepToFlow("master-person");
-    runPage.verifyStepInFlow("Mastering", "master-person", flowName);
-    runPage.addStep(flowName);
-    runPage.addStepToFlow("generate-dictionary");
 
     cy.log("**Verify all steps are selected (just one Load step selected)**");
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlCheckedStep("#loadPersonXML");
     runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#generate-dictionary");
     runPage.controlCheckedStep("#match-xml-person");
     runPage.controlCheckedStep("#merge-xml-person");
-    runPage.controlCheckedStep("#master-person");
     runPage.controlCheckedStep("#generate-dictionary");
     runPage.controlUncheckedStep("#ingest-orders");
 
@@ -77,7 +74,6 @@ describe("Run Tile tests", () => {
     runPage.controlUncheckedStep("#mapPersonXML");
     runPage.controlUncheckedStep("#match-xml-person");
     runPage.controlUncheckedStep("#merge-xml-person");
-    runPage.controlUncheckedStep("#master-person");
     runPage.controlUncheckedStep("#generate-dictionary");
     runPage.controlUncheckedStep("#ingest-orders");
 
@@ -86,14 +82,13 @@ describe("Run Tile tests", () => {
     runPage.getSelectAll().click();
     runPage.controlCheckedStep("#loadPersonXML");
     runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#generate-dictionary");
     runPage.controlCheckedStep("#match-xml-person");
     runPage.controlCheckedStep("#merge-xml-person");
-    runPage.controlCheckedStep("#master-person");
-    runPage.controlCheckedStep("#generate-dictionary");
     runPage.controlUncheckedStep("#ingest-orders");
 
     //Verify scrolling, last step should still be visible in the flow panel
-    runPage.verifyStepInFlow("Custom", "generate-dictionary", flowName);
+    runPage.verifyStepInFlow("Merging", "merge-xml-person", flowName);
     //confirm the first load step is no longer visible because panel scrolled to the end
     cy.get("#testPersonXML").within(() => {
       cy.get("#testPersonXML-loadPersonXML-card").should("not.be.visible");
@@ -109,7 +104,6 @@ describe("Run Tile tests", () => {
     cy.get("#generate-dictionary").click();
     cy.get("#loadPersonXML").click();
     cy.get("#mapPersonXML").click();
-    cy.get("#master-person").click();
     cy.get("#match-xml-person").click();
     cy.get("#merge-xml-person").click();
     cy.get("#errorMessageEmptySteps").contains("Select at least one step to run a flow.");
@@ -117,10 +111,9 @@ describe("Run Tile tests", () => {
     cy.log("**Click Necessary Steps and Run**");
     cy.get("#loadPersonXML").click();
     cy.get("#mapPersonXML").click();
+    cy.get("#generate-dictionary").click();
     cy.get("#match-xml-person").click();
     cy.get("#merge-xml-person").click();
-    cy.get("#master-person").click();
-    cy.get("#generate-dictionary").click();
     cy.contains("Select at least one step to run a flow.").should("not.exist");
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
     runPage.runFlow(flowName);
@@ -132,8 +125,6 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("merge-xml-person", "success");
-    runPage.verifyStepRunResult("master-person", "failure");
-    runPage.getStepFailureSummary("master-person").should("be.visible");
     runPage.verifyFlowModalCompleted(flowName);
     runPage.closeFlowStatusModal(flowName);
 
@@ -252,11 +243,9 @@ describe("Run Tile tests", () => {
     runPage.clickStepInsidePopover("#mapPersonXML");
     runPage.clickStepInsidePopover("#match-xml-person");
     runPage.clickStepInsidePopover("#generate-dictionary");
-    runPage.clickStepInsidePopover("#master-person");
     runPage.clickStepInsidePopover("#merge-xml-person");
 
     runPage.clickStepInsidePopover("#mapPersonXML");
-    runPage.clickStepInsidePopover("#master-person");
     runPage.clickStepInsidePopover("#match-xml-person");
 
     cy.log("**Run Flow with selected steps**");
@@ -272,8 +261,6 @@ describe("Run Tile tests", () => {
 
     runPage.verifyStepRunResult("mapPersonXML", "success");
     runPage.verifyStepRunResult("match-xml-person", "success");
-    runPage.verifyStepRunResult("master-person", "failure");
-    runPage.getStepFailureSummary("master-person").should("be.visible");
     runPage.closeFlowStatusModal(flowName);
 
     cy.log("**Change page and return to check the same steps previously selected**");

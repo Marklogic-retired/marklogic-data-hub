@@ -36,7 +36,7 @@ function post(context, params, input) {
   let firstMergeStep = Object.keys(flow.steps || {}).find((stepNumber) => flow.steps[stepNumber].stepDefinitionType.toLowerCase() === "merging");
   let refStepNumber = params.step || firstMergeStep || '1';
   let stepRef = flow.steps[refStepNumber] || {stepDefinitionType: "" };
-  const isPreview = params.preview === "true";
+  const isPreview = fn.string(params.preview) === "true";
 
   let uris = hubUtils.normalizeToArray(params.uri);
   let stepDetails;

@@ -31,6 +31,10 @@ class CompareValuesModal {
     return cy.get(`[aria-label="Yes"]`);
   }
 
+  confirmationNo() {
+    return cy.get(`[aria-label="No"]`);
+  }
+
   getUnmergedPreview() {
     return cy.findByText(`Preview`);
   }
