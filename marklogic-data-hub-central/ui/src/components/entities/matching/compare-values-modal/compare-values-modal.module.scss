@@ -16,9 +16,13 @@
     margin-left: 3px;
 }
 
+.matchIconContainer{
+    line-height: 0;
+}
+
 .matchIcon {
     background: #85bf97;
-    margin-left: 95%;
+    margin-right: 0.5rem ;
     width: 2vh;
     height: 2vh;
 }
@@ -169,4 +173,64 @@
             }
         }
     }
+}
+
+
+.paginationRow {
+    width: 100%;
+    display: flex;
+}
+
+.paginationRowCleanSpace {
+    width: 223px;
+}
+.paginationRowActions {
+    flex: 1 1 auto;
+    padding: 0 16px;
+}
+.paginationRowLegend {
+    width: 280px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+}
+.paginationArrow {
+    margin: 0 0.5rem;
+    cursor: pointer;
+    background-color: $primary;
+    padding: 0.5rem 0.7rem;
+    &:hover {
+        background-color: #303a7e;
+        border-color: #2e3676
+    }
+}
+.paginationArrowDisabled {
+    margin: 0 0.5rem;
+    cursor: not-allowed;
+    background-color: $primary;
+    opacity: 0.65;
+    padding: 0.5rem 0.7rem;
+}
+.paginationLegend {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.compareValuesEntityName {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -55px;
+    margin-bottom: 20px;
+}
+
+.compareValuesModelBodyContainer {
+    display: grid;
 }

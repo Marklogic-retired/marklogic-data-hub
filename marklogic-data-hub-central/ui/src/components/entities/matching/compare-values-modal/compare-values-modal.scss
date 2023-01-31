@@ -27,14 +27,41 @@
         thead {
             tr {
                 th {
-                    background-color: #e0e0e0 !important;
+                    background-color: #f1f1f1 !important;
+                    max-width: 290px;
+                    &:first-child {
+                        border: 0 !important;
+                    }
+                    &:nth-child(2) {
+                        border-right: 1px solid rgba(0,0,0,.05) !important;
+                        font-weight: bold !important;
+                        max-width: 180px;
+                        min-width: 180px;
+                    }                    
+                    &:last-child {
+                        border-left: 1px solid rgba(0,0,0,.05) !important;
+                        font-weight: bold !important;
+                        max-width: 290px;
+                        min-width: 290px;
+                    }
                 }
             }
         }
         tr {
             td {
+                max-width: 290px;
                 &.expand-cell {
                     background-color: transparent !important;
+                }
+                &:nth-child(2) {
+                    border-right: 1px solid rgba(0,0,0,.05) !important;
+                    max-width: 180px;
+                    min-width: 180px;
+                }                    
+                &:last-child {
+                    border-left: 1px solid rgba(0,0,0,.05) !important;
+                    max-width: 290px;
+                    min-width: 290px;
                 }
             }
             &:hover {
