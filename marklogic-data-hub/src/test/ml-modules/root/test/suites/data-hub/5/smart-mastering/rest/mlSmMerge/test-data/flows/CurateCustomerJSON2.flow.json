@@ -1,0 +1,8 @@
+{
+  "name" : "CurateCustomerJSON2",
+  "steps" : {
+    "1" : {
+      "stepId" : "matchCustomers-matching"
+    }
+  }
+}

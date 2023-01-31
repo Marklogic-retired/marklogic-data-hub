@@ -35,25 +35,50 @@ function post(context, params, input) {
   // make the first merge step in a flow the default
   let firstMergeStep = Object.keys(flow.steps || {}).find((stepNumber) => flow.steps[stepNumber].stepDefinitionType.toLowerCase() === "merging");
   let refStepNumber = params.step || firstMergeStep || '1';
-  let stepRef = flow.steps[refStepNumber];
+  let stepRef = flow.steps[refStepNumber] || {stepDefinitionType: "" };
+  const isPreview = params.preview === "true";
+
+  let uris = hubUtils.normalizeToArray(params.uri);
+  let stepDetails;
   if (!(stepRef.stepDefinitionType.toLowerCase() === "merging" || stepRef.stepDefinitionType.toLowerCase() === "mastering")) {
-    httpUtils.throwBadRequest(`The step referenced must be a merging step. Step type: ${stepRef.stepDefinitionType}`);
+    let modelInfo = fn.head(cts.doc(uris[0]).xpath('/*:envelope/*:instance/*:info'));
+    let otherMergeForEntityType = null;
+    if (fn.exists(modelInfo)) {
+      const modelTitle = fn.string(modelInfo.xpath("*:title"));
+      const modelVersion = fn.string(modelInfo.xpath("*:version"));
+      const modelBaseUri = fn.string(modelInfo.xpath("*:baseUri"));
+      const entityTypeIri = `${modelBaseUri.endsWith("/") ? modelBaseUri: modelBaseUri + "/"}${modelTitle}-${modelVersion}/${modelTitle}`;
+      const mergeStepForEntity = fn.head(cts.search(cts.andQuery([
+        cts.collectionQuery("http://marklogic.com/data-hub/steps/merging"),
+        cts.jsonPropertyValueQuery("targetEntityType", entityTypeIri)
+      ])));
+      if (fn.exists(mergeStepForEntity)) {
+        otherMergeForEntityType = mergeStepForEntity.toObject();
+      }
+    }
+    if (isPreview || fn.exists(otherMergeForEntityType)) {
+      stepRef = {};
+      stepDetails = otherMergeForEntityType || {};
+    } else {
+      httpUtils.throwBadRequest(`The step referenced must be a merging step. Step type: ${stepRef.stepDefinitionType}`);
+    }
+  } else {
+    stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType) || {};
   }
-  let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType) || {};
   // build combined options
   let flowOptions = flow.options || {};
   let stepRefOptions = stepRef.options || stepRef;
   let stepDetailsOptions = stepDetails.options || stepDetails;
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
-  let sourceDatabase = combinedOptions.sourceDatabase || config.FINALDATABASE;
 
   combinedOptions.fullOutput = true;
-  combinedOptions.writeStepOutput = params.preview !== "true";
+  combinedOptions.writeStepOutput = !isPreview;
   combinedOptions.acceptsBatch = true;
-  let jobId = params["job-id"];
-  let uris = hubUtils.normalizeToArray(params.uri);
+  let sourceDatabase = combinedOptions.sourceDatabase || config.FINALDATABASE;
   let query = cts.documentQuery(uris);
   let content = hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
+
+  let jobId = params["job-id"];
   let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber, stepRef.interceptors);
 
   return {
