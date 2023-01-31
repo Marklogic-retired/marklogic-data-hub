@@ -14,6 +14,7 @@ import CompareValuesModal from "../entities/matching/compare-values-modal/compar
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {unmergeUri} from "@api/merging";
 import {AuthoritiesContext} from "@util/authorities";
+import {AxiosResponse} from "axios";
 import {Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
 
@@ -119,17 +120,28 @@ const SearchResult: React.FC<Props> = (props) => {
   };
 
   const fetchCompareData = async (array, item) => {
-    const result1 = await getDocFromURI(array[0]);
-    const result2 = await getDocFromURI(array[1]);
+    let uriRequests: Promise<AxiosResponse<any>>[] = [];
+    array.forEach((uri) => {
+      uriRequests.push(getDocFromURI(uri));
+    });
+    const results = await Promise.all(uriRequests);
+    const result1 = results[0];
+    const result2 = results[1];
 
     const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
-      let result1Instance = result1.data.data.envelope.instance;
-      let result2Instance = result2.data.data.envelope.instance;
+      let urisInfo: any[] = [];
+      results.forEach((result, index) => {
+        const instanceKey = `result${index + 1}Instance`;
+        urisInfo.push({
+          [instanceKey]: result.data.data.envelope.instance,
+        });
+      });
       let previewInstance = preview.data.value.envelope.instance;
-      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+      urisInfo.push({previewInstance});
+      setUriInfo(urisInfo);
     }
 
     let testMatchData = {
@@ -150,7 +162,31 @@ const SearchResult: React.FC<Props> = (props) => {
     <>
       <div className={"w-100"}>
         <div className={`d-flex align-items-center ${styles.title}`} onClick={() => showTableEntityProperties()}>
-          {show ? <ChevronDown className={styles.expandableIcon} aria-label="icon: chevron-down" data-cy="expandable-icon" data-testid="expandable-icon"/> : <ChevronRight className={styles.expandableIcon} aria-label="icon: chevron-right" data-cy="expandable-icon" data-testid="expandable-icon" />}
+          {show
+            ?<ChevronDown
+              className={styles.expandableIcon}
+              aria-label="icon: chevron-down"
+              data-cy="expandable-icon"
+              data-testid="expandable-icon"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  showTableEntityProperties();
+                }
+              }}
+            />
+            :<ChevronRight
+              className={styles.expandableIcon}
+              aria-label="icon: chevron-right"
+              data-cy="expandable-icon"
+              data-testid="expandable-icon"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  showTableEntityProperties();
+                }
+              }}
+            />}
           <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
           {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
           <span data-cy="primary-key-value" aria-label={itemEntityName + "-" + primaryKeyValue}>{primaryKeyValue}</span>
@@ -195,7 +231,13 @@ const SearchResult: React.FC<Props> = (props) => {
                 }
               </HCTooltip>
             </Link>
-            <div className={styles.graphIcon}>
+            <div className={styles.graphIcon} tabIndex={0} onKeyDown={
+              (event) => {
+                if (event.key === "Enter") {
+                  navigateToGraphView(props.item);
+                }
+              }
+            }>
               <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
                 <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
                   size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(props.item)}/></i>
@@ -204,7 +246,14 @@ const SearchResult: React.FC<Props> = (props) => {
             {
               props.item.unmerge ?
                 <div>
-                  <div className={styles.unMergeIcon}>
+                  <div className={styles.unMergeIcon} tabIndex={0} onKeyDown={
+                    (event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        openUnmergeCompare(props.item, event);
+                      }
+                    }
+
+                  }>
                     {
                       canReadMatchMerge ?
                         <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">

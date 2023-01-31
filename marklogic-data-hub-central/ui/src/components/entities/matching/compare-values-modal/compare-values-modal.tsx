@@ -11,7 +11,7 @@ import {deleteNotification} from "@api/merging";
 import {ConfirmationType} from "../../../../types/common-types";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
 import {HCTable, HCButton, HCTooltip, HCModal, HCCheckbox} from "@components/common";
-import {faExclamationTriangle, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle, faInfoCircle, faChevronRight, faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -38,7 +38,6 @@ interface Props {
 }
 
 const CompareValuesModal: React.FC<Props> = (props) => {
-  let property1, property2, previewValues;
   const {curationOptions} = useContext(CurationContext);
   const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -49,17 +48,46 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [includeUnmerged, setIncludeUnmerged] = useState(false);
 
+  const [columns, setColumns] = useState<any[]>([]);
+
+  const pageSize = 4;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+
+
   const {
     searchOptions,
     toggleMergeUnmerge,
   } = useContext(SearchContext);
 
+  const filterColumns = (currentPage, pageSize, _totalPages) => {
+    let start = (currentPage - 1) * pageSize;
+    let end = currentPage * pageSize;
+    const filteredColumns = props.uris.slice(start, end);
+    let columns: any[] = columnsGenerator(filteredColumns);
+    setColumns(columns);
+  };
+  const mounted = React.useRef(false);
   useEffect(() => {
-    if (props.isVisible && props.uriInfo) {
-      let parsedData = parseDefinitionsToTable(props.entityDefinitionsArray, getMatchedProperties());
-      setCompareValuesTableData(parsedData);
+    mounted.current = true;
+    if (mounted.current && props.isVisible && props.uriInfo && props.uris) {
+      let newParsedData = parseDataToTable(props.entityDefinitionsArray, getMatchedProperties(), props.uriInfo);
+      const totalPages = Math.ceil(props.uris.length / pageSize);
+      setTotalPages(totalPages);
+      filterColumns(1, pageSize, totalPages);
+      setCompareValuesTableData(newParsedData);
     }
-  }, [props.isVisible]);
+    return () => {
+      mounted.current = false;
+      setCurrentPage(1);
+    };
+  }, [props.isVisible, props.uriInfo, props.uris]);
+
+  useEffect(() => {
+    if (mounted.current) {
+      filterColumns(currentPage, pageSize, totalPages);
+    }
+  }, [currentPage]);
 
   const DEFAULT_ENTITY_DEFINITION: Definition = {
     name: "",
@@ -75,7 +103,12 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           let matchRuleset = props.previewMatchActivity.actionPreview[i].matchRulesets[j];
           let name = matchRuleset.split(" - ");
           if (name.length > 1) {
-            matchedPropArray.push(name[0]);
+            let structuredParentName = name[0].split(".");
+            if (structuredParentName.length > 1) {
+              matchedPropArray.push(structuredParentName[0]);
+            } else {
+              matchedPropArray.push(name[0]);
+            }
           } else {
             for (let i = 0; i < curationOptions?.activeStep?.stepArtifact?.matchRulesets?.length; i++) {
               let ruleset = curationOptions.activeStep.stepArtifact.matchRulesets[i];
@@ -97,412 +130,201 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     props.toggleModal(false);
   };
 
-  const getPropertyPath = (parentKeys: any, structuredTypeName: string, propertyName: string, propertyPath?: string, arrayIndex?: number, parentPropertyName?: string) => {
-    let updatedPropertyPath = "";
-    if (!propertyPath) {
-      if (parentPropertyName && arrayIndex !== undefined && arrayIndex >= 0) {
-        parentKeys.forEach(parentsKey => {
-          let key = parentsKey.split(",")[0];
-          if (key === parentPropertyName) {
-            return !updatedPropertyPath.length ? updatedPropertyPath = `${key}[${arrayIndex}]` : updatedPropertyPath = updatedPropertyPath + "." + `${key}[${arrayIndex}]`;
-          } else {
-            return !updatedPropertyPath.length ? updatedPropertyPath = key : updatedPropertyPath = updatedPropertyPath + "." + key;
-          }
-        });
-      } else {
-        parentKeys.forEach(parentsKey => !updatedPropertyPath.length ? updatedPropertyPath = parentsKey.split(",")[0] : updatedPropertyPath = updatedPropertyPath + "." + parentsKey.split(",")[0]);
-      }
-      updatedPropertyPath = updatedPropertyPath + "." + structuredTypeName + "." + propertyName;
-    } else {
-      updatedPropertyPath = propertyPath + "." + structuredTypeName + "." + propertyName;
-    }
-    return updatedPropertyPath;
-  };
 
-  const propertyValueFromPath = (propertyPath, initialObj) => {
-    let localPropertyPath = propertyPath.split(".").reduce((arrObject, curr) => {
-      if (curr.indexOf("[") !== -1) {
-        let updatedCurr = curr.slice(0, curr.indexOf("["));
-        let index = curr.slice(curr.indexOf("[") + 1, curr.indexOf("]"));
-        if (arrObject[updatedCurr] && Array.isArray(arrObject[updatedCurr])) {
-          return arrObject[updatedCurr][index];
-        } else {
-          return arrObject[updatedCurr] ? arrObject[updatedCurr] : "";
-        }
-      } else {
-        return (arrObject === undefined || !arrObject[curr]) ? "" : arrObject[curr];
-      }
-    }, initialObj);
-    return localPropertyPath;
-  };
-
-  const getPropertyPathForStructuredProperties = (parentKeys: any, propertyName: string) => {
-    let propertyPath = "";
-    parentKeys.forEach(parentsKey => !propertyPath.length ? propertyPath = parentsKey : propertyPath = propertyPath === parentsKey ? propertyPath : propertyPath + "." + parentsKey);
-    propertyPath = propertyPath + "." + propertyName;
-    return propertyPath;
-  };
-
-  const parseDefinitionsToTable = (entityDefinitionsArray: Definition[], matchedPropertiesArray) => {
+  const parseDataToTable = (entityDefinitionsArray: Definition[], matchedPropertiesArray, uriInfo) => {
     let activeEntityName = props.isPreview ? props.activeStepDetails.entityName : props.activeStepDetails[0].name;
     let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
-    return entityTypeDefinition?.properties.map((property, index) => {
+    const parsedData = entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
-      let counter = 0;
-      let propertyValueInURI1 = "";
-      let propertyValueInURI2 = "";
-      let propertyValueInReview = "";
-      if (props.uriInfo) {
-        property1 = props.uriInfo[0]["result1Instance"][activeEntityName];
-        property2 = props.uriInfo[1]["result2Instance"][activeEntityName];
-        previewValues = props.uriInfo[props.uriInfo.length - 1]["previewInstance"][activeEntityName];
-      }
-      if (property.datatype === "structured") {
-        const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys, allParentKeys, propertyPath, indexArray?: number, localParentKey?: string) => {
-          let parsedRef = property.ref.split("/");
-          if (indexArray === undefined) {
-            if (parentKey && !parentKeys.includes(parentKey)) {
-              parentKeys.push(parentKey);
-            } else {
-              parentKeys.push(property.name + "," + index + (counter + 1));
-            }
-          }
-          if (localParentKey && !allParentKeys.includes(localParentKey)) {
-            allParentKeys.push(localParentKey);
-          } else {
-            if (!allParentKeys.includes(localParentKey)) {
-              allParentKeys.push(property.name);
-            }
-          }
-
-          if (parsedRef.length > 0 && parsedRef[1] === "definitions") {
-            let updatedPropertyPath = propertyPath ? propertyPath : property.name;
-            let URI1Value: any = propertyValueFromPath(updatedPropertyPath, property1);
-            let URI2Value: any = propertyValueFromPath(updatedPropertyPath, property2);
-            let PREVIEWValue: any = propertyValueFromPath(updatedPropertyPath, previewValues);
-            let arrLength = 0;
-            if ((URI1Value && Array.isArray(URI1Value)) || (URI2Value && Array.isArray(URI2Value)) || (PREVIEWValue && Array.isArray(PREVIEWValue))) {
-              // arrLength = URI1Value.length > URI2Value.length ? URI1Value.length : URI2Value.length;
-              arrLength = URI1Value.length;
-              if (URI2Value.length > URI1Value.length) {
-                arrLength = URI2Value;
-              }
-              if (PREVIEWValue.length > URI1Value.length && PREVIEWValue.length > URI2Value.length) {
-                arrLength = PREVIEWValue;
-              }
-            }
-
-
-
-
-            let structuredType = entityDefinitionsArray.find(entity => entity.name === parsedRef[2]);
-            let structuredTypePropertiesArray: any = [];
-            let structuredTypeProperties: any;
-            if (arrLength > 0) {
-              let parentKeysTempArray = [...parentKeys];
-              for (let i = 0; i < arrLength; i++) {
-                let allParentKeysTempArray = [...allParentKeys];
-                let structTypeProperties = structuredType?.properties.map((structProperty, structIndex) => {
-                  if (structProperty.datatype === "structured") {
-                    // Recursion to handle nested structured types
-                    counter++;
-                    let parentDefinitionName = structuredType.name;
-                    let immediateParentKey = (parentKey !== "" ? property.name : structProperty.name) + "," + index + counter + i;
-                    let localParentKey = structProperty.name;
-                    let propertyPathUri = propertyPath ? propertyPath : getPropertyPath(parentKeysTempArray, structuredType.name, structProperty.name, undefined, i, property.name);
-                    return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName, immediateParentKey, parentKeysTempArray, allParentKeysTempArray, propertyPathUri, i, localParentKey);
-                  } else {
-                    let allParentKeysArray = [...allParentKeysTempArray];
-                    let updatedPropertyPath = getPropertyPath(parentKeysTempArray, structuredType.name, structProperty.name, propertyPath, i, property.name);
-                    let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
-                    let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
-                    let propertyValueInReview = propertyValueFromPath(updatedPropertyPath, previewValues);
-                    let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
-                    let matchedRow = propertyValueInURI1 && propertyValueInURI2 ? matchedPropertiesArray.includes(localPropertyPath) : false;
-                    return {
-                      key: property.name + "," + index + structIndex + counter + i,
-                      propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
-                      propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
-                      propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
-                      structured: structuredType.name,
-                      propertyName: {name: structProperty.name, matchedRow: matchedRow},
-                      propertyPath: updatedPropertyPath,
-                      type: structProperty.datatype === "structured" ? structProperty.ref.split("/").pop() : structProperty.datatype,
-                      multiple: structProperty.multiple ? structProperty.name : "",
-                      hasChildren: false,
-                      hasParent: true,
-                      parentKeys: allParentKeysArray,
-                    };
-                  }
-                });
-                let parentKeysArray = [...parentKeysTempArray];
-                let arrayRow = {
-                  key: property.name + "," + index + i + counter,
-                  propertyValueInURI1: {value: propertyValueInURI1, matchedRow: false},
-                  propertyValueInURI2: {value: propertyValueInURI2, matchedRow: false},
-                  propertyValueInReview: {value: propertyValueInReview, matchedRow: false},
-                  structured: structuredType.name,
-                  propertyName: {name: (i + 1) + " " + structuredType.name, matchedRow: matchedPropertiesArray.includes(property.name)},
-                  propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structuredType.name, propertyPath, i),
-                  children: structTypeProperties,
-                  hasChildren: true,
-                  hasParent: true,
-                  parentKeys: allParentKeys
-                };
-                structuredTypePropertiesArray.push(arrayRow);
-              }
-
-            } else {
-              structuredTypeProperties = structuredType?.properties.map((structProperty, structIndex) => {
-                if (structProperty.datatype === "structured") {
-                  // Recursion to handle nested structured types
-                  counter++;
-                  let parentDefinitionName = structuredType.name;
-                  let immediateParentKey = (parentKey !== "" ? property.name : structProperty.name) + "," + index + counter;
-                  let propertyPath = getPropertyPath(parentKeys, structuredType.name, structProperty.name);
-                  return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName, immediateParentKey, parentKeys, allParentKeys, propertyPath);
-                } else {
-                  let parentKeysArray = [...parentKeys];
-                  let allParentKeysArray = [...allParentKeys];
-                  let updatedPropertyPath = getPropertyPath(parentKeys, structuredType.name, structProperty.name, propertyPath);
-                  let propertyValueInURI1 = propertyValueFromPath(updatedPropertyPath, property1);
-                  let propertyValueInURI2 = propertyValueFromPath(updatedPropertyPath, property2);
-                  let propertyValueInReview = propertyValueFromPath(updatedPropertyPath, previewValues);
-                  let localPropertyPath = getPropertyPathForStructuredProperties(allParentKeysArray, structProperty.name);
-                  let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(localPropertyPath);
-                  return {
-                    key: property.name + "," + index + structIndex + counter,
-                    propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
-                    propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
-                    propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
-                    structured: structuredType.name,
-                    propertyName: {name: structProperty.name, matchedRow: matchedRow},
-                    propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structProperty.name, propertyPath),
-                    type: structProperty.datatype === "structured" ? structProperty.ref.split("/").pop() : structProperty.datatype,
-                    multiple: structProperty.multiple ? structProperty.name : "",
-                    hasChildren: false,
-                    hasParent: true,
-                    parentKeys: allParentKeysArray
-                  };
-                }
-              });
-            }
-
-            let hasParent = parentKey !== "";
-            let allParentKeysArray = [...allParentKeys];
-            return {
-              key: property.name + "," + index + counter,
-              structured: structuredType.name,
-              propertyValueInURI1: {value: "", matchedRow: false},
-              propertyValueInURI2: {value: "", matchedRow: false},
-              propertyValueInReview: {value: "", matchedRow: false},
-              propertyName: {name: property.name, matchedRow: matchedPropertiesArray.includes(property.name)},
-              propertyPath: hasParent ? getPropertyPath(parentKeys, structuredType.name, property.name, propertyPath) : property.name,
-              multiple: property.multiple ? property.name : "",
-              type: property.ref.split("/").pop(),
-              children: arrLength ? structuredTypePropertiesArray : structuredTypeProperties,
-              hasChildren: true,
-              hasParent: hasParent,
-              parentKeys: hasParent ? allParentKeysArray : []
-            };
-          }
-        };
-        propertyRow = parseStructuredProperty(entityDefinitionsArray, property, "", undefined, [], [], "");
-        counter++;
-      } else {
-        // To handle non structured properties
-        if (props.uriInfo !== undefined) {
-          propertyValueInURI1 = property1[property.name];
-          propertyValueInURI2 = property2[property.name];
-          propertyValueInReview = previewValues[property.name];
-          if (propertyValueInURI1 === undefined) {
-            propertyValueInURI1 = "";
-          }
-          if (propertyValueInURI2 === undefined) {
-            propertyValueInURI2 = "";
-          }
-          if (propertyValueInReview === undefined) {
-            propertyValueInReview = "";
-          }
-        }
-        let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedPropertiesArray.includes(property.name);
-
-        propertyRow = {
-          key: property.name + "," + index,
-          propertyValueInURI1: {value: propertyValueInURI1, matchedRow: matchedRow},
-          propertyValueInURI2: {value: propertyValueInURI2, matchedRow: matchedRow},
-          propertyValueInReview: {value: propertyValueInReview, matchedRow: matchedRow},
-          propertyName: {name: property.name, matchedRow: matchedRow},
-          propertyPath: property.name,
-          type: property.datatype,
-          identifier: entityTypeDefinition?.primaryKey === property.name ? property.name : "",
-          multiple: property.multiple ? property.name : "",
-          hasChildren: false,
-          parentKeys: []
-        };
-      }
+      const previewValues = uriInfo[uriInfo.length - 1]["previewInstance"][activeEntityName];
+      const matchedRow = matchedPropertiesArray.includes(property.name);
+      propertyRow = {
+        key: property.name + "," + index,
+        propertyPath: property.name,
+        type: property.datatype,
+        identifier: entityTypeDefinition?.primaryKey === property.name ? property.name : "",
+        multiple: property.multiple ? property.name : "",
+        hasChildren: false,
+        parentKeys: [],
+        propertyName: {name: property.name, matchedRow: matchedRow},
+        propertyValueInReview: {value: previewValues[property.name] || "", matchedRow: matchedRow},
+      };
+      uriInfo.forEach((uri, index) => {
+        let propertyInstanceKey = `result${index + 1}Instance`;
+        if (!uri[propertyInstanceKey]) return;
+        let propertyValueInURI = uri[propertyInstanceKey][activeEntityName];
+        const propertyValueKey = `propertyValueInURI${index + 1}`;
+        const value = propertyValueInURI[property.name] || "";
+        propertyRow[propertyValueKey] = {value, matchedRow};
+      });
       return propertyRow;
     });
+    return parsedData;
   };
 
-  const columns = [
-    {
-      dataField: "propertyName",
-      key: "propertyPath",
-      text: "propertyName",
-      title: (cell) => `${cell.name}`,
-      ellipsis: true,
-      width: "25%",
-      style: (property) => {
-        if (property?.matchedRow) {
-          return {
-            backgroundColor: "#85BF97",
-            width: "25%",
-            backgroundImage: "url(" + backgroundImage + ")",
-            verticalAlign: "top"
-          };
-        }
-        return {
-          backgroundColor: "",
-          width: "25%",
-          verticalAlign: "top"
-        };
-      },
-      formatter: (text, row) => {
-        return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""} aria-label={text.name}>{text.name}</span>;
-      },
-    },
-    {
-      dataField: props.isMerge ?  "propertyValueInURI1" : "propertyValueInReview",
-      key: props.isMerge ? "propertyValueInURI1" : "propertyValueInReview",
-      title: (cell) => `${cell.value}`,
-      ellipsis: true,
-      width: "25%",
-      style: (property) => {
-        if (property?.matchedRow) {
-          return {
-            backgroundColor: "#85BF97",
-            width: "25%",
-            backgroundImage: "url(" + backgroundImage + ")",
-            verticalAlign: "top"
-          };
-        }
-        return {
-          backgroundColor: "",
-          width: "25%",
-          verticalAlign: "top"
-        };
-      },
-      formatter: (property, key) => {
-        let mergedOutput;
-        if (isArray(property.value) && property.value.length > 1) {
-          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
-            //pretty print JSON if array of objects
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //format normal arrays
-            mergedOutput = JSON.stringify(property.value, null, 2);
+
+  const columnsGenerator = (data: any[]) => {
+    let columns: any[] = [
+      {
+        dataField: "propertyName",
+        key: "propertyPath",
+        text: "Property Name",
+        title: (cell) => `${cell.name}`,
+        ellipsis: true,
+        style: (property) => {
+          if (property?.matchedRow) {
+            return {
+              backgroundColor: "#85BF97",
+              backgroundImage: "url(" + backgroundImage + ")",
+              verticalAlign: "top",
+              width: "250px",
+            };
           }
-        } else {
-          if (typeof property.value === "object" && property.value !== null) {
-            //pretty print JSON if singular object
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //remove "" if empty value, show string values in quotes
-            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+          return {
+            backgroundColor: "",
+            verticalAlign: "top",
+            width: "250px",
+          };
+        },
+        formatter: (text, row) => {
+          return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""} aria-label={text.name}>{text.name}</span>;
+        },
+      },
+    ];
+    data.map((uri, index) => {
+      const dataField = `propertyValueInURI${index + 1}`;
+      columns.push(
+        {
+          dataField: dataField,
+          key: dataField,
+          title: (cell) => `${cell.value}`,
+          ellipsis: true,
+          text: uri,
+          style: (property) => {
+            if (property?.matchedRow) {
+              return {
+                backgroundColor: "#85BF97",
+                backgroundImage: "url(" + backgroundImage + ")",
+                verticalAlign: "top",
+                width: "auto",
+                maxWidth: "200px",
+              };
+            }
+            return {
+              backgroundColor: "",
+              verticalAlign: "top",
+              width: "auto",
+              maxWidth: "200px",
+            };
+          },
+          formatter: (property, key) => {
+            let mergedOutput;
+            if (isArray(property.value) && property.value.length > 1) {
+              if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+                //pretty print JSON if array of objects
+                mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+              } else {
+                //format normal arrays
+                mergedOutput = JSON.stringify(property.value, null, 2);
+              }
+            } else {
+              if (typeof property.value === "object" && property.value !== null) {
+                //pretty print JSON if singular object
+                mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+              } else {
+                //remove "" if empty value, show string values in quotes
+                mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+              }
+            }
+            return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell${index + 2}` : `empty-cell${index + 2}`}>{mergedOutput}</span>;
           }
         }
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell1` : "empty-cell1"}>{mergedOutput}</span>;
+      );
+    });
+
+    columns.push(
+      {
+        dataField: "propertyValueInReview",
+        key: "propertyValueInReview",
+        title: (cell) => `${cell.value}`,
+        ellipsis: true,
+        text: "Preview",
+        style: (property) => {
+          if (property?.matchedRow) {
+            return {
+              backgroundColor: "#85BF97",
+              backgroundImage: `url(${backgroundImage})`,
+              verticalAlign: "top",
+              width: "300px",
+            };
+          }
+          return {
+            backgroundColor: "",
+            verticalAlign: "top",
+            width: "300px",
+          };
+        },
+        formatter: (property, key) => {
+          let mergedOutput;
+          if (isArray(property.value) && property.value.length > 1) {
+            if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+              //pretty print JSON if array of objects
+              mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+            } else {
+              //format normal arrays
+              mergedOutput = JSON.stringify(property.value, null, 2);
+            }
+          } else {
+            if (typeof property.value === "object" && property.value !== null) {
+              //pretty print JSON if singular object
+              mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+            } else {
+              //remove "" if empty value, show string values in quotes
+              mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+            }
+          }
+          return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-preview` : "empty-preview-cell"}>{mergedOutput}</span>;
+        }
       }
-    },
-    {
-      dataField: "propertyValueInURI2",
-      text: "propertyValueInURI2",
-      key: "propertyValueInURI2",
-      title: (cell) => `${cell.value}`,
-      ellipsis: true,
-      width: "25%",
-      style: (property) => {
-        if (property?.matchedRow) {
-          return {
-            backgroundColor: "#85BF97",
-            width: "25%",
-            backgroundImage: `url(${backgroundImage})`,
-            verticalAlign: "top"
-          };
-        }
-        return {
-          backgroundColor: "",
-          width: "25%",
-          verticalAlign: "top"
-        };
-      },
-      formatter: (property, key) => {
-        let mergedOutput;
-        if (isArray(property.value) && property.value.length > 1) {
-          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
-            //pretty print JSON if array of objects
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //format normal arrays
-            mergedOutput = JSON.stringify(property.value, null, 2);
-          }
-        } else {
-          if (typeof property.value === "object" && property.value !== null) {
-            //pretty print JSON if singular object
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //remove "" if empty value, show string values in quotes
-            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
-          }
-        }
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
-      }
-    },
-    {
-      dataField: props.isMerge ? "propertyValueInReview" : "propertyValueInURI1",
-      key: props.isMerge ? "propertyValueInReview" : "propertyValueInURI1",
-      title: (cell) => `${cell.value}`,
-      ellipsis: true,
-      width: "calc(25% - 50px)",
-      style: (property) => {
-        if (property?.matchedRow) {
-          return {
-            backgroundColor: "#85BF97",
-            width: "calc(25% - 50px)",
-            backgroundImage: `url(${backgroundImage})`,
-            verticalAlign: "top"
-          };
-        }
-        return {
-          backgroundColor: "",
-          width: "calc(25% - 50px)",
-          verticalAlign: "top"
-        };
-      },
-      formatter: (property, key) => {
-        let mergedOutput;
-        if (isArray(property.value) && property.value.length > 1) {
-          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
-            //pretty print JSON if array of objects
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //format normal arrays
-            mergedOutput = JSON.stringify(property.value, null, 2);
-          }
-        } else {
-          if (typeof property.value === "object" && property.value !== null) {
-            //pretty print JSON if singular object
-            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-          } else {
-            //remove "" if empty value, show string values in quotes
-            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
-          }
-        }
-        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-cell2` : "empty-cell2"}>{mergedOutput}</span>;
-      }
-    },
-  ];
+    );
+    return columns;
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      const pageNumber = currentPage - 1;
+      setCurrentPage(pageNumber);
+    }
+  };
+
+
+
+  const renderPagination = () => {
+    let start = ((currentPage - 1) * pageSize) + 1;
+    let end = (currentPage * pageSize) > props.uris.length ? props.uris.length : (currentPage * pageSize);
+    return (<div className={styles.paginationContainer}>
+      <div onClick={handlePrevious}>
+        <span className={(currentPage > 1) ? styles.paginationArrow : styles.paginationArrowDisabled}>
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" style={{color: "#fff"}}></FontAwesomeIcon>
+        </span>
+      </div>
+      <div className={styles.paginationLegend}>
+        <span>
+          <strong>{start}</strong> to <strong>{end}</strong> of <strong>{props.uris.length}</strong> Documents
+        </span>
+      </div>
+      <div onClick={handleNextPage}>
+        <span className={(currentPage < totalPages) ? styles.paginationArrow : styles.paginationArrowDisabled}>
+          <FontAwesomeIcon icon={faChevronRight} size="lg" style={{color: "#fff"}}></FontAwesomeIcon>
+        </span>
+      </div>
+    </div>);
+  };
 
   const onExpand = (record, expanded, rowIndex) => {
     let newExpandedRows = [...expandedRows];
@@ -580,10 +402,10 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         onMouseLeave={() => setShowUrisPopover(false)}>
         <Popover.Body className={styles.moreUrisPopover}>
           {props.uriCompared.length < 30 ?
-            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return <div key={index}><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div>; })}</div>
+            <div className={styles.moreUrisInfo} aria-label="more-uri-info">All URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return <div key={index}><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br /></div>; })}</div>
             :
             <div>
-              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br/><br/>{props.uriCompared.map((uri, index) => { return index < 30 ? <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br/></div> : null; })}</div>
+              <div className={styles.moreUrisInfo} aria-label="more-uri-info-limit">The first <strong>30</strong> URIs included in this {props.isMerge ? "merge" : "unmerge"} are displayed below (<strong>{props.uriCompared.length} total</strong>): <br /><br />{props.uriCompared.map((uri, index) => { return index < 30 ? <div><span className={styles.uriText} aria-label={`${uri}-uri`}>{uri}</span><br /></div> : null; })}</div>
               <span>...</span>
             </div>
           }
@@ -619,12 +441,13 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     </HCModal>
   );
 
+
   return <><HCModal
     show={props.isVisible}
-    size={"lg"}
     dialogClassName={styles.modal1400w}
     aria-label={"compare-values-modal"}
     onHide={closeModal}
+    scrollable={true}
   >
     <Modal.Header className={"bb-none"} >
       <span className={styles.compareValuesModalHeading} data-testid="compareTitle">Compare</span>
@@ -648,62 +471,37 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
     </Modal.Header>
     <Modal.Body>
-      <div>
-        {
-          props.isMerge ?
-            <div className={styles.compareHeaderContainer}>
-              <span className={styles.expandCell}></span>
-              <span className={styles.entityPropertiesHeader}></span>
-              <span className={styles.entity1}>{props.entityDefinitionsArray[0]?.name} 1</span>
-              <span className={styles.entity2}>{props.entityDefinitionsArray[0]?.name} 2</span>
-              <span className={styles.entityPreview}>Merged: Preview</span>
-            </div>
-            :
-            <div className={styles.compareHeaderContainer}>
-              <span className={styles.expandCell}></span>
-              <span className={styles.entityPropertiesHeader}></span>
-              <span className={styles.entityPreview}>{props.entityDefinitionsArray[0]?.name}</span>
-              <span className={styles.entity1}>Unmerged: Preview 1</span>
-              <span className={styles.entity2}>Unmerged: Preview 2</span>
-            </div>
-        }
-        {
-          props.isMerge ?
-            <div className={styles.compareTableHeader}>
-              <span className={styles.expandCell}></span>
-              <span className={styles.entityPropertiesHeader}></span>
-              <span className={styles.uri1}>{props.uriCompared[0]}</span>
-              <span className={styles.uri2}>{props.uriCompared[1]}</span>
-              <span className={styles.entityPreview}>{}</span>
-            </div>
-            :
-            <div className={styles.compareTableHeader}>
-              <span className={styles.expandCell}></span>
-              <span className={styles.entityPropertiesHeader}></span>
-              <span className={styles.originalUri}>{props.originalUri}</span>
-              <span className={styles.uri1}>{props.uriCompared[0]}</span>
-              <span className={styles.uri2}>{props.uriCompared[1]}</span>
-            </div>
-        }
-        <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
-        <span className={styles.matchIconText}>Match</span>
-      </div>
-      <div>
-        <HCTable columns={columns}
-          className={`compare-values-model ${styles.compareValuesModelTable}`}
-          data={compareValuesTableData}
-          onExpand={onExpand}
-          expandedRowKeys={expandedRows}
-          showExpandIndicator={{bordered: false}}
-          nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
-          childrenIndent={true}
-          pagination={true}
-          rowStyle={rowStyle2}
-          keyUtil="key"
-          baseIndent={0}
-          rowKey="key"
-          showHeader={false}
-        />
+      <div className={styles.compareValuesModelBodyContainer}>
+        <div className="w-100 d-flex">
+          <span className={styles.compareValuesEntityName}>Entity: <strong>{props.isPreview ? props.activeStepDetails.entityName : props?.activeStepDetails[0]?.name || ""}</strong></span>
+        </div>
+        <div className={styles.paginationRow}>
+          <div className={styles.paginationRowCleanSpace}></div>
+          <div className={styles.paginationRowActions}>
+            {props.uris.length > pageSize && renderPagination()}
+          </div>
+          <div className={styles.paginationRowLegend}>
+            <span className={styles.matchIconContainer}><img src={backgroundImage} className={styles.matchIcon}></img></span>
+            <span className={styles.matchIconText}>Match</span>
+          </div>
+        </div>
+        <div>
+          {columns.length > 0 && <HCTable columns={columns}
+            className={`compare-values-model ${styles.compareValuesModelTable}`}
+            data={compareValuesTableData}
+            onExpand={onExpand}
+            expandedRowKeys={expandedRows}
+            showExpandIndicator={{bordered: false}}
+            nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
+            childrenIndent={true}
+            pagination={false}
+            rowStyle={rowStyle2}
+            keyUtil="key"
+            baseIndent={0}
+            rowKey="key"
+            showHeader={true}
+          />}
+        </div>
       </div>
     </Modal.Body>
     {!props.isPreview ?
