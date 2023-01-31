@@ -1,0 +1,18 @@
+{
+  "info": {
+    "title": "CustomerWithoutMerge",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "CustomerWithoutMerge": {
+      "required": [],
+      "primaryKey": "customerId",
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        }
+      }
+    }
+  }
+}
