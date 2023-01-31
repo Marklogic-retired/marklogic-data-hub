@@ -3,12 +3,12 @@
     "headers": {},
     "instance": {
       "info": {
-        "title": "Customer",
+        "title": "CustomerWithoutMerge",
         "version": "0.0.1",
         "baseUri": "http://example.org/"
       },
-      "Customer": {
-        "customerId": 1
+      "CustomerWithoutMerge": {
+        "customerId": 2
       }
     }
   }
