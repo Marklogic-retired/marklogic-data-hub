@@ -136,9 +136,9 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     compareValuesModal.getModal().should("be.visible");
 
     cy.log("** verify match coloring **");
-    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    // cy.findByTitle("Address").should("have.css", "background-color", "rgb(133, 191, 151)");
-    // cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
 
     compareValuesModal.getMergeButton().should("be.visible");
 
@@ -148,10 +148,9 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     browsePage.getMergeIcon().first().click();
 
     cy.log("** verify match coloring when reopening modal **");
+    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
     cy.findByTitle("ZipCode").should("not.have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("DateOfBirth").should("have.css", "background-color", "rgb(133, 191, 151)");
-    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
 
     compareValuesModal.getMergeButton().click();
     compareValuesModal.confirmationYes().click();
