@@ -254,7 +254,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           </HCTooltip>
         );
       })}
-      {props.greyFacets.length > 0 &&
+      {Object.keys(greyedOptions.selectedFacets)?.length > 0 &&
         <HCTooltip text="Clear unapplied facets" id="clear-facets-toolbar" placement="top">
           <i><FontAwesomeIcon
             icon={faWindowClose}
@@ -272,7 +272,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           /></i>
         </HCTooltip>
       }
-      {props.greyFacets.length > 0 &&
+      {Object.keys(greyedOptions.selectedFacets)?.length > 0 &&
         <HCTooltip text="Apply facets" id="apply-facets-tooltip" placement="top">
           <i><FontAwesomeIcon
             icon={faCheckSquare}
