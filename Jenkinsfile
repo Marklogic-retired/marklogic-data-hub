@@ -607,8 +607,8 @@ void cypressE2EOnPremWinChromeTests(){
                                  setlocal
                                  set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
-                                 set CYPRESS_BASE_URL=${cypressChBaseUrl};
-                                 set mlHost=${mlChHost};
+                                 set CYPRESS_BASE_URL=${cypressChBaseUrl}
+                                 set mlHost=${mlChHost}
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
                                  npm run cy:run-chrome-headed -- --config baseUrl=${cypressChBaseUrl} --env mlHost=${mlChHost}   >> e2e_err.log
      """
@@ -825,8 +825,8 @@ def runFFTests(){
                                  setlocal
                                  set ERRORLEVEL=0
                                  set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH
-                                 set CYPRESS_BASE_URL=${cypressFFBaseUrl};
-                                 set mlHost=${mlFFHost};
+                                 set CYPRESS_BASE_URL=${cypressFFBaseUrl}
+                                 set mlHost=${mlFFHost}
                                  cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
                                  npm run cy:run-firefox-headed -- --config baseUrl=${cypressFFBaseUrl} --env mlHost=${mlFFHost}  >> e2e_err.log
      """

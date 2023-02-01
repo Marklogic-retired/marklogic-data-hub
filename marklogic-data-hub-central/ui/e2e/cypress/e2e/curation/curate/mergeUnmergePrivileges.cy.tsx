@@ -34,7 +34,12 @@ describe("Disabled Merge/Unmerge Permissions on All Screens", () => {
     browsePage.waitForSpinnerToDisappear();
     explorePage.getEntities().click();
     browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickTableView();
+    cy.wait(1000);
+    cy.waitForAsyncRequest();
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Person");
     cy.wait(1000); //adding explicit waits for now to get this stably in for beta
