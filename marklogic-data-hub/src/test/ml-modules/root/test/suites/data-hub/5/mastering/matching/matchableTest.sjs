@@ -4,7 +4,7 @@ const test = require("/test/test-helper.xqy");
 const Matchable = MatchableModule.Matchable;
 
 function testMatchableClass() {
-  const matchableInstance = new Matchable({}, {});
+  const matchableInstance = new MatchableModule.Matchable({}, {});
   return [
     test.assertExists(matchableInstance, "Matchable class instance should exist."),
     test.assertExists(matchableInstance.baselineQuery, "Matchable class instance function baselineQuery should exist."),
@@ -17,13 +17,13 @@ function testMatchableClass() {
 }
 
 function testBaselineQuery() {
-  const matchableEntityInstanceQuery = new Matchable({
+  const matchableEntityInstanceQuery = new MatchableModule.Matchable({
     targetEntityType: "http://example.org/Customer-0.0.1/Customer"
   }, {}).baselineQuery();
-  const matchableEntityInstanceFallbackQuery = new Matchable({
+  const matchableEntityInstanceFallbackQuery = new MatchableModule.Matchable({
     targetEntityType: "http://example.org/Customer-0.0.1/CustomerWithoutTriplesFromTDE"
   }, {}).baselineQuery();
-  const matchableNoEntityQuery = new Matchable({
+  const matchableNoEntityQuery = new MatchableModule.Matchable({
     collections: {
       content: "MyMatchCollection"
     }
@@ -38,7 +38,7 @@ function testBaselineQuery() {
   const interceptorQueries = fn.tail(cts.andQueryQueries(matchableWithBaselineQueryInterceptorsQuery)).toArray();
   let matchableWithBadBaselineQueryInterceptorsError;
   try {
-    let invalidBaselineQuery = new Matchable({
+    let invalidBaselineQuery = new MatchableModule.Matchable({
       targetEntityType: "http://example.org/Customer-0.0.1/Customer",
       baselineQueryInterceptors: [
         { path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction" }
@@ -69,7 +69,7 @@ function testBaselineQuery() {
 
 function testFilterQuery() {
   const docA = cts.doc("/content/docA.json");
-  const filterQueryJustDoc = new Matchable({}, {}).filterQuery(docA);
+  const filterQueryJustDoc = new MatchableModule.Matchable({}, {}).filterQuery(docA);
   const filterQueryDocAndSerialized = new Matchable({ filterQuery: { collectionQuery: { uris: ["new"] } } }, {}).filterQuery(docA);
   const filterWithInterceptorQuery = new Matchable({
     filterQueryInterceptors: [
@@ -79,7 +79,7 @@ function testFilterQuery() {
   const interceptorQuery = fn.head(fn.tail(cts.andQueryQueries(filterWithInterceptorQuery)));
   let matchableWithBadFilterQueryInterceptorError;
   try {
-    let invalidFilterQuery = new Matchable({
+    let invalidFilterQuery = new MatchableModule.Matchable({
       filterQueryInterceptors: [
         { path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction" }
       ]
@@ -193,7 +193,7 @@ function testMatchRulesetDefinitions() {
       }
     ]
   };
-  const matchable = new Matchable(matchStep, {});
+  const matchable = new MatchableModule.Matchable(matchStep, {});
   const matchRulesetDefinitions = matchable.matchRulesetDefinitions();
   const assertions = [
     test.assertEqual(matchStep.matchRulesets.length, matchRulesetDefinitions.length, "Count of match ruleset definitions should match count of objects in the step.")
@@ -264,7 +264,7 @@ function testBuildActionDetails() {
       }
     ]
   };
-  const matchable = new Matchable(matchStep, {});
+  const matchable = new MatchableModule.Matchable(matchStep, {});
   const thresholdDefinitions = matchable.thresholdDefinitions();
   const assertions = [
     test.assertEqual(matchStep.thresholds.length, thresholdDefinitions.length, "Count of threshold definitions should match count of objects in the step.")
@@ -321,7 +321,7 @@ function testThresholds() {
       }
     ]
   };
-  const matchable = new Matchable(matchStep, {});
+  const matchable = new MatchableModule.Matchable(matchStep, {});
   const thresholdDefinitions = matchable.thresholdDefinitions();
   const assertions = [
     test.assertEqual(matchStep.thresholds.length, thresholdDefinitions.length, "Count of threshold definitions should match count of objects in the step.")
@@ -399,12 +399,12 @@ function testScoreDocument() {
     ]
   };
 
-  const matchable = new Matchable(matchStep, {});
+  const matchable = new MatchableModule.Matchable(matchStep, {});
   const score = matchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
   const assertions = [
     test.assertEqual(23, score, "score should come back as 23 (exact:10 + doubleMetaphone:5 + exact with custom true function:3 + synonym:5).")
   ];
-  const scoreInterceptorMatchable = new Matchable(Object.assign({scoreDocumentInterceptors:  [
+  const scoreInterceptorMatchable = new MatchableModule.Matchable(Object.assign({scoreDocumentInterceptors:  [
       { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor" }
     ]}, matchStep), {});
   const interceptorScore = scoreInterceptorMatchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });

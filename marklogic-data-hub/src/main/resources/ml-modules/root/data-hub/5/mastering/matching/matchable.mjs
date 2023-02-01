@@ -6,7 +6,8 @@ import common from "/data-hub/5/mastering/common.mjs";
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-import groupQueries from "./matcher.mjs";
+
+import matcher from "/data-hub/5/mastering/matching/matcher.mjs"
 
 /*
  * A class that encapsulates the configurable portions of the matching process.
@@ -327,11 +328,11 @@ class Matchable {
       xdmp.trace(matchingTraceEvent, `Atomic values for ${localname}: ${xdmp.describe(atomicValues, Sequence.from([]), Sequence.from([]))}.`);
     }
     if (this.matchStep.dataFormat === "json") {
-      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.jsonPropertyValueQuery(localname, atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      const lastQuery = matcher.groupQueries(queryValues.concat(atomicValues.length ? [cts.jsonPropertyValueQuery(localname, atomicValues, ["case-insensitive"])]: []), cts.orQuery);
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, lastQuery);
     } else {
       atomicValues = atomicValues.map((val) => fn.string(val));
-      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      const lastQuery = matcher.groupQueries(queryValues.concat(atomicValues.length ? [cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), atomicValues, ["case-insensitive"])]: []), cts.orQuery);
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, lastQuery);
     }
   }
@@ -522,7 +523,7 @@ class MatchRulesetDefinition {
     if (!this._cachedCtsQueries[uri]) {
       const queries = [];
       const model = this.matchable.model();
-      const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.mjs", "groupQueries");
+      //const groupQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.mjs", "groupQueries");
       let pos = 1;
       for (const matchRule of this.matchRuleset.matchRules) {
         if (!matchRule.node) {
@@ -543,8 +544,8 @@ class MatchRulesetDefinition {
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
       }
-      const optimizeCtsQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.mjs", "optimizeCtsQueries");
-      const optimizedCtsQuery = optimizeCtsQueries(groupQueries(queries, cts.andQuery));
+      //const optimizeCtsQueries = hubUtils.requireFunction("/data-hub/5/mastering/matching/matcher.mjs", "optimizeCtsQueries");
+      const optimizedCtsQuery = matcher.optimizeCtsQueries(matcher.groupQueries(queries, cts.andQuery));
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} returned ${xdmp.describe(optimizedCtsQuery, Sequence.from([]), Sequence.from([]))}`);
       }
