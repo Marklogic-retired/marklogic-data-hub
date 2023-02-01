@@ -1,6 +1,8 @@
 import React from "react";
 import {render, waitForElement, fireEvent} from "@testing-library/react";
 import SelectedFacets from "./selected-facets";
+import {SearchContext} from "@util/search-context";
+import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 
 
 test("No Selected Facets", () => {
@@ -79,14 +81,23 @@ test("Selected Facets: Numeric facet selected", () => {
 
 test("Grey Facets: Verify apply/discard icons", async () => {
   const {getByTestId, getByText} = render(
-    <SelectedFacets
-      selectedFacets={[]}
-      greyFacets={[{constraint: "Collection", facet: "productMapping"}]}
-      toggleApplyClicked={jest.fn()}
-      toggleApply={jest.fn()}
-      showApply={false}
-      applyClicked={true}
-    />,
+    <SearchContext.Provider value={{
+      ...searchContextInterfaceByDefault,
+      greyedOptions: {
+        ...searchContextInterfaceByDefault.greyedOptions,
+        selectedFacets: [{constraint: "Collection", facet: "productMapping"}]
+      }
+    }}>
+      <SelectedFacets
+        selectedFacets={[]}
+        greyFacets={[{constraint: "Collection", facet: "productMapping"}]}
+        toggleApplyClicked={jest.fn()}
+        toggleApply={jest.fn()}
+        showApply={false}
+        applyClicked={true}
+      />,
+    </SearchContext.Provider>
+
   );
   let discardButton = getByTestId("clear-all-grey-button");
   let applyButton = getByTestId("facet-apply-button");
