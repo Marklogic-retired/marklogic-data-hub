@@ -13,6 +13,7 @@ const SidebarFooter: React.FC = () => {
     setSearchOptions,
     clearAllGreyFacets,
     setQuery,
+    clearAllFacetsLS,
   } = useContext(SearchContext);
   const {
     monitorOptions,
@@ -42,6 +43,7 @@ const SidebarFooter: React.FC = () => {
         pageLength: searchOptions.pageSize
       });
       clearAllGreyFacets();
+      clearAllFacetsLS();
     } else {
       if (greyedOptions.query !== searchOptions.query) setQuery(greyedOptions.query);
     }
