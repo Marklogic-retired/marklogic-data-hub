@@ -48,7 +48,7 @@ const assertTripleFrequency = (tripleArray, subject, predicate, object) => {
 }
 
 const assertions = [
-  test.assertEqual("finished", response.jobStatus)
+  test.assertEqual("finished", response.jobStatus, xdmp.toJsonString(response))
 ];
 
 // This is based on the URIs that were merged together

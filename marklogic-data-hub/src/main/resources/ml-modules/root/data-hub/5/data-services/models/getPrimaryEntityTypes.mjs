@@ -19,9 +19,8 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model"
 
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import conceptLib from "/data-hub/5/impl/concept-lib.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const ext = sjsProxy.requireSjsModule("/data-hub/extensions/entity/build-entity-query.xqy");
+const ext = require("/data-hub/extensions/entity/build-entity-query.xqy");
 
 const includeDrafts = external.includeDrafts;
 
@@ -36,7 +35,7 @@ function buildEntityResponse(modelObject) {
   };
   return Object.assign(response, jobData);
 
-};
+}
 
 let modelResponseArr = [];
 let conceptResponseArr = [];
@@ -100,7 +99,7 @@ function buildConceptResponse(modelObject) {
   };
   return Object.assign(response);
 
-};
+}
 
 function getEntityOrConceptName(modelObject){
   if (modelObject.hasOwnProperty("entityName")) {

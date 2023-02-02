@@ -16,11 +16,11 @@
 
 'use strict';
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
+import hubUtils from "./hub-utils.mjs";
 
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
-const ext = sjsProxy.requireSjsModule("/data-hub/extensions/entity/post-process-database-properties.sjs");
+const ext = require("/data-hub/extensions/entity/post-process-database-properties.sjs");
 
 /**
  * Generates database properties based on the given entity models. This starts with the ES database-properties-generate
@@ -34,7 +34,7 @@ function generateDatabaseProperties(entityModels)
 {
   const dbProps = hent.dumpIndexes(entityModels);
   return ext.postProcessDatabaseProperties(dbProps);
-};
+}
 
 /**
  * @param entityIRI
@@ -260,10 +260,10 @@ function generateProtectedPathConfig(models) {
 }
 
 function getEntityInfoFromRecord(record) {
-  if (record instanceof Node) {
+  if (hubUtils.isNode(record)) {
     const infoNode = fn.head(record.xpath("/*:envelope/*:instance/*:info"));
     if (infoNode) {
-      return (infoNode instanceof ObjectNode) ? infoNode.toObject() : {
+      return hubUtils.isObjectNode(infoNode) ? infoNode.toObject() : {
         title: fn.string(infoNode.xpath("./*:title")),
         version: fn.string(infoNode.xpath("./*:version"))
       };

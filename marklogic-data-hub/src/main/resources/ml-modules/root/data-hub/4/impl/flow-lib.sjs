@@ -103,7 +103,7 @@ function runFlow(jobId, flow, identifier, content, options, mainFunc) {
   rfc.setItemContext(itemContext);
 
   return runMain(itemContext, mainFunc);
-};
+}
 
 function cleanData(resp, destination, dataFormat)
 {
@@ -310,7 +310,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
   }
 
   fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
-};
+}
 
 function makeLegacyEnvelope(content, headers, triples, dataFormat) {
   content = cleanData(content, "content", dataFormat);
@@ -373,7 +373,7 @@ function makeLegacyEnvelope(content, headers, triples, dataFormat) {
   }
 
   fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
-};
+}
 
 function instanceToCanonicalJson(entityInstance) {
   let o;
@@ -484,14 +484,14 @@ function instanceToCanonicalXml(entityInstance) {
     nb.endElement();
   nb.endDocument();
   return nb.toNode();
-};
+}
 
 function setDefaultOptions(options, flow) {
   options.entity = flow.entity;
   options.flow = flow.name;
   options.flowType = flow.type;
   options.dataFormat = flow.dataFormat;
-};
+}
 
 function getMainFunc(main) {
 
@@ -550,7 +550,7 @@ function runMain(itemContext, func) {
     resp = fn.head(resp);
   }
   return resp;
-};
+}
 
 function queueWriter(writerFunction, identifier, envelope, options) {
   writerQueue[identifier] = {
@@ -630,7 +630,7 @@ function runWriter(writerFunction, itemContext, identifier, envelope, options) {
   }
 
   return resp;
-};
+}
 
 function safeRun(func) {
   let before = xdmp.elapsedTime();
@@ -647,12 +647,12 @@ function safeRun(func) {
     tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
     fn.error(null, "DATAHUB-PLUGIN-ERROR",  JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
   }
-};
+}
 
 function makeFunction(funcName, moduleUri) {
   return require(moduleUri)[funcName];
   // return xdmp.function(xs.QName(funcName), moduleUri);
-};
+}
 
 module.exports = {
   getModuleNs: getModuleNs,

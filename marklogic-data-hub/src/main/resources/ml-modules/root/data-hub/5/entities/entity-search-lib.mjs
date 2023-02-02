@@ -17,10 +17,9 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import prov from "/data-hub/5/impl/prov.mjs";
 import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 
-const esInstance = sjsProxy.requireSjsModule('/MarkLogic/entity-services/entity-services-instance.xqy', "http://marklogic.com/entity-services-instance");
-const ext = sjsProxy.requireSjsModule("/data-hub/extensions/entity/get-entity-details.sjs");
+const esInstance = require('/MarkLogic/entity-services/entity-services-instance.xqy');
+const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
 
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -270,7 +269,7 @@ function getEntitySources(doc) {
     return sourcesArray;
   }
 
-  if(doc instanceof Element || doc instanceof XMLDocument) {
+  if(hubUtils.isXmlNode(doc)) {
     const sources = doc.xpath("/*:envelope/*:headers/*:sources");
     if(!fn.empty(sources)) {
       for (var srcDoc of sources) {
@@ -456,7 +455,7 @@ function addGenericEntityProperties(result) {
 function fetchUnmergeDetails(doc, entityName) {
   let unmergeDetails = {};
   unmergeDetails.unmerge = fn.exists(doc.xpath("/*:envelope/*:headers/*:merges"));
-  unmergeDetails.unmergeUris = doc instanceof XMLDocument ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
+  unmergeDetails.unmergeUris = hubUtils.isXmlDocument(doc) ? doc.xpath("/*:envelope/*:headers/*:merges/*:document-uri/text()") : doc.xpath("/*:envelope/*:headers/*:merges");
   if (unmergeDetails.unmerge) {
     unmergeDetails.matchStepName = getMatchStepFromModelName(entityName);
   }

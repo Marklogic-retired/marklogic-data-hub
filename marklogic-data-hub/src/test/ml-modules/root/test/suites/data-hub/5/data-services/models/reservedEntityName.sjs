@@ -12,8 +12,8 @@ function assertNameIsReserved(name) {
     throw Error(`Expected validation to fail because ${name} is reserved due to it being used in the generated search options`);
   } catch (error) {
     assertions.push(
-      test.assertEqual("400", error.data[0]),
-      test.assertEqual(`${name} is a reserved term and is not allowed as an entity name.`, error.data[1])
+      test.assertEqual("400", error.data ? error.data[0]: error),
+      test.assertEqual(`${name} is a reserved term and is not allowed as an entity name.`, error.data ? error.data[1]: error)
     );
   }
 }

@@ -1,7 +1,7 @@
-const config = require("/com.marklogic.hub/config.sjs");
-const hubTest = require("/test/data-hub-test-helper.sjs");
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+const config = require("/com.marklogic.hub/config.sjs");
+const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 const testEntityModel = {

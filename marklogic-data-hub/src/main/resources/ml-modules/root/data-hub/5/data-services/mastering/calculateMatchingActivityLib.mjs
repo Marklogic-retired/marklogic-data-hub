@@ -151,7 +151,7 @@ function highestThreshold(score) {
     }
   }
   return highest;
-};
+}
 
 function addToCombinationsMap(score, names)
 {

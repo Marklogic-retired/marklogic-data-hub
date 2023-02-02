@@ -21,9 +21,8 @@ const search = require('/MarkLogic/appservices/search/search');
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const sem = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+const sem = require("/MarkLogic/semantics.xqy");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>

@@ -1,11 +1,12 @@
 declareUpdate();
-// This tests provenance planned for the 5.7.0 release
+// This tests provenance planned for later release
 const dhProv = require('/data-hub/5/provenance/dh-provenance.xqy');
 const config = require("/com.marklogic.hub/config.sjs");
-const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
 const hubTest = require("/test/data-hub-test-helper.xqy");
-const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
-const provLib = require("/data-hub/5/impl/prov.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs")
+const flowProvenance = mjsProxy.requireMjsModule("/data-hub/5/flow/flowProvenance.mjs");
+const StepExecutionContext = mjsProxy.requireMjsModule("/data-hub/5/flow/stepExecutionContext.mjs");
+const provLib = mjsProxy.requireMjsModule("/data-hub/5/impl/prov.mjs");
 const stagingDB = config.STAGINGDATABASE;
 const finalDB = config.FINALDATABASE;
 

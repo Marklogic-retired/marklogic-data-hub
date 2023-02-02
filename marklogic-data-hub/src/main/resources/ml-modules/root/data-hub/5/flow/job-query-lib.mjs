@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const op = require('/MarkLogic/optic');
+import op from '/MarkLogic/optic';
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import config from "/com.marklogic.hub/config.mjs";
 

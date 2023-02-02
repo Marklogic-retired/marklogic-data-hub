@@ -11,37 +11,8 @@ const test = require("/test/test-helper.xqy");
 
 function runWithRolesAndPrivileges(roles, privileges, funOrModule, variables)
 {
-    hubTest.assertCalledFromTest();
-    const securityOptions = { "defaultXqueryVersion": "1.0-ml", "database": xdmp.securityDatabase() };
-    try {
-        xdmp.invoke("/test/invoke/create-test-role.xqy", {"roles": Sequence.from(roles), "privileges": Sequence.from(privileges)}, securityOptions);
-    } catch (e) {
-        throw e;
-    }
-    const userId = fn.head(xdmp.invoke("/test/invoke/create-test-user.xqy", {}, securityOptions));
-    const cleanUp = function() {
-        try {
-            xdmp.invoke("/test/invoke/delete-test-role.xqy", {},securityOptions);
-        } catch (e) {
-        }
-        try {
-            xdmp.invoke("/test/invoke/delete-test-user.xqy", {}, securityOptions);
-        } catch (e) {
-        }
-    }
-    let execute;
-    try {
-        if (funOrModule instanceof Function || typeof funOrModule === 'function') {
-            execute = xdmp.invokeFunction(funOrModule, {userId});
-        } else {
-            execute = xdmp.invoke(funOrModule, variables, {userId});
-        }
-    } catch (e) {
-        cleanUp();
-        throw e;
-    }
-    cleanUp();
-    return execute;
+  const userId = hubTest.createTestUser(Sequence.from(roles), Sequence.from(privileges));
+  return hubTest.runWithUserId(userId, funOrModule, variables) ;
 }
 
 function verifyJson(expectedObject, actualObject, assertions) {
@@ -288,6 +259,7 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
   return Object.assign({}, initialMappingStep, mappingStepProperties);
 }
 
+const ampedRunWithRolesAndPrivileges = module.amp(runWithRolesAndPrivileges);
 module.exports = {
   createSimpleProject,
   createSimpleMappingProject,
@@ -303,6 +275,5 @@ module.exports = {
   stagingDocumentExists,
   verifyJson,
   getUrisInCollection,
-  runWithRolesAndPrivileges
-  //runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
+  runWithRolesAndPrivileges: ampedRunWithRolesAndPrivileges
 };

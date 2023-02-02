@@ -18,10 +18,9 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const json = sjsProxy.requireSjsModule('/MarkLogic/json/json.xqy');
-const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+const json = require('/MarkLogic/json/json.xqy');
+const sem = require("/MarkLogic/semantics.xqy");
 
   /**
    : Determine the input document type from the root node.
@@ -31,19 +30,19 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
    */
 
   function determineDocumentType(input) {
-    switch (input.nodeType) {
-      case Node.OBJECT_NODE:
+    switch (input.nodeKind) {
+      case "object":
         return consts.JSON;
-      case Node.ARRAY_NODE:
+      case "array":
         return consts.JSON;
-      case Node.ELEMENT_NODE:
+      case "element":
         return consts.XML;
-      case Node.TEXT_NODE:
+      case "text":
         return consts.TEXT;
-      case Node.BINARY_NODE:
+      case "binary":
         return consts.BINARY;
-      case Node.BINARY_NODE:
-        return consts.BINARY;
+      case "document":
+        return determineDocumentType(input.root);
       default:
         return consts.DEFAULT_FORMAT;
     }
@@ -71,21 +70,21 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
           title: content['$type'],
           version: content['$version']
         };
-        if (content['$attachments'] && content['$attachments'] instanceof Element) {
+        if (hubUtils.isElementNode(content['$attachments'])) {
           attachments =  xmlToJson(content['$attachments']);
         } else {
           attachments = content['$attachments'];
         }
       } else if (dataFormat === consts.XML) {
         instance = instanceToCanonicalXml(content);
-        if ((!content['$attachments'] instanceof Element && !content['$attachments'] instanceof XMLDocument) && (content['$attachments'] instanceof Object || content['$attachments'] instanceof ObjectNode)) {
+        if (content['$attachments'] && (!hubUtils.isNode(content['$attachments']) || hubUtils.isObjectNode(content['$attachments']))) {
           attachments = jsonToXml(content['$attachments']);
         } else {
           attachments = content['$attachments'];
         }
       }
     } else if (inputFormat === dataFormat) {
-      if(content instanceof Element &&  content.nodeName.toLowerCase() === 'dataHubXmlWrapper' && content.namespaceURI.toLowerCase() === ""){
+      if(hubUtils.isElementNode(content) &&  content.nodeName.toLowerCase() === 'dataHubXmlWrapper' && content.namespaceURI.toLowerCase() === ""){
         instance = Sequence.from(content.xpath('node()'));
       } else {
         if(content['$attachments']) {
@@ -103,7 +102,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       if (isNonStringIterable(triples)) {
         let triplesAsArray = [];
         for (let triple of triples) {
-          if (triple instanceof Sequence) {
+          if (hubUtils.isSequence(triple)) {
             triplesAsArray = triplesAsArray.concat(triple.toArray());
           } else if (Array.isArray(triple)) {
             triplesAsArray = triplesAsArray.concat(triple);
@@ -119,7 +118,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       return {
         envelope: {
           headers: headers,
-          triples: triples.map((triple) => normalizeTriple(triple).toObject()),
+          triples: triples.map((triple) => normalizeTriple(triple)),
           instance: instance,
           attachments: attachments
         }
@@ -164,11 +163,11 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
           let attachments = content["$attachments"];
-          if (attachments instanceof XMLDocument || isXmlNode(attachments)) {
+          if (isXmlNode(attachments)) {
             nb.addNode(attachments);
           } else {
             let xmlAttachments = json.transformFromJson(attachments, json.config('custom'));
-            if(xmlAttachments instanceof Sequence){
+            if(hubUtils.isSequence(xmlAttachments)){
                 for(let xmlNode of xmlAttachments){
                   nb.addNode(xmlNode);
                 }
@@ -176,7 +175,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
               nb.addNode(xmlAttachments);
             }
           }
-        } else if (attachments instanceof XMLDocument || isXmlNode(attachments)) {
+        } else if (isXmlNode(attachments)) {
           nb.addNode(attachments);
         }
         nb.endElement();
@@ -186,15 +185,16 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       }
       nb.endElement();
       nb.endDocument();
-      return nb.toNode();
+      const results = nb.toNode();
+      return results;
     }
 
     httpUtils.throwBadRequest("Invalid data format: " + dataFormat + ".  Must be JSON or XML");
-  };
+  }
 
   function cleanData(resp, destination, dataFormat)
   {
-    if (resp instanceof Document) {
+    if (hubUtils.isDocumentNode(resp)) {
       if (fn.count(resp.xpath('node()')) > 1) {
         httpUtils.throwBadRequest("Too Many Nodes!. Return just 1 node");
       } else {
@@ -202,11 +202,11 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       }
     }
 
-    if (resp instanceof BinaryNode) {
+    if (hubUtils.isBinaryNode(resp)) {
       return xs.hexBinary(resp);
     }
 
-    if (resp instanceof Sequence) {
+    if (hubUtils.isSequence(resp)) {
       var cleanResp = [];
       for (const respPart of resp) {
         cleanResp.push(cleanData(respPart, destination, dataFormat));
@@ -214,8 +214,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       return Sequence.from(cleanResp);
     }
 
-    let kind = resp ? xdmp.nodeKind(resp) : null;
-    let isXml = (kind === 'element');
+    let isXml = hubUtils.isXmlNode(resp);
     if (!isXml && resp) {
       // object with $type key is ES response type
       if (resp instanceof Object && resp.hasOwnProperty('$type')) {
@@ -227,9 +226,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
         return resp;
       }
     } else if (isXml && resp) {
-      if ((resp instanceof ArrayNode || resp instanceof Array) && dataFormat === consts.XML) {
-        return cleanData(json.arrayValues(resp), destination, dataFormat);
-      } else if (dataFormat === consts.JSON) {
+      if (dataFormat === consts.JSON) {
         return xmlToJson(resp);
       } else {
         return resp;
@@ -254,27 +251,21 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
     return resp;
   }
 
-  function isXmlNode(value) {
-    return (value instanceof XMLNode && (value.nodeName !== null));
-  }
-
-  function tripleToXml(triple) {
-    return semXqy.rdfSerialize(triple, 'triplexml').xpath('*');
+function tripleToXml(triple) {
+    return sem.rdfSerialize(triple, 'triplexml').xpath('*');
   }
 
   function normalizeTriple(triple) {
-    if (triple instanceof sem.triple) {
+    if (triple instanceof sem.triple || !triple) {
       return triple;
-    } else if (triple instanceof ObjectNode) {
-      return sem.triple(triple.toObject());
-    } else if (triple instanceof ArrayNode) {
-      return normalizeTriple(triple.xpath("./node()"));
-    } if (triple[Symbol.iterator]) {
+    } else if (triple[Symbol.iterator]) {
       const triples = [];
       for (const t of triple) {
         triples.push(normalizeTriple(t));
       }
       return triples.length <= 1 ? triples[0]: triples;
+    } else if (triple.toObject && !hubUtils.isElementNode(triple)) {
+      return normalizeTriple(triple.toObject());
     } else {
       return sem.triple(triple);
     }
@@ -351,8 +342,8 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
         if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'NCName', key) && key !== '$type') {
           let nsKey = getElementName(namespace, namespacePrefix, key);
           let prop = entityInstance[key];
-          let isArray = prop instanceof Array;
-          if (isArray || prop instanceof Sequence) {
+          let isArray = Array.isArray(prop);
+          if (isArray || hubUtils.isSequence(prop)) {
             for (let item of prop) {
               instanceItemToCanonicalXml(nb, item, nsKey, ns, isArray);
             }
@@ -387,7 +378,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
         nb.addAttribute('datatype', 'array');
       }
 
-      if (item instanceof Node) {
+      if (hubUtils.isNode(item)) {
         nb.addNode(item);
       } else if (item instanceof Number) {
         nb.addNumber(item);
@@ -420,7 +411,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       let childNodes = content.childNodes;
       for (let i = 0; i < childNodes.length; i++) {
         let childNode = childNodes[i];
-        if (childNode instanceof Element) {
+        if (hubUtils.isElementNode(childNode)) {
           organizedOutput[childNode.localName] = organizedOutput[childNode.localName] || [];
           organizedOutput[childNode.localName].push(xmlNodeToJson(childNode));
         } else {
@@ -450,10 +441,10 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
 
   function jsonToXml(content) {
     let contentInput = content;
-    if (content instanceof ObjectNode || content instanceof ArrayNode) {
+    if (hubUtils.isJsonNode(content)) {
       contentInput = content.toObject();
     }
-    if(contentInput instanceof Sequence){
+    if(hubUtils.isSequence(contentInput)){
       contentInput = contentInput.toArray();
     }
     let nb = new NodeBuilder().startElement('dataHubXmlWrapper');
@@ -467,12 +458,12 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       }
     } else if (content instanceof xs.anyAtomicType) {
       nb.addText(fn.string(content));
-    } else if (content instanceof Object) {
+    } else if (typeof content === "object") {
       for (const propName in content) {
         if (content.hasOwnProperty(propName)) {
           const propValues = content[propName];
           const elementName = (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", propName)) ? xdmp.encodeForNCName(propName) : propName;
-          if (propValues instanceof Array) {
+          if (Array.isArray(propValues)) {
             for (let propValueIndex in propValues) {
               if (propValues.hasOwnProperty(propValueIndex)) {
                 nb.startElement(elementName);
@@ -487,7 +478,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
           }
         }
       }
-    } else if (content instanceof Node) {
+    } else if (hubUtils.isNode(content)) {
       nb.addNode(content);
     } else {
       nb.addText(fn.string(content));
@@ -544,14 +535,14 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
       let docHeadersArray = [];
       if (isNonStringIterable(docHeaders)) {
         for (let header of docHeaders) {
-          if (header instanceof Element) {
+          if (hubUtils.isElementNode(header)) {
             docHeadersArray.push(xmlToJson(header));
           } else {
             docHeadersArray.push(header);
           }
         }
       } else {
-        if (docHeaders instanceof Element) {
+        if (hubUtils.isElementNode(docHeaders)) {
           docHeadersArray.push(xmlToJson(docHeaders));
         } else {
           docHeadersArray.push(docHeaders);
@@ -641,9 +632,7 @@ const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://mar
   }
 
   function normalizeValuesInNode(node) {
-    if (node instanceof ObjectNode || node instanceof ArrayNode) {
-      return node;
-    } else if (node instanceof Element) {
+    if (hubUtils.isElementNode(node)) {
       return node.xpath('*');
     }
     return node;
@@ -713,7 +702,7 @@ function addMetadataToContent(content, flowName, stepName, jobId) {
 
   if (content.context.permissions) {
     content.context.permissions = hubUtils.normalizeToArray(content.context.permissions).map(perm => {
-      if (perm instanceof Element) {
+      if (hubUtils.isElementNode(perm)) {
         const roleName = xdmp.roleName(fn.string(perm.xpath("*:role-id")));
         const capability = fn.string(perm.xpath("*:capability"));
         return xdmp.permission(roleName, capability);
@@ -761,7 +750,7 @@ function handleWriteErrors(error, contentArray) {
         if (failedContentObject) {
           let contentValue = failedContentObject.value;
           let entityTitle;
-          if (contentValue instanceof Node) {
+          if (hubUtils.isNode(contentValue)) {
             entityTitle = fn.string(contentValue.xpath('/*:envelope/*:instance/*:info/*:title'));
           } else {
             entityTitle = contentValue.envelope.instance.info.title;

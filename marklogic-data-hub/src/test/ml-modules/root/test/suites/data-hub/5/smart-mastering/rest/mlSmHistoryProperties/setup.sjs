@@ -1,11 +1,14 @@
 'use strict';
 declareUpdate();
 /* perform merge to create property history */
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const manualMerge = require("/data-hub/5/builtins/steps/mastering/default/manual-merge.sjs");
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const mjsProxy = require('/data-hub/core/util/mjsProxy.sjs');
+const [Artifacts, manualMerge, DataHubSingleton, hubUtils] = mjsProxy.requireMjsModules(
+  "/data-hub/5/artifacts/core.mjs",
+  "/data-hub/5/builtins/steps/mastering/default/manual-merge.mjs",
+  "/data-hub/5/datahub-singleton.mjs",
+  "/data-hub/5/impl/hub-utils.mjs"
+);
 const datahub = DataHubSingleton.instance({});
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 let flow = Artifacts.getFullFlow("CurateCustomerJSON", "2");
 let stepRef = flow.steps["2"];

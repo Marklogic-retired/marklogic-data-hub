@@ -21,10 +21,9 @@ import entityLib from "/data-hub/5/impl/entity-lib.mjs"
 import entitySearchLib from "/data-hub/5/entities/entity-search-lib"
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
 import op from '/MarkLogic/optic';
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 import {getPredicatesByModel} from "./entity-lib.mjs"
 
-const sem = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy");
+const sem = require("/MarkLogic/semantics.xqy");
 
 const hubCentralConfig = cts.doc("/config/hubCentral.json");
 const graphDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH_DEBUG);
@@ -368,10 +367,11 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   const distinctIriPredicateCombos = {};
   const groupNodeCount = {};
   const getEdgeCount = (iri) => {
-    if (!distinctIriPredicateCombos[iri]) {
+    const iriString = fn.string(iri);
+    if (!distinctIriPredicateCombos[iriString]) {
       return 0;
     }
-    return distinctIriPredicateCombos[iri].size + (groupNodeCount[iri] || 0);
+    return distinctIriPredicateCombos[iriString].size + (groupNodeCount[iriString] || 0);
   };
   for (const item of result) {
     const subjectIri = fn.string(item.subjectIRI);
@@ -488,7 +488,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!nodesByID[key]) {
             let objectNode = {};
             objectNode.id = key;
-            objectNode.docUri = isDocument ? key : item.firstDocURI ? item.firstDocURI : null;
+            objectNode.docUri = isDocument ? key : item.firstDocURI ? fn.string(item.firstDocURI) : null;
             objectNode.docIRI = objectIRI;
             objectNode.label = isDocument ? getNodeLabel(objectIRIArr, key): (fn.string(item.conceptLabel) || objectIRIArr[objectIRIArr.length - 1]);
             resultPropertiesOnHover = isDocument ? entityLib.getValuesPropertiesOnHover(key, objectEntityType, hubCentralConfig) : "";
@@ -511,7 +511,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         }
         if (fn.exists(item.additionalEdge) && item.additionalEdge.toString().length > 0) {
           const objectId = objectHasDoc ? objectUri : objectIRI;
-          const additionalId = fn.exists(item.docRelated) ? item.docRelated : item.additionalIRI;
+          const additionalId = fn.exists(item.docRelated) ? fn.string(item.docRelated) : fn.string(item.additionalIRI);
           const sortedIds = [objectId, additionalId].sort();
           const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
           const predicateArr = item.additionalEdge.toString().split("/");
@@ -519,7 +519,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!edgesByID[edgeId]) {
             edgesByID[edgeId] = {
               id: edgeId,
-              predicate: item.additionalEdge,
+              predicate: fn.string(item.additionalEdge),
               label: edgeLabel,
               from: sortedIds[0],
               to: sortedIds[1]
@@ -532,7 +532,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         let edge = {};
         edge.id = "edge-" + objectId;
         if (!edgesByID[edge.id]) {
-          edge.predicate = item.predicateIRI;
+          edge.predicate = fn.string(item.predicateIRI);
           edge.label = edgeLabel;
           edge.from = originId;
           edge.to = objectId;
@@ -542,8 +542,8 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           let objectNode = {};
           objectNode.id = objectId;
           objectNode.label = objectIRIArr[objectIRIArr.length - 1];
-          objectNode.parentDocUri = item.docURI;
-          objectNode.predicateIri = item.predicateIRI;
+          objectNode.parentDocUri = fn.string(item.docURI);
+          objectNode.predicateIri = fn.string(item.predicateIRI);
           objectNode.propertiesOnHover = "";
           objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
           objectNode.isConcept = false;
@@ -560,7 +560,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!edgesByID[edgeId]) {
             edgesByID[edgeId] = {
               id: edgeId,
-              predicate: item.predicateIRI,
+              predicate: fn.string(item.predicateIRI),
               label: edgeLabel,
               from: sortedIds[0],
               to: sortedIds[1]

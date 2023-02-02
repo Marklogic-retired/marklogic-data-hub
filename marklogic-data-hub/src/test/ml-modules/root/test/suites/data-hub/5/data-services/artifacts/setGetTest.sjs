@@ -11,7 +11,6 @@ function invokeSetService(artifactType, artifactName, artifact) {
 
 function insertValidArtifact() {
   const result = invokeSetService('ingestion','validArtifact', { name: 'validArtifact', sourceFormat: 'xml', targetFormat: 'json'});
-  console.log("result insertValidArtifact: " + JSON.stringify(result));
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
@@ -21,14 +20,15 @@ function insertValidArtifact() {
 }
 
 function getArtifact() {
-  const result = Artifacts.getArtifact("ingestion", "validArtifact");
-  console.log("result getArtifact: " + JSON.stringify(result));
-  return [
-    test.assertEqual("validArtifact", result.name),
-    test.assertEqual("xml", result.sourceFormat),
-    test.assertEqual("json", result.targetFormat),
-    test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', result.lastUpdated))
-  ];
+  xdmp.invokeFunction(() => {
+    const result = Artifacts.getArtifact("ingestion", "validArtifact");
+    return [
+      test.assertEqual("validArtifact", result.name),
+      test.assertEqual("xml", result.sourceFormat),
+      test.assertEqual("json", result.targetFormat),
+      test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', result.lastUpdated))
+    ];
+  });
 }
 
 []

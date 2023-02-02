@@ -33,9 +33,9 @@ let expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 0;
 let supportConcept = graphUtils.supportsGraphConceptsSearch();
 
 let assertions = [
-  test.assertEqual(expectedNodeCount, resultsTest.total),
-  test.assertEqual(expectedNodeCount, resultsTest.nodes.length),
-  test.assertEqual(expectedEdgeCount, resultsTest.edges.length)
+  test.assertEqual(expectedNodeCount, resultsTest.total, xdmp.toJsonString(resultsTest)),
+  test.assertEqual(expectedNodeCount, resultsTest.nodes.length, xdmp.toJsonString(resultsTest)),
+  test.assertEqual(expectedEdgeCount, resultsTest.edges.length, xdmp.toJsonString(resultsTest))
 ];
 
   resultsTest.nodes.forEach(node => {

@@ -20,9 +20,8 @@
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+const sem = require("/MarkLogic/semantics.xqy");
 
 const nodeInfo = external.nodeInfo;
 const limitParam = external.limit;
@@ -61,7 +60,7 @@ if(!isConcept) {
   } else {
     result = graphUtils.getEntityNodesByDocument(nodeToExpand, limit);
     const subjectIRIs = [];
-    for (const triple of cts.triples(null, semXqy.curieExpand("rdfs:isDefinedBy"), null, "=", [], cts.documentQuery(nodeToExpand))) {
+    for (const triple of cts.triples(null, sem.curieExpand("rdfs:isDefinedBy"), null, "=", [], cts.documentQuery(nodeToExpand))) {
       subjectIRIs.push(sem.tripleSubject(triple));
     }
     totalEstimate = fn.count(cts.triples(subjectIRIs, graphUtils.getAllPredicates(), null, ["=","=","="])) + fn.count(cts.triples(null, graphUtils.getAllPredicates(), subjectIRIs, ["=","=","="]));

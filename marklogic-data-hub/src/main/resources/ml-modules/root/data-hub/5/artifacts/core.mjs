@@ -201,6 +201,7 @@ function validateArtifactName(artifactName){
 }
 
 function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
+
   const artifactLibrary = getArtifactTypeLibrary(artifactType);
   const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
   if (fn.empty(node)) {

@@ -2,7 +2,7 @@
 
 const test = require("/test/test-helper.xqy");
 const stepService = require("./stepService.sjs");
-
+const hubTest = require("/test/data-hub-test-helper.sjs");
 // Utils for getDocument's tests.
 const DocumentForTestingUtils = {
   STEP_NAME1: 'prospect2CustomerMappingStep',
@@ -12,7 +12,6 @@ const DocumentForTestingUtils = {
   loadTestData: function () {
     // Found it difficult to figure out how to load a mapping step via test-data directory and get it into the collection
     // required by mapping.sjs' getArtifactNode().  Going this route instead.
-    const stepService = require("./stepService.sjs");
     stepService.createDefaultMappingStep(DocumentForTestingUtils.STEP_NAME1);
     stepService.updateStep('mapping',{
       name: DocumentForTestingUtils.STEP_NAME1,
@@ -28,7 +27,7 @@ const DocumentForTestingUtils = {
     });
   },
   invokeService: function (stepName, uri) {
-    return fn.head(require("/test/data-hub-test-helper.sjs").runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
+    return fn.head(hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
       "/data-hub/5/data-services/mapping/getDocument.mjs", {stepName, uri}
     ));
   },

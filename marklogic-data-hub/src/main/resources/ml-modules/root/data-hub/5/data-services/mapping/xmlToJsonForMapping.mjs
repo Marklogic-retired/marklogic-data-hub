@@ -237,12 +237,12 @@ function determineFinalNSPrefix(currentPrefix, uri) {
       }
       // Set up to try again.
       if (finalPrefix.endsWith(attemptsCurrent)) {
-        finalPrefix = finalPrefix.substr(0, finalPrefix.length - new String(attemptsCurrent).length);
+        finalPrefix = finalPrefix.substr(0, finalPrefix.length - String(attemptsCurrent).length);
       }
       attemptsCurrent++;
       finalPrefix += attemptsCurrent;
       i = 0;
-      continue;
+
     }
   }
 

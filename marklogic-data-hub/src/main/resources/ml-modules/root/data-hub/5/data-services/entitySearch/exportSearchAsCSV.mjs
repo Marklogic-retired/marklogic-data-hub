@@ -17,11 +17,12 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/export-entities", "execute");
 
-const op = require('/MarkLogic/optic');
-const search = require('/MarkLogic/appservices/search/search');
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import op from '/MarkLogic/optic';
+
+const search = require('/MarkLogic/appservices/search/search');
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -130,7 +131,5 @@ if (limit) {
 }
 // Not using the rows REST API due to https://bugtrack.marklogic.com/55338
 let result = opticPlan.result('object');
-if (!(result instanceof Sequence)) {
-  result = Sequence.from(result);
-}
+result = hubUtils.normalizeToSequence(result);
 xdmp.quote(result, {method:'sparql-results-csv'});

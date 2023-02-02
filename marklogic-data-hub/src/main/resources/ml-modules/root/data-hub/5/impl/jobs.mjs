@@ -358,7 +358,7 @@ export default {
     }
     hubUtils.writeDocument(jobUri, jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
     return null;
-  };
+  }
 
 
   /**
@@ -372,6 +372,6 @@ export default {
     for (let uri of jobDocumentURIs) {
       xdmp.documentDelete(uri);
     }
-  };
+  }
 
 

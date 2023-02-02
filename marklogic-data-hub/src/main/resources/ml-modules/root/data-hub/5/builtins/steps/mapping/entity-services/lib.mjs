@@ -5,7 +5,6 @@ import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import mappingLib from "/data-hub/5/mapping/mapping-lib.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 import mappingStepLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
@@ -742,7 +741,7 @@ function testXmlMapping(xmlMapping, sourceInstance, parameterMap) {
   }, {database: xdmp.modulesDatabase()});
 
   let inputDoc = sourceInstance;
-  if (!(inputDoc instanceof Document)) {
+  if (!(hubUtils.isDocumentNode(inputDoc))) {
     inputDoc = fn.head(xdmp.unquote(String(sourceInstance)));
   }
   return xdmp.xsltEval(mappingXslt, inputDoc, parameterMap);
@@ -776,7 +775,7 @@ function extractInstance(docNode) {
 
 function getXQueryLib() {
   if (!xqueryLib) {
-    xqueryLib = sjsProxy.requireSjsModule('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy', "");
+    xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
   }
   return xqueryLib;
 }

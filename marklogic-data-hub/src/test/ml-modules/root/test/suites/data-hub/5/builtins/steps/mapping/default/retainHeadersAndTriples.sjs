@@ -77,9 +77,9 @@ function testJSONResults(assertions, docToTest) {
   try {
     let sources = docToTest.envelope.headers.sources[0] ? docToTest.envelope.headers.sources[0] : docToTest.envelope.headers.sources;
     assertions.push(
-      test.assertEqual("SomeSource", sources.name,
+      test.assertEqual("SomeSource", fn.string(sources.name),
       "The 'sources' header in the incoming document should be retained by the mapping function"),
-      test.assertEqual("s", docToTest.envelope.triples[0].triple.subject,
+      test.assertEqual("s", sem.tripleSubject(docToTest.envelope.triples[0]),
         "The 'triples' header in the incoming document should be retained by the mapping function")
     );
   } catch (e) {

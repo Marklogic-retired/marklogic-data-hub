@@ -15,5 +15,13 @@
   "mergeRules" : [ {
     "entityPropertyPath": "property1",
     "maxSources": 1
-  } ]
+  },
+  {
+    "entityPropertyPath": "property2",
+    "maxSources": 1
+  },
+  {
+    "entityPropertyPath": "property3",
+    "maxSources": 1
+  }]
 }

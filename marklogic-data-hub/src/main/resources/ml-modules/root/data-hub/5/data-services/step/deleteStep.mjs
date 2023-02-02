@@ -20,7 +20,7 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const stepDefinitionType = external.stepDefinitionType.toLowerCase();
-const stepName = external.stepDefinitionType;
+const stepName = external.stepName;
 
 if ("ingestion" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");

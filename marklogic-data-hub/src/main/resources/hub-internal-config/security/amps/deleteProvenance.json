@@ -1,6 +1,6 @@
 {
   "local-name" : "deleteProvenance",
-  "document-uri" : "/data-hub/5/provenance/prov-lib.sjs",
+  "document-uri" : "/data-hub/5/provenance/prov-lib.mjs",
   "modules-database" : "%%mlModulesDbName%%",
   "role" : [ "ps-internal" ]
 }
