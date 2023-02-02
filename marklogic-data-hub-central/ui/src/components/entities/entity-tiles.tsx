@@ -1,6 +1,6 @@
 import "./entity-tiles.scss";
 
-import {Accordion, Card, Col, Modal, Row, Tab, Tabs} from "react-bootstrap";
+import {Accordion, Card, Col, Modal, Row, Spinner, Tab, Tabs} from "react-bootstrap";
 import React, {useContext, useEffect, useState} from "react";
 import {UserContext, getViewSettings, setViewSettings} from "@util/user-context";
 import {createStep, deleteStep, getSteps, updateStep} from "@api/steps";
@@ -528,6 +528,7 @@ const EntityTiles = (props) => {
 
   return (
     <div id="entityTilesContainer" className={styles.entityTilesContainer}>
+      {props.loading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
       {Object.keys(props.entityModels).sort().map((entityType, index) => (
         <Accordion
           id={entityType}

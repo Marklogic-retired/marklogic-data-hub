@@ -14,17 +14,21 @@ const Curate: React.FC = () => {
 
   const storage = getViewSettings();
 
-  useEffect(() => {
-    getEntityModels();
-    getFlows();
-  }, []);
 
   const {handleError} = useContext(UserContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
   // const [isLoading, setIsLoading] = useState(false);
   const [flows, setFlows] = useState<any[]>([]);
   const [entityModels, setEntityModels] = useState<any>({});
+  const [isFetching, setIsFetching] = useState<boolean>(true);
   const history = useHistory<any>();
+
+  useEffect(() => {
+    setIsFetching(true);
+    Promise.all([getEntityModels(), getFlows()]).finally(() => {
+      setIsFetching(false);
+    });
+  }, []);
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -150,10 +154,10 @@ const Curate: React.FC = () => {
               canReadCustom={canReadCustom}
               canWriteCustom={canWriteCustom}
               entityModels={entityModels}
-              getEntityModels={getEntityModels}
               canWriteFlow={canWriteFlow}
               addStepToFlow={addStepToFlow}
               addStepToNew={addStepToNew}
+              loading={isFetching}
             />
           ]
           :

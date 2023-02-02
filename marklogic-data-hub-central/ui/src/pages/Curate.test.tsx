@@ -117,6 +117,21 @@ describe("Curate component", () => {
     // entities should not be visible
     expect(queryByText("Customer")).not.toBeInTheDocument();
   });
+
+  test("Check Spinner in the loading ", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    const {queryByTestId} = await render(
+      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}>
+        <CurationContext.Provider value={customerMappingStep}>
+          <Curate />
+        </CurationContext.Provider>
+      </AuthoritiesContext.Provider></MemoryRouter>);
+
+    expect(queryByTestId("spinner")).toBeInTheDocument();
+  });
+
 });
 
 describe("getViewSettings", () => {

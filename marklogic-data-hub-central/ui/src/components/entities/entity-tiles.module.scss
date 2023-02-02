@@ -1,5 +1,6 @@
 .entityTilesContainer {
     padding: 0;
+    padding-bottom: 50px;
 }
 
 .cardView {
@@ -40,3 +41,19 @@ ul.entityTabs {
 .focusEntity:focus-visible {
     outline: auto !important;
   }
+  
+.spinnerContainer {
+position: absolute;
+top: 0;
+left: 0;
+padding-top: 25px;
+text-align: center;
+width: 100%;
+height: 100%;
+z-index: 999;
+background-color: rgba(255, 255, 255, 0.6);
+.runningLabel {
+    margin-top: 5px;
+    color: #3b458f;
+}
+}

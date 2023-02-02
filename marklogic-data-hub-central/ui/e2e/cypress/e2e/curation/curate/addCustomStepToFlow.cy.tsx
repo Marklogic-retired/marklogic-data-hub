@@ -8,6 +8,7 @@ import LoginPage from "../../../support/pages/login";
 
 //Utils
 import {generateUniqueName} from "../../../support/helper";
+import browsePage from "../../../support/pages/browse";
 
 const stepName = "mapping-step";
 const flowName = generateUniqueName("testAddCustomStepToFlow1");
@@ -89,5 +90,17 @@ describe("Add Custom step to a flow", () => {
 
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
+  });
+});
+
+describe("Check spinner", () => {
+  it("Check Spinner when page is loading", () => {
+    cy.log(Cypress.config("baseUrl"));
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.visit("/tiles/curate");
+    cy.findByTestId("spinner");
+    browsePage.waitForSpinnerToDisappear();
   });
 });
