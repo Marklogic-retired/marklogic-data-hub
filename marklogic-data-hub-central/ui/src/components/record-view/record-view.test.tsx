@@ -8,6 +8,8 @@ import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 jest.mock("axios");
 
@@ -92,7 +94,7 @@ describe("Raw data card view component", () => {
 
   test("Verify file download and merge on Raw data card ", async () => {
     const authorityService = new AuthoritiesService();
-    authorityService.setAuthorities(["readMerging", "readMatching"]);
+    authorityService.setAuthorities(["writeMatching", "writeMerging"]);
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
     const {getByLabelText, getByTestId, getByText} = render(<MemoryRouter>
@@ -138,5 +140,26 @@ describe("Raw data card view component", () => {
     fireEvent.click(getByLabelText("Yes"));
     await waitForElementToBeRemoved(() => getByLabelText("Yes"));
     expect(axiosMock.delete).toHaveBeenCalledWith("/api/steps/merging/notifications?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml");
+  });
+
+
+  test("Merge Icon not available, missing permission", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMerging", "readMatching"]);
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
+
+    const {getByTestId, getByText} = render(<MemoryRouter>
+      <AuthoritiesContext.Provider value={authorityService}>
+        <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
+          <RecordCardView
+            entityDefArray={[{name: "Customer", properties: []}]}
+            data={entitySearch.results}
+          />
+        </SearchContext.Provider>
+      </AuthoritiesContext.Provider></MemoryRouter>);
+
+    //verify merge icon tooltip
+    fireEvent.mouseOver(getByTestId("merge-icon"));
+    await (waitForElement(() => (getByText(SecurityTooltips.missingPermissionMerge))));
   });
 });

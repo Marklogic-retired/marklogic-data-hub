@@ -745,6 +745,22 @@ class BrowsePage {
     return cy.get(`[data-testid="merge-icon${rowNum}"]`);
   }
 
+  getMergeIconDisabled() {
+    return cy.get(`[data-testid="disabled-merge-icon0"]`);
+  }
+
+  expandItemSnippetView(itemEntityName: string, primaryKeyValue: string) {
+    return cy.get(`[aria-label="${itemEntityName + "-" + primaryKeyValue}"]`).should("be.visible").click({force: true});
+  }
+
+  getSnippetItem(primaryKeyValue: string) {
+    return cy.get(`[aria-label="expandable-view-${primaryKeyValue}"]`);
+  }
+
+  expandItemTableView(primaryKeyValue: string) {
+    return cy.get(`[data-testid="${primaryKeyValue}-expand-icon"]`).should("be.visible").click({force: true});
+  }
+
 }
 
 const browsePage = new BrowsePage();

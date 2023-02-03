@@ -7,6 +7,7 @@ import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 
 describe("Search Result view component", () => {
@@ -38,8 +39,10 @@ describe("Search Result view component", () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <SearchResult
             entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
+            item={searchPayloadResults[0] as any}
             tableView={false}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
           />
         </AuthoritiesContext.Provider>
       </Router>
@@ -61,7 +64,24 @@ describe("Search Result view component", () => {
 
     fireEvent.mouseOver(getByTestId("graph-icon"));
     await (waitForElement(() => (getByText("View entity in graph view"))));
+  });
 
+  test("UnmergeIcon available", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["writeMatching", "writeMerging"]);
+    const {getByText, getByTestId} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchResult
+            entityDefArray={entityDefArray}
+            item={searchPayloadResults[0] as any}
+            tableView={false}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>
+    );
     fireEvent.mouseOver(getByTestId("unmerge-icon"));
     await (waitForElement(() => (getByText("Unmerge Documents"))));
   });
@@ -72,8 +92,10 @@ describe("Search Result view component", () => {
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
+            item={searchPayloadResults[0] as any}
             tableView={false}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
           />
         </Router>
       </SearchContext.Provider>
@@ -88,13 +110,39 @@ describe("Search Result view component", () => {
         <Router>
           <SearchResult
             entityDefArray={entityDefArray}
-            item={searchPayloadResults[0]}
+            item={searchPayloadResults[0] as any}
             tableView={false}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
           />
         </Router>
       </SearchContext.Provider>
     );
 
     expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
+  });
+  test("UnmergeIcon not available, missing permission", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMatching", "readMerging"]);
+    const {queryByTestId, getByTestId, findByText} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchResult
+            entityDefArray={entityDefArray}
+            item={searchPayloadResults[0] as any}
+            tableView={false}
+            handleViewChange={() => {}}
+            onExpand={() => {}}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>
+    );
+    expect(queryByTestId("unmerge-icon")).toHaveClass("unMergeIconDisabled");
+    fireEvent.click(getByTestId("unmerge-icon"));
+    expect(queryByTestId("hc-button-component-spinner")).toBeNull();
+
+    // Check Tooltip
+    fireEvent.mouseOver(getByTestId("unmerge-icon"));
+    expect(await findByText(SecurityTooltips.missingPermissionUnMerge));
   });
 });
