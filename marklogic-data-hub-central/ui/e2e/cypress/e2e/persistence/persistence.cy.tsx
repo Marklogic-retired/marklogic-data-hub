@@ -43,16 +43,21 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Go to load tile, switch to list view, sort, and then visit another tile. When returning to load tile the list view is persisted", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     loadPage.loadView("table").click();
+    browsePage.waitForSpinnerToDisappear();
     loadPage.addNewButton("list").should("be.visible");
     cy.waitUntil(() => cy.findByTestId("loadTableName").click());
     cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
   });
   it(" Explore tile: the graph view switches settings should be preserved", () => {
     toolbar.getExploreToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.clickGraphView();
 
     cy.log("**Switch off all the toggles**");
@@ -67,7 +72,9 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("**Switch Tile and come back, toggle value should be the same**");
     toolbar.getCurateToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     toolbar.getExploreToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
@@ -76,13 +83,16 @@ describe("Validate persistence across Hub Central", () => {
   });
   it("Go to curate tile, and validate that the accordion and tabs are kept when switching between pages", () => {
     toolbar.getCurateToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     curatePage.getAccordionButton(0).click();
     curatePage.getAccordionButton(1).click();
     curatePage.getAccordionButtonTab(0, 1).click();
     curatePage.getAccordionButtonTab(1, 2).click();
     cy.log("**Before switch page**");
     toolbar.getLoadToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     toolbar.getCurateToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     cy.log("**After come back to curate tile**");
     curatePage.getAccordionButton(0).should("have.attr", "aria-expanded");
     curatePage.getAccordionButton(1).should("have.attr", "aria-expanded");
@@ -95,9 +105,11 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.log("Table view");
     modelPage.selectView("table");
+    browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("body")
@@ -106,8 +118,10 @@ describe("Validate persistence across Hub Central", () => {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     modelPage.selectView("table");
+    browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("body")
@@ -116,8 +130,10 @@ describe("Validate persistence across Hub Central", () => {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     modelPage.selectView("table");
+    browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
 
     cy.log("Graph view");
@@ -135,14 +151,16 @@ describe("Validate persistence across Hub Central", () => {
     graphViewSidePanel.getEntityTypeTabContent().should("exist");
 
     cy.log("Visit run tile and come back to model");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     graphViewSidePanel.getEntityTypeTabContent().should("exist");
 
     graphViewSidePanel.getPropertiesTab().click();
@@ -153,14 +171,16 @@ describe("Validate persistence across Hub Central", () => {
     propertyTable.getProperty("shipping-city").scrollIntoView();
 
     cy.log("Visit run tile and come back to model");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("Verify property is still expanded");
     propertyTable.getProperty("shipping-street").scrollIntoView();
@@ -185,8 +205,10 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Should sort table by entityName asc and desc", () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     modelPage.selectView("table");
+    browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
 
     modelPage.getSortIndicator().scrollIntoView().click();
@@ -228,8 +250,9 @@ describe("Validate persistence across Hub Central", () => {
   // });
 
   it("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    curatePage.getEntityTypePanel("Person").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
@@ -260,8 +283,10 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
 
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
     cy.contains("If only some of the values in the entities must match, then move the threshold lower.");
     cy.contains("If you want it to have only some influence, then move the ruleset lower.");
@@ -277,8 +302,9 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMergeTab("Person");
     curatePage.openStepDetails("merge-person");
@@ -294,8 +320,10 @@ describe("Validate persistence across Hub Central", () => {
 
 
     cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.contains("A merge strategy defines how to combine the property values of candidate entities, but the merge strategy is not active until assigned to a merge rule. A merge strategy can be assigned to multiple merge rules.");
     mergingStepDetail.verifyRowExpanded();
     mergingStepDetail.getSortAscIcon().first().should("have.class", "hc-table_activeCaret__2ugNC");
@@ -309,10 +337,12 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("**Navigates to Model and triggers table view**");
     toolbar.getModelToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
     modelPage.selectView("table");
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Creates new Entity**");
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName(entityName);
     entityTypeModal.newEntityDescription("Test Entity");
@@ -330,6 +360,7 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("**Clicks on Load toolbar icon**");
     toolbar.getLoadToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Confirms Navigation warn**");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);

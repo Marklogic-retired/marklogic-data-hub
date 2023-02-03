@@ -294,7 +294,7 @@ class LoadPage {
   }
 
   addStepToNewFlow(stepName: string) {
-    this.stepName(stepName).trigger("mouseover");
+    cy.findByText(stepName).trigger("mouseover");
     this.addToNewFlow(stepName).click();
   }
 

@@ -108,11 +108,13 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitForAsyncRequest();
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.xml");
+    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(stepName, "success");
+    cy.wait(1000);
     // Commented until DHFPROD-7477 is done
     //Verify step name appears as a collection facet in explorer
-    runPage.explorerLink(stepName).click({multiple: true, force: true});
+    runPage.explorerLink(stepName).should("be.visible").click({multiple: true, force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
