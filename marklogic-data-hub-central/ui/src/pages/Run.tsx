@@ -228,7 +228,8 @@ const Run = (props) => {
 
   const finishRun = () => {
     setIsLoading(false);
-    setFlowRunning(InitialFlow);
+    //Commented to prevent Stop Run Button disappear quicly after clicking run flow
+    //setFlowRunning(InitialFlow);
   };
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
