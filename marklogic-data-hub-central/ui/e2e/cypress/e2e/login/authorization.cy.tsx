@@ -16,14 +16,14 @@ import {mappingStepDetail} from "../../support/components/mapping";
 describe("login", () => {
 
   before(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.visit("/");
     cy.waitForAsyncRequest();
   });
 
   afterEach(() => {
     //resetting the test user back to only have 'hub-central-user' role
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });

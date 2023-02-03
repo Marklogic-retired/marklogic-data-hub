@@ -71,6 +71,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
     cy.waitForAsyncRequest();
+    cy.wait(1000);
   });
   it("Add step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
