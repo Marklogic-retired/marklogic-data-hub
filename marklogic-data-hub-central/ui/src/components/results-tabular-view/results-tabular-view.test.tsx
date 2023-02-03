@@ -7,6 +7,7 @@ import {validateTableRow} from "../../util/test-utils";
 import dayjs from "dayjs";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 describe("Results Table view component", () => {
   const defaultSearchOptions = {
@@ -183,11 +184,6 @@ describe("Results Table view component", () => {
     //Check if the tooltip on 'graph' icon works fine.
     fireEvent.mouseOver(getByTestId("101-graphOnSeparatePage"));
     await(waitForElement(() => (getByText("View entity in graph view"))));
-
-    //verify unmerge icon and tooltip
-    fireEvent.mouseOver(getByTestId("unmergeIcon"));
-    await(waitForElement(() => (getByText("Unmerge Documents"))));
-
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -290,5 +286,54 @@ describe("Results Table view component", () => {
 
     // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
+  });
+
+  test("UnmergeIcon available", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["writeMatching", "writeMerging"]);
+    const {getByText, getByTestId} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <ResultsTabularView
+            data={entitySearch.results}
+            entityPropertyDefinitions={entityPropertyDefinitions}
+            selectedPropertyDefinitions={selectedPropertyDefinitions}
+            entityDefArray={entityDefArray}
+            columns={[]}
+            hasStructured={false}
+            selectedEntities={["Customer"]}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>
+    );
+    fireEvent.mouseOver(getByTestId("unmergeIcon"));
+    await (waitForElement(() => (getByText("Unmerge Documents"))));
+  });
+
+  test("UnmergeIcon not available, missing permission", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMatching", "readMerging"]);
+    const {queryByTestId, getByTestId, findByText} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <ResultsTabularView
+            data={entitySearch.results}
+            entityPropertyDefinitions={entityPropertyDefinitions}
+            selectedPropertyDefinitions={selectedPropertyDefinitions}
+            entityDefArray={entityDefArray}
+            columns={[]}
+            hasStructured={false}
+            selectedEntities={["Customer"]}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>
+    );
+    expect(queryByTestId("unmergeIcon")).toHaveClass("unMergeIconDisabled");
+    fireEvent.click(getByTestId("unmergeIcon"));
+    expect(queryByTestId("hc-button-component-spinner")).toBeNull();
+
+    // Check Tooltip
+    fireEvent.mouseOver(getByTestId("unmergeIcon"));
+    expect(await findByText(SecurityTooltips.missingPermissionUnMerge));
   });
 });

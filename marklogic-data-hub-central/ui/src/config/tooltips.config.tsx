@@ -588,7 +588,9 @@ const SecurityIntros = {
 };
 
 const SecurityTooltips = {
-  missingPermission: 'Contact your security administrator for access.'
+  missingPermission: 'Contact your security administrator for access.',
+  missingPermissionMerge: "Merge: Contact your security administrator for access.",
+  missingPermissionUnMerge: "Unmerge: Contact your security administrator for access."
 };
 
 const SecurityPlaceholders = {

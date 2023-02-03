@@ -16,6 +16,8 @@ import TableViewGroupNodes from "../table-view-group-nodes/table-view-group-node
 import {themeColors} from "@config/themes.config";
 import {nodeType} from "types/explore-types";
 import {AuthoritiesContext} from "@util/authorities";
+import {HCTooltip} from "@components/common";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 type Props = {
   entityTypeInstances: any;
@@ -55,7 +57,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
 
   const authorityService = useContext(AuthoritiesContext);
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
 
   const {
     searchOptions,
@@ -925,7 +927,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       }
       case "Unmerge": {
         const filteredData= props.data.filter((item) => item["uri"] === clickedNode["nodeId"]);
-        if (filteredData.length >0 && canReadMatchMerge) {
+        if (filteredData.length >0 && canWriteMatchMerge) {
           props.openUnmergeCompare(filteredData[0].uri);
         }
         break;
@@ -974,6 +976,23 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const isClusterFocused = () => {
     return !!nodesDefocussed.length;
+  };
+
+  const unmergeOption = () => {
+    if (canWriteMatchMerge) {
+      return (
+        <div id="Unmerge" key="9" className={styles.contextMenuItem} data-testid="UnmergeOption">
+            Unmerge this record
+        </div>
+      );
+    }
+    return (
+      <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
+        <div id="Unmerge" key="9" className={styles.contextDisabled} data-testid="UnmergeOption">
+            Unmerge this record
+        </div>
+      </HCTooltip>
+    );
   };
 
   const menu = () => {
@@ -1028,10 +1047,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             Show all records
           </div>
         }
-        {props.isUnmergeAvailable(clickedNode["nodeId"]) &&
-          <div id="Unmerge" key="9" className={styles.contextMenuItem} data-testid="UnmergeOption">
-            Unmerge this record
-          </div>
+        {props.isUnmergeAvailable(clickedNode["nodeId"]) && unmergeOption()
         }
         <div id="centerNode" key="10" className={styles.contextMenuItem}>
           Center this record

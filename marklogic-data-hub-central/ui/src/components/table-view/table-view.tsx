@@ -28,7 +28,7 @@ const TableView: React.FC<Props> = (props) => {
   let currRow: number[] = [];
 
   const authorityService = useContext(AuthoritiesContext);
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
 
   const parseJson = (obj: Object) => {
     let parsedData: any[] = [];
@@ -120,7 +120,7 @@ const TableView: React.FC<Props> = (props) => {
     if (props.data) {
       if (!props.isUnmergeAvailable?.(props.data.docUri)) return null;
       if (props.data.unmerge) {
-        if (canReadMatchMerge) {
+        if (canWriteMatchMerge) {
           return (
             <div className={styles.unmergeContainer}>
               {props.loadingCompare !== "" ? (
@@ -153,7 +153,7 @@ const TableView: React.FC<Props> = (props) => {
         } else {
           return (
             <div className={styles.unMergeIcon}>
-              <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+              <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
                 <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
               </HCTooltip>
             </div>
