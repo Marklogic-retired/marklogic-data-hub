@@ -262,7 +262,7 @@ describe("Graph Validations", () => {
   });
 
   it("can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
-    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
+    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
     cy.log("**Opens a-Test2 details**");
     entityTypeTable.viewEntityInGraphView("a-Test2");
