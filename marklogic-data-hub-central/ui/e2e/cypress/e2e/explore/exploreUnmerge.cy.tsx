@@ -6,26 +6,22 @@ import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import {compareValuesModal} from "../../support/components/matching/index";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import browsePage from "../../support/pages/browse";
-
+import explorePage from "../../support/pages/explore";
 
 describe("Test '/Explore' graph right panel", () => {
-  before(() => {
+  beforeEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
+  });
+
+
+
+  it("Validate Unmerge from nodes and table on graph view", () => {
+    cy.clearAllSessionStorage();
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
     LoginPage.postLogin();
-  });
-  afterEach(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
-  });
-  after(() => {
-    cy.loginAsDeveloperV2().withRequest();
-    cy.resetTestUser();
-    cy.waitForAsyncRequest();
-  });
-
-  it("Validate Unmerge from nodes and table on graph view", () => {
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
@@ -116,7 +112,133 @@ describe("Test '/Explore' graph right panel", () => {
 
   });
 
+
+  it("Merge Icon disabled, missing permission", () => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsOperator().withRequest();
+    LoginPage.postLogin();
+    cy.log("** Click notification bell icon to open modal **");
+    toolbar.getHomePageNotificationIcon().click({force: true});
+    toolbar.getNotificationTitle().should("be.visible");
+
+    browsePage.getMergeIconDisabled().trigger("mouseover");
+    cy.findByText("Merge: Contact your security administrator for access.");
+  });
+
+  it("Merge icon disabled in all Data, missing permission", () => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsOperator().withRequest();
+    LoginPage.postLogin();
+    toolbar.getExploreToolbarIcon().click();
+    cy.wait(8000);
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    explorePage.getAllDataButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.log("**filter data**");
+    graphExplore.getSearchBar().type("match-person");
+    graphExplore.getSearchButton().click();
+    cy.wait(4000);
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getMergeIcon().first().scrollIntoView().should("be.visible");
+    browsePage.getMergeIcon().first().trigger("mouseover");
+    cy.findByText("Merge: Contact your security administrator for access.");
+  });
+
+
+  it("unMerge icon disabled on SnippetView/TableView and  when user doesn't have writeMatching and writeMerging rights ", () => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsOperator().withRequest();
+    LoginPage.postLogin();
+
+    cy.log("**Go to Explore section**");
+    toolbar.getExploreToolbarIcon().click();
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    browsePage.waitForSpinnerToDisappear();
+    graphExplore.getSearchBar().type("Jones");
+    graphExplore.getSearchButton().click();
+    cy.wait(6000);
+
+    // SnippetView
+    browsePage.clickSnippetView();
+    cy.log("** unmerge icon should be visible**");
+    browsePage.getUnmergeIcon().should("have.length", 1);
+    cy.log("** when hover unmerge icon should show a security tooltip**");
+    browsePage.getUnmergeIcon().trigger("mouseover");
+    cy.findByText("Unmerge: Contact your security administrator for access.");
+
+    //TableView
+    browsePage.clickTableView();
+    browsePage.getUnmergeIcon().should("have.length", 1);
+    cy.log("** when hover unmerge icon should show a security tooltip**");
+    browsePage.getUnmergeIcon().trigger("mouseover");
+    cy.findByText("Unmerge: Contact your security administrator for access.");
+
+    //Graph explore
+    browsePage.clickGraphView();
+
+    cy.log("**Verify Graph view is default view**");
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    browsePage.waitForSpinnerToDisappear();
+
+
+    cy.log("**Picking up a node available to merge**");
+    graphExplore.focusNode(ExploreGraphNodes.MERGED_RECORD);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.MERGED_RECORD).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.MERGED_RECORD];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
+    });
+    cy.wait(3000);
+
+    cy.log("**Verify unmerge icon is visible");
+    graphExplore.getUnmergeIcon().should("be.visible");
+    browsePage.getUnmergeIcon().should("have.length", 1);
+
+    // Check unmerge icon in side panel
+    cy.log("** when hover unmerge icon should show a security tooltip**");
+    browsePage.getUnmergeIcon().trigger("mouseover");
+    cy.findByText("Unmerge: Contact your security administrator for access.");
+
+    // Check unmerge option in right click node
+    cy.log("** when hover unmerge icon should show a security tooltip**");
+    graphExplore.getUnmergeOption().should("be.visible");
+    graphExplore.getUnmergeOption().trigger("mouseover");
+    cy.findByText("Unmerge: Contact your security administrator for access.");
+  });
+
   it("Navigate to Table View and Filter Person entity", () => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloperV2().withRequest();
+    LoginPage.postLogin();
+    //Saving Local Storage to preserve session
+
+    cy.log("**Go to Explore section**");
+    toolbar.getExploreToolbarIcon().click();
+
+    cy.log("**Verify Graph view is default view**");
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    browsePage.waitForSpinnerToDisappear();
+
+    graphExplore.getSearchBar().type("Jones");
+    graphExplore.getSearchButton().click();
+    cy.wait(6000);
     browsePage.clickTableView();
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Person");

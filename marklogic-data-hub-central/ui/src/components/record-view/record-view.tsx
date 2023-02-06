@@ -35,7 +35,7 @@ const RecordCardView = (props) => {
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
   const [flowName, setFlowname] = useState<string>("");
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const handleDetailViewNavigation = () => { }; // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Custom CSS for source Format
@@ -310,7 +310,7 @@ const RecordCardView = (props) => {
                           /> : null
                       }
                       {
-                        canReadMatchMerge ?
+                        canWriteMatchMerge ?
                           <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
                             <i>
                               <MdCallMerge
@@ -327,8 +327,8 @@ const RecordCardView = (props) => {
                             </i>
                           </HCTooltip>
                           :
-                          <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                            <i><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"} /></i>
+                          <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
+                            <i data-testid={`merge-icon${index}`}><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"} /></i>
                           </HCTooltip>
                       }
 
