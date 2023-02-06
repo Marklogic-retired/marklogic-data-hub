@@ -65,7 +65,7 @@ const SearchResult: React.FC<Props> = (props) => {
   const [compareModalVisible, setCompareModalVisible] = useState(false);
   const [loading, setToggleLoading] = useState("");
   const authorityService = useContext(AuthoritiesContext);
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
 
   let itemEntityName: string[] = [];
   let primaryKey: any = "-";
@@ -277,12 +277,12 @@ const SearchResult: React.FC<Props> = (props) => {
 
                   }>
                     {
-                      canReadMatchMerge ?
+                      canWriteMatchMerge ?
                         <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
                           <i><MdCallSplit className={styles.unMergeIcon} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`} onClick={(e) => openUnmergeCompare(item, e)}/></i>
                         </HCTooltip>
                         :
-                        <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                        <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
                           <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmerge-icon`} aria-label={`unmerge-icon`}/></i>
                         </HCTooltip>
                     }

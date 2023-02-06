@@ -26,7 +26,7 @@ const NotificationModal = (props) => {
 
   const {notificationOptions} = useContext(NotificationContext); // eslint-disable-line @typescript-eslint/no-unused-vars
   const authorityService = useContext(AuthoritiesContext);
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [rowInformation, setRowInformation] = useState<any>({});
   const {setNotificationsObj} = useContext(NotificationContext);
@@ -127,24 +127,24 @@ const NotificationModal = (props) => {
         <>
           <span className={styles.tableRow}>{text}
             {
-              canReadMatchMerge ?
+              canWriteMatchMerge ?
                 <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
                   <i><MdCallMerge color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)} /></i>
                 </HCTooltip>
                 :
-                <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
-                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon`} aria-label={`disabled-merge-icon`} /></i>
+                <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
+                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon${idRow++}`} aria-label={`disabled-merge-icon`} /></i>
                 </HCTooltip>
             }
           </span>
           <span className={styles.tableRow}>{text}
             {
-              canReadMatchMerge ?
+              canWriteMatchMerge ?
                 <HCTooltip text={"Delete"} id={`delete-icon${idRowAux++}`} placement="top-end">
                   <i aria-label={`deleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}`} className={styles.deleteRow} onClick={() => onDelete(row)} size="lg" /></i>
                 </HCTooltip>
                 :
-                <HCTooltip text={SecurityTooltips.missingPermission} id="disabled-delete-icon" placement="top-end">
+                <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="disabled-delete-icon" placement="top-end">
                   <i aria-label={`disabledDeleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}-disabled`} className={styles.deleteRowDisabled} size="lg" /></i>
                 </HCTooltip>
             }

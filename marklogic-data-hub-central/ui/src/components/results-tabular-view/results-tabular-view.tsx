@@ -100,7 +100,7 @@ const ResultsTabularView = (props) => {
   } = useContext(SearchContext);
 
   const authorityService = useContext(AuthoritiesContext);
-  const canReadMatchMerge = authorityService.canReadMatchMerge();
+  const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const canExportQuery = authorityService.canExportEntityInstances();
   let counter = 0;
 
@@ -390,7 +390,7 @@ const ResultsTabularView = (props) => {
         {
           item.unmerge ?
             <div className={styles.unmergeContainer}>
-              {canReadMatchMerge ?
+              {canWriteMatchMerge ?
                 <div className={styles.unMergeIcon}>
                   <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
                     <i>
@@ -411,7 +411,7 @@ const ResultsTabularView = (props) => {
                 </div>
                 :
                 <div className={styles.unMergeIcon}>
-                  <HCTooltip text={SecurityTooltips.missingPermission} id="missing-permission-tooltip" placement="top-end">
+                  <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
                     <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
                   </HCTooltip>
                 </div>

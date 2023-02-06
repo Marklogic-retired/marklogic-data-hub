@@ -4,6 +4,8 @@ import TableView from "./table-view";
 import jsonDocPayload from "../../assets/mock-data/explore/json-document-payload";
 import {render} from "@testing-library/react";
 import {AuthoritiesContext, AuthoritiesService} from "@util/authorities";
+import {fireEvent} from "@testing-library/dom";
+import {SecurityTooltips} from "@config/tooltips.config";
 
 describe("Table view component",  () => {
   test("renders", async() => {
@@ -39,7 +41,7 @@ describe("Unmerge record", () => {
 
   test("Unmerge button available and not spinner", async () => {
     const authorityService = new AuthoritiesService();
-    authorityService.setAuthorities(["readMatching", "readMerging"]);
+    authorityService.setAuthorities(["readMatching", "writeMatching"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
         <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="" isUnmergeAvailable={() => true} location={""} isEntityInstance={false}/>
@@ -51,12 +53,31 @@ describe("Unmerge record", () => {
 
   test("spinner visible", async () => {
     const authorityService = new AuthoritiesService();
-    authorityService.setAuthorities(["readMatching", "readMerging"]);
-    const {queryByTestId} = render(
+    authorityService.setAuthorities(["writeMatching", "writeMerging"]);
+    const {getByTestId, findByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
         <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} location={""} isEntityInstance={false} />
       </AuthoritiesContext.Provider>
     );
-    expect(queryByTestId("hc-button-component-spinner")).toBeInTheDocument();
+
+    fireEvent.click(getByTestId("unmergeIcon"));
+    expect(await findByTestId("hc-button-component-spinner")).toBeInTheDocument();
+  });
+
+  test("unmergeIcon not available when user doesnt have \"writeMatching\", \"writeMerging\"", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMatching", "readMerging"]);
+    const {queryByTestId, getByTestId, findByText} = render(
+      <AuthoritiesContext.Provider value={authorityService}>
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} location={""} isEntityInstance={false} />
+      </AuthoritiesContext.Provider>
+    );
+    expect(queryByTestId("unmergeIcon")).toHaveClass("unMergeIconDisabled");
+    fireEvent.click(getByTestId("unmergeIcon"));
+    expect(queryByTestId("hc-button-component-spinner")).toBeNull();
+
+    // Check Tooltip
+    fireEvent.mouseOver(getByTestId("unmergeIcon"));
+    expect(await findByText(SecurityTooltips.missingPermissionUnMerge));
   });
 });
