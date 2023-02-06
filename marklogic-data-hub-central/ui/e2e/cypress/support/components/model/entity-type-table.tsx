@@ -63,7 +63,7 @@ class EntityTypeTable {
   }
 
   sortByNodeTypeConcept() {
-    cy.get("[data-testid='nodeType']").scrollIntoView().should("be.visible").click();
+    cy.get("[data-testid='nodeType']").scrollIntoView().should("be.visible").click({force: true});
   }
 
 }

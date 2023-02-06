@@ -95,7 +95,7 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Close model tile and go to explore**");
-    homePage.getTileCloseButton().click();
+    homePage.getTileCloseButton().scrollIntoView().click({force: true});
     homePage.getExploreCard().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();

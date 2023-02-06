@@ -341,10 +341,12 @@ describe("Concept classes in Modeling screen", () => {
 
   it("Create/Edit and verify new concept class from Table view", {defaultCommandTimeout: 120000}, () => {
     cy.log("Add new concept class from table view");
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().click();
+    cy.waitForAsyncRequest();
     modelPage.selectView("table");
+    cy.waitForAsyncRequest();
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().click();
     modelPage.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("TestConcept");
     conceptClassModal.newConceptClassDescription("Test description.");

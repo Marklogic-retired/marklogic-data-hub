@@ -122,6 +122,12 @@ describe("save/manage queries scenarios, developer role", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getFacetApplyButton().click();
+    cy.get(".css-1hwfws3").then((body) => {
+      if (body.find(`span[aria-label="Remove Person"]`).length === 0) {
+        entitiesSidebar.openBaseEntityDropdown();
+        entitiesSidebar.selectBaseEntityOption("Person");
+      }
+    });
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
     //Refresh the browser page.
