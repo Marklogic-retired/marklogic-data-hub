@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -14,7 +14,7 @@ import {Overlay} from "react-bootstrap";
 import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
-import {delayTooltip} from "@util/common-utils";
+
 
 type Props = {
   tabKey: string;
@@ -193,15 +193,21 @@ const CreateEditStep: React.FC<Props> = (props) => {
 
   const [showQueryPopover, setShowQueryPopover] = useState(false);
   const [targetQueryPopover, setTargetQueryPopover] = useState(null);
+  const QueryPopoverContainerRef = useRef(null);
 
   const collectionQueryInfo =
     <Overlay
       show={showQueryPopover}
       target={targetQueryPopover}
       placement="left"
+      container={QueryPopoverContainerRef.current}
     >
-      <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
-        <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioQuery}</div></Popover.Body></Popover>
+      <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}>
+        <Popover.Body className={styles.popoverCreateEditStepBody}>
+          <div className={styles.collectionQueryInfo}>
+            {CommonStepTooltips.radioQuery}
+          </div>
+        </Popover.Body></Popover>
     </Overlay>;
 
   const handleSubmit = async (event: {preventDefault: () => void;}) => {
@@ -436,18 +442,15 @@ const CreateEditStep: React.FC<Props> = (props) => {
       }
     }
   };
-  let time: any;
+
   const handleShowQueryPopover = (event) => {
     event.persist();
-    time = delayTooltip(() => {
-      setShowQueryPopover(true);
-      setTargetQueryPopover(event.target);
-    });
+    setShowQueryPopover(true);
+    setTargetQueryPopover(event.target);
   };
 
   const handleMouseLeaveTooltip = () => {
     setShowQueryPopover(false);
-    clearTimeout(time);
   };
 
   return (
@@ -572,7 +575,18 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 />
                 <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover"} className={"me-4"}>
                   <HCTooltip text={CommonStepTooltips.radioCollection} id="radio-collection-tooltip" placement={"top"}>
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip" />
+                    <QuestionCircleFill
+                      tabIndex={0}
+                      color={themeColors.defaults.questionCircle}
+                      size={13}
+                      className={styles.questionCircleCollection}
+                      data-testid="collectionTooltip"
+                      onFocus={() => {
+                        if (showQueryPopover) {
+                          setShowQueryPopover(false);
+                        }
+                      }}
+                    />
                   </HCTooltip>  </span>
                 <Form.Check
                   inline
@@ -586,20 +600,28 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   aria-label={"Query"}
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
-                />
-                <span
-                  tabIndex={0}
-                  onMouseEnter={handleShowQueryPopover}
-                  onMouseLeave={() => handleMouseLeaveTooltip()}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      handleShowQueryPopover(event);
+                  onFocus={() => {
+                    if (showQueryPopover) {
+                      setShowQueryPopover(false);
                     }
                   }}
-                  onBlur={() => handleMouseLeaveTooltip()}
-                >
+                />
+                <span ref={QueryPopoverContainerRef}>
                   {collectionQueryInfo}
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircleQuery} data-testid="queryTooltip" />
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircleQuery}
+                    data-testid="queryTooltip"
+                    tabIndex={0}
+                    onMouseEnter={handleShowQueryPopover}
+                    onMouseLeave={() => handleMouseLeaveTooltip()}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        handleShowQueryPopover(event);
+                      }
+                    }}
+                  />
                 </span>
               </Col>
               <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
@@ -617,6 +639,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
                     onBlur={sendPayload}
                     style={{width: "100%"}}
                     minLength={3}
+                    onFocus={() => {
+                      if (showQueryPopover) {
+                        setShowQueryPopover(false);
+                      }
+                    }}
                   ></Typeahead>
                   {props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
                   id="srcQuery"
@@ -625,6 +652,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   onChange={handleChange}
                   disabled={!props.canReadWrite}
                   className={styles.input}
+                  onFocus={() => {
+                    if (showQueryPopover) {
+                      setShowQueryPopover(false);
+                    }
+                  }}
                   onBlur={sendPayload}
                   style={{borderRadius: 4, border: ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "1px solid #B32424"}}
                 /></div>}

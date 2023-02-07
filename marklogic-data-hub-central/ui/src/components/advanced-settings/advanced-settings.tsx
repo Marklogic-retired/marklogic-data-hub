@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import Axios from "axios";
 import Select, {components as SelectComponents} from "react-select";
 import CreatableSelect from "react-select/creatable";
@@ -394,7 +394,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     return payload;
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: {preventDefault: () => void;}) => {
     if (event) event.preventDefault();
 
     // Parent handles saving of all tabs
@@ -637,7 +637,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -659,7 +659,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setProvGranTooltipVisible2(false);
     setBatchSizeToolTipVisible(false);
     setHeaderContentTooltipVisible(false);
-    setShowInterceptorPopover(false);
+    // setShowInterceptorPopover(false);
     setCustomHookTooltipVisible(false);
   };
 
@@ -691,31 +691,31 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     //Moving focus to respective tooltip when user presses Right Arrow
     if (event.keyCode === 39) {
       if (component === "tgtDatabaseInner" || component === "tgtDatabase") {
-           tgtDatabaseTooltipRef2.current!.focus();
-           setTgtDatabaseTooltipVisible(false);
+        tgtDatabaseTooltipRef2.current!.focus();
+        setTgtDatabaseTooltipVisible(false);
       }
       if (component === "tgtCollectionInner" || component === "tgtCollection") {
-          tgtCollectionTooltipRef2.current!.focus();
-          setTgtCollectionTooltipVisible(false);
+        tgtCollectionTooltipRef2.current!.focus();
+        setTgtCollectionTooltipVisible(false);
       }
       if (component === "tgtPermission") {
-          tgtPermissionTooltipRef.current!.focus();
+        tgtPermissionTooltipRef.current!.focus();
       }
       if (component === "provGranularity" || component === "provGranularityInner") {
-          provGranTooltipRef2.current!.focus();
-          setProvGranTooltipVisible(false);
+        provGranTooltipRef2.current!.focus();
+        setProvGranTooltipVisible(false);
       }
       if (component === "batchSize") {
-          batchSizeTooltipRef.current!.focus();
+        batchSizeTooltipRef.current!.focus();
       }
       if (component === "headerContent") {
-          headerContentTooltipRef.current!.focus();
+        headerContentTooltipRef.current!.focus();
       }
       if (component === "interceptors") {
-          interceptorTooltipRef.current!.focus();
+        interceptorTooltipRef.current!.focus();
       }
       if (component === "customHook") {
-          customHookTooltipRef.current!.focus();
+        customHookTooltipRef.current!.focus();
       }
     }
 
@@ -729,36 +729,36 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     //Moving focus away from tooltip when user presses left arrow
     if (event.key === "ArrowLeft") {
       if (component === "tgtDatabaseTooltip") {
-          tgtDatabaseTooltipRef.current!.focus();
-          setTgtDatabaseTooltipVisible(true);
+        tgtDatabaseTooltipRef.current!.focus();
+        setTgtDatabaseTooltipVisible(true);
       }
       if (component === "tgtCollectionTooltip") {
-          tgtCollectionTooltipRef.current!.focus();
-          setTgtCollectionTooltipVisible(true);
+        tgtCollectionTooltipRef.current!.focus();
+        setTgtCollectionTooltipVisible(true);
       }
       if (component === "tgtPermissionTooltip") {
-          tgtPermissionRef.current!.focus();
-          setTgtPermissionToolTipVisible(false);
+        tgtPermissionRef.current!.focus();
+        setTgtPermissionToolTipVisible(false);
       }
       if (component === "provGranularityTooltip") {
-          provGranTooltipRef.current!.focus();
-          setProvGranTooltipVisible(true);
+        provGranTooltipRef.current!.focus();
+        setProvGranTooltipVisible(true);
       }
       if (component === "batchSizeTooltip") {
-          batchSizeRef.current!.focus();
-          setBatchSizeToolTipVisible(false);
+        batchSizeRef.current!.focus();
+        setBatchSizeToolTipVisible(false);
       }
       if (component === "headerContentTooltip") {
-          headerContentRef.current!.focus();
-          setHeaderContentTooltipVisible(false);
+        headerContentRef.current!.focus();
+        setHeaderContentTooltipVisible(false);
       }
       if (component === "interceptorTooltip") {
-          interceptorRef.current!.focus();
-          setShowInterceptorPopover(false);
+        interceptorRef.current!.focus();
+        setShowInterceptorPopover(false);
       }
       if (component === "customHookTooltip") {
-          customHookRef.current!.focus();
-          setCustomHookTooltipVisible(false);
+        customHookRef.current!.focus();
+        setCustomHookTooltipVisible(false);
       }
       closeAllTooltips();
     }
@@ -804,23 +804,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const [showInterceptorPopover, setShowInterceptorPopover] = useState(false);
   const [targetInterceptorPopover, setTargetInterceptorPopover] = useState(null);
+  const containerRef = useRef(null);
   const content = (
     <Overlay
       show={showInterceptorPopover}
       target={targetInterceptorPopover}
       placement="left"
+      container={containerRef.current}
     >
       <Popover id={`interceptors-tooltip`} className={styles.popoverInterceptor}
         onMouseEnter={() => setShowInterceptorPopover(true)}
-        onMouseLeave={() => setShowInterceptorPopover(false)}>
-        <Popover.Body className={styles.popoverInterceptor}>
+        onMouseLeave={() => setShowInterceptorPopover(false)}
+      >
+        <Popover.Body>
           {tooltips.interceptors}
         </Popover.Body>
       </Popover>
     </Overlay>
   );
 
-  let time:any;
+  let time: any;
   const handleShowInterceptorPopover = (event) => {
     event.persist();
     time = delayTooltip(() => {
@@ -914,7 +917,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 </HCTooltip>
               </div>
             </Col>
-          </Row>: null
+          </Row> : null
         }
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
@@ -999,7 +1002,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     text={tooltips.additionalCollections}
                     id="additional-coll-tooltip"
                     placement="left"
-                    show={tgtCollectionTooltipVisible2 ? tgtCollectionTooltipVisible2 :undefined}
+                    show={tgtCollectionTooltipVisible2 ? tgtCollectionTooltipVisible2 : undefined}
                   >
                     <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
@@ -1094,7 +1097,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <FormLabel column lg={3} className={"pe-0"}>{"Provenance Granularity:"}</FormLabel>
           <Col className={"d-flex"}>
             <OverlayTrigger overlay={<Tooltip id="button-tooltip-provGran">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={provGranTooltipVisible}>
-              <div className={styles.tooltipRef}  ref={provGranTooltipRef} style={{width: "100%", marginLeft: "-2px"}} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularity")}>
+              <div className={styles.tooltipRef} ref={provGranTooltipRef} style={{width: "100%", marginLeft: "-2px"}} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularity")}>
                 <Select
                   id="provGranularity-select-wrapper"
                   inputId="provGranularity"
@@ -1354,17 +1357,17 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <span>
               {interceptorsExpanded ?
                 <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} /> :
-                <ChevronRight className={styles.rightArrow} onClick={() => expandCollapseInterceptors() } />}
+                <ChevronRight className={styles.rightArrow} onClick={() => expandCollapseInterceptors()} />}
               <span aria-label="interceptors-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseInterceptors()}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter"|| event.key === " ") { expandCollapseInterceptors(); }
+                  if (event.key === "Enter" || event.key === " ") { expandCollapseInterceptors(); }
                 }}
               >Interceptors</span>
             </span>
           </Col>
         </Row>
         {interceptorsExpanded ?
-          <Row className={"mb-3"}>
+          <Row className={"mb-3"} ref={containerRef}>
             <Col>
               <Row>
                 <Col className={"d-flex"}>
@@ -1382,12 +1385,27 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     rows={6}
                     aria-label="interceptors-textarea"
                     style={!interceptorsValid ? {border: "solid 1px #C00"} : {}}
+                    onFocus={() => {
+                      if (showInterceptorPopover) {
+                        setShowInterceptorPopover(false);
+                      }
+                    }}
                   />
-                  <span tabIndex={0} ref={interceptorTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptorTooltip")} className={styles.tooltipRef}>
+                  <span
+                    ref={interceptorTooltipRef}
+                    className={styles.tooltipRef}>
                     <div className={"p-2 d-flex align-items-center"}>
                       <div>
                         {content}
-                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} onMouseEnter={handleShowInterceptorPopover} onMouseLeave={() => handleMouseLeaveInterceptorPopover()}/>
+                        <QuestionCircleFill
+                          aria-label="icon: question-circle"
+                          color={themeColors.defaults.questionCircle}
+                          size={13}
+                          tabIndex={0}
+                          onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptorTooltip")}
+                          onMouseEnter={handleShowInterceptorPopover}
+                          onMouseLeave={() => handleMouseLeaveInterceptorPopover()}
+                        />
                       </div>
                     </div>
                   </span>
@@ -1409,7 +1427,12 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />}
               <span aria-label="custom-hook-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseCustomHook()}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter"|| event.key === " ") { expandCollapseCustomHook(); }
+                  if (event.key === "Enter" || event.key === " ") { expandCollapseCustomHook(); }
+                }}
+                onFocus={() => {
+                  if (showInterceptorPopover) {
+                    setShowInterceptorPopover(false);
+                  }
                 }}
               >Custom Hook</span>
               <HCTooltip

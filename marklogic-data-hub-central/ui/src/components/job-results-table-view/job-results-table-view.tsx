@@ -378,7 +378,12 @@ const JobResultsTableView = ({data}) => {
   };
 
   const content = (
-    <Popover id={`popover-overview`} className={styles.popoverJobResults}>
+    <Popover id={`popover-overview`} className={styles.popoverJobResults}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          setPopoverVisibility(false);
+        }
+      }}>
       <Popover.Body>
         <div data-testid="column-selector-popover" className={styles.popover}>
           <div className={styles.content}>
@@ -484,6 +489,9 @@ const JobResultsTableView = ({data}) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       handleColumnSelectorViewClick(event);
+    }
+    if (event.key === "Escape") {
+      setPopoverVisibility(false);
     }
   };
 

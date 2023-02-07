@@ -1,10 +1,10 @@
 import React from "react";
 import oneToManyIcon from "../assets/one-to-many-white.svg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import "./tooltips.config.scss";
-import { themeColors } from "./themes.config";
+import {themeColors} from "./themes.config";
 
 /* --- MODELING --- */
 
@@ -118,7 +118,7 @@ const ModelingTooltips = {
   editModeInfo: <span>To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
   addRelationshipHeader: function (relationshipType: string) {
     return <span aria-label="addRelationshipHeader">{relationshipType === "entityToConceptClass" ? `Set the relationship type, source property, relationship name, and expression. You are not required to specify the expression to save the relationship.` : `Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.`}</span>
-},
+  },
   duplicatePropertyError: function (relationshipName) {
     return (
       <span data-testid="property-name-error">
@@ -210,11 +210,11 @@ const CommonStepTooltips = {
   targetFormat: 'The format of the records in the target database.',
   targetPermissions: (
     <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
-      <span style={{ fontFamily: "monospace" }}> role,capability,role,capability,...</span>, where
-      <i> capability</i> can be <span style={{ fontFamily: "monospace" }}>read</span>,
-      <span style={{ fontFamily: "monospace" }}> insert</span>,
-      <span style={{ fontFamily: "monospace" }}> update</span>, or
-      <span style={{ fontFamily: "monospace" }}> execute</span>.</span>
+      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
+      <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
+      <span style={{fontFamily: "monospace"}}> insert</span>,
+      <span style={{fontFamily: "monospace"}}> update</span>, or
+      <span style={{fontFamily: "monospace"}}> execute</span>.</span>
   ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
@@ -225,13 +225,13 @@ const CommonStepTooltips = {
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
-  radioCollection : 'A single collection that selects the source data to process in this configuration.',
-  radioQuery: <span aria-label="radio-query-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }} tabIndex={0}>CTS Query.</a><br /><br />
+  radioCollection: 'A single collection that selects the source data to process in this configuration.',
+  radioQuery: <span aria-label="radio-query-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{color: themeColors.info}} tabIndex={0}>CTS Query.</a><br /><br />
     The following example source queries select data from multiple collections.<br /><br />
     JavaScript:<br />
-    <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
+    <span style={{fontFamily: "monospace"}}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
     XQuery:<br />
-    <span style={{ fontFamily: "monospace" }}>xdmp.xqueryEval("cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
+    <span style={{fontFamily: "monospace"}}>xdmp.xqueryEval("cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
 };
 
 /* Note: Some of the following are intentionally duplicated in other *Placeholders constants. */
@@ -513,7 +513,7 @@ const RunToolTips = {
   stopRunMissingPermission: 'You cannot cancel the flow. Only the user who started the flow can cancel it.',
 
   /* Explore Data */
-  exploreButtonEnabled: function() {
+  exploreButtonEnabled: function () {
     return <span>You will be redirected to the <strong>Explore</strong> screen in the same browser tab.</span>
   },
 
@@ -521,16 +521,16 @@ const RunToolTips = {
 
   /* Step run results in footer */
   stepRunning: "Step is running...",
-  stepCompleted: function(endTime) {
+  stepCompleted: function (endTime) {
     return <span>Step completed successfully on {endTime}</span>
   },
-  stepCompletedWithErrors: function(endTime) {
+  stepCompletedWithErrors: function (endTime) {
     return <span>Step completed with errors on {endTime}</span>
   },
-  stepFailed: function(endTime) {
+  stepFailed: function (endTime) {
     return <span>Step failed on {endTime}</span>
   },
-  stepCanceled: function(endTime) {
+  stepCanceled: function (endTime) {
     return <span>Step was canceled on {endTime}</span>
   }
 };
@@ -639,11 +639,11 @@ const AdvancedSettingsTooltips = {
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
   targetPermissions: (
     <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
-      <span style={{ fontFamily: "monospace" }}> role,capability,role,capability,...</span>, where
-      <i> capability</i> can be <span style={{ fontFamily: "monospace" }}>read</span>,
-      <span style={{ fontFamily: "monospace" }}> insert</span>,
-      <span style={{ fontFamily: "monospace" }}> update</span>, or
-      <span style={{ fontFamily: "monospace" }}> execute</span>.</span>
+      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
+      <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
+      <span style={{fontFamily: "monospace"}}> insert</span>,
+      <span style={{fontFamily: "monospace"}}> update</span>, or
+      <span style={{fontFamily: "monospace"}}> execute</span>.</span>
   ),
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   provGranularity: <>The level of detail logged for provenance. Choose <strong>coarse</strong> for the default level or <strong>off</strong> for no provenance logging.</>,
@@ -653,14 +653,14 @@ const AdvancedSettingsTooltips = {
   ),
   attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
   interceptors: <span>An array of JSON objects specifying the custom modules that perform additional processes on a batch.<br /><br />
-    <strong>Syntax:</strong><br /><span style={{ fontFamily: "monospace" }}>{'{'}[<br />&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br />&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br />
+    <strong>Syntax:</strong><br /><span style={{fontFamily: "monospace"}}>{'{'}[<br />&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br />&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br />
       &nbsp;&nbsp;"when": "beforeMain | beforeContentPersisted"<br />]{'}'}</span><br /><br /><strong>Parameters:</strong><br />path: The URI of the interceptor module in the MODULES database that the user running the step can read and execute.<br />
-    vars (optional): A JSON object containing parameters to pass to the interceptor.<br />when: Defines when the interceptor will be invoked. Allowed values are <span style={{ fontFamily: "monospace" }}>"beforeMain"</span> or <span style={{ fontFamily: "monospace" }}>"beforeContentPersisted"</span>.<br /><br />
-    The module identified by the <span style={{ fontFamily: "monospace" }}>"path"</span> property will be invoked via MarkLogic's <a href="https://docs.marklogic.com/xdmp.invoke">xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br /><br />
-    &nbsp;&nbsp;1. contentArray: The array of content objects<br /><ul style={{}}><li>When the <span style={{ fontFamily: "monospace" }}>"when"</span> property is <span style={{ fontFamily: "monospace" }}>"beforeMain"</span>, this will be the array of content objects that will be passed to the <span style={{ fontFamily: "monospace" }}>"main"</span> function of the step module.</li>
-      <li>When the <span style={{ fontFamily: "monospace" }}>"when"</span> property is <span style={{ fontFamily: "monospace" }}>"beforeContentPersisted"</span>, this will be the array of content objects returned by the <span style={{ fontFamily: "monospace" }}>"main"</span> function of the step module.</li></ul>
+    vars (optional): A JSON object containing parameters to pass to the interceptor.<br />when: Defines when the interceptor will be invoked. Allowed values are <span style={{fontFamily: "monospace"}}>"beforeMain"</span> or <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>.<br /><br />
+    The module identified by the <span style={{fontFamily: "monospace"}}>"path"</span> property will be invoked via MarkLogic's <a target="_blank" href="https://docs.marklogic.com/xdmp.invoke" tabIndex={0}>xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br /><br />
+    &nbsp;&nbsp;1. contentArray: The array of content objects<br /><ul style={{}}><li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeMain"</span>, this will be the array of content objects that will be passed to the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li>
+      <li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>, this will be the array of content objects returned by the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li></ul>
     &nbsp;&nbsp;2. options: The set of combined options from the step definition, flow, step, and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime options<br /><br />
-    For a working example of step interceptors along with more details, please see the <a href="https://github.com/marklogic/marklogic-data-hub/tree/master/examples/step-interceptors/">Step Interceptors example</a>.</span>,
+    For a working example of step interceptors along with more details, please see the <a target="_blank" href="https://github.com/marklogic/marklogic-data-hub/tree/master/examples/step-interceptors/" tabIndex={0}>Step Interceptors example</a>.</span>,
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   sourceDatabase: 'The database where the input data is read from.',
   targetDatabase: 'The database where to store the processed data.',
@@ -820,10 +820,10 @@ const ToolbarBulbIconInfo = {
     For more detailed information, visit the <a href="https://docs.marklogic.com/datahub/tools/hubcentral/exploring-with-hubcentral.html" target="_blank">Documentation</a> page about <strong>Explore</strong>.<br /><br />
   </div>,
   homePageInfo: <div>
-    <span style={{ fontSize: "larger" }}><strong>Ready to get started?</strong></span><br /><br />
+    <span style={{fontSize: "larger"}}><strong>Ready to get started?</strong></span><br /><br />
     To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br /><br />
-    <div style={{ display: "flex" }}><div className={"modelIconHeader"} style={{ color: "#999999" }}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br />
-    <div style={{ display: "flex" }}><div style={{ display: "flex", flexDirection: "column" }}><div className={"loadIconHeader"} style={{ color: "#999999", marginBottom: "1.2vh" }}></div><div className={"runIconHeader"} style={{ color: "#999999", marginBottom: "1.2vh" }}></div><div className={"exploreIconHeader"} style={{ color: "#999999" }}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a Load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a Mapping step from the <strong>Curate</strong> screen. The Mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br /><br /></div></div>
+    <div style={{display: "flex"}}><div className={"modelIconHeader"} style={{color: "#999999"}}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br />
+    <div style={{display: "flex"}}><div style={{display: "flex", flexDirection: "column"}}><div className={"loadIconHeader"} style={{color: "#999999", marginBottom: "1.2vh"}}></div><div className={"runIconHeader"} style={{color: "#999999", marginBottom: "1.2vh"}}></div><div className={"exploreIconHeader"} style={{color: "#999999"}}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a Load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a Mapping step from the <strong>Curate</strong> screen. The Mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br /><br /></div></div>
     Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new Load and Mapping step for each new source.<br /><br />
     After you have finished mapping, if there are duplicate records from various sources that you would like to merge, do the following from the <strong>Curate</strong> screen:<br />
     &nbsp;&nbsp;1. Create a Matching step to identify the duplicates.<br />
