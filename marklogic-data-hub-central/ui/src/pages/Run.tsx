@@ -228,7 +228,7 @@ const Run = (props) => {
 
   const finishRun = () => {
     setIsLoading(false);
-    //Commented to prevent Stop Run Button disappear quicly after clicking run flow
+    //Commented to prevent Stop Run Button disappear quickly after clicking run flow
     //setFlowRunning(InitialFlow);
   };
 
