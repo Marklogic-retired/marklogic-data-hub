@@ -191,11 +191,11 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       return (
         <div id="pageList">
           {
-            pagesWithoutFirstLast.map(p => (
+            pagesWithoutFirstLast.map((p, index) => (
               p.active ?
-                <button className="btnActive" data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
+                <button className="btnActive" key={index} data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
                 :
-                <button className="btn" data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
+                <button className="btn" key={index} data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
             ))
           }
         </div>

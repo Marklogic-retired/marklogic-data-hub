@@ -65,6 +65,10 @@
 
 .input{
     width: 400px !important;
+    :focus{
+        outline: 2px solid #7f86b5;
+        outline-offset: 2px;
+    }
 }
 
 .priorityOrderContainer{

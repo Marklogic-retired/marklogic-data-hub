@@ -168,4 +168,51 @@ describe("Merge Strategy Dialog component", () => {
     expect(strategyText).toHaveAttribute("value", "customMergeStrategy");
   });
 
+  it("Accessibility", () => {
+    const {getAllByTestId, getByLabelText, getAllByLabelText} =render(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergeStrategyDialog
+          {...data.mergeStrategyDataProps}
+          isEditStrategy={false}
+        />
+      </CurationContext.Provider>
+    );
+
+    userEvent.tab();
+    expect(getByLabelText("Close")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-input-component")[0]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("maxValuesAllRadio")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-input-component")[1]).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[0]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("maxSourcesAllRadio")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-input-component")[2]).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[1]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("defaultStrategyNo")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[2]).toHaveFocus();
+    //Enter the values for strategy name to see save button gets enabled.
+    fireEvent.keyDown(getByLabelText("dropdownOptions-select"), {key: "ArrowDown"});
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[3]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("dropdownOptions-select")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("add-slider-button")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("mergeStrategy-scale-switch")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[4]).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-button-component")[1]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("confirm-merge-strategy")).toHaveFocus();
+  });
 });

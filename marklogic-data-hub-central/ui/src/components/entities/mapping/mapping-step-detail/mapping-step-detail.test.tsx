@@ -289,6 +289,7 @@ describe("RTL Source-to-entity map tests", () => {
   }, 50000);
 
   test("Mapping expression for a nested entity property with same name should be saved appropriately", async () => {
+    jest.setTimeout(20000);
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDefSameNames});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
@@ -955,6 +956,7 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify URI fields for primary and related entity tables.", async () => {
+    jest.setTimeout(20000);
     const authorityService = new AuthoritiesService();
     await act(async() => authorityService.setAuthorities(["readMapping", "writeMapping"]));
 

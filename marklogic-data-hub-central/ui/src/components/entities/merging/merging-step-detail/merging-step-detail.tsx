@@ -243,7 +243,9 @@ const MergingStepDetail: React.FC = () => {
         return (
           <span className={styles.link}
             id={"strategy-name-link"}
-            onClick={() => editMergeStrategy(text)}>
+            onClick={() => editMergeStrategy(text)}
+            tabIndex={0}
+            onKeyPress={(e) => { if (e.key ==="Enter") editMergeStrategy(text); }}>
             {text}</span>
         );
       }
@@ -300,7 +302,10 @@ const MergingStepDetail: React.FC = () => {
         return (
           <span className={styles.link}
             id={"property-name-link"}
-            onClick={() => editMergeRule(mergeRuleLabel)}>
+            tabIndex={0}
+            data-testid={mergeRuleLabel}
+            onClick={() => editMergeRule(mergeRuleLabel)}
+            onKeyPress={(e) => { if (e.key ==="Enter") editMergeRule(mergeRuleLabel); }}>
             {text}</span>
         );
       }
@@ -330,7 +335,7 @@ const MergingStepDetail: React.FC = () => {
       align: "center" as "center",
       headerAlign: "center",
       width: 75,
-      formatter: text => <a data-testid={"delete"} >{text}</a>,
+      formatter: text => <a data-testid={"delete"}>{text}</a>,
     }
   ];
 
@@ -344,6 +349,10 @@ const MergingStepDetail: React.FC = () => {
     }
   }
 
+  const deleteIsAvailable = (i) => {
+    return commonStrategyNames.indexOf(i["strategyName"]) !==-1;
+  };
+
 
   mergingStep && mergingStep.mergeStrategies && mergingStep.mergeStrategies.length > 0 && mergingStep.mergeStrategies.forEach((i) => {
     mergeStrategiesData.push(
@@ -353,13 +362,18 @@ const MergingStepDetail: React.FC = () => {
         maxSources: i["maxSources"],
         default: i["default"] === true ? <FontAwesomeIcon className={styles.defaultIcon} icon={faCheck} data-testid={"default-" + i["strategyName"] + "-icon"} /> : null,
         priorityOrder: i.hasOwnProperty("priorityOrder") ? true : false,
-        delete: <HCTooltip text={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""} id="delete-strategy-tooltip" placement="top">
-          <i><FontAwesomeIcon
-            icon={faTrashAlt}
-            size="lg"
-            className={commonStrategyNames.indexOf(i["strategyName"]) !== -1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
-            data-testid={`mergestrategy-${i.strategyName}`}
-            onClick={() => onDelete(i)}/></i>
+        delete: <HCTooltip text={deleteIsAvailable(i) ? MergeStrategyTooltips.delete : ""} id="delete-strategy-tooltip" placement="top">
+          <i
+            onKeyPress={(e) => { if (e.key ==="Enter" && !deleteIsAvailable(i)) onDelete(i); }}
+            tabIndex={0}
+            data-testid={`mergestrategy-${i.strategyName}`}>
+            <FontAwesomeIcon
+              icon={faTrashAlt}
+              size="lg"
+              data-testid={`mergestrategyIcon-${i.strategyName}`}
+              className={deleteIsAvailable(i) ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
+              onClick={() => { if (!deleteIsAvailable(i)) onDelete(i); }}/>
+          </i>
         </HCTooltip>
       }
     );
@@ -372,7 +386,12 @@ const MergingStepDetail: React.FC = () => {
         property: i["entityPropertyPath"]?.split(".").join(" > "),
         mergeType: i["mergeType"],
         strategy: i["mergeStrategyName"],
-        delete: <i><FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color={themeColors.info} size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/></i>
+        delete:
+         <i
+           onKeyPress={(e) => { if (e.key ==="Enter") onDelete(i); }}
+           tabIndex={0}>
+           <FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color={themeColors.info} size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/>
+         </i>
       }
     );
   });
