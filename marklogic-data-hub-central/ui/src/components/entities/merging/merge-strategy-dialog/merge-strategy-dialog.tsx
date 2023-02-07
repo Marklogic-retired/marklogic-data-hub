@@ -465,6 +465,18 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
+  const handleToggleCheck =(event) => {
+    const {target, type, key} = event;
+    if (type === "keydown") {
+      if (key === "Enter") {
+        target.checked = !target.checked;
+        toggleDisplayPriorityOrderTimeline(target.checked);
+      }
+    } else {
+      toggleDisplayPriorityOrderTimeline(!target.checked);
+    }
+  };
+
   return (
     <HCModal
       show={props.createEditMergeStrategyDialog}
@@ -519,7 +531,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
                 <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
                 <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle" tabIndex={0} />
                 </HCTooltip>
               </Form.Check>
             </Col>
@@ -543,7 +555,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
                 <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
                 <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                 </HCTooltip>
               </Form.Check>
             </Col>
@@ -579,7 +591,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                   >
                   </Form.Check>
                   <HCTooltip text={MergingStepTooltips.defaultStrategy} id="default-strategy-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" className={`flex-shrink-1 ${styles.questionCircleDefault}`} size={13} aria-label="icon: question-circle"/>
+                    <QuestionCircleFill color="#7F86B5" className={`flex-shrink-1 ${styles.questionCircleDefault}`} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                   </HCTooltip>
                 </Col>
                 <Col xs={12} className={styles.validationError}>
@@ -593,7 +605,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <p className={`d-flex align-items-center ${styles.priorityText}`}>
                 Priority Order
                 <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                 </HCTooltip>
               </p>
             </div>
@@ -605,6 +617,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                   placeholder=""
                   value={dropdownTypeOptions.find(oItem => oItem.value === dropdownOption)}
                   onChange={handleDropDownOptions}
+                  openMenuOnFocus={true}
                   // isDisabled={!canWriteMatchMerge} //this was commented in previous version changed property but keep commented
                   aria-label="dropdownOptions-select"
                   options={dropdownTypeOptions}
@@ -621,10 +634,21 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
             </div>
             <div>
-              <div className="d-flex align-items-center"><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><FormCheck type="switch" aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)} className={styles.switchToggleMergeStrategy}></FormCheck>
+              <div className="d-flex align-items-center">
+                <span className={styles.enableStrategySwitch}>
+                  <b>Enable Priority Order Scale </b>
+                </span>
+                <FormCheck
+                  type="switch"
+                  aria-label="mergeStrategy-scale-switch"
+                  defaultChecked={false}
+                  onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
+                  onKeyDown={(e) => { handleToggleCheck(e); }}
+                  className={styles.switchToggleMergeStrategy}>
+                </FormCheck>
                 <span>
                   <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle"/>
+                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle" tabIndex={0} />
                   </HCTooltip>
                 </span></div>
               {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}

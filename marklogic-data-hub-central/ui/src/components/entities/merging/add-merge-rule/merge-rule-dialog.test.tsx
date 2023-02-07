@@ -318,5 +318,22 @@ describe("Merge Rule Dialog component", () => {
     wait(() => { expect(mockMergingUpdate).toHaveBeenCalledTimes(1); });
   });
 
+  test("Accessibility", async () => {
+    const {getByLabelText, getAllByLabelText} = render(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergeRuleDialog
+          {...data.mergeRuleDataProps}
+          isEditRule={false}
+        />
+      </CurationContext.Provider>
+    );
 
+    userEvent.tab();
+    expect(getByLabelText("Close")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("property-to-match-dropdown")[1]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("icon: question-circle")).toHaveFocus();
+    fireEvent.keyDown(getByLabelText("mergeType-select"), {key: "ArrowDown"});
+  });
 });

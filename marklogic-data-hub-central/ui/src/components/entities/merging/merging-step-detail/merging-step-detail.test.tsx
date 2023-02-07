@@ -2,7 +2,7 @@ import React from "react";
 import {
   cleanup,
   fireEvent,
-  render, wait,
+  render, screen, wait,
   waitForElement
 } from "@testing-library/react";
 import {CurationContext} from "../../../../util/curation-context";
@@ -145,8 +145,8 @@ describe("Merging Step Detail view component", () => {
         <MergingStepDetail />
       </CurationContext.Provider>
     );
-    expect(getByTestId("mergestrategy-customMergeStrategy")).toBeInTheDocument();
-    userEvent.click(getByTestId("mergestrategy-customMergeStrategy"));
+    expect(getByTestId("mergestrategyIcon-customMergeStrategy")).toBeInTheDocument();
+    userEvent.click(getByTestId("mergestrategyIcon-customMergeStrategy"));
     expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete customMergeStrategy merge strategy ?");
     })))).toBeInTheDocument();
@@ -163,8 +163,8 @@ describe("Merging Step Detail view component", () => {
         <MergingStepDetail />
       </CurationContext.Provider>
     );
-    expect(getByTestId("mergestrategy-testMerge")).toBeInTheDocument();
-    userEvent.click(getByTestId("mergestrategy-testMerge"));
+    expect(getByTestId("mergestrategyIcon-testMerge")).toBeInTheDocument();
+    userEvent.click(getByTestId("mergestrategyIcon-testMerge"));
     expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete testMerge merge strategy ?");
     })))).toBeInTheDocument();
@@ -172,4 +172,52 @@ describe("Merging Step Detail view component", () => {
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
   });
 
+  it("Accessibility", () => {
+    const {getAllByLabelText, getAllByText, getByLabelText, getByTestId, container} = render(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergingStepDetail />
+      </CurationContext.Provider>
+    );
+
+
+    userEvent.tab();
+    expect(getByLabelText("Back")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("add-merge-strategy")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Strategy Name sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Max Values sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Max Sources sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Default sortable")).toHaveFocus();
+    userEvent.tab();
+    screen.debug(undefined, 90000000);
+    expect(getAllByText("Delete")[0]).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("Expand row")[0]).toHaveFocus();
+    userEvent.tab();
+    expect(container.querySelector("#strategy-name-link")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("mergestrategy-myFavoriteSource")).toHaveFocus();
+    for (let i=0;i<=3;i++) { // jump over the  remaining rows
+      userEvent.tab();
+    }
+    expect(getByTestId("page-<")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("page-1")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("page->")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("add-merge-rule")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Property sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Merge Type sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("Strategy sortable")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByText("Delete")[1]).toHaveFocus();
+  });
 });

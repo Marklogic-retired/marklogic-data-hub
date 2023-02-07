@@ -163,6 +163,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   return (
     <>
       <TreeSelect
+        tabIndex={0}
         showSearch={false}
         aria-label={finalIdentifier}
         data-testid={finalIdentifier}

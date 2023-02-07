@@ -655,6 +655,18 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     </div>
   );
 
+  const handleToggleCheck =(event) => {
+    const {target, type, key} = event;
+    if (type === "keydown") {
+      if (key === "Enter") {
+        target.checked = !target.checked;
+        toggleDisplayPriorityOrderTimeline(target.checked);
+      }
+    } else {
+      toggleDisplayPriorityOrderTimeline(!target.checked);
+    }
+  };
+
   const mergeStrategyOptions = mergeStrategyNames.map(strategyName => ({value: strategyName, label: strategyName}));
 
   return (
@@ -707,7 +719,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     />
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.disabledProperties} id="property-name-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
                       </HCTooltip>
                     </div>
                   </Col>
@@ -724,11 +742,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               <Col>
                 <Row>
                   <Col className={mergeTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                    <div className={styles.input}>
+                    <div  className={styles.input}>
                       <Select
                         id="mergeType-select-wrapper"
                         inputId="mergeType"
                         components={{MenuList}}
+                        openMenuOnFocus={true}
+                        tabSelectsValue={false}
                         placeholder="Select merge type"
                         value={mergeTypeOptions.find(oItem => oItem.value === mergeType)}
                         onChange={handleMergeType}
@@ -772,7 +792,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
-                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                           </HCTooltip>
                         </div>
                       </Col>
@@ -801,7 +821,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
-                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                           </HCTooltip>
                         </div>
                       </Col>
@@ -828,7 +848,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     />
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -848,6 +868,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                           id="strategyName-select-wrapper"
                           inputId="strategyName"
                           placeholder="Select strategy name"
+                          openMenuOnFocus={true}
+                          tabSelectsValue={false}
                           value={mergeStrategyOptions.find(oItem => oItem.value === strategyValue)}
                           onChange={handleStrategyNameOptions}
                           aria-label="strategy-name-select"
@@ -894,7 +916,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -920,7 +942,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                       </HCTooltip>
                     </div>
                   </Col>
@@ -929,7 +951,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <div>
                     <p className={styles.priorityText}>Priority Order
                       <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                       </HCTooltip>
                     </p>
                   </div>
@@ -941,6 +963,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         placeholder=""
                         value={dropdownTypeOptions.find(oItem => oItem.value === dropdownOption)}
                         onChange={handleDropDownOptions}
+                        openMenuOnFocus={true}
                         // isDisabled={!canWriteMatchMerge} //this was commented in previous version changed property but keep commented
                         aria-label="dropdownOptions-select"
                         options={dropdownTypeOptions}
@@ -957,10 +980,21 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
                   </div>
                   <div>
-                    <div className="d-flex pe-2 align-items-center"><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><FormCheck type="switch" aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)} className={styles.switchToggleMergeStrategy}></FormCheck>
+                    <div className="d-flex pe-2 align-items-center">
+                      <span className={styles.enableStrategySwitch}>
+                        <b>Enable Priority Order Scale </b>
+                      </span>
+                      <FormCheck
+                        type="switch"
+                        aria-label="mergeStrategy-scale-switch"
+                        defaultChecked={false}
+                        onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
+                        onKeyDown={(e) => { handleToggleCheck(e); }}
+                        className={styles.switchToggleMergeStrategy}>
+                      </FormCheck>
                       <span>
                         <HCTooltip text={MergeRuleTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                         </HCTooltip>
                       </span></div>
                     {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}
