@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import React, {useState, useEffect, useRef} from "react";
+import {Row, Col, Form, FormLabel, Overlay} from "react-bootstrap";
 import CreatableSelect from "react-select/creatable";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./entity-settings.module.scss";
@@ -11,7 +11,6 @@ import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTooltip, HCInput} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
 import {themeColors} from "@config/themes.config";
 
 type Props = {
@@ -34,6 +33,9 @@ const EntitySettings: React.FC<Props> = (props) => {
   const [targetPermissions, setTargetPermissions] = useState(defaultTargetPermissions);
   const [targetPermissionsValid, setTargetPermissionsValid] = useState(true);
   const [permissionValidationError, setPermissionValidationError] = useState<any>(null);
+
+  const [target, setTarget] = useState(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     getSettings();
@@ -143,7 +145,7 @@ const EntitySettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: {preventDefault: () => void;}) => {
     if (event) event.preventDefault();
     setPopoverVisibilty(false);
     updateStep(getPayload());
@@ -156,12 +158,21 @@ const EntitySettings: React.FC<Props> = (props) => {
     getSettings();
   };
 
+  const handleOnClick = (event) => {
+    setTarget(event.target);
+    togglePopover();
+  };
+
   const serviceNameKeyDownHandler = async (event, component) => {
     //Make selection when user presses space or enter key
     if ((event.keyCode === 13) || (event.keyCode === 32)) {
       if (component === "settingsIcon") {
+        setTarget(event.target);
         togglePopover();
       }
+    }
+    if (event.keyCode === 27 && popoverVisibility) {
+      onCancel();
     }
   };
 
@@ -173,7 +184,11 @@ const EntitySettings: React.FC<Props> = (props) => {
 
   const content = (
 
-    <Popover id={`popover-overview`} className={styles.popoverEntitySettings}>
+    <Popover id={`popover-overview`} className={styles.popoverEntitySettings} onKeyDown={(event) => {
+      if (event.key === "Escape" && popoverVisibility) {
+        onCancel();
+      }
+    }}>
       <Popover.Body>
         <div id="entity-settings-popover" data-testid="entity-settings-popover" className={styles.entitySettings}>
           <h2 data-testid={`${props.entityTitle}-settings-title`} className={styles.title}>Advanced Settings: {props.entityTitle}</h2>
@@ -201,7 +216,7 @@ const EntitySettings: React.FC<Props> = (props) => {
                   />
                   <div className={"p-2 d-flex align-items-center"}>
                     <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -225,12 +240,11 @@ const EntitySettings: React.FC<Props> = (props) => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         disabled={!canReadWrite}
-                        className={styles.inputWithTooltip}
                         onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
                       />
                       <div className={"p-2 d-flex align-items-center"}>
                         <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
-                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                          <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
                         </HCTooltip>
                       </div>
                     </Col>
@@ -262,13 +276,26 @@ const EntitySettings: React.FC<Props> = (props) => {
   );
 
   return (
-    <OverlayTrigger placement="left-start" show={popoverVisibility} overlay={content} trigger="click">
-      <div id="entitySettings" tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "settingsIcon")}>
-        <div><div className={styles.entitySettingsLink}>
-          <FontAwesomeIcon data-testid={`${props.entityTitle}-entity-settings`} icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"} onClick={() => togglePopover()}/></div>
+    <div ref={containerRef}>
+      <div id="entitySettings">
+        <div>
+          <div className={styles.entitySettingsLink}>
+            <FontAwesomeIcon
+              data-testid={`${props.entityTitle}-entity-settings`}
+              icon={faCog}
+              type="edit"
+              role="entity-settings button"
+              aria-label={"entitySettings"}
+              tabIndex={0}
+              onKeyDown={(e) => serviceNameKeyDownHandler(e, "settingsIcon")}
+              onClick={handleOnClick} />
+          </div>
         </div>
       </div>
-    </OverlayTrigger>
+      <Overlay target={target} placement="left-start" show={popoverVisibility} container={containerRef}>
+        {content}
+      </Overlay>
+    </div>
   );
 };
 

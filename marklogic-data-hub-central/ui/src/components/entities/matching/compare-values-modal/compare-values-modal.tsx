@@ -462,7 +462,21 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       {
         !props.isPreview ?
           <HCTooltip text={"Delete"} id="delete-icon" placement="top-end">
-            <i><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} className={styles.deleteMatch} onClick={() => toggleConfirmModal(true)} size="lg" /></i>
+            <i>
+              <FontAwesomeIcon
+                icon={faTrashAlt}
+                color={themeColors.info}
+                className={styles.deleteMatch}
+                onClick={() => toggleConfirmModal(true)}
+                size="lg"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    toggleConfirmModal(true);
+                  }
+                }}
+              />
+            </i>
           </HCTooltip>
           : null
       }
@@ -470,7 +484,19 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         props.uriCompared.length > 2 ?
           <div className={styles.moreUrisTrigger}>
             {moreUrisInfo}
-            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => handleMouseLeaveUrisPopover()} />
+            <FontAwesomeIcon
+              icon={faInfoCircle}
+              aria-label="icon: info-circle"
+              className={styles.infoIcon}
+              onMouseEnter={handleShowUrisPopover}
+              onMouseLeave={() => handleMouseLeaveUrisPopover()}
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleShowUrisPopover(event);
+                }
+              }}
+            />
           </div>
           :
           null

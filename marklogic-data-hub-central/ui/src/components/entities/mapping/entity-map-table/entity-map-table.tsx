@@ -1,4 +1,4 @@
-import React, {useState, useEffect, CSSProperties} from "react";
+import React, {useState, useEffect, CSSProperties, useRef} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
 import Select, {components as SelectComponents} from "react-select";
@@ -102,7 +102,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
     <Popover id={`popover-emt-related-info`} className={styles.popoverEntityMapTableRelated}
       style={{paddingLeft: "10px"}}
       onMouseEnter={() => setShowDocPopover(true)}
-      onMouseLeave={() => setShowDocPopover(false)}>
+      onMouseLeave={() => setShowDocPopover(false)}
+      onKeyDown={(event) => {
+        if (event.key === "Escape" && showDocPopover) {
+          onCancel();
+        }
+      }}
+    >
       <Popover.Body>
         <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>
       </Popover.Body>
@@ -152,7 +158,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [targetDocLinksPopover, setTargetDocLinksPopover] = useState(null);
   const [deleteFromTable, setDeleteFromTable] = useState(false);
 
-  let time:any;
+  const xPathExpressionContainerFirstRef = useRef(null);
+  const xPathExpressionContainerSecondRef = useRef(null);
+
+  let time: any;
   const handleShowDocPopover = (event) => {
     event.persist();
     time = delayTooltip(() => {
@@ -168,7 +177,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
   const handleShowDocLinksPopover = (event) => {
     event.persist();
-    time= delayTooltip(() => {
+    time = delayTooltip(() => {
       setShowDocLinksPopover(!showDocLinksPopover);
       setTargetDocLinksPopover(event.target);
     });
@@ -182,22 +191,34 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
-  const xPathDocLinks =
-    <Overlay
+  const xPathDocLinks = (container) =>
+    (<Overlay
       show={showDocLinksPopover}
       target={targetDocLinksPopover}
-      placement="top"
+      placement="bottom"
+      container={container}
+      rootClose={true}
     >
       <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks} onMouseEnter={() => setShowDocLinksPopover(true)} onMouseLeave={() => setShowDocLinksPopover(false)}>
         <Popover.Body>
           <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
             <div><ul className={styles.docLinksUl}>
-              <li><a href="https://docs.marklogic.com/guide/xquery/xpath" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-              <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
+              <li>
+                <a href="https://docs.marklogic.com/guide/xquery/xpath" tabIndex={showDocLinksPopover ? 0 : -1} target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a>
+              </li>
+              <li>
+                <a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" tabIndex={showDocLinksPopover ? 0 : -1} target="_blank" rel="noopener noreferrer" className={styles.docLink}
+                  onKeyDown={(e) => {
+                    if (e.key === "Tab" && !e.shiftKey) {
+                      setShowDocLinksPopover(false);
+                    }
+                  }}
+                >Mapping Functions</a>
+              </li>
             </ul></div>
           </div>
         </Popover.Body></Popover>
-    </Overlay>;
+    </Overlay>);
 
   const getColumnOptions = () => {
     let storageAux = storage?.curateEntityTable;
@@ -318,7 +339,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     newEntityStorage = {
       ...storage, curateEntityTable: {
         ...storage.curateEntityTable,
-        filterMainTable: {...storage.curateEntityTable?.filterMainTable, [props?.savedMappingArt?.name]: value ? "": searchedKey},
+        filterMainTable: {...storage.curateEntityTable?.filterMainTable, [props?.savedMappingArt?.name]: value ? "" : searchedKey},
       }
     };
     setViewSettings(newEntityStorage);
@@ -449,7 +470,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const getCurrentPageMainTable = () => {
     let storageAux = storage?.curateEntityTable;
-    let propertyArray = props.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let propertyArray = props.entityTypeTitle + "_" + props?.savedMappingArt?.name;
     if (storageAux?.pageNumberTable && props?.entityTypeTitle && storageAux.pageNumberTable[propertyArray]) {
       let pageNumberTableAux = storageAux.pageNumberTable[propertyArray];
       return pageNumberTableAux;
@@ -458,7 +479,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const getCurrentSizeMainTable = () => {
     let storageAux = storage?.curateEntityTable;
-    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let propertyArray = props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
 
     if (storageAux?.pageSizeTable && props?.entityTypeTitle && storageAux?.pageSizeTable[propertyArray]) {
       let pageSizeTableAux = storageAux.pageSizeTable[propertyArray];
@@ -468,7 +489,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const saveSessionPageSizeMainTable = (page, size) => {
     let newEntityStorage;
-    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let propertyArray = props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
     newEntityStorage = {
       ...storage, curateEntityTable: {
         ...storage.curateEntityTable,
@@ -484,7 +505,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     newEntityStorage = {
       ...storage, curateEntityTable: {
         ...storage.curateEntityTable,
-        mainTableCollapsed: {...storage?.curateEntityTable?.mainTableCollapsed, [props?.entityTypeTitle+"_"+props?.savedMappingArt?.name]: tableCollapsed},
+        mainTableCollapsed: {...storage?.curateEntityTable?.mainTableCollapsed, [props?.entityTypeTitle + "_" + props?.savedMappingArt?.name]: tableCollapsed},
       }
     };
     setViewSettings(newEntityStorage);
@@ -492,7 +513,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const getMainTableCollapsed = () => {
     let storageAux = storage?.curateEntityTable;
-    let propertyArray = props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let propertyArray = props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
 
     if (storageAux?.mainTableCollapsed && storageAux?.mainTableCollapsed[propertyArray]) {
       let mainTableCollapsed = storageAux?.mainTableCollapsed[propertyArray];
@@ -1245,7 +1266,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const getSelectedOptionsDrp = (deleteKey?) => {
     let storageAux = storage?.curateEntityTable;
-    let propertyArray = deleteKey ? deleteKey+"_"+props?.savedMappingArt?.name :props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let propertyArray = deleteKey ? deleteKey + "_" + props?.savedMappingArt?.name : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
 
     if (deleteKey && storageAux?.selectedValues && storageAux.selectedValues[propertyArray]) {
       return storageAux.selectedValues[propertyArray];
@@ -1274,7 +1295,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       let arrayToFilter = getSelectedOptionsDrp(mainObjectLabel);
       filteredArray = arrayToFilter && arrayToFilter?.filter(item => item !== removedEntity?.entityLabel);
     }
-    let keyArray = deleteFromTable ? mainObjectLabel+"_"+props?.savedMappingArt?.name : props?.entityTypeTitle+"_"+props?.savedMappingArt?.name;
+    let keyArray = deleteFromTable ? mainObjectLabel + "_" + props?.savedMappingArt?.name : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
     let valueToSave = deleteFromTable ? filteredArray : newlySelectedValues;
 
     let newEntityStorage;
@@ -1290,7 +1311,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const handleOptionSelect = (selected) => {
     const newlySelectedValues = selected === "" && getSelectedOptionsDrp() !== "" ?
-      getSelectedOptionsDrp(): selected.map(option => option.value);
+      getSelectedOptionsDrp() : selected.map(option => option.value);
     let selectedArray: any = [];
     let entityArray = props.relatedEntityTypeProperties;
 
@@ -1387,7 +1408,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           cursor: "default"
         }),
       }}
-      formatOptionLabel={(option: { value, label }) => {
+      formatOptionLabel={(option: {value, label}) => {
         return (
           <span aria-label={`${option.label}-option`} role={"option"}>
             {option.label}
@@ -1695,9 +1716,22 @@ const EntityMapTable: React.FC<Props> = (props) => {
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} tabIndex={0}/>
-        {xPathDocLinks}
+      headerFormatter: () => <span ref={xPathExpressionContainerFirstRef}>XPath Expression
+        <img
+          className={styles.arrayImage}
+          src={DocIcon}
+          alt={""}
+          data-testid="XPathInfoIcon"
+          onMouseEnter={handleShowDocLinksPopover}
+          onMouseLeave={() => handleMouseLeaveDocLinksPopover()}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleShowDocLinksPopover(e);
+            }
+          }}
+        />
+        {xPathDocLinks(xPathExpressionContainerFirstRef.current)}
       </span>,
       dataField: "key",
       key: "key",
@@ -1943,7 +1977,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span>XPath Expression
+      headerFormatter: () => <span ref={xPathExpressionContainerSecondRef}>XPath Expression
         <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} />
         {xPathDocLinks}
       </span>,
