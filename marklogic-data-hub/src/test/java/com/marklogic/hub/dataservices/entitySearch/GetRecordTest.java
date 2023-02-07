@@ -98,7 +98,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
             FlowRunner flowRunner = null;
 
             try {
-                   inputs = new FlowInputs("inline");
+                   inputs = new FlowInputs("inline").withSteps("1","2");
                    inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
                    flowRunner = new FlowRunnerImpl(getHubClient());
                    RunFlowResponse flowResponse = flowRunner.runFlow(inputs);
@@ -108,6 +108,10 @@ public class GetRecordTest extends AbstractHubCoreTest {
                     logger.error("Error getting step " + e.getMessage());
             }
 
+            if(!mappingStepResponse.isSuccess()){
+                logger.error("Step status: " + mappingStepResponse.getStatus() +
+                    " Step output: " + mappingStepResponse.getStepOutput());
+            }
             assertEquals(true, mappingStepResponse.isSuccess(), "mappingStepResponse: " + mappingStepResponse.toString() );
             assertNull( mappingStepResponse.getStepOutput());
 

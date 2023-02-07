@@ -35,7 +35,7 @@
           "mastering-flow-mapping-json"
         ],
         "outputFormat": "json",
-        "targetDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
         "permissions": "data-hub-common,read,data-hub-common,update"
       }
     }
