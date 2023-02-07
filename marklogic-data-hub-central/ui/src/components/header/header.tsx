@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from "react";
+import React, {useContext, useState, useEffect, createRef} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
 import {UserContext} from "@util/user-context";
@@ -24,7 +24,7 @@ interface Props extends RouteComponentProps<any> {
   environment: any
 }
 
-const Header:React.FC<Props> = (props) => {
+const Header: React.FC<Props> = (props) => {
   const {user, userNotAuthenticated, handleError} = useContext(UserContext);
   const {notificationOptions, setNotificationsObj} = useContext(NotificationContext);
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
@@ -32,14 +32,14 @@ const Header:React.FC<Props> = (props) => {
   const [notificationModalVisible, setNotificationModalVisible] = useState(false);
   const history = useHistory();
 
-  const logoRef = React.createRef<HTMLAnchorElement>();
-  const titleRef = React.createRef<HTMLDivElement>();
-  const serviceNameRef = React.createRef<HTMLElement>();
-  const helpLinkRef = React.createRef<HTMLAnchorElement>();
-  const userDropdownRef = React.createRef<HTMLSpanElement>();
+  const logoRef = createRef<HTMLAnchorElement>();
+  const titleRef = createRef<HTMLDivElement>();
+  const serviceNameRef = createRef<HTMLElement>();
+  const helpLinkRef = createRef<HTMLAnchorElement>();
+  const userDropdownRef = createRef<HTMLSpanElement>();
   const [isAutoClose, setAutoClose] = useState(false);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
-
+  const notificationBellRef = createRef<HTMLAnchorElement>();
 
   const fetchModels = async () => {
     await axios.get(`/api/models`)
@@ -129,11 +129,11 @@ const Header:React.FC<Props> = (props) => {
     if (event.key === "Escape") { toggleUserDropdown(false); }
   };
 
-  let userMenu = <div className={styles.userMenu}>
-    <div className={styles.username}>{localStorage.getItem("dataHubUser")}</div>
-    <div className={styles.logout}>
+  let userMenu = <div className={styles.userMenu}tabIndex={-1}>
+    <div className={styles.username} tabIndex={-1}>{localStorage.getItem("dataHubUser")}</div>
+    <div className={styles.logout} tabIndex={-1}>
       <HCButton id="logOut" variant="outline-light"
-        onClick={confirmLogout} onKeyDown={logoutKeyDownHandler} tabIndex={1}>
+        onClick={confirmLogout} onKeyDown={logoutKeyDownHandler} tabIndex={0}>
         Log Out
       </HCButton>
     </div>
@@ -141,8 +141,7 @@ const Header:React.FC<Props> = (props) => {
 
   const serviceNameKeyDownHandler = (event) => {
     if (event.key === "Enter") { handleSystemInfoDisplay(); }
-
-    if (event.key === "ArrowRight") { helpLinkRef.current!.focus(); }
+    if (event.key === "ArrowRight") { if (notificationBellRef.current !== null) notificationBellRef.current.focus(); }//debe ir a llogin no quedarse y el de izq va a ltitulo?
     if (event.key === "ArrowLeft") { titleRef.current!.focus(); }
   };
 
@@ -151,9 +150,16 @@ const Header:React.FC<Props> = (props) => {
     handleSystemInfoDisplay();
   };
 
+  const bellIconKeyKeyDownHandler = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      setNotificationModalVisible(true);
+    } else if (event.key === "ArrowLeft") { serviceNameRef.current!.focus(); }
+    if (event.key === "ArrowRight") { helpLinkRef.current!.focus(); }
+  };
+
   const helpLinkKeyDownHandler = (event) => {
-    if (event.key === "ArrowRight") { userDropdownRef.current!.focus(); }
-    if (event.key === "ArrowLeft") { serviceNameRef.current!.focus(); }
+    if (event.key === "ArrowRight") { if (userDropdownRef.current !== null)userDropdownRef.current!.focus(); }
+    if (event.key === "ArrowLeft") { if (notificationBellRef.current !== null) { notificationBellRef.current.focus(); } }
   };
 
   const helpLinkClickHandler = (event) => {
@@ -162,7 +168,6 @@ const Header:React.FC<Props> = (props) => {
   };
 
   const userIconKeyDownHandler = (event) => {
-    if (event.key === "Enter") { toggleUserDropdown(!showUserDropdown); }
     if (event.key === "ArrowLeft") { helpLinkRef.current!.focus(); }
     if (event.key === "Escape") { toggleUserDropdown(false); }
   };
@@ -173,19 +178,18 @@ const Header:React.FC<Props> = (props) => {
   };
 
   let infoContainer = <div aria-label="info-text">
-      Data Hub Version: <strong>{props.environment.dataHubVersion}</strong><br/>
-      MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong><br/>
-      Service Name: <strong>{props.environment.serviceName}</strong><br/><br/>
-      Click to see details, to download configuration files, and to clear user data.
+    Data Hub Version: <strong>{props.environment.dataHubVersion}</strong><br />
+    MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong><br />
+    Service Name: <strong>{props.environment.serviceName}</strong><br /><br />
+    Click to see details, to download configuration files, and to clear user data.
   </div>;
 
   let globalIcons;
   if (user.authenticated) {
     globalIcons =
       <Nav id="global-icons" className={styles.iconsContainerAuth}>
-
         <Nav.Item>
-          <Nav.Link>
+          <Nav.Link tabIndex={-1}>
             <HCTooltip text={infoContainer} id="info-tooltip" placement="bottom-end" className={styles.infoTooltip}>
               <i id="service-name" aria-label="service-details" tabIndex={1} ref={serviceNameRef}
                 onMouseDown={serviceNameClickHandler} onKeyDown={serviceNameKeyDownHandler}>
@@ -201,41 +205,42 @@ const Header:React.FC<Props> = (props) => {
 
         <Nav.Item>
           <HCTooltip text="Merge Notifications" id="notification-tooltip" placement="bottom">
-            <Nav.Link aria-label={"notification-link"} onClick={() => setNotificationModalVisible(true)}>
-              <NotificationBadge className={styles.notificationBadge} count={notificationOptions.totalCount} effect={Effect.SCALE}/>
-              <FontAwesomeIcon id="notificationBell" className={styles.notificationBell} icon={faBell} size="2x" aria-label="icon: notification-bell"/>
+            <Nav.Link aria-label={"notification-link"} ref={notificationBellRef} tabIndex={0} onKeyDown={bellIconKeyKeyDownHandler} onClick={() => setNotificationModalVisible(true)}>
+              <NotificationBadge className={styles.notificationBadge} count={notificationOptions.totalCount} effect={Effect.SCALE} />
+              <FontAwesomeIcon id="notificationBell" className={styles.notificationBell} icon={faBell} size="2x" aria-label="icon: notification-bell" />
             </Nav.Link>
           </HCTooltip>
         </Nav.Item>
         <Nav.Item>
-          <Nav.Link id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
-            tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler} as="a">
-            <HCTooltip text="Help" id="help-tooltip" placement="bottom">
+          <HCTooltip text="Help" id="help-tooltip" placement="bottom">
+            <Nav.Link id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
+              tabIndex={0} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler} as="a">
               <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle" />
-            </HCTooltip></Nav.Link>
+            </Nav.Link></HCTooltip>
         </Nav.Item>
-        <NavDropdown autoClose={isAutoClose} title={
-          <HCTooltip text="User" id="user-tooltip" placement="bottom">
-            <i>
+
+        <HCTooltip text="User" id="user-tooltip" placement="bottom">
+          <NavDropdown tabIndex={-1} autoClose={isAutoClose} title={
+            <i tabIndex={-1} >
               <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user" />
             </i>
-          </HCTooltip>
-        }
-        className={styles.userDrop}
-        id="user-dropdown">
-          <NavDropdown.Item
-            as="span"
-            className="bg-transparent p-0 m-0"
-            ref={userDropdownRef}
-            onKeyDown={userIconKeyDownHandler}
-            onMouseDown={userDropdownClickHandler}>
-            {userMenu}
-          </NavDropdown.Item>
-
-        </NavDropdown>
+          }
+          className={styles.userDrop}
+          id="user-dropdown">
+            <NavDropdown.Item
+              tabIndex={0}
+              as="span"
+              className="bg-transparent p-0 m-0"
+              onKeyDown={userIconKeyDownHandler}
+              onMouseDown={userDropdownClickHandler}
+              ref={userDropdownRef}>
+              {userMenu}
+            </NavDropdown.Item>
+          </NavDropdown>
+        </HCTooltip>
       </Nav>;
   } else {
-    globalIcons =(
+    globalIcons = (
       <Nav id="global-icons" className={styles.iconsContainer}>
         <Nav.Item>
           <Nav.Link id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
