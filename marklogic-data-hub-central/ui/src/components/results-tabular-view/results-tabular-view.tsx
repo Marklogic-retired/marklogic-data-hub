@@ -540,7 +540,7 @@ const ResultsTabularView = (props) => {
       for (let subItem of item) {
         if (!Array.isArray(subItem)) {
           if (!Array.isArray(subItem.propertyValue) || subItem.propertyValue[0] === null || typeof (subItem.propertyValue[0]) !== "object") {
-            dataObj[subItem.propertyPath] = subItem.propertyValue;
+            dataObj[subItem.propertyPath] = subItem.propertyValue.toString();
           } else {
             let dataObjArr: any[] = [];
             subItem.propertyValue.forEach((el, index) => {

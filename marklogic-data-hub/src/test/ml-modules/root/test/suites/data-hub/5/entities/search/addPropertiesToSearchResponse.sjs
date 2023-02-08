@@ -39,7 +39,7 @@ function verifySimpleSelectedPropertiesResults() {
       }
     ]
   };
-  const selectedProperties = ["name", "nicknames"];
+  const selectedProperties = ["name", "nicknames", "active"];
   let janeExpectedResult = [
     {
       "propertyPath": "name",
@@ -51,6 +51,10 @@ function verifySimpleSelectedPropertiesResults() {
         "jane",
         "foster"
       ]
+    },
+    {
+      "propertyPath": "active",
+      "propertyValue": true
     }
   ];
 
@@ -66,6 +70,10 @@ function verifySimpleSelectedPropertiesResults() {
         "din",
         "shh"
       ]
+    },
+    {
+      "propertyPath": "active",
+      "propertyValue": false
     }
   ];
 
@@ -74,8 +82,8 @@ function verifySimpleSelectedPropertiesResults() {
     test.assertEqual(janeExpectedResult, response.results[0].entityProperties),
     test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
     test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
-    test.assertEqual(2, response.selectedPropertyDefinitions.length),
-    test.assertEqual(7, response.entityPropertyDefinitions.length)
+    test.assertEqual(3, response.selectedPropertyDefinitions.length),
+    test.assertEqual(8, response.entityPropertyDefinitions.length)
   ];
 }
 
@@ -204,7 +212,7 @@ function verifyStructuredFirstLevelSelectedPropertiesResults() {
     test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
     test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
     test.assertEqual(2, response.selectedPropertyDefinitions.length),
-    test.assertEqual(7, response.entityPropertyDefinitions.length)
+    test.assertEqual(8, response.entityPropertyDefinitions.length)
   ];
 }
 
@@ -297,7 +305,7 @@ function verifyStructuredSelectedPropertiesResults() {
     test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
     test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
     test.assertEqual(2, response.selectedPropertyDefinitions.length),
-    test.assertEqual(7, response.entityPropertyDefinitions.length)
+    test.assertEqual(8, response.entityPropertyDefinitions.length)
   ]);
 
   const selectedMetadata = response.selectedPropertyDefinitions;
@@ -539,7 +547,7 @@ function verifyResultsWithoutSelectedProperties() {
     test.assertEqual(["Sal", "din", "shh"], response.results[2].entityProperties[2].propertyValue),
     test.assertEqual(sallyShippingResults, response.results[2].entityProperties[3].propertyValue),
     test.assertEqual(5, response.selectedPropertyDefinitions.length),
-    test.assertEqual(7, response.entityPropertyDefinitions.length)
+    test.assertEqual(8, response.entityPropertyDefinitions.length)
   ];
 }
 
@@ -744,22 +752,24 @@ function verifyEntityInstanceResults() {
   };
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
   return [
-    test.assertEqual(5, Object.keys(response.results[0].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(6, Object.keys(response.results[0].entityInstance).length, "Sally has 6 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[0].entityInstance.customerId),
     test.assertEqual("Sally Hardin", response.results[0].entityInstance.name),
     test.assertEqual(["Sal", "din", "shh"], response.results[0].entityInstance.nicknames),
     test.assertEqual(2, response.results[0].entityInstance.shipping.length),
     test.assertEqual(null, response.results[0].entityInstance.birthDate),
     test.assertEqual(null, response.results[0].entityInstance.status),
+    test.assertEqual(false, response.results[0].entityInstance.active),
 
     // For XML doc result
-    test.assertEqual(5, Object.keys(response.results[1].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(6, Object.keys(response.results[1].entityInstance).length, "Sally has 6 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[1].entityInstance.customerId),
     test.assertEqual("Sally Hardin", response.results[1].entityInstance.name),
     test.assertEqual(["Sal", "din", "shh"], response.results[1].entityInstance.nicknames),
     test.assertEqual(2, response.results[1].entityInstance.shipping.length),
     test.assertEqual(null, response.results[1].entityInstance.birthDate),
     test.assertEqual(null, response.results[1].entityInstance.status),
+    test.assertEqual(false, response.results[1].entityInstance.active),
 
     // instanceWithAdditionalProperty
     test.assertEqual(4, Object.keys(response.results[2].entityInstance).length, "4 props are populated. which are available in the xpath /*:envelope/*:instance" +
@@ -844,7 +854,7 @@ function verifyEntityInstanceResultsForAllEntities() {
   };
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
   return [
-    test.assertEqual(5, Object.keys(response.results[0].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(6, Object.keys(response.results[0].entityInstance).length, "Sally has 6 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[0].entityInstance.customerId),
     test.assertEqual("Sally Hardin", response.results[0].entityInstance.name),
     test.assertEqual(["Sal", "din", "shh"], response.results[0].entityInstance.nicknames),
@@ -852,7 +862,7 @@ function verifyEntityInstanceResultsForAllEntities() {
     test.assertEqual(null, response.results[0].entityInstance.birthDate),
     test.assertEqual(null, response.results[0].entityInstance.status),
     // For XML doc result
-    test.assertEqual(5, Object.keys(response.results[1].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(6, Object.keys(response.results[1].entityInstance).length, "Sally has 6 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[1].entityInstance.customerId),
     test.assertEqual("Sally Hardin", response.results[1].entityInstance.name),
     test.assertEqual(["Sal", "din", "shh"], response.results[1].entityInstance.nicknames),

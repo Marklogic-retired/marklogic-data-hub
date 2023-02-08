@@ -41,6 +41,9 @@
         },
         "customerSince": {
           "datatype": "date"
+        },
+        "active": {
+          "datatype": "boolean"
         }
       }
     },

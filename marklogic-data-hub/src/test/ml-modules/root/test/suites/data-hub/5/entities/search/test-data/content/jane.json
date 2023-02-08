@@ -12,7 +12,8 @@
         "nicknames": [
           "jane",
           "foster"
-        ]
+        ],
+        "active": true
       }
     }
   }
