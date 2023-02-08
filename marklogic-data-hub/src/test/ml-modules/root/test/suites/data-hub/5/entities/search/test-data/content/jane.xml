@@ -10,6 +10,7 @@
             <name xsi:type="xs:string">Jane Foster</name>
             <nicknames datatype="array" xsi:type="xs:string">jane</nicknames>
             <nicknames datatype="array" xsi:type="xs:string">foster</nicknames>
+            <active xsi:type="xs:boolean">true</active>
         </Customer>
     </instance>
 </envelope>
