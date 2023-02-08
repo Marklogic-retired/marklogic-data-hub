@@ -320,7 +320,7 @@ function getPropertyValues(currentProperty, entityInstance) {
     }
   } else {
     let propertyName = currentProperty.propertyPath.split(".").pop();
-    resultObject.propertyValue = entityInstance[propertyName] ? entityInstance[propertyName] :
+    resultObject.propertyValue = (entityInstance[propertyName] !== null && entityInstance[propertyName] !== undefined) ? entityInstance[propertyName] :
         (currentProperty.multiple ? [] : "");
   }
   return resultObject;
