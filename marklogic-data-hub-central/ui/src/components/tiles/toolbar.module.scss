@@ -8,14 +8,13 @@
     top: 64px;
     right: 0;
     width: 70px;
-    background-color: #F1F1F1;
+    background-color: $bg-toolbar;
     padding: 40px 15px;
     height: 100%;
     hr {
         margin: 20px 0;
     }
 }
-
 
 .toolbarIcon {
     cursor: pointer;
@@ -25,8 +24,8 @@
     font-family: MLCustomFont;
     flex-direction: row;
     font-size: 24px;
-    background-color: #FFF;
-    border: 1px solid #7F86B5;
+    background-color: $white;
+    border: 1px solid $span-hover;
     border-radius: 4px;
     width: 40px;
     height: 40px;
@@ -38,6 +37,10 @@
         color: var(--hoverColor) !important;
         box-shadow: 0px 4px 4px $shadow;
     }
+}
+
+.toolbarIcon:focus-within {
+    outline: auto;
 }
 
 .exploreIcon {
@@ -85,12 +88,12 @@
 }
 
 .selected {
-    box-shadow: 0px 0 3px 2px #7f86b5;
+    box-shadow: 0px 0 3px 2px $span-hover;
 }
 
 .disabled,
 .disabled>* {
-    color: grey;
+    color: $grey;
     opacity: 0.5;
     cursor: not-allowed;
 }
