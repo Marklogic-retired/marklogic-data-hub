@@ -19,6 +19,7 @@
           "din",
           "shh"
         ],
+        "active": false,
         "shipping": [
           {
             "Address": {

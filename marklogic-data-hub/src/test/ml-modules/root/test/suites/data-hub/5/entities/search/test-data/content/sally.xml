@@ -13,6 +13,7 @@
             <nicknames datatype="array" xsi:type="xs:string">Sal</nicknames>
             <nicknames datatype="array" xsi:type="xs:string">din</nicknames>
             <nicknames datatype="array" xsi:type="xs:string">shh</nicknames>
+            <active xsi:type="xs:boolean">false</active>
             <shipping datatype="array">
                 <Address>
                     <street xsi:type="xs:string">Whitwell Place</street>
