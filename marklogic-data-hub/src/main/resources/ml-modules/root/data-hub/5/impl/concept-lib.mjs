@@ -317,7 +317,7 @@ function findConceptModelReferencesInEntities(conceptName) {
 }
 
 function deleteDraftConceptModel(conceptName) {
-  var uri = getConceptModelUri(conceptName);
+  let uri = getConceptModelUri(conceptName);
   if (!fn.docAvailable(uri)) {
     uri = getDraftConceptModelUri(conceptName);
     if (!fn.docAvailable(uri)) {

@@ -56,11 +56,11 @@ const startParam = external.start;
 const pageLengthParam = external.limit;
 
 
-var query = queryParam;
-var start = startParam;
-var pageLength = pageLengthParam;
-var structuredQuery ;
-var queryOptions ;
+let query = queryParam;
+let start = startParam;
+let pageLength = pageLengthParam;
+let structuredQuery = external.structuredQuery;
+let queryOptions = external.queryOptions;
 
 if(query == null) {
   httpUtils.throwBadRequest("Request cannot be empty");

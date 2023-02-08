@@ -5,8 +5,8 @@ const sem = require("/MarkLogic/semantics.xqy");
 
 const datahub = DataHubSingleton.instance();
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
-var mappings = {};
-var entityModel = null;
+let mappings = {};
+let entityModel = null;
 
 function main(content, options) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;

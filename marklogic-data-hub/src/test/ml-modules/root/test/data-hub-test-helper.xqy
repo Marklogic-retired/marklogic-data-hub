@@ -363,8 +363,7 @@ declare function run-with-user-id($user-id, $func-or-module, $variables)
       if ($func-or-module instance of xdmp:function) then
         xdmp:invoke-function($func-or-module, $user-map)
       else if (fn:matches(fn:string($func-or-module), "^\s*function\s*\(\)")) then
-        xdmp:javascript-eval("var functionToRun;
-        functionToRun();", map:entry("functionToRun", $func-or-module), $user-map)
+        xdmp:javascript-eval("var functionToRun; functionToRun();", map:entry("functionToRun", $func-or-module), $user-map)
       else
         xdmp:invoke(fn:string($func-or-module), $variables, $user-map)
       ,

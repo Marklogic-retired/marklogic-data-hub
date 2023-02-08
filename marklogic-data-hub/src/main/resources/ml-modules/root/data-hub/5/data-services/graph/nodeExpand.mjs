@@ -25,7 +25,7 @@ const sem = require("/MarkLogic/semantics.xqy");
 
 const nodeInfo = external.nodeInfo;
 const limitParam = external.limit;
-var limit = limitParam;
+let limit = limitParam;
 
 if(nodeInfo == null) {
   httpUtils.throwBadRequest("Request cannot be empty");

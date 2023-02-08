@@ -207,7 +207,7 @@ const sem = require("/MarkLogic/semantics.xqy");
     }
 
     if (hubUtils.isSequence(resp)) {
-      var cleanResp = [];
+      let cleanResp = [];
       for (const respPart of resp) {
         cleanResp.push(cleanData(respPart, destination, dataFormat));
       }
@@ -559,7 +559,7 @@ function tripleToXml(triple) {
     const currentUser = xdmp.getCurrentUser();
     const currentDateTime = fn.currentDateTime();
     if (outputFormat === consts.XML) {
-      var response = [];
+      let response = [];
       for (const headerElement of headers) {
         if(fn.localName(headerElement) == "createdBy"){
           response.push(normalizeValuesInNode(xdmp.unquote(`<createdBy xmlns="">${currentUser}</createdBy>`)));

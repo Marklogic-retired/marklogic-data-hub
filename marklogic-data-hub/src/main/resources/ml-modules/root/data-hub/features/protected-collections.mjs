@@ -35,7 +35,7 @@ function protectCollections(collections, permissions) {
                 hubUtils.hubTrace(INFO_EVENT, `While adding protected collections, cannot protect collection ${coll}. Invalid permissions: ${permissions}`);
             } else {
                 let permissionsSec = [];
-                for (var i = 0; i < permissionsSplit.length; i++) {
+                for (let i = 0; i < permissionsSplit.length; i++) {
                     permissionsSec.push(xdmp.permission(permissionsSplit[i], permissionsSplit[++i], "element"));
                 }
                 sec.protectCollection(coll, permissionsSec);

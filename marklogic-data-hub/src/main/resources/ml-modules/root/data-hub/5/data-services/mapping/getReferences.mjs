@@ -14,6 +14,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
 
 import artifacts from "/data-hub/5/artifacts/core.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 const stepName = external.stepName;
 const mappingStep = artifacts.getArtifact("mapping", stepName);
@@ -21,7 +22,7 @@ let response = [{"name": "$URI", "description": "The URI of the source document"
 const modulePath = mappingStep.mappingParametersModulePath;
 if (modulePath) {
   try {
-    const userParams = require(modulePath)["getParameterDefinitions"](mappingStep);
+    const userParams = hubUtils.requireFunction(modulePath, "getParameterDefinitions")(mappingStep);
     userParams.forEach(userParam => userParam.name = "$" + userParam.name);
     response = response.concat(userParams);
     response.sort((a, b) => (a.name > b.name) ? 1 : -1);

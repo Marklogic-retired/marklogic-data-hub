@@ -21,7 +21,7 @@ dependencies {
     api "org.springframework:spring-test:5.3.22"
     api project(":marklogic-data-hub")
 
-    api "com.marklogic:marklogic-unit-test-client:1.1.0"
+    api "com.marklogic:marklogic-unit-test-client:1.3.0"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
 }

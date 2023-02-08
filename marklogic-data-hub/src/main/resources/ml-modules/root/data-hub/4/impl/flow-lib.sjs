@@ -651,7 +651,6 @@ function safeRun(func) {
 
 function makeFunction(funcName, moduleUri) {
   return require(moduleUri)[funcName];
-  // return xdmp.function(xs.QName(funcName), moduleUri);
 }
 
 module.exports = {

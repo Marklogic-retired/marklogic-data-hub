@@ -83,7 +83,7 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
   const allPropertiesMetadata = [];
   let granularPropertyMetadata = {};
 
-  for (var propertyName of Object.keys(entityType.properties)) {
+  for (let propertyName of Object.keys(entityType.properties)) {
     const property = entityType.properties[propertyName];
 
     const isSimpleProperty = property.datatype != "array" && !property["$ref"];
@@ -272,7 +272,7 @@ function getEntitySources(doc) {
   if(hubUtils.isXmlNode(doc)) {
     const sources = doc.xpath("/*:envelope/*:headers/*:sources");
     if(!fn.empty(sources)) {
-      for (var srcDoc of sources) {
+      for (let srcDoc of sources) {
         const currNode = new NodeBuilder().startDocument().addNode(srcDoc).endDocument().toNode();
         sourcesArray.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
       }

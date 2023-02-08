@@ -19,7 +19,7 @@ public class ModuleWatchingConsumerTest {
     @Test
     public void shouldGenerateFunctionMetadata() {
         Set<Resource> resources = new HashSet<>();
-        resources.add(new FileSystemResource("marklogic-data-hub/src/test/ml-modules/root/custom-modules/mapping-functions/custom-mapping-functions.sjs"));
+        resources.add(new FileSystemResource("marklogic-data-hub/src/test/ml-modules/root/custom-modules/mapping-functions/custom-mapping-functions.mjs"));
         assertTrue(consumer.shouldFunctionMetadataBeGenerated(resources));
     }
 
@@ -36,7 +36,7 @@ public class ModuleWatchingConsumerTest {
         consumer = new ModuleWatchingConsumer(new CommandContext(null, null, null), command);
 
         Set<Resource> resources = new HashSet<>();
-        resources.add(new FileSystemResource("marklogic-data-hub/src/test/ml-modules/root/custom-modules/mapping-functions/custom-mapping-functions.sjs"));
+        resources.add(new FileSystemResource("marklogic-data-hub/src/test/ml-modules/root/custom-modules/mapping-functions/custom-mapping-functions.mjs"));
         consumer.accept(resources);
 
         assertTrue(command.wasExecuted, "The command should have been executed, which means it threw an exception that " +

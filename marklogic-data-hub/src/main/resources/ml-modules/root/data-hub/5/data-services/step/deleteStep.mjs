@@ -42,7 +42,7 @@ const flowsWithReferences = cts.search(cts.andQuery([
   cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
 ]));
 
-for (var flowDoc of flowsWithReferences) {
+for (let flowDoc of flowsWithReferences) {
   const flow = flowDoc.toObject();
   let foundStep = false;
   Object.keys(flow.steps).forEach(key => {

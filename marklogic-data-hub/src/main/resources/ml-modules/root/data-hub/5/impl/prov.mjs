@@ -19,9 +19,9 @@ import config from "/com.marklogic.hub/config.mjs";
 import hubES from "/data-hub/5/impl/hub-es.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import op from '/MarkLogic/optic';
+import ProvenanceWriteQueue from "/data-hub/5/provenance/provenanceWriteQueue.mjs";
 
 const ps = require("/MarkLogic/provenance.xqy");
-import ProvenanceWriteQueue from "/data-hub/5/provenance/provenanceWriteQueue.mjs";
 
 const provenanceWriteQueue = new ProvenanceWriteQueue();
 
@@ -146,7 +146,12 @@ function validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, s
 function createRecords(recordsQueue, latestProvenance = false) {
   xdmp.eval(`
     declareUpdate();
-    recordsQueue.persist();
+    // some scenarios this is treated as mjs and others it is treated as sjs
+    if (external) {
+      external.recordsQueue.persist();
+    } else {
+      recordsQueue.persist();
+    }
     `,
     {recordsQueue},
     {

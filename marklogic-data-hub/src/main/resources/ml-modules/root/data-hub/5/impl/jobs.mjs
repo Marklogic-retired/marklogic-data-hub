@@ -211,7 +211,7 @@ function saveNewJob(job) {
     // Build a map of flow name to latest job for quick lookup
     const latestJobMap = {};
     latestJobs.toArray().forEach(job => {
-      var obj = job.toObject();
+      let obj = job.toObject();
       latestJobMap[obj.job.flow] = obj;
     });
 

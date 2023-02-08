@@ -45,7 +45,7 @@ function findEntityTypeIds() {
  */
 function findEntityTypesAsMap() {
   const map = {};
-  for (var doc of cts.search(cts.collectionQuery(getModelCollection()))) {
+  for (let doc of cts.search(cts.collectionQuery(getModelCollection()))) {
     Object.assign(map, convertModelToEntityTypeMap(doc.toObject()));
   }
   return map;
@@ -178,7 +178,7 @@ function getEntityModelRelationships() {
 function convertModelToEntityTypeMap(model) {
   const map = {};
   const modelId = getModelId(model);
-  for (var entityTypeTitle of Object.keys(model.definitions)) {
+  for (let entityTypeTitle of Object.keys(model.definitions)) {
     map[modelId + "/" + entityTypeTitle] = model.definitions[entityTypeTitle];
   }
   return map;
@@ -250,7 +250,7 @@ function getModelCollection() {
 }
 
 function deleteDraftModel(entityName) {
-  var uri = getModelUri(entityName);
+  let uri = getModelUri(entityName);
     if (!fn.docAvailable(uri)) {
       uri = getDraftModelUri(entityName);
       if (!fn.docAvailable(uri)) {

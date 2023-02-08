@@ -10,7 +10,7 @@ import entityValidationLib from '/data-hub/5/builtins/steps/mapping/entity-servi
 const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
-var mappings = {};
+let mappings = {};
 let entityModelMap = {};
 const traceEvent = consts.TRACE_MAPPING_DEBUG;
 
@@ -157,7 +157,7 @@ function buildUri(entityInstance, entityName, outputFormat){
 function getUserMappingParameterMap(stepExecutionContext, contentSequence) {
   if (stepExecutionContext != null) {
     const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
-    return path ? require(path)["getParameterValues"](contentSequence) : {};
+    return path ? hubUtils.requireFunction(path, "getParameterValues")(contentSequence) : {};
   }
   return {};
 }
@@ -227,8 +227,8 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
   let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
   if (outputFormat === consts.JSON) {
-    if (!hubUtils.isXmlNode(doc) && (doc instanceof Object || hubUtils.isJsonNode(doc))) {
-      attachments = flowUtils.jsonToXml(attachments);
+    if (hubUtils.isXmlNode(attachments)) {
+      attachments = xdmp.quote(attachments);
     }
     nb.addNode({
       envelope: {

@@ -3,11 +3,12 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
+import matcher from "/data-hub/5/mastering/matching/matcher.mjs"
+
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
 
-import matcher from "/data-hub/5/mastering/matching/matcher.mjs"
 
 /*
  * A class that encapsulates the configurable portions of the matching process.

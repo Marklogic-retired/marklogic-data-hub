@@ -72,7 +72,7 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   const namespaces = fetchNamespacesFromMappingStep(mappingStep);
 
   let entityTemplates = "";
-  for(var i=0; i< allEntityMap.length; i++){
+  for(let i=0; i< allEntityMap.length; i++){
     entityTemplates += generateEntityTemplates(i, allEntityMap[i]).join('\n') + "\n";
   }
 
@@ -150,7 +150,7 @@ function makeParameterElements(mappingStep, userParameterNames) {
         hubUtils.hubTrace(infoEvent, `Applying mapping parameters module at path '${modulePath}`);
       }
       try {
-        const userParams = require(modulePath)["getParameterDefinitions"](mappingStep);
+        const userParams = hubUtils.requireFunction(modulePath, "getParameterDefinitions")(mappingStep);
         userParams.forEach(userParam => elements += `<m:param name="${userParam.name}"/>`);
       } catch (error) {
         throw Error(`getParameterDefinitions failed in module '${modulePath}'; cause: ${error.message}`);
@@ -402,9 +402,8 @@ function validateAndTestMapping(mapping, uri) {
   try {
     if (modulePath) {
       const contentSequence = Sequence.from([{"uri": uri, "value": sourceDocument}]);
-      const moduleLib = require(modulePath);
-      userParameterNames = moduleLib["getParameterDefinitions"](mapping).map(def => def.name);
-      userParameterMap = moduleLib["getParameterValues"](contentSequence);
+      userParameterNames = hubUtils.requireFunction(modulePath, "getParameterDefinitions")(mapping).map(def => def.name);
+      userParameterMap = hubUtils.requireFunction(modulePath, "getParameterValues")(contentSequence);
     }
   } catch (error) {
     // Need to throw an HTTP error so that the testMapping endpoint returns a proper error

@@ -2,6 +2,7 @@
 
 xquery version "1.0-ml";
 import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
+
 try {
   let $config := admin:get-configuration()
   let $dbid := xdmp:database()
@@ -17,6 +18,7 @@ try {
 
 xquery version "1.0-ml";
 import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
+
 try {
   let $config := admin:get-configuration()
   let $dbid := xdmp:database()
@@ -34,36 +36,44 @@ xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
 
-hub-test:run-with-roles-and-privileges("temporal-admin", (),
-  function () {
-    temporal:axis-create(
-      "valid",
-      cts:field-reference("validStart", "type=dateTime"),
-      cts:field-reference("validEnd", "type=dateTime")
-    )
-  },
-  ()
-)
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (),
+    function () {
+      temporal:axis-create(
+        "valid",
+        cts:field-reference("validStart", "type=dateTime"),
+        cts:field-reference("validEnd", "type=dateTime")
+      )
+    },
+    ()
+  )
+} catch ($e) {()}
+
+;
+xquery version "1.0-ml";
+import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
+import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
+
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (),
+    function () {
+      temporal:axis-create(
+        "system",
+        cts:field-reference("systemStart", "type=dateTime"),
+        cts:field-reference("systemEnd", "type=dateTime")
+      )
+    },
+    ()
+  )
+} catch ($e) {()}
+
 ;
 
 xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
-hub-test:run-with-roles-and-privileges("temporal-admin", (),
-  function () {
-    temporal:axis-create(
-      "system",
-      cts:field-reference("systemStart", "type=dateTime"),
-      cts:field-reference("systemEnd", "type=dateTime")
-    )
-  },
-  ()
-)
 
-;
-
-xquery version "1.0-ml";
-import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
-import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
-hub-test:run-with-roles-and-privileges("temporal-admin", (),
-  function () { temporal:collection-create("myTemporalCollection", "system", "valid") },())
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (),
+    function () { temporal:collection-create("myTemporalCollection", "system", "valid") },())
+} catch ($e) {()}

@@ -89,47 +89,38 @@ function checkPermissions(modPerms, operatorRole) {
   return true;
 }
 
+function formatError(err, lineIndex = 0) {
+  if (err.stack) {
+    let stackLines = err.stack.split("\n");
+    return stackLines[0] + " " + stackLines[1];
+  }
+  if (err.stackFrames) {
+    return err.message + ": " + err.data[0] + " in " + err.stackFrames[0].uri + " at " + err.stackFrames[0].line;
+  }
+  return "Invalid Module";
+}
 function staticCheck(modPath) {
-  let errResp;
-  try{
-    xdmp.eval("var x=require('" + modPath + "');", {"staticCheck":fn.true()})
+  if (fn.endsWith(modPath, ".mjs")) {
+    return staticCheckMJS(modPath);
   }
-  catch (err){
-    if(err.stack) {
-      let stackLines = err.stack.split("\n");
-      errResp = stackLines[0] + " " + stackLines[1];
-    }
-    else if (err.stackFrames) {
-      errResp =  err.message + ": " + err.data[0] + " in " + err.stackFrames[0].uri + " at " + err.stackFrames[0].line;
-    }
-    else {
-      errResp = "Invalid Module";
-    }
+  try {
+    xdmp.eval("let x = require('" + modPath + "');", {"staticCheck": fn.true()});
+  } catch (err) {
+    return formatError(err);
   }
-  return errResp;
 }
 
 function staticCheckMJS(modPath) {
-  xdmp.log("modPath: " + modPath)
-  let errResp;
-  try{
-    evalScriptOrModule("import x from '" + modPath + "';")
+  try {
+    evalModule("import x from '" + modPath + "';");
+  } catch (err) {
+    let formattedError = formatError(err);
+    // MJS error traces can point to the current module
+    if (fn.contains(formattedError, "/marklogic.rest.resource/mlStepValidate/assets/resource.sjs")) {
+      formattedError = fn.substringBefore(formattedError, "/marklogic.rest.resource/mlStepValidate/assets/resource.sjs") + modPath;
+    }
+    return formattedError;
   }
-  catch (err){
-    xdmp.log("err: " + err)
-    if(err.stack) {
-      let stackLines = err.stack.split("\n");
-      errResp = stackLines[0] + " " + stackLines[1];
-    }
-    else if (err.stackFrames) {
-      errResp =  err.message + ": " + err.data[0] + " in " + err.stackFrames[0].uri + " at " + err.stackFrames[0].line;
-    }
-    else {
-      errResp = "Invalid Module";
-    }
-  }
-  xdmp.log("errResp: " + errResp)
-  return errResp;
 }
 
 exports.GET = get;

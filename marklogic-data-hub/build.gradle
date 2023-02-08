@@ -92,8 +92,8 @@ dependencies {
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
 
-    testImplementation "com.marklogic:marklogic-junit5:1.1.0"
-    mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
+    testImplementation "com.marklogic:marklogic-junit5:1.3.0"
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.3.0"
 }
 
 configurations.all {
@@ -326,7 +326,7 @@ task bootstrap(type: JavaExec) {
     systemProperty "mlHost", mlHost
 }
 bootstrap.dependsOn extractFastXmlParserZip
-bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is downloaded
+bootstrap.dependsOn mlPrepareBundles // ensures that marklogic-unit-test is downloaded
 test.mustRunAfter bootstrap
 
 task dhsBootstrap(type: JavaExec) {

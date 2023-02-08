@@ -78,8 +78,8 @@ fn.collection(conceptLib.getConceptCollection()).toArray().forEach(concept => {
 });
 
 modelResponseArr.sort(function(modelA, modelB) {
-  var nameA = getEntityOrConceptName(modelA);
-  var nameB = getEntityOrConceptName(modelB);
+  let nameA = getEntityOrConceptName(modelA);
+  let nameB = getEntityOrConceptName(modelB);
   if (nameA < nameB) {
     return -1;
   }

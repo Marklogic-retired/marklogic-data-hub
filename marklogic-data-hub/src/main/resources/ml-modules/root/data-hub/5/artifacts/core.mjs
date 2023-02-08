@@ -110,7 +110,7 @@ function getArtifactsGroupByEntity(queries) {
     if (entityNameMap[targetEntityType]) {
       entityNameMap[targetEntityType].artifacts.push(artifact);
     } else {
-      for (var entityName of Object.keys(entityNameMap)) {
+      for (let entityName of Object.keys(entityNameMap)) {
         if (entityNameMap[entityName].entityTypeId == targetEntityType) {
           entityNameMap[entityName].artifacts.push(artifact);
           break;
@@ -247,9 +247,9 @@ function getFullFlow(flowName, stepNumber) {
 }
 
 function removeNullProperties(obj) {
-  var propNames = Object.getOwnPropertyNames(obj);
-  for (var i = 0; i < propNames.length; i++) {
-    var propName = propNames[i];
+  let propNames = Object.getOwnPropertyNames(obj);
+  for (let i = 0; i < propNames.length; i++) {
+    let propName = propNames[i];
     if (obj[propName] === null || obj[propName] === undefined ) {
       delete obj[propName];
     }

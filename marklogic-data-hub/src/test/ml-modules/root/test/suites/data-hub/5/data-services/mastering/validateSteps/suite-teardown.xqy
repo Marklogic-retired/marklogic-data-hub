@@ -1,20 +1,28 @@
 xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
-hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:collection-remove("myTemporalCollection") }, ())
+
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:collection-remove("myTemporalCollection") }, ())
+} catch ($e) {()}
 ;
 
 xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
-hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:axis-remove("valid") }, ())
+
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:axis-remove("valid") }, ())
+} catch ($e) {()}
 
 ;
 
 xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
 import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
-hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:axis-remove("system") }, ())
+try {
+  hub-test:run-with-roles-and-privileges("temporal-admin", (), function () { temporal:axis-remove("system") }, ())
+} catch ($e) {()}
 
 ;
 

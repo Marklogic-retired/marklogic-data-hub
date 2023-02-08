@@ -32,7 +32,7 @@ const result = {
 
 // Need to ensure we have objects to pass to generateProtectedPathConfig
 const entityModels = [];
-for (var doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
+for (let doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
   entityModels.push(doc.toObject());
 }
 

@@ -16,6 +16,7 @@
 'use strict';
 
 import hubUtils from "./hub-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 
 function capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
@@ -124,17 +125,6 @@ function documentToContentDescriptor(doc, options = {}) {
     };
 }
 
-/*function queryToContentDescriptorArray(query, options = {}, database) {
-  let contentArray = [];
-  invokeFunction(function () {
-    let results = cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
-    for (let doc of results) {
-      contentArray.push(documentToContentDescriptor(doc, options));
-    }
-  }, database);
-  return contentArray;
-}*/
-
 function documentsToContentDescriptorArray(documents, options = {}) {
   let contentArray = [];
   for (let doc of documents) {
@@ -213,9 +203,17 @@ const cachedModules = {};
 
 function requireFunction(modulePath, functionName) {
   if (!cachedModules[modulePath]) {
-    cachedModules[modulePath] = require(modulePath);
+    if (fn.endsWith(modulePath, ".mjs")) {
+      cachedModules[modulePath] = mjsProxy.requireMjsModule(modulePath);
+    } else {
+      cachedModules[modulePath] = require(modulePath);
+    }
   }
-  return cachedModules[modulePath][functionName];
+  const fun = cachedModules[modulePath][functionName];
+  if (!fun) {
+    fn.error(xs.QName("XDMP-UNDFUN"), "XDMP-UNDFUN", [`${functionName}()`]);
+  }
+  return fun;
 }
 
 // node check functions
