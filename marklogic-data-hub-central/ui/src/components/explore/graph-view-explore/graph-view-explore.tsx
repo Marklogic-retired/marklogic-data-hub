@@ -20,6 +20,8 @@ import {unmergeUri} from "@api/merging";
 import CompareValuesModal from "@components/entities/matching/compare-values-modal/compare-values-modal";
 import {AuthoritiesContext} from "@util/authorities";
 import {AxiosResponse} from "axios";
+import  {getUserPreferences, updateUserPreferences} from "../../../services/user-preferences";
+import {UserContext} from "@util/user-context";
 
 type Props = {
   entityTypeInstances: any;
@@ -38,6 +40,8 @@ const {graphViewTooltips} = tooltipsConfig;
 
 const GraphViewExplore: React.FC<Props> = (props) => {
   const storage = getViewSettings();
+  const {user} = useContext(UserContext);
+  const localStorage = JSON.parse(getUserPreferences(user.name));
   const {entityTypeInstances, graphView, setGraphPageInfo, setIsLoading} = props;
 
   const [viewRelationshipLabels, toggleRelationShipLabels] = useState(storage.explore?.graphView?.relationshipLabels !== undefined ? storage.explore?.graphView?.relationshipLabels : true);
@@ -51,6 +55,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [originalUri, setOriginalUri] = useState<string>("");
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
   const [compareModalVisible, setCompareModalVisible] = useState(false);
+  const [alertStabilizeVisible, setAlertStabilizeVisible] = useState(localStorage.alertStabilizeGraphVisible !== undefined ? localStorage.alertStabilizeGraphVisible: true);
 
   const {exploreSidebar} = tooltipsConfig;
 
@@ -152,6 +157,12 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       }
     });
     togglePhysicsAnimation(e.target.checked);
+  };
+
+  const handleCloseAlert=() => {
+    localStorage.alertStabilizeGraphVisible=false;
+    updateUserPreferences(user.name, localStorage);
+    setAlertStabilizeVisible(false);
   };
 
   const isUnmergeAvailable = (nodeId) => {
@@ -319,11 +330,13 @@ const GraphViewExplore: React.FC<Props> = (props) => {
       ? <span></span>
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
-          <HCAlert
+          {alertStabilizeVisible && <HCAlert
             variant="info"
             aria-label="graph-stabilization-alert"
             showIcon
-          >{graphViewTooltips.graphStabilizationMessage}</HCAlert>
+            closeButton={true}
+            handleCloseAlert={handleCloseAlert}
+          >{graphViewTooltips.graphStabilizationMessage}</HCAlert>}
           <div className={styles.graphButtons}>
             {graphSwitches}
             {headerButtons}

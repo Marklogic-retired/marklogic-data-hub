@@ -12,7 +12,8 @@ interface UserPreferences {
   sidebarQuery: string,
 
   loadSelectedStepsUser: boolean,
-  selectedStepsDataUser: any
+  selectedStepsDataUser: any,
+  alertStabilizeGraphVisible:boolean
 }
 
 export const defaultUserPreferences = {
@@ -35,7 +36,8 @@ export const defaultUserPreferences = {
     selectedStepOptions: {},
     arrayLoadChecksSteps: [{flowName: "", stepNumber: -1}],
     selectedStepDetails: [{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]
-  }
+  },
+  alertStabilizeGraphVisible: true
 };
 
 export const createUserPreferences = (username: string) => {
