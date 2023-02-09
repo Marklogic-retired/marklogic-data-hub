@@ -22,8 +22,8 @@ let mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
 let xpathFunctions = esMappingLib.getXpathMappingFunctions();
 let mappingFunctions = !excludeMLMappingFunctions ? mlFunctions.concat(xpathFunctions) : xpathFunctions;
 mappingFunctions.sort(function(funcA, funcB) {
-  var nameA = String(funcA.functionName).toLowerCase();
-  var nameB = String(funcB.functionName).toLowerCase();
+  let nameA = String(funcA.functionName).toLowerCase();
+  let nameB = String(funcB.functionName).toLowerCase();
   if (nameA < nameB) {
     return -1;
   }

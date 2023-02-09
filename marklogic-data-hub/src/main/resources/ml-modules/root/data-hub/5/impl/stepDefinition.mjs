@@ -17,6 +17,7 @@
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import Perf from "/data-hub/5/impl/perf.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 
 const cachedModules = {};
 
@@ -65,7 +66,12 @@ export default class StepDefinition {
 
   retrieveModuleLibrary(moduleLibraryURI) {
     if (!cachedModules[moduleLibraryURI]) {
-      cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+        let extension = moduleLibraryURI.split(".").pop();
+        if (extension === "mjs"){
+            cachedModules[moduleLibraryURI] = mjsProxy.requireMjsModule(moduleLibraryURI);
+        }else{
+            cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+        }
     }
     return cachedModules[moduleLibraryURI];
   }

@@ -3,7 +3,7 @@
   "name": "default-matching",
   "type": "matching",
   "version": 1,
-  "modulePath": "/data-hub/5/builtins/steps/mastering/default/matching.sjs",
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/matching.mjs",
   "retryLimit" : 0,
   "batchSize" : 100,
   "threadCount" : 4,

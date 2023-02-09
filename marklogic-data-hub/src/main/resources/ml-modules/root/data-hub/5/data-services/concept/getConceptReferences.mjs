@@ -25,7 +25,7 @@ if (!conceptName) {
   httpUtils.throwBadRequest("Must specify a name in order to get model references");
 }
 
-var conceptModel = conceptLib.findModelByConceptName(conceptName);
+let conceptModel = conceptLib.findModelByConceptName(conceptName);
 if (!conceptModel) {
   conceptModel = conceptLib.findDraftModelByConceptName(conceptName);
   if (!conceptModel) {

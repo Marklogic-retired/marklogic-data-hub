@@ -169,7 +169,7 @@ export default class StepExecutionContext {
   finalizeCollectionsAndPermissions(contentArray) {
     this.applyTargetCollectionsAdditivity(contentArray);
 
-    for (var contentObject of contentArray) {
+    for (let contentObject of contentArray) {
       if (contentObject) {
         const context = contentObject.context || {};
 

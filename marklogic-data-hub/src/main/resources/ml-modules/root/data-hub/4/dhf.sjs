@@ -46,7 +46,7 @@ function run(context, func)
   }
 
   return flowlib.safeRun(func)
-};
+}
 
 /**
  : Creates a legacy envelope in the http://marklogic.com/data-hub/envelope namespace (if xml)
@@ -59,7 +59,7 @@ function run(context, func)
  */
 function makeLegacyEnvelope(content, headers, triples, dataFormat) {
   return flowlib.makeLegacyEnvelope(content, headers, triples, dataFormat);
-};
+}
 
 /**
  : Creates an entity services envelope in the http://marklogic.com/entity-services namespace (if xml)
@@ -71,7 +71,7 @@ function makeLegacyEnvelope(content, headers, triples, dataFormat) {
  */
 function makeEnvelope(content, headers, triples, dataFormat) {
   return flowlib.makeEnvelope(content, headers, triples, dataFormat);
-};
+}
 
 /**
  : Runs a writer plugin
@@ -83,7 +83,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
  */
 function runWriter(writerFunction, id, envelope, options) {
   flowlib.queueWriter(writerFunction, id, envelope, options);
-};
+}
 
 /**
  : Creates a generic context for use in any plugin
@@ -96,14 +96,14 @@ function context(label) {
   };
   setTraceLabel(context, label);
   return context;
-};
+}
 
 /**
  : Creates a context for a content plugin
  */
 function contentContext() {
   return context('content');
-};
+}
 
 /**
  : Creates a context for a content plugin
@@ -114,7 +114,7 @@ function contentContext(rawContent) {
     addTraceInput(ctx, "rawContent", rawContent);
   }
   return ctx;
-};
+}
 
 /**
  : Creates a context for a headers plugin
@@ -123,7 +123,7 @@ function headersContext(content) {
   let ctx = context('headers');
   addTraceInput(ctx, "content", content);
   return ctx;
-};
+}
 
 /**
  : Creates a context for a triples plugin
@@ -133,7 +133,7 @@ function triplesContext(content, headers) {
   addTraceInput(ctx, "content", content);
   addTraceInput(ctx, "headers", headers);
   return ctx;
-};
+}
 
 /**
  : Creates a context for a writer plugin
@@ -142,7 +142,7 @@ function writerContext(envelope) {
   let ctx = context('writer');
   addTraceInput(ctx, "envelope", envelope);
   return ctx;
-};
+}
 
 /**
  : Sets the trace label for a given context
@@ -156,7 +156,7 @@ function writerContext(envelope) {
 function setTraceLabel(context, label) {
   context.label = label;
   return context;
-};
+}
 
 /**
  : Adds a trace input to the context
@@ -174,7 +174,7 @@ function addTraceInput(context, inputLabel, input) {
   inputs[inputLabel] = input;
   context.inputs = inputs;
   return context;
-};
+}
 
 function logTrace(context) {
   let label = context.label;
@@ -191,7 +191,7 @@ function logTrace(context) {
     tracelib.setPluginInput(key, inputs[key]);
   }
   tracelib.pluginTrace(null, null, "PT0S");
-};
+}
 
 module.exports = {
   run: run,

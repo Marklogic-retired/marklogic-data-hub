@@ -5,7 +5,6 @@ import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import mappingLib from "/data-hub/5/mapping/mapping-lib.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 import mappingStepLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
@@ -73,7 +72,7 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   const namespaces = fetchNamespacesFromMappingStep(mappingStep);
 
   let entityTemplates = "";
-  for(var i=0; i< allEntityMap.length; i++){
+  for(let i=0; i< allEntityMap.length; i++){
     entityTemplates += generateEntityTemplates(i, allEntityMap[i]).join('\n') + "\n";
   }
 
@@ -151,7 +150,7 @@ function makeParameterElements(mappingStep, userParameterNames) {
         hubUtils.hubTrace(infoEvent, `Applying mapping parameters module at path '${modulePath}`);
       }
       try {
-        const userParams = require(modulePath)["getParameterDefinitions"](mappingStep);
+        const userParams = hubUtils.requireFunction(modulePath, "getParameterDefinitions")(mappingStep);
         userParams.forEach(userParam => elements += `<m:param name="${userParam.name}"/>`);
       } catch (error) {
         throw Error(`getParameterDefinitions failed in module '${modulePath}'; cause: ${error.message}`);
@@ -403,9 +402,8 @@ function validateAndTestMapping(mapping, uri) {
   try {
     if (modulePath) {
       const contentSequence = Sequence.from([{"uri": uri, "value": sourceDocument}]);
-      const moduleLib = require(modulePath);
-      userParameterNames = moduleLib["getParameterDefinitions"](mapping).map(def => def.name);
-      userParameterMap = moduleLib["getParameterValues"](contentSequence);
+      userParameterNames = hubUtils.requireFunction(modulePath, "getParameterDefinitions")(mapping).map(def => def.name);
+      userParameterMap = hubUtils.requireFunction(modulePath, "getParameterValues")(contentSequence);
     }
   } catch (error) {
     // Need to throw an HTTP error so that the testMapping endpoint returns a proper error
@@ -742,7 +740,7 @@ function testXmlMapping(xmlMapping, sourceInstance, parameterMap) {
   }, {database: xdmp.modulesDatabase()});
 
   let inputDoc = sourceInstance;
-  if (!(inputDoc instanceof Document)) {
+  if (!(hubUtils.isDocumentNode(inputDoc))) {
     inputDoc = fn.head(xdmp.unquote(String(sourceInstance)));
   }
   return xdmp.xsltEval(mappingXslt, inputDoc, parameterMap);
@@ -776,7 +774,7 @@ function extractInstance(docNode) {
 
 function getXQueryLib() {
   if (!xqueryLib) {
-    xqueryLib = sjsProxy.requireSjsModule('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy', "");
+    xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
   }
   return xqueryLib;
 }

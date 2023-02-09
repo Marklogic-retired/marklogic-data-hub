@@ -1,9 +1,8 @@
 
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
 const datahub = DataHubSingleton.instance();
-const merging = sjsProxy.requireSjsModule('/com.marklogic.smart-mastering/merging.xqy');
+const merging = require('/com.marklogic.smart-mastering/merging.xqy');
 
 function main(content, options) {
   let documentsAffected = [content];

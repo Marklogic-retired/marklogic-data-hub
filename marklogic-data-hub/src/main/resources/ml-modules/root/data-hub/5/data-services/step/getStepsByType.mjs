@@ -52,8 +52,8 @@ for (const step of stepsOfType) {
 for (const stepType in response) {
   const stepsOfType = response[stepType];
   stepsOfType.sort((stepA, stepB) => {
-    var stepAName = stepA.name.toLowerCase();
-    var stepBName = stepB.name.toLowerCase();
+    let stepAName = stepA.name.toLowerCase();
+    let stepBName = stepB.name.toLowerCase();
     if (stepAName < stepBName) {
       return -1;
     }

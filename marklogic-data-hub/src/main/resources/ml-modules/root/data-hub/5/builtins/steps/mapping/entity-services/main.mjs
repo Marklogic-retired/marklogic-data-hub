@@ -5,13 +5,12 @@ import lib from "/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs";
 import mappingLibrary from "/data-hub/5/mapping/mapping-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 
 import entityValidationLib from '/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.mjs';
-const xqueryLib = sjsProxy.requireSjsModule('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy')
+const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
-var mappings = {};
+let mappings = {};
 let entityModelMap = {};
 const traceEvent = consts.TRACE_MAPPING_DEBUG;
 
@@ -158,7 +157,7 @@ function buildUri(entityInstance, entityName, outputFormat){
 function getUserMappingParameterMap(stepExecutionContext, contentSequence) {
   if (stepExecutionContext != null) {
     const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
-    return path ? require(path)["getParameterValues"](contentSequence) : {};
+    return path ? hubUtils.requireFunction(path, "getParameterValues")(contentSequence) : {};
   }
   return {};
 }
@@ -228,13 +227,13 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
   let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
   if (outputFormat === consts.JSON) {
-    if ((!doc instanceof Element && !doc instanceof XMLDocument) && (doc instanceof Object || doc instanceof ObjectNode)) {
-      attachments = flowUtils.jsonToXml(attachments);
+    if (hubUtils.isXmlNode(attachments)) {
+      attachments = xdmp.quote(attachments);
     }
     nb.addNode({
       envelope: {
         headers: headers,
-        triples: triples.map((triple) => flowUtils.normalizeTriple(triple).toObject()),
+        triples: triples.map((triple) => flowUtils.normalizeTriple(triple)).reduce((arr, triple) => arr.concat(triple), []),
         instance: Object.assign({
           info: entityInfo
         }, instance.toObject()),
@@ -277,7 +276,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
       nb.addText(entityInfo.version);
       nb.endElement();
       nb.endElement();
-      if (instance instanceof Sequence) {
+      if (instance[Symbol.iterator]) {
         for (let n of instance) {
           nb.addNode(n);
         }
@@ -288,7 +287,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
     }
     if (attachments && options.attachSourceDocument) {
       nb.startElement("attachments", "http://marklogic.com/entity-services");
-      if (attachments instanceof Document && attachments.documentFormat === 'JSON') {
+      if (hubUtils.isJsonNode(attachments)) {
         nb.addText(xdmp.quote(attachments));
       } else {
         // can get sequence of nodes in JSON to XML scenario

@@ -139,7 +139,7 @@ function main(content, options, stepExecutionContext) {
 function applyPermissionsFromOptions(results, options) {
   if (options.permissions) {
     const parsedPermissions = hubUtils.parsePermissions(options.permissions);
-    for (var result of results) {
+    for (let result of results) {
       if (result['$delete'] == true) {
         continue;
       }

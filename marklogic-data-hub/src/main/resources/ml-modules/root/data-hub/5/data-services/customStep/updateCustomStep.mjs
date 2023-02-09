@@ -31,7 +31,7 @@ Artifacts.getArtifact("custom", stepName);
 xdmp.trace(consts.TRACE_STEP, `Updating custom step ${stepName}`);
 
 // unpackage additionalSettings field given by UI
-var additionalSettings = stepProperties.additionalSettings;
+let additionalSettings = stepProperties.additionalSettings;
 Object.assign(stepProperties, additionalSettings);
 delete stepProperties.additionalSettings;
 

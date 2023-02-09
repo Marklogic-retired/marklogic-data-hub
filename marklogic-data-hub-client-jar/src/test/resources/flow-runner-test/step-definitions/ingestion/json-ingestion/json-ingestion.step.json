@@ -3,7 +3,7 @@
   "name": "json-ingestion",
   "type": "INGESTION",
   "version": 1,
-  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.sjs",
+  "modulePath": "/data-hub/5/builtins/steps/ingestion/default/main.mjs",
   "customHook": {},
   "retryLimit" : 0,
   "batchSize" : 100,

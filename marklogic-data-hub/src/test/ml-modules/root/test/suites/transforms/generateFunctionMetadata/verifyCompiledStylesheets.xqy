@@ -21,7 +21,7 @@ declare function local:verify-stylesheet-has-map-namespace-declared($path as xs:
 core-functions.xml.xslt is not tested here because the problem with the 'map' namespace prefix not being
 referenceable isn't a problem for an XQuery mapping functions module. The 'map' namespace prefix is used
 in the xdmp:javascript-call elements added to the XSLT module for an SJS mapping functions module, and
-thus we verify that it exists for the XSLT associated with the custom-mapping-functions.sjs module.
+thus we verify that it exists for the XSLT associated with the custom-mapping-functions.mjs module.
 :)
 local:verify-stylesheet-has-map-namespace-declared("/custom-modules/mapping-functions/custom-mapping-functions.xml.xslt")
 
