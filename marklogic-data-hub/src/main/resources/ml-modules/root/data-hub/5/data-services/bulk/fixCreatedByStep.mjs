@@ -23,7 +23,7 @@ declareUpdate();
 import config from "/com.marklogic.hub/config.mjs";
 import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
 
-var endpointState = external.endpointState;
+let endpointState = external.endpointState;
 if (!endpointState) {
   endpointState = {};
 } else {
@@ -99,7 +99,7 @@ if (uris.length == 0) {
               {database: xdmp.database(config.JOBDATABASE)}
             );
             if (associatedWithTriples) {
-              for (var triple of associatedWithTriples) {
+              for (let triple of associatedWithTriples) {
                 const object = sem.tripleObject(triple);
                 if (object != flowName && object != stepDefinitionName) {
                   console.log("Using associatedWith!");

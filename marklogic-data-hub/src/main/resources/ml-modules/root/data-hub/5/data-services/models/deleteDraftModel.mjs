@@ -27,7 +27,7 @@ if (!entityName) {
   httpUtils.throwBadRequest("Must specify a name in order to delete an entity model");
 }
 
-var entityModel = entityLib.findModelByEntityName(entityName);
+let entityModel = entityLib.findModelByEntityName(entityName);
 if (!entityModel) {
   entityModel = entityLib.findDraftModelByEntityName(entityName);
   if (!entityModel) {

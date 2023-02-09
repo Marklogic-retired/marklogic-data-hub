@@ -20,8 +20,8 @@ hub-test:load-non-entities($test:__CALLER_FILE__);
 
 xquery version "1.0-ml";
 xdmp:javascript-eval("
-  // Alternative to hub-test; this way gets the step def into the collection required by mapping.sjs' getArtifactNode().
-  const mappingService = require('/test/suites/data-hub/5/data-services/lib/mappingService.sjs');
+  // Alternative to hub-test; this way gets the step def into the collection required by mapping.mjs' getArtifactNode().
+  import mappingService from '/test/suites/data-hub/5/data-services/lib/mappingService.mjs';
   mappingService.DocumentForTestingUtils.loadTestData();
 ")
 

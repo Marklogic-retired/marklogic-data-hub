@@ -1,0 +1,19 @@
+{
+  "name": "CustomerByValue",
+  "type": "CUSTOM",
+  "version": 1,
+  "options": {
+    "collections": [
+      "value-collection"
+    ],
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "targetEntity": "Customer",
+    "sourceQuery": "cts.values(cts.uriReference())",
+    "sourceQueryIsScript": true,
+    "writeStepOutput": false
+  },
+  "customHook": {},
+  "lang": "zxx",
+  "modulePath": "/test/custom-by-value-step/main.mjs"
+}

@@ -39,6 +39,7 @@ export default class Flow {
   constructor(config) {
     this.config = config;
     this.stepDefinition = new StepDefinition(config);
+    this.flowUtils = flowUtils;
   }
 
   getFlow(name) {

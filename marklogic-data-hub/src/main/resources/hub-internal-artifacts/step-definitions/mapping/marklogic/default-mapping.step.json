@@ -3,7 +3,7 @@
   "name": "default-mapping",
   "type": "mapping",
   "version": 1,
-  "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs",
+  "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.mjs",
   "retryLimit" : 0,
   "batchSize" : 100,
   "threadCount" : 4,

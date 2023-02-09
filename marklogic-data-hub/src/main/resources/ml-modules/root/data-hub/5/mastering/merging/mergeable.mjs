@@ -7,15 +7,14 @@ import common from "/data-hub/5/mastering/common.mjs";
  */
 import hubUtil from '/data-hub/5/impl/hub-utils.mjs';
 import consts from "../../impl/consts.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 
-const semXqy = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+const sem = require("/MarkLogic/semantics.xqy");
 
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
-const rdfType = semXqy.curieExpand("rdf:type");
-const rdfsIsDefinedBy = semXqy.curieExpand("rdfs:isDefinedBy");
+const rdfType = sem.curieExpand("rdf:type");
+const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
 
 
 export default class Mergeable {
@@ -535,7 +534,7 @@ export default class Mergeable {
     nodeBuilder.endElement();
     nodeBuilder.startElement("es:triples", "http://marklogic.com/entity-services");
     if (triples) {
-      for (const tripleNode of semXqy.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
+      for (const tripleNode of sem.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
         nodeBuilder.addNode(tripleNode);
       }
     }
@@ -576,7 +575,7 @@ export default class Mergeable {
         // add values
         for (const output of hubUtil.normalizeToArray(propertyOutput)) {
           for (const value of hubUtil.normalizeToArray(output.values)) {
-            if (value instanceof Node) {
+            if (hubUtil.isNode(value)) {
               nodeBuilder.addNode(value);
             } else {
               nodeBuilder.startElement(fn.string(output.propertyName), fn.namespaceUriFromQName(output.propertyName));
@@ -595,7 +594,7 @@ export default class Mergeable {
 
   setMergeInformation(merges, instanceXPath, output) {
     for (const source of hubUtil.normalizeToArray(output.sources)) {
-      let {documentUri, dateTime, name} = source instanceof Node ? source.toObject() : source;
+      let {documentUri, dateTime, name} = hubUtil.isNode(source) ? source.toObject() : source;
       // following use of fn.string is so ML 9 will compare the strings properly
       documentUri = fn.string(documentUri), dateTime = fn.string(dateTime), name = fn.string(name);
       const existingEntry = merges.find((entry) => entry["document-uri"] === documentUri && entry.name === name);

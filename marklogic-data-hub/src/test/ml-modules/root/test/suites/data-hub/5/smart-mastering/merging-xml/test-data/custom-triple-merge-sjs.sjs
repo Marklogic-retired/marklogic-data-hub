@@ -13,4 +13,6 @@ function customTrips(mergeOptions, docs, sources, propertySpec) {
   return sem.triple(sem.iri("some-param"), sem.iri("is"), someParam);
 }
 
-exports.customTrips = customTrips;
+module.exports = {
+  customTrips
+};
