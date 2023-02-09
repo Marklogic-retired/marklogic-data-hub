@@ -15,6 +15,8 @@
  */
 'use strict';
 
+import common from  "/data-hub/5/data-services/mastering/validateStepCommonLib.mjs";
+import core from "/data-hub/5/artifacts/core.mjs";
 import validateMergeLib from "/data-hub/5/data-services/mastering/validateMergingStepLib.mjs";
 
 const stepName = external.stepName;
@@ -24,8 +26,6 @@ const entityPropertyPath = external.entityPropertyPath
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
-import common from  "/data-hub/5/data-services/mastering/validateStepCommonLib.mjs";
-import core from "/data-hub/5/artifacts/core.mjs";
 const step = core.getArtifact("merging", stepName);
 
 let warnings = [];

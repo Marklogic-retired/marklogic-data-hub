@@ -1,5 +1,4 @@
 const test = require("/test/test-helper.xqy");
-const {match} = require("../../../smart-mastering/lib/masteringTestLib.sjs");
 
 function baselineQueryInterceptorA(baselineQuery) {
   return cts.andQuery([baselineQuery, cts.collectionQuery("InterceptorA")]);
@@ -20,8 +19,7 @@ function scoreDocumentInterceptor(defaultScore, contentObjectA, contentObjectB, 
     if (matchRulesetScore > score) {
       score = matchRulesetScore;
     }
-  }
- */
+  }*/
   return score;
 }
 

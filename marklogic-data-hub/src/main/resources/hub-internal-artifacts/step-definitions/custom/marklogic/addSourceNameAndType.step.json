@@ -7,5 +7,5 @@
     "sourceNameToAdd": "",
     "sourceTypeToAdd": ""
   },
-  "modulePath": "/data-hub/5/builtins/steps/custom/addSourceNameAndType/main.sjs"
+  "modulePath": "/data-hub/5/builtins/steps/custom/addSourceNameAndType/main.mjs"
 }

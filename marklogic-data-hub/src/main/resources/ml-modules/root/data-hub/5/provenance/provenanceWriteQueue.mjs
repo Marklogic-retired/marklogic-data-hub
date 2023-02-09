@@ -16,9 +16,8 @@
 'use strict';
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const ps = sjsProxy.requireSjsModule("/MarkLogic/provenance.xqy", "http://marklogic.com/provenance-services");
+const ps = require("/MarkLogic/provenance.xqy");
 
 const persistedIDs = [];
 

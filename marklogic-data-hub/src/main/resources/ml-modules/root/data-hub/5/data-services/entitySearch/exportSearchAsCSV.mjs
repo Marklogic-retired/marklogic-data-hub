@@ -17,11 +17,12 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/export-entities", "execute");
 
-const op = require('/MarkLogic/optic');
-const search = require('/MarkLogic/appservices/search/search');
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import op from '/MarkLogic/optic';
+
+const search = require('/MarkLogic/appservices/search/search');
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -73,14 +74,14 @@ const filterObjectAndArrayTypeProperties = (name) => {
 
 
 
-var viewName = external.viewName;
-var schemaName = external.schemaName;
-var limit = external.limit;
-var structuredQuery = external.structuredQuery;
-var searchText = external.searchText;
-var queryOptions = external.queryOptions;
-var sortOrder = external.sortOrder;
-var columns = external.columns;
+let viewName = external.viewName;
+let schemaName = external.schemaName;
+let limit = external.limit;
+let structuredQuery = external.structuredQuery;
+let searchText = external.searchText;
+let queryOptions = external.queryOptions;
+let sortOrder = external.sortOrder;
+let columns = external.columns;
 
 structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
 searchText = searchText || '';
@@ -130,7 +131,5 @@ if (limit) {
 }
 // Not using the rows REST API due to https://bugtrack.marklogic.com/55338
 let result = opticPlan.result('object');
-if (!(result instanceof Sequence)) {
-  result = Sequence.from(result);
-}
+result = hubUtils.normalizeToSequence(result);
 xdmp.quote(result, {method:'sparql-results-csv'});
