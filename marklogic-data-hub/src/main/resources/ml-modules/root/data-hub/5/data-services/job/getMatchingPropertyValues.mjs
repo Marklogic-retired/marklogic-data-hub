@@ -19,6 +19,6 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/monitor-jobs", "ex
 import jobQueryLib from "/data-hub/5/flow/job-query-lib.mjs";
 
 const facetValuesSearchQueryParam = external.facetValuesSearchQuery;
-var facetValuesSearchQuery = facetValuesSearchQueryParam;
+let facetValuesSearchQuery = facetValuesSearchQueryParam;
 facetValuesSearchQuery = fn.head(xdmp.fromJSON(facetValuesSearchQuery));
 jobQueryLib.getMatchingPropertyValues(facetValuesSearchQuery);

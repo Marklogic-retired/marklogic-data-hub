@@ -22,7 +22,7 @@ import Job from "/data-hub/5/flow/job.mjs";
 const jobId = external.jobId;
 const stepNumber = external.stepNumber;
 const stepStatus = external.stepStatus;
-var runStepResponse = fn.head(xdmp.fromJSON(runStepResponse));
+let runStepResponse = fn.head(xdmp.fromJSON(runStepResponse));
 
 const job = Job.getRequiredJob(jobId).finishStep(stepNumber, runStepResponse, stepStatus, null, null).update();
 job;

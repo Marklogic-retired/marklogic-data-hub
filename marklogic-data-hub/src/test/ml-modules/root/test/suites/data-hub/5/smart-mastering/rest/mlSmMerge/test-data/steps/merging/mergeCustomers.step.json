@@ -20,7 +20,7 @@
   "targetCollections": {},
   "interceptors" : [
     {
-      "path": "/test/suites/data-hub/5/smart-mastering/rest/mlSmMerge/test-data/mergeInterceptor.sjs",
+      "path": "/test/suites/data-hub/5/smart-mastering/rest/mlSmMerge/test-data/mergeInterceptor.mjs",
       "vars": {},
       "when": "beforeContentPersisted"
     }

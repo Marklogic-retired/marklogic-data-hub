@@ -1,21 +1,16 @@
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-const cachedInterceptorModules = {};
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 function retrieveInterceptorFunction(interceptorObj, interceptorType) {
-    let interceptorModule = cachedInterceptorModules[interceptorObj.path];
-    if (!interceptorModule) {
-        try {
-            interceptorModule = require(interceptorObj.path);
-            cachedInterceptorModules[interceptorObj.path] = interceptorModule;
-        } catch (e) {
-            httpUtils.throwBadRequest(`Module defined by ${interceptorType} not found: ${interceptorObj.path}`);
+    try {
+        const interceptorFunction = hubUtils.requireFunction(interceptorObj.path, interceptorObj.function);
+        if (!interceptorFunction) {
+            httpUtils.throwBadRequest(`Function defined by ${interceptorType} not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
         }
+        return interceptorFunction;
+    } catch (err) {
+        httpUtils.throwBadRequest(`Module defined by ${interceptorType} not found: ${interceptorObj.path}`);
     }
-    const interceptorFunction = interceptorModule[interceptorObj.function];
-    if (!interceptorFunction) {
-        httpUtils.throwBadRequest(`Function defined by ${interceptorType} not exported by module: ${interceptorObj.function}#${interceptorObj.path}`);
-    }
-    return interceptorFunction;
 }
 
 function applyInterceptors(interceptorType, accumulated, interceptors, ...additionalArguments) {

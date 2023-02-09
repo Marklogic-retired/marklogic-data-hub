@@ -3,7 +3,7 @@
   "name": "default-mastering",
   "type": "mastering",
   "version": 1,
-  "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs",
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.mjs",
   "retryLimit" : 0,
   "batchSize" : 100,
   "threadCount" : 4,

@@ -337,8 +337,47 @@ declare function assert-arrays-equal($expected as item()*, $actual as item()*)
 
 declare function run-with-roles-and-privileges($roles, $privileges, $func-or-module, $variables)
 {
-  hub-test:assert-called-from-test()
-  ,
+  let $user-id := create-test-user($roles, $privileges)
+  let $user-map := map:map() => map:with("userId", $user-id)
+  return
+    try {
+      if ($func-or-module instance of xdmp:function) then
+        xdmp:invoke-function($func-or-module, $user-map)
+      else
+        xdmp:invoke(fn:string($func-or-module), $variables, $user-map)
+      ,
+      let $_ := clean-up-test-user()
+      return ()
+    }
+    catch ($e) {
+      clean-up-test-user(),
+      xdmp:rethrow()
+    }
+};
+
+declare function run-with-user-id($user-id, $func-or-module, $variables)
+{
+  let $user-map := map:map() => map:with("userId", $user-id)
+  return
+    try {
+      if ($func-or-module instance of xdmp:function) then
+        xdmp:invoke-function($func-or-module, $user-map)
+      else if (fn:matches(fn:string($func-or-module), "^\s*function\s*\(\)")) then
+        xdmp:javascript-eval("var functionToRun; functionToRun();", map:entry("functionToRun", $func-or-module), $user-map)
+      else
+        xdmp:invoke(fn:string($func-or-module), $variables, $user-map)
+      ,
+      let $_ := clean-up-test-user()
+      return ()
+    }
+    catch ($e) {
+      clean-up-test-user(),
+      xdmp:rethrow()
+    }
+};
+
+declare function create-test-user($roles, $privileges) {
+  hub-test:assert-called-from-test(),
   let $security-options :=
     map:map() =>
     map:with("defaultXqueryVersion", "1.0-ml") =>
@@ -348,36 +387,22 @@ declare function run-with-roles-and-privileges($roles, $privileges, $func-or-mod
       json:object() => map:with("roles", $roles) => map:with("privileges", $privileges),
       $security-options
     )
+  return fn:head(xdmp:invoke("/test/invoke/create-test-user.xqy", (), $security-options))
+};
 
-  let $user-id := fn:head(xdmp:invoke("/test/invoke/create-test-user.xqy", (), $security-options))
-  let $user-map := map:map() => map:with("userId", $user-id)
-  let $clean-up :=
-    function() {
-      try {
-          xdmp:invoke("/test/invoke/delete-test-role.xqy", (), $security-options)
-      } catch ($e) {
-      }
-      ,
-      try {
-          xdmp:invoke("/test/invoke/delete-test-user.xqy", (), $security-options)
-      } catch ($e) {
-      }
-    }
-
-  return
-    try {
-      if ($func-or-module instance of xdmp:function) then
-        xdmp:invoke-function($func-or-module, $user-map)
-      else
-        xdmp:invoke($func-or-module, $variables, $user-map)
-      ,
-      let $_ := $clean-up()
-      return ()
-    }
-    catch ($e) {
-      $clean-up(),
-      xdmp:rethrow()
-    }
+declare function clean-up-test-user() {
+  let $security-options :=
+    map:map() =>
+    map:with("defaultXqueryVersion", "1.0-ml") =>
+    map:with("database", xdmp:security-database())
+  return (try {
+    xdmp:invoke("/test/invoke/delete-test-role.xqy", (), $security-options)
+  } catch ($e) {
+  },
+  try {
+    xdmp:invoke("/test/invoke/delete-test-user.xqy", (), $security-options)
+  } catch ($e) {
+  })
 };
 
 declare function wait-for-indexes()

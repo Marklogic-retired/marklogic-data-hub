@@ -19,10 +19,9 @@ import config from "/com.marklogic.hub/config.mjs";
 import hubES from "/data-hub/5/impl/hub-es.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import op from '/MarkLogic/optic';
-import sjsProxy from "/data-hub/core/util/sjsProxy";
-
-const ps = sjsProxy.requireSjsModule("/MarkLogic/provenance.xqy", "http://marklogic.com/provenance-services");
 import ProvenanceWriteQueue from "/data-hub/5/provenance/provenanceWriteQueue.mjs";
+
+const ps = require("/MarkLogic/provenance.xqy");
 
 const provenanceWriteQueue = new ProvenanceWriteQueue();
 
@@ -145,11 +144,10 @@ function validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, s
  * @param {Array} recordsQueue - array of objects with identifier of this provenance information, options, and metadata
  */
 function createRecords(recordsQueue, latestProvenance = false) {
-  xdmp.eval(`
-    declareUpdate();
-    recordsQueue.persist();
-    `,
-    {recordsQueue},
+  xdmp.invokeFunction(() => {
+      declareUpdate();
+      recordsQueue.persist();
+    },
     {
       database: xdmp.database(config.JOBDATABASE),
       commit: 'auto',
@@ -157,7 +155,7 @@ function createRecords(recordsQueue, latestProvenance = false) {
       ignoreAmps: true
     });
   return recordsQueue.getDatabaseQueue(consts.JOBDATABASE).map((recordDetails) => recordDetails.id);
-};
+}
 
 /**
  * General function for adding to the commit queue
@@ -171,7 +169,7 @@ function queueForCommit(databaseName = config.JOBDATABASE, id, options, metadata
     hubUtils.hubTrace(consts.TRACE_FLOW_DEBUG, `Queueing provenance record with ID: ${id}`);
   }
   provenanceWriteQueue.addProvenanceRecord(databaseName, {id, options, metadata});
-};
+}
 
 /**
  * @desc Create a provenance record when a document is run through an ingestion step

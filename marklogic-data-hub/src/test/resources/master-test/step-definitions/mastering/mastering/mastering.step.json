@@ -133,5 +133,5 @@
   },
   "customHook": {},
   "lang": "zxx",
-  "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.sjs"
+  "modulePath": "/data-hub/5/builtins/steps/mastering/default/main.mjs"
 }

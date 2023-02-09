@@ -366,7 +366,7 @@ function allAssociatedProvEntities(documentURI, database = config.FINALDATABASE)
     }
   }
   return ancestorOrSelfProvIDs;
-};
+}
 
 function sourceInformationForDocument(documentURI, database = config.FINALDATABASE) {
   const allAssociatedProvIDs = allAssociatedProvEntities(documentURI, database);

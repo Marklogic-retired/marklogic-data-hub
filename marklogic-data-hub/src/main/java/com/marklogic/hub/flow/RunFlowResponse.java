@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.hub.step.RunStepResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class RunFlowResponse {
     String lastCompletedStep;
     String user;
     Map<String, RunStepResponse> stepResponses;
+    List<Map<String, Object>> flowErrors;
 
     public RunFlowResponse(String jobId) {
         this.jobId = jobId;

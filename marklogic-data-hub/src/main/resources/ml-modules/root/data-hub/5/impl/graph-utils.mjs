@@ -20,8 +20,9 @@ import consts from "/data-hub/5/impl/consts.mjs"
 import entityLib from "/data-hub/5/impl/entity-lib.mjs"
 import entitySearchLib from "/data-hub/5/entities/entity-search-lib"
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
-import sem from "/MarkLogic/semantics.xqy";
 import {getPredicatesByModel} from "./entity-lib.mjs"
+
+const sem = require("/MarkLogic/semantics.xqy");
 
 const hubCentralConfig = cts.doc("/config/hubCentral.json");
 const graphDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_GRAPH_DEBUG);
@@ -361,7 +362,8 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   };
 
   const getEdgeCount = (iri) => {
-    if (!distinctIriPredicateCombos[iri]) {
+    const iriString = fn.string(iri);
+    if (!distinctIriPredicateCombos[iriString]) {
       return 0;
     }
     return distinctIriPredicateCombos[iri].size + getGroupNodeCount(iri);
@@ -559,7 +561,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         }
         if (fn.exists(item.additionalEdge) && item.additionalEdge.toString().length > 0) {
           const objectId = objectHasDoc ? objectUri : objectIRI;
-          const additionalId = fn.exists(item.docRelated) ? item.docRelated : item.additionalIRI;
+          const additionalId = fn.exists(item.docRelated) ? fn.string(item.docRelated) : fn.string(item.additionalIRI);
           const sortedIds = [objectId, additionalId].sort();
           const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
           const predicateArr = item.additionalEdge.toString().split("/");
@@ -576,6 +578,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         }
       }
       if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0) {
+
         const docUriToNodeKeys = getUrisByIRI(objectIRI);
         const edgeFunction = key => {
           const objectId = key;

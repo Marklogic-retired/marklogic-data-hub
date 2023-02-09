@@ -20,7 +20,7 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const stepDefinitionType = external.stepDefinitionType.toLowerCase();
-const stepName = external.stepDefinitionType;
+const stepName = external.stepName;
 
 if ("ingestion" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
@@ -42,7 +42,7 @@ const flowsWithReferences = cts.search(cts.andQuery([
   cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
 ]));
 
-for (var flowDoc of flowsWithReferences) {
+for (let flowDoc of flowsWithReferences) {
   const flow = flowDoc.toObject();
   let foundStep = false;
   Object.keys(flow.steps).forEach(key => {

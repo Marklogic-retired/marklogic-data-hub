@@ -20,9 +20,8 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/download-project-f
 import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubEs from "/data-hub/5/impl/hub-es.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
 
-const hent = sjsProxy.requireSjsModule("/data-hub/5/impl/hub-entities.xqy");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 
 const artifactsWithProjectPaths = [];
@@ -51,7 +50,7 @@ cts.search(userArtifactQuery).toArray().forEach(artifact => {
 
 // Need to ensure we have objects to pass to generateProtectedPathConfig
 const entityModels = [];
-for (var doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
+for (let doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
   entityModels.push(doc.toObject());
 }
 

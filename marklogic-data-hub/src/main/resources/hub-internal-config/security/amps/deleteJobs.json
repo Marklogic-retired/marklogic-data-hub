@@ -1,6 +1,6 @@
 {
   "local-name" : "deleteJobs",
-  "document-uri" : "/data-hub/5/impl/jobs.sjs",
+  "document-uri" : "/data-hub/5/impl/jobs.mjs",
   "modules-database" : "%%mlModulesDbName%%",
   "role" : [ "data-hub-job-internal" ]
 }
