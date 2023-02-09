@@ -1233,6 +1233,26 @@ pipeline{
                             }
                             }
               }
+         stage('rh7_cluster_11.0.0'){
+            agent { label 'dhfLinuxAgent'}
+            steps{
+             timeout(time: 5,  unit: 'HOURS'){
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("11.0.0","Release")}
+            }}
+            post{
+                  always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                    }
+                            success {
+                              println("rh7_cluster_11.0.0 Tests Completed")
+                              sendMail Email,'<h3>Tests Passed on  11.0.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0.0 | Cluster | Passed'
+                             }
+                             unstable {
+                                println("rh7_cluster_11.0.0 Tests Failed")
+                                sendMail Email,'<h3>Some Tests Failed on 11.0.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0.0 | Cluster | Failed'
+                            }
+                            }
+              }              
 		}
 	}
 
