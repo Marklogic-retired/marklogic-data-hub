@@ -30,6 +30,8 @@ public interface HubClient {
      */
     String getUsername();
 
+    String getMlAuthentication();
+
     DatabaseClient getStagingClient();
 
     DatabaseClient getStagingClient(String databaseName);
