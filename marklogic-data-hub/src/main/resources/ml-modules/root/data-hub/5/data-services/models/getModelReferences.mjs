@@ -27,7 +27,7 @@ if (!entityName) {
   httpUtils.throwBadRequest("Must specify a name in order to get model references");
 }
 
-var entityModel = entityLib.findModelByEntityName(entityName);
+let entityModel = entityLib.findModelByEntityName(entityName);
 if (!entityModel) {
   entityModel = entityLib.findDraftModelByEntityName(entityName);
   if (!entityModel) {
@@ -38,9 +38,8 @@ if (!entityModel) {
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
 const entityModelUris = [entityLib.getModelUri(entityName),entityLib.getDraftModelUri(entityName)];
 
-var stepNames;
-var entityNames;
-var entityNamesWithForeignKeyReferences;
+let {stepNames, entityNames, entityNamesWithForeignKeyReferences} = external;
+
 if (propertyName == null || propertyName == undefined) {
   stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
   entityNames = entityLib.findModelReferencesInOtherModels(entityModelUris, entityTypeId);

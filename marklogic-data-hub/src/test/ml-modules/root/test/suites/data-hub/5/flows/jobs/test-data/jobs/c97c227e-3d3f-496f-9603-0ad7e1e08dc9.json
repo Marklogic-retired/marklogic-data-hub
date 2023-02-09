@@ -35,7 +35,7 @@
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "targetDatabase": "data-hub-FINAL",
         "stepOutput": [
-          "com.marklogic.client.FailedRequestException: Local message: failed to POST at /data-hub/5/data-services/stepRunner/processBatch.sjs: Bad Request. Server Message: XDMP-ELEMRIDXNOTFOUND: cts.elementValueCoOccurrences(fn.QName(\"\",\"zipCode\"), fn.QName(\"\",\"geoPoint\"), null, cts.andQuery([cts.collectionQuery(\"zipCode\"), cts.jsonPropertyRangeQuery(\"zipCode\", \"=\", [\"31807\", \"94070\", \"66601\", ...], [\"collation=http://marklogic.com/collation/\"], 1)], [])) -- No string element range index for zipCode collation=http://marklogic.com/collation/ "
+          "com.marklogic.client.FailedRequestException: Local message: failed to POST at /data-hub/5/data-services/stepRunner/processBatch.mjs: Bad Request. Server Message: XDMP-ELEMRIDXNOTFOUND: cts.elementValueCoOccurrences(fn.QName(\"\",\"zipCode\"), fn.QName(\"\",\"geoPoint\"), null, cts.andQuery([cts.collectionQuery(\"zipCode\"), cts.jsonPropertyRangeQuery(\"zipCode\", \"=\", [\"31807\", \"94070\", \"66601\", ...], [\"collation=http://marklogic.com/collation/\"], 1)], [])) -- No string element range index for zipCode collation=http://marklogic.com/collation/ "
         ],
         "fullOutput": null,
         "status": "failed step 2",

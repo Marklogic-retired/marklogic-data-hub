@@ -26,7 +26,7 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-const semXqy = require("/MarkLogic/semantics.xqy");
+const sem = require("/MarkLogic/semantics.xqy");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
@@ -45,7 +45,7 @@ function findEntityTypeIds() {
  */
 function findEntityTypesAsMap() {
   const map = {};
-  for (var doc of cts.search(cts.collectionQuery(getModelCollection()))) {
+  for (let doc of cts.search(cts.collectionQuery(getModelCollection()))) {
     Object.assign(map, convertModelToEntityTypeMap(doc.toObject()));
   }
   return map;
@@ -59,7 +59,7 @@ function findModelForEntityTypeId(entityTypeId) {
   return fn.head(cts.search(
     cts.andQuery([
       cts.collectionQuery(getModelCollection()),
-      cts.tripleRangeQuery(sem.iri(entityTypeId), semXqy.curieExpand("rdf:type"), semXqy.curieExpand("es:EntityType", semPrefixes))
+      cts.tripleRangeQuery(sem.iri(entityTypeId), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType", semPrefixes))
     ])));
 }
 
@@ -178,7 +178,7 @@ function getEntityModelRelationships() {
 function convertModelToEntityTypeMap(model) {
   const map = {};
   const modelId = getModelId(model);
-  for (var entityTypeTitle of Object.keys(model.definitions)) {
+  for (let entityTypeTitle of Object.keys(model.definitions)) {
     map[modelId + "/" + entityTypeTitle] = model.definitions[entityTypeTitle];
   }
   return map;
@@ -250,7 +250,7 @@ function getModelCollection() {
 }
 
 function deleteDraftModel(entityName) {
-  var uri = getModelUri(entityName);
+  let uri = getModelUri(entityName);
     if (!fn.docAvailable(uri)) {
       uri = getDraftModelUri(entityName);
       if (!fn.docAvailable(uri)) {
@@ -740,13 +740,13 @@ function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
       let entityPropertyName = configPropertiesOnHover[i];
       if(!entityPropertyName.includes(".")){
         //create an Property on hover object
-        let objPropertyOnHover = new Object();
+        let objPropertyOnHover = {};
         objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
         resultPropertiesOnHover.push(objPropertyOnHover);
       }else{
 
         let propertyVec = entityPropertyName.split(".");
-        let objPropertyOnHover = new Object();
+        let objPropertyOnHover = {};
         const entityModel = findEntityTypeByEntityName(entityType);
         let newPath = "";
         for (let j = 0; j < propertyVec.length; j++) {

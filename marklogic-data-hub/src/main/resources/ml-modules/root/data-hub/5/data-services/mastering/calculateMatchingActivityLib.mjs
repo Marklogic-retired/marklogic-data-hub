@@ -24,7 +24,7 @@ let thresholdScores = thresholdScoresParam;
 let scoreMin = scoreMinParam;
 let scoreMax = scoreMaxParam;
 let combinations = combinationsParam;
-var rulesetNameObjectMap;
+let rulesetNameObjectMap;
 function calculateMatchingActivity(step)
 {
   // ruleset name object map: name/object (rulesetNameObjectMap)
@@ -151,7 +151,7 @@ function highestThreshold(score) {
     }
   }
   return highest;
-};
+}
 
 function addToCombinationsMap(score, names)
 {

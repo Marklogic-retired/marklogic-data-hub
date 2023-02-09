@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 'use strict';
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const temporal = sjsProxy.requireSjsModule("/MarkLogic/temporal.xqy", "http://marklogic.com/xdmp/temporal");
-
+const temporal = require("/MarkLogic/temporal.xqy");
 
 
-  function getTemporalCollections() {
-    return temporal.collections();
-  }
 
-  export default {
-      getTemporalCollections
-  }
+function getTemporalCollections() {
+  return temporal.collections();
+}
+
+export default {
+    getTemporalCollections: import.meta.amp(getTemporalCollections)
+}
 

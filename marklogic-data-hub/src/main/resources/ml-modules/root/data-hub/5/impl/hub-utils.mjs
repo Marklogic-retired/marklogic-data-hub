@@ -15,7 +15,8 @@
  */
 'use strict';
 
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
+import hubUtils from "./hub-utils.mjs";
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 
 function capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
@@ -70,12 +71,16 @@ function invokeFunction(queryFunction, database) {
   })
 }
 
+function isSequence(value) {
+   return !!(value instanceof Sequence || (value && !Array.isArray(value) && typeof value.toArray === "function"));
+}
+
 function normalizeToSequence(value) {
-  if (value instanceof Sequence) {
+  if (isSequence(value)) {
     return value;
   } else if (value === null || value === undefined) {
     return Sequence.from([]);
-  } else if (value.constructor === Array || (value instanceof Node && xdmp.nodeKind(value) === 'array')) {
+  } else if (Array.isArray(value) || hubUtils.isArrayNode(value)) {
     return Sequence.from(value);
   } else {
     return Sequence.from([value]);
@@ -83,7 +88,7 @@ function normalizeToSequence(value) {
 }
 
 function normalizeToArray(value) {
-  if (value instanceof Sequence) {
+  if (isSequence(value)) {
     return value.toArray();
   } else if (Array.isArray(value)) {
     return value;
@@ -119,6 +124,7 @@ function documentToContentDescriptor(doc, options = {}) {
       }
     };
 }
+
 function documentsToContentDescriptorArray(documents, options = {}) {
   let contentArray = [];
   for (let doc of documents) {
@@ -193,9 +199,63 @@ function getErrorMessage(e) {
   return errorMessage;
 }
 
+const cachedModules = {};
+
 function requireFunction(modulePath, functionName) {
-   return sjsProxy.requireSjsModule(modulePath)[functionName];
-  //  return sjsProxy.requireSjsModule(modulePath);
+  if (!cachedModules[modulePath]) {
+    if (fn.endsWith(modulePath, ".mjs")) {
+      cachedModules[modulePath] = mjsProxy.requireMjsModule(modulePath);
+    } else {
+      cachedModules[modulePath] = require(modulePath);
+    }
+  }
+  const fun = cachedModules[modulePath][functionName];
+  if (!fun) {
+    fn.error(xs.QName("XDMP-UNDFUN"), "XDMP-UNDFUN", [`${functionName}()`]);
+  }
+  return fun;
+}
+
+// node check functions
+function isNode(value) {
+  return value instanceof Node || value && value.nodeKind;
+}
+function isXmlNode(value) {
+  return value instanceof XMLNode || (isNode(value) && (isElementNode(value) || isXmlDocument(value)));
+}
+
+function isXmlDocument(value) {
+  return value instanceof XMLDocument || (isDocumentNode(value) && isXmlNode(value.root));
+}
+
+function isDocumentNode(value) {
+  return value instanceof Document || (isNode(value) && value.nodeKind === "document");
+}
+
+function isBinaryNode(value) {
+  return value instanceof BinaryNode || ((isNode(value) && value.nodeKind === "binary") || isDocumentNode(value) && isBinaryNode(value.root));
+}
+
+function isTextNode(value) {
+  return value instanceof TextNode || ((isNode(value) && value.nodeKind === "text") || isDocumentNode(value) && isTextNode(value.root));
+}
+function isElementNode(value) {
+  return value instanceof Element || (isNode(value) && value.nodeKind === "element");
+}
+
+function isJsonNode(value) {
+  return isObjectNode(value) || isArrayNode(value);
+}
+function isJsonDocument(value) {
+  return isDocumentNode(value) && isJsonNode(value.root);
+}
+
+function isObjectNode(value) {
+  return value instanceof ObjectNode || (isNode(value) && value.nodeKind === "object");
+}
+
+function isArrayNode(value) {
+  return value instanceof ArrayNode || (isNode(value) && value.nodeKind === "array");
 }
 
 export default {
@@ -204,7 +264,7 @@ export default {
   documentsToContentDescriptorArray,
   documentToContentDescriptor,
   error,
-  evalInDatabase,
+  evalInDatabase: import.meta.amp(evalInDatabase),
   getErrorMessage,
   getObjectValues,
   hubTrace,
@@ -217,5 +277,17 @@ export default {
   replaceLanguageWithLang,
   requireFunction,
   warn,
-  writeDocument
+  writeDocument,
+  isNode,
+  isElementNode,
+  isArrayNode,
+  isBinaryNode,
+  isTextNode,
+  isDocumentNode,
+  isJsonDocument,
+  isObjectNode,
+  isJsonNode,
+  isXmlDocument,
+  isXmlNode,
+  isSequence
 };

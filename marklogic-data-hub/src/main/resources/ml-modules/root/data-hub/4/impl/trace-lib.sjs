@@ -338,7 +338,7 @@ function sanitizeData(data) {
     result = xdmp.quote(data);
   }
   return result;
-};
+}
 
 function pluginTrace(itemContext, output, duration) {
   let ic = itemContext || rfc.getItemContext();
@@ -367,7 +367,7 @@ function errorTrace(itemContext, error, duration) {
   incrementErrorCount();
   if (identifier) {
     addFailedItem(identifier);
-  };
+  }
   let ts = getCurrentTraceSettings();
   ts['_has_errors'] = true;
   let traceSteps = currentTrace.traceSteps || [];

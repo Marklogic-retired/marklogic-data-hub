@@ -126,7 +126,7 @@ export default class FlowExecutionContext {
       return "finished_with_errors";
     }
 
-    for (var key of Object.keys(this.flowResponse.stepResponses)) {
+    for (let key of Object.keys(this.flowResponse.stepResponses)) {
       const stepStatus = this.flowResponse.stepResponses[key].status;
       if (stepStatus) {
         if (stepStatus.startsWith("failed")) {

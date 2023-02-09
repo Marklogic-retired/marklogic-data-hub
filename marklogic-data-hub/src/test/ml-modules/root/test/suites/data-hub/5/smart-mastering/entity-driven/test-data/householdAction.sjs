@@ -2,7 +2,6 @@
 
 const sem = require("/MarkLogic/semantics.xqy");
 const householdPredicateIRI = sem.iri('http://marklogic.com/datahub/test/household#memberOf');
-
 function householdAction(uri, matches, options) {
     const allURIs = [uri].concat(matches.map((match) => match.uri)).sort();
     const householdIRI = sem.iri(`http://marklogic.com/datahub/test/household/${xdmp.md5(allURIs)}`);
@@ -17,7 +16,6 @@ function householdAction(uri, matches, options) {
             }
         };
 }
-
 module.exports = {
     householdAction
 };

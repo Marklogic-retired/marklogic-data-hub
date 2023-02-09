@@ -215,7 +215,7 @@ function runStepMainOnEachItem(contentArray, stepExecutionContext) {
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
 
-  for (var contentObject of contentArray) {
+  for (let contentObject of contentArray) {
     const thisItem = contentObject.uri;
     if (DEBUG_ENABLED) {
       hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
