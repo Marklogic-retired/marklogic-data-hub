@@ -136,7 +136,7 @@ function strategy(item, algorithms) {
   }
 
   return s;
-};
+}
 
 function mergeRule(item, algorithms, properties, namespaces) {
   let mr = {};
@@ -183,7 +183,7 @@ function mergeRule(item, algorithms, properties, namespaces) {
   }
 
   return mr
-};
+}
 
 function targetCollectionObject(parent) {
   let obj = {};

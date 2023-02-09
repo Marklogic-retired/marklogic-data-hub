@@ -97,3 +97,4 @@ function addMapNamespaceToMetadata(xml) {
 }
 
 exports.transform = mlGenerateFunctionMetadata;
+exports.addMapNamespaceToMetadata = addMapNamespaceToMetadata;

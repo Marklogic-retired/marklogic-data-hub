@@ -16,4 +16,6 @@ function orderedMerge(propertyName, properties, propertySpec) {
   return fn.subsequence(xdmp.arrayValues(sortedProperties), 1, maxValues);
 }
 
-exports.customThing = orderedMerge;
+module.exports = {
+  customThing: orderedMerge
+};

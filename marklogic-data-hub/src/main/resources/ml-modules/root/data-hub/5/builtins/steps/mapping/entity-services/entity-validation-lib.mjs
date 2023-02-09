@@ -112,7 +112,8 @@ function validateXmlEntity(newInstance, options = {}, validateEntityValue, entit
         }
         options.headers.datahub.validationErrors = [];
 
-        for (error of result.xpath("/*:error")) {
+          let error;
+          for (error of result.xpath("/*:error")) {
           let validationError = {
             error : {
               code: fn.string(error.xpath("./*:code/text()")),
