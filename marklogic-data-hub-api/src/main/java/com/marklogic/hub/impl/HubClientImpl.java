@@ -27,6 +27,7 @@ public class HubClientImpl implements HubClient {
 
     private final HubClientConfig hubClientConfig;
     private String username;
+    private String mlAuthentication;
     private DatabaseClient stagingClient;
     private DatabaseClient finalClient;
     private DatabaseClient jobsClient;
@@ -37,6 +38,7 @@ public class HubClientImpl implements HubClient {
     public HubClientImpl(HubClientConfig hubClientConfig) {
         this.hubClientConfig = hubClientConfig;
         username = hubClientConfig.getUsername();
+        mlAuthentication = hubClientConfig.getMlAuthentication();
         stagingClient = hubClientConfig.newStagingClient(null);
         finalClient = hubClientConfig.newFinalClient(null);
         jobsClient = hubClientConfig.newJobDbClient();
@@ -48,6 +50,11 @@ public class HubClientImpl implements HubClient {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public String getMlAuthentication() {
+        return mlAuthentication;
     }
 
     @Override
