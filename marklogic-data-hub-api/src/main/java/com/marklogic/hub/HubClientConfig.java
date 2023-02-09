@@ -43,9 +43,12 @@ public class HubClientConfig {
     private String host;
     private String username;
     private String password;
+    private String cloudApiKey;
+    private String mlAuthentication;
 
     private String stagingDbName;
     private Integer stagingPort;
+    private String stagingBasePath;
     private String stagingAuthMethod;
     private Boolean stagingSimpleSsl;
     private SSLContext stagingSslContext;
@@ -57,6 +60,7 @@ public class HubClientConfig {
 
     private String finalDbName;
     private Integer finalPort;
+    private String finalBasePath;
     private String finalAuthMethod;
     private Boolean finalSimpleSsl;
     private SSLContext finalSslContext;
@@ -68,6 +72,7 @@ public class HubClientConfig {
 
     private String jobDbName;
     private Integer jobPort;
+    private String jobBasePath;
     private String jobAuthMethod;
     private Boolean jobSimpleSsl;
     private SSLContext jobSslContext;
@@ -154,6 +159,7 @@ public class HubClientConfig {
         if (propertyConsumerMap == null) {
             initializePropertyConsumerMap();
         }
+
         for (Map.Entry<String, Consumer<String>> propertyEntry : propertyConsumerMap.entrySet()) {
             String value = propertySource.apply(propertyEntry.getKey());
             if (value != null) {
@@ -197,6 +203,12 @@ public class HubClientConfig {
         config.setCertPassword(stagingCertPassword);
         config.setExternalName(stagingExternalName);
         config.setTrustManager(stagingTrustManager);
+        if(mlAuthentication.equals("cloud")) {
+            config.setSecurityContextType(SecurityContextType.CLOUD);
+            config.setCloudApiKey(cloudApiKey);
+            config.setBasePath(stagingBasePath);
+            config.setPort(443);
+        }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
@@ -215,6 +227,12 @@ public class HubClientConfig {
         config.setCertPassword(finalCertPassword);
         config.setExternalName(finalExternalName);
         config.setTrustManager(finalTrustManager);
+        if(mlAuthentication.equals("cloud")) {
+            config.setSecurityContextType(SecurityContextType.CLOUD);
+            config.setCloudApiKey(cloudApiKey);
+            config.setBasePath(finalBasePath);
+            config.setPort(443);
+        }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
@@ -223,6 +241,7 @@ public class HubClientConfig {
 
     public DatabaseClient newJobDbClient() {
         DatabaseClientConfig config = new DatabaseClientConfig(host, jobPort, username, password);
+
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
         config.setSslHostnameVerifier(jobSslHostnameVerifier);
         config.setSslContext(jobSslContext);
@@ -230,6 +249,12 @@ public class HubClientConfig {
         config.setCertPassword(jobCertPassword);
         config.setExternalName(jobExternalName);
         config.setTrustManager(jobTrustManager);
+        if(mlAuthentication.equals("cloud")) {
+            config.setSecurityContextType(SecurityContextType.CLOUD);
+            config.setCloudApiKey(cloudApiKey);
+            config.setBasePath(jobBasePath);
+            config.setPort(443);
+        }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
@@ -259,9 +284,11 @@ public class HubClientConfig {
         host = "localhost";
         isHostLoadBalancer = false;
         manageConfig = null;
+        mlAuthentication = "local";
 
         stagingDbName = "data-hub-STAGING";
         stagingPort = 8010;
+        stagingBasePath = "";
         stagingAuthMethod = "digest";
         stagingSimpleSsl = false;
         stagingSslContext = null;
@@ -273,6 +300,7 @@ public class HubClientConfig {
 
         finalDbName = "data-hub-FINAL";
         finalPort = 8011;
+        finalBasePath = "";
         finalAuthMethod = "digest";
         finalSimpleSsl = false;
         finalSslContext = null;
@@ -284,6 +312,7 @@ public class HubClientConfig {
 
         jobDbName = "data-hub-JOBS";
         jobPort = 8013;
+        jobBasePath = "";
         jobAuthMethod = "digest";
         jobSimpleSsl = false;
         jobSslContext = null;
@@ -347,7 +376,13 @@ public class HubClientConfig {
 
         propertyConsumerMap.put("mlUsername", prop -> username = prop);
         propertyConsumerMap.put("mlPassword", prop -> password = prop);
-
+        propertyConsumerMap.put("mlCloudApiKey", prop -> cloudApiKey = prop);
+        propertyConsumerMap.put("mlAuthentication", prop -> {
+            if(prop.equals("cloud")) {
+                initializeSslConfigForCloud();
+            }
+            mlAuthentication = prop;
+        });
         propertyConsumerMap.put("mlDHFVersion", prop -> logger.warn("mlDHFVersion no longer has any impact " +
             "starting in version 5.3.0. You may safely remove this from your properties file."));
 
@@ -359,6 +394,7 @@ public class HubClientConfig {
 
         propertyConsumerMap.put("mlStagingDbName", prop -> stagingDbName = prop);
         propertyConsumerMap.put("mlStagingPort", prop -> stagingPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlStagingBasePath", prop -> stagingBasePath = prop);
         propertyConsumerMap.put("mlStagingAuth", prop -> stagingAuthMethod = prop);
         propertyConsumerMap.put("mlStagingSimpleSsl", prop -> stagingSimpleSsl = Boolean.parseBoolean(prop));
         propertyConsumerMap.put("mlStagingCertFile", prop -> stagingCertFile = prop);
@@ -367,6 +403,7 @@ public class HubClientConfig {
 
         propertyConsumerMap.put("mlFinalDbName", prop -> finalDbName = prop);
         propertyConsumerMap.put("mlFinalPort", prop -> finalPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlFinalBasePath", prop -> finalBasePath = prop);
         propertyConsumerMap.put("mlFinalAuth", prop -> finalAuthMethod = prop);
         propertyConsumerMap.put("mlFinalSimpleSsl", prop -> finalSimpleSsl = Boolean.parseBoolean(prop));
         propertyConsumerMap.put("mlFinalCertFile", prop -> finalCertFile = prop);
@@ -375,6 +412,7 @@ public class HubClientConfig {
 
         propertyConsumerMap.put("mlJobDbName", prop -> jobDbName = prop);
         propertyConsumerMap.put("mlJobPort", prop -> jobPort = Integer.parseInt(prop));
+        propertyConsumerMap.put("mlJobBasePath", prop -> jobBasePath = prop);
         propertyConsumerMap.put("mlJobAuth", prop -> jobAuthMethod = prop);
         propertyConsumerMap.put("mlJobSimpleSsl", prop -> jobSimpleSsl = Boolean.parseBoolean(prop));
         propertyConsumerMap.put("mlJobCertFile", prop -> jobCertFile = prop);
@@ -429,6 +467,22 @@ public class HubClientConfig {
         }
     }
 
+    private void initializeSslConfigForCloud() {
+        SSLContext sslContext = SimpleX509TrustManager.newSSLContext();
+        stagingSslContext = sslContext;
+        finalSslContext = sslContext;
+        jobSslContext = sslContext;
+
+        SimpleX509TrustManager trustManager = new SimpleX509TrustManager();
+        stagingTrustManager = trustManager;
+        finalTrustManager = trustManager;
+        jobTrustManager = trustManager;
+
+        stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+        finalSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+        jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
+    }
+
     public void setConfiguredDatabaseClientFactory(ConfiguredDatabaseClientFactory configuredDatabaseClientFactory) {
         this.configuredDatabaseClientFactory = configuredDatabaseClientFactory;
     }
@@ -458,12 +512,36 @@ public class HubClientConfig {
         this.password = password;
     }
 
+    public String getCloudApiKey() {
+        return cloudApiKey;
+    }
+
+    public void setCloudApiKey(String cloudApiKey) {
+        this.cloudApiKey = cloudApiKey;
+    }
+
+    public String getMlAuthentication() {
+        return mlAuthentication;
+    }
+
+    public void setMlAuthentication(String mlAuthentication) {
+        this.mlAuthentication = mlAuthentication;
+    }
+
     public Integer getStagingPort() {
         return stagingPort;
     }
 
     public void setStagingPort(Integer stagingPort) {
         this.stagingPort = stagingPort;
+    }
+
+    public String getStagingBasePath() {
+        return stagingBasePath;
+    }
+
+    public void setStagingBasePath(String stagingBasePath) {
+        this.stagingBasePath = stagingBasePath;
     }
 
     public String getStagingAuthMethod() {
@@ -542,6 +620,14 @@ public class HubClientConfig {
         this.finalPort = finalPort;
     }
 
+    public String getFinalBasePath() {
+        return finalBasePath;
+    }
+
+    public void setFinalBasePath(String finalBasePath) {
+        this.finalBasePath = finalBasePath;
+    }
+
     public String getFinalAuthMethod() {
         return finalAuthMethod;
     }
@@ -616,6 +702,14 @@ public class HubClientConfig {
 
     public void setJobPort(Integer jobPort) {
         this.jobPort = jobPort;
+    }
+
+    public String getJobBasePath() {
+        return jobBasePath;
+    }
+
+    public void setJobBasePath(String jobBasePath) {
+        this.jobBasePath = jobBasePath;
     }
 
     public String getJobAuthMethod() {
