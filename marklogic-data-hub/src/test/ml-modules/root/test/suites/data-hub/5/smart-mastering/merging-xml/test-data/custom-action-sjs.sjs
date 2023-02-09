@@ -11,4 +11,6 @@ function customAction(uri, matches, mergeOptions) {
   );
 }
 
-exports.customAction = customAction;
+module.exports = {
+  customAction
+};

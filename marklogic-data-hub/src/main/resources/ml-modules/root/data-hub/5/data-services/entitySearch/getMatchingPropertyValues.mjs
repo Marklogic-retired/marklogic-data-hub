@@ -17,8 +17,9 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
-const ext = require("/data-hub/extensions/entity/build-property-path-reference.sjs");
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+
+const ext = require("/data-hub/extensions/entity/build-property-path-reference.sjs");
 
 const facetValuesSearchQuery = external.facetValuesSearchQuery;
 if(facetValuesSearchQuery == null) {
@@ -51,7 +52,7 @@ let propertyPath = queryObj.propertyPath;
 let referenceType = queryObj.referenceType;
 let limit = queryObj.limit;
 let pattern = queryObj.pattern;
-var query;
+let query = external.query;
 
 if (referenceType === "field") {
   if (propertyPath === "createdByStep") {

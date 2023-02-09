@@ -16,9 +16,8 @@
 import masteringStepLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const mastering = sjsProxy.requireSjsModule("/com.marklogic.smart-mastering/process-records.xqy");
+const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);

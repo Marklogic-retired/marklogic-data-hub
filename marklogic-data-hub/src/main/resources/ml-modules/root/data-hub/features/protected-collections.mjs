@@ -18,8 +18,7 @@
 import core from "/data-hub/5/artifacts/core.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy.mjs";
-const sec = sjsProxy.requireSjsModule("/MarkLogic/security.xqy");
+const sec = require("/MarkLogic/security.xqy");
 
 const INFO_EVENT = consts.TRACE_CORE;
 const DEBUG_EVENT = consts.TRACE_CORE_DEBUG;
@@ -36,7 +35,7 @@ function protectCollections(collections, permissions) {
                 hubUtils.hubTrace(INFO_EVENT, `While adding protected collections, cannot protect collection ${coll}. Invalid permissions: ${permissions}`);
             } else {
                 let permissionsSec = [];
-                for (var i = 0; i < permissionsSplit.length; i++) {
+                for (let i = 0; i < permissionsSplit.length; i++) {
                     permissionsSec.push(xdmp.permission(permissionsSplit[i], permissionsSplit[++i], "element"));
                 }
                 sec.protectCollection(coll, permissionsSec);

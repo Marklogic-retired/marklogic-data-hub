@@ -20,9 +20,8 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 import Job from "/data-hub/5/flow/job.mjs";
 import config from "/com.marklogic.hub/config.mjs";
 import jobs from "/data-hub/5/impl/jobs.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const dhProv = sjsProxy.requireSjsModule("/data-hub/5/provenance/dh-provenance.xqy");
+const dhProv = require("/data-hub/5/provenance/dh-provenance.xqy");
 
 const jobId = external.jobId;
 const jobStatus = external.jobStatus;

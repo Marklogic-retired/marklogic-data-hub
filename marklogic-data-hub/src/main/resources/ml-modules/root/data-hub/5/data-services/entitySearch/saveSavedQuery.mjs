@@ -22,8 +22,8 @@ xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-e
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const saveQuery = external.saveQuery;
-var userCollections = ["http://marklogic.com/data-hub/saved-query"];
-var queryDocument = JSON.parse(saveQuery);
+let userCollections = ["http://marklogic.com/data-hub/saved-query"];
+let queryDocument = JSON.parse(saveQuery);
 
 if (queryDocument == null || queryDocument.savedQuery == null) {
     httpUtils.throwBadRequest("The request is empty or malformed");

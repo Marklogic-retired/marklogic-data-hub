@@ -21,9 +21,8 @@ const search = require('/MarkLogic/appservices/search/search');
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const sem = sjsProxy.requireSjsModule("/MarkLogic/semantics.xqy", "http://marklogic.com/semantics");
+const sem = require("/MarkLogic/semantics.xqy");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -57,11 +56,11 @@ const startParam = external.start;
 const pageLengthParam = external.limit;
 
 
-var query = queryParam;
-var start = startParam;
-var pageLength = pageLengthParam;
-var structuredQuery ;
-var queryOptions ;
+let query = queryParam;
+let start = startParam;
+let pageLength = pageLengthParam;
+let structuredQuery = external.structuredQuery;
+let queryOptions = external.queryOptions;
 
 if(query == null) {
   httpUtils.throwBadRequest("Request cannot be empty");

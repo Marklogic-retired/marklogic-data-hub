@@ -21,7 +21,7 @@ import Artifacts from "/data-hub/5/artifacts/core.mjs";
 
 const name = external.name;
 const description = external.description;
-const stepIds = external.stepIds;
+let stepIds = external.stepIds;
 let newSteps = {};
 
 const flow = Artifacts.getArtifact("flow", name);

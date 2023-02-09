@@ -99,7 +99,7 @@ function buildStepMap(flows){
   const steps = stepIds.length < 1 ? [] : findStepsByIds(stepIds);
 
 // Build a map of steps for fast access
-  for (var step of steps) {
+  for (let step of steps) {
     step = step.toObject();
     stepMap[step.stepId] = step;
   }
