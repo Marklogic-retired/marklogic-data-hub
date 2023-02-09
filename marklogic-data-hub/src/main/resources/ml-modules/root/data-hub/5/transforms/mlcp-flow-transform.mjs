@@ -132,7 +132,7 @@ function buildContentArray(context) {
 }
 
 function parseOptionsString(optionsString, contentUri) {
-  var tokens = optionsString.split("=");
+  let tokens = optionsString.split("=");
   if (tokens.length < 2) {
     // Using console.log so this always appears
     console.log("Unable to parse JSON options; expecting options={json object}; found: " + optionsString);

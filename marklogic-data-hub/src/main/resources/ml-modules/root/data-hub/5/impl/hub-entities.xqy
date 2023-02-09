@@ -262,10 +262,9 @@ declare %private function hent:fix-options-for-explorer(
 
 declare function is-explorer-constraint-name($name as xs:string?) as xs:boolean
 {
-  fn:false()
-(:  let $default-constraint-names := es:search-options-generate(map:map())/search:constraint/@name/fn:string()
+  let $default-constraint-names := es:search-options-generate(map:map())/search:constraint/@name/fn:string()
   let $explorer-constraint-names := build-static-explorer-constraints()/@name/fn:string()
-  return $name = ($default-constraint-names, $explorer-constraint-names) :)
+  return $name = ($default-constraint-names, $explorer-constraint-names)
 };
 
 (:

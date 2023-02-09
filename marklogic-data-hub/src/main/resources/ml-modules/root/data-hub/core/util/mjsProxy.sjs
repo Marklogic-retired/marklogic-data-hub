@@ -22,7 +22,7 @@ function requireMjsModule(modulePath) {
 }
 function requireMjsModules(...modulePaths) {
   const cleanModulePaths = modulePaths.map(mp => mp.replace(/"/g, ""));
-  return fn.head(evalScriptOrModule(`'use strict';
+  return fn.head(evalModule(`'use strict';
     ${cleanModulePaths.map((mp, i) => `import mjsMod${i} from "${mp}";`).join("\n")}
 [${cleanModulePaths.map((mp, i) => `mjsMod${i}`).join(", ")}];`));
 }

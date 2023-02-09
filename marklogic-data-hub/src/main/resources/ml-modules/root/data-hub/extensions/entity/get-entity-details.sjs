@@ -16,6 +16,8 @@
 'use strict';
 
 const es = require('/MarkLogic/entity-services/entity-services');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 
 /**
  * Invoked when DHF needs to get the entity type name and entity instance properties from a document, where the
@@ -57,14 +59,14 @@ function getInstanceAsJson(doc) {
     return null;
   }
 
-  if (doc instanceof Element || doc instanceof XMLDocument) {
+  if (hubUtils.isXmlNode(doc)) {
     const builder = new NodeBuilder();
     const instance = doc.xpath("/*:envelope/*:instance");
     if (!fn.empty(instance)) {
       const node = builder.startDocument().addNode(instance).endDocument().toNode();
       return fn.head(es.instanceJsonFromDocument(node)).toObject();
     }
-  } else if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
+  } else if (doc.toObject && doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
     return doc.toObject().envelope.instance;
   }
 

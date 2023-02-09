@@ -19,4 +19,7 @@ function orderedMerge(propertyName, properties, propertySpec) {
   return sortedProperties.slice(0,maxValues);
 }
 
-exports.customThing = orderedMerge;
+
+module.exports = {
+  customThing: orderedMerge
+};

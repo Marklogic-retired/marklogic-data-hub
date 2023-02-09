@@ -24,9 +24,8 @@ import consts from "/data-hub/5/impl/consts.mjs" ;
 import httpUtils from "/data-hub/5/impl/http-utils.mjs" ;
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs" ;
 import entityLib from "/data-hub/5/impl/entity-lib.mjs" ;
-import sjsProxy from "/data-hub/core/util/sjsProxy";
 
-const hent = sjsProxy.requireSjsModule("/data-hub/5/impl/hub-entities.xqy");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 function findDraftModelByConceptName(conceptName) {
   const assumedUri = "/concepts/" + conceptName + ".draft.concept.json";
@@ -318,7 +317,7 @@ function findConceptModelReferencesInEntities(conceptName) {
 }
 
 function deleteDraftConceptModel(conceptName) {
-  var uri = getConceptModelUri(conceptName);
+  let uri = getConceptModelUri(conceptName);
   if (!fn.docAvailable(uri)) {
     uri = getDraftConceptModelUri(conceptName);
     if (!fn.docAvailable(uri)) {

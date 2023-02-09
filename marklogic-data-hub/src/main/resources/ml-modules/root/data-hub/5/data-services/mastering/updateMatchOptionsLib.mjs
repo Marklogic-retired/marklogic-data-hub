@@ -86,7 +86,7 @@ function updateMatchOptions(opt)
   }
 
   return newOpt;
-};
+}
 
 function maxWeightValue(opt) {
   let weights = [];
@@ -105,7 +105,7 @@ function maxWeightValue(opt) {
     }
   }
   return Math.max.apply(null, weights)
-};
+}
 
 function exactRuleset(item, properties, maxWeight) {
   let ruleset = {
@@ -120,7 +120,7 @@ function exactRuleset(item, properties, maxWeight) {
     ]
   };
   return ruleset
-};
+}
 
 function zipRuleset(item, properties, maxWeight) {
   // find the max of the origin weights
@@ -141,7 +141,7 @@ function zipRuleset(item, properties, maxWeight) {
     ]
   };
   return ruleset
-};
+}
 
 function reduceRuleset(item, properties, maxWeight) {
   if (item.allMatch) {
@@ -177,7 +177,7 @@ function reduceRuleset(item, properties, maxWeight) {
     };
     return ruleset
   }
-};
+}
 
 function doubleMetaphoneRuleset(item, properties, maxWeight)
 {
@@ -196,7 +196,7 @@ function doubleMetaphoneRuleset(item, properties, maxWeight)
     ]
   };
   return ruleset
-};
+}
 
 function synonymRuleset(item, properties, maxWeight) {
   let ruleset = {
@@ -214,7 +214,7 @@ function synonymRuleset(item, properties, maxWeight) {
     ]
   };
   return ruleset
-};
+}
 
 function customRuleset(item, properties, algorithms, maxWeight) {
   let algorithm = algorithms[item.algorithmRef];
@@ -233,7 +233,7 @@ function customRuleset(item, properties, algorithms, maxWeight) {
     ]
   };
   return ruleset
-};
+}
 
 function threshold(thr, actions) {
   let t = {
@@ -251,7 +251,7 @@ function threshold(thr, actions) {
   }
 
   return t
-};
+}
 
 // returns a weight between 0 and 100
 function adjustWeight(weight, maxWeight) {
@@ -266,7 +266,7 @@ function adjustWeight(weight, maxWeight) {
     w = (w / (maxWeight / 100));
   }
   return w
-};
+}
 
 function getEntityPropertyPath(propName, propertyDefinitions = {})
 {

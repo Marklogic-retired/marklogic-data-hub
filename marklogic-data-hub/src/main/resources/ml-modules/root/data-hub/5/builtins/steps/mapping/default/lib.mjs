@@ -1,3 +1,5 @@
+import hubUtils from "../../../../impl/hub-utils.mjs";
+
 const cachedMappingByNameAndVersion = {};
 const cachedEntityByTitleAndVersion = {};
 
@@ -69,7 +71,7 @@ function processInstance(model, mapping, content, provenance = {}) {
 
 function extractInstanceFromModel(model, modelName, mapping, content, provenance = {}) {
   let sourceContext = mapping.sourceContext;
-  if (content instanceof XMLDocument && sourceContext !== '/' && sourceContext !== '//')  {
+  if (hubUtils.isXmlDocument(content) && sourceContext !== '/' && sourceContext !== '//')  {
     sourceContext = getSourceContext(sourceContext);
   }
   let mappingProperties = mapping.properties;
