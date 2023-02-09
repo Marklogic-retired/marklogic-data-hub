@@ -23,6 +23,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,13 +47,25 @@ public class SourceQueryCollector {
 
     public DiskQueue<String> run(String flow, String step, Map<String, Object> options) {
         final DatabaseClient stagingClient = hubClient.getStagingClient();
+        String basePath = "";
+        if(hubClient.getMlAuthentication().equalsIgnoreCase("cloud")) {
+            basePath = stagingClient.getBasePath();
+            if(StringUtils.isNotEmpty(basePath) && !basePath.startsWith("/")) {
+                basePath = ("/").concat(basePath);
+            }
+
+            if(StringUtils.isNotEmpty(basePath) && basePath.endsWith("/")) {
+                basePath = basePath.substring(0, basePath.length() - 1);
+            }
+        }
 
         try {
             String uriString = String.format(
-                "%s://%s:%d/v1/internal/hubcollector5?flow-name=%s&database=%s&step=%s",
+                "%s://%s:%d%s/v1/internal/hubcollector5?flow-name=%s&database=%s&step=%s",
                 stagingClient.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 stagingClient.getHost(),
                 stagingClient.getPort(),
+                basePath,
                 URLEncoder.encode(flow, "UTF-8"),
                 URLEncoder.encode(this.sourceDatabase, "UTF-8"),
                 URLEncoder.encode(step, "UTF-8")

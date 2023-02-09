@@ -1198,20 +1198,24 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     protected void addDhfPropertiesToCustomTokens(AppConfig appConfig) {
         Map<String, String> customTokens = appConfig.getCustomTokens();
         customTokens.put("%%mlHost%%", appConfig.getHost());
+        customTokens.put("%%mlAuthentication%%", getMlAuthentication());
         customTokens.put("%%mlStagingAppserverName%%", stagingHttpName);
         customTokens.put("%%mlStagingPort%%", getStagingPort().toString());
+        customTokens.put("%%mlStagingBasePath%%", getStagingBasePath());
         customTokens.put("%%mlStagingDbName%%", getStagingDbName());
         customTokens.put("%%mlStagingForestsPerHost%%", stagingForestsPerHost.toString());
         customTokens.put("%%mlStagingAuth%%", getStagingAuthMethod());
 
         customTokens.put("%%mlFinalAppserverName%%", finalHttpName);
         customTokens.put("%%mlFinalPort%%", getFinalPort().toString());
+        customTokens.put("%%mlFinalBasePath%%", getFinalBasePath());
         customTokens.put("%%mlFinalDbName%%", getFinalDbName());
         customTokens.put("%%mlFinalForestsPerHost%%", finalForestsPerHost.toString());
         customTokens.put("%%mlFinalAuth%%", getFinalAuthMethod());
 
         customTokens.put("%%mlJobAppserverName%%", jobHttpName);
         customTokens.put("%%mlJobPort%%", getJobPort().toString());
+        customTokens.put("%%mlJobBasePath%%", getJobBasePath());
         customTokens.put("%%mlJobDbName%%", getJobDbName());
         customTokens.put("%%mlJobForestsPerHost%%", jobForestsPerHost.toString());
         customTokens.put("%%mlJobAuth%%", getJobAuthMethod());
@@ -1378,13 +1382,17 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
      */
     private void applyFinalConnectionSettingsToMlGradleDefaultRestSettings(AppConfig config) {
         if (getFinalAuthMethod() != null) {
-            config.setRestSecurityContextType(SecurityContextType.valueOf(getFinalAuthMethod().toUpperCase()));
+            String authMethod = getMlAuthentication().equalsIgnoreCase("cloud") ? getMlAuthentication() : getFinalAuthMethod();
+            config.setRestSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
         }
         if (Boolean.TRUE.equals(isProvisionedEnvironment)) {
             config.setRestConnectionType(DatabaseClient.ConnectionType.GATEWAY);
             config.setAppServicesConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
-        config.setRestPort(getFinalPort());
+        Integer finalPort = getMlAuthentication().equalsIgnoreCase("cloud") ? 443 : getFinalPort();
+        config.setRestPort(finalPort);
+        config.setCloudApiKey(getCloudApiKey());
+        config.setRestBasePath(getFinalBasePath());
         config.setRestCertFile(getFinalCertFile());
         config.setRestCertPassword(getFinalCertPassword());
         config.setRestExternalName(getFinalExternalName());
