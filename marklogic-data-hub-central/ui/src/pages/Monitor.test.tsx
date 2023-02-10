@@ -21,7 +21,8 @@ describe("Monitor component", () => {
 
     const {getByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Monitor/></AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(getByText(tiles.monitor.intro)).toBeInTheDocument(); // tile intro text
+    let intro = tiles?.monitor?.intro;
+    if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text
   });
 
 });

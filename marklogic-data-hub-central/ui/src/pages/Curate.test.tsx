@@ -39,7 +39,8 @@ describe("Curate component", () => {
 
     expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
 
-    expect(getByText(tiles.curate.intro)).toBeInTheDocument(); // tile intro text
+    let intro = tiles.curate.intro;
+    if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");

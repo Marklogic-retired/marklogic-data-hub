@@ -8,6 +8,7 @@ import {fireEvent} from "@testing-library/react";
 import {SearchContext} from "../../util/search-context";
 import {entityDefinitionsArray} from "../../assets/mock-data/modeling/modeling";
 import {getQueriesResponse} from "../../assets/mock-data/explore/query";
+import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 
 const color = "#000";
 const text = "test";
@@ -26,7 +27,7 @@ describe("Tiles component", () => {
     const {getByLabelText} = render(
       <Tiles
         id={text}
-        view={<TestComponent/>}
+        view={<TestComponent />}
         currentNode={text}
         options={{...options}}
         onMenuClick={jest.fn()}
@@ -45,7 +46,7 @@ describe("Tiles component", () => {
     const {getByLabelText} = render(
       <Tiles
         id={text}
-        view={<TestComponent/>}
+        view={<TestComponent />}
         currentNode={text}
         options={{...options, ...localOptions}}
         onMenuClick={jest.fn()}
@@ -67,7 +68,7 @@ describe("Tiles component", () => {
     const {getByLabelText, queryByLabelText} = render(
       <Tiles
         id={title}
-        view={<TestComponent/>}
+        view={<TestComponent />}
         currentNode={title}
         options={localOptions}
         onMenuClick={jest.fn()}
@@ -90,7 +91,7 @@ describe("Tiles component", () => {
     const {getByLabelText, queryByLabelText} = render(
       <Tiles
         id={title}
-        view={<TestComponent/>}
+        view={<TestComponent />}
         currentNode={title}
         options={localOptions}
         onMenuClick={jest.fn()}
@@ -114,7 +115,7 @@ describe("Tiles component", () => {
     const {getByLabelText} = render(
       <Tiles
         id={title}
-        view={<TestComponent/>}
+        view={<TestComponent />}
         currentNode={title}
         options={localOptions}
         onMenuClick={jest.fn()}
@@ -140,12 +141,13 @@ describe("Tiles component", () => {
     };
     const {getByLabelText, debug} = render(
       <SearchContext.Provider value={{
+        ...searchContextInterfaceByDefault,
         savedQueries: getQueriesResponse,
         entityDefinitionsArray
       }}>
         <Tiles
           id={title}
-          view={<TestComponent/>}
+          view={<TestComponent />}
           currentNode={title}
           options={localOptions}
           onMenuClick={jest.fn()}

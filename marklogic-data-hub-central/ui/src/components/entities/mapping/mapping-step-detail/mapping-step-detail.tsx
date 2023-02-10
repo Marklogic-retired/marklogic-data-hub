@@ -1761,7 +1761,7 @@ const MappingStepDetail: React.FC = () => {
                 <Spinner animation="border" data-testid="spinTest" variant="primary" />
               </div> :
                 emptyData ?
-                  <div id="noData" style={{paddingTop: "80px"}}>
+                  <div id="noData" data-testid="noData" style={{paddingTop: "80px"}}>
                     <HCAlert
                       className={styles.interceptorFailureAlert}
                       showIcon={true}

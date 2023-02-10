@@ -44,6 +44,15 @@ const validateTableRow = (dataTable, uris) => {
   });
 };
 
+export const getSubElements=(content, node, title) => {
+  const hasText = node => node.textContent === title;
+  const nodeHasText = hasText(node);
+  const childrenDontHaveText = Array.from(node.children).every(
+    child => !hasText(child)
+  );
+  return nodeHasText && childrenDontHaveText;
+};
+
 const onHideMock = jest.fn();
 
 export {
@@ -53,5 +62,5 @@ export {
   onClosestTable,
   onClosestDiv,
   validateTableRow,
-  onHideMock
+  onHideMock,
 };

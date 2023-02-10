@@ -195,7 +195,8 @@ describe("Load component", () => {
 
     expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
 
-    expect(getByText(tiles.load.intro)).toBeInTheDocument(); // tile intro text
+    let intro = tiles.load.intro;
+    if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated in default view
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");

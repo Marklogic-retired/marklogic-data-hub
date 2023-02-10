@@ -62,7 +62,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
-    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props.rowKey === "string" && !row.children).map(element => typeof props.rowKey === "string" && typeof element[props.rowKey] !== undefined && element[props.rowKey]),
+    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props?.rowKey === "string" && !row.children).map(element => typeof props?.rowKey === "string" && typeof element[props?.rowKey] !== "undefined" && element[props?.rowKey]),
   };
 
   const generateIndentList = (data, indentLevel, indentArray) => {
@@ -136,7 +136,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
   }
 
   const defaultSorted: Array<{dataField: string; order: string;}> = []; // expects { dataField: string; order: string; }
-  const noDataIndication = () => <div className={styles.noDataPlaceholder}><span>No Data</span></div>;
+  const noDataIndication = () => <div className={styles.noDataPlaceholder} data-testid={"noData"}><span>No Data</span></div>;
   let paginationFactoryObject = null;
   let filterFactoryObject = null;
 
@@ -186,6 +186,22 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       options.hideSizePerPage = true;
     }
 
+    options.pageListRenderer = ({pages, onPageChange}) => {
+      const pagesWithoutFirstLast = pages.filter(p => p.page !== "<<" && p.page !== ">>");
+      return (
+        <div id="pageList">
+          {
+            pagesWithoutFirstLast.map((p, index) => (
+              p.active ?
+                <button className="btnActive" key={index} data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
+                :
+                <button className="btn" key={index} data-testid={`page-${p.page}`} title={p.page} onClick = {() => onPageChange(p.page)}>{p.page}</button>
+            ))
+          }
+        </div>
+      );
+    };
+
     if (pagination.onChange) {
       options.onPageChange = pagination.onChange;
     }
@@ -202,6 +218,9 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, component,
       options.pageStartIndex = pagination.defaultCurrent;
     }
 
+    options.alwaysShowAllBtns = true;
+    options.prePageText = "<";
+    options.nextPageText = ">";
     options.prePageTitle = "Previous Page";
     options.nextPageTitle = "Next Page";
     paginationFactoryObject = paginationFactory(options);
@@ -339,13 +358,21 @@ const isMappingXML = (showHeader) => {
 const isEntityMapping = (keyUtil, showHeader) => {
   return keyUtil === "key" && !showHeader;
 };
+
+const serviceRowDownHandler = (event, expandKey, isExpanded) => {
+  if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    event.preventDefault();
+    isExpanded(expandKey);
+  }
+};
+
 const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentList, baseIndent, headerColumns, showHeader, iconCellList, state, showIndicator, isExpanded, bordered, selectRow, rowKey}) => {
   const [expandedNestedRows] = state;
   const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
   const selected = selectRow && selectRow.selected;
 
   let expandKey = keyUtil === "rowKey" ? row.rowKey : row.key;
-  let expandIcon = row.children && component !== "entity-map-table" ? <span style={{marginRight: "10px"}} onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</span> : null;
+  let expandIcon = row.children && component !== "entity-map-table" ? <span style={{marginRight: "10px"}} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, expandKey, isExpanded); }} onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</span> : null;
   let indentation = 0;
   if (indentList[expandKey]) {
     indentation = indentList[expandKey];

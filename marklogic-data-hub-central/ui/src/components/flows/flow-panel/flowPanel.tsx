@@ -157,7 +157,7 @@ const FlowPanel: React.FC<Props> = ({
 
     //Count load steps if by local storage or with default
     const countIngestionSteps = originLStorage === true ? flow?.steps?.reduce((acc, cur) =>
-    cur?.stepDefinitionType.toLowerCase() === "ingestion" ? ++acc : acc, 0) : loadTypeCountAux;
+      cur?.stepDefinitionType.toLowerCase() === "ingestion" ? ++acc : acc, 0) : loadTypeCountAux;
 
     let hasLoadSteps =  countIngestionSteps === 0 ? 1: countIngestionSteps === 1 ? 1:countIngestionSteps;
 

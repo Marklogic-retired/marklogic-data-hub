@@ -43,7 +43,8 @@ describe("App component", () => {
     fireEvent.click(getByLabelText("tool-" + firstTool));
     await expect(getByLabelText("icon-" + firstTool)).toBeInTheDocument();
     expect(queryByText("overview")).not.toBeInTheDocument();
-    expect(getByLabelText("logo-link").href).toContain("/tiles");
+    let element = getByLabelText("logo-link") as HTMLAnchorElement;
+    expect(element.href).toContain("/tiles");
     fireEvent.mouseDown(getByLabelText("title-link"));
     expect(getByLabelText("overview")).toBeInTheDocument();
   });

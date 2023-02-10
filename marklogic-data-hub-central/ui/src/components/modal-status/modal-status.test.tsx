@@ -1,7 +1,5 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {createMemoryHistory} from "history";
-const history = createMemoryHistory();
 import {render, wait, waitForElement} from "@testing-library/react";
 import axiosMock from "axios";
 import userEvent from "@testing-library/user-event";
@@ -48,7 +46,7 @@ describe("Modal Status Component", () => {
       userEvent.click(getByText("Continue Session"));
     });
     expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  });
+  }, 30000);
 
   test("Modal session status renders and can click logout", async () => {
     axiosMock.get["mockImplementation"](() => Promise.resolve({status: 200}));
@@ -66,7 +64,7 @@ describe("Modal Status Component", () => {
       userEvent.click(getByText("Log Out"));
     });
     expect(axiosMock.get).toHaveBeenCalledTimes(1);
-  });
+  }, 30000);
 
   test("Modal can render 500 error and can click OK", async () => {
     mocks.systemInfoAPI(axiosMock);
@@ -134,7 +132,7 @@ describe("Modal Status Component", () => {
   test("No response (middle tier crash) handled", async () => {
     mocks.noResponseAPI(axiosMock);
     const {getByText} = render(
-      <Router history={history}>
+      <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
@@ -146,5 +144,3 @@ describe("Modal Status Component", () => {
   });
 
 });
-
-

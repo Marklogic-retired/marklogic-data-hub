@@ -89,7 +89,6 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueriesDropdown().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.removeSelectedBaseEntity();
-    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json").should("be.visible", {timeout: 10000}).click({force: true});
     browsePage.waitForSpinnerToDisappear();

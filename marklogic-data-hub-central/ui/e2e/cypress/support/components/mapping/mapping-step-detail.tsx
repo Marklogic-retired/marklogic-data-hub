@@ -99,6 +99,10 @@ class MappingStepDetail {
     cy.get(`#${entityName}-entities-filter-select-wrapper`).click();
   }
 
+  mapRelatedEntities(entityName: string) {
+    return cy.get(`#${entityName}-entities-filter-select`);
+  }
+
   deleteConfirmationButtonYes() {
     return cy.get(".modal-content button").contains("Yes");
   }
@@ -387,6 +391,10 @@ class MappingStepDetail {
   }
 
   selectPageSourceTable(page: string) {
+    cy.get(`[data-testid="page-${page}"]`).contains(page).click();
+  }
+
+  selectCustomPageSourceTable(page: string) {
     cy.get(".pagination .page-item a").contains(page).click();
   }
 
@@ -406,7 +414,7 @@ class MappingStepDetail {
   }
 
   verifyPageSourceTable(page: string) {
-    cy.get(".pagination .page-item a").contains(page).should("exist");
+    cy.get(`[data-testid="page-${page}"]`).should("exist");
   }
 
   addFilter(text: string) {

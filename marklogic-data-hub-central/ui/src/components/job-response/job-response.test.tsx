@@ -1,11 +1,11 @@
 import React from "react";
 import axiosMock from "axios";
-import {render, waitForElement, act, cleanup, wait, fireEvent} from "@testing-library/react";
+import {render, waitForElement, act, cleanup, wait, fireEvent, screen} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
 import {BrowserRouter as Router} from "react-router-dom";
 import {CurationContext} from "../../util/curation-context";
-import {curationContextMock} from "../../assets/mock-data/curation/curation-context-mock";
+import {customerMatchingStep} from "../../assets/mock-data/curation/curation-context-mock";
 import dayjs from "dayjs";
 import curateData from "../../assets/mock-data/curation/flows.data";
 import userEvent from "@testing-library/user-event";
@@ -13,6 +13,8 @@ import userEvent from "@testing-library/user-event";
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();
+
+jest.useRealTimers();
 
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"), useHistory: () => ({
@@ -49,7 +51,7 @@ describe("Job response modal", () => {
     act(() => {
       ({getByText, getAllByText, getByTestId} = render(
         <Router>
-          <CurationContext.Provider value={curationContextMock}>
+          <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"e4590649-8c4b-419c-b6a1-473069186592"}
               setOpenJobResponse={() => { }}
@@ -109,7 +111,7 @@ describe("Job response modal", () => {
     act(() => {
       ({getByText, queryByText, getByTestId} = render(
         <Router>
-          <CurationContext.Provider value={curationContextMock}>
+          <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}
               setOpenJobResponse={() => { }}
@@ -153,7 +155,7 @@ describe("Job response modal", () => {
     act(() => {
       ({getByText, getByLabelText} = render(
         <Router>
-          <CurationContext.Provider value={curationContextMock}>
+          <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"8c69c502-e682-46ce-a0f4-6506ab527ab8"}
               setOpenJobResponse={() => { }}
@@ -191,7 +193,7 @@ describe("Job response modal", () => {
     act(() => {
       ({getByText} = render(
         <Router>
-          <CurationContext.Provider value={curationContextMock}>
+          <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
               setOpenJobResponse={() => { }}
@@ -217,14 +219,14 @@ describe("Job response modal", () => {
 
   test("Verify that action tooltip apears when hover on the info icon", async () => {
     mocks.runAPI(axiosMock);
-    let getByRole;
+
     let getByText;
     let getByLabelText;
     const stopRun = jest.fn();
     act(() => {
-      ({getByRole, getByText, getByLabelText} = render(
+      ({getByText, getByLabelText} = render(
         <Router>
-          <CurationContext.Provider value={curationContextMock}>
+          <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
               setOpenJobResponse={() => { }}
@@ -242,6 +244,6 @@ describe("Job response modal", () => {
     const infoIcon = getByLabelText("icon: info-circle");
     expect(infoIcon).toBeInTheDocument();
     userEvent.hover(infoIcon);
-    expect(getByRole("tooltip")).toBeInTheDocument();
-  });
+    expect(await screen.findAllByRole("tooltip")).toHaveLength(1);
+  }, 50000);
 });

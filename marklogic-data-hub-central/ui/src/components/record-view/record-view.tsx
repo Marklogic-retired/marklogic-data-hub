@@ -4,7 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ReactHtmlParser from "react-html-parser";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import sourceFormatOptions from "@config/formats.config";
 import {AuthoritiesContext} from "@util/authorities";
 import {formatCardUri} from "@util/conversionFunctions";
@@ -15,7 +15,7 @@ import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Download, FileEarmark, ArrowRightSquare} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger, Spinner} from "react-bootstrap";
+import {Overlay, Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
 import {MdCallMerge} from "react-icons/md";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
@@ -24,6 +24,7 @@ import CompareValuesModal from "../../components/entities/matching/compare-value
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);
+  const history: any = useHistory();
   const {
     searchOptions
   } = useContext(SearchContext);
@@ -37,6 +38,11 @@ const RecordCardView = (props) => {
   const [flowName, setFlowname] = useState<string>("");
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const handleDetailViewNavigation = () => { }; // eslint-disable-line @typescript-eslint/no-unused-vars
+
+  const [infoVisibility, setInfoVisibility] = useState(false);
+  const [target, setTarget] = useState(null);
+  const [element, setElement] = useState(null);
+
 
   // Custom CSS for source Format
   const sourceFormatStyle = (sourceFmt) => {
@@ -98,7 +104,7 @@ const RecordCardView = (props) => {
 
   const displayRecordMetadata = (item) => {
     return (
-      <Popover id={`popover-positioned-record-view-${item?.index ? item.index: ""}`} className={styles.popoverWrap}>
+      <Popover id={`popover-positioned-record-view-${item?.index ? item.index : ""}`} className={styles.popoverWrap}>
         <Popover.Body>
           <div className={styles.popover} data-testid={item.uri + "-popover"}>
             <div className={styles.colKey}>
@@ -113,24 +119,24 @@ const RecordCardView = (props) => {
                   text={displayRecordSources(item)}
                   id="source-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span tabIndex={0}>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
                 <HCTooltip
                   text={item.hubMetadata?.lastProcessedByFlow}
                   id="last-processed-by-flow-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span tabIndex={0}>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
                 <HCTooltip
                   text={item.hubMetadata.lastProcessedByStep}
                   id="last-processed-by-step-tooltip"
                   placement="bottom"
-                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
+                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span tabIndex={0}>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
               </span> : emptyField}
               {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
                 {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
@@ -166,6 +172,11 @@ const RecordCardView = (props) => {
     };
 
     return linkObject;
+  };
+  const navigateUsingKey = (event, elem) => {
+    if (event.key === "Enter" || event.key === " ") {
+      history.push(getLinkProperties(elem));
+    }
   };
 
   const download = async (docUri) => {
@@ -208,7 +219,7 @@ const RecordCardView = (props) => {
     const result1 = await getDocFromURI(array[0]);
     const result2 = await getDocFromURI(array[1]);
 
-    const flowName= item.hubMetadata.lastProcessedByFlow;
+    const flowName = item.hubMetadata.lastProcessedByFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
@@ -240,9 +251,42 @@ const RecordCardView = (props) => {
     }
   };
 
+  const handleInfoIconClick = (event, element) => {
+    setElement(element);
+    setTarget(event.target);
+    setInfoVisibility(true);
+  };
+
+  const closePopover = () => {
+    if (infoVisibility) {
+      setInfoVisibility(false);
+    }
+  };
+
+  const infoKeyDownHandler = (event, element) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleInfoIconClick(event, element);
+    }
+    if (event.key === "Escape") {
+      closePopover();
+    }
+  };
+
+  const infoPopover = (
+    <Overlay
+      show={infoVisibility}
+      target={target}
+      placement="bottom-end"
+    >
+      {element ? displayRecordMetadata(element) : <></>}
+    </Overlay>);
+
+
   return (
-    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
+    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard} >
       <Row className="w-100 m-0">
+        {infoVisibility && element && infoPopover}
         {props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col xs={"auto"} key={index}>
             <div >
@@ -252,23 +296,26 @@ const RecordCardView = (props) => {
                 <div className={styles.cardMetadataContainer}>
                   <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>URI: <span className={styles.uri}>
                     <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
-                      <span>{displayUri(elem.uri)}</span>
+                      <span tabIndex={0} onFocus={closePopover}>{displayUri(elem.uri)}</span>
                     </HCTooltip>
                   </span></span>
                   <span className={styles.cardIcons}>
-                    <OverlayTrigger
-                      rootClose
-                      overlay={displayRecordMetadata(elem)}
-                      placement="bottom-end"
-                      trigger="click">
-                      <span>
-                        <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
-                          <span className={styles.infoIcon}>
-                            <i><FontAwesomeIcon icon={faInfoCircle} size="1x" data-testid={elem.uri + "-InfoIcon"}/></i>
-                          </span>
-                        </HCTooltip>
-                      </span>
-                    </OverlayTrigger>
+                    <span>
+                      <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
+                        <span className={styles.infoIcon}>
+                          <i>
+                            <FontAwesomeIcon
+                              tabIndex={0}
+                              icon={faInfoCircle}
+                              size="1x"
+                              data-testid={elem.uri + "-InfoIcon"}
+                              onClick={(event) => handleInfoIconClick(event, elem)}
+                              onKeyDown={(event) => infoKeyDownHandler(event, elem)}
+                            />
+                          </i>
+                        </span>
+                      </HCTooltip>
+                    </span>
                     <span className={styles.sourceFormat}
                       style={sourceFormatStyle(elem.format)}
                       data-testid={elem.uri + "-sourceFormat"}
@@ -277,14 +324,17 @@ const RecordCardView = (props) => {
                       <span id={"instance"}
                         data-cy="instance">
                         <HCTooltip text="View details" id="binary-detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare}/>
+                          <ArrowRightSquare className={styles.arrowRightSquare} />
                         </HCTooltip>
                       </span>
                       :
-                      <Link to={getLinkProperties(elem)} id={"instance"}
-                        data-cy="instance">
+                      <Link to={getLinkProperties(elem)} onKeyDown={(e) => navigateUsingKey(e, elem)}
+                        id={"instance"}
+                        data-cy="instance"
+                        onFocus={closePopover}
+                      >
                         <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}/>
+                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"} />
                         </HCTooltip>
                       </Link>
                     }
@@ -311,7 +361,19 @@ const RecordCardView = (props) => {
                       {
                         canWriteMatchMerge ?
                           <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
-                            <i><MdCallMerge className={styles.mergeIcon} data-testid={"merge-icon"} onClick={() => openMergeCompare(elem)}/></i>
+                            <i>
+                              <MdCallMerge
+                                className={styles.mergeIcon}
+                                data-testid={"merge-icon"}
+                                onClick={() => openMergeCompare(elem)}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    openMergeCompare(elem);
+                                  }
+                                }}
+                              />
+                            </i>
                           </HCTooltip>
                           :
                           <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
@@ -323,7 +385,17 @@ const RecordCardView = (props) => {
                     : null}
                 <span className={styles.downloadIcon}>
                   <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom" >
-                    <Download onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"}  size={18} />
+                    <Download
+                      onClick={() => download(elem.uri)}
+                      data-testid={elem.uri + "-download-icon"}
+                      size={18}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          download(elem.uri);
+                        }
+                      }}
+                    />
                   </HCTooltip>
                 </span>
               </HCCard>

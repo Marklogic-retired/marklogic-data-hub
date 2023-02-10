@@ -9,7 +9,6 @@ import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities"
 import mocks from "../../../api/__mocks__/mocks.data";
 import {CustomStepTooltips} from "../../../config/tooltips.config";
 
-
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();
@@ -42,6 +41,12 @@ describe("Custom Card component", () => {
           canReadWrite={true}
           entityModel={{entityTypeId: "Customer"}}
           getArtifactProps={() => { return customData[0]; }}
+          flows={""}
+          entityTypeTitle={""}
+          updateCustomArtifact={jest.fn()}
+          canWriteFlow={true}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
         />
       </AuthoritiesContext.Provider></Router>);
 
@@ -104,7 +109,6 @@ describe("Custom Card component", () => {
     await wait(() => {
       expect(queryByText("Custom Step Settings")).not.toBeInTheDocument();
     });
-
   });
 
   test("Open settings in read-only mode", async () => {
@@ -119,6 +123,12 @@ describe("Custom Card component", () => {
           canReadWrite={false}
           entityModel={{entityTypeId: "Customer"}}
           getArtifactProps={() => { return customData[0]; }}
+          flows={""}
+          entityTypeTitle={""}
+          updateCustomArtifact={jest.fn()}
+          canWriteFlow={true}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
         />
       </AuthoritiesContext.Provider></Router>);
 
@@ -169,7 +179,6 @@ describe("Custom Card component", () => {
     await wait(() => {
       expect(queryByText("Custom Step Settings")).not.toBeInTheDocument();
     });
-
   });
 
   test("Custom card does not allow edit without writeCustom", async () => {
@@ -177,12 +186,24 @@ describe("Custom Card component", () => {
     let getByRole, queryAllByRole, getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false} entityModel={{entityTypeId: "Customer"}}/></Router>
+        <Router><CustomCard
+          data={customData}
+          canReadOnly={true}
+          canReadWrite={false}
+          entityModel={{entityTypeId: "Customer"}}
+          flows={""}
+          entityTypeTitle={""}
+          updateCustomArtifact={jest.fn()}
+          canWriteFlow={true}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          getArtifactProps={() => { return customData[0]; }}
+        /></Router>
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
-      getByText=renderResults.getByText;
-      getByTestId=renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
     });
 
     expect(getByRole("edit-custom")).toBeInTheDocument();
@@ -207,8 +228,11 @@ describe("Custom Card component", () => {
           canReadWrite={false}
           canWriteFlow={true}
           entityModel={{entityTypeId: "Customer"}}
-          addStepToFlow={() => {}}
+          addStepToFlow={() => { }}
           getArtifactProps={() => { return customData[0]; }}
+          entityTypeTitle={""}
+          updateCustomArtifact={jest.fn()}
+          addStepToNew={jest.fn()}
         />
       </AuthoritiesContext.Provider></Router>);
 
