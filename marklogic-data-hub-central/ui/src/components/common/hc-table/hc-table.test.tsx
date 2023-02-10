@@ -11,7 +11,7 @@ describe("Hub Central Table component", () => {
 
   test("should render a HCTable component", () => {
     const {getByText} = render(<HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />);
-    const tableColumns = within(getByText("Name").closest("tr"));
+    const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
 
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
     expect(tableColumns.getByText("Description")).toBeInTheDocument();
@@ -42,8 +42,8 @@ describe("Hub Central Table component", () => {
       }} />);
 
     expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
-    expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
-    expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).toBeInTheDocument();
+    expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
+    expect(container.querySelector("[title=\"2\"]")).toBeInTheDocument();
     expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("10 / page");
   });
 
@@ -60,14 +60,14 @@ describe("Hub Central Table component", () => {
       }} />);
 
     expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
-    expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
-    expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).toBeInTheDocument();
+    expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
+    expect(container.querySelector("[title=\"2\"]")).toBeInTheDocument();
     expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).not.toBeInTheDocument();
   });
 
   test("should allow sorting columns after clicking on the header", () => {
     const {getByText, container} = render(<HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />);
-    const tableColumns = within(getByText("Name").closest("tr"));
+    const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
     const tableRowCells = container.querySelectorAll(".hc-table_row td");
 
     expect(tableRowCells[0]).toHaveTextContent("testLoadXML");

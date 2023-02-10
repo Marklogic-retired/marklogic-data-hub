@@ -125,9 +125,8 @@ const Sidebar: React.FC<Props> = (props) => {
     props.currentBaseEntities.forEach(base => {
       let entityName = base["name"];
       props.entityRelationships[entityName].map(entityName => {
-        const currentRelatedEntity = props.currentRelatedEntities.get(entityName);
         const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
-        relatedEntitiesList.set(entityName, {...relEntity, checked: currentRelatedEntity?.checked || checkAllRelatedEntities});
+        relatedEntitiesList.set(entityName, {...relEntity, checked: true});
       });
     });
 
@@ -136,8 +135,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
       relatedConceptsValues["facetValues"].map((obj) => {
-        const currentRelatedConcept = props.currentRelatedConcepts.get(obj.name);
-        relatedConceptsList.set(obj.name, {...obj, checked: currentRelatedConcept?.checked || checkAllRelatedConcepts});
+        relatedConceptsList.set(obj.name, {...obj, checked: true});
       });
     }
 
@@ -962,7 +960,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
           </div>
           :
-        props.currentRelatedConcepts?.size > 0 &&
+          props.currentRelatedConcepts?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
             <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
               <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>

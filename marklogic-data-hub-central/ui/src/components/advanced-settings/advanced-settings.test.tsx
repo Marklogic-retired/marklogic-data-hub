@@ -25,7 +25,24 @@ describe("Advanced step settings", () => {
     const clearStepData = {...data.advancedLoad};
     clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, queryByText} = render(
-      <AdvancedSettings {...clearStepData} />
+      <AdvancedSettings {...clearStepData}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"ingestion"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     //'Step Definition Name' should be present only for custom ingestion steps
@@ -38,7 +55,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
     expect(getByText("Default Collections:")).toBeInTheDocument();
-    expect((await(waitForElement(() => getAllByText("AdvancedLoad")))).length > 0);
+    expect((await (waitForElement(() => getAllByText("AdvancedLoad")))).length > 0);
 
     expect(getByText("Target Permissions:")).toBeInTheDocument();
 
@@ -63,7 +80,7 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -71,7 +88,24 @@ describe("Advanced step settings", () => {
     const clearStepData = {...data.advancedLoad};
     clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByLabelText, getByLabelText} = render(
-      <AdvancedSettings {...clearStepData} />
+      <AdvancedSettings {...clearStepData}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"ingestion"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     // should be present
@@ -79,7 +113,7 @@ describe("Advanced step settings", () => {
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
     // tooltip for header content, 5 is the index of the header content tooltip icon in advanced-settings
-    const tipIcons  = getAllByLabelText("icon: question-circle");
+    const tipIcons = getAllByLabelText("icon: question-circle");
     fireEvent.mouseOver(tipIcons[5]);
     await waitForElement(() => getByText(AdvancedSettingsTooltips["headers"]));
     expect(getByText(AdvancedSettingsTooltips["headers"]).innerHTML).toBe(AdvancedSettingsTooltips["headers"]);
@@ -94,7 +128,24 @@ describe("Advanced step settings", () => {
     const clearStepData = {...data.advancedCustomLoad};
     clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, queryByText, getByPlaceholderText} = render(
-      <AdvancedSettings {...clearStepData} />
+      <AdvancedSettings {...clearStepData}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"ingestion"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     expect(queryByText("Source Database:")).not.toBeInTheDocument();
@@ -127,7 +178,7 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
     expect(getByPlaceholderText("Please enter additional settings")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter additional settings")).toBeEnabled();
@@ -137,7 +188,24 @@ describe("Advanced step settings", () => {
     const clearStepData = {...data.advancedMapping};
     clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <AdvancedSettings {...clearStepData} />
+      <AdvancedSettings {...clearStepData}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"mapping"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -148,7 +216,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
     expect(getByText("Default Collections:")).toBeInTheDocument();
-    expect((await(waitForElement(() => getAllByText("AdvancedMapping")))).length > 0);
+    expect((await (waitForElement(() => getAllByText("AdvancedMapping")))).length > 0);
 
     expect(getByText("Target Permissions:")).toBeInTheDocument();
 
@@ -161,7 +229,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Parameters Module Path:")).toBeInTheDocument();
     expect(getByPlaceholderText("example: /custom-modules/mapping-params/example-mapping-params.sjs")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("parameters-question-circle"));
-    expect((await(waitForElement(() => getByText("Custom module that defines custom mapping parameters for use in mapping expressions"))))).toBeInTheDocument();
+    expect((await (waitForElement(() => getByText("Custom module that defines custom mapping parameters for use in mapping expressions"))))).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
 
     expect(getByText("Source Record Scope:")).toBeInTheDocument();
@@ -186,7 +254,7 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -194,46 +262,76 @@ describe("Advanced step settings", () => {
     const clearStepData = {...data.advancedMatching};
     clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText} = render(
-      <AdvancedSettings {...clearStepData} />
+      <AdvancedSettings {...clearStepData}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"matching"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[0]).toBeInTheDocument();
     expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[1]).toBeInTheDocument();
-
     expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
     expect(getByText("Default Collections:")).toBeInTheDocument();
-
     expect(getByText("Target Permissions:")).toBeInTheDocument();
-
     expect(getByText("Batch Size:")).toBeInTheDocument();
-
     expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();
-
     expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
     fireEvent.click(getByText("Interceptors"));
-    expect((await(waitForElement(() => getByText("{ \"interceptor\": true }"))))).toBeInTheDocument();
+    expect((await (waitForElement(() => getByText("{ \"interceptor\": true }"))))).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
   test("Verify edit advanced settings for Merging", async () => {
+    const clearStepData = {...data.advancedMerging};
     // remove batch size to test default merge batch size
     const advancedMerging = data.advancedMerging;
     delete advancedMerging.stepData.batchSize;
     const {queryByText, getByLabelText, getByTestId, getByText, getAllByText, queryByPlaceholderText} = render(
-      <AdvancedSettings {...advancedMerging} />
+      <AdvancedSettings {...advancedMerging}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={clearStepData.stepData}
+        activityType={"merging"}
+        canWrite={true}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -245,7 +343,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Default Collections")).toBeInTheDocument();
     expect(getByText("Additional Collections")).toBeInTheDocument();
     // merge collections are present
-    expect((await(waitForElement(() => getAllByText("Merge")))).length > 0);
+    expect((await (waitForElement(() => getAllByText("Merge")))).length > 0);
     expect(getByText("sm-Test-merged sm-Test-mastered")).toBeInTheDocument();
     expect(getByText("merged")).toBeInTheDocument();
 
@@ -302,7 +400,7 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -311,7 +409,24 @@ describe("Advanced step settings", () => {
     let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettings {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping}
+          tabKey={""}
+          tooltipsData={""}
+          isEditing={true}
+          openStepSettings={false}
+          setOpenStepSettings={jest.fn()}
+          updateStep={jest.fn()}
+          stepData={[]}
+          activityType={"merging"}
+          canWrite={true}
+          currentTab={""}
+          setIsValid={true}
+          resetTabs={jest.fn()}
+          setHasChanged={jest.fn()}
+          setPayload={jest.fn()}
+          createStep={jest.fn()}
+          onCancel={jest.fn()}
+        />
       );
       getByText = renderResults.getByText;
       getAllByText = renderResults.getAllByText;
@@ -406,7 +521,7 @@ describe("Advanced step settings", () => {
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "hook-changed"}});
     expect(getByLabelText("customHook-textarea")).toHaveValue("hook-changed");
     fireEvent.mouseOver(getByText("DEPRECATED"));
-    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
+    await wait(() => expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -414,7 +529,24 @@ describe("Advanced step settings", () => {
     let getByText, getByLabelText, queryAllByText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettings {...data.advancedCustomLoad} />
+        <AdvancedSettings {...data.advancedCustomLoad}
+          tabKey={""}
+          tooltipsData={""}
+          isEditing={true}
+          openStepSettings={false}
+          setOpenStepSettings={jest.fn()}
+          updateStep={jest.fn()}
+          stepData={[]}
+          activityType={"ingestion"}
+          canWrite={true}
+          currentTab={""}
+          setIsValid={true}
+          resetTabs={jest.fn()}
+          setHasChanged={jest.fn()}
+          setPayload={jest.fn()}
+          createStep={jest.fn()}
+          onCancel={jest.fn()}
+        />
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -464,7 +596,23 @@ describe("Advanced step settings", () => {
     let getByText, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettings {...data.advancedMapping} canWrite={false} />
+        <AdvancedSettings {...data.advancedMapping} canWrite={false}
+          tabKey={""}
+          tooltipsData={""}
+          isEditing={true}
+          openStepSettings={false}
+          setOpenStepSettings={jest.fn()}
+          updateStep={jest.fn()}
+          stepData={[]}
+          activityType={"mapping"}
+          currentTab={""}
+          setIsValid={true}
+          resetTabs={jest.fn()}
+          setHasChanged={jest.fn()}
+          setPayload={jest.fn()}
+          createStep={jest.fn()}
+          onCancel={jest.fn()}
+        />
       );
       getByText = renderResults.getByText;
       getByPlaceholderText = renderResults.getByPlaceholderText;
@@ -492,11 +640,27 @@ describe("Advanced step settings", () => {
 
   test("Verify tooltips", async () => {
     const {getByText, getAllByLabelText} = render(
-      <AdvancedSettings {...data.advancedMapping} />
+      <AdvancedSettings {...data.advancedMapping}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={[]}
+        activityType={"mapping"}
+        currentTab={""}
+        setIsValid={true}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
     );
     fireEvent.click(getByText("Interceptors"));
     fireEvent.click(getByText("Custom Hook"));
-    let tipIcons  = getAllByLabelText("icon: question-circle");
+    let tipIcons = getAllByLabelText("icon: question-circle");
     const tips = ["sourceDatabase", "targetDatabase", "additionalCollections", "targetPermissions",
       "targetFormat", "provGranularity", "validateEntity", "batchSize", "headers", "interceptors", "customHook"];
     tips.forEach(async (tip, i) => {

@@ -1,45 +1,31 @@
 import React from "react";
-import {mount} from "enzyme";
+import {act} from "react-dom/test-utils";
 import TableView from "./table-view";
 import jsonDocPayload from "../../assets/mock-data/explore/json-document-payload";
-import {render, cleanup} from "@testing-library/react";
+import {render} from "@testing-library/react";
 import {AuthoritiesContext, AuthoritiesService} from "@util/authorities";
 import {fireEvent} from "@testing-library/dom";
 import {SecurityTooltips} from "@config/tooltips.config";
 
-
-afterEach(() => {
-  cleanup();
-});
-describe("Table view component", () => {
-  let wrapper;
-  describe("Using JSON document payload", () => {
-    beforeEach(() => {
-      wrapper = mount(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" />);
+describe("Table view component",  () => {
+  test("renders", async() => {
+    let infoRender:any;
+    await act(async () => {
+      infoRender = render(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json"  location= {""} isEntityInstance={ true}/>);
     });
-
-    test("renders", () => {
-      expect(wrapper.exists()).toBe(true);
-    });
-
-    test("table view renders", () => {
-      expect(wrapper.find(".react-bootstrap-table")).toHaveLength(1);
-    });
+    expect(infoRender.container.getElementsByClassName("react-bootstrap-table")).toHaveLength(1);
   });
-  // TODO add XML test cases
 });
 
 describe("Table view detail component - RTL", () => {
   test("Table detail view with No data renders", async () => {
     const {getByText} = render(
-      <TableView document={{}} contentType="json" />
+      <TableView document={{}} contentType="json" location={""} isEntityInstance={false} isSidePanel={false}/>
     );
       // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
   });
-
 });
-
 
 describe("Unmerge record", () => {
   test("Unmerge button not available", async () => {
@@ -47,7 +33,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["readMatching", "readMerging"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: false}} />
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: false}} location={""} isEntityInstance={false} />
       </AuthoritiesContext.Provider>
     );
     expect(queryByTestId("unmergeIcon")).toBeNull();
@@ -58,7 +44,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["readMatching", "writeMatching"]);
     const {queryByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="" isUnmergeAvailable={() => true}/>
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="" isUnmergeAvailable={() => true} location={""} isEntityInstance={false}/>
       </AuthoritiesContext.Provider>
     );
     expect(queryByTestId("unmergeIcon")).toBeInTheDocument();
@@ -70,7 +56,7 @@ describe("Unmerge record", () => {
     authorityService.setAuthorities(["writeMatching", "writeMerging"]);
     const {getByTestId, findByTestId} = render(
       <AuthoritiesContext.Provider value={authorityService}>
-        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} />
+        <TableView document={{}} contentType="json" isSidePanel={true} data={{unmerge: true}} loadingCompare="abcd" isUnmergeAvailable={() => true} location={""} isEntityInstance={false} />
       </AuthoritiesContext.Provider>
     );
 

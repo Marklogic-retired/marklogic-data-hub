@@ -6,35 +6,15 @@ import Browse from "./Browse";
 import {SearchContext} from "../util/search-context";
 import axiosMock from "axios";
 import {exploreModelResponse} from "../../src/assets/mock-data/explore/model-response";
+import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
+import models from "../../src/assets/mock-data/explore/model-mock";
 
 jest.mock("axios");
 jest.setTimeout(30000);
 jest.mock("../api/modeling");
+const modelsAux: any = models;
 
 describe("Explorer Browse page tests ", () => {
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: ["Customer"],
-    relatedEntityTypeIds: [],
-    nextEntityType: "",
-    baseEntities: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    sidebarQuery: "Select a saved query",
-    selectedQuery: "select a query",
-    selectedTableProperties: [],
-    view: null,
-    tileId: "explore",
-    sortOrder: [],
-    database: "final",
-    datasource: "entities"
-  };
-
   beforeEach(() => {
     axiosMock.get["mockImplementation"]((url) => {
       switch (url) {
@@ -53,16 +33,10 @@ describe("Explorer Browse page tests ", () => {
   test("Verify collapsible side bar", async () => {
     const {getByLabelText} = render(<MemoryRouter>
       <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setRelatedEntityTypeIds: jest.fn(),
-        setConceptFilterTypeIds: jest.fn(),
-        setAllFilterTypeIds: jest.fn(),
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn(),
-        savedNode: undefined,
-        setSavedNode: jest.fn()
-      }}>
+        ...searchContextInterfaceByDefault,
+        setEntityDefinitionsArray: modelsAux
+      }}
+      >
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
@@ -76,28 +50,21 @@ describe("Explorer Browse page tests ", () => {
   test("Verify snippet/table view on hover css", async () => {
     const {getByLabelText} = render(<MemoryRouter>
       <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setConceptFilterTypeIds: jest.fn(),
-        setRelatedEntityTypeIds: jest.fn(),
-        setAllFilterTypeIds: jest.fn(),
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn(),
-        savedNode: undefined,
-        setSavedNode: jest.fn()
+        ...searchContextInterfaceByDefault,
+        setEntityDefinitionsArray: modelsAux
       }}>
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    fireEvent.click(document.querySelector("#switch-view-table"));
+    fireEvent.click(document.querySelector("#switch-view-table")!);
     expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", true);
     expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", false);
-    fireEvent.mouseOver(document.querySelector("#switch-view-snippet"));
+    fireEvent.mouseOver(document.querySelector("#switch-view-snippet")!);
     expect(getByLabelText("switch-view-snippet")).toHaveStyle("color: rgb(127, 134, 181");
-    fireEvent.click(document.querySelector("#switch-view-snippet"));
+    fireEvent.click(document.querySelector("#switch-view-snippet")!);
     expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", false);
     expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", true);
-    fireEvent.mouseOver(document.querySelector("#switch-view-table"));
+    fireEvent.mouseOver(document.querySelector("#switch-view-table")!);
     expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 

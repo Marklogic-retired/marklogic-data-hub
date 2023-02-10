@@ -106,8 +106,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: "no",
   pii: "no",
   facetable: false,
-  sortable: false
-  //wildcard: false
+  sortable: false,
+  wildcard: false
 };
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
@@ -757,7 +757,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   };
 
   const onCheckboxChange = (event, checkboxName) => {
-    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event.target.checked});
+    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName]: event.target.checked});
   };
 
   const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
@@ -772,10 +772,14 @@ const PropertyModal: React.FC<Props> = (props) => {
             type={"radio"}
             defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
             onChange={(event) => onRadioChange(event, radio.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter"|| event.key === " ") { onRadioChange("t", radio.value); }
+            }}
             label={"Yes"}
             value={"yes"}
             aria-label={radio.value + "-yes"}
             className={"mb-0"}
+            tabIndex={0}
           />
           <Form.Check
             inline
@@ -784,14 +788,18 @@ const PropertyModal: React.FC<Props> = (props) => {
             type={"radio"}
             defaultChecked={selectedPropertyOptions[radio.value] === "no"}
             onChange={(event) => onRadioChange(event, radio.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter"|| event.key === " ") { onRadioChange(event, radio.value); }
+            }}
             label={"No"}
             value={"no"}
             aria-label={radio.value + "-no"}
             className={"mb-0"}
+            tabIndex={0}
           />
           <div className={"p-2 d-flex align-items-center"}>
             <HCTooltip text={radio.tooltip} id={radio.value + "-tooltip"} placement="top">
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.radioQuestionIcon} />
+              <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.radioQuestionIcon} />
             </HCTooltip>
           </div>
         </Col>
@@ -810,12 +818,16 @@ const PropertyModal: React.FC<Props> = (props) => {
               value={checkbox.value}
               checked={selectedPropertyOptions[checkbox.value]}
               onChange={(event) => onCheckboxChange(event, checkbox.value)}
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter"|| event.key === " ") { onCheckboxChange("keyboard", checkbox.value); }
+              }}
             />
             <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
           </FormCheck>
           <div className={"p-2 ps-4 d-flex align-items-center"}>
             <HCTooltip text={checkbox.tooltip} id={checkbox.value + "-tooltip"} placement="top">
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+              <QuestionCircleFill  tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
             </HCTooltip>
           </div>
         </Col>
@@ -935,7 +947,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} />
+                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.icon} />
                   </HCTooltip>
                 </div>
               </Col>
@@ -1000,6 +1012,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                     aria-label="foreignKey-select"
                     options={foreignKeyOptions}
                     styles={reactSelectThemeConfig}
+                    openMenuOnFocus
                     formatOptionLabel={({value, label}) => {
                       return (
                         <span aria-label={`${value}-option`} role={"option"}>
@@ -1010,7 +1023,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   />
                   <div className={"d-flex p-2 align-items-center"}>
                     <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
+                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
                     </HCTooltip>
                   </div>
                 </div>

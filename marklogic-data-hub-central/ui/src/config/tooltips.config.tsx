@@ -226,7 +226,7 @@ const CommonStepTooltips = {
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
   radioCollection : 'A single collection that selects the source data to process in this configuration.',
-  radioQuery: <span aria-label="radio-query-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }}>CTS Query.</a><br /><br />
+  radioQuery: <span aria-label="radio-query-tooltip">The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{ color: themeColors.info }} tabIndex={0}>CTS Query.</a><br /><br />
     The following example source queries select data from multiple collections.<br /><br />
     JavaScript:<br />
     <span style={{ fontFamily: "monospace" }}>cts.collectionQuery(['collection1', 'collection2'])</span><br /><br />
@@ -368,6 +368,8 @@ const MatchingStepTooltips = {
   thresholdScale: 'Enable the scale to position, edit or delete thresholds.',
   rulesetScale: 'Enable the scale to position, edit or delete rulesets.',
   testDisabled: 'A threshold configuration above is required before testing.',
+  fuzzyMatching: 'Toggle this functionality to allow matching values based on Double Metaphones to increase your matching efficiency.',
+  valuesToIgnore: 'Documents containing the values provided in these lists for the above property will be ignored in matching.',
 };
 
 const MatchingStepPlaceholders = {

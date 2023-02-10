@@ -41,9 +41,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can render matching steps", () => {
-    const {getByText} =  render(
+    const {getByText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -53,11 +66,22 @@ describe("Matching cards view component", () => {
 
   it("can render/edit match steps with writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
-    const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
+    const {getByText, getByLabelText, getByTestId, queryAllByRole} = render(
       <Router>
         <MatchingCard
           {...defaultProps}
           deleteMatchingArtifact={deleteMatchingArtifact}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
         />
       </Router>
     );
@@ -84,12 +108,22 @@ describe("Matching cards view component", () => {
 
   it("cannot edit/delete match step without writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
-    const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
+    const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} = render(
       <Router>
         <MatchingCard
           {...defaultProps}
           deleteMatchingArtifact={deleteMatchingArtifact}
           canWriteMatchMerge={false}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
         />
       </Router>
     );
@@ -97,7 +131,7 @@ describe("Matching cards view component", () => {
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     expect(getByText("matchCustomers")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    await wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Curate: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
 
@@ -122,11 +156,22 @@ describe("Matching cards view component", () => {
 
   it("can render/edit match steps with writeMatchMerge authority", async () => {
     const deleteMatchingArtifact = jest.fn();
-    const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
+    const {getByText, getByLabelText, getByTestId, queryAllByRole} = render(
       <Router>
         <MatchingCard
           {...defaultProps}
           deleteMatchingArtifact={deleteMatchingArtifact}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
         />
       </Router>
     );
@@ -150,9 +195,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can add a step to a new flow", async () => {
-    const {getByText, getByLabelText, getByTestId} =  render(
+    const {getByText, getByLabelText, getByTestId} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -169,9 +227,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can add/run a step in a new flow from run button", async () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -187,9 +258,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can add a step to an existing flow", async () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={defaultProps.flows}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -209,9 +293,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can run a step in an existing flow where step DOES NOT exist", () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={defaultProps.flows}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -230,9 +327,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can run a step in an existing flow where step DOES exist", () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={defaultProps.flows}
+          entityName={""}
+          entityModel={""}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -251,9 +361,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can run a step in an existing flow where step exists in MORE THAN ONE flow", () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={defaultProps.flows}
+          entityName={""}
+          entityModel={entityModel}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 
@@ -272,9 +395,22 @@ describe("Matching cards view component", () => {
   });
 
   it("can open step settings and navigate to match step details", async () => {
-    const {getByText, getByTestId, getByLabelText} =  render(
+    const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}/>
+        <MatchingCard {...defaultProps}
+          matchingStepsArray={matchingStepsArray}
+          flows={[]}
+          entityName={""}
+          entityModel={entityModel}
+          canReadMatchMerge={true}
+          canWriteMatchMerge={true}
+          deleteMatchingArtifact={jest.fn()}
+          createMatchingArtifact={jest.fn()}
+          updateMatchingArtifact={jest.fn()}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          canWriteFlow={true}
+        />
       </Router>
     );
 

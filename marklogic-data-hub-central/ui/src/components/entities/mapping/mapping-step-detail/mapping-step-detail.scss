@@ -68,6 +68,9 @@
   border-style: dashed !important;
 }
 
+.tableExpandIcon:focus {
+  outline: red;
+}
 
 #columnOptionsSelectorButton {
     text-decoration: none !important;

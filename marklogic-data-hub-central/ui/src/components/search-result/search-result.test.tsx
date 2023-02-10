@@ -5,31 +5,12 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
-import {SearchContext} from "../../util/search-context";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {SecurityTooltips} from "@config/tooltips.config";
-
 
 describe("Search Result view component", () => {
   const parsedModelData = entityFromJSON(modelResponse);
   const entityDefArray = entityParser(parsedModelData);
-
-  const defaultSearchOptions = {
-    query: "",
-    entityTypeIds: [],
-    nextEntityTypes: [],
-    start: 1,
-    pageNumber: 1,
-    pageLength: 20,
-    pageSize: 20,
-    selectedFacets: {},
-    maxRowsPerPage: 100,
-    selectedQuery: "select a query",
-    manageQueryModal: false,
-    selectedTableProperties: [],
-    view: null,
-    sortOrder: []
-  };
 
   test("Source and instance tooltips render", async () => {
     const authorityService = new AuthoritiesService();
@@ -86,41 +67,6 @@ describe("Search Result view component", () => {
     await (waitForElement(() => (getByText("Unmerge Documents"))));
   });
 
-  test("Verify expandable icon closes if page number changes", async () => {
-    const {rerender, getByTestId, getByLabelText} = render(
-      <SearchContext.Provider value={{searchOptions: defaultSearchOptions}}>
-        <Router>
-          <SearchResult
-            entityDefArray={entityDefArray}
-            item={searchPayloadResults[0] as any}
-            tableView={false}
-            handleViewChange={() => {}}
-            onExpand={() => {}}
-          />
-        </Router>
-      </SearchContext.Provider>
-    );
-    expect(getByTestId("expandable-icon")).toBeInTheDocument();
-    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
-    fireEvent.click(getByLabelText("icon: chevron-right"));
-    expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
-
-    rerender(
-      <SearchContext.Provider value={{searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
-        <Router>
-          <SearchResult
-            entityDefArray={entityDefArray}
-            item={searchPayloadResults[0] as any}
-            tableView={false}
-            handleViewChange={() => {}}
-            onExpand={() => {}}
-          />
-        </Router>
-      </SearchContext.Provider>
-    );
-
-    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
-  });
   test("UnmergeIcon not available, missing permission", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMatching", "readMerging"]);

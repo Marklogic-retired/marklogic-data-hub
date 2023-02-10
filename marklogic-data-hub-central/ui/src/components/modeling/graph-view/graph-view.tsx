@@ -212,7 +212,10 @@ const GraphView: React.FC<Props> = (props) => {
       <span className={styles.disabledCursor}>{publishButton}</span>
     </HCTooltip>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
-      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }}/></i>
+      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" tabIndex={0} onClick={() => { setExportPngButtonClicked(true); }} onKeyDown={(event) => {
+        if (event.key === "Enter"|| event.key === " ") {  setExportPngButtonClicked(true); }
+      }}
+      /></i>
     </HCTooltip>
   </span>;
 

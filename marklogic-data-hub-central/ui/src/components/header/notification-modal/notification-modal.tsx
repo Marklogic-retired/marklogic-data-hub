@@ -129,7 +129,22 @@ const NotificationModal = (props) => {
             {
               canWriteMatchMerge ?
                 <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
-                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIcon} data-testid={`merge-icon${idRow}`} aria-label={`merge-icon`} onClick={() => openMergeCompare(row)} /></i>
+                  <i>
+                    <MdCallMerge
+                      color={themeColors.info}
+                      className={styles.mergeIcon}
+                      data-testid={`merge-icon${idRow}`}
+                      aria-label={`merge-icon`}
+                      tabIndex={0}
+                      onClick={() => openMergeCompare(row)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          openMergeCompare(row);
+                        }
+                      }}
+                    />
+                  </i>
                 </HCTooltip>
                 :
                 <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
@@ -141,7 +156,23 @@ const NotificationModal = (props) => {
             {
               canWriteMatchMerge ?
                 <HCTooltip text={"Delete"} id={`delete-icon${idRowAux++}`} placement="top-end">
-                  <i aria-label={`deleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}`} className={styles.deleteRow} onClick={() => onDelete(row)} size="lg" /></i>
+                  <i aria-label={`deleteIcon`}>
+                    <FontAwesomeIcon
+                      icon={faTrashAlt}
+                      color={themeColors.info}
+                      data-testid={`delete-icon${idRowAux}`}
+                      className={styles.deleteRow}
+                      onClick={() => onDelete(row)}
+                      size="lg"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onDelete(row);
+                        }
+                      }}
+                    />
+                  </i>
                 </HCTooltip>
                 :
                 <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="disabled-delete-icon" placement="top-end">
@@ -285,25 +316,28 @@ const NotificationModal = (props) => {
           </Modal.Header>
           <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
             {notificationOptions.totalCount < 1 ?
+
               <div className={styles.emptyList}>
                 <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" /></i>
                 <div className={styles.emptyText}><strong>No Merge Notifications Present</strong></div>
               </div>
               :
-              notificationOptions?.notifications && <><HCTable
-              pagination={false}
-              columns={columns}
-              data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
-              rowKey="unique_key"
-            />
-            <SearchPaginationSimple
-              total={notificationOptions?.totalCount}
-              pageSize={pageLength}
-              pageNumber={pageTableNotification}
-              maxRowsPerPage={pageLength}
-              updatePage={updatePage}
-            />
-            </>
+              notificationOptions?.notifications &&
+              <>
+                <HCTable
+                  pagination={false}
+                  columns={columns}
+                  data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+                  rowKey="unique_key"
+                ></HCTable>
+                <SearchPaginationSimple
+                  total={notificationOptions?.totalCount}
+                  pageSize={pageLength}
+                  pageNumber={pageTableNotification}
+                  maxRowsPerPage={pageLength}
+                  updatePage={updatePage}
+                ></SearchPaginationSimple>
+              </>
             }
           </div>
         </Modal.Body>

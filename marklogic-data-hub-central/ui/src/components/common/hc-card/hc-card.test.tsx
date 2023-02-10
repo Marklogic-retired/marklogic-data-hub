@@ -28,14 +28,12 @@ describe("Hub Central Card component", () => {
   });
 
   test("should render a HCCard component with title extras", () => {
+    let child: any = [<div key="extra">Extras here.</div>];
     const {getByText} = render(<HCCard
       title={"This is the title"}
-      titleExtra={[
-        <div key="extra">Extras here.</div>
-      ]}
+      titleExtra={child}
     >This is a card</HCCard>);
     expect(getByText("This is a card")).toBeInTheDocument();
     expect(getByText("Extras here.")).toBeInTheDocument();
   });
-
 });

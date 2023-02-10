@@ -240,7 +240,7 @@ describe("Monitor Tile", () => {
     monitorPage.getRowByIndex(1).click({force: true});
     monitorPage.checkExpandedRow();
     monitorPage.getPaginationPageSizeOptions().first().scrollIntoView().should("be.visible").select("10 / page");
-    mappingStepDetail.selectPageSourceTable("2");
+    mappingStepDetail.selectCustomPageSourceTable("2");
 
     cy.log("**Go to another page and back**");
     toolbar.getLoadToolbarIcon().click();
@@ -249,7 +249,7 @@ describe("Monitor Tile", () => {
     cy.log("**Checking and setting in session new data**");
     mappingStepDetail.verifyContent("10 / page");
     monitorPage.checkCurrentPage(2);
-    mappingStepDetail.selectPageSourceTable("1");
+    mappingStepDetail.selectCustomPageSourceTable("1");
     monitorPage.checkExpandedRow();
     monitorPage.getColumnSelectorIcon().click();
     mappingStepDetail.selectColumnPopoverById("column-user-id").click();

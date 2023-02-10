@@ -14,3 +14,7 @@ export const simulateMouseClick = (element) => {
     );
   }
 };
+
+export const delayTooltip = (func) => {
+  return setTimeout(() => { func(); }, 400);
+};

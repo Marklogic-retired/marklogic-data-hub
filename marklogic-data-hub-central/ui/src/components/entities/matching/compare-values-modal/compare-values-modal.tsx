@@ -16,7 +16,7 @@ import {Overlay} from "react-bootstrap";
 import Popover from "react-bootstrap/Popover";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "@util/search-context";
-import {isArray} from "util";
+import {delayTooltip} from "@util/common-utils";
 
 interface Props {
   isVisible: any;
@@ -219,7 +219,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           },
           formatter: (property, key) => {
             let mergedOutput;
-            if (isArray(property.value) && property.value.length > 1) {
+            if (Array.isArray(property.value) && property.value.length > 1) {
               if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
                 //pretty print JSON if array of objects
                 mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
@@ -266,7 +266,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         },
         formatter: (property, key) => {
           let mergedOutput;
-          if (isArray(property.value) && property.value.length > 1) {
+          if (Array.isArray(property.value) && property.value.length > 1) {
             if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
               //pretty print JSON if array of objects
               mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
@@ -385,10 +385,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     closeModal();
     toggleMergeUnmerge(searchOptions.mergeUnmerge);
   };
-
+  let time:any;
   const handleShowUrisPopover = (event) => {
-    setShowUrisPopover(!showUrisPopover);
-    setTargetUrisPopover(event.target);
+    event.persist();
+    time = delayTooltip(() => {
+      setShowUrisPopover(!showUrisPopover);
+      setTargetUrisPopover(event.target);
+    });
+  };
+
+  const handleMouseLeaveUrisPopover = () => {
+    setShowUrisPopover(false);
+    clearTimeout(time);
   };
 
   const moreUrisInfo = (
@@ -462,7 +470,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         props.uriCompared.length > 2 ?
           <div className={styles.moreUrisTrigger}>
             {moreUrisInfo}
-            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => setShowUrisPopover(false)} />
+            <FontAwesomeIcon icon={faInfoCircle} aria-label="icon: info-circle" className={styles.infoIcon} onMouseEnter={handleShowUrisPopover} onMouseLeave={() => handleMouseLeaveUrisPopover()} />
           </div>
           :
           null

@@ -10,23 +10,33 @@ import {HCDivider, HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/
 import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/explore.config";
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {themeColors} from "@config/themes.config";
+import {EntityProps} from "types/entity-types";
+
+interface BaseEntityProps {
+  filter: number;
+  amount: number;
+}
+
+interface EntityIndicatorDataProps {
+  max: number;
+  entities: {
+    [entityName:string] : BaseEntityProps
+  };
+}
 
 interface Props {
-  currentBaseEntities: any;
-  entityIndicatorData: any;
+  currentBaseEntities: EntityProps[];
+  entityIndicatorData: EntityIndicatorDataProps;
   setCurrentBaseEntities: (entities: any[]) => void;
-  allBaseEntities: any[];
+  allBaseEntities: EntityProps[];
   setActiveAccordionRelatedEntities: (entity: string) => void;
-  activeKey: any[];
+  activeKey: string[];
   setEntitySpecificPanel: (entity: any) => void;
 }
 
 const {MINIMUM_ENTITIES} = exploreSidebar;
 
-const BaseEntitiesFacet: React.FC<Props> = (props) => {
-
-  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, entityIndicatorData} = props;
-
+const BaseEntitiesFacet: React.FC<Props> = ({setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, entityIndicatorData, setActiveAccordionRelatedEntities, activeKey}) => {
   const {
     searchOptions,
     setSearchOptions,
@@ -87,25 +97,27 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         selectedTableProperties: [],
         ...defaultPaginationOptions
       });
-      if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
+      if (activeKey.indexOf("related-entities") !== -1) { setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
       setEntityNames(clearSelection);
       setCurrentBaseEntities(baseEntitiesSorting(filteredEntities));
 
-      if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
+      if (activeKey.indexOf("related-entities") === -1) { setActiveAccordionRelatedEntities("related-entities"); }
+
+      const selectedTablePropertiesAux: string[] = [];
 
       let updatedSearchOptions = {
         ...searchOptions,
         entityTypeIds: clearSelection,
         baseEntities: filteredEntities,
-        selectedTableProperties: [],
+        selectedTableProperties: selectedTablePropertiesAux,
         ...defaultPaginationOptions
       };
       if (filteredEntities.length === 1) {
         let queryColumnsToDisplay = filteredEntities[0].properties?.map(property => property.name);
-        updatedSearchOptions["selectedTableProperties"] = queryColumnsToDisplay;
+        updatedSearchOptions.selectedTableProperties = queryColumnsToDisplay;
       }
       setSearchOptions(updatedSearchOptions);
     }
@@ -145,6 +157,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   return (
     <>
       <Select
+        tabSelectsValue={false}
+        openMenuOnFocus={true}
         id="entitiesSidebar-select-wrapper"
         inputId="entitiesSidebar-select"
         isMulti
@@ -203,6 +217,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
                   style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
                   className={styles.entityItem}
                   onClick={() => setEntitySpecificPanel(entitySpecificPanelInfo)}
+                  tabIndex={0}
+                  onKeyDown={(event) =>  { if (event.key === "Enter") setEntitySpecificPanel(entitySpecificPanelInfo); }}
                 >
                   <span className={styles.entityIcon}>
                     <DynamicIcons name={finalIcon}/>
@@ -230,7 +246,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       </div>
 
       <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (currentBaseEntities.length > MINIMUM_ENTITIES) ? "block" : "none"}}>
-        {(showMore) ? "<< less" : "more >>"}
+        <span tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") onShowMore(); }} >{(showMore) ? "<< less" : "more >>"}</span>
       </div>
     </>
   );

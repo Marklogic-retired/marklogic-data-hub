@@ -109,7 +109,7 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const renderOptions = () => {
     const options = pageSizeOptions.map((item, index) => {
-      return <option key={index} className={+item === +props.pageSize ? styles.optionSelected : ""} value={item}>{item} / page</option>;
+      return <option key={index} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
     });
     return options;
   };

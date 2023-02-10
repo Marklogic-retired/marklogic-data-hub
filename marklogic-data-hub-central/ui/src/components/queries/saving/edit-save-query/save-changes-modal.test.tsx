@@ -35,6 +35,8 @@ describe("<SaveChangesModal/>", () => {
       entityQueryUpdate={false}
       isSaveQueryChanged={jest.fn()}
       resetYesClicked={false}
+      entityDefArray={[]}
+      setColumnSelectorTouched={jest.fn()}
     />);
     queryField = getByPlaceholderText("Enter query name");
     expect(queryField).toHaveAttribute("value", "Order query");
@@ -67,6 +69,7 @@ describe("<SaveChangesModal/>", () => {
       isSaveQueryChanged={jest.fn()}
       resetYesClicked={false}
       setColumnSelectorTouched={jest.fn()}
+      entityDefArray={[]}
     />);
     queryField = getByPlaceholderText("Enter query name");
     fireEvent.change(queryField, {target: {value: ""}});
@@ -122,6 +125,7 @@ describe("<SaveChangesModal/>", () => {
       isSaveQueryChanged={jest.fn()}
       resetYesClicked={false}
       setColumnSelectorTouched={jest.fn()}
+      entityDefArray={[]}
     />);
     queryField = getByPlaceholderText("Enter query name");
     fireEvent.change(queryField, {target: {value: "Edit new query"}});

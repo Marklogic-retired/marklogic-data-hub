@@ -115,7 +115,6 @@ describe("Leaf Nodes", () => {
   });
   it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
     browsePage.removeBaseEntity("Customer");
-    entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
     cy.wait(2000);
     cy.waitForAsyncRequest();
