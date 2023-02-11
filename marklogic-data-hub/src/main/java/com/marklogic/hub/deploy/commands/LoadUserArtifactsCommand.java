@@ -286,9 +286,17 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         final Path stepsPath = hubConfig.getHubProject().getStepsPath();
         if (stepsPath.toFile().exists()) {
             StepService stepService = StepService.on(hubClient.getStagingClient());
-            for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
+            File[] stepTypeDirectories = stepsPath.toFile().listFiles(File::isDirectory);
+            if (stepTypeDirectories == null) {
+                return;
+            }
+            for (File stepTypeDir : stepTypeDirectories) {
                 final String stepType = stepTypeDir.getName();
-                for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
+                File[] stepFiles = stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"));
+                if (stepFiles == null) {
+                    continue;
+                }
+                for (File stepFile : stepFiles) {
                     JsonNode step = readArtifact(stepFile);
                     if (!step.has("name")) {
                         throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
@@ -307,7 +315,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         final Path flowsPath = hubConfig.getHubProject().getFlowsDir();
         if (flowsPath.toFile().exists()) {
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
-            for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
+            File[] flowFiles = flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"));
+            if (flowFiles == null) {
+                return;
+            }
+            for (File file : flowFiles) {
                 JsonNode flow = readArtifact(file);
                 if (!flow.has("name")) {
                     throw new RuntimeException("Unable to load flow from file: " + file + "; no 'name' property found");
@@ -322,7 +334,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     private void loadHubCentralConfig(HubClient hubClient) {
         final Path configPath = hubConfig.getHubProject().getHubCentralConfigPath();
         if (configPath.toFile().exists()) {
-            for (File file : configPath.toFile().listFiles(f -> f.isFile())) {
+            File[] configFiles = configPath.toFile().listFiles(f -> f.isFile());
+            if (configFiles == null) {
+                return;
+            }
+            for (File file : configFiles) {
                 JsonNode hubCentralConfig = readArtifact(file);
                 String docUri = "/config/".concat(file.getName());
                 new HubCentralManager().deployHubCentralConfig(hubClient, hubCentralConfig, docUri);
@@ -334,12 +350,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         final Path configPath = hubConfig.getHubProject().getHubCentralConceptsPath();
         ArrayNode conceptsArray = objectMapper.createArrayNode();
         if (configPath.toFile().exists()) {
-            for (File file : configPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".concept.json"))) {
+            File[] conceptFiles = configPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".concept.json"));
+            if (conceptFiles == null) {
+                return;
+            }
+            for (File file : conceptFiles) {
                 conceptsArray.add(readArtifact(file));
             }
         }
 
-        if(conceptsArray.size() > 0) {
+        if (conceptsArray.size() > 0) {
             ConceptService.on(hubClient.getStagingClient()).saveConceptModels(conceptsArray);
             clearExpandedTreeCache(hubClient);
         }
@@ -349,11 +369,21 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         final Path stepDefsPath = hubConfig.getHubProject().getStepDefinitionsDir();
         if (stepDefsPath.toFile().exists()) {
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
-            for (File typeDir : stepDefsPath.toFile().listFiles(File::isDirectory)) {
+            File[] typeDirectories = stepDefsPath.toFile().listFiles(File::isDirectory);
+            if (typeDirectories == null) {
+                return;
+            }
+            for (File typeDir : typeDirectories) {
                 final String stepDefType = typeDir.getName();
-                for (File defDir : typeDir.listFiles(File::isDirectory)) {
-                    String[] fileNames;
-                    fileNames = defDir.list();
+                File[] definitionDirectories = typeDir.listFiles(File::isDirectory);
+                if (definitionDirectories == null) {
+                    continue;
+                }
+                for (File defDir : definitionDirectories) {
+                    String[] fileNames = defDir.list();
+                    if (fileNames == null) {
+                        continue;
+                    }
                     for (String stepDefFileName : fileNames) {
                         File stepDefFile = new File(defDir, stepDefFileName);
                         if (stepDefFile.exists()) {

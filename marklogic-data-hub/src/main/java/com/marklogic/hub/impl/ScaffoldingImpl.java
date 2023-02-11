@@ -276,7 +276,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
             try {
                 String fileContents = buildFlowFromDefaultFlow(customTokens);
-                try (FileWriter writer = new FileWriter(flowFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(flowFile), StandardCharsets.UTF_8)) {
                     writer.write(fileContents);
                 }
             }
@@ -358,9 +358,9 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 .withMapping(mappingNameWithVersion)
                 .build();
 
-            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-            flow.toProperties().store(fw, "");
-            fw.close();
+            try (OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(flowDir.resolve(flowName + ".properties").toFile()), StandardCharsets.UTF_8)) {
+                flow.toProperties().store(fw, "");
+            }
         }
         catch(IOException e) {
             throw new RuntimeException(e);
@@ -396,31 +396,10 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
     }
 
     private void writeToFile(String fileContent, File dstFile) {
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-
-        try {
-            fw = new FileWriter(dstFile);
-            bw = new BufferedWriter(fw);
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dstFile),StandardCharsets.UTF_8))) {
             bw.write(fileContent);
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if( fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -431,7 +410,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         try {
             inputStream = Scaffolding.class.getClassLoader()
                 .getResourceAsStream(srcFile);
-            rdr = new BufferedReader(new InputStreamReader(inputStream));
+            rdr = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             String bufferedLine = null;
             while ((bufferedLine = rdr.readLine()) != null) {
                 if(bufferedLine.contains("placeholder")) {

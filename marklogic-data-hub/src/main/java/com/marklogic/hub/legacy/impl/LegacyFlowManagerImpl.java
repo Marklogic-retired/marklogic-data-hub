@@ -16,6 +16,7 @@
 package com.marklogic.hub.legacy.impl;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices.ServiceResult;
 import com.marklogic.client.extensions.ResourceServices.ServiceResultIterator;
@@ -35,6 +36,8 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 @Component
-public class LegacyFlowManagerImpl implements LegacyFlowManager {
+public class LegacyFlowManagerImpl extends LoggingObject implements LegacyFlowManager {
 
     @Autowired
     private HubConfig hubConfig;
@@ -143,40 +146,47 @@ public class LegacyFlowManagerImpl implements LegacyFlowManager {
             ? FlowType.INPUT : FlowType.HARMONIZE;
 
         String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
-        return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
+        Path propertiesDir = propertiesFile.getParent();
+        return propertiesDir == null ? null : getLocalFlow(entityName, propertiesDir, flowType);
     }
 
     private LegacyFlow getLocalFlow(String entityName, Path flowDir, FlowType flowType) {
-        try {
-            String flowName = flowDir.getFileName().toString();
-            File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
-            if (propertiesFile.exists()) {
-                Properties properties = new Properties();
-                try (FileInputStream fis = new FileInputStream(propertiesFile)) {
-                    properties.load(fis);
-                }
-
-                // trim trailing whitespaces for properties.
-                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-                    properties.put(entry.getKey(), entry.getValue().toString().trim());
-                }
-
-                LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
-                    .withEntityName(entityName)
-                    .withName(flowName)
-                    .withType(flowType)
-                    .withCodeFormat(CodeFormat.getCodeFormat((String) properties.get("codeFormat")))
-                    .withDataFormat(DataFormat.getDataFormat((String) properties.get("dataFormat")))
-                    .withMain(new MainPluginImpl((String) properties.get("mainModule"), CodeFormat.getCodeFormat((String) properties.get("mainCodeFormat"))));
-
-                if (flowType.equals(FlowType.HARMONIZE)) {
-                    flowBuilder.withCollector(new LegacyCollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
-                }
-
-                return flowBuilder.build();
+        Path flowPath = flowDir.getFileName();
+        if (flowPath == null) {
+            return null;
+        }
+        String flowName = flowPath.toString();
+        File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
+        if (propertiesFile.exists()) {
+            Properties properties = new Properties();
+            try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+                properties.load(fis);
+            } catch (FileNotFoundException e) {
+                logger.warn("Unable to locate properties file for legacy flow: " + flowName, e);
+                return null;
+            } catch (IOException e) {
+                logger.warn("Unable to load properties file for legacy flow: " + flowName, e);
+                return null;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+            // trim trailing whitespaces for properties.
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                properties.put(entry.getKey(), entry.getValue().toString().trim());
+            }
+
+            LegacyFlowBuilder flowBuilder = LegacyFlowBuilder.newFlow()
+                .withEntityName(entityName)
+                .withName(flowName)
+                .withType(flowType)
+                .withCodeFormat(CodeFormat.getCodeFormat((String) properties.get("codeFormat")))
+                .withDataFormat(DataFormat.getDataFormat((String) properties.get("dataFormat")))
+                .withMain(new MainPluginImpl((String) properties.get("mainModule"), CodeFormat.getCodeFormat((String) properties.get("mainCodeFormat"))));
+
+            if (flowType.equals(FlowType.HARMONIZE)) {
+                flowBuilder.withCollector(new LegacyCollectorImpl((String) properties.get("collectorModule"), CodeFormat.getCodeFormat((String) properties.get("collectorCodeFormat"))));
+            }
+
+            return flowBuilder.build();
         }
         return null;
     }

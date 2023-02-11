@@ -93,7 +93,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
      * <code>maxInMemorySize</code> elements in memory.
      */
     public DiskQueue() {
-        this(safeIntCast((Runtime.getRuntime().freeMemory() / 40) * DEFAULT_REFILL_RATIO), null);
+        this(safeIntCast((Runtime.getRuntime().freeMemory() / (float) 40) * DEFAULT_REFILL_RATIO), null);
     }
 
     /**
@@ -156,7 +156,9 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
 
         fileElementCount = 0;
 
-        fileQueue.delete();
+        if (!fileQueue.delete()) {
+            LOG.log(Level.INFO, "Unable to clean up file queue located at " + fileQueue.getAbsolutePath());
+        }
         fileQueue = null;
         return true;
     }

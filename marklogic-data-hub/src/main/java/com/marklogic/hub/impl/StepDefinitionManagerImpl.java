@@ -76,8 +76,9 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
             }
             getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition), stepDefinition.getName());
             Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
+            if (!(dir.toFile().mkdirs() || dir.toFile().exists())) {
+                logger.error("Unable to create directory for step definition at " + dir.toAbsolutePath());
+                return;
             }
             String stepFileName = stepDefinition.getName() + STEP_DEFINITION_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), stepFileName).toFile();

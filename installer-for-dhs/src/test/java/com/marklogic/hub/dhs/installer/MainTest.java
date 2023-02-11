@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,7 +24,7 @@ public class MainTest {
             boolean result = Main.parseArgs(commander, new String[]{});
             assertFalse(result, "The args aren't valid because the required ones aren't specified");
 
-            String errorOutput = new String(testOutput.toByteArray());
+            String errorOutput = new String(testOutput.toByteArray(), StandardCharsets.UTF_8);
             assertTrue(errorOutput.contains("Please see the usage information above for required options and available commands"));
         } finally {
             System.setErr(originalStream);

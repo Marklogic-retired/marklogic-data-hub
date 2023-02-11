@@ -11,6 +11,7 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -74,7 +75,7 @@ public abstract class TestObject extends LoggingObject {
 
     protected String readStringFromClasspath(String path) {
         try {
-            return new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath(path)));
+            return new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath(path)), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

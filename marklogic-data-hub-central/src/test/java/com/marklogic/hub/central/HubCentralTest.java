@@ -17,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,7 +53,7 @@ public class HubCentralTest extends TestObject {
         addDefaultPermissions(metadata);
         DatabaseClient client = DatabaseClientFactory.newClient("localhost", 8010, "data-hub-MODULES",
             new DatabaseClientFactory.DigestAuthContext("test-admin-for-data-hub-tests", "password"));
-        client.newDocumentManager().write(uri, metadata, new BytesHandle(readStringFromClasspath("/custom-config/datahubConfig.json").getBytes()).withFormat(Format.JSON));
+        client.newDocumentManager().write(uri, metadata, new BytesHandle(readStringFromClasspath("/custom-config/datahubConfig.json").getBytes(StandardCharsets.UTF_8)).withFormat(Format.JSON));
 
         HubConfigImpl hubConfig = hubCentral.newHubConfig("test-data-hub-developer", "password");
         assertEquals(hubConfig.getUsername(), "test-data-hub-developer");

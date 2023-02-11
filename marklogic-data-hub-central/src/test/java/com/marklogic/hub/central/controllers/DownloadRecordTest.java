@@ -12,6 +12,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.NestedServletException;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -84,7 +86,7 @@ public class DownloadRecordTest extends AbstractMvcTest {
 
 
     private void writeAndValidateDownloadRecord(@NotNull DocumentManager docMgr, String docUri, String database, @NotNull String content) throws Exception {
-        final byte[] contentBytes = content.getBytes();
+        final byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
         docMgr.write(docUri, addDefaultPermissions(new DocumentMetadataHandle()), new BytesHandle(contentBytes));
 
         loginAsTestUserWithRoles("hub-central-operator");

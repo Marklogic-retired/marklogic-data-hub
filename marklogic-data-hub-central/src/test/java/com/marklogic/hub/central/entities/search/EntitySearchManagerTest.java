@@ -40,11 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
-    static String ACTUAL_QUERY_OPTIONS = EntitySearchManager.QUERY_OPTIONS;
-
     @AfterEach
     public void resetData() {
-        EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
         if (isVersionCompatibleWith520Roles()) {
             runAsDataHubDeveloper();
         } else {

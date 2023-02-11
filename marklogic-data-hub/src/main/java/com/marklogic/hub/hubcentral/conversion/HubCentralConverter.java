@@ -64,7 +64,10 @@ public class HubCentralConverter extends LoggingObject {
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
         boolean atLeastOneEntityModelWasConverted = false;
         File[] entityModelDefs = entityModelsDir.listFiles((dir, name) -> name.endsWith(EntityManagerImpl.ENTITY_FILE_EXTENSION));
-
+        if (entityModelDefs == null) {
+            logger.warn("No entity definitions were converted.");
+            return;
+        }
         for (File entityModelDef : entityModelDefs) {
             JsonNode entityModelNode = null;
             String fileName = entityModelDef.getName();

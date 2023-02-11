@@ -16,6 +16,7 @@ import com.marklogic.mgmt.api.security.User;
 import com.marklogic.rest.util.Fragment;
 
 import java.net.ConnectException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -250,14 +251,14 @@ public abstract class AbstractHubClientTest extends TestObject {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         addDefaultPermissions(metadata);
         metadata.getCollections().addAll(collections);
-        client.newDocumentManager().write(uri, metadata, new BytesHandle(content.getBytes()).withFormat(Format.JSON));
+        client.newDocumentManager().write(uri, metadata, new BytesHandle(content.getBytes(StandardCharsets.UTF_8)).withFormat(Format.JSON));
     }
 
     protected void writeXmlDoc(DatabaseClient client, String uri, String content, String... collections) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         addDefaultPermissions(metadata);
         metadata.getCollections().addAll(collections);
-        client.newDocumentManager().write(uri, metadata, new BytesHandle(content.getBytes()).withFormat(Format.XML));
+        client.newDocumentManager().write(uri, metadata, new BytesHandle(content.getBytes(StandardCharsets.UTF_8)).withFormat(Format.XML));
     }
 
     protected void writeJobsXmlDoc(String uri, String content, String... collections) {
