@@ -8,6 +8,8 @@ import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,7 +35,7 @@ public class HandleFailedWriteTest extends AbstractSparkConnectorTest {
             "}";
 
         getHubClient().getModulesClient().newDocumentManager().write(CUSTOM_INGESTION_ENDPOINT_PATH,
-            new BytesHandle(moduleTextThatCanThrowError.getBytes()).withFormat(Format.TEXT));
+            new BytesHandle(moduleTextThatCanThrowError.getBytes(StandardCharsets.UTF_8)).withFormat(Format.TEXT));
 
     }
 

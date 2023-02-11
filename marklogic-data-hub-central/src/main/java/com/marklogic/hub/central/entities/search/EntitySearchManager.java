@@ -57,6 +57,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -70,23 +71,24 @@ public class EntitySearchManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EntitySearchManager.class);
 
-    public static String QUERY_OPTIONS = "exp-final-entity-options";
+    public String QUERY_OPTIONS;
     private static Map<String, FacetHandler> facetHandlerMap;
     private DatabaseClient searchDatabaseClient;
     private DatabaseClient savedQueryDatabaseClient;
 
     public EntitySearchManager(HubClient hubClient) {
         this.searchDatabaseClient = hubClient.getFinalClient();
+        this.QUERY_OPTIONS = "exp-final-entity-options";
         initializeFacetHandlerMap();
     }
 
     public EntitySearchManager(HubClient hubClient, String database) {
         if("staging".equalsIgnoreCase(database)) {
             this.searchDatabaseClient = hubClient.getStagingClient();
-            QUERY_OPTIONS = "exp-staging-entity-options";
+            this.QUERY_OPTIONS = "exp-staging-entity-options";
         } else {
             this.searchDatabaseClient = hubClient.getFinalClient();
-            QUERY_OPTIONS = "exp-final-entity-options";
+            this.QUERY_OPTIONS = "exp-final-entity-options";
         }
         this.savedQueryDatabaseClient = hubClient.getFinalClient();
         initializeFacetHandlerMap();
@@ -224,11 +226,12 @@ public class EntitySearchManager {
                 StringWriter writer = new StringWriter();
                 transformer.transform(new DOMSource(document), new StreamResult(writer));
                 output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-            } catch(Exception e) {}
+            } catch(Exception e) {
+                logger.warn("Unable to parse structured query XML", e);
+            }
 
             structuredQueryStr = output;
         }
-        logger.info(structuredQueryStr);
         // And between all the queries
         return queryMgr.newRawStructuredQueryDefinition(new StringHandle(structuredQueryStr).withFormat(Format.XML), QUERY_OPTIONS);
     }
@@ -280,7 +283,7 @@ public class EntitySearchManager {
         }
 
         try {
-            FileCopyUtils.copy(export, new OutputStreamWriter(out));
+            FileCopyUtils.copy(export, new OutputStreamWriter(out, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

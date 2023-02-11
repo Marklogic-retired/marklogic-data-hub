@@ -40,6 +40,9 @@ public class FileUtil {
         List<String> folders = new ArrayList<>();
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             File[] files = rootDirectory.listFiles();
+            if (files == null) {
+                return folders;
+            }
             for (File file : files) {
                 if (file.isDirectory() && !file.isHidden()) {
                     folders.add(file.getName());
@@ -60,6 +63,9 @@ public class FileUtil {
         List<String> filenames = new ArrayList<>();
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             File[] files = rootDirectory.listFiles();
+            if (files == null) {
+                return filenames;
+            }
             for (File file : files) {
                 if (!file.isDirectory() && !file.isHidden()) {
                     filenames.add(file.getName());

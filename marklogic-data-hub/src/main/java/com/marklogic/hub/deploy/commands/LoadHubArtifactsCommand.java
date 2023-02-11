@@ -49,7 +49,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
      * Hub artifacts are deployed after triggers for no particular reason yet other than that user artifacts must be
      * deployed after both triggers (because of entity models) and after hub artifacts.
      */
-    public static int SORT_ORDER = SortOrderConstants.DEPLOY_TRIGGERS + 10;
+    public static final int SORT_ORDER = SortOrderConstants.DEPLOY_TRIGGERS + 10;
 
     @Autowired
     private HubConfig hubConfig;

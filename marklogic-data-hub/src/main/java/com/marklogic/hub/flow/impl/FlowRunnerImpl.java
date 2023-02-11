@@ -275,13 +275,13 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     public void stopJob(String jobId) {
-        if (stepsMap.get(jobId) != null) {
+        if (stepsMap.containsKey(jobId)) {
             stepsMap.get(jobId).clear();
             stepsMap.remove(jobId);
-            isJobCancelled.set(true);
         }
+        isJobCancelled.set(true);
 
-        if (jobId != null && jobId.equals(runningJobId)) {
+        if (jobId.equals(runningJobId)) {
             if (stepRunner != null) {
                 stepRunner.stop();
             }

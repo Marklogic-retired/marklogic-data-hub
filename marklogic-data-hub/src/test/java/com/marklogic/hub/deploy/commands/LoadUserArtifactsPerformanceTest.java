@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,7 +49,7 @@ public class LoadUserArtifactsPerformanceTest extends AbstractHubCoreTest {
         for (int i = 1; i <= entityCount; i++) {
             String model = template.replaceAll("changeme", "Entity" + i);
             File file = getHubProject().getHubEntitiesDir().resolve("Entity" + i + ".entity.json").toFile();
-            FileCopyUtils.copy(model.getBytes(), file);
+            FileCopyUtils.copy(model.getBytes(StandardCharsets.UTF_8), file);
         }
 
         loadUserArtifacts();
@@ -88,7 +89,7 @@ public class LoadUserArtifactsPerformanceTest extends AbstractHubCoreTest {
             String step = template.replaceAll("changeme", "ingest" + i);
             getHubProject().getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().mkdirs();
             File file = getHubProject().getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("ingest" + i + ".step.json").toFile();
-            FileCopyUtils.copy(step.getBytes(), file);
+            FileCopyUtils.copy(step.getBytes(StandardCharsets.UTF_8), file);
         }
 
         loadUserArtifacts();
@@ -125,7 +126,7 @@ public class LoadUserArtifactsPerformanceTest extends AbstractHubCoreTest {
             String step = template.replaceAll("changeme", "mapping" + i);
             getHubProject().getStepsPath(StepDefinition.StepDefinitionType.MAPPING).toFile().mkdirs();
             File file = getHubProject().getStepsPath(StepDefinition.StepDefinitionType.MAPPING).resolve("mapping" + i + ".step.json").toFile();
-            FileCopyUtils.copy(step.getBytes(), file);
+            FileCopyUtils.copy(step.getBytes(StandardCharsets.UTF_8), file);
         }
 
         loadUserArtifacts();

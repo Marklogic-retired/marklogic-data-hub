@@ -17,6 +17,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -120,7 +121,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(mapper.readTree(flowDevRole).get("role").toString().contains("data-hub-developer"), "As of DHFPROD-3619, flow-developer-role should inherit data-hub-developer");
 
         //per DHFPROD-3617, following properties shouldn't be there in gradle.properties after hubInit is run. Users can adjust these if needed
-        String props = FileUtils.readFileToString(hubProject.getProjectDir().resolve("gradle.properties").toFile());
+        String props = FileUtils.readFileToString(hubProject.getProjectDir().resolve("gradle.properties").toFile(), StandardCharsets.UTF_8);
         assertFalse(props.contains("mlEntityPermissions"));
         assertFalse(props.contains("mlFlowPermissions"));
         assertFalse(props.contains("mlMappingPermissions"));
@@ -129,7 +130,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertFalse(props.contains("mlModulePermissions"));
 
         File finalDatabaseXmlFile = hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
-        Fragment finalDatabaseXmlProps = new Fragment(new String(FileCopyUtils.copyToByteArray(finalDatabaseXmlFile)));
+        Fragment finalDatabaseXmlProps = new Fragment(new String(FileCopyUtils.copyToByteArray(finalDatabaseXmlFile), StandardCharsets.UTF_8));
         // This doesn't really matter because we know the file didn't exist before, but doesn't hurt to verify these things
         UpgradeFinalDatabaseXmlFileTest.verify540ChangesAreApplied(finalDatabaseXmlProps);
 

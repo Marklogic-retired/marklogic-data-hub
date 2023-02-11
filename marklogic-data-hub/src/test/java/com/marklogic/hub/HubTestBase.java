@@ -63,6 +63,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -250,7 +251,7 @@ public class HubTestBase extends AbstractHubTest {
 
     protected String getResource(String resourceName) {
         try {
-            return new String(FileCopyUtils.copyToByteArray(new ClassPathResource(resourceName).getInputStream()));
+            return new String(FileCopyUtils.copyToByteArray(new ClassPathResource(resourceName).getInputStream()), StandardCharsets.UTF_8);
         } catch (IOException ex) {
             throw new RuntimeException("Unable to read file from classpath: " + resourceName, ex);
         }

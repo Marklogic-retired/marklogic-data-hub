@@ -31,6 +31,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
@@ -185,7 +186,10 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         String template = code.getExtractionTemplate();
         if (template != null) {
             File dir = userFinalSchemasTDEs.toFile();
-            dir.mkdirs();
+            if (!(dir.mkdirs() || dir.exists())) {
+                logger.warn("Unable to create directory for TDE templates: " + dir.getAbsolutePath());
+                return;
+            }
             File out = new File(dir, code.getTitle() + "-" + code.getVersion() + ".tdex");
             String logMessage = "Wrote extraction template to: ";
             if (out.exists()) {
@@ -199,7 +203,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                 logMessage = "Extraction template does not match existing file, so writing to: ";
             }
             try {
-                FileCopyUtils.copy(template.getBytes(), out);
+                FileCopyUtils.copy(template.getBytes(StandardCharsets.UTF_8), out);
                 if (logger.isInfoEnabled()) {
                     logger.info(logMessage + out.getAbsolutePath());
                 }

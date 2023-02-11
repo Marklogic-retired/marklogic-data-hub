@@ -29,6 +29,7 @@ import org.jdom2.Namespace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +49,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
     /**
      * Defines the roles that can be inherited when a data-hub-security-admin creates or edits a custom role.
      */
-    public final static List<String> ROLES_THAT_CAN_BE_INHERITED = Arrays.asList(
+    public final static List<String> ROLES_THAT_CAN_BE_INHERITED = Collections.unmodifiableList(Arrays.asList(
         "data-hub-admin",
         "data-hub-developer",
         "data-hub-monitor",
@@ -106,7 +107,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         // Added in 5.4.0 to allow for custom roles to use DLS
         "dls-user",
         "dls-admin"
-    );
+    ));
 
 
     public CreateGranularPrivilegesCommand(HubConfig hubConfig) {

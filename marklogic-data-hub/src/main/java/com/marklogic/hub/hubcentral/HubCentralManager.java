@@ -12,7 +12,6 @@ import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -23,7 +22,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
@@ -52,10 +56,10 @@ public class HubCentralManager extends LoggingObject {
                 try {
                     zipOutputStream.putNextEntry(entry);
                     if (artifact.has("xml")) {
-                        byte[] bytes = artifact.get("xml").asText().getBytes();
+                        byte[] bytes = artifact.get("xml").asText().getBytes(StandardCharsets.UTF_8);
                         zipOutputStream.write(bytes, 0, bytes.length);
                     } else {
-                        byte[] bytes = prettyWriter.writeValueAsString(artifact.get("json")).getBytes();
+                        byte[] bytes = prettyWriter.writeValueAsString(artifact.get("json")).getBytes(StandardCharsets.UTF_8);
                         zipOutputStream.write(bytes, 0, bytes.length);
                     }
                     zipOutputStream.closeEntry();
@@ -86,7 +90,9 @@ public class HubCentralManager extends LoggingObject {
         }
         finally {
             IOUtils.closeQuietly(outputStream);
-            FileUtils.deleteQuietly(projectPath.toFile());
+            if (projectPath != null) {
+                FileUtils.deleteQuietly(projectPath.toFile());
+            }
         }
     }
 
@@ -128,12 +134,15 @@ public class HubCentralManager extends LoggingObject {
             byte[] bytes;
             try{
                 if (artifact.has("xml")) {
-                    bytes = artifact.get("xml").asText().getBytes();
+                    bytes = artifact.get("xml").asText().getBytes(StandardCharsets.UTF_8);
                 } else {
-                    bytes = prettyWriter.writeValueAsString(artifact.get("json")).getBytes();
+                    bytes = prettyWriter.writeValueAsString(artifact.get("json")).getBytes(StandardCharsets.UTF_8);
                 }
                 File outputFile = new File(projectDir, path);
-                outputFile.getParentFile().mkdirs();
+                File parentDirectory = outputFile.getParentFile();
+                if (parentDirectory == null || !(parentDirectory.mkdirs() || parentDirectory.exists())) {
+                    throw new RuntimeException("Unable to create parent directory at '" + parentDirectory.getAbsolutePath() + "' for zip file.");
+                }
                 try(FileOutputStream fileOut = new FileOutputStream(outputFile)){
                     FileCopyUtils.copy(bytes, fileOut);
                 }
@@ -202,9 +211,14 @@ public class HubCentralManager extends LoggingObject {
             ConfigDir configDir = new ConfigDir(userConfigDir);
             File ppDir = configDir.getProtectedPathsDir();
             if (ppDir.exists()) {
-                for (File file : ppDir.listFiles((dir, name) -> name.contains(HubConfig.PII_PROTECTED_PATHS_FILE))) {
-                    logger.info("Deleting entity-based protected path file: " + file.getAbsolutePath());
-                    file.delete();
+                File[] files = ppDir.listFiles((dir, name) -> name.contains(HubConfig.PII_PROTECTED_PATHS_FILE));
+                if (files != null) {
+                    for (File file : files) {
+                        logger.info("Deleting entity-based protected path file: " + file.getAbsolutePath());
+                        if (!file.delete()) {
+                            logger.warn("Unable to delete entity-based protected path file: " + file.getAbsolutePath());
+                        }
+                    }
                 }
             }
 
@@ -253,8 +267,8 @@ public class HubCentralManager extends LoggingObject {
                     }
                 }
             }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Error extracting project zip file.", ex);
         }
     }
 

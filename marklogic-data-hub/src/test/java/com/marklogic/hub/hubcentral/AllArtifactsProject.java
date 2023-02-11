@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,15 +125,14 @@ public class AllArtifactsProject extends TestObject {
 
     private void readZipArtifacts() throws IOException {
         ZipFile zip = new ZipFile(hubCentralFilesZipFile);
-        InputStream zipFileStream = new FileInputStream(hubCentralFilesZipFile);
-        ZipInputStream zipInputStream = new ZipInputStream(zipFileStream);
-        List<ZipEntry> entries = new ArrayList<>();
-        ZipEntry ze;
-        while((ze  = zipInputStream.getNextEntry()) != null){
-            entries.add(ze);
+        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(hubCentralFilesZipFile))) {
+            List<ZipEntry> entries = new ArrayList<>();
+            ZipEntry ze;
+            while ((ze = zipInputStream.getNextEntry()) != null) {
+                entries.add(ze);
+            }
+            readZipArtifacts(zip, Collections.enumeration(entries));
         }
-        readZipArtifacts(zip, Collections.enumeration(entries));
-        zip.close();
     }
 
     protected void readZipArtifacts(ZipFile zip, Enumeration<?> entries) throws IOException {
@@ -157,7 +155,7 @@ public class AllArtifactsProject extends TestObject {
                 "XML search options documents; actual content: " + xml);
             assertContentIsPrettyPrinted(xml);
         } else if (entry.getName().endsWith(".json")){
-            assertContentIsPrettyPrinted(new String(buffer));
+            assertContentIsPrettyPrinted(new String(buffer, StandardCharsets.UTF_8));
             hubCentralFilesZipEntries.put(entry.getName(), objectMapper.readTree(buffer));
         }
     }

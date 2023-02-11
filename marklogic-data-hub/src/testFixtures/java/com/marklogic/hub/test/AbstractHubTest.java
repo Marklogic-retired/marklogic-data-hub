@@ -35,6 +35,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -375,7 +376,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             finalDb.save();
 
             File testFile = new ClassPathResource("test-config/databases/final-database.json").getFile();
-            String payload = new String(FileCopyUtils.copyToByteArray(testFile));
+            String payload = new String(FileCopyUtils.copyToByteArray(testFile), StandardCharsets.UTF_8);
             new DatabaseManager(hubConfig.getManageClient()).save(payload);
 
             Database stagingDb = new Database(new API(hubConfig.getManageClient()), hubConfig.getDbName(DatabaseKind.STAGING));
