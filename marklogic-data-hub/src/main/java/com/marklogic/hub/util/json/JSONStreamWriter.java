@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class JSONStreamWriter {
     private static Logger logger = LoggerFactory.getLogger(JSONStreamWriter.class);
@@ -19,7 +20,7 @@ public class JSONStreamWriter {
     public void write(Object val) throws IOException {
         String stringToSer = JSONObject.writeValueAsString(val);
         if (StringUtils.isNotEmpty(stringToSer)) {
-            out.write(stringToSer.getBytes());
+            out.write(stringToSer.getBytes(StandardCharsets.UTF_8));
             out.close();
         }
     }

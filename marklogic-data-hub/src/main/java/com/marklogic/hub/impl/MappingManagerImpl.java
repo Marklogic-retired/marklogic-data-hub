@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -116,8 +117,8 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             }
             String mappingString = mapping.serialize();
             Path dir = getMappingDirPath(mapping.getName());
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
+            if (!(dir.toFile().mkdirs() || dir.toFile().exists())) {
+                logger.error("Unable");
             }
             String mappingFileName = mapping.getName() + "-" + mapping.getVersion() + MAPPING_FILE_EXTENSION;
             File file = Paths.get(dir.toString(), mappingFileName).toFile();
@@ -126,7 +127,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
             Object json = objectMapper.readValue(mappingString, Object.class);
             try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-                fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes());
+                fileOutputStream.write(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json).getBytes(StandardCharsets.UTF_8));
                 fileOutputStream.flush();
             }
         } catch (JsonProcessingException e) {

@@ -5,6 +5,7 @@ import org.jdom2.Element;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -85,7 +86,7 @@ class FinalDatabaseXmlFileUpgrader {
     private Fragment readOfficialFileFromClasspath() {
         String path = "ml-config/database-fields/final-database.xml";
         try {
-            String xml = new String(FileCopyUtils.copyToByteArray(new ClassPathResource(path).getInputStream()));
+            String xml = new String(FileCopyUtils.copyToByteArray(new ClassPathResource(path).getInputStream()), StandardCharsets.UTF_8);
             return new Fragment(xml);
         } catch (Exception ex) {
             throw new RuntimeException("Unable to read from classpath file: " + path + "; cause: " + ex.getMessage(), ex);

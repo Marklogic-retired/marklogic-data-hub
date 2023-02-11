@@ -21,7 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.ExportListener;
+import com.marklogic.client.datamovement.JobReport;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatcher;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.datamovement.consumer.WriteToZipConsumer;
@@ -43,6 +48,7 @@ import com.marklogic.hub.legacy.job.LegacyJobManager;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,50 +115,48 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
         response.fullPath = exportFilePath.toAbsolutePath().toString();
 
         File zipFile = exportFilePath.toFile();
-        WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile);
+        try (WriteToZipConsumer zipConsumer = new WriteToZipConsumer(zipFile)) {
 
-        QueryManager qm = jobClient.newQueryManager();
+            QueryManager qm = jobClient.newQueryManager();
 
-        // Get the job(s) document(s)
-        StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
-        DataMovementManager dmm = jobClient.newDataMovementManager();
+            // Get the job(s) document(s)
+            StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
+            DataMovementManager dmm = jobClient.newDataMovementManager();
 
-        StructuredQueryDefinition query = jobIds == null ? null : sqb.value(sqb.jsonProperty("jobId"), jobIds);
-        QueryBatcher batcher = newQueryBatcher(dmm, jobClient, query);
-        batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-
-        JobTicket jobTicket = dmm.startJob(batcher);
-        batcher.awaitCompletion();
-        dmm.stopJob(batcher);
-        dmm.release();
-
-        JobReport report = dmm.getJobReport(jobTicket);
-        long jobCount = report.getSuccessEventsCount();
-        response.totalJobs = jobCount;
-
-        if (jobCount > 0) {
-
-            // Get the traces that go with the job(s)
-            dmm = this.jobClient.newDataMovementManager();
-
-            query = jobIds == null ? null : sqb.value(sqb.element(new QName("jobId")), jobIds);
-            batcher = newQueryBatcher(dmm, jobClient, query);
+            StructuredQueryDefinition query = jobIds == null ? null : sqb.value(sqb.jsonProperty("jobId"), jobIds);
+            QueryBatcher batcher = newQueryBatcher(dmm, jobClient, query);
             batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-            jobTicket = dmm.startJob(batcher);
+
+            JobTicket jobTicket = dmm.startJob(batcher);
             batcher.awaitCompletion();
             dmm.stopJob(batcher);
             dmm.release();
 
-            report = dmm.getJobReport(jobTicket);
-            long traceCount = report.getSuccessEventsCount();
-            response.totalTraces = traceCount;
+            JobReport report = dmm.getJobReport(jobTicket);
+            long jobCount = report.getSuccessEventsCount();
+            response.totalJobs = jobCount;
 
-            zipConsumer.close();
-        }
-        else {
-            // there were no jobs, so don't produce an empty zip file
-            zipConsumer.close();
-            zipFile.delete();
+            if (jobCount > 0) {
+
+                // Get the traces that go with the job(s)
+                dmm = this.jobClient.newDataMovementManager();
+
+                query = jobIds == null ? null : sqb.value(sqb.element(new QName("jobId")), jobIds);
+                batcher = newQueryBatcher(dmm, jobClient, query);
+                batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
+                jobTicket = dmm.startJob(batcher);
+                batcher.awaitCompletion();
+                dmm.stopJob(batcher);
+                dmm.release();
+
+                report = dmm.getJobReport(jobTicket);
+                long traceCount = report.getSuccessEventsCount();
+                response.totalTraces = traceCount;
+            } else {
+                // there were no jobs, so don't produce an empty zip file
+                zipConsumer.close();
+                zipFile.delete();
+            }
         }
 
         return response;
@@ -203,7 +207,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
 
                 if (entry.getName().startsWith("/jobs/")) {
                     // Delimiter = \A, which is the beginning of the input
-                    Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                    Scanner s = new Scanner(importZip.getInputStream(entry), StandardCharsets.UTF_8.name()).useDelimiter("\\A");
                     String entryText = s.hasNext() ? s.next() : "";
 
                     writer.add(
@@ -231,7 +235,7 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
 
                 for (ZipEntry entry : traceEntries) {
                     // Delimiter = \A, which is the beginning of the input
-                    Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                    Scanner s = new Scanner(importZip.getInputStream(entry), StandardCharsets.UTF_8.name()).useDelimiter("\\A");
                     String entryText = s.hasNext() ? s.next() : "";
 
                     writer.add(

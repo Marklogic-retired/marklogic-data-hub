@@ -7,6 +7,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,9 @@ public class TestSuiteGenerator extends LoggingObject {
         }
 
         File suiteDir = sourcePath.resolve("root").resolve("test").resolve("suites").resolve(suiteName).toFile();
-        suiteDir.mkdirs();
+        if (!(suiteDir.mkdirs() || suiteDir.exists())) {
+            logger.warn("Unable to create directory for test suite: " + suiteDir.getAbsolutePath());
+        }
 
         List<File> generatedFiles = new ArrayList<>();
 
@@ -64,7 +67,7 @@ public class TestSuiteGenerator extends LoggingObject {
             logger.warn("File already exists, will not overwrite: " + file.getAbsolutePath());
         } else {
             try {
-                FileCopyUtils.copy(content.getBytes(), file);
+                FileCopyUtils.copy(content.getBytes(StandardCharsets.UTF_8), file);
                 generatedFiles.add(file);
             } catch (IOException e) {
                 throw new RuntimeException("Unable to write unit test file: " + file.getAbsolutePath() + "; cause: " + e.getMessage());

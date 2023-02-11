@@ -22,6 +22,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,7 +60,7 @@ public class LoadUserArtifactsTokenReplaceTest extends AbstractHubCoreTest {
                 "}\n";
 
         File file = getHubProject().getFlowsDir().resolve("Flow.flow.json").toFile();
-        FileCopyUtils.copy(flow.getBytes(), file);
+        FileCopyUtils.copy(flow.getBytes(StandardCharsets.UTF_8), file);
     }
 
     private void setupStepDefinition() throws IOException {
@@ -78,7 +79,7 @@ public class LoadUserArtifactsTokenReplaceTest extends AbstractHubCoreTest {
 
         File file = getHubProject().getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("StepDefinition").resolve("StepDefinition.step.json").toFile();
         file.getParentFile().mkdirs();
-        FileCopyUtils.copy(flow.getBytes(), file);
+        FileCopyUtils.copy(flow.getBytes(StandardCharsets.UTF_8), file);
     }
 
     private void setupLegacyMapping() throws IOException {
@@ -97,7 +98,7 @@ public class LoadUserArtifactsTokenReplaceTest extends AbstractHubCoreTest {
 
         File file = getHubProject().getHubMappingsDir().resolve("LegacyMapping").resolve("LegacyMapping.mapping.json").toFile();
         file.getParentFile().mkdirs();
-        FileCopyUtils.copy(mapping.getBytes(), file);
+        FileCopyUtils.copy(mapping.getBytes(StandardCharsets.UTF_8), file);
     }
 
     private void setupStep() throws IOException {
@@ -117,7 +118,7 @@ public class LoadUserArtifactsTokenReplaceTest extends AbstractHubCoreTest {
 
         File file = getHubProject().getStepsPath(StepDefinition.StepDefinitionType.MAPPING).resolve("Step.step.json").toFile();
         file.getParentFile().mkdirs();
-        FileCopyUtils.copy(step.getBytes(), file);
+        FileCopyUtils.copy(step.getBytes(StandardCharsets.UTF_8), file);
     }
 
     private void setupEntityModel() throws IOException {
@@ -140,7 +141,7 @@ public class LoadUserArtifactsTokenReplaceTest extends AbstractHubCoreTest {
                 "}";
 
         File file = getHubProject().getHubEntitiesDir().resolve("Entity.entity.json").toFile();
-        FileCopyUtils.copy(model.getBytes(), file);
+        FileCopyUtils.copy(model.getBytes(StandardCharsets.UTF_8), file);
     }
 
 

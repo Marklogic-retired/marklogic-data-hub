@@ -16,10 +16,14 @@
 package com.marklogic.hub.legacy.flow.impl;
 
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.hub.legacy.MainPlugin;
 import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
-import com.marklogic.hub.legacy.flow.*;
-import com.marklogic.hub.legacy.MainPlugin;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowBuilder;
 import com.marklogic.hub.legacy.impl.MainPluginImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -37,7 +41,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Properties;
 
 public class LegacyFlowImpl implements LegacyFlow {

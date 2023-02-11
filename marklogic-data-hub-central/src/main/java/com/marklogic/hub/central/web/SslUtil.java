@@ -27,7 +27,7 @@ import java.security.KeyStore;
 
 public class SslUtil {
 
-    public static String KEY_STORE_TYPE = "PKCS12";
+    public static final String KEY_STORE_TYPE = "PKCS12";
 
     public static ServerProperties buildServerProperties(String keyStorePassword) {
         final ServerProperties serverProperties = new ServerProperties();

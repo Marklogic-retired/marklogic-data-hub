@@ -33,11 +33,12 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -362,7 +363,10 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     private void writeResources(PathMatchingResourcePatternResolver resolver, String pattern, Path projectTargetPath) throws IOException {
-        projectTargetPath.toFile().mkdirs();
+        File projectTargetDir = projectTargetPath.toFile();
+        if (!(projectTargetDir.mkdirs() || projectTargetDir.exists())) {
+            throw new RuntimeException("Unable to create directory at '"+ projectTargetDir.getAbsolutePath() +"'.");
+        }
         for (Resource resource : resolver.getResources(pattern)) {
             FileCopyUtils.copy(resource.getInputStream(), new FileOutputStream(projectTargetPath.resolve(resource.getFilename()).toFile()));
         }
@@ -418,7 +422,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                         fileContents = fileContents.replace(entry.getKey(), value);
                     }
                 }
-                try(FileWriter writer = new FileWriter(dstFile.toFile())) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dstFile.toFile()), StandardCharsets.UTF_8)) {
                     writer.write(fileContents);
                 }
             }
@@ -506,6 +510,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                 hubConfigNode = ObjectMapperFactory.getObjectMapper().readTree(hubConfigFile);
             } catch (Exception ex) {
                 logger.warn("Unable to parse Hub Central Config " + hubConfigFile.getName() + "; exception: " + ex.toString());
+                return;
             }
         } else {
             hubConfigNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
@@ -627,7 +632,10 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                 ((ObjectNode) hubConfigNode.path("modeling")).set("entities", hubConfigEntitiesNode);
                 try {
                     if (!hubConfigFile.exists()) {
-                        hubConfigFile.getParentFile().mkdirs();
+                        File parentFile = hubConfigFile.getParentFile();
+                        if (!(parentFile.mkdirs() || parentFile.exists())) {
+                            throw new RuntimeException("Unable to create parent directory at '"+ parentFile.getAbsolutePath() +"' for Hub config file.");
+                        }
                         hubConfigFile.createNewFile();
                     }
                     ObjectMapperFactory.getObjectMapper().writeValue(hubConfigFile, hubConfigNode);
@@ -652,9 +660,9 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         if (fileDatabasePath.toFile().exists()) {
             File finalDbFile = userDatabaseFieldsDir.resolve("final-database.xml").toFile();
             try {
-                String fileContents = new String(FileCopyUtils.copyToByteArray(finalDbFile));
+                String fileContents = new String(FileCopyUtils.copyToByteArray(finalDbFile), StandardCharsets.UTF_8);
                 String upgradedFileContents = new FinalDatabaseXmlFileUpgrader().updateFinalDatabaseXmlFile(fileContents);
-                FileCopyUtils.copy(upgradedFileContents.getBytes(), finalDbFile);
+                FileCopyUtils.copy(upgradedFileContents.getBytes(StandardCharsets.UTF_8), finalDbFile);
             } catch (Exception e) {
                 throw new DataHubProjectException("Error while upgrading project; was not able to add /matchSummary/actionDetails/*/uris " +
                         "path range index to final-database.xml file; cause: " + e.getMessage(), e);
@@ -666,8 +674,9 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     @Override
     public void exportProject(File location) {
-        if(!location.getParentFile().exists()) {
-            location.getParentFile().mkdirs();
+        File parentFile = location.getParentFile();
+        if (parentFile == null ||!(location.getParentFile().exists() || location.getParentFile().mkdirs())) {
+            throw new RuntimeException("Unable to create parent directory at '"+ parentFile != null ? parentFile.getAbsolutePath(): location.getAbsolutePath() +"' for project export.");
         }
         try(FileOutputStream out = new FileOutputStream(location)) {
             exportProject(out, new ArrayList<>());
@@ -811,9 +820,13 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     @Override
     public String getUserModulesDeployTimestampFile() {
         Path timestampPath = Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile);
-        File parentFile = timestampPath.getParent().toFile();
-        if (!parentFile.exists()) {
-            parentFile.mkdirs();
+        Path parentPath = timestampPath.getParent();
+        if (parentPath == null) {
+            return null;
+        }
+        File parentFile = parentPath.toFile();
+        if (!(parentFile.mkdirs() || parentFile.exists())) {
+            logger.warn("Unable to create parent directory at '"+ parentFile.getAbsolutePath() +"' for module timestamp file.");
         }
         return timestampPath.toString();
     }
