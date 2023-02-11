@@ -9,6 +9,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,7 @@ public class CommandLineFlowInputs {
         String optionsString;
         if (StringUtils.isNotEmpty(optionsFile)) {
             try {
-                optionsString = new String(FileCopyUtils.copyToByteArray(new File(optionsFile)));
+                optionsString = new String(FileCopyUtils.copyToByteArray(new File(optionsFile)), StandardCharsets.UTF_8);
             } catch (IOException ex) {
                 throw new RuntimeException("Unable to read options file at: " + optionsFile, ex);
             }

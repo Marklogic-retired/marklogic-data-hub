@@ -41,6 +41,7 @@ import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
@@ -120,7 +121,9 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             if (appConfigTimestampFilePath != null) {
                 File defaultTimestampFile = new File(appConfigTimestampFilePath);
                 if (defaultTimestampFile.exists()) {
-                    defaultTimestampFile.delete();
+                    if (!defaultTimestampFile.delete()) {
+                        logger.info("Unable to delete module timestamp file: " + defaultTimestampFile.getAbsolutePath());
+                    }
                 }
             }
         }
@@ -164,12 +167,20 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]harmonize[/\\\\].*");
     }
 
-    boolean isFlowPropertiesFile(Path dir) {
+    boolean isFlowPropertiesFile(@NotNull Path dir) {
+        Path dirFileName = dir.getFileName();
         Path parent = dir.getParent();
-        return dir.toFile().isFile() &&
-            dir.getFileName().toString().endsWith(".properties") &&
-            parent.toString().matches(".*[/\\\\](input|harmonize)[/\\\\][^/\\\\]+$") &&
-            dir.getFileName().toString().equals(parent.getFileName().toString() + ".properties");
+        Path parentFileName = parent != null ? parent.getFileName(): null;
+        if (dirFileName == null || parentFileName == null) {
+            return false;
+        }
+        String fileNameStr = dir.getFileName().toString();
+        String parentFileNameStr = parentFileName.toString();
+        String parentStr = parent.toString();
+        return fileNameStr != null && parentFileNameStr != null && parentStr != null && dir.toFile().isFile() &&
+                fileNameStr.endsWith(".properties") &&
+            parentStr.matches(".*[/\\\\](input|harmonize)[/\\\\][^/\\\\]+$") &&
+                fileNameStr.equals(parentFileNameStr + ".properties");
     }
 
     /**
@@ -241,7 +252,9 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             }
             Path entityConfigDir = Paths.get(decodedFileName, HubConfig.ENTITY_CONFIG_DIR);
             if (!entityConfigDir.toFile().exists()) {
-                entityConfigDir.toFile().mkdirs();
+                if (!entityConfigDir.toFile().mkdirs()) {
+                    logger.warn("Unable to create entity directory: " + entityConfigDir.toAbsolutePath());
+                }
             }
             entityManager.deployQueryOptions();
         }

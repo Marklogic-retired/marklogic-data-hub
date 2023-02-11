@@ -76,6 +76,8 @@ public class CreatedOnFacetHandler implements FacetHandler {
             case "Custom":
                 getCustomTimeWindow(data, facetInputs);
                 break;
+            default:
+                throw new RuntimeException("Unrecognized time range provided");
         }
         return facetInputs.dateRange;
     }

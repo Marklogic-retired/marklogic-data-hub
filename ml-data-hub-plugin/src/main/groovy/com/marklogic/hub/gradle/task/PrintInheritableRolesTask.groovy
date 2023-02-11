@@ -11,7 +11,9 @@ class PrintInheritableRolesTask extends HubTask {
         println "The following DHF and MarkLogic roles can be inherited by a custom role created by a user with the data-hub-security-admin role: "
         println ""
         List<String> roles = CreateGranularPrivilegesCommand.ROLES_THAT_CAN_BE_INHERITED
-        Collections.sort(roles)
-        println roles
+        // roles is immutable, so we're creating a new list that we can sort
+        List<String> sortedRoles = new ArrayList<>(roles)
+        Collections.sort(sortedRoles)
+        println sortedRoles
     }
 }

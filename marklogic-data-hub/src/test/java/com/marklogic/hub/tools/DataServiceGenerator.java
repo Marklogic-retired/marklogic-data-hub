@@ -9,6 +9,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Tool for generating the files that comprise a Data Service endpoint. See the build.gradle file in this project for a
@@ -121,7 +122,7 @@ public class DataServiceGenerator {
         final File moduleFile = new File(serviceDir, endpointName + ".sjs");
         if (!moduleFile.exists()) {
             System.out.println("Writing module file: " + moduleFile);
-            FileCopyUtils.copy(MODULE_TEMPLATE.getBytes(), moduleFile);
+            FileCopyUtils.copy(MODULE_TEMPLATE.getBytes(StandardCharsets.UTF_8), moduleFile);
         } else {
             System.out.println("Module file already exists: " + moduleFile);
         }

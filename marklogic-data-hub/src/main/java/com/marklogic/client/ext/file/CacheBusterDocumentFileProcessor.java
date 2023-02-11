@@ -24,6 +24,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class CacheBusterDocumentFileProcessor extends LoggingObject implements DocumentFileProcessor {
@@ -40,7 +41,7 @@ public class CacheBusterDocumentFileProcessor extends LoggingObject implements D
                     InputStream inputStream = null;
                     try {
                         inputStream = resource.getInputStream();
-                        text = new String(FileCopyUtils.copyToByteArray(inputStream));
+                        text = new String(FileCopyUtils.copyToByteArray(inputStream), StandardCharsets.UTF_8);
                     } catch (IOException ie) {
                         logger.warn("Unable to replace tokens in file: " + documentFile.getUri() + "; cause: " + ie.getMessage());
                     } finally {

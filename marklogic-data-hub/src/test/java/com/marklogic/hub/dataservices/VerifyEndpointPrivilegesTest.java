@@ -7,6 +7,7 @@ import com.marklogic.client.io.BytesHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class VerifyEndpointPrivilegesTest extends AbstractHubCoreTest {
         try {
             iter.forEachRemaining(uri -> {
                 final String uriString = uri.getString();
-                String moduleContent = new String(mgr.read(uriString, new BytesHandle()).get());
+                String moduleContent = new String(mgr.read(uriString, new BytesHandle()).get(), StandardCharsets.UTF_8);
                 List<String> privileges = extractPrivileges(moduleContent);
                 if (privileges.isEmpty()) {
                     fail("DS endpoint module does not call xdmp.securityAssert, nor does it have a comment starting with " +

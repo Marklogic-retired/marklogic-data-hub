@@ -9,6 +9,7 @@ import com.marklogic.client.io.JacksonHandle;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class BulkUtil {
 
@@ -29,7 +30,7 @@ public class BulkUtil {
     }
 
     public static void runExecCaller(DatabaseClient databaseClient, String apiPath, ObjectNode endpointConstants, String errorPrefix) {
-        try (InputStreamReader apiReader = new InputStreamReader(BulkUtil.class.getClassLoader().getResourceAsStream(apiPath))) {
+        try (InputStreamReader apiReader = new InputStreamReader(BulkUtil.class.getClassLoader().getResourceAsStream(apiPath), StandardCharsets.UTF_8)) {
             ObjectNode apiNode = objectMapper.readValue(apiReader, ObjectNode.class);
             ExecCaller caller = ExecCaller.on(databaseClient, new JacksonHandle(apiNode));
             CapturingErrorListener errorListener = new CapturingErrorListener();

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -56,7 +57,7 @@ public class MasterTest extends AbstractHubCoreTest {
         metadata.getPermissions().add("data-hub-module-reader", DocumentMetadataHandle.Capability.READ);
         metadata.getPermissions().add("data-hub-module-writer", DocumentMetadataHandle.Capability.UPDATE);
         getHubConfig().newModulesDbClient().newDocumentManager().write("/custom-modules/no-op.sjs",
-            metadata, new BytesHandle(customModuleText.getBytes()).withFormat(Format.TEXT));
+            metadata, new BytesHandle(customModuleText.getBytes(StandardCharsets.UTF_8)).withFormat(Format.TEXT));
     }
 
     @Test

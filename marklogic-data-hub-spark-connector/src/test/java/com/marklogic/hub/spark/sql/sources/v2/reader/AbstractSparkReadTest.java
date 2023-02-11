@@ -17,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
     protected void loadTDE(String name) {
         String template;
         try {
-            template = new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath("tde-views/" + name + ".tdex")));
+            template = new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath("tde-views/" + name + ".tdex")), StandardCharsets.UTF_8);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

@@ -78,8 +78,8 @@ public class EnvironmentController extends BaseController {
     @RequestMapping(value = "/api/environment/clearUserData", method = RequestMethod.POST)
     @Secured("ROLE_clearUserData")
     public ResponseEntity<Void> clearUserData(@RequestBody(required=false) ClearDataInfo info) {
-      String targetDatabase = info != null ? info.targetDatabase : null;
-      String targetCollection = info != null ? info.targetCollection : null;
+        String targetDatabase = info != null ? info.targetDatabase : null;
+        String targetCollection = info != null ? info.targetCollection : null;
         new DataHubImpl(getHubClient()).clearUserData(targetDatabase, targetCollection);
         return new ResponseEntity<>(HttpStatus.OK);
     }

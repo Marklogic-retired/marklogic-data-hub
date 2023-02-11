@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.ContainerProvider;
 import javax.websocket.WebSocketContainer;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -77,7 +78,7 @@ public class SessionManagerTest {
 
         @Override
         public void handleFrame(StompHeaders stompHeaders, Object o) {
-            blockingQueue.offer(new String((byte[]) o));
+            blockingQueue.offer(new String((byte[]) o, StandardCharsets.UTF_8));
         }
     }
 }

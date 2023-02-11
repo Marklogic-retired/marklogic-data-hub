@@ -9,6 +9,7 @@ import com.marklogic.client.io.*;
 import com.marklogic.hub.HubClient;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -99,13 +100,13 @@ public class ReferenceModelProject extends TestObject {
             if (Format.XML.equals(contentFormat)) {
                 XmlMapper xmlMapper = new XmlMapper();
                 instanceBytes = xmlMapper.writer().withRootName("envelope").writeValueAsBytes(entityInstanceMap);
-                String xml = new String(instanceBytes);
+                String xml = new String(instanceBytes, StandardCharsets.UTF_8);
                 // Some ugly hacking as I don't know how to specify namespaces when writing a Map
                 xml = xml.replace("<envelope>", "<envelope xmlns='http://marklogic.com/entity-services'>");
                 if (xmlNamespace != null) {
                     xml = xml.replace("<Customer>", "<Customer xmlns='" + xmlNamespace + "'>");
                 }
-                instanceByteStream = new ByteArrayInputStream(xml.getBytes());
+                instanceByteStream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
                 fileExtension = ".xml";
             } else {
                 ObjectMapper mapper = new ObjectMapper();

@@ -194,22 +194,21 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
         Path entitiesPath = hubConfig.getHubEntitiesDir();
         File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
+        if (entityDefs == null) {
+            return entities;
+        }
         Arrays.sort(entityDefs, new Comparator<File>() {
             public int compare(File a, File b) {
                 return a.getName().compareTo(b.getName());
             }
         });
-        if (entityDefs != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            for (File entityDef : entityDefs) {
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(entityDef);
-                    entities.add(objectMapper.readTree(fileInputStream));
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    logger.warn(format("Ignoring %s entity model as malformed JSON content is found", entityDef.getName()));
-                    logger.error(e.getMessage());
-                }
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (File entityDef : entityDefs) {
+            try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
+                entities.add(objectMapper.readTree(fileInputStream));
+            } catch (IOException e) {
+                logger.warn(format("Ignoring %s entity model as malformed JSON content is found", entityDef.getName()));
+                logger.error(e.getMessage());
             }
         }
         return entities;
@@ -229,6 +228,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             try {
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    if (entityDefs == null) {
+                        continue;
+                    }
                     for (File entityDef : entityDefs) {
                         try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
                             entities.add(objectMapper.readTree(fileInputStream));
