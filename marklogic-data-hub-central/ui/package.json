@@ -39,7 +39,7 @@
     "rc-cascader": "^2.3.1",
     "rc-slider": "^9.7.2",
     "rc-tree": "^5.3.5",
-    "rc-tree-select": "^4.8.0",
+    "rc-tree-select": "5.6.0",
     "react": "^16.12.0",
     "react-bootstrap": "2.0.1",
     "react-bootstrap-daterangepicker": "^7.0.0",

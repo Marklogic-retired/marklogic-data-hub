@@ -145,7 +145,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   });
 
   const dropdownStyle = {
-    zIndex: 2000,
+    zIndex: 9999,
     maxHeight: "350px",
     overflow: "auto",
   };

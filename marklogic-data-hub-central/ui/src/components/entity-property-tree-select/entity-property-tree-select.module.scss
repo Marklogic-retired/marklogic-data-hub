@@ -22,9 +22,9 @@
         color: #bfbfbf;
     }
     :focus-visible{
-        outline: auto 1px !important;
         opacity: 1 !important;
         background: rgba(255, 255, 255, 0) !important;
+        border-left: 2px solid !important;
     }
 }
 
