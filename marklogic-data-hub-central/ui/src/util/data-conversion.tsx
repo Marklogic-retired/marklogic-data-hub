@@ -536,9 +536,9 @@ export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropert
   return parser(selectedPropertyDefinitions);
 };
 
-export const trimText  = (text) => {
-  if (text.length>20) {
-    text= text.slice(0, 19) +"...";
+export const trimText  = (text, lettersToCut = 19) => {
+  if (text?.length>lettersToCut+1) {
+    text= text.slice(0, lettersToCut) +"...";
   }
   return text;
 };
