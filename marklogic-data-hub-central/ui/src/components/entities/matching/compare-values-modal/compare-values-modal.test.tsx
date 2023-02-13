@@ -4,7 +4,6 @@ import CompareValuesModal from "./compare-values-modal";
 import data from "../../../../assets/mock-data/curation/merging.data";
 
 
-
 describe("Compare Values Modal component", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -48,6 +47,7 @@ describe("Compare Values Modal component", () => {
       />
     );
 
+    expect(document.querySelector(".compare-values-model-unmerge")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
 
     expect(await (waitForElement(() => getByText((content, node) => {
@@ -119,7 +119,7 @@ describe("Compare Values Modal component", () => {
         flowName={""}
       />
     );
-
+    expect(document.querySelector(".compare-values-model")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("icon: info-circle"));
     expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "12 total");
