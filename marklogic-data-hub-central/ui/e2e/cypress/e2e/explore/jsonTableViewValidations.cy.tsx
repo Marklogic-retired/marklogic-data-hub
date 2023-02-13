@@ -66,6 +66,14 @@ describe("json scenario for table on browse documents page", () => {
     table.getTableColumns().should("have.length", 5);
   });
 
+  it("select Product entity and long text should be trimmed and tooltip appears on hover", () => {
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Product");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...").trigger("mouseover");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless");
+    cy.findByText("product5");
+  });
 
   it("select Person entity and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
