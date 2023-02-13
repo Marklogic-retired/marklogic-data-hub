@@ -18,10 +18,12 @@ package com.marklogic.hub.central.auth;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.hub.central.CloudParameters;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.HubCentralService;
 import com.marklogic.hub.impl.HubConfigImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -30,7 +32,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,15 +80,19 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
      * @param password
      */
     protected AuthenticationToken authenticateUser(String username, String password) {
-        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-            throw new BadCredentialsException("Unauthorized");
+
+        if(!CloudParameters.AUTHENTICATION_TYPE.equalsIgnoreCase("cloud")) {
+            if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+                throw new BadCredentialsException("Unauthorized");
+            }
+
+            username = username.trim();
+
+            HubConfigImpl hubClientConfig = hubCentral.newHubConfig(username, password);
+            hubClientProvider.setHubClientConfig(hubClientConfig);
+            hubClientProvider.setHubClientDelegate(hubClientConfig.newHubClient());
         }
 
-        username = username.trim();
-
-        HubConfigImpl hubClientConfig = hubCentral.newHubConfig(username, password);
-        hubClientProvider.setHubClientConfig(hubClientConfig);
-        hubClientProvider.setHubClientDelegate(hubClientConfig.newHubClient());
         List<GrantedAuthority> authorities = new ArrayList<>();
         JsonNode response;
         try {
