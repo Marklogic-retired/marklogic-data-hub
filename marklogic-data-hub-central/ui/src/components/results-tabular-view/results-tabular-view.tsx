@@ -19,6 +19,7 @@ import {unmergeUri} from "@api/merging";
 import {Spinner} from "react-bootstrap";
 import {AxiosResponse} from "axios";
 import {getViewSettings, setViewSettings} from "@util/user-context";
+import {trimText} from "@util/data-conversion";
 
 /* eslint-disable */
 interface Props {
@@ -138,6 +139,18 @@ const ResultsTabularView = (props) => {
     } else {
       setExpandedNestedTableColumn([...expandedNestedTableColumn, key]);
     }
+  };
+
+  const renderField = (valueToTrim, lettersUntilCut) => {
+    const trimIfLong = trimText(valueToTrim, lettersUntilCut);
+    if (trimIfLong !== valueToTrim) {
+      return (
+        <HCTooltip text={valueToTrim} id="LongTextTooltip" placement="auto">
+          <div>{trimIfLong}</div>
+        </HCTooltip>
+      );
+    }
+    return <div>{valueToTrim}</div>;
   };
 
   const renderStructuredProperty = (properties, cell) => {
@@ -263,7 +276,7 @@ const ResultsTabularView = (props) => {
           headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
           ...setSortOptions(item),
           formatter: (value) => {
-            if (!Array.isArray(value)) return (<div>{value}</div>);
+            if (!Array.isArray(value)) return renderField(value, 65);
             return (value?.map((el, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>{el}</div>));
           }
         };
@@ -471,7 +484,6 @@ const ResultsTabularView = (props) => {
         dataObj = {...dataObj, ...dataWithSelectedTableColumns};
       }
     }
-
     return dataObj;
   };
 
@@ -629,7 +641,7 @@ const ResultsTabularView = (props) => {
         dataField: "value",
         width: !props.groupNodeTableView ? "34%" : "67%",
         formatter: (_, row) => {
-          return <span>{row.value}</span>;
+          return renderField(row.value, 100);
         },
       }
     ];
