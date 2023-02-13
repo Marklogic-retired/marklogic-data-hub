@@ -5,7 +5,7 @@ class CompareValuesModal {
   }
 
   getTableHeader() {
-    return cy.get(".compare-values-model.react-bootstrap-table thead");
+    return cy.get(".compare-values-model-unmerge.react-bootstrap-table thead");
   }
 
   getUnmergeButton() {
@@ -36,7 +36,7 @@ class CompareValuesModal {
   }
 
   getUnmergedPreview() {
-    return cy.findByText(`Preview`);
+    return cy.findByText(`Current Document:`);
   }
 }
 

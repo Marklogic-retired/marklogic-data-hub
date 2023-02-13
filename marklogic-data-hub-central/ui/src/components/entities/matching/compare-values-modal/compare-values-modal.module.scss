@@ -175,21 +175,31 @@
     }
 }
 
-
 .paginationRow {
     width: 100%;
     display: flex;
 }
 
-.paginationRowCleanSpace {
+.paginationRowCleanSpaceMerge {
     width: 223px;
 }
+
+.paginationRowCleanSpaceUnmerge {
+    width: 443px;
+}
+
 .paginationRowActions {
     flex: 1 1 auto;
     padding: 0 16px;
 }
-.paginationRowLegend {
+.paginationRowLegendMerge {
     width: 280px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.paginationRowLegendUnmerge {
     display: flex;
     justify-content: flex-end;
     align-items: center;

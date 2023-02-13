@@ -130,10 +130,9 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     props.toggleModal(false);
   };
 
-
   const parseDataToTable = (entityDefinitionsArray: Definition[], matchedPropertiesArray, uriInfo) => {
-    let activeEntityName = props.isPreview ? props.activeStepDetails.entityName : props.activeStepDetails[0].name;
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
+    let activeEntityName = props?.isPreview ? props.activeStepDetails?.entityName : props?.activeStepDetails[0]?.name;
+    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition?.name === activeEntityName) || DEFAULT_ENTITY_DEFINITION;
     const parsedData = entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       const previewValues = uriInfo[uriInfo.length - 1]["previewInstance"][activeEntityName];
@@ -191,6 +190,55 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         },
       },
     ];
+
+    const previewColumn = {
+      dataField: "propertyValueInReview",
+      key: "propertyValueInReview",
+      title: (cell) => `${cell.value}`,
+      ellipsis: true,
+      text: !props.isMerge ? <><div>{"Current Document: "}</div><div style={{fontWeight: 400}}>{props.originalUri}</div></> : "Preview",
+      style: (property) => {
+        if (property?.matchedRow) {
+          return {
+            backgroundColor: "#FFF",
+            backgroundImage: `url(${backgroundImage})`,
+            verticalAlign: "top",
+            width: "300px",
+          };
+        }
+        return {
+          backgroundColor: "",
+          verticalAlign: "top",
+          width: "300px",
+        };
+      },
+      formatter: (property, key) => {
+        let mergedOutput;
+        if (Array.isArray(property.value) && property.value.length > 1) {
+          if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
+            //pretty print JSON if array of objects
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //format normal arrays
+            mergedOutput = JSON.stringify(property.value, null, 2);
+          }
+        } else {
+          if (typeof property.value === "object" && property.value !== null) {
+            //pretty print JSON if singular object
+            mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
+          } else {
+            //remove "" if empty value, show string values in quotes
+            mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
+          }
+        }
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-preview` : "empty-preview-cell"}>{mergedOutput}</span>;
+      }
+    };
+
+    if (!props.isMerge) {
+      columns.push(previewColumn);
+    }
+
     data.map((uri, index) => {
       const dataField = `propertyValueInURI${index + 1}`;
       columns.push(
@@ -242,51 +290,10 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       );
     });
 
-    columns.push(
-      {
-        dataField: "propertyValueInReview",
-        key: "propertyValueInReview",
-        title: (cell) => `${cell.value}`,
-        ellipsis: true,
-        text: "Preview",
-        style: (property) => {
-          if (property?.matchedRow) {
-            return {
-              backgroundColor: "#85BF97",
-              backgroundImage: `url(${backgroundImage})`,
-              verticalAlign: "top",
-              width: "300px",
-            };
-          }
-          return {
-            backgroundColor: "",
-            verticalAlign: "top",
-            width: "300px",
-          };
-        },
-        formatter: (property, key) => {
-          let mergedOutput;
-          if (Array.isArray(property.value) && property.value.length > 1) {
-            if (property.value.some(ele => { return (typeof ele === "object" && ele !== null); })) {
-              //pretty print JSON if array of objects
-              mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-            } else {
-              //format normal arrays
-              mergedOutput = JSON.stringify(property.value, null, 2);
-            }
-          } else {
-            if (typeof property.value === "object" && property.value !== null) {
-              //pretty print JSON if singular object
-              mergedOutput = <pre className={styles.objectNotation}>{JSON.stringify(property.value, null, 2)}</pre>;
-            } else {
-              //remove "" if empty value, show string values in quotes
-              mergedOutput = property.value === "" ? null : JSON.stringify(property.value, null, 2);
-            }
-          }
-          return <span key={key} aria-label={(property.value && property.value.length > 0) ? `${property.value}-preview` : "empty-preview-cell"}>{mergedOutput}</span>;
-        }
-      }
-    );
+    if (props.isMerge) {
+      columns.push(previewColumn);
+    }
+
     return columns;
   };
 
@@ -315,7 +322,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       </div>
       <div className={styles.paginationLegend}>
         <span>
-          <strong>{start}</strong> to <strong>{end}</strong> of <strong>{props.uris.length}</strong> Documents
+          <strong>{!props.isMerge ? "Preview " : ""} {start}</strong> to <strong>{end}</strong> of <strong>{props.uris.length}</strong> Documents
         </span>
       </div>
       <div onClick={handleNextPage}>
@@ -385,7 +392,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     closeModal();
     toggleMergeUnmerge(searchOptions.mergeUnmerge);
   };
-  let time:any;
+  let time: any;
   const handleShowUrisPopover = (event) => {
     event.persist();
     time = delayTooltip(() => {
@@ -510,18 +517,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           <span className={styles.compareValuesEntityName}>Entity: <strong>{props.isPreview ? props.activeStepDetails.entityName : props?.activeStepDetails[0]?.name || ""}</strong></span>
         </div>
         <div className={styles.paginationRow}>
-          <div className={styles.paginationRowCleanSpace}></div>
+          <div className={props?.isMerge ? styles.paginationRowCleanSpaceMerge: styles.paginationRowCleanSpaceUnmerge}></div>
           <div className={styles.paginationRowActions}>
             {props.uris.length > pageSize && renderPagination()}
           </div>
-          <div className={styles.paginationRowLegend}>
+          <div className={props.isMerge ? styles.paginationRowLegendMerge: styles.paginationRowLegendUnmerge}>
             <span className={styles.matchIconContainer}><img src={backgroundImage} className={styles.matchIcon}></img></span>
             <span className={styles.matchIconText}>Match</span>
           </div>
         </div>
         <div>
           {columns.length > 0 && <HCTable columns={columns}
-            className={`compare-values-model ${styles.compareValuesModelTable}`}
+            className={props.isMerge ? `compare-values-model ${styles.compareValuesModelTable}`: `compare-values-model-unmerge ${styles.compareValuesModelTable}`}
             data={compareValuesTableData}
             onExpand={onExpand}
             expandedRowKeys={expandedRows}
