@@ -337,6 +337,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
 
+  const [isTooltipVisible, setIsTooltipVisible] = useState({
+    uri: false,
+    function: false,
+    namespace: false
+  });
+
   const renderCustomOptions = (
     <>
       <Row className={"mb-3"}>
@@ -353,8 +359,15 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, uri: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, uri: false})}
+              >
+                <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top" show={
+                  isTooltipVisible.uri ? isTooltipVisible.uri : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -379,8 +392,15 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, function: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, function: false})}
+              >
+                <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top" show={
+                  isTooltipVisible.function ? isTooltipVisible.function : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -405,8 +425,15 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
+              >
+                <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top" show={
+                  isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>

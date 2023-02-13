@@ -1213,8 +1213,13 @@ const Sidebar: React.FC<Props> = (props) => {
             <div>
               <span>Include Data Hub artifacts</span>
               <span tabIndex={props.cardView ? 0 : undefined} onFocus={(e) => onFocusHandlerTooltip(e, "artifacts")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "artifacts")}>
-                <HCTooltip text={tooltips.includingDataHubArtifacts} aria-label="toggle-data-hub-artifacts-tooltip" id="toggle-data-hub-artifacts-tooltip" placement="bottom">
-                  <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+                <HCTooltip
+                  text={tooltips.includingDataHubArtifacts}
+                  aria-label="toggle-data-hub-artifacts-tooltip"
+                  id="toggle-data-hub-artifacts-tooltip"
+                  placement="bottom"
+                  show={isTooltipVisible.artifacts ? isTooltipVisible.artifacts : undefined}>
+                  <i><FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} /></i>
                 </HCTooltip>
               </span>
             </div>

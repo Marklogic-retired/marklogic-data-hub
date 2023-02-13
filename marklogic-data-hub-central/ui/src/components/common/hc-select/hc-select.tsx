@@ -47,6 +47,8 @@ const HCSelect: React.FC<Props> = (props) => {
     inputId={inputId}
     components={components}
     placeholder="Select match type"
+    tabSelectsValue={false}
+    openMenuOnFocus={true}
     value={valueAux}
     onChange={(event) => handleValue(event, onChange)}
     aria-label={`${row.propertyPath}-match-type-dropdown`}

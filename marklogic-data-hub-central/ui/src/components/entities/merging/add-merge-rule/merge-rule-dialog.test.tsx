@@ -319,7 +319,7 @@ describe("Merge Rule Dialog component", () => {
   });
 
   test("Accessibility", async () => {
-    const {getByLabelText, getAllByLabelText} = render(
+    const {getByLabelText, getAllByLabelText, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeRuleDialog
           {...data.mergeRuleDataProps}
@@ -333,7 +333,7 @@ describe("Merge Rule Dialog component", () => {
     userEvent.tab();
     expect(getAllByLabelText("property-to-match-dropdown")[1]).toHaveFocus();
     userEvent.tab();
-    expect(getByLabelText("icon: question-circle")).toHaveFocus();
+    expect(getByText("Select property")).toHaveFocus();
     fireEvent.keyDown(getByLabelText("mergeType-select"), {key: "ArrowDown"});
   });
 });

@@ -27,7 +27,12 @@ const HCTag: React.FC<Props> = (props) => {
       style={props.style}>
       {props.label}
       {(props?.closable || props?.closable === undefined) &&
-        <XLg data-testid="iconClose-tagComponent" onClick={props?.onClose} className={styles.spanIcon} />
+        <XLg
+          data-testid="iconClose-tagComponent"
+          tabIndex={0}
+          onKeyDown={(event) => { if (props.onClose && event.key === "Enter") { props?.onClose(); } }}
+          onClick={props?.onClose}
+          className={styles.spanIcon} />
       }
     </span>
   );
