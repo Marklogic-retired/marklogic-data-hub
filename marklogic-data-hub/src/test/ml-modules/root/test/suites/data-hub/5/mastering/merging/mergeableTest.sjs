@@ -183,6 +183,114 @@ const mergeRuleStep = {
   }
 };
 
+const customTripleMerge = {
+  "dataFormat": "json",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "lastUpdatedLocation": {
+    "documentXPath": "/envelope/headers/createdOn"
+  },
+  "mergeStrategies": [
+    {
+      "strategyName": "myFavoriteNameSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 8
+          }
+        ]
+      }
+    },
+    {
+      "strategyName": "myFavoriteBirthDateSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 12
+          }
+        ]
+      }
+    },{
+      "strategyName": "Default Strategy",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 3",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 6
+          }
+        ]
+      },
+      "default": true
+    }
+  ],
+  "tripleMerge": {
+    "function": "customTrips",
+    "at": "/test/suites/data-hub/5/smart-mastering/merging-xml/test-data/custom-triple-merge-sjs.sjs",
+    "someParam": "3"
+  },
+  "mergeRules": [
+    {
+      "entityPropertyPath": "name",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteNameSource"
+    },
+    {
+      "entityPropertyPath": "birthDate",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteBirthDateSource"
+    },
+    {
+      "entityPropertyPath": "active",
+      "mergeType": "custom",
+      "mergeModulePath": "/test/suites/data-hub/5/mastering/matching/test-data/mergeableInterceptors.sjs",
+      "mergeModuleFunction": "customMerge",
+    }
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [""],
+      "remove": []
+    },
+    "onNoMatch": {
+      "add": [""],
+      "remove": []
+    },
+    "onNotification": {
+      "add": [""],
+      "remove": []
+    }
+  }
+};
+
 function copyStep(step) {
   return Object.assign({}, step, {mergeRules: step.mergeRules.map(mergeRule => Object.assign({}, mergeRule))});
 }
@@ -320,10 +428,28 @@ function testBuildMergeDocumentXml() {
   return assertions;
 }
 
+
+function testCustomTripleMerge() {
+  let mergeStep = copyStep(customTripleMerge);
+  let options = {};
+  const mergeableInstance = new Mergeable(mergeStep, options);
+  const mergeContentObjects = ["/content/CustMatchMerge1.json","/content/CustMatchMerge2.json","/content/CustMatchMerge3.json"].map(uri => ({
+    uri,
+    value: cts.doc(uri)
+  }));
+  const mergedDocument = mergeableInstance.buildMergeDocument(mergeContentObjects);
+  const assertions = [];
+  assertions.push(
+    test.assertEqual(1, fn.count(mergedDocument.xpath("/envelope/triples")), `Using a custom function for merging triples: ${xdmp.toJsonString(mergedDocument)}`)
+  );
+  return assertions;
+}
+
 []
   .concat(testMergeableClass())
   .concat(testApplyContext())
   .concat(testApplyContextInterceptor())
   .concat(testMergeRuleDefinitions())
   .concat(testBuildMergeDocumentJson())
+  .concat(testCustomTripleMerge())
   .concat(testBuildMergeDocumentXml());
