@@ -797,11 +797,18 @@ const MatchingStepDetail: React.FC = () => {
       id="add-ruleset"
       align="end"
       title={<>Add<ChevronDown className="ms-2" /></>}
-      onSelect={handleAddMenu}>
-      <Dropdown.Item eventKey="singlePropertyRuleset">
+      onSelect={handleAddMenu}
+    >
+      <Dropdown.Item eventKey="singlePropertyRuleset" onKeyDown={(event) => {
+        if (event.key === "Enter"|| event.key === " ") { handleAddMenu("singlePropertyRuleset"); }
+      }}>
         <span aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
       </Dropdown.Item>
-      <Dropdown.Item eventKey="multiPropertyRuleset">
+      <Dropdown.Item eventKey="multiPropertyRuleset" onKeyDown={(event) => {
+        if (event.key === "Enter"|| event.key === " ") {
+          handleAddMenu("multiPropertyRuleset");
+        }
+      }}>
         <span aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
       </Dropdown.Item>
     </DropdownButton>
@@ -913,9 +920,33 @@ const MatchingStepDetail: React.FC = () => {
               >Add</HCButton>
             </div>
           </div>
-          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={displayThresholdTimeline} className={styles.switchToggle}></FormCheck>
+          <div className={styles.switchToggleContainer}>
+            <span className={styles.editingLabel}>
+              <b>Edit Thresholds</b>
+            </span>
+            <FormCheck
+              type="switch"
+              aria-label="threshold-scale-switch"
+              onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)}
+              defaultChecked={displayThresholdTimeline}
+              className={styles.switchToggle}
+              onKeyDown={
+                (e: any) => {
+                  const {target, key, type} = e;
+                  if (target) {
+                    if (type === "keydown") {
+                      if (key === "Enter" || key === " ") {
+                        target.checked = !target.checked;
+                        toggleDisplayThresholdTimeline(target.checked);
+                      }
+                    }
+                  }
+
+                }
+              }
+            />
             <span>
-              <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
+              <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right" aria-label="threshold-scale-tooltip">
                 <QuestionCircleFill
                   aria-label="icon: question-circle"
                   color={themeColors.defaults.questionCircle}
@@ -986,9 +1017,29 @@ const MatchingStepDetail: React.FC = () => {
               {addButton}
             </div>
           </div>
-          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={displayRulesetTimeline} className={styles.switchToggle}></FormCheck>
+          <div className={styles.switchToggleContainer}>
+            <span className={styles.editingLabel}><b>Edit Rulesets</b></span>
+            <FormCheck
+              type="switch"
+              aria-label="ruleset-scale-switch"
+              onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)}
+              defaultChecked={displayRulesetTimeline}
+              tabIndex={0}
+              onKeyDown={(e: any) => {
+                const {target, key, type} = e;
+                if (target) {
+                  if (type === "keydown") {
+                    if (key === "Enter" || key === " ") {
+                      target.checked = !target.checked;
+                      toggleDisplayRulesetTimeline(target.checked);
+                    }
+                  }
+                }
+
+              }}
+              className={styles.switchToggle}/>
             <span>
-              <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
+              <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right" aria-label="ruleset-scale-tooltip">
                 <QuestionCircleFill
                   aria-label="icon: question-circle"
                   color={themeColors.defaults.questionCircle}
@@ -1022,12 +1073,11 @@ const MatchingStepDetail: React.FC = () => {
                 }}
                 label={"Test URIs"}
                 value={1}
-                aria-label={"inputUriOnlyRadio"}
+                aria-label="inputUriOnlyRadio"
                 className={"mb-0"}
-                tabIndex={0}
               />
               <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
-                <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
+                <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right" aria-label="test-all-uris-tooltip">
                   <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip><br />
               </span>
@@ -1089,7 +1139,7 @@ const MatchingStepDetail: React.FC = () => {
               tabIndex={0}
             />
             <span aria-label="testUriTooltip">
-              <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
+              <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right" aria-label="test-uris-all-data-tooltip">
                 <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span><br />
@@ -1150,7 +1200,7 @@ const MatchingStepDetail: React.FC = () => {
               tabIndex={0}
             />
             <span aria-label={"allDataTooltip"}>
-              <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
+              <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right" aria-label="test-all-data-tooltip">
                 <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span>

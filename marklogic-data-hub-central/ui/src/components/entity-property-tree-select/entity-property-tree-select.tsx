@@ -147,7 +147,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   const dropdownStyle = {
     zIndex: 2000,
     maxHeight: "350px",
-    overflow: "auto"
+    overflow: "auto",
   };
 
   const onTreeNodeExpand = (keys) => {
@@ -169,7 +169,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         data-testid={finalIdentifier}
         id={finalIdentifier}
         className={styles.matchTypeSelect}
-        placeholder="Select property"
+        placeholder={<span tabIndex={0}>Select property</span>}
         onChange={onChange}
         treeExpandedKeys={expandedKeys}
         onTreeExpand={onTreeNodeExpand}

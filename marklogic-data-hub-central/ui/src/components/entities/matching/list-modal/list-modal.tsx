@@ -207,6 +207,7 @@ const ListModal: React.FC<Props> = (props) => {
     <Modal
       show={props.isVisible}
       data-testid="modal-list-ignore"
+      onHide={closeModal}
     >
       <Modal.Header className={`bb-none ${styles.modalHeader}`}>
         <div className={`flex-column ${styles.modalTitleLegend}`}>{`${textModalHeader} List`}</div>

@@ -552,6 +552,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     onNo={discardCancel}
   />;
 
+  const [isTooltipVisible, setIsTooltipVisible] = useState({
+    thesaurusURI: false,
+    filter: false,
+    dictionaryURI: false,
+    distanceThreshold: false,
+    uri: false,
+    function: false,
+    namespace: false,
+    reduce: false,
+    fuzzy: false,
+    valuesIgnore: false,
+  });
+
   const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
 
   const renderSynonymOptions = (
@@ -570,8 +583,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, thesaurusURI: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, thesaurusURI: false})}
+              >
+                <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top" show={
+                  isTooltipVisible.thesaurusURI ? isTooltipVisible.thesaurusURI : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -595,8 +615,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             onChange={handleInputChange}
             onBlur={handleInputChange}
           />
-          <div className={"p-2 d-flex align-items-center"}>
-            <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top">
+          <div
+            className={"p-2 d-flex align-items-center"}
+            tabIndex={0}
+            onFocus={() => setIsTooltipVisible({...isTooltipVisible, filter: true})}
+            onBlur={() => setIsTooltipVisible({...isTooltipVisible, filter: false})}
+          >
+            <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top" show={
+              isTooltipVisible.filter ? isTooltipVisible.filter : undefined
+            }>
               <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
             </HCTooltip>
           </div>
@@ -621,8 +648,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, dictionaryURI: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, dictionaryURI: false})}
+              >
+                <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top" show={
+                  isTooltipVisible.dictionaryURI ? isTooltipVisible.dictionaryURI : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -648,8 +682,16 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, distanceThreshold: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, distanceThreshold: false})}
+
+              >
+                <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top" show={
+                  isTooltipVisible.distanceThreshold ? isTooltipVisible.distanceThreshold : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -679,8 +721,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, uri: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, uri: false})}
+              >
+                <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top" show={
+                  isTooltipVisible.uri ? isTooltipVisible.uri : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -705,8 +754,16 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onChange={handleInputChange}
                 onBlur={handleInputChange}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, function: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, function: false})}
+
+              >
+                <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top" show={
+                  isTooltipVisible.function ? isTooltipVisible.function : undefined
+                }>
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -729,8 +786,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             onChange={handleInputChange}
             onBlur={handleInputChange}
           />
-          <div className={"p-2 d-flex align-items-center"}>
-            <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top">
+          <div
+            className={"p-2 d-flex align-items-center"}
+            tabIndex={0}
+            onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
+            onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
+          >
+            <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top" show={
+              isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
+            }>
               <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
             </HCTooltip>
           </div>
@@ -793,6 +857,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const handleClick = (event, btn, itemInfo) => {
     setShowListModal(true);
+    // eslint-disable-next-line no-console
+    console.log("btn", btn);
     if (btn === "A") {
       setActionListModal("A");
       resetModalValuesIgnore();
@@ -826,14 +892,32 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const Option = (renderMatchOptions) => {
     return (
       <div>
-        {renderMatchOptions.data.name === "Preset List 0" && <components.MenuList {...renderMatchOptions} >
-          <div className={styles.createNewListOption} id="createNewListOption" data-test-id="createNewListOption" onClick={(event) => { handleClick(event, "A", renderMatchOptions.data); }}>Create new list</div>
-        </components.MenuList>}
+        {renderMatchOptions.data.name === "Preset List 0" &&
+        <components.Option {...renderMatchOptions} >
+          <div className={styles.createNewListOption}
+            id="createNewListOption"
+            data-test-id="createNewListOption"
+            onClick={(event) => { handleClick(event, "A", renderMatchOptions.data); }}
+            tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") handleClick(event, "A", renderMatchOptions.data); }}
+          >Create new list</div>
+        </components.Option>}
         {renderMatchOptions.data.name !== "Preset List 0" &&
               <components.Option {...renderMatchOptions}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesIgnore)}</span>} id="reduce-tooltip" placement="top">
-                  <div>{renderMatchOptions.data.name} </div>
-                </HCTooltip>
+                <div
+                  tabIndex={0}
+                  onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
+                  onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
+                >
+                  <HCTooltip show={
+                    isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined
+                  }
+                  text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesIgnore)}</span>}
+                  id="reduce-tooltip"
+                  placement="top">
+                    <div>{renderMatchOptions.data.name} </div>
+                  </HCTooltip>
+                </div>
+
                 <div className={styles.optionsList}>
                   <i>
                     <FontAwesomeIcon
@@ -842,6 +926,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       icon={faPencilAlt}
                       color={themeColors.info}
                       size="sm" onClick={(event) => { handleClick(event, "E", renderMatchOptions.data); }}
+                      tabIndex={0}
                     />
                   </i>
                   <i>
@@ -852,6 +937,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       color={themeColors.info}
                       size="sm"
                       onClick={(event) => { handleClick(event, "C", renderMatchOptions.data); }}
+                      tabIndex={0}
                     />
                   </i>
                   <i>
@@ -862,6 +948,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       color={themeColors.info}
                       size="sm"
                       onClick={(event) => { handleClick(event, "D", renderMatchOptions.data); }}
+                      tabIndex={0}
                     />
                   </i>
                 </div>
@@ -908,10 +995,26 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 defaultChecked={props.editRuleset.reduce}
                 className={styles.switchReduceToggle}
                 onChange={onToggleReduce}
+                onKeyDown={(event: any) => {
+                  if (event.key === "Enter") {
+                    event.target.checked = !event.target.checked;
+                    onToggleReduce(event);
+                  }
+                }}
                 aria-label="reduceToggle"
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
+
+              >
+                <HCTooltip
+                  show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
+                  text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
+                  id="reduce-tooltip"
+                  placement="top">
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-reduce" />
                 </HCTooltip>
               </div>
@@ -927,9 +1030,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 className={styles.switchReduceToggle}
                 onChange={onFuzzyMatching}
                 aria-label="fuzzyMatching"
+                onKeyDown={(event: any) => {
+                  if (event.key === "Enter") {
+                    event.target.checked = !event.target.checked;
+                    onFuzzyMatching(event);
+                  }
+                }}
               />
-              <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-tooltip" placement="top">
+              <div
+                className={"p-2 d-flex align-items-center"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: false})}
+              >
+                <HCTooltip
+                  show={isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined}
+                  text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>}
+                  id="fuzzy-tooltip"
+                  placement="top">
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
                 </HCTooltip>
               </div>
@@ -972,6 +1090,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       aria-label="match-type-dropdown"
                       options={renderMatchOptions}
                       styles={reactSelectThemeConfig}
+                      tabSelectsValue={false}
+                      openMenuOnFocus={true}
                       formatOptionLabel={({value, label}) => {
                         return (
                           <span aria-label={`${value}-option`}>
@@ -1002,6 +1122,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       isClearable={true}
                       isSearchable={true}
                       components={{Option}}
+                      tabSelectsValue={false}
+                      openMenuOnFocus={true}
                       placeholder="Search previous lists"
                       //value={renderMatchOptions.find(oItem => oItem.value === matchType)}
                       //onChange={onMatchTypeSelect}
@@ -1019,8 +1141,17 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       }}
                     />
                   </div>
-                  <div className={"p-2 d-flex align-items-center"}>
-                    <HCTooltip text={<span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>} id="reduce-tooltip" placement="top">
+                  <div
+                    className={"p-2 d-flex align-items-center"}
+                    tabIndex={0}
+                    onFocus={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: true})}
+                    onBlur={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: false})}
+                  >
+                    <HCTooltip
+                      show={isTooltipVisible.valuesIgnore ? isTooltipVisible.valuesIgnore : undefined}
+                      text={<span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>}
+                      id="reduce-tooltip"
+                      placement="top">
                       <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-values-ignore" />
                     </HCTooltip>
                   </div>

@@ -708,11 +708,24 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return validationErrStyle;
   };
 
+  const [isTooltipVisible, setIsTooltipVisible] = useState({
+    asterisk: false,
+    nodeThesaurus: false,
+    namespace: false,
+    reduce: false,
+    fuzzy: false,
+  });
+
   const helpIconWithAsterisk = (title) => (
     <span>
       <div className={styles.asterisk}>*</div>
-      <div>
-        <HCTooltip text={title} id="asterisk-help-tooltip" placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}>
+      <div tabIndex={0}
+        onFocus={() => setIsTooltipVisible({...isTooltipVisible, asterisk: true})}
+        onBlur={() => setIsTooltipVisible({...isTooltipVisible, asterisk: false})}
+      >
+        <HCTooltip show={
+          isTooltipVisible.asterisk ? isTooltipVisible.asterisk : undefined
+        } text={title} id="asterisk-help-tooltip" placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}>
           <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
         </HCTooltip>
       </div>
@@ -746,9 +759,18 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <HCTooltip text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
-          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
-        </HCTooltip>
+        <div
+          tabIndex={0}
+          onFocus={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: true})}
+          onBlur={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: false})}
+        >
+          <HCTooltip show={
+            isTooltipVisible.nodeThesaurus ? isTooltipVisible.nodeThesaurus : undefined
+          } text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
+            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
+          </HCTooltip>
+        </div>
+
       </span>
     </div>;
   };
@@ -830,9 +852,19 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
-          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
-        </HCTooltip>
+        <div
+          tabIndex={0}
+          onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
+          onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
+        >
+          <HCTooltip
+            show={
+              isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
+            }text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
+            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
+          </HCTooltip>
+        </div>
+
       </span>
     </div>;
   };
@@ -1280,8 +1312,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       scrollable={true}
     >
       <Modal.Header className={"bb-none align-items-start headerModal"}>
-        {modalTitle}
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        {modalTitle}
         <Form
           id="matching-multiple-ruleset"
           onSubmit={onSubmit}
@@ -1317,10 +1349,23 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                 defaultChecked={props.editRuleset.reduce}
                 className={styles.switchReduceToggle}
                 onChange={onToggleReduce}
+                onKeyDown={(event: any) => {
+                  if (event.key === "Enter") {
+                    event.target.checked = !event.target.checked;
+                    onToggleReduce(event);
+                  }
+                }
+                }
                 aria-label="reduceToggle"
               />
-              <div className={"p-2 d-flex"}>
-                <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
+              <div className={"p-2 d-flex"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
+              >
+                <HCTooltip show={
+                  isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined
+                } text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -1332,10 +1377,23 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                 defaultChecked={props.editRuleset.fuzzyMatch}
                 className={styles.switchFuzzy}
                 onChange={onFuzzyMatching}
+                onKeyDown={(event: any) => {
+                  if (event.key === "Enter") {
+                    event.target.checked = !event.target.checked;
+                    onFuzzyMatching(event);
+                  }
+                }
+                }
                 aria-label="fuzzyMatchingMultiple"
               />
-              <div className={"p-2 d-flex"}>
-                <HCTooltip text={<span aria-label="fuzzy-multiple-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-multiple-matching-tooltip" placement="right">
+              <div className={"p-2 d-flex"}
+                tabIndex={0}
+                onFocus={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: true})}
+                onBlur={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: false})}
+              >
+                <HCTooltip show={
+                  isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined
+                } text={<span aria-label="fuzzy-multiple-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-multiple-matching-tooltip" placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle-fuzzy" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
