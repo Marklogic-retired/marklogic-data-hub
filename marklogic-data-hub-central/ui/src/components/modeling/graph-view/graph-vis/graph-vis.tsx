@@ -1091,6 +1091,7 @@ const GraphVis: React.FC<Props> = (props) => {
       </div>
       {invalidAlert()}
       {!invalidSource && <AddEditRelationship
+        edgeData={graphData.edges}
         openRelationshipModal={openRelationshipModal}
         setOpenRelationshipModal={setOpenRelationshipModal}
         isEditing={!newRelationship}

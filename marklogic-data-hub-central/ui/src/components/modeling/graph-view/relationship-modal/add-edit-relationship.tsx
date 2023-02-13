@@ -43,6 +43,7 @@ type Props = {
   hubCentralConfig: any;
   getColor: any;
   mapFunctions: any;
+  edgeData?: any
 }
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
@@ -66,6 +67,7 @@ const AddEditRelationship: React.FC<Props> = ({
   hubCentralConfig,
   getColor,
   mapFunctions,
+  edgeData
 }) => {
 
   const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(relationshipInfo.isConcept ? eVisibleSettings.EntityToConceptClass : eVisibleSettings.EntityToEntity);
@@ -284,65 +286,71 @@ const AddEditRelationship: React.FC<Props> = ({
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
+
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
 
-    entityTypeDefinition["properties"][propertyName] = newProperty;
+    const edge = edgeData.find((edge) => edge.from === definitionName && edge.label === propertyName && edge.structParent !== "");
+    if (edge) {
+      updatedDefinitions[edge.structParent]["properties"][propertyName] = newProperty;
+    } else {
+      entityTypeDefinition["properties"][propertyName] = newProperty;
 
-    if (editPropertyOptions.propertyOptions.identifier === "yes") {
-      entityTypeDefinition.primaryKey = editPropertyOptions.name;
-    } else if (entityTypeDefinition.hasOwnProperty("primaryKey") && entityTypeDefinition.primaryKey === propertyName) {
-      delete entityTypeDefinition.primaryKey;
-    }
+      if (editPropertyOptions.propertyOptions.identifier === "yes") {
+        entityTypeDefinition.primaryKey = editPropertyOptions.name;
+      } else if (entityTypeDefinition.hasOwnProperty("primaryKey") && entityTypeDefinition.primaryKey === propertyName) {
+        delete entityTypeDefinition.primaryKey;
+      }
 
-    if (editPropertyOptions.propertyOptions.pii === "yes") {
-      let index = entityTypeDefinition.pii?.indexOf(propertyName);
-      if (index > -1) {
-        entityTypeDefinition.pii[index] = editPropertyOptions.name;
-      } else {
-        if (entityTypeDefinition.hasOwnProperty("pii")) {
-          entityTypeDefinition.pii.push(editPropertyOptions.name);
+      if (editPropertyOptions.propertyOptions.pii === "yes") {
+        let index = entityTypeDefinition.pii?.indexOf(propertyName);
+        if (index > -1) {
+          entityTypeDefinition.pii[index] = editPropertyOptions.name;
         } else {
-          entityTypeDefinition.pii = [editPropertyOptions.name];
+          if (entityTypeDefinition.hasOwnProperty("pii")) {
+            entityTypeDefinition.pii.push(editPropertyOptions.name);
+          } else {
+            entityTypeDefinition.pii = [editPropertyOptions.name];
+          }
+        }
+      } else {
+        let index = entityTypeDefinition.pii?.indexOf(propertyName);
+        if (index > -1) {
+          entityTypeDefinition.pii.splice(index, 1);
         }
       }
-    } else {
-      let index = entityTypeDefinition.pii?.indexOf(propertyName);
-      if (index > -1) {
-        entityTypeDefinition.pii.splice(index, 1);
+
+      if (propertyName !== editPropertyOptions.name) {
+        let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map((key) => {
+          const newKey = key === propertyName ? editPropertyOptions.name : key;
+          const value = key === propertyName ? newProperty : entityTypeDefinition["properties"][key];
+          return {[newKey]: value};
+        });
+        entityTypeDefinition["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
+
+        if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
+          let index = entityTypeDefinition.required.indexOf(propertyName);
+          entityTypeDefinition.required[index] = editPropertyOptions.name;
+        }
+        if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
+          let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
+          entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
+        }
+        if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
+          let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
+          entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
+        }
+        if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
+          let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
+          entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
+        }
+        if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
+          let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
+          entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
+        }
       }
+
+      updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
     }
-
-    if (propertyName !== editPropertyOptions.name) {
-      let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map((key) => {
-        const newKey = key === propertyName ? editPropertyOptions.name : key;
-        const value = key === propertyName ? newProperty : entityTypeDefinition["properties"][key];
-        return {[newKey]: value};
-      });
-      entityTypeDefinition["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
-
-      if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
-        let index = entityTypeDefinition.required.indexOf(propertyName);
-        entityTypeDefinition.required[index] = editPropertyOptions.name;
-      }
-      if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
-        let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
-        entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
-      }
-      if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
-        let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
-        entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
-      }
-      if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
-        let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
-        entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
-      }
-      if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
-        let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
-        entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
-      }
-    }
-
-    updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
 
     let modifiedEntityStruct: EntityModified = {
       entityName: definitionName,
