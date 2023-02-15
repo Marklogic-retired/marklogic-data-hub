@@ -1,0 +1,22 @@
+{
+  "headers" : {
+    "sources" : [ {
+      "name" : "ingest-zip"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "collections" : [ "ingest-zip", "zipCode" ],
+  "permissions" : "data-hub-common,read,data-hub-developer,update",
+  "batchSize" : 100,
+  "name" : "ingest-zip",
+  "description" : "",
+  "stepDefinitionType" : "ingestion",
+  "stepDefinitionName" : "zipTransform",
+  "sourceFormat" : "csv",
+  "targetFormat" : "json",
+  "stepId" : "ingest-zip-ingestion",
+  "sourceQuery" : "cts.collectionQuery([])",
+  "targetDatabase" : "data-hub-STAGING",
+  "lastUpdated" : "2023-02-16T09:28:17.238438-08:00"
+}

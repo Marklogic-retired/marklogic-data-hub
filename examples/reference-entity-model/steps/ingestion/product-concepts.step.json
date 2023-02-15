@@ -1,0 +1,24 @@
+{
+  "headers" : {
+    "sources" : [ {
+      "name" : "product-concepts"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "collections" : [ "product-concepts", "http://marklogic.com/semantics#default-graph" ],
+  "permissions" : "data-hub-common,read,data-hub-developer,update",
+  "batchSize" : 100,
+  "name" : "product-concepts",
+  "description" : "",
+  "stepDefinitionType" : "ingestion",
+  "stepDefinitionName" : "default-ingestion",
+  "sourceFormat" : "binary",
+  "targetFormat" : "binary",
+  "stepId" : "product-concepts-ingestion",
+  "sourceQuery" : "cts.collectionQuery([])",
+  "targetDatabase" : "data-hub-FINAL",
+  "lastUpdated" : "2023-02-15T14:47:13.561752-08:00",
+  "inputFilePath" : "input/productConcepts",
+  "threadCount" : 16
+}
