@@ -4,7 +4,6 @@ import HCFacetIndicator from "./hc-facet-indicator";
 
 const config = {
   style: {
-    width: "50px",
     height: "8px",
     overflow: "hidden"
   },
