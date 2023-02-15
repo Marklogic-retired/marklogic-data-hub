@@ -29,6 +29,7 @@ const FacetName: React.FC<Props> = ({category, name, facet, checked, index, hand
         label={facetLabel}
         checked={isActive}
         dataTestId={id}
+        removeMargin={true}
         tooltip={facetValue?.length > 25 ? facetValue : undefined}
       />
       <div

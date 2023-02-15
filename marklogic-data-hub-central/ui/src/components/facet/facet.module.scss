@@ -68,11 +68,11 @@
 
   .checkContainer {
     display: flex;
-    justify-content: space-between;
     height: 23px;
+    white-space: nowrap;
     label {
       display: block;
-      max-width: 200px;
+      max-width: 168px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -94,6 +94,7 @@
   .count {
     padding: 0 5px 0 0;
     color: #999;
+    margin-left: auto;
   }
 
   .more {
