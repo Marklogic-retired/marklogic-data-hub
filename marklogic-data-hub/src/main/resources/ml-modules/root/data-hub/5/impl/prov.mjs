@@ -144,16 +144,10 @@ function validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, s
  * @param {Array} recordsQueue - array of objects with identifier of this provenance information, options, and metadata
  */
 function createRecords(recordsQueue, latestProvenance = false) {
-  xdmp.eval(`
-    declareUpdate();
-    // some scenarios this is treated as mjs and others it is treated as sjs
-    if (external) {
-      external.recordsQueue.persist();
-    } else {
+  xdmp.invokeFunction(() => {
+      declareUpdate();
       recordsQueue.persist();
-    }
-    `,
-    {recordsQueue},
+    },
     {
       database: xdmp.database(config.JOBDATABASE),
       commit: 'auto',
