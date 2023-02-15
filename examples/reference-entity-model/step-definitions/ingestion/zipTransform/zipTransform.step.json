@@ -1,0 +1,25 @@
+{
+  "lang" : "zxx",
+  "name" : "zipTransform",
+  "description" : "",
+  "type" : "INGESTION",
+  "version" : 1,
+  "options" : {
+    "sourceQuery" : "cts.collectionQuery([])",
+    "collections" : [ "zipTransform" ],
+    "permissions" : "data-hub-common,read,data-hub-common,update",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-STAGING"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/ingestion/zipTransform/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "fileLocations" : {
+    "inputFilePath" : "input/zipCodes",
+    "outputURIReplacement" : "",
+    "inputFileType" : "csv"
+  },
+  "language" : "zxx"
+}
