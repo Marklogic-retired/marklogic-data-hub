@@ -1,7 +1,10 @@
 /**
- * Performs a small amount of tweaking to the JSON document for each row in the zipCodes CSV file. 
+ * This scaffolded step module provides a template for implementing your own logic as a DHF ingestion step.
+ * All of the comments in this module are intended to explain how to implement a DHF ingestion step. You are free to delete
+ * any or all of the comments at any point.
  */
-function transform(content, context) {
+
+function main(content, options) {
   const value = content.value.toObject();
 
   // Concatenating latitude and longitude allows for a geospatial element index to be easily added
@@ -15,6 +18,6 @@ function transform(content, context) {
   return content;
 }
 
-module.exports = {
-  transform
-}
+ module.exports = {
+   main
+ };

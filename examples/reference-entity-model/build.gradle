@@ -50,34 +50,17 @@ test {
     useJUnitPlatform()
 }
 
-task importZipCodes(type: com.marklogic.gradle.task.MlcpTask) {
+task importZipCodes(type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
     description = "Imports a document for each zip code defined in the zipCodes.zip file. These are used by the mapCustomersJSON mapping step."
-	classpath = configurations.mlcp
-	command = "IMPORT"
-    port = 8010
-    input_file_path = "input/zipCodes/zipCodes.zip"
-	input_file_type = "delimited_text"
-    input_compressed = true
-    document_type = "json"
-    output_uri_prefix = "/zipCode/"
-    output_uri_suffix = ".json"
-	output_permissions = "data-hub-common,read,data-hub-developer,update"
-    output_collections = "zipCode"
-    thread_count = 16
-    transform_module = "/custom-modules/mlcp/zipCodeTransform.sjs"
-	delimiter = ","
+    flowName = "LoadSupportingModules"
+    steps = ["2"]
 }
 
-task importProductConcepts(type: com.marklogic.gradle.task.MlcpTask) {
+task importProductConcepts(type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
     description = "Imports a document for each zip code defined in the zipCodes.zip file. These are used by the mapCustomersJSON mapping step."
-    classpath = configurations.mlcp
-    command = "IMPORT"
-    port = 8011
-    input_file_path = "input/productConcepts.ttl"
-    input_file_type = "rdf"
-    output_permissions = "data-hub-common,read,data-hub-developer,update"
-    output_collections = "productConcepts,http://marklogic.com/semantics#default-graph"
-    thread_count = 16
+    flowName = "LoadSupportingModules"
+    steps = ["1"]
+
 }
 
 ["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers",
