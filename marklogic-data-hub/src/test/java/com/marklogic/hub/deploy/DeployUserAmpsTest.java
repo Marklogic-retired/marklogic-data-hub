@@ -80,7 +80,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             ampRoles = amp.getRole();
             // If server version > 10.0-4.4, PUT request should succeed, will log an error msg in case of 10.0-4.4, will fail otherwise
             MarkLogicVersion mlVersion = new MarkLogicVersion(getHubClient().getManageClient());
-            if(mlVersion.isNightly() || mlVersion.getMinor() > 404){
+            if(mlVersion.isNightly() || mlVersion.getMinor() > 404 || mlVersion.getMajor() > 10) {
                 Collections.sort(ampRoles);
                 Assertions.assertEquals(2, ampRoles.size());
                 Assertions.assertEquals("data-hub-developer", ampRoles.get(0));
