@@ -103,11 +103,11 @@ const customerQuery = {
   "selectedFacets": {}
 };
 const resultsTest6 = searchNodes(customerQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
+expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 3;
 expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
 const testEdge = resultsTest6.edges.find((edge) => edge.to === "/content/customer1.json");
 const mergedNode = resultsTest6.nodes.find(node => node.id === "/content/customer1.json");
-assertions.concat([
+assertions = assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTest6.total),
   test.assertEqual(expectedNodeCount, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
   test.assertEqual(expectedEdgeCount, resultsTest6.edges.length),
@@ -119,6 +119,8 @@ assertions.concat([
   test.assertEqual("matchingStep", mergedNode.matchStepName)
 ]);
 
+const customerWithoutIdNode = resultsTest6.nodes.find(node => node.id === "/content/customer%20without%20id.json");
+assertions.push(test.assertEqual("/content/customer without id.json", customerWithoutIdNode.label, `URI id should be decoded for label. Result: ${xdmp.toJsonString(customerWithoutIdNode)}`));
 
 const nodeLeafQuery = {
   "searchText": "",
@@ -169,12 +171,12 @@ const RelatedByPropertyDifferentFromID = {
 };
 
 const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
-expectedCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
-
+expectedCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 4 : 3;
+const expectedEdgeCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
 assertions.concat([
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.total),
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
-  test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.edges.length),
+  test.assertEqual(expectedEdgeCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.edges.length),
 ]);
 
 const conceptFilterQuery = {
@@ -257,10 +259,10 @@ const structuredConceptQuery = {
   "selectedFacets": {}
 };
 const structuredConceptQueryResults = searchNodes(structuredConceptQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
+expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
 expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 1 : 0;
 assertions.concat([
-  test.assertEqual(expectedNodeCount, structuredConceptQueryResults.total, "Includes 1 customer node and 1 structured property concept node"),
+  test.assertEqual(expectedNodeCount, structuredConceptQueryResults.total, "Includes 2 customer nodes and 1 structured property concept node"),
   test.assertEqual(expectedNodeCount, structuredConceptQueryResults.nodes.length, xdmp.toJsonString(structuredConceptQueryResults)),
   test.assertEqual(expectedEdgeCount, structuredConceptQueryResults.edges.length, "One edge between concept node and structured property concept node")
 ]);

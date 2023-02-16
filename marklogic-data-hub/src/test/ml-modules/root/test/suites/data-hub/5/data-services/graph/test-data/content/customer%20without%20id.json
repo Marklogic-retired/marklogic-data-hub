@@ -1,0 +1,21 @@
+{
+  "envelope": {
+    "headers": {},
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "name": "John Smith",
+        "nicknames": [
+          "Jon"
+        ],
+        "shipping": [
+        ]
+      }
+    }
+  }
+}
