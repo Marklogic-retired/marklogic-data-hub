@@ -352,7 +352,7 @@ function getNodeLabel(objectIRIArr, objectUri) {
 
   if (label.length === 0) {
     if(fn.exists(objectUri)) {
-      label = objectUri;
+      label = decodeURI(objectUri);
     } else {
       label = objectIRIArr[objectIRIArr.length - 1];
     }
