@@ -28,7 +28,7 @@
             tr {
                 th {
                     background-color: #f1f1f1 !important;
-                    max-width: 290px;
+                    max-width: 250px;
                     &:first-child {
                         border: 0 !important;
                     }
@@ -41,8 +41,8 @@
                     &:last-child {
                         border-left: 1px solid rgba(0,0,0,.05) !important;
                         font-weight: bold !important;
-                        max-width: 290px;
-                        min-width: 290px;
+                        max-width: 250px;
+                        min-width: 250px;
                     }
                 }
             }
