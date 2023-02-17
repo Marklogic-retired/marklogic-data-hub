@@ -143,6 +143,10 @@ function getEntityModel(entityName){
 }
 
 function expandStructuredProperties(entityModel, entityName) {
+  // avoid throwing an error if a structured definition doesn't exist yet
+  if (!entityModel.definitions[entityName]) {
+    return {};
+  }
   let entityProperties = entityModel.definitions[entityName].properties;
 
   for(let entityPropertyName in entityProperties){
