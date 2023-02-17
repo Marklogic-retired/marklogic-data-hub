@@ -207,14 +207,14 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                 backgroundImage: "url(" + backgroundImage + ")",
                 verticalAlign: "top",
                 width: "auto",
-                maxWidth: "200px",
+                maxWidth: "100px",
               };
             }
             return {
               backgroundColor: "",
               verticalAlign: "top",
               width: "auto",
-              maxWidth: "200px",
+              maxWidth: "100px",
             };
           },
           formatter: (property, key) => {

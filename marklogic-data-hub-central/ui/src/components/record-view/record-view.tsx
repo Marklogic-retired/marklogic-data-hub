@@ -21,6 +21,7 @@ import {MdCallMerge} from "react-icons/md";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
 import {deleteNotification, mergeUris} from "@api/merging";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
+import {AxiosResponse} from "axios";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);
@@ -216,17 +217,28 @@ const RecordCardView = (props) => {
   };
 
   const fetchCompareData = async (array, item) => {
-    const result1 = await getDocFromURI(array[0]);
-    const result2 = await getDocFromURI(array[1]);
+    let uriRequests: Promise<AxiosResponse<any>>[] = [];
+    array.forEach((uri) => {
+      uriRequests.push(getDocFromURI(uri));
+    });
+    const results = await Promise.all(uriRequests);
+    const result1 = results[0];
+    const result2 = results[1];
 
-    const flowName = item.hubMetadata.lastProcessedByFlow;
+    const flowName= result1.data.recordMetadata?.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
-      let result1Instance = result1.data.data.envelope.instance;
-      let result2Instance = result2.data.data.envelope.instance;
+      let urisInfo: any[] = [];
+      results.forEach((result, index) => {
+        const instanceKey = `result${index + 1}Instance`;
+        urisInfo.push({
+          [instanceKey]: result.data.data.envelope.instance,
+        });
+      });
       let previewInstance = preview.data.value.envelope.instance;
-      await setUriInfo([{result1Instance}, {result2Instance}, {previewInstance}]);
+      urisInfo.push({previewInstance});
+      setUriInfo(urisInfo);
     }
 
     let testMatchData = {
