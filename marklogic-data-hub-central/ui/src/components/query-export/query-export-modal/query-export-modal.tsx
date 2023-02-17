@@ -133,7 +133,7 @@ const QueryExportModal = (props) => {
             <div className={"d-flex"}>
               <Accordion.Button>Show Preview</Accordion.Button>
             </div>
-            <Accordion.Body>
+            <Accordion.Body style={{overflowX: "auto"}}>
               <br />
               {props.tableColumns && props.tableData &&
                 <Table data-testid="export-preview-table" bordered>
