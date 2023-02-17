@@ -102,7 +102,7 @@ describe("Raw data card view component", () => {
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final"});
 
     jest.clearAllMocks();
-    axiosMock.get["mockImplementation"](jest.fn(() => Promise.resolve({tatus: 200, data: {data: {envelope: {instance: {}}}, value: {envelope: {instance: {}}}}})));
+    axiosMock.get["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: {data: {envelope: {instance: {}}}, value: {envelope: {instance: {}}}}})));
     axiosMock.put["mockImplementation"](jest.fn(() => Promise.resolve({status: 200})));
     axiosMock.delete["mockImplementation"](jest.fn(() => {
       return Promise.resolve({status: 204});
