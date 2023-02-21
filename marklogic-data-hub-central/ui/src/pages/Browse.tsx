@@ -743,6 +743,7 @@ const Browse: React.FC<Props> = ({location}) => {
               entityIndicatorData={entityIndicatorData}
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
               entityRelationships={entityRelationships}
+              isBackToResultsClicked={state ? true :false}
             />
           </>
         </HCSider>
