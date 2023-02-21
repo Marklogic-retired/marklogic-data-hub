@@ -25,7 +25,7 @@ type Props = {
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
   autoExpand: string;
-  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeVersion: string, entityTypeColor: string, entityTypeIcon: string) => void;
+  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified, errorHandler: Function | undefined) => void;
   hubCentralConfig: any;
@@ -182,7 +182,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         getEntityTypeProp(entityName, "description", isConceptClass),
         getEntityTypeProp(entityName, "namespace", isConceptClass),
         getEntityTypeProp(entityName, "namespacePrefix", isConceptClass),
-        getEntityTypeProp(entityName, "version", isConceptClass),
         getEntityTypeProp(entityName, "color", isConceptClass),
         getEntityTypeProp(entityName, "icon", isConceptClass),
       );
@@ -446,9 +445,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     if (prop === "icon") {
       return getIcon(nodeName, isConceptClass);
     }
-    if (prop === "version") {
-      return versionExistsForEntity(node) ? node.model.info[prop] : undefined;
-    }
     if (!isConceptClass) {
       return (node.hasOwnProperty("model") &&
         node.model.hasOwnProperty("definitions") &&
@@ -499,10 +495,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         <ChevronDown className={styles.iconIndicator} aria-label="down" /> :
         <ChevronRight className={styles.iconIndicator} aria-label="right" />}
     </HCButton>;
-  };
-
-  const versionExistsForEntity = (entity) => {
-    return (entity.hasOwnProperty("model") && entity.model.hasOwnProperty("info") && entity.model.info.hasOwnProperty("version"));
   };
 
   const getColor = (nodeName, isConcept: boolean) => {

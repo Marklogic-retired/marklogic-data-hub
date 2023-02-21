@@ -65,20 +65,6 @@ public class PublishModelsTest extends ModelTest {
         assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft for final database");
     }
 
-    @Test
-    @WithMockUser(roles = {"writeEntityModel"})
-    void testUpdateModelVersion() {
-        runAsTestUserWithRoles("hub-central-entity-model-writer");
-        createModel();
-        publishDraftModels();
-        verifySchemaHasCorrectTDEVersion("3.0.1");
-        updateModelVersion();
-        publishDraftModels();
-        assertEquals(1, getFinalDocCount(entityCollection), "There should be no entities published");
-        assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft after publishing");
-        verifySchemaHasCorrectTDEVersion("3.1.0");
-    }
-
     private void verifySchemaHasCorrectTDEVersion(String version) {
         assertSchemasAndTDE(Assertions::assertNotNull, version);
     }

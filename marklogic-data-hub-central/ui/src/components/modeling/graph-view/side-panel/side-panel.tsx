@@ -73,10 +73,8 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
-  const [selectedEntityVersion, setSelectedEntityVersion] = useState("");
   const [selectedEntityLabel, setSelectedEntityLabel] = useState<string>("");
   const [selectedEntityPropOnHover, setSelectedEntityPropOnHover] = useState<any>();
-  const [versionTouched, setVersionTouched] = useState(false);
   const [descriptionTouched, setisDescriptionTouched] = useState(false);
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefixTouched, setisPrefixTouched] = useState(false);
@@ -139,9 +137,6 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                 setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
                 setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
                 setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
-              }
-              if (entity !== undefined && selectedEntityDetails.model?.info?.version) {
-                setSelectedEntityVersion(selectedEntityDetails.model.info.version);
               }
               setEntityModels({...convertArrayOfEntitiesToObject(response.data)});
               initializeEntityColorIcon();
@@ -233,18 +228,10 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
       }
       setSelectedEntityNamespacePrefix(event.target.value);
     }
-    if (event.target.id === "version") {
-      if (event.target.value !== selectedEntityInfo.model.info.version) {
-        setVersionTouched(true);
-      } else {
-        setVersionTouched(false);
-      }
-      setSelectedEntityVersion(event.target.value);
-    }
   };
 
   const entityPropertiesEdited = () => {
-    return (descriptionTouched || namespaceTouched || prefixTouched || versionTouched);
+    return (descriptionTouched || namespaceTouched || prefixTouched);
   };
 
   const setEntityTypesFromServer = async (entityName) => {
@@ -265,7 +252,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
       if (modelingOptions.selectedEntity !== undefined) {
         let response;
         if (!isConceptNode) {
-          response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, selectedEntityVersion);
+          response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix);
         } else {
           response = await updateConceptClass(modelingOptions.selectedEntity, selectedEntityDescription);
         }
@@ -656,29 +643,6 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
                   {errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null}
                 </Col>
               </Row>
-            </Col>
-          </Row>}
-          {!isConceptNode && <Row>
-            <FormLabel column lg={3} style={{marginTop: "20px"}}>{"Version:"}</FormLabel>
-            <Col className={"d-flex align-items-center"}>
-              <div className={styles.versionContainer}>
-                <HCInput
-                  id="version"
-                  data-testid="version"
-                  placeholder="0.0.1"
-                  disabled={canReadEntityModel && !canWriteEntityModel}
-                  value={selectedEntityVersion}
-                  onChange={handlePropertyChange}
-                  onBlur={onSubmit}
-                  className={styles.input}
-                  style={{verticalAlign: "text-bottom"}}
-                />
-                <div className={"d-flex align-items-center"}>
-                  <HCTooltip id="colo-selector" text={ModelingTooltips.versionField} placement="right">
-                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.colorsIcon} />
-                  </HCTooltip>
-                </div>
-              </div>
             </Col>
           </Row>}
           {/* Display settings section  */}
