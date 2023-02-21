@@ -19,8 +19,7 @@ const placeholders = {
   name: "Enter name",
   description: "Enter description",
   namespace: "Example: http://example.org/es/gs",
-  namespacePrefix: "Example: esgs",
-  version: "0.0.1"
+  namespacePrefix: "Example: esgs"
 };
 
 const defaultModalOptions = {
@@ -29,7 +28,6 @@ const defaultModalOptions = {
   updateEntityTypesAndHideModal: jest.fn(),
   isEditModal: false,
   name: "",
-  version: "",
   description: "",
   namespace: "",
   prefix: "",
@@ -63,12 +61,11 @@ describe("EntityTypeModal Component", () => {
     );
 
     let url = "/api/models";
-    let payload = {"name": "AnotherModel", "description": "Testing", "namespace": "", "namespacePrefix": "", "version": "3.0.1"};
+    let payload = {"name": "AnotherModel", "description": "Testing", "namespace": "", "namespacePrefix": ""};
 
     expect(getByText("Add Entity Type")).toBeInTheDocument();
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
-    userEvent.type(getByPlaceholderText(placeholders.version), payload.version);
 
     //modify the entity color via color picker and verify it is sent in hub central config payload
     userEvent.click(getByTestId(`${payload.name}-color-button`));
@@ -133,7 +130,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "", "namespacePrefix": "", "version": ""};
+    let payload = {"name": "Testing", "description": "", "namespace": "", "namespacePrefix": ""};
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -155,16 +152,15 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Edit modal is visible", async () => {
-    const {getByText, getByDisplayValue, queryByText, getByTestId, getByLabelText, getByPlaceholderText} = render(
+    const {getByText, getByDisplayValue, queryByText, getByTestId, getByLabelText} = render(
       <EntityTypeModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt" version="3.0.1"/>
+        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt"/>
     );
 
     expect(getByText("Edit Entity Type")).toBeInTheDocument();
     expect(queryByText("*")).toBeNull();
     expect(getByText("ModelName")).toBeInTheDocument();
     expect(getByDisplayValue("Model description")).toBeInTheDocument();
-    expect(getByPlaceholderText(placeholders.version)).toHaveValue("3.0.1");
 
     //proper color and icon is displayed
     expect(getByTestId("ModelName-color")).toHaveStyle("background: #CEE0ED");
@@ -172,7 +168,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByLabelText("ModelName-FaUserAlt-icon")).toBeInTheDocument();
   });
 
-  test("Entity description, namespace, version, prefix, color and icon selection are updated", async () => {
+  test("Entity description, namespace, prefix, color and icon selection are updated", async () => {
     axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
@@ -181,13 +177,12 @@ describe("EntityTypeModal Component", () => {
     );
 
     let url = "/api/models/ModelName/info";
-    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated", "version": "3.0.1"};
+    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated"};
 
     userEvent.clear(getByPlaceholderText(placeholders.description));
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
     userEvent.type(getByPlaceholderText(placeholders.namespace), payload.namespace);
     userEvent.type(getByPlaceholderText(placeholders.namespacePrefix), payload.namespacePrefix);
-    userEvent.type(getByPlaceholderText(placeholders.version), payload.version);
     //edit the entity color via color picker and verify it is sent in payload
     userEvent.click(getByTestId("ModelName-color-button"));
     userEvent.click(getByTitle("#F8F8DE"));
@@ -219,7 +214,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "badURI", "namespacePrefix": "test", "version": ""};
+    let payload = {"name": "Testing", "description": "", "namespace": "badURI", "namespacePrefix": "test"};
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -245,7 +240,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "http://example.org/test", "namespacePrefix": "xml", "version": ""};
+    let payload = {"name": "Testing", "description": "", "namespace": "http://example.org/test", "namespacePrefix": "xml"};
 
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);

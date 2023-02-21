@@ -41,9 +41,10 @@ if (!(fn.docAvailable(uri) || draftExists)) {
 
 const model = (draftExists) ? cts.doc(draftUri).toObject() : cts.doc(uri).toObject();
 
-if (version) {
-  model.info.version = version;
-} 
+// commenting out for entity version rollback DHFPROD-9943
+// if (version) {
+//   model.info.version = version;
+// } 
 
 if (!model.definitions[name]) {
   httpUtils.throwBadRequest("Could not find model with an entity type with name: " + name);
