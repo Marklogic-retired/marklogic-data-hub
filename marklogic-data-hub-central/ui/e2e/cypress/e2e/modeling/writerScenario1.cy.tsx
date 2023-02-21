@@ -47,7 +47,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");
     entityTypeModal.newEntityDescription("An entity for buyers");
-    entityTypeModal.newEntityVersion("3.0.0");
+    // commenting out for entity version rollback DHFPROD-9943
+    // entityTypeModal.newEntityVersion("3.0.0");
     modelPage.openIconSelector("Buyer");
     modelPage.selectIcon("Buyer", "FaAccessibleIcon");
     modelPage.toggleColorSelector("Buyer");
@@ -92,7 +93,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.clearEntityDescription();
     entityTypeModal.newEntityDescription("Description has changed");
-    entityTypeModal.newEntityVersion("3.0.1");
+    // commenting out for entity version rollback DHFPROD-9943
+    // entityTypeModal.newEntityVersion("3.0.1");
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should("not.exist");
     propertyTable.editProperty("user");
@@ -105,7 +107,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     // check edited entity description
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
-    entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
+    // commenting out for entity version rollback DHFPROD-9943
+    // entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getCancelButton().click();
   });
   it("Add cascaded type with identifier", () => {
@@ -169,7 +172,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getMultipleIcon("buyer-id").should("exist");
     // check edited entity version description
     entityTypeTable.getEntity("Buyer").scrollIntoView().click();
-    entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
+    // commenting out for entity version rollback DHFPROD-9943
+    // entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });

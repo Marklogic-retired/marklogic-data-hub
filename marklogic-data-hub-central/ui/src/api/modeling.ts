@@ -10,12 +10,11 @@ export const createEntityType = async (entityPayload: any) => {
 };
 
 export const updateModelInfo = async (name: string, description: string,
-  namespace: string, prefix: string, version: string) => {
+  namespace: string, prefix: string) => {
   let payload = {
     description: description,
     namespace: namespace,
-    namespacePrefix: prefix,
-    version: version
+    namespacePrefix: prefix
   };
   return await axios.put(`/api/models/${name}/info`, payload);
 };

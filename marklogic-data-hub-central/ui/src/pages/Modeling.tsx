@@ -39,7 +39,6 @@ const Modeling: React.FC = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [namespace, setNamespace] = useState("");
-  const [version, setVersion] = useState("");
   const [prefix, setPrefix] = useState("");
   const [color, setColor] = useState("");
   const [icon, setIcon] = useState("");
@@ -240,7 +239,7 @@ const Modeling: React.FC = () => {
     }));
   };
 
-  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeVersion: string, entityTypeColor: string, entityTypeIcon: string) => {
+  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => {
     if (canWriteEntityModel) {
       toggleIsEditModal(true);
       toggleShowEntityModal(true);
@@ -248,7 +247,6 @@ const Modeling: React.FC = () => {
       setDescription(entityTypeDescription);
       setNamespace(entityTypeNamespace);
       setPrefix(entityTypePrefix);
-      setVersion(entityTypeVersion);
       setColor(entityTypeColor);
       setIcon(entityTypeIcon);
     }
@@ -602,7 +600,6 @@ const Modeling: React.FC = () => {
           name={name}
           description={description}
           namespace={namespace}
-          version={version}
           prefix={prefix}
           color={color}
           icon={icon}
