@@ -246,7 +246,7 @@ describe("Graph View Component", () => {
     // Hovers over color question icon to see tooltip
     const tooltips = getAllByLabelText("icon: question-circle");
     // color tooltip has index 1 in the array
-    fireEvent.mouseOver(tooltips[1]);
+    fireEvent.mouseOver(tooltips[0]);
 
     const tooltip = await screen.findAllByLabelText("colorToolTip");
     expect(tooltip[0].lastChild?.textContent).toBe("Select a color to associate it with the Product entity throughout your project.");

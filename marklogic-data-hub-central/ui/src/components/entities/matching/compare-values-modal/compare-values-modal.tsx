@@ -196,7 +196,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       key: "propertyValueInReview",
       title: (cell) => `${cell.value}`,
       ellipsis: true,
-      text: !props.isMerge ? <><div>{"Current Document: "}</div><div style={{fontWeight: 100}}>{props.originalUri}</div></> : "Preview",
+      text: !props.isMerge ? <><div>{"Current Document: "}</div><div style={{fontWeight: 400}}>{props.originalUri}</div></> : "Preview",
       style: (property) => {
         if (property?.matchedRow) {
           return {
