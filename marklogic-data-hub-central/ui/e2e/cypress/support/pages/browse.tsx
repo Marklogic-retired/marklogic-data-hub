@@ -761,6 +761,14 @@ class BrowsePage {
     return cy.get(`[data-testid="${primaryKeyValue}-expand-icon"]`).should("be.visible").click({force: true});
   }
 
+  getStagingButton() {
+    return cy.findByText("Staging");
+  }
+
+  getAllDataButton() {
+    return cy.findByText("All Data");
+  }
+
 }
 
 const browsePage = new BrowsePage();
