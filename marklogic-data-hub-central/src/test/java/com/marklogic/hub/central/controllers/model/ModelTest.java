@@ -34,8 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelTest extends AbstractHubCentralTest {
     protected final static String MODEL_NAME = "Customer";
-    protected final static String MODEL_VERSION = "3.0.1";
-    protected final static String MODEL_VERSION_2 = "3.1.0";
+    // commenting out for entity version rollback DHFPROD-9943
+    // protected final static String MODEL_VERSION = "3.0.1";
+    // protected final static String MODEL_VERSION_2 = "3.1.0";
     protected final static String ENTITY_PROPERTY_1 = "someProperty";
     protected final static String ENTITY_PROPERTY_2 = "someOtherProperty";
     protected final static String DATABASE_PROPERTY_1 = "testRangeIndexForDHFPROD4704";
@@ -116,11 +117,13 @@ public class ModelTest extends AbstractHubCentralTest {
 
         ObjectNode input = objectMapper.createObjectNode();
         input.put("name", MODEL_NAME);
-        input.put("version", MODEL_VERSION_2);
+        // commenting out for entity version rollback DHFPROD-9943
+        // input.put("version", MODEL_VERSION_2);
         controller.updateDraftModelInfo(MODEL_NAME, input);
         JsonNode model = getModel(getHubClient().getFinalClient(), true);
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
-        assertEquals(MODEL_VERSION_2, model.get("info").get("version").asText());
+        // commenting out for entity version rollback DHFPROD-9943
+        // assertEquals(MODEL_VERSION_2, model.get("info").get("version").asText());
         assertTrue(model.get("info").get("draft").asBoolean());
     }
 
@@ -211,14 +214,16 @@ public class ModelTest extends AbstractHubCentralTest {
 
         //Remove namespace and namespacePrefix from entity model
         input.put("description", "Description updated again");
-        input.put("version", MODEL_VERSION);
+        // commenting out for entity version rollback DHFPROD-9943
+        // input.put("version", MODEL_VERSION);
         input.remove("namespace");
         input.remove("namespacePrefix");
         controller.updateDraftModelInfo(MODEL_NAME, input);
 
         model = getModel(getHubClient().getFinalClient(), true);
         assertEquals("Description updated again", model.get("definitions").get(MODEL_NAME).get("description").asText());
-        assertEquals(MODEL_VERSION, model.get("info").get("version").asText());
+        // commenting out for entity version rollback DHFPROD-9943
+        // assertEquals(MODEL_VERSION, model.get("info").get("version").asText());
         assertNull(model.get("definitions").get(MODEL_NAME).get("namespace"));
         assertNull(model.get("definitions").get(MODEL_NAME).get("namespacePrefix"));
 

@@ -71,9 +71,10 @@ if (input.description) {
   model.definitions[name].description = description;
 }
 
-if (input.version) {
-  model.info.version = version;
-}
+// commenting out for entity version rollback DHFPROD-9943
+// if (input.version) {
+//   model.info.version = version;
+// }
 
 if(hubCentralConfig){
   model.hubCentral = hubCentralConfig;
