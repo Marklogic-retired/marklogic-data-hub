@@ -63,6 +63,7 @@ function onArtifactPublish (artifactType, artifactName) {
     let protectedFeature = {};
     protectedFeature.collections = [collection];
     protectedFeature.permissions = permissions;
+    protectedFeature.enabled = true;
 
     artifact.features["protectedCollections"] = protectedFeature;
     //confirm that the collection is protected
