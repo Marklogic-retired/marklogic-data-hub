@@ -105,5 +105,6 @@ export default {
     getDirectory,
     validateArtifact,
     defaultArtifact,
-    getFileExtension
+    getFileExtension,
+    getArtifactUri
 };
