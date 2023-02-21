@@ -109,6 +109,24 @@ describe("Test '/Explore' graph right panel", () => {
     graphExploreSidePanel.getSidePanelConceptHeadingInfo("Kettle").scrollIntoView().should("be.visible");
     graphExploreSidePanel.getTableCellValueByName("1").should("contain", "Product");
   });
+
+  it("Retain state when select facets", () => {
+    cy.log("**Go to Explore section**");
+    toolbar.getExploreToolbarIcon().click();
+
+    cy.log("**Verify Graph view is default view**");
+    graphExplore.getGraphVisCanvas().should("be.visible");
+    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getStagingButton().click();
+    browsePage.getAllDataButton().click();
+    cy.findByTestId("collection-loadPersonJSON-checkbox").click();
+    cy.findByTestId("facet-apply-button").click();
+    cy.findByTestId("/json/persons/last-name-dob-custom1.json-detailViewIcon").click();
+    cy.findByLabelText("Back").click();
+    cy.wait(6000); // There was a bug when the element appears and later disappear
+    cy.get("[data-cy=\"clear-loadPersonJSON\"]");
+  });
 });
 
 
