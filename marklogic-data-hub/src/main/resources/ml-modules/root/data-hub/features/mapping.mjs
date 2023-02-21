@@ -18,14 +18,63 @@
 /**
  * Feature that handles the mapping transformation of the artifacts.
  */
+import core from "/data-hub/5/artifacts/core.mjs";
+import mappingModule from "/data-hub/5/artifacts/mapping.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+
+const INFO_EVENT = consts.TRACE_CORE;
 
 function onArtifactSave(artifactType, artifactName) {
+    try{
+        const artifact = core.getArtifact(artifactType, artifactName);
+        if(artifact.stepDefinitionType == "mapping"){
+
+               let nodeURI =  mappingModule.getArtifactUri(artifactName)
+                //Invoke mappingJSONtoXML with the URI
+                invokeService(nodeURI);
+        }
+    } catch (ex) {
+        hubUtils.hubTrace(INFO_EVENT, `Unable to generate mapping transform;  ${artifactName}; Reason: ${ex.message}`);
+        return false;
+    }
+    hubUtils.hubTrace(INFO_EVENT, `End of processing mapping transform for ${artifactName}`);
     return true;
 }
 
 function onArtifactDelete(artifactType, artifactName) {
- return true;
+    try{
+        const artifact = core.getArtifact(artifactType, artifactName);
+        if(artifact.stepDefinitionType == "mapping"){
+
+            let nodeURI =  mappingModule.getArtifactUri(artifactName)
+            //Invoke cleanUpMapping with the URI
+            invokeServiceClean(nodeURI);
+        }
+    } catch (ex) {
+        hubUtils.hubTrace(INFO_EVENT, `Failed to clean up;  ${artifactName}; Reason: ${ex.message}`);
+        return false;
+    }
+    hubUtils.hubTrace(INFO_EVENT, `End of clean up for ${artifactName}`);
+    return true;
 }
+
+
+function invokeService(uri) {
+    return fn.head(xdmp.invoke(
+        "/data-hub/5/triggers/mapping/mappingJSONtoXML.sjs",
+        {uri}
+    ));
+}
+
+function invokeServiceClean(uri) {
+    return fn.head(xdmp.invoke(
+        "/data-hub/5/triggers/mapping/cleanUpMapping.sjs",
+        {uri}
+    ));
+}
+
+
 
 export default {
     onArtifactSave,
