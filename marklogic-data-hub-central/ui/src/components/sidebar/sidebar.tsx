@@ -50,6 +50,7 @@ interface Props {
   entityIndicatorData: any;
   entitiesWithRelatedConcepts: any;
   entityRelationships: any;
+  isBackToResultsClicked?: boolean;
 }
 const Sidebar: React.FC<Props> = (props) => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
@@ -410,7 +411,7 @@ const Sidebar: React.FC<Props> = (props) => {
       entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
       checkDataInDatabase("final").then((countEntityFinalCount) => {
         //By Default entities datasource and final database is selected
-        if (countEntityFinalCount === 0) {
+        if (countEntityFinalCount === 0 && !props.isBackToResultsClicked) {
           checkDataInDatabase("staging").then((countEntityStagingCount) => {
             if (countEntityStagingCount > 0) {
               //Setting the staging database if there is no data in final database
