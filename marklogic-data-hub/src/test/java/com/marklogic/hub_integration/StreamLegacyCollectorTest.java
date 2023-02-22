@@ -25,9 +25,13 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DataHub;
-import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.impl.Scaffolding;
+import com.marklogic.hub.legacy.LegacyFlowManager;
+import com.marklogic.hub.legacy.flow.CodeFormat;
+import com.marklogic.hub.legacy.flow.DataFormat;
+import com.marklogic.hub.legacy.flow.FlowType;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
+import com.marklogic.hub.legacy.flow.LegacyFlowRunner;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -51,7 +54,7 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
-
+    private boolean initialSetup = false;
     @Autowired
     LegacyFlowManager fm;
 
@@ -91,7 +94,7 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
         DataMovementManager stagingDataMovementManager = getHubClient().getStagingClient().newDataMovementManager();
 
         WriteBatcher writeBatcher = stagingDataMovementManager.newWriteBatcher()
-            .withBatchSize(2000)
+            .withBatchSize(BATCH_SIZE)
             .withThreadCount(8)
             .onBatchSuccess(batch -> installDocsFinished = true)
             .onBatchFailure((batch, failure) -> {
@@ -107,12 +110,19 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         int counter = 0;
         for (int i = 0; i < DOC_COUNT; i++) {
-            ArrayList<String> contents = new ArrayList<>();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("{");
             for (int j = 0; j < BATCH_SIZE; j++) {
-                contents.add("\"id\":\"" + counter + "\"");
+                stringBuilder.append("\"id\":\"");
+                stringBuilder.append(counter);
+                stringBuilder.append("\"");
                 counter++;
+                if (j < (BATCH_SIZE - 1)) {
+                    stringBuilder.append(",");
+                }
             }
-            StringHandle handle = new StringHandle("{" + String.join(",", contents) + "}").withFormat(Format.JSON);
+            stringBuilder.append("}");
+            StringHandle handle = new StringHandle(stringBuilder.toString()).withFormat(Format.JSON);
             writeBatcher.add("/doc-" + i + ".json", metadataHandle, handle);
         }
 
