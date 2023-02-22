@@ -31,7 +31,7 @@ const Overview: React.FC<Props> = (props) => {
   };
 
   const openDocumentation = (e, type) => {
-    if (e.type === "click" || e.key==="Enter") {
+    if (e.type === "click" || e.key === "Enter") {
       if (e) e.stopPropagation(); // Stop click from also opening tile
       let versionNum = parseVersion(props.environment.dataHubVersion);
       window.open(overviewConfig.documentationLinks.tileSpecificLink(versionNum, type), "_blank");
@@ -39,7 +39,7 @@ const Overview: React.FC<Props> = (props) => {
   };
 
   const openVideo = (e, type) => {
-    if (e.type === "click" || e.key==="Enter") {
+    if (e.type === "click" || e.key === "Enter") {
       if (e) e.stopPropagation(); // Stop click from also opening tile
       window.open(overviewConfig.videoLinks[type], "_blank");
     }
@@ -52,9 +52,13 @@ const Overview: React.FC<Props> = (props) => {
 
   const [helpInfoVisible, setHelpInfoVisible] = useState(false);
 
-  const helpInfoViewChange = (visible) => {
+  const helpInfoViewChange = (visible, event?) => {
     if (visible) setHelpInfoVisible(true);
     else setHelpInfoVisible(false);
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
   };
 
   const getClassNames = (id) => {
@@ -161,7 +165,10 @@ const Overview: React.FC<Props> = (props) => {
               rootClose
               onToggle={helpInfoViewChange}
             >
-              <span className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon} /></span>
+              <span tabIndex={0} onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") { helpInfoViewChange(!helpInfoVisible, event); } else if (event.key === "Tab" && helpInfoVisible) { helpInfoViewChange(!helpInfoVisible); }
+              }}
+              className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon}/></span>
             </OverlayTrigger>
           </span>}</div>
         <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central makes it easy to manage your data. You can load, curate, and manage your data, or explore and export your data — all within Hub Central.</div>
@@ -179,7 +186,7 @@ const Overview: React.FC<Props> = (props) => {
             </div>
             <div className={styles.body}>Create and configure steps that define how data should be loaded.
               <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "load"); }}>
-                <span onClick={(e) => { openDocumentation(e, "load"); } }>Documentation</span>
+                <span onClick={(e) => { openDocumentation(e, "load"); }}>Documentation</span>
               </div>
               <div className={styles.vidLink} tabIndex={0} onKeyDown={(e) => { openVideo(e, "load"); }}>
                 <span onClick={(e) => { openVideo(e, "load"); }} >Video Tutorial</span>
