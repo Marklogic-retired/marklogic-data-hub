@@ -16,15 +16,12 @@
 'use strict';
 
 // This is just for testing purposes
-
-var jobId;
-var status;
-
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 const alwaysUseThisStatus = "stop-on-error";
 try {
-  const jobDoc = jobs.getJob(jobId);
+  const jobDoc = jobs.getJob(external.jobId);
   if (jobDoc) {
     jobDoc.job.jobStatus = alwaysUseThisStatus;
     jobDoc.job.timeEnded = fn.currentDateTime();
