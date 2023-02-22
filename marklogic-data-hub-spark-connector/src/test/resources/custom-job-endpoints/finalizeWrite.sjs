@@ -15,12 +15,12 @@
  */
 'use strict';
 
-// This is just for testing purposes
-
 var jobId;
 var status;
 
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+// This is just for testing purposes
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
 
 const alwaysUseThisStatus = "stop-on-error";
 try {
