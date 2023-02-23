@@ -19,7 +19,8 @@
     "tde-view",
     "data-hub-saved-query-user",
     "redaction-user",
-    "data-hub-temporal-user"
+    "data-hub-temporal-user",
+    "data-hub-job-internal"
   ],
   "privilege": [
     {

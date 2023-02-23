@@ -13,14 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-'use strict';
-
-declareUpdate();
-
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
-
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import conceptLib from "/data-hub/5/impl/concept-lib.mjs";
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const conceptName = external.conceptName;
 if (!conceptName) {

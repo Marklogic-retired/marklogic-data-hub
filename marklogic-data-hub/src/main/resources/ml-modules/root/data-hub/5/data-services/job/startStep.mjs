@@ -13,15 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
-
 import config from "/com.marklogic.hub/config.mjs";
 import coreLib from "/data-hub/5/artifacts/core.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import Job from "/data-hub/5/flow/job.mjs";
 import jobs from "/data-hub/5/impl/jobs.mjs";
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
 const dhProv = require("/data-hub/5/provenance/dh-provenance.xqy");
 const jobId = external.jobId;

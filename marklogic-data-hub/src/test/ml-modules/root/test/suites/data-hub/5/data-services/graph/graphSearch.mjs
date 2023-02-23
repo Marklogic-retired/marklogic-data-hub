@@ -277,9 +277,9 @@ const resultsAllEntitiesSelected = searchNodes(withAllEntitiesSelectedQuery);
 
 
 resultsAllEntitiesSelected.nodes.forEach(node => {
-    if(node.count != null && node.count > 1){
-      test.assertFail("a node with count greater than 1 must not exists");
-    }
+  if(node.count != null && node.count > 1){
+    test.assertFail("a node with count greater than 1 must not exists");
+  }
 })
 
 assertions;

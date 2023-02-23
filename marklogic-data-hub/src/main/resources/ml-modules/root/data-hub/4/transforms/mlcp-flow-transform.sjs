@@ -19,7 +19,8 @@ const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
 
 function transform(content, context) {
   let uri = content.uri;

@@ -23,7 +23,7 @@ const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definitio
 const STEP_COLLECTION = "http://marklogic.com/data-hub/steps";
 const ENTITY_MODEL_UI_CONFIG_COLLECTION = "http://marklogic.com/hub-central/ui-config";
 
-export default{
+export default {
     XQUERY: "xqy",
     JAVASCRIPT: "sjs",
     XML: "xml",

@@ -1,7 +1,5 @@
 package com.marklogic.hub.scaffolding;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.ServerTransform;
@@ -11,8 +9,9 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.step.StepDefinition;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CreateStepDefinitionTest extends AbstractHubCoreTest {
 
@@ -39,7 +38,7 @@ public class CreateStepDefinitionTest extends AbstractHubCoreTest {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(getHubConfig());
 
         StepDefinition stepDef = scaffolding.createStepDefinition("myIngester", "ingestion", "sjs");
-        assertEquals("/custom-modules/ingestion/myIngester/main.sjs", stepDef.getModulePath());
+        assertEquals("/custom-modules/ingestion/myIngester/main.mjs", stepDef.getModulePath());
         installUserModules(getHubConfig(), true);
 
         scaffolding.createStepFile("myIngestionStep", "ingestion", "myIngester", null);

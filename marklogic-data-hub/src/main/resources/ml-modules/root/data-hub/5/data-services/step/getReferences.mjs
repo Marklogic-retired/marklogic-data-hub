@@ -16,11 +16,11 @@
 // No privilege required: No special privilege is needed for this endpoint
 'use strict';
 
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 
-var searchProperty;
-var referenceName;
+const searchProperty = external.searchProperty;
+const referenceName = external.referenceName;
 if (!(searchProperty && referenceName)) {
   httpUtils.throwBadRequest("Must specify a search property and reference in order to get item references");
 }

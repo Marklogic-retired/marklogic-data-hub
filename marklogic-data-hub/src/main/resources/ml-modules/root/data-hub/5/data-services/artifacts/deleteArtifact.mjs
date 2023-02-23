@@ -15,10 +15,10 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
-var artifactType, artifactName;
+const artifactType = external.artifactType, artifactName = external.artifactName;
 
 if ("ingestion" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");

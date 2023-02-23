@@ -15,12 +15,10 @@
 */
 'use strict';
 
-declareUpdate();
-
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
-
 import conceptLib from "/data-hub/5/impl/concept-lib.mjs";
 import config from "/com.marklogic.hub/config.mjs";
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const models = external.models.toObject();
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];

@@ -14,11 +14,11 @@
  limitations under the License.
  */
 'use strict';
+import mappableEntityLib from "/data-hub/5/data-services/mapping/mappable-entity-lib.mjs";
 
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
 const entityName = external.entityName;
 
-import mappableEntityLib from "/data-hub/5/data-services/mapping/mappable-entity-lib.mjs";
 
 mappableEntityLib.getEntitiesForUI(entityName);

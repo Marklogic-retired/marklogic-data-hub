@@ -61,7 +61,7 @@ task loadWebViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     output_uri_prefix = "/webpage"
     output_uri_suffix = ".json"
     output_permissions = "rest-reader,read,rest-writer,update"
-    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.mjs"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
     transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
     transform_param = "flow-name=default-ingestion"
 }
@@ -78,7 +78,7 @@ task loadIpViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     output_uri_prefix = "/iplocation/"
     output_uri_suffix = ".json"
     output_permissions = "rest-reader,read,rest-writer,update"
-    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.mjs"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
     transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
     transform_param = "flow-name=default-ingestion"
 }
