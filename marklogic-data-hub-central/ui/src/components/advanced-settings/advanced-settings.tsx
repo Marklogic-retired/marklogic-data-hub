@@ -3,9 +3,9 @@ import Axios from "axios";
 import Select, {components as SelectComponents} from "react-select";
 import CreatableSelect from "react-select/creatable";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
-import {Form, Row, Col, FormCheck, FormLabel, FormControl, OverlayTrigger, Tooltip} from "react-bootstrap";
+import {Form, Row, Col, FormCheck, FormLabel, FormControl} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
-import {AdvancedSettingsTooltips, keyboardNavigationTooltips} from "@config/tooltips.config";
+import {AdvancedSettingsTooltips} from "@config/tooltips.config";
 import {AdvancedSettingsMessages} from "@config/messages.config";
 import StepsConfig from "@config/steps.config";
 import "./advanced-settings.scss";
@@ -888,6 +888,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col className={"d-flex"}>
               <Select
                 id="sourceDatabase-select-wrapper"
+                openMenuOnFocus={true}
+                tabSelectsValue={false}
                 inputId="sourceDatabase"
                 components={{MenuList: props => MenuList("sourceDatabase", props)}}
                 placeholder="Please select source database"
@@ -913,7 +915,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="source-database-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -922,32 +924,30 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
           <Col className={"d-flex"}>
-            <OverlayTrigger overlay={<Tooltip id="button-tooltip-TgtDatabase">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={tgtDatabaseTooltipVisible}>
-              <span tabIndex={0} ref={tgtDatabaseTooltipRef} style={{width: "100%", marginRight: "-1px"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabase")}>
-                <Select
-                  id="targetDatabase-select-wrapper"
-                  inputId="targetDatabase"
-                  tabIndex={0}
-                  onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabaseInner")}
-                  components={{MenuList: props => MenuList("targetDatabase", props)}}
-                  placeholder="Please select target database"
-                  value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
-                  onChange={handleTargetDatabase}
-                  isSearchable={false}
-                  isDisabled={!canReadWrite}
-                  aria-label="targetDatabase-select"
-                  onBlur={sendPayload}
-                  options={targetDbOptions}
-                  styles={reactSelectThemeConfig}
-                  formatOptionLabel={({value, label}) => {
-                    return (
-                      <span data-testid={`targetDbOptions-${value}`}>
-                        {label}
-                      </span>
-                    );
-                  }}
-                /></span></OverlayTrigger>
-            <span tabIndex={0} ref={tgtDatabaseTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabaseTooltip")} className={styles.tooltipRef}>
+            <Select
+              id="targetDatabase-select-wrapper"
+              inputId="targetDatabase"
+              openMenuOnFocus={true}
+              tabSelectsValue={false}
+              components={{MenuList: props => MenuList("targetDatabase", props)}}
+              placeholder="Please select target database"
+              value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
+              onChange={handleTargetDatabase}
+              isSearchable={false}
+              isDisabled={!canReadWrite}
+              aria-label="targetDatabase-select"
+              onBlur={sendPayload}
+              options={targetDbOptions}
+              styles={reactSelectThemeConfig}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`targetDbOptions-${value}`}>
+                    {label}
+                  </span>
+                );
+              }}
+            />
+            <span  ref={tgtDatabaseTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabaseTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.targetDatabase}
@@ -955,7 +955,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={tgtDatabaseTooltipVisible2 ? tgtDatabaseTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </span>
@@ -975,28 +975,28 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
             <Col className={"d-flex"} data-testid={"target-collections"}>
-              <span className={styles.tooltipRef} tabIndex={0} ref={tgtCollectionTooltipRef} style={{width: "100%"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollection")}>
-                <OverlayTrigger overlay={<Tooltip id="button-tooltip-addCol">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={tgtCollectionTooltipVisible}>
-                  <CreatableSelect
-                    id="additionalColl-select-wrapper"
-                    inputId="additionalColl"
-                    isMulti
-                    tabIndex={0}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollectionInner")}
-                    isClearable={false}
-                    placeholder="Please add target collections"
-                    value={additionalCollections.map(d => ({value: d, label: d}))}
-                    isDisabled={!canReadWrite}
-                    onChange={handleAddColl}
-                    onCreateOption={handleCreateAdditionalColl}
-                    aria-label="additionalColl-select"
-                    onBlur={sendPayload}
-                    options={additionalCollectionsOptions}
-                    styles={reactSelectThemeConfig}
-                  />
-                </OverlayTrigger>
-              </span>
-              <span tabIndex={0} ref={tgtCollectionTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollectionTooltip")} className={styles.tooltipRef}>
+              <CreatableSelect
+                id="additionalColl-select-wrapper"
+                inputId="additionalColl"
+                isMulti
+                tabIndex={0}
+                onKeyDown={(e) => { e.key === "Enter" ? handleAddColl :null; }}
+                isClearable={false}
+                openMenuOnFocus={true}
+                tabSelectsValue={false}
+                placeholder="Please add target collections"
+                value={additionalCollections.map(d => ({value: d, label: d}))}
+                isDisabled={!canReadWrite}
+                onChange={handleAddColl}
+
+                onCreateOption={handleCreateAdditionalColl}
+                aria-label="additionalColl-select"
+                onBlur={sendPayload}
+                options={additionalCollectionsOptions}
+                styles={reactSelectThemeConfig}
+              />
+
+              <span  ref={tgtCollectionTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollectionTooltip")} className={styles.tooltipRef}>
                 <div className={"p-2 d-flex"}>
                   <HCTooltip
                     text={tooltips.additionalCollections}
@@ -1004,7 +1004,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     placement="left"
                     show={tgtCollectionTooltipVisible2 ? tgtCollectionTooltipVisible2 : undefined}
                   >
-                    <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                   </HCTooltip>
                 </div>
               </span>
@@ -1029,6 +1029,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 <HCInput
                   id="targetPermissions"
                   ref={tgtPermissionRef}
+                  ariaLabel="Target-Permissions"
                   tabIndex={0}
                   onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermission")}
                   placeholder="Please enter target permissions"
@@ -1037,7 +1038,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   onBlur={handleBlur}
                   disabled={!canReadWrite}
                 />
-                <span tabIndex={0} ref={tgtPermissionTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermissionTooltip")} className={styles.tooltipRef}>
+                <span ref={tgtPermissionTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermissionTooltip")} className={styles.tooltipRef}>
                   <div className={"p-2 d-flex"}>
                     <HCTooltip
                       text={tooltips.targetPermissions}
@@ -1045,7 +1046,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       placement="left"
                       show={tgtPermissionTooltipVisible ? tgtPermissionTooltipVisible : undefined}
                     >
-                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </span>
@@ -1072,6 +1073,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 aria-label="targetFormat-select"
                 onBlur={sendPayload}
                 options={targetFormatOptions}
+                openMenuOnFocus={true}
+                tabSelectsValue={false}
                 styles={reactSelectThemeConfig}
                 formatOptionLabel={({value, label}) => {
                   return (
@@ -1087,7 +1090,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="target-format-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1096,32 +1099,30 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3} className={"pe-0"}>{"Provenance Granularity:"}</FormLabel>
           <Col className={"d-flex"}>
-            <OverlayTrigger overlay={<Tooltip id="button-tooltip-provGran">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={provGranTooltipVisible}>
-              <div className={styles.tooltipRef} ref={provGranTooltipRef} style={{width: "100%", marginLeft: "-2px"}} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularity")}>
-                <Select
-                  id="provGranularity-select-wrapper"
-                  inputId="provGranularity"
-                  components={{MenuList: props => MenuList("provGranularity", props)}}
-                  placeholder="Please select provenance granularity"
-                  value={provGranOpts.find(oItem => oItem.value === provGranularity)}
-                  onChange={handleProvGranularity}
-                  isSearchable={false}
-                  isDisabled={!canReadWrite}
-                  tabIndex={0}
-                  onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularityInner")}
-                  aria-label="provGranularity-select"
-                  onBlur={sendPayload}
-                  options={provGranOpts}
-                  styles={reactSelectThemeConfig}
-                  formatOptionLabel={({value, label}) => {
-                    return (
-                      <span data-testid={`provOptions-${label}`}>
-                        {label}
-                      </span>
-                    );
-                  }}
-                /></div></OverlayTrigger>
-            <span tabIndex={0} ref={provGranTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularityTooltip")} className={styles.tooltipRef}>
+            <Select
+              id="provGranularity-select-wrapper"
+              inputId="provGranularity"
+              components={{MenuList: props => MenuList("provGranularity", props)}}
+              placeholder="Please select provenance granularity"
+              value={provGranOpts.find(oItem => oItem.value === provGranularity)}
+              onChange={handleProvGranularity}
+              isSearchable={false}
+              openMenuOnFocus={true}
+              tabSelectsValue={false}
+              isDisabled={!canReadWrite}
+              aria-label="provGranularity-select"
+              onBlur={sendPayload}
+              options={provGranOpts}
+              styles={reactSelectThemeConfig}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`provOptions-${label}`}>
+                    {label}
+                  </span>
+                );
+              }}
+            />
+            <span  ref={provGranTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularityTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.provGranularity}
@@ -1129,7 +1130,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={provGranTooltipVisible2 ? provGranTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div></span>
           </Col>
@@ -1141,6 +1142,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               <Select
                 id="validateEntity-select-wrapper"
                 inputId="validateEntity"
+                openMenuOnFocus={true}
+                tabSelectsValue={false}
                 components={{MenuList: props => MenuList("validateEntity", props)}}
                 placeholder="Please select Entity Validation"
                 value={valEntityOpts.find(oItem => oItem.value === validateEntity)}
@@ -1165,7 +1168,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="validate-entity-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1179,6 +1182,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 id="parametersModuleInput"
                 ref={parametersModuleRef}
                 tabIndex={0}
+                ariaLabel={"Parameters-Module-Path"}
                 onKeyDown={(e) => serviceNameKeyDownHandler(e, "parametersModule")}
                 placeholder="example: /custom-modules/mapping-params/example-mapping-params.sjs"
                 value={parametersModuleValue}
@@ -1193,7 +1197,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="parameters-module-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill data-testid="parameters-question-circle" aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} data-testid="parameters-question-circle" aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1208,6 +1212,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   <Select
                     id="sourceRecordScope-select-wrapper"
                     inputId="sourceRecordScope"
+                    openMenuOnFocus={true}
+                    tabSelectsValue={false}
                     components={{MenuList: props => MenuList("sourceRecordScope", props)}}
                     placeholder="Please select Source Record Scope"
                     value={sourceRecordScopeValue.find(oItem => oItem.value === sourceRecordScope)}
@@ -1227,7 +1233,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   />
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
-                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -1246,6 +1252,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col className={"d-flex align-items-center"}>
               <FormCheck
                 inline
+                aria-label="Attach-Source-Document-Yes"
                 id={"attachmentTrue"}
                 data-testid="attachmentTrue"
                 name={"attachSourceDocument"}
@@ -1258,6 +1265,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               />
               <FormCheck
                 inline
+                aria-label="Attach-Source-Document-No"
                 id={"attachmentFalse"}
                 data-testid="attachmentFalse"
                 name={"attachSourceDocument"}
@@ -1274,7 +1282,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   id="attach-source-document-tooltip"
                   placement="left"
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </Col>
@@ -1285,6 +1293,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Col className={"d-flex"}>
             <HCInput
               id="batchSize"
+              ariaLabel="Batch-Size"
               ref={batchSizeRef}
               tabIndex={0}
               onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSize")}
@@ -1295,7 +1304,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               className={styles.inputBatchSize}
               onBlur={sendPayload}
             />
-            <div tabIndex={0} ref={batchSizeTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSizeTooltip")} className={styles.tooltipRef}>
+            <div  ref={batchSizeTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSizeTooltip")} className={styles.tooltipRef}>
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip
                   text={tooltips.batchSize}
@@ -1303,7 +1312,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={batchSizeTooltipVisible ? batchSizeTooltipVisible : undefined}
                 >
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                 </HCTooltip>
               </div>
             </div>
@@ -1330,7 +1339,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     aria-label="headers-textarea"
                     style={!headersValid ? {border: "solid 1px #C00"} : {}}
                   />
-                  <span tabIndex={0} ref={headerContentTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "headerContentTooltip")} className={styles.tooltipRef}>
+                  <span  ref={headerContentTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "headerContentTooltip")} className={styles.tooltipRef}>
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip
                         text={tooltips.headers}
@@ -1338,7 +1347,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                         placement="left"
                         show={headerContentTooltipVisible ? headerContentTooltipVisible : undefined}
                       >
-                        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                        <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                       </HCTooltip>
                     </div>
                   </span>
@@ -1402,6 +1411,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                           color={themeColors.defaults.questionCircle}
                           size={13}
                           tabIndex={0}
+                          onFocus={handleShowInterceptorPopover}
                           onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptorTooltip")}
                           onMouseEnter={handleShowInterceptorPopover}
                           onMouseLeave={() => handleMouseLeaveInterceptorPopover()}
@@ -1465,7 +1475,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     aria-label="customHook-textarea"
                     style={!customHookValid ? {border: "solid 1px #C00"} : {}}
                   />
-                  <span tabIndex={0} ref={customHookTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "customHookTooltip")} className={styles.tooltipRef}>
+                  <span  ref={customHookTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "customHookTooltip")} className={styles.tooltipRef}>
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip
                         text={tooltips.customHook}
@@ -1473,7 +1483,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                         placement="left"
                         show={customHookTooltipVisible ? customHookTooltipVisible : undefined}
                       >
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} />
+                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
                       </HCTooltip>
                     </div>
                   </span>
@@ -1508,7 +1518,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       id="additional-settings-tooltip"
                       placement="left"
                     >
-                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
                     </HCTooltip>
                   </div>
                 </Col>

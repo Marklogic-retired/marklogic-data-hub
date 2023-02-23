@@ -507,15 +507,15 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 />}
                 <div className={"p-2 d-flex align-items-center"}>
                   {props.stepType === StepType.Mapping ?
-                    <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                    <HCTooltip  text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill  data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                     </HCTooltip> :
                     props.stepType === StepType.Matching ?
-                      <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                      <HCTooltip  text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
+                        <QuestionCircleFill data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                       </HCTooltip> :
-                      <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                      <HCTooltip   text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
+                        <QuestionCircleFill  data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                       </HCTooltip>
                   }
                 </div>
@@ -541,14 +541,14 @@ const CreateEditStep: React.FC<Props> = (props) => {
             <div className={"p-2 d-flex align-items-center"}>
               {props.stepType === StepType.Mapping ?
                 <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill  data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                 </HCTooltip> :
                 props.stepType === StepType.Matching ?
                   <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </HCTooltip> :
                   <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                    <QuestionCircleFill  data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
                   </HCTooltip>
               }
             </div>
@@ -614,6 +614,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                     className={styles.questionCircleQuery}
                     data-testid="queryTooltip"
                     tabIndex={0}
+                    onFocus={handleShowQueryPopover}
                     onMouseEnter={handleShowQueryPopover}
                     onMouseLeave={() => handleMouseLeaveTooltip()}
                     onKeyDown={(event) => {

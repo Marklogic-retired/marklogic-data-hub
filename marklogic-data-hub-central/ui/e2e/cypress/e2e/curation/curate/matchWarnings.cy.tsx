@@ -39,10 +39,12 @@ describe("Validate Match warnings", () => {
     cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
     curatePage.targetCollection("mapPersonJSON");
+    cy.findByText("Create \"mapPersonJSON\"").click();
     curatePage.saveSettings(matchStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection mapPersonJSON");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     curatePage.targetCollection("Person");
+    cy.findByText("Create \"Person\"").click();
     curatePage.saveSettings(matchStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the target entity type Person");
     curatePage.alertContent().eq(0).contains("Please remove target entity type from target collections");

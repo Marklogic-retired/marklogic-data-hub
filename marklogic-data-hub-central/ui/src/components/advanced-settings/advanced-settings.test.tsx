@@ -6,6 +6,7 @@ import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/advanced-settings.data";
 import {AdvancedSettingsTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import StepsConfig from "../../config/steps.config";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 
@@ -638,6 +639,61 @@ describe("Advanced step settings", () => {
     await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
   });
 
+  test("Accessibility using tab key", async() => {
+    const {getByLabelText, getAllByLabelText, findByLabelText} = render(
+      <AdvancedSettings {...data.advancedMapping}
+        tabKey={""}
+        tooltipsData={""}
+        isEditing={true}
+        openStepSettings={false}
+        setOpenStepSettings={jest.fn()}
+        updateStep={jest.fn()}
+        stepData={[]}
+        activityType={"mapping"}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        createStep={jest.fn()}
+        onCancel={jest.fn()}
+      />
+    );
+    const ariaLabels =[
+      "sourceDatabase-select",
+      "targetDatabase-select",
+      "additionalColl-select",
+      "Target-Permissions",
+      "targetFormat-select",
+      "provGranularity-select",
+      "validateEntity-select",
+      "Parameters-Module-Path",
+      "sourceRecordScope-select",
+      "Attach-Source-Document-No",
+      "Batch-Size",
+      "headers-textarea",
+
+    ];
+
+    let Index = 0;
+    ariaLabels.forEach((ariaLabel, index) => {
+      userEvent.tab();
+      expect(getByLabelText(ariaLabel)).toHaveFocus();
+      userEvent.tab();
+      expect(getAllByLabelText("icon: question-circle")[index]).toHaveFocus();
+      Index = index;
+    });
+
+    userEvent.tab();
+    expect(getByLabelText("interceptors-expand")).toHaveFocus();
+    userEvent.click(getByLabelText("interceptors-expand"));
+    userEvent.tab();
+    expect(await findByLabelText("interceptors-textarea")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByLabelText("icon: question-circle")[Index+1]).toHaveFocus();
+
+  }, 90000);
+
   test("Verify tooltips", async () => {
     const {getByText, getAllByLabelText} = render(
       <AdvancedSettings {...data.advancedMapping}
@@ -664,9 +720,16 @@ describe("Advanced step settings", () => {
     const tips = ["sourceDatabase", "targetDatabase", "additionalCollections", "targetPermissions",
       "targetFormat", "provGranularity", "validateEntity", "batchSize", "headers", "interceptors", "customHook"];
     tips.forEach(async (tip, i) => {
-      fireEvent.mouseOver(tipIcons[i]);
+      userEvent.hover(tipIcons[i]);
+      //fireEvent.mouseOver();
       await waitForElement(() => getByText(AdvancedSettingsTooltips[tip]));
     });
   });
+
+
+
+
+
+
 
 });

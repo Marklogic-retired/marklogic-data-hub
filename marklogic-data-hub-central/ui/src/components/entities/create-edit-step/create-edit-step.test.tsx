@@ -6,6 +6,7 @@ import axiosMock from "axios";
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import {SecurityTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {StepType} from "../../../types/curation-types";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 describe("Create Edit Step Dialog component", () => {
@@ -404,5 +405,32 @@ describe("Create Edit Step Dialog component", () => {
 
     fireEvent.mouseOver(getByTestId("queryTooltip"));
     await wait(() => expect(getByLabelText("radio-query-tooltip")).toBeInTheDocument());
+  });
+
+  test("Verify collection and query tooltips appear when hovered", async () => {
+    const {getAllByTestId, getByTestId, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.editMerging} />);
+    userEvent.tab();
+    expect(getByTestId("NameTooltip")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-input-component")[1]).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("descriptionTooltip")).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("collection")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("collectionTooltip")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("queryTooltip")).toHaveFocus();
+    userEvent.tab();
+    userEvent.tab();
+    expect(getByPlaceholderText("Enter collection name")).toHaveFocus();
+    userEvent.tab();
+    expect(getAllByTestId("hc-input-component")[2]).toHaveFocus();
+    userEvent.tab();
+    expect(getByLabelText("icon: question-circle")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("merging-dialog-cancel")).toHaveFocus();
+    userEvent.tab();
+    expect(getByTestId("merging-dialog-save")).toHaveFocus();
   });
 });
