@@ -333,7 +333,7 @@ ext {
 task bootstrap(type: JavaExec) {
     description = "Install the test application - an instance of DHF - so that the tests can be run against it"
     classpath = sourceSets.test.runtimeClasspath
-    main = 'com.marklogic.bootstrap.TestAppInstaller'
+    mainClass = 'com.marklogic.bootstrap.TestAppInstaller'
     systemProperty "mlHost", mlHost
 }
 bootstrap.dependsOn extractFastXmlParserZip
@@ -343,7 +343,7 @@ test.mustRunAfter bootstrap
 task dhsBootstrap(type: JavaExec) {
     description = "Install the test application in a DHS instance"
     classpath = sourceSets.test.runtimeClasspath
-    main = 'com.marklogic.bootstrap.TestAppInstaller'
+    mainClass = 'com.marklogic.bootstrap.TestAppInstaller'
     // Pass some Gradle properties as system properties so they can be easily overridden
     systemProperty "mlHost", mlHost
     systemProperty "hubDhs", "true"
