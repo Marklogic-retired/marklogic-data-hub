@@ -59,7 +59,7 @@ public interface StepService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/step/", servDecl);
 
                 this.req_getReferences = this.baseProxy.request(
-                    "getReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getReferences.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStepsByType = this.baseProxy.request(
                     "getStepsByType.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveStep = this.baseProxy.request(

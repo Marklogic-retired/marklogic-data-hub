@@ -152,6 +152,7 @@ declare function function-metadata-put(
       map:map()=>map:with("uri",$uri),
       map:map()=>map:with("database",xdmp:modules-database()))
   let $compiled := xquery-lib:function-metadata-compile($source)
+  where fn:exists($compiled)
   return
     xdmp:eval($put,
       map:map()=>map:with("uri",$uri)=>
@@ -219,4 +220,12 @@ declare function parse-function-signature($signature as xs:string, $min-arity as
     "")
   else
     $signature
+};
+
+declare function function-metadata-generate-with-namespace($namespace as xs:string, $uri as xs:string) {
+  es:function-metadata-generate($namespace, $uri)
+};
+
+declare function function-metadata-generate($uri as xs:string) {
+  es:function-metadata-generate($uri)
 };

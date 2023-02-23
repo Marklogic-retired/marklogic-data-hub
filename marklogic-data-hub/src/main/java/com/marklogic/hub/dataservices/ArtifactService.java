@@ -63,7 +63,7 @@ public interface ArtifactService {
                 this.req_setArtifact = this.baseProxy.request(
                     "setArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteArtifact = this.baseProxy.request(
-                    "deleteArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "deleteArtifact.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_clearUserArtifacts = this.baseProxy.request(
                     "clearUserArtifacts.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(

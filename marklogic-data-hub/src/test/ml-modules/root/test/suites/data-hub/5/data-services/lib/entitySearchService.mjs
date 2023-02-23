@@ -1,13 +1,13 @@
-function invokeEntitySearchModule(module, args) {
-  return fn.head(xdmp.invoke("/data-hub/5/data-services/entitySearch/" + module, args));
+function invokeEntitySearchModule(module, args, options = {}) {
+  return fn.head(xdmp.invoke("/data-hub/5/data-services/entitySearch/" + module, args, options));
 }
 
 function saveQuery(saveQuery) {
-  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": saveQuery});
+  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": saveQuery}, {update: "true"});
 }
 
 function updateSavedQuery(updatedQuery) {
-  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": updatedQuery});
+  return invokeEntitySearchModule("saveSavedQuery.mjs", {"saveQuery": updatedQuery}, {update: "true"});
 }
 
 function getSavedQuery(id) {

@@ -163,7 +163,7 @@ const sem = require("/MarkLogic/semantics.xqy");
         nb.startElement("attachments", "http://marklogic.com/entity-services");
         if (content instanceof Object && content.hasOwnProperty("$attachments")) {
           let attachments = content["$attachments"];
-          if (isXmlNode(attachments)) {
+          if (hubUtils.isXmlNode(attachments)) {
             nb.addNode(attachments);
           } else {
             let xmlAttachments = json.transformFromJson(attachments, json.config('custom'));
@@ -175,7 +175,7 @@ const sem = require("/MarkLogic/semantics.xqy");
               nb.addNode(xmlAttachments);
             }
           }
-        } else if (isXmlNode(attachments)) {
+        } else if (hubUtils.isXmlNode(attachments)) {
           nb.addNode(attachments);
         }
         nb.endElement();

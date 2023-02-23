@@ -14,11 +14,10 @@
  limitations under the License.
  */
 // No privilege required: If the user doesn't have permission to update artifacts, their deletion will fail
-'use strict';
-declareUpdate();
 import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 let urisToDelete = cts.uris(null, null, cts.andQuery([cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat('http://marklogic.com/data-hub/mappings'))
   ,cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION))])).toArray();
-urisToDelete.forEach(uri => xdmp.documentDelete(uri));
+urisToDelete.forEach(uri => hubUtils.deleteDocument(uri));
 
