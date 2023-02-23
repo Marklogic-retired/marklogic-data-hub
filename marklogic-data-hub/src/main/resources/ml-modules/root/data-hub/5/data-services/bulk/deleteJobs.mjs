@@ -15,8 +15,6 @@
  */
 'use strict';
 
-declareUpdate();
-
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-jobs", "execute");
 
 import jobs from"/data-hub/5/impl/jobs.mjs";

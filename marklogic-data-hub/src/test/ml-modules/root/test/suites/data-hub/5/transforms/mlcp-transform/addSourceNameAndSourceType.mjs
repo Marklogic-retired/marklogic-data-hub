@@ -1,4 +1,4 @@
-import mlcpTransform from "/data-hub/5/transforms/mlcp-flow-transform.mjs";
+const mlcpTransform = require("/data-hub/5/transforms/mlcp-flow-transform.sjs");
 const test = require("/test/test-helper.xqy");
 
 function testAddSourceNameAndSourceType() {

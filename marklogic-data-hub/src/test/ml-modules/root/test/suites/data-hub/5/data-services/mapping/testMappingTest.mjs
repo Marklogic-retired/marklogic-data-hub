@@ -76,8 +76,10 @@ function testMappings() {
 }
 
 function clean() {
-    hubUtils.deleteDocument("/test/customer100.json", config.FINALDATABASE);
-    hubUtils.deleteDocument("/test/entities/Customer.entity.json", config.FINALDATABASE);
+    xdmp.invokeFunction(() => {
+        hubUtils.deleteDocument("/test/customer100.json", config.FINALDATABASE);
+        hubUtils.deleteDocument("/test/entities/Customer.entity.json", config.FINALDATABASE);
+    }, {update: "true"});
 }
 
 []

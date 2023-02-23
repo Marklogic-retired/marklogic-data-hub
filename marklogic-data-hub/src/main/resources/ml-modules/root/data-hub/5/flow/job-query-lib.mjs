@@ -396,23 +396,9 @@ function installJobTemplates() {
   ];
   const collections = ["hub-template", "http://marklogic.com/xdmp/tde"];
 
-  insertDocument(templateUri, stepResponseTemplate, permissions, collections, config.STAGINGSCHEMASDATABASE);
-  insertDocument(templateUri, stepResponseTemplate, permissions, collections, config.FINALSCHEMASDATABASE);
+  hubUtils.writeDocument(templateUri, stepResponseTemplate, permissions, collections, config.STAGINGSCHEMASDATABASE);
+  hubUtils.writeDocument(templateUri, stepResponseTemplate, permissions, collections, config.FINALSCHEMASDATABASE);
 
-}
-
-function insertDocument(uri, content, permissions, collections, targetDatabase) {
-  xdmp.invokeFunction(
-      function() {
-        declareUpdate();
-        xdmp.documentInsert(uri, content, {
-              permissions: permissions,
-              collections: collections
-            }
-        )
-      },
-      {database: xdmp.database(targetDatabase)}
-  )
 }
 
 export default {

@@ -213,12 +213,18 @@ function createSimpleProject(flowName, arrayOfStepProperties, customerModel) {
       generatedStepDefinitionNames.push(stepDef.name);
     }
 
-    Artifacts.setArtifact(stepType, stepProps.name, stepProps);
+    xdmp.invokeFunction(function() {
+      declareUpdate();
+      Artifacts.setArtifact(stepType, stepProps.name, stepProps);
+    });
     flow.steps["" + index] = {"stepId": stepProps.stepId};
     index++;
   });
 
-  Artifacts.setArtifact("flow", flow.name, flow);
+  xdmp.invokeFunction(function() {
+    declareUpdate();
+    Artifacts.setArtifact("flow", flow.name, flow);
+  });
 }
 
 /**

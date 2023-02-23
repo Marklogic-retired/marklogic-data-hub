@@ -186,7 +186,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         // cts.values with multiple index references and references to the options object too
         options.put("firstQName", "PersonGivenName");
         options.put("secondQName", "PersonSurName");
-        options.put("sourceQuery", "cts.values([cts.elementReference(options.firstQName), cts.elementReference(options.secondQName)], null, null, cts.collectionQuery('collector-test-input'))");
+        options.put("sourceQuery", "cts.values([cts.elementReference(external.options.firstQName), cts.elementReference(external.options.secondQName)], null, null, cts.collectionQuery('collector-test-input'))");
         RunFlowResponse resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
 

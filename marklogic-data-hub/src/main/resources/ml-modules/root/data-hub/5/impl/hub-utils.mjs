@@ -15,20 +15,49 @@
  */
 'use strict';
 
-import hubUtils from "./hub-utils.mjs";
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const urisOperatedOnByTransaction = {};
+
 
 function capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 }
 
-function deleteDocument(docUri, database) {
-  xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.mjs', {docUri}, {
-    database: xdmp.database(database),
-    commit: 'auto',
-    update: 'true',
-    ignoreAmps: true
-  });
+function isWriteTransaction() {
+  return fn.empty(xdmp.requestTimestamp());
+}
+
+function assertUriHasNotBeenActedOn(docUri, databaseId) {
+  const fullId = `${databaseId}:${docUri}`;
+  const urisOperatedOn = urisOperatedOnByTransaction[xdmp.transaction()];
+  if (urisOperatedOn && urisOperatedOn.has(fullId)) {
+    throw new Error(`Attempting to update cts.doc('${docUri}') in database '${xdmp.databaseName(databaseId)}' multiple times in a transaction!`);
+  }
+  trackUriForTransaction(docUri, databaseId);
+}
+
+function trackUriForTransaction(docUri, databaseId) {
+  const fullId = `${databaseId}:${docUri}`;
+  const transaction = xdmp.transaction();
+  if (!urisOperatedOnByTransaction[transaction]) {
+    urisOperatedOnByTransaction[transaction] = new Set();
+  }
+  urisOperatedOnByTransaction[transaction].add(fullId);
+}
+
+function deleteDocument(docUri, database = xdmp.databaseName(xdmp.database())) {
+  const dbId = xdmp.database(database);
+  assertUriHasNotBeenActedOn(docUri, dbId);
+ if (isWriteTransaction() && dbId === xdmp.database()) {
+   xdmp.documentDelete(docUri, {ifNotExists: "allow"});
+ } else {
+    xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.mjs', {docUri}, {
+      database: dbId,
+      commit: 'auto',
+      update: 'true',
+      ignoreAmps: true
+    });
+  }
 }
 
 /**
@@ -80,7 +109,7 @@ function normalizeToSequence(value) {
     return value;
   } else if (value === null || value === undefined) {
     return Sequence.from([]);
-  } else if (Array.isArray(value) || hubUtils.isArrayNode(value)) {
+  } else if (Array.isArray(value) || isArrayNode(value)) {
     return Sequence.from(value);
   } else {
     return Sequence.from([value]);
@@ -154,18 +183,46 @@ function replaceLanguageWithLang(artifact) {
   }
 }
 
-function writeDocument(docUri, content, permissions, collections, database) {
-  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.mjs', {
-    content: content,
-    docUri: docUri,
-    permissions: permissions,
-    collections: normalizeToArray(collections)
-  }, {
-    database: xdmp.database(database),
-    commit: 'auto',
-    update: 'true',
-    ignoreAmps: false
-  }));
+function writeDocument(docUri, content, permissions, collections, database = xdmp.databaseName(xdmp.database())) {
+  const dbId = xdmp.database(database);
+  assertUriHasNotBeenActedOn(docUri, dbId);
+  if (isWriteTransaction() && dbId === xdmp.database()) {
+    xdmp.documentInsert(docUri, content, {permissions: permissions, collections: normalizeToArray(collections) });
+    return {
+      transaction: xdmp.transaction(),
+      dateTime: fn.currentDateTime()
+    };
+  } else {
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-write.mjs', {
+      content: content,
+      docUri: docUri,
+      permissions: permissions,
+      collections: normalizeToArray(collections)
+    }, {
+      database: dbId,
+      commit: 'auto',
+      update: 'true',
+      ignoreAmps: false
+    }));
+  }
+}
+
+function nodeReplace(originalNode, newNode) {
+  const dbId = xdmp.database();
+  assertUriHasNotBeenActedOn(xdmp.nodeUri(originalNode), dbId);
+  if (isWriteTransaction()) {
+    xdmp.nodeReplace(originalNode, newNode);
+  } else {
+    const xpath = xdmp.path(originalNode, true);
+    xdmp.invokeFunction(() => {
+      const replaceNode = xdmp.unpath(xpath);
+      xdmp.nodeReplace(replaceNode, newNode);
+    }, {
+      commit: 'auto',
+      update: 'true',
+      ignoreAmps: false
+    });
+  }
 }
 
 /**
@@ -181,7 +238,7 @@ function getObjectValues(object){
     return valuesArray;
 }
 
-function evalInDatabase(script, database) {
+export function evalInDatabaseInternal(script, database) {
   return xdmp.eval(script, null, {database: xdmp.database(database)})
 }
 
@@ -258,13 +315,15 @@ function isArrayNode(value) {
   return value instanceof ArrayNode || (isNode(value) && value.nodeKind === "array");
 }
 
+export const evalInDatabase = import.meta.amp(evalInDatabaseInternal);
+
 export default {
   capitalize,
   deleteDocument,
   documentsToContentDescriptorArray,
   documentToContentDescriptor,
   error,
-  evalInDatabase: import.meta.amp(evalInDatabase),
+  evalInDatabase,
   getErrorMessage,
   getObjectValues,
   hubTrace,
@@ -289,5 +348,7 @@ export default {
   isJsonNode,
   isXmlDocument,
   isXmlNode,
-  isSequence
+  isSequence,
+  isWriteTransaction,
+  nodeReplace
 };
