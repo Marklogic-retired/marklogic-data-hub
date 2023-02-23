@@ -37,7 +37,9 @@ xdmp.invokeFunction(function() {
 xdmp.invokeFunction(function() {
   declareUpdate();
   entityLib.deleteDraftModel(modelUri)
+});
 
+xdmp.invokeFunction(function() {
   const deletedModel = entityLib.findDraftModelByEntityName(modelUri)
   assertions.push(test.assertEqual(deletedModel.info.title, modelUri))
   assertions.push(test.assertTrue(deletedModel.info.isDraft))

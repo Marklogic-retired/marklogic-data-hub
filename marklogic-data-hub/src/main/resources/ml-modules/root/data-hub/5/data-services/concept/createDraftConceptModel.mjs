@@ -13,17 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-'use strict';
-
-declareUpdate();
-
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
-
-
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import conceptLib from "/data-hub/5/impl/concept-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const input = fn.head(xdmp.fromJSON(external.input));
 

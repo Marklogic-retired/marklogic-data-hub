@@ -1,4 +1,5 @@
 {
+  "namespace": "",
   "local-name" : "updateJob",
   "document-uri" : "/data-hub/5/impl/jobs.mjs",
   "modules-database" : "%%mlModulesDbName%%",

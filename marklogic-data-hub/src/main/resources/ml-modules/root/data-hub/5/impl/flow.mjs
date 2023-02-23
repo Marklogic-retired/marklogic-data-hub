@@ -37,6 +37,7 @@ const cachedFlows = {};
 export default class Flow {
 
   constructor(config) {
+    this.consts = consts;
     this.config = config;
     this.stepDefinition = new StepDefinition(config);
     this.flowUtils = flowUtils;

@@ -20,8 +20,6 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 
-declareUpdate();
-
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const models = fn.head(xdmp.fromJSON(external.models));

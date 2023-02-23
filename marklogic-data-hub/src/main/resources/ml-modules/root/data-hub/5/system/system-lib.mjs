@@ -16,6 +16,7 @@
 'use strict';
 
 import config from "/com.marklogic.hub/config.mjs";
+import hubUtils from "../impl/hub-utils.mjs";
 
 function saveHubConfigInDocumentsDatabase() {
   const uri = "/data-hub/5/datahubConfig.json";
