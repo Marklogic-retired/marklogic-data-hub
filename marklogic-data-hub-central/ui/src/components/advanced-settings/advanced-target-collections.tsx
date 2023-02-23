@@ -36,6 +36,12 @@ const MultiValueContainer = props => {
   );
 };
 
+const checkEnterPress = (key, func) => {
+  if (key === "Enter") {
+    func();
+  }
+};
+
 const defaultTargetCollectionHeaders = [
   {
     text: "Event",
@@ -47,7 +53,7 @@ const defaultTargetCollectionHeaders = [
   },
   {
     text: "Default Collections",
-    headerFormatter: () => <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    headerFormatter: () => <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill  tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataField: "defaultCollections",
     visible: true,
     attrs: (_, row, index) => {
@@ -57,7 +63,7 @@ const defaultTargetCollectionHeaders = [
   },
   {
     text: "Additional Collections",
-    headerFormatter: () => <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    headerFormatter: () => <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataField: "additionalCollectionsField",
     visible: true,
     attrs: (_, row, index) => {
@@ -101,19 +107,27 @@ const defaultTargetCollectionHeaders = [
       if (action.event) {
         if (action.mode === "edit") {
           return <div className={styles.keepDiscard}>
-            <span data-testid={action.event+"-keep"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.saveEdit}>
-              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
-              <FontAwesomeIcon className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
+            <span data-testid={action.event+"-keep"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.saveEdit} onKeyDown={(e) => { checkEnterPress(e.key, action.saveEdit); }}>
+              <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon  className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
             </span>
-            <span data-testid={action.event+"-discard"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.discardEdit}>
-              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
-              <FontAwesomeIcon className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
+            <span data-testid={action.event+"-discard"} className={styles.iconLink + " fa-layers fa-fw"} onClick={action.discardEdit} onKeyDown={(e) => { checkEnterPress(e.key, action.discardEdit); }}>
+              <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon  className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
             </span>
           </div>;
         } else {
           return <HCTooltip text="Edit" id="edit-tooltip" placement="bottom">
             <i role="edit-collections button" key="last">
-              <FontAwesomeIcon className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={action.event+"-edit"} onClick={action.toggle}/>
+              <FontAwesomeIcon
+                tabIndex={0}
+                className={styles.iconLink}
+                size={"lg"}
+                icon={faPencilAlt}
+                data-testid={action.event+"-edit"}
+                onClick={action.toggle}
+                onKeyDown={(e) => { checkEnterPress(e.key, action.toggle); }}
+              />
             </i>
           </HCTooltip>;
         }
@@ -122,7 +136,7 @@ const defaultTargetCollectionHeaders = [
   },
   {
     text: "Remove Collections",
-    headerFormatter: () => <span>Remove Collections <HCTooltip text="Use this column to filter out the collections you do not want to merge." id="remove-collections-tooltip" placement="top"><QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    headerFormatter: () => <span>Remove Collections <HCTooltip text="Use this column to filter out the collections you do not want to merge." id="remove-collections-tooltip" placement="top"><QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataField: "removeCollectionsField",
     key: "removeCollectionsField",
     visible: true,
@@ -176,19 +190,19 @@ const defaultTargetCollectionHeaders = [
       if (removeAction.event !== "onNotification" || removeAction.event === "Notification") {
         if (removeAction.mode === "remove") {
           return <div className={styles.keepDiscard}>
-            <span data-testid={removeAction.event+"-keepRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.saveRemove}>
-              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
-              <FontAwesomeIcon className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
+            <span data-testid={removeAction.event+"-keepRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.saveRemove} onKeyDown={(e) => { checkEnterPress(e.key, removeAction.saveRemove); }}>
+              <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon  className={styles.checkIcon} size={"lg"}  icon={faCheck} inverse></FontAwesomeIcon>
             </span>
-            <span data-testid={removeAction.event+"-discardRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.discardRemove}>
-              <FontAwesomeIcon size={"2x"} icon={faSquare}></FontAwesomeIcon>
-              <FontAwesomeIcon className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
+            <span data-testid={removeAction.event+"-discardRemoved"} className={styles.iconLink + " fa-layers fa-fw"} onClick={removeAction.discardRemove} onKeyDown={(e) => { checkEnterPress(e.key, removeAction.discardRemove); }}>
+              <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare}></FontAwesomeIcon>
+              <FontAwesomeIcon  className={styles.timesIcon} size={"lg"}  icon={faTimes} inverse></FontAwesomeIcon>
             </span>
           </div>;
         } else {
           return <HCTooltip text="Edit" id="remove-tooltip" placement="bottom">
             <i role="remove-collections button" key="last">
-              <FontAwesomeIcon className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={removeAction.event+"-remove"} onClick={removeAction.toggle}/>
+              <FontAwesomeIcon tabIndex={0} className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={removeAction.event+"-remove"} onClick={removeAction.toggle} onKeyDown={(e) => { checkEnterPress(e.key, removeAction.toggle); }}/>
             </i>
           </HCTooltip>;
         }
