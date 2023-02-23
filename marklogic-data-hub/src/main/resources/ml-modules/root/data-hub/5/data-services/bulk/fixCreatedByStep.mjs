@@ -13,10 +13,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-'use strict';
-
-declareUpdate();
-
 // No privilege required: Use of this is restricted to users who have update permissions on entity instances
 // matching the query performed by this endpoint
 

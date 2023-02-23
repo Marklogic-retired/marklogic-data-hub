@@ -367,7 +367,7 @@ function getNodeLabel(objectIRIArr, objectUri) {
 function shouldCreateGroupNode(item, entityType, entityTypeIds, isSearch) {
   let allEntitiesAreSelected = entityTypeIds.length === fn.count(fn.collection(entityLib.getModelCollection()));
   return fn.exists(item.nodeCount) && fn.head(item.nodeCount) > 1
-      && !(allEntitiesAreSelected === true && isSearch === true ) && !(entityTypeIds.includes(entityType) && isSearch === true);
+    && !(allEntitiesAreSelected === true && isSearch === true ) && !(entityTypeIds.includes(entityType) && isSearch === true);
 }
 
 function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludeOriginNode = false) {
@@ -377,11 +377,10 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   const distinctIriPredicateCombos = {};
   const groupNodeCount = {};
   const getEdgeCount = (iri) => {
-    const iriString = fn.string(iri);
-    if (!distinctIriPredicateCombos[iriString]) {
+    if (!distinctIriPredicateCombos[iri]) {
       return 0;
     }
-    return distinctIriPredicateCombos[iriString].size + (groupNodeCount[iriString] || 0);
+    return distinctIriPredicateCombos[iri].size + (groupNodeCount[iri] || 0);
   };
 
   let listOfURIs = [];
@@ -431,8 +430,8 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
 
   const archivedURIs = cts.search(cts.andQuery([cts.documentQuery(listOfURIs), cts.collectionQuery(entitiesArchived)]))
     .toArray().map(entityModel =>{
-    return fn.string(fn.documentUri(entityModel));
-  });
+      return fn.string(fn.documentUri(entityModel));
+    });
 
   const getUrisByIRI = (iri) => Object.keys(docUriToSubjectIri).filter(key => docUriToSubjectIri[key].includes(iri));
   for (const item of result) {
@@ -478,12 +477,12 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       nodeOrigin.count = 1;
       nodeOrigin.propertiesOnHover = resultPropertiesOnHover;
 
-      const doc = cts.doc(docUri);
-      const unmergeDetails = entitySearchLib.fetchUnmergeDetails(doc, entityType);
+      const doc = docUri ? cts.doc(docUri): null;
+      const unmergeDetails = docUri ? entitySearchLib.fetchUnmergeDetails(doc, entityType): {};
       nodeOrigin.unmerge = unmergeDetails["unmerge"];
       nodeOrigin.unmergeUris = unmergeDetails["unmergeUris"];
       nodeOrigin.matchStepName = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
-      nodesByID[item.docURI] = nodeOrigin;
+      nodesByID[originId] = nodeOrigin;
     }
     if (fn.exists(item.firstObjectIRI)) {
       //Checking for target nodes
@@ -512,7 +511,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!nodesByID[key]) {
             let objectNode = {};
             objectNode.id = key;
-            objectNode.docUri = isDocument ? key : item.firstDocURI ? fn.string(item.firstDocURI) : null;
+            objectNode.docUri = isDocument ? key : item.firstDocURI ? item.firstDocURI : null;
             objectNode.docIRI = objectIRI;
             objectNode.label = isDocument ? getNodeLabel(objectIRIArr, key): (fn.string(item.conceptLabel) || objectIRIArr[objectIRIArr.length - 1]);
             resultPropertiesOnHover = isDocument ? entityLib.getValuesPropertiesOnHover(key, objectEntityType, hubCentralConfig) : "";
@@ -535,7 +534,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         }
         if (fn.exists(item.additionalEdge) && item.additionalEdge.toString().length > 0) {
           const objectId = objectHasDoc ? objectUri : objectIRI;
-          const additionalId = fn.exists(item.docRelated) ? fn.string(item.docRelated) : fn.string(item.additionalIRI);
+          const additionalId = fn.exists(item.docRelated) ? item.docRelated : item.additionalIRI;
           const sortedIds = [objectId, additionalId].sort();
           const edgeId = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
           const predicateArr = item.additionalEdge.toString().split("/");
@@ -543,7 +542,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!edgesByID[edgeId]) {
             edgesByID[edgeId] = {
               id: edgeId,
-              predicate: fn.string(item.additionalEdge),
+              predicate: item.additionalEdge,
               label: edgeLabel,
               from: sortedIds[0],
               to: sortedIds[1]
@@ -556,7 +555,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
         let edge = {};
         edge.id = "edge-" + objectId;
         if (!edgesByID[edge.id]) {
-          edge.predicate = fn.string(item.predicateIRI);
+          edge.predicate = item.predicateIRI;
           edge.label = edgeLabel;
           edge.from = originId;
           edge.to = objectId;
@@ -566,8 +565,8 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           let objectNode = {};
           objectNode.id = objectId;
           objectNode.label = objectIRIArr[objectIRIArr.length - 1];
-          objectNode.parentDocUri = fn.string(item.docURI);
-          objectNode.predicateIri = fn.string(item.predicateIRI);
+          objectNode.parentDocUri = item.docURI;
+          objectNode.predicateIri = item.predicateIRI;
           objectNode.propertiesOnHover = "";
           objectNode.group = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
           objectNode.isConcept = false;
@@ -584,7 +583,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           if (!edgesByID[edgeId]) {
             edgesByID[edgeId] = {
               id: edgeId,
-              predicate: fn.string(item.predicateIRI),
+              predicate: item.predicateIRI,
               label: edgeLabel,
               from: sortedIds[0],
               to: sortedIds[1]
@@ -623,12 +622,12 @@ const propertiesOnHoverByEntityType = {};
 
 function getPropertiesOnHoverFromHubConfigByEntityType(entityType) {
   if (labelsByEntityType[entityType] === undefined) {
-      if (hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType +"/propertiesOnHover"))) {
-        const obj = JSON.parse(hubCentralConfig);
-        propertiesOnHoverByEntityType[entityType] = obj.modeling.entities[entityType].propertiesOnHover;
-      } else {
-        propertiesOnHoverByEntityType[entityType] = "";
-      }
+    if (hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType +"/propertiesOnHover"))) {
+      const obj = JSON.parse(hubCentralConfig);
+      propertiesOnHoverByEntityType[entityType] = obj.modeling.entities[entityType].propertiesOnHover;
+    } else {
+      propertiesOnHoverByEntityType[entityType] = "";
+    }
   }
   return propertiesOnHoverByEntityType[entityType];
 }

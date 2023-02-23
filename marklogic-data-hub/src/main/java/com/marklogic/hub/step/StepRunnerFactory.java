@@ -3,15 +3,16 @@ package com.marklogic.hub.step;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.impl.HubClientImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +40,9 @@ public class StepRunnerFactory {
     public StepRunnerFactory(HubClient hubClient) {
         this.hubClient = hubClient;
         this.stepDefinitionProvider = new MarkLogicStepDefinitionProvider(hubClient.getStagingClient());
+        // add Hub Project, if we can determine it from our hub client implementation
+        HubClientConfig clientConfig =  hubClient instanceof HubClientImpl ? ((HubClientImpl) hubClient).getHubClientConfig(): null;
+        this.hubProject = clientConfig instanceof HubConfigImpl ? ((HubConfigImpl) clientConfig).getHubProject(): null;
     }
 
     public StepRunner getStepRunner(Flow flow, String stepNum)  {

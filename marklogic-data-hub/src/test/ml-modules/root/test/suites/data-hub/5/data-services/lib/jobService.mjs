@@ -2,7 +2,7 @@
 import config from "/com.marklogic.hub/config.mjs";
 
 function invokeModule(module, args) {
-  return fn.head(xdmp.invoke("/data-hub/5/data-services/job/" + module, args));
+  return fn.head(xdmp.invoke("/data-hub/5/data-services/job/" + module, args, {update: "true"}));
 }
 
 function findStepResponses(endpointConstants) {

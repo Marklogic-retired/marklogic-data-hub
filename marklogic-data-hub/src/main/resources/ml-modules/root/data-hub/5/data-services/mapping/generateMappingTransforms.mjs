@@ -10,14 +10,12 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
-declareUpdate();
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
 
 cts.uris(null, null, cts.collectionQuery("http://marklogic.com/data-hub/mappings")).toArray().forEach(uri => {
   const doc = cts.doc(uri);
   // "Touch" the document to force the trigger to run
-  xdmp.nodeReplace(cts.doc(uri), doc);
+  hubUtils.nodeReplace(cts.doc(uri), doc);
 });

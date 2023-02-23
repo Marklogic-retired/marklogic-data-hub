@@ -489,7 +489,7 @@ function writeModelToDatabases(entityName, model, databases, isDraft = false) {
     // It is significantly faster to use xdmp.documentInsert due to the existence of pre and post commit triggers.
     // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
     // when calling xdmp.documentInsert directly.
-    if (db === xdmp.databaseName(xdmp.database())) {
+    if (hubUtils.isWriteTransaction() && db === xdmp.databaseName(xdmp.database())) {
       xdmp.documentInsert(uriFunction(entityName), model, permissions, collection);
     } else {
       hubUtils.writeDocument(uriFunction(entityName), model, permissions, collection, db)
@@ -523,7 +523,7 @@ function publishDraftModels() {
       }
     }
   }
-  // write all of the affected models out here
+  // write all the affected models out here
   for (const modelName in inMemoryModelsUpdated) {
     hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelName}`);
     writeModel(modelName, inMemoryModelsUpdated[modelName]);
@@ -534,11 +534,11 @@ function publishDraftModels() {
     xdmp.collectionDelete(consts.DRAFT_ENTITY_MODEL_COLLECTION);
     hubUtils.hubTrace(consts.TRACE_ENTITY,"deleted draft collection");
   };
-  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   const currentDatabase = xdmp.database();
+  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   databaseNames.forEach(databaseName => {
     const database = xdmp.database(databaseName);
-    if (database === currentDatabase) {
+    if (currentDatabase === database) {
       deleteDraftsOperation();
     } else {
       xdmp.invokeFunction(deleteDraftsOperation, {database, update: "true", commit: "auto"});
