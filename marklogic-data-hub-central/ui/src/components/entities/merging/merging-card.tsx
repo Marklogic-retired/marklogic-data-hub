@@ -532,13 +532,13 @@ const MergingCard: React.FC<Props> = (props) => {
                   className={styles.cardStyle}
                 >
                   <div className={styles.formatFileContainer}>
-                    <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 27, "...")}</span>
+                    <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 26, "...")}</span>
                   </div>
                   <br />
                   {step.selectedSource === "collection" ? (
                     <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(step.sourceQuery)}</div>
                   ) : (
-                    <div className={styles.sourceQuery}>Source Query: {getInitialChars(step.sourceQuery, 32, "...")}</div>
+                    <div className={styles.sourceQuery}>Source Query: {getInitialChars(step.sourceQuery, 30, "...")}</div>
                   )}
                   <br /><br />
                   <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(step.lastUpdated)}</p>
