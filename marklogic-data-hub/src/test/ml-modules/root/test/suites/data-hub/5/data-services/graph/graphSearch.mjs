@@ -173,7 +173,6 @@ const RelatedByPropertyDifferentFromID = {
 const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
 let expectedCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 4 : 3;
 const expectedEdgeCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
-
 assertions.concat([
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.total),
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
@@ -277,9 +276,9 @@ const resultsAllEntitiesSelected = searchNodes(withAllEntitiesSelectedQuery);
 
 
 resultsAllEntitiesSelected.nodes.forEach(node => {
-    if(node.count != null && node.count > 1){
-      test.assertFail("a node with count greater than 1 must not exists");
-    }
+  if(node.count != null && node.count > 1){
+    test.assertFail("a node with count greater than 1 must not exists");
+  }
 })
 
 assertions;

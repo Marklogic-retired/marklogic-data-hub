@@ -324,26 +324,6 @@ function saveNewJob(job) {
     return provRecordUri;
   }
 
-
-
-export default {
-  buildJobPermissions,
-  buildNewJob,
-  createJob,
-  createJobReport,
-  findProvenanceRecordUriFromJobId,
-  getJob,
-  getJobWithDetails,
-  getJobDocs,
-  getJobDocsByFlow,
-  getJobDocsForFlows,
-  getRequiredJob,
-  saveNewJob,
-  deleteJobs: import.meta.amp(deleteJobs),
-  updateJob: import.meta.amp(updateJob)
-}
-
-
   /**
    * Only updates the document, does not make any modifications to it, so nothing is returned.
    *
@@ -374,4 +354,19 @@ export default {
     }
   }
 
-
+export default {
+  buildJobPermissions,
+  buildNewJob,
+  createJob,
+  createJobReport,
+  findProvenanceRecordUriFromJobId,
+  getJob,
+  getJobWithDetails,
+  getJobDocs,
+  getJobDocsByFlow,
+  getJobDocsForFlows,
+  getRequiredJob,
+  saveNewJob,
+  deleteJobs: import.meta.amp(deleteJobs),
+  updateJob: import.meta.amp(updateJob)
+}
