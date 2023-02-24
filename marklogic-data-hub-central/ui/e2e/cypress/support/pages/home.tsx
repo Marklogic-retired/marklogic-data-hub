@@ -35,7 +35,7 @@ class HomePage {
   }
 
   getTileCloseButton() {
-    return cy.get(`[aria-label="tile-header"]`).find(`svg[aria-label="close"]`);
+    return cy.get(`[class*="tiles_close"]`);
   }
 }
 

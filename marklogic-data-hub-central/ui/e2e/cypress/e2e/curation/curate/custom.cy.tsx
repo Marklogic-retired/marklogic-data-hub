@@ -34,6 +34,7 @@ describe("Custom step settings: ", () => {
     curatePage.editStep(stepName).click();
     createEditStepDialog.stepDescriptionInput().should("have.value", "This is the default mapping step");
     createEditStepDialog.cancelButton("custom").click();
+    cy.wait(1000);
     curatePage.verifyStepNameIsVisible(stepName);
   });
 

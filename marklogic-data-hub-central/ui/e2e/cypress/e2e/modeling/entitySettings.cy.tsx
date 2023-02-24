@@ -170,7 +170,7 @@ describe("Entity display settings in model tile", () => {
 
     cy.log("**Close explore tile and go to model**");
     homePage.getTileCloseButton().click();
-    homePage.getModelCard().click();
+    homePage.getModelCard().should("be.visible").click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
 
