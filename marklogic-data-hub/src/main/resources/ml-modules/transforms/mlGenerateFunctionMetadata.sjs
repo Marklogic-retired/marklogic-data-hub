@@ -34,22 +34,11 @@ function mlGenerateFunctionMetadata(context, params, content) {
       xdmp.permission("rest-extension-user", "execute")
     ]);
 
-    let writeInfo = hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
+    let writeInfo = fn.head(xdmp.invokeFunction(() =>
+      hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
+      {update: "true"}));
     if (writeInfo && fn.exists(writeInfo.transaction)) {
-      // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
-      /* Using xqueryLib.functionMetadataPut instead of es.functionMetadataPut that comes with ML server in order to
-      allow for sequence to be passed to javascript mapping functions. https://project.marklogic.com/jira/browse/DHFPROD-5850
-       */
-      try {
-        xqueryLib.functionMetadataPut(uriVal + ".xml");
-      } catch (e) {
-        if (/(prefix|XSLT-UNBPRFX)/ig.test(e.message)) {
-          xdmp.moduleCacheClear();
-          xqueryLib.functionMetadataPut(uriVal + ".xml");
-        } else {
-          throw e;
-        }
-      }
+      xqueryLib.functionMetadataPut(uriVal + ".xml");
     } else {
       datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
     }
@@ -60,18 +49,18 @@ function mlGenerateFunctionMetadata(context, params, content) {
 function generateMetadata(uri) {
   let metadataXml;
   if (uri === "/data-hub/5/mapping-functions/core-functions.xqy") {
-    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/data-hub/mapping/functions", uri));
+    metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/data-hub/mapping/functions", uri);
   }
   // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
   // a namespace of http://marklogic.com/mapping-functions/custom
-  else if (uri.startsWith("/custom-modules/mapping-functions/") && uri.endsWith(".xqy")){
-    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
+  else if (uri.endsWith(".xqy")) {
+    metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/mapping-functions/custom", uri);
   }
   else {
-    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+    metadataXml = xqueryLib.functionMetadataGenerate(uri);
   }
 
-  return addMapNamespaceToMetadata(metadataXml);
+  return addMapNamespaceToMetadata(es.functionMetadataValidate(metadataXml));
 }
 
 /**

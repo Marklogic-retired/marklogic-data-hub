@@ -523,7 +523,7 @@ function publishDraftModels() {
       }
     }
   }
-  // write all of the affected models out here
+  // write all the affected models out here
   for (const modelName in inMemoryModelsUpdated) {
     hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelName}`);
     writeModel(modelName, inMemoryModelsUpdated[modelName]);
@@ -534,11 +534,11 @@ function publishDraftModels() {
     xdmp.collectionDelete(consts.DRAFT_ENTITY_MODEL_COLLECTION);
     hubUtils.hubTrace(consts.TRACE_ENTITY,"deleted draft collection");
   };
-  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   const currentDatabase = xdmp.database();
+  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   databaseNames.forEach(databaseName => {
     const database = xdmp.database(databaseName);
-    if (database === currentDatabase) {
+    if (currentDatabase === database) {
       deleteDraftsOperation();
     } else {
       xdmp.invokeFunction(deleteDraftsOperation, {database, update: "true", commit: "auto"});

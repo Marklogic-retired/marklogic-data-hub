@@ -50,23 +50,26 @@ xdmp.invokeFunction(function() {
   entityLib.writeDraftModel(orderModelUri, orderModel);
 });
 
+xdmp.invokeFunction(function() {
+  let references = modelService.getModelReferences(orderModelUri);
 
-let references = modelService.getModelReferences(orderModelUri);
-
-assertions.push(
-  test.assertEqual(1, references.entityNames.length),
-  test.assertEqual("Customer", references.entityNames[0])
-);
+  assertions.push(
+    test.assertEqual(1, references.entityNames.length),
+    test.assertEqual("Customer", references.entityNames[0])
+  );
+});
 
 xdmp.invokeFunction(function() {
   declareUpdate();
   entityLib.deleteDraftModel(customerModelUri);
 });
 
-references = modelService.getModelReferences(orderModelUri);
+xdmp.invokeFunction(function() {
+  let references = modelService.getModelReferences(orderModelUri);
 
-assertions.push(
-  test.assertEqual(0, references.entityNames.length)
-);
+  assertions.push(
+    test.assertEqual(0, references.entityNames.length)
+  );
+});
 
 assertions;

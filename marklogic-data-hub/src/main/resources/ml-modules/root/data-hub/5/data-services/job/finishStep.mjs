@@ -15,9 +15,11 @@
  */
 'use strict';
 
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
-
 import Job from "/data-hub/5/flow/job.mjs";
+
+declareUpdate();
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
 const jobId = external.jobId;
 const stepNumber = external.stepNumber;

@@ -15,7 +15,7 @@
  */
 'use strict';
 
-import Artifacts from "/data-hub/5/artifacts/core.sjs";
+import Artifacts from "/data-hub/5/artifacts/core.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const artifactType = external.artifactType, artifactName = external.artifactName;

@@ -115,7 +115,6 @@ function writeConceptModelToDatabases(conceptName, model, databases, isDraft = f
   hubUtils.replaceLanguageWithLang(model);
 
   const permissions = getModelPermissions();
-
   databases.forEach(db => {
     // It is significantly faster to use xdmp.documentInsert due to the existence of pre and post commit triggers.
     // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
@@ -141,13 +140,9 @@ function publishDraftConcepts() {
 
     if(modelObject.info.draftDeleted) {
       const conceptClassName = modelObject.info.name;
-      const conceptModelUri = getConceptModelUri(modelObject.info.name);
       hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleting draft model: ${conceptClassName}`);
       deleteModel(modelObject.info.name);
       hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model: ${conceptClassName}`);
-
-
-
     } else {
       // if the draft changes aren't already picked up by reference updates, add them here.
       if (!inMemoryModelsUpdated[modelObject.info.name]) {
@@ -155,20 +150,20 @@ function publishDraftConcepts() {
       }
     }
   }
-  // write all of the affected models out here
+
+  // write all the affected concepts out here
   for (const modelName in inMemoryModelsUpdated) {
     hubUtils.hubTrace(consts.TRACE_CONCEPT,`writing draft model: ${modelName}`);
     writeModel(modelName, inMemoryModelsUpdated[modelName]);
     hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${modelName}`);
   }
-
   const deleteDraftsOperation = () => {
     hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleting draft collection");
     xdmp.collectionDelete(consts.DRAFT_CONCEPT_COLLECTION);
     hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleted draft collection");
   };
-  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   const currentDatabase = xdmp.database();
+  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   databaseNames.forEach(databaseName => {
     const database = xdmp.database(databaseName);
     if (database === currentDatabase) {
