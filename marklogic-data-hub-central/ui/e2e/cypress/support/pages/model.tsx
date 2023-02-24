@@ -15,7 +15,7 @@ class ModelPage {
   }
 
   closeSidePanel() {
-    return cy.findByLabelText("closeGraphViewSidePanel").click({force: true});
+    cy.findByLabelText("closeGraphViewSidePanel").click({force: true});
   }
 
   getAddButton() {
@@ -51,27 +51,27 @@ class ModelPage {
   }
 
   clickModelingInfoIcon() {
-    return cy.findByLabelText("modelInfoIcon").trigger("click");
+    cy.findByLabelText("modelInfoIcon").click();
   }
 
   verifyModelingInfo() {
-    return cy.findByLabelText("modelingInfo").should("exist");
+    cy.findByLabelText("modelingInfo").should("exist");
   }
 
   scrollPageBottom() {
-    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
+    cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
   }
 
   scrollPageTop() {
-    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
+    cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
   }
 
   openIconSelector(entityName: string) {
-    return cy.get(`[data-testid="${entityName}-icon-selector"]`).click();
+    cy.get(`[data-testid="${entityName}-icon-selector"]`).click();
   }
 
   selectIcon(entitType: string, icon: string) {
-    return cy.get(`[data-testid="${entitType}-${icon}-icon-option"]`).click();
+    cy.get(`[data-testid="${entitType}-${icon}-icon-option"]`).click();
   }
 
   getSortIndicator() {
@@ -91,7 +91,7 @@ class ModelPage {
   }
 
   toggleColorSelector(entityType: string) {
-    return cy.get(`[id="${entityType}-color-button"]`).click();
+    cy.get(`[id="${entityType}-color-button"]`).click();
   }
 
   selectColorFromPicker(color: string) {

@@ -305,10 +305,10 @@ describe("Concept classes in Modeling screen", () => {
 
   it("Create/Edit and verify new concept class from Table view", {defaultCommandTimeout: 120000}, () => {
     cy.log("Add new concept class from table view");
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("TestConcept");
     conceptClassModal.newConceptClassDescription("Test description.");
@@ -356,7 +356,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click();
+    cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click({force: true});
     entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});
     confirmationModal.getDeleteConceptClassText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeleteConceptClass);

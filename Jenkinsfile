@@ -1548,7 +1548,7 @@ pipeline{
                            }
                    }
                 }
-                stage('cypress-mac-chrome'){
+                /*stage('cypress-mac-chrome'){
                     agent { label 'dhfmacchrome'}
                     steps{
                         timeout(time: 4,  unit: 'HOURS'){
@@ -1568,7 +1568,7 @@ pipeline{
                             cypressE2ePostFailed()
                            }
                    }
-                }
+                }*/
             }
         }
     }

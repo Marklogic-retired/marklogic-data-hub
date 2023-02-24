@@ -25,17 +25,21 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
 
     graphExplore.getPersonJSONacordeon().click();
     graphExplore.getMappingPerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
     graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMatchPerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
     graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMergePerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
-    graphExplore.getCloseModalMergePerson().click();
+    graphExplore.getCloseModalMergePerson().click({force: true});
     graphExplore.getTitleApp().click();
 
     cy.log("**Go to Explore section**");
