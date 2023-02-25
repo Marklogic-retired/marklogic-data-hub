@@ -14,14 +14,11 @@
   limitations under the License.
 */
 'use strict';
-
-declareUpdate();
-
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
-
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import conceptLib from "/data-hub/5/impl/concept-lib.mjs";
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const name = external.name;
 const input = fn.head(xdmp.fromJSON(external.input));

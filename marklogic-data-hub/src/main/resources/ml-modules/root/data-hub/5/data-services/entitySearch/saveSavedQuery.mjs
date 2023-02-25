@@ -14,12 +14,10 @@
  limitations under the License.
  */
 'use strict';
-
-declareUpdate();
+import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-entity-query", "execute");
-
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const saveQuery = external.saveQuery;
 let userCollections = ["http://marklogic.com/data-hub/saved-query"];
@@ -71,10 +69,7 @@ function insertDocument(queryDocument) {
     let permissions = [xdmp.permission('data-hub-saved-query-user', 'read'),
         xdmp.permission('data-hub-saved-query-user', 'update'),
         xdmp.defaultPermissions()];
-    xdmp.documentInsert(docUri, queryDocument, {
-        permissions: permissions,
-        collections: userCollections
-    });
+    hubUtils.writeDocument(docUri, queryDocument, permissions, userCollections);
 }
 
 queryDocument;

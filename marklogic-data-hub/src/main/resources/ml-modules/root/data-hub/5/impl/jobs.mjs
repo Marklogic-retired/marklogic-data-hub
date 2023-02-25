@@ -350,7 +350,7 @@ function saveNewJob(job) {
   export function deleteJobsInternal(jobDocumentURIs) {
     xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-jobs", "execute");
     for (let uri of jobDocumentURIs) {
-      xdmp.documentDelete(uri);
+      hubUtils.deleteDocument(uri);
     }
   }
 export const updateJob = import.meta.amp(updateJobInternal);

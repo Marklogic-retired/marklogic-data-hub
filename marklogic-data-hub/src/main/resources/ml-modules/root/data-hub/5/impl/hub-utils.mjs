@@ -45,7 +45,7 @@ function trackUriForTransaction(docUri, databaseId) {
   urisOperatedOnByTransaction[transaction].add(fullId);
 }
 
-function deleteDocument(docUri, database) {
+function deleteDocument(docUri, database = xdmp.databaseName(xdmp.database())) {
   const dbId = xdmp.database(database);
   assertUriHasNotBeenActedOn(docUri, dbId);
  if (isWriteTransaction() && dbId === xdmp.database()) {
@@ -183,7 +183,7 @@ function replaceLanguageWithLang(artifact) {
   }
 }
 
-function writeDocument(docUri, content, permissions, collections, database) {
+function writeDocument(docUri, content, permissions, collections, database = xdmp.databaseName(xdmp.database())) {
   const dbId = xdmp.database(database);
   assertUriHasNotBeenActedOn(docUri, dbId);
   if (isWriteTransaction() && dbId === xdmp.database()) {
@@ -330,5 +330,6 @@ export default {
   isJsonNode,
   isXmlDocument,
   isXmlNode,
-  isSequence
+  isSequence,
+  isWriteTransaction
 };

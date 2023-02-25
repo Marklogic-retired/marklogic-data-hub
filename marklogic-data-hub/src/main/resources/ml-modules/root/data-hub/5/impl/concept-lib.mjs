@@ -119,7 +119,7 @@ function writeConceptModelToDatabases(conceptName, model, databases, isDraft = f
     // It is significantly faster to use xdmp.documentInsert due to the existence of pre and post commit triggers.
     // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
     // when calling xdmp.documentInsert directly.
-    if (db === xdmp.databaseName(xdmp.database())) {
+    if (hubUtils.isWriteTransaction() && db === xdmp.databaseName(xdmp.database())) {
       xdmp.documentInsert(uriFunction(conceptName), model, permissions, collection);
     } else {
       hubUtils.writeDocument(uriFunction(conceptName), model, permissions, collection, db)

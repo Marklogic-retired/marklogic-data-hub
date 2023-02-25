@@ -13,16 +13,13 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
-declareUpdate();
-
 xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-entity-query", "execute");
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 const id = external.id;
 
 let documentUri = "/saved-queries/" + id + ".json";
 let canDelete = cts.exists(cts.andQuery([cts.documentQuery(documentUri), cts.jsonPropertyValueQuery("owner", xdmp.getCurrentUser())]));
 if(canDelete) {
-    xdmp.documentDelete(documentUri);
+    hubUtils.deleteDocument(documentUri);
 }
