@@ -51,7 +51,7 @@ if(queryNameExists) {
 if (cts.doc("/saved-queries/" + id + ".json")) {
     queryDocument.savedQuery.systemMetadata.lastUpdatedBy = xdmp.getCurrentUser();
     queryDocument.savedQuery.systemMetadata.lastUpdatedDateTime = fn.currentDateTime();
-    xdmp.nodeReplace(cts.doc("/saved-queries/" + id + ".json"), queryDocument);
+    hubUtils.nodeReplace(cts.doc("/saved-queries/" + id + ".json"), queryDocument);
 } else {
     queryDocument.savedQuery.id = sem.uuidString();
     queryDocument.savedQuery.owner = xdmp.getCurrentUser();

@@ -207,6 +207,24 @@ function writeDocument(docUri, content, permissions, collections, database = xdm
   }
 }
 
+function nodeReplace(originalNode, newNode) {
+  const dbId = xdmp.database();
+  assertUriHasNotBeenActedOn(xdmp.nodeUri(originalNode), dbId);
+  if (isWriteTransaction()) {
+    xdmp.nodeReplace(originalNode, newNode);
+  } else {
+    const xpath = xdmp.path(originalNode, true);
+    xdmp.invokeFunction(() => {
+      const replaceNode = xdmp.unpath(xpath);
+      xdmp.nodeReplace(replaceNode, newNode);
+    }, {
+      commit: 'auto',
+      update: 'true',
+      ignoreAmps: false
+    });
+  }
+}
+
 /**
  * ML 9 does not support Object.values(). This function serves as its replacement so that datahub can be supported in ML 9
  * @param object
@@ -331,5 +349,6 @@ export default {
   isXmlDocument,
   isXmlNode,
   isSequence,
-  isWriteTransaction
+  isWriteTransaction,
+  nodeReplace
 };
