@@ -13,14 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-'use strict';
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-const datahub = DataHubSingleton.instance();
+// must keep as sjs to be compatible with MLCP, otherwise we get the following error: XDMP-NOEXECUTE: var xform = require(transformModule)[transformFunction]; -- Document is not of executable mimetype. URI: /data-hub/5/transforms/mlcp-flow-transform.mjs
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const [DataHubSingleton, consts, flowApi, httpUtils, hubUtils] = mjsProxy.requireMjsModules("/data-hub/5/datahub-singleton.mjs",
+  "/data-hub/5/impl/consts.mjs",
+  "/data-hub/public/flow/flow-api.mjs",
+  "/data-hub/5/impl/http-utils.mjs",
+  "/data-hub/5/impl/hub-utils.mjs");
 
-import consts from "/data-hub/5/impl/consts.mjs";
-import flowApi from "/data-hub/public/flow/flow-api.mjs";
-import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+const datahub = DataHubSingleton.instance();
 
 const urisInBatch = [];
 for (let requestField of xdmp.getRequestFieldNames()) {
@@ -147,4 +148,4 @@ function parseOptionsString(optionsString, contentUri) {
   }
 }
 
-export default{transform};
+module.exports = {transform};
