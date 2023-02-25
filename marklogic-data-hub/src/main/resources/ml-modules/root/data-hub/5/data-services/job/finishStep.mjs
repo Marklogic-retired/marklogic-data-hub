@@ -13,11 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
 import Job from "/data-hub/5/flow/job.mjs";
-
-declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 

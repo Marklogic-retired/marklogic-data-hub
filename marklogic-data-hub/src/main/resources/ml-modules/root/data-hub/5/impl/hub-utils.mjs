@@ -220,7 +220,7 @@ function getObjectValues(object){
     return valuesArray;
 }
 
-function evalInDatabase(script, database) {
+export function evalInDatabaseInternal(script, database) {
   return xdmp.eval(script, null, {database: xdmp.database(database)})
 }
 
@@ -297,13 +297,15 @@ function isArrayNode(value) {
   return value instanceof ArrayNode || (isNode(value) && value.nodeKind === "array");
 }
 
+export const evalInDatabase = import.meta.amp(evalInDatabaseInternal);
+
 export default {
   capitalize,
   deleteDocument,
   documentsToContentDescriptorArray,
   documentToContentDescriptor,
   error,
-  evalInDatabase: import.meta.amp(evalInDatabase),
+  evalInDatabase,
   getErrorMessage,
   getObjectValues,
   hubTrace,

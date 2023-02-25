@@ -330,7 +330,7 @@ function saveNewJob(job) {
    * @param jobDoc
    * @returns
    */
-  function updateJob(jobDoc) {
+  export function updateJobInternal(jobDoc) {
     const jobId = jobDoc.job.jobId;
     const jobUri = "/jobs/" + jobId + ".json";
     if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
@@ -347,13 +347,14 @@ function saveNewJob(job) {
    * @param jobDocumentURIs URIs of job documents to delete.
    *
    */
-  function deleteJobs(jobDocumentURIs) {
+  export function deleteJobsInternal(jobDocumentURIs) {
     xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-jobs", "execute");
     for (let uri of jobDocumentURIs) {
       xdmp.documentDelete(uri);
     }
   }
-
+export const updateJob = import.meta.amp(updateJobInternal);
+export const deleteJobs = import.meta.amp(deleteJobsInternal);
 export default {
   buildJobPermissions,
   buildNewJob,
@@ -367,6 +368,6 @@ export default {
   getJobDocsForFlows,
   getRequiredJob,
   saveNewJob,
-  deleteJobs: import.meta.amp(deleteJobs),
-  updateJob: import.meta.amp(updateJob)
+  deleteJobs,
+  updateJob
 }

@@ -13,14 +13,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import Job from "/data-hub/5/flow/job.mjs";
 import jobs from "/data-hub/5/impl/jobs.mjs";
-
-declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
