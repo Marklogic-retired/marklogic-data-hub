@@ -46,7 +46,7 @@ function jobReport(jobID, stepResponse, options, outputContentArray) {
    return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
 }
 
-module.exports = {
+export default {
   main,
   jobReport
 };
