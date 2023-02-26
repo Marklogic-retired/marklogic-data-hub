@@ -84,4 +84,8 @@ public class HubClientImpl implements HubClient {
     public ManageClient getManageClient() {
         return manageClient;
     }
+
+    public HubClientConfig getHubClientConfig() {
+        return hubClientConfig;
+    }
 }
