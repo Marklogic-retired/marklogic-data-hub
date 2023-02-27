@@ -537,7 +537,7 @@ const LoadCard: React.FC<Props> = (props) => {
                 <div className={styles.formatContainer}>
                   <div className={styles.sourceFormat} style={sourceFormatStyle(elem.sourceFormat)} aria-label={`${elem.name}-sourceFormat`}>{sourceFormatOptions[elem.sourceFormat].label}</div>
                 </div>
-                <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 23, "...")}</div>
+                <div className={styles.stepNameStyle} aria-label={elem.name}>{getInitialChars(elem.name, 23, "...")}</div>
                 <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? "block" : "none"}}>
 

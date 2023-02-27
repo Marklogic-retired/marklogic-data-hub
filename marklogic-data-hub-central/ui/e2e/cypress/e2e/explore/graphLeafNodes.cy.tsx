@@ -113,9 +113,9 @@ describe("Leaf Nodes", () => {
       expect(orderCoordinates).to.be.undefined;
     });
   });
-  it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
+  it("Verify if concepts leaf can be expanded properly. Select 'BabyRegistry' entity", () => {
     browsePage.removeBaseEntity("Customer");
-    entitiesSidebar.selectBaseEntityOption("Product");
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
     cy.wait(2000);
     cy.waitForAsyncRequest();
 
@@ -123,9 +123,9 @@ describe("Leaf Nodes", () => {
     graphExplore.stopStabilization();
     graphView.physicsAnimationToggle();
     cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
-    graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
-      let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_301);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_301).then((nodePositions: any) => {
+      let officeCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_301];
       const canvas = graphExplore.getGraphVisCanvas();
 
       //Hover to bring focus

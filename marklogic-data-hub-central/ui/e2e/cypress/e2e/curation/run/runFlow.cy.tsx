@@ -390,4 +390,28 @@ describe("Run Tile tests", () => {
     browsePage.getTotalDocuments().should("eq", 6);
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
+
+  it("persist open flows", {defaultCommandTimeout: 120000}, () => {
+    const firstFlowName = "personJSON";
+    const firstStepName = "mapPersonJSON";
+
+    cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
+    cy.intercept("/api/jobs/**").as("runResponse");
+
+    cy.log(`**Expand flow: ${firstFlowName}**`);
+    runPage.expandFlow(firstFlowName);
+
+    cy.log("**Navigate to explorer tile using the explorer link**");
+    toolbar.getExploreToolbarIcon().click();
+    cy.waitForAsyncRequest();
+
+    cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
+    cy.intercept("/api/jobs/**").as("runResponse");
+    runPage.getRunStep(firstStepName, firstFlowName).should("be.visible");
+
+  });
 });
