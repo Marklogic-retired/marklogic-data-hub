@@ -5,7 +5,8 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {NotificationContext} from "@util/notification-context";
 import {notificationsMock} from "../../../assets/mock-data/notification-context-mock";
 import {AuthoritiesContext, AuthoritiesService} from "@util/authorities";
-import {fireEvent, screen} from "@testing-library/dom";
+import {fireEvent} from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
 
 const emptyNotificationData = {
   notifications: [],
@@ -61,7 +62,6 @@ describe("Update data load settings component", () => {
           </NotificationContext.Provider>
         </AuthoritiesContext.Provider>
       </Router>);
-    screen.debug();
     expect(queryAllByTestId("disabled-merge-icon1")[0]).toHaveClass("mergeIconDisabled");
     // Check Tooltip
 
@@ -89,4 +89,19 @@ describe("Update data load settings component", () => {
     fireEvent.mouseOver(queryAllByTestId("merge-icon1")[0]);
     expect(await findByText("Merge"));
   });
+});
+
+
+
+test("Tooltip Label column", async () => {
+  const {findByText, getByLabelText} = render(<Router><NotificationContext.Provider value={notificationsMock}>
+    <NotificationModal
+      notificationModalVisible={true}
+      setNotificationModalVisible={jest.fn()}
+    />
+  </NotificationContext.Provider></Router>);
+  const tooltipIcon = getByLabelText("icon: question-circle");
+  expect(tooltipIcon).toBeInTheDocument();
+  userEvent.hover(tooltipIcon);
+  expect(await findByText("Document labels will be 'undefined' unless a property is set as an 'Identifier' in the entity model or assigned as a 'Record Label' in the explore graph display settings."));
 });
