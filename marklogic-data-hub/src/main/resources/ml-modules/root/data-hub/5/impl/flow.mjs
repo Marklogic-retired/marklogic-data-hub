@@ -119,20 +119,22 @@ export default class Flow {
   filterItemsAlreadyProcessedByStep(items, flowName, stepId) {
     // TODO This duplicates knowledge of hash construction with jobs.sjs. Will clean this up in 5.5 when we can create
     // a better "utils" library that is not a class with a bunch of public functions.
-    const prefix = flowName + "|" + fn.lowerCase(stepId) + "|finished|";
+    const prefixAux = flowName + "|" + fn.lowerCase(stepId) + "|finished|";
+    var prefix = prefixAux.replace(`'` , '');
 
     // A map is used in this script to avoid N calls to array.includes
-    const script = "var items; var prefix; " +
-      "const itemHashes = items.map(item => xdmp.hash64(prefix + item)); " +
-      "const processedItemHashesMap = cts.values(cts.jsonPropertyReference('processedItemHashes'), null, ['map'], cts.andQuery([" +
-      "  cts.collectionQuery('Batch'), " +
-      "  cts.jsonPropertyRangeQuery('processedItemHashes', '=', itemHashes)" +
-      "])); " +
-      "items.filter(item => !processedItemHashesMap[xdmp.hash64(prefix + item)]);";
+    const script =
+       `let items = ${xdmp.toJsonString(items)};` +
+       `const itemHashes =items.map(item => xdmp.hash64('${prefix}' + item)); ` +
+       `const processedItemHashesMap = cts.values(cts.jsonPropertyReference('processedItemHashes'), null, ['map'], cts.andQuery([` +
+       `  cts.collectionQuery('Batch'), ` +
+       `  cts.jsonPropertyRangeQuery('processedItemHashes', '=', itemHashes)` +
+       `])); ` +
+       `items.filter(item => !processedItemHashesMap[xdmp.hash64('${prefix}' + item)]);`;
 
     // xdmp.invokeFunction returns nothing, so using xdmp.eval
     return fn.head(xdmp.eval(script,
-      {items, prefix},
+      null,
       {database: xdmp.database(this.config.JOBDATABASE)}
     ));
   }
