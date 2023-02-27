@@ -18,13 +18,9 @@
 import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 
-const collections = ['http://marklogic.com/data-hub/steps/mastering', 'http://marklogic.com/data-hub/steps'];
+const collections = ['http://marklogic.com/entity-services/models'];
 const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
-const permissions =
-  [
-    xdmp.permission(consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
-    xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
-  ];
+const permissions = [xdmp.permission(consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'), xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, 'read')];
 const requiredProperties = ['name'];
 
 function getNameProperty() {
@@ -43,50 +39,39 @@ function getPermissions() {
     return permissions;
 }
 
-function getFileExtension() {
-  return '.step.json';
-}
-
-function getDirectory() {
-  return "/steps/mastering/";
-}
-
 function getArtifactNode(artifactName, artifactVersion) {
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
-  return fn.head(results);
+    const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+    return fn.head(results);
 }
 
 function getArtifactUri(artifactName){
-  return getDirectory().concat(artifactName).concat(getFileExtension());
+    return getDirectory().concat(artifactName).concat(getFileExtension());
+}
+
+function getDirectory(artifactName, artifact, artifactDirName) {
+    return "/entities/";
+}
+
+function getFileExtension() {
+    return ".entity.json";
 }
 
 function validateArtifact(artifact) {
+    const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
+    if (missingProperties.length) {
+        return new Error(`Entity '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+    }
     return artifact;
 }
 
-function defaultArtifact(artifactName) {
-  const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
-  return {
-    artifactName,
-    collections: ['default-mastering'],
-    additionalCollections: [],
-    sourceDatabase: config.FINALDATABASE,
-    targetDatabase: config.FINALDATABASE,
-    provenanceGranularityLevel: 'coarse',
-    permissions: defaultPermissions,
-    batchSize: 100
-  };
-}
-
-export default {
+export default{
   getNameProperty,
   getCollections,
   getStorageDatabases,
+  getDirectory,
   getPermissions,
+  getFileExtension,
   getArtifactNode,
   validateArtifact,
-  defaultArtifact,
-  getFileExtension,
-  getDirectory,
   getArtifactUri
 };
