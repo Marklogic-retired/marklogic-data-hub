@@ -170,7 +170,9 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
      * This captures the custom step template as defined in DHF 5.4.2 (and also 5.4.0 / 5.4.1). We want to have a test
      * for this so we know it still compiles and works without throwing an error.
      */
-    private final static String DHF_542_TEMPLATE = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
+    private final static String DHF_542_TEMPLATE =
+        "const mjsProxy = require(\"/data-hub/core/util/mjsProxy.sjs\");\n" +
+        "const DataHub = mjsProxy.requireMjsModule(\"/data-hub/5/datahub.mjs\");\n" +
         "const datahub = new DataHub();\n" +
         "\n" +
         "function main(content, options) {\n" +
