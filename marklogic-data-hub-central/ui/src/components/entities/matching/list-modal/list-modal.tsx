@@ -159,12 +159,15 @@ const ListModal: React.FC<Props> = (props) => {
           size={13} aria-label="icon: question-circle"
           onMouseOver={(e) => setShow(true)}
           onMouseLeave={(e) => setShow(false)}
+          onFocus={(e) => setShow(true)}
+          onBlur={(e) => setShow(false)}
+          tabIndex={0}
         />
       </i>
       <Overlay target={target.current} show={show} placement="top" container={container}>
         {(props) => (
-          <Tooltip id="list-tooltip" {...props}>
-            <span aria-label="reduce-tooltip-text">{"Documents containing these values will be ignored during matching."}</span>
+          <Tooltip  id="list-tooltip" {...props}>
+            <span  aria-label="reduce-tooltip-text">{"Documents containing these values will be ignored during matching."}</span>
           </Tooltip>
         )}
       </Overlay>
@@ -254,6 +257,7 @@ const ListModal: React.FC<Props> = (props) => {
                 placeholder="Enter values to remove"
                 onChange={(e) => { handleListValues(e); }}
                 selected={selected}
+                tabIndex={0}
               />
 
               <div className={"p-2 d-flex align-items-center"}>
