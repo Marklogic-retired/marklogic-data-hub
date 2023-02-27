@@ -89,6 +89,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [listName, setListName] = useState("");
   const [listValues, setListValues] = useState<string[]>([]);
   const [excludeList, setExcludeList] = useState(presetListMock);
+  const [clickedExcludeLists, setClickedExcludeList] = useState<any>([]);
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -857,11 +858,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const handleClick = (event, btn, itemInfo) => {
     setShowListModal(true);
-    // eslint-disable-next-line no-console
-    console.log("btn", btn);
     if (btn === "A") {
       setActionListModal("A");
       resetModalValuesIgnore();
+      return;
     } else if (btn === "C") {
       setActionListModal("C");
       setListValues(itemInfo.valuesIgnore);
@@ -926,7 +926,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       icon={faPencilAlt}
                       color={themeColors.info}
                       size="sm" onClick={(event) => { handleClick(event, "E", renderMatchOptions.data); }}
-                      tabIndex={0}
+
                     />
                   </i>
                   <i>
@@ -960,6 +960,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const checkIfExistInList = (name) => {
     return excludeList.some((item) => item.name === name);
+  };
+
+  const handleChangeValuesToIgnore = (selected, e) => {
+    if (selected.length === 0) {
+      setClickedExcludeList([]);
+      return;
+    }
+    if (selected.length>0 && selected[selected.length-1].name !== presetListMock[0].name) {
+      setClickedExcludeList(selected);
+    } else {
+      handleClick(e, "A", {});
+    }
   };
 
   return (
@@ -1125,9 +1137,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       tabSelectsValue={false}
                       openMenuOnFocus={true}
                       placeholder="Search previous lists"
-                      //value={renderMatchOptions.find(oItem => oItem.value === matchType)}
-                      //onChange={onMatchTypeSelect}
-                      //options={renderMatchOptions}
+                      value={clickedExcludeLists}
+                      onChange={handleChangeValuesToIgnore}
                       options={excludeList}
                       styles={reactSelectThemeConfig}
                       formatOptionLabel={({value, name}) => {
