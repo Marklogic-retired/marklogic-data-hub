@@ -14,13 +14,19 @@
 }
 
 .notificationModalBody th {
-  pointer-events: none;
+  //pointer-events: none;
 }
 
 .spinner {
   font-size: 19px;
   color: #44499c;
   margin-left: 11px;
+}
+
+@media (max-width: 1210px) {
+  .spinner {
+    margin-left: 1px;
+  }
 }
 
 .emptyList {
@@ -81,8 +87,41 @@
 
 .notificationModalContainer {
   height: auto;
-  max-height: 550px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-top: 50px;
+  max-height: 700px;
+  overflow: hidden;
+  padding-top: 10px;
+}
+
+.tableContainer{
+  max-height: 640px;
+  overflow-x: auto;
+  text-decoration: none;
+  tbody td:first-child{
+    max-width: 260px; 
+  }
+
+  td:last-child{
+    padding: 0px !important;
+  }
+
+  th:nth-child(2){
+    padding: 0px !important;
+    padding-left: 16px !important;
+    vertical-align: middle;
+  }
+
+  thead{
+    position: sticky;
+    top: 0;
+  }
+
+
+
+  
+}
+
+
+
+.questionCircle{
+  margin-top: -2px
 }
