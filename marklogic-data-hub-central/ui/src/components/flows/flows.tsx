@@ -3,7 +3,7 @@ import {HCButton, HCTooltip} from "@components/common";
 import {useLocation} from "react-router-dom";
 import {SecurityTooltips} from "@config/tooltips.config";
 import React, {createRef, useEffect, useState} from "react";
-import {getViewSettings} from "@util/user-context";
+import {getViewSettings, setViewSettings} from "@util/user-context";
 import {getUserPreferences, updateUserPreferences} from "../../../src/services/user-preferences";
 import {Flow} from "../../types/run-types";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
@@ -107,15 +107,15 @@ const Flows: React.FC<Props> = ({
   // maintain a list of panel refs
   const flowPanelsRef: any = flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
 
-  /* // Persists active keys in session storage as a user interacts with them
-    useEffect(() => {
-      if (openFlows === undefined) {
-        return;
-      }
-      const newStorage = {...storage, run: {...storage.run, openFlows: openFlows}};
-      setViewSettings(newStorage);
-    }, [openFlows]);
-  */
+  // Persists active keys in session storage as a user interacts with them
+  useEffect(() => {
+    if (openFlows === undefined) {
+      return;
+    }
+    const newStorage = {...storage, run: {...storage.run, openFlows: openFlows}};
+    setViewSettings(newStorage);
+  }, [openFlows]);
+
 
   const tryParseJson = (userPreferences) => {
     try {

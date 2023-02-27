@@ -14,5 +14,6 @@ export enum ExploreGraphNodes {
     CONCEPT_JEANS = "http://www.example.com/Category/Jeans",
     CONCEPT_BASKETBALLSHOES = "http://www.example.com/Category/BasketballShoes",
     CONCEPT_SLOWCOOKER = "http://www.example.com/Category/SlowCooker",
-    MERGED_RECORD = "/com.marklogic.smart-mastering/merged/ecbd43241f2e14a06ccd24deb79ab0c5.json"
+    MERGED_RECORD = "/com.marklogic.smart-mastering/merged/ecbd43241f2e14a06ccd24deb79ab0c5.json",
+    CUSTOMER_301 = "/Customer/customer1WithRelatedEntities.json"
 }

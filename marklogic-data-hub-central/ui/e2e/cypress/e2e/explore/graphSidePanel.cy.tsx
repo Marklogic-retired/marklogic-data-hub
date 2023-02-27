@@ -115,9 +115,9 @@ describe("Test '/Explore' graph right panel", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify Graph view is default view**");
-    graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
     browsePage.waitForSpinnerToDisappear();
+    graphExplore.getGraphVisCanvas().should("be.visible");
     browsePage.getStagingButton().click();
     browsePage.getAllDataButton().click();
     cy.findByTestId("collection-loadPersonJSON-checkbox").click();
