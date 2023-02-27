@@ -25,6 +25,7 @@ import ExclusionList from './exclusionList.mjs';
 import Mastering from './mastering.mjs';
 import StepDef from './stepDefinition.mjs';
 import CustomStep from './customStep.mjs';
+import Model from './model.mjs';
 
 import consts from '/data-hub/5/impl/consts.mjs';
 import httpUtils from '/data-hub/5/impl/http-utils.mjs';
@@ -41,7 +42,8 @@ const registeredArtifactTypes = {
     merging: Merging,
     mastering: Mastering,
     custom: CustomStep,
-    exclusionList: ExclusionList
+    exclusionList: ExclusionList,
+    model: Model
 };
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'custom', 'matching', 'merging'];
@@ -139,7 +141,6 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
 function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     if (!cachedArtifacts[artifactKey]) {
-        const artifactLibrary =  getArtifactTypeLibrary(artifactType);
         const artifactNode = getArtifactNode(artifactType, artifactName, artifactVersion);
         cachedArtifacts[artifactKey] = artifactNode.toObject();
     }
@@ -193,6 +194,11 @@ function validateArtifact(artifactType, artifactName, artifact) {
     httpUtils.throwBadRequest(validatedArtifact.message);
   }
   return validatedArtifact;
+}
+
+function  getArtifactUri(artifactType, artifactName) {
+    const artifactLibrary = getArtifactTypeLibrary(artifactType);
+    return artifactLibrary.getArtifactUri(artifactName);
 }
 
 function validateArtifactName(artifactName){
@@ -354,6 +360,7 @@ export default {
     getArtifact,
     setArtifact,
     validateArtifact,
+    getArtifactUri,
     getFullFlow,
     convertStepReferenceToInlineStep,
     validateArtifactName

@@ -33,6 +33,8 @@ if ("ingestion" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-custom", "execute");
 } else if ("flow" === artifactType || "stepDefinition" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
+} else if ("model" === artifactType) {
+    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 } else {
   httpUtils.throwBadRequest("Unsupported artifact type: " + artifactType);
 }

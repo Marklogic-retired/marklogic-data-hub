@@ -76,5 +76,6 @@ export default {
   getFileExtension,
   getArtifactNode,
   getDirectory,
-  validateArtifact
+  validateArtifact,
+  getArtifactUri
 }
