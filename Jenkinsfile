@@ -928,7 +928,7 @@ pipeline{
           catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run')}
         }}
         post{
-		   always{sh 'rm -rf $WORKSPACE/xdmp' }
+		   always{sh 'rm -rf $WORKSPACE/xdmp;sudo mladmin stop-hubcentral' }
            success {
               script{env.CYPRESSE2E_TESTS_PASSED=true}
               postStage('Tests Passed')
