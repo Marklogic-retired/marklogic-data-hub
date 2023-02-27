@@ -21,6 +21,8 @@ import CompareValuesModal from "../../../components/entities/matching/compare-va
 import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
 import {UserContext} from "@util/user-context";
 import {AxiosResponse} from "axios";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const NotificationModal = (props) => {
 
@@ -43,6 +45,8 @@ const NotificationModal = (props) => {
 
   let idRow = 0, idRowAux = 0, pageLength = notificationOptions.pageLength, totalRowsLastPage = notificationOptions.pageLength;
   const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
+
+
 
   const checkRowsPerPage = (totalRows) => {
     let totalPages = Math.floor(totalRows / pageLength);
@@ -96,8 +100,29 @@ const NotificationModal = (props) => {
       text: "Label",
       dataField: "meta.label",
       key: "meta.label",
+      visible: true,
+      headerFormatter: (column, index, components, a) => {
+        return (
+          <div>
+            <span>Label </span>
+            <HCTooltip
+              text="Document labels will be 'undefined' unless a property is set as an 'Identifier' in the entity model or assigned as a 'Record Label' in the explore graph display settings."
+              id="additional-collections-tooltip"
+              placement="top">
+              <QuestionCircleFill
+                tabIndex={0}
+                aria-label="icon: question-circle"
+                color={themeColors.defaults.questionCircle}
+                size={13}
+                className={styles.questionCircle}
+              />
+            </HCTooltip>
+          </div>
+        );
+      },
       formatter: (text) => (
-        <span className={styles.tableRow}>{text}
+        <span className={styles.labelText}>
+          <AddTooltipWhenTextOverflow text={text} />
         </span>
       ),
     },
@@ -324,12 +349,14 @@ const NotificationModal = (props) => {
               :
               notificationOptions?.notifications &&
               <>
-                <HCTable
-                  pagination={false}
-                  columns={columns}
-                  data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
-                  rowKey="unique_key"
-                ></HCTable>
+                <div className={styles.tableContainer}>
+                  <HCTable
+                    pagination={false}
+                    columns={columns}
+                    data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+                    rowKey="unique_key"
+                  />
+                </div>
                 <SearchPaginationSimple
                   total={notificationOptions?.totalCount}
                   pageSize={pageLength}
