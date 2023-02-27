@@ -21,16 +21,19 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 const artifactType = external.artifactType, artifactName = external.artifactName;
 
 if ("ingestion" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
 } else if ("mapping" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
 } else if ("matching" === artifactType || "merging" === artifactType ||"exclusionList" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-match-merge", "execute");
 } else if ("flow" === artifactType || "stepDefinition" === artifactType) {
-  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
-} else {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
+} else if ("model" === artifactType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
+}else {
   httpUtils.throwBadRequest("Unsupported artifact type: " + artifactType);
 }
+
 
 Artifacts.deleteArtifact(artifactType, artifactName);
 
