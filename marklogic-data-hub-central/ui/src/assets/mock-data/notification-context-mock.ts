@@ -38,4 +38,3 @@ export const notificationsMock = {
   }),
   setNotificationsObj: jest.fn()
 };
-
