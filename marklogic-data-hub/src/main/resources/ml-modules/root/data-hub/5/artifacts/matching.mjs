@@ -84,13 +84,14 @@ function defaultArtifact(artifactName) {
 }
 
 export default {
-    getNameProperty,
-    getCollections,
-    getStorageDatabases,
-    getPermissions,
-    getArtifactNode,
-    validateArtifact,
-    defaultArtifact,
-    getFileExtension,
-    getDirectory
+  getNameProperty,
+  getCollections,
+  getStorageDatabases,
+  getPermissions,
+  getArtifactNode,
+  validateArtifact,
+  defaultArtifact,
+  getFileExtension,
+  getDirectory,
+  getArtifactUri
 };

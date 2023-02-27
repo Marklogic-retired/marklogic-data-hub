@@ -19,12 +19,65 @@
  * Feature that handles the schema validation of the artifacts and instances.
  */
 
+import core from "/data-hub/5/artifacts/core.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import entityValidation from "/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.mjs";
+const es = require('/MarkLogic/entity-services/entity-services');
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
+
+const INFO_EVENT = consts.TRACE_CORE;
+const DEBUG_EVENT = consts.TRACE_CORE_DEBUG;
+const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
+
 function onArtifactSave(artifactType, artifactName) {
-    return true;
+    if ("model" === artifactType) {
+        hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Creating schemas for ${artifactName}.`);
+        const entityModel = core.getArtifact(artifactType, artifactName);
+        const targetUri = core.getArtifactUri(artifactType, artifactName);
+
+        let schemaPermissions = (
+            xdmp.defaultPermissions(),
+                xdmp.permission("data-hub-common", "read"),
+                xdmp.permission("data-hub-entity-model-writer", "update"));
+        let xmlSchemaCollection = "ml-data-hub-xml-schema";
+        let jsonSchemaCollection = "ml-data-hub-json-schema";
+
+        let xmlSchema = fn.head(es.schemaGenerate(entityModel));
+
+        xdmp.invokeFunction(function () {
+            declareUpdate();
+            xdmp.documentInsert(fn.replace(targetUri, "\.json$", ".xsd"), xmlSchema, schemaPermissions, xmlSchemaCollection)
+            },{database: xdmp.schemaDatabase()});
+
+
+        const jsonSchema = hent.jsonSchemaGenerate(entityModel.info.title, entityModel);
+        xdmp.invokeFunction(function () {
+            declareUpdate();
+            xdmp.documentInsert(fn.replace(targetUri, "\.json$", ".schema.json"), jsonSchema, schemaPermissions, jsonSchemaCollection)
+            },{database: xdmp.schemaDatabase()});
+
+        hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Finished creating schemas for ${artifactName}.`);
+    }
 }
 
 function onInstanceSave(stepContext, model, contentObject) {
-    return true;
+
+    hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Validating schema for content of type ${model.info.title}.`);
+
+    const options = stepContext.options;
+    entityValidation.validateEntity(contentObject, options, model.info);
+    if (options.headers != null && options.headers.datahub != null && options.headers.datahub.validationErrors != null) {
+        const errors = options.headers.datahub.validationErrors;
+        hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Schema validation for content of type ${model.info.title} got errors.`);
+        if (DEBUG_ENABLED) {
+            errors.formattedMessages.forEach(msg => {
+                hubUtils.hubTrace(DEBUG_EVENT, `Schema validation feature: Error - ${msg}`);
+            })
+        }
+    } else {
+        hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Schema validation for content of type ${model.info.title} passed.`);
+    }
 }
 
 export default {
