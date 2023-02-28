@@ -220,6 +220,7 @@ describe("Entity Type Settings Modal", () => {
 
     cy.log("**Save the changes**");
     dataModelDisplaySettingsModal.getModalSaveButton().click();
+    cy.waitForAsyncRequest();
     dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Reopen the settings modal and check the new values**");
@@ -246,8 +247,9 @@ describe("Entity Type Settings Modal", () => {
     });
 
     cy.log("**Click on customer node and verify that label in side bar**");
-    cy.wait(2000);
+    cy.wait(5000);
     graphExplore.stopStabilization();
+    cy.waitForAsyncRequest();
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
@@ -359,6 +361,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Click on customer node and verify that label in side bar**");
     cy.wait(1000);
     graphExplore.stopStabilization();
+    cy.waitForAsyncRequest();
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];

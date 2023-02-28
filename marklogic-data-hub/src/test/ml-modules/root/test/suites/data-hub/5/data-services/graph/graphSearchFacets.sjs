@@ -1,4 +1,3 @@
-const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const test = require("/test/test-helper.xqy");
 
 function invoke(module, args) {
@@ -26,10 +25,9 @@ const productQuery = {
   "entityTypeIds": [ "Product", "BabyRegistry", "Customer" ],
 };
 const resultsTest = searchNodes(productQuery);
-let expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 9 : 6;
-let expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 0;
 
-let supportConcept = graphUtils.supportsGraphConceptsSearch();
+let expectedNodeCount = 9;
+let expectedEdgeCount = 4;
 
 let assertions = [
   test.assertEqual(expectedNodeCount, resultsTest.total),
@@ -38,34 +36,18 @@ let assertions = [
 ];
 
   resultsTest.nodes.forEach(node => {
-    if(supportConcept){
-      if(node.id === "/content/product100.json") {
-        assertions.push(test.assertTrue(node.hasRelationships, `Product 100 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-      }
-      else if(node.id === "/content/product50.json") {
-        assertions.push(test.assertFalse(node.hasRelationships, `Product 50 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
-      }
-      else if(node.id === "/content/product60.json") {
-        assertions.push(test.assertFalse(node.hasRelationships, `Product 60 must have relationships flag in false. Result: ${xdmp.toJsonString(node)}`));
-      }
-      if (!node.isConcept) {
-        assertions.push(test.assertTrue(node.docUri.includes("product")));
-      }
-    }else{
-      if(node.id === "/content/product100.json") {
-        assertions.push(test.assertTrue(node.hasRelationships, `Product 100 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-      }
-      else if(node.id === "/content/product50.json") {
-        assertions.push(test.assertTrue(node.hasRelationships, `Product 50 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-      }
-      else if(node.id === "/content/product60.json") {
-        assertions.push(test.assertTrue(node.hasRelationships, `Product 60 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-      }
-      if (!node.isConcept) {
-        assertions.push(test.assertTrue(node.docUri.includes("product")));
-      }
+    if(node.id === "/content/product100.json") {
+      assertions.push(test.assertTrue(node.hasRelationships, `Product 100 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
     }
-
-  })
+    else if(node.id === "/content/product50.json") {
+      assertions.push(test.assertTrue(node.hasRelationships, `Product 50 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
+    }
+    else if(node.id === "/content/product60.json") {
+      assertions.push(test.assertTrue(node.hasRelationships, `Product 60 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
+    }
+    if (!node.isConcept) {
+      assertions.push(test.assertTrue(node.docUri.includes("product")));
+    }
+  });
 
 assertions;
