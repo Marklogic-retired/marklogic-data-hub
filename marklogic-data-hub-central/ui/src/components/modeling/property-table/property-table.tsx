@@ -839,7 +839,6 @@ const PropertyTable: React.FC<Props> = (props) => {
       entityName: entityName,
       modelDefinition: updatedDefinitions
     };
-
     await saveAndUpdateModifiedEntity(entityModified, entitiesRelated, undefined);
   };
 
