@@ -16,8 +16,8 @@ const productQuery = {
 };
 const resultsTest1 = searchNodes(productQuery);
 
-let expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 9 : 6;
-let expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 0;
+let expectedNodeCount = 9;
+let expectedEdgeCount = 4;
 let assertions = [
   test.assertEqual(expectedNodeCount, resultsTest1.total),
   test.assertEqual(expectedNodeCount, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
@@ -42,8 +42,8 @@ const nsCustomerQuery = {
   "selectedFacets": {}
 };
 const nsCustomerQueryResults = searchNodes(nsCustomerQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 1 : 0;
+expectedNodeCount = 2;
+expectedEdgeCount = 1;
 assertions.concat([
   test.assertEqual(expectedNodeCount, nsCustomerQueryResults.total),
   test.assertEqual(expectedNodeCount, nsCustomerQueryResults.nodes.length, xdmp.toJsonString(nsCustomerQueryResults)),
@@ -57,13 +57,13 @@ const multipleQuery = {
 
 const resultsTest3 = searchNodes(multipleQuery);
 
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 10 : 7;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 10 : 6;
-let expectedHasRelationship = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
+expectedNodeCount = 10;
+expectedEdgeCount = 10;
+let expectedHasRelationship = 3;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTest3.total),
   test.assertEqual(expectedNodeCount, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
-  test.assertEqual(expectedEdgeCount, resultsTest3.edges.length),
+  test.assertEqual(expectedEdgeCount, resultsTest3.edges.length, xdmp.toJsonString(resultsTest3)),
   test.assertEqual(expectedHasRelationship, resultsTest3.nodes.filter((node) => node.hasRelationships).length, xdmp.toJsonString(resultsTest3.nodes))
 ]);
 
@@ -79,7 +79,7 @@ const resultsTest4 = searchNodes(withRelatedQuery);
 assertions.concat([
   test.assertEqual(3, resultsTest4.total, `wrong total: ${xdmp.toJsonString(resultsTest4)}`),
   test.assertEqual(3, resultsTest4.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsTest4)}`),
-  test.assertEqual(2, resultsTest4.edges.length, `wrong edges length: ${xdmp.toJsonString(resultsTest4)}`)
+  test.assertEqual(3, resultsTest4.edges.length, `wrong edges length: ${xdmp.toJsonString(resultsTest4)}`)
 ]);
 
 resultsTest4.nodes.forEach(node => {
@@ -91,6 +91,7 @@ resultsTest4.nodes.forEach(node => {
   }
   else if(node.id === "/content/customer1.json") {
     assertions.push(test.assertTrue(node.hasRelationships, `Customer 301 node must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
+    assertions.push(test.assertEqual("Columbus", node.propertiesOnHover.filter((p) => !!p["shipping.city"])[0]["shipping.city"], `Customer 301 node must have propertiesOnHover for shipping.city. Result: ${xdmp.toJsonString(node)}`));
   }
 })
 
@@ -103,16 +104,16 @@ const customerQuery = {
   "selectedFacets": {}
 };
 const resultsTest6 = searchNodes(customerQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 4 : 3;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 1;
-const testEdge = resultsTest6.edges.find((edge) => edge.to === "/content/customer1.json");
+expectedNodeCount = 4;
+expectedEdgeCount = 3;
+const testEdge = resultsTest6.edges.find((edge) => edge.to === "/content/customer1.json" && edge.predicate.includes("ownedBy"));
 const mergedNode = resultsTest6.nodes.find(node => node.id === "/content/customer1.json");
 assertions = assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTest6.total),
   test.assertEqual(expectedNodeCount, resultsTest6.nodes.length, xdmp.toJsonString(resultsTest6)),
   test.assertEqual(expectedEdgeCount, resultsTest6.edges.length),
   // to and from are in sorted order to support bidirectional queries.
-  test.assertEqual("/content/babyRegistry1.json", testEdge.from),
+  test.assertEqual("/content/babyRegistry1.json", testEdge.from, xdmp.toJsonString(testEdge)),
   test.assertEqual("/content/customer1.json", testEdge.to, xdmp.toJsonString(testEdge)),
   test.assertTrue(mergedNode.unmerge),
   test.assertNotEqual(null, mergedNode.unmergeUris),
@@ -151,8 +152,8 @@ const searchTextQuery = {
 };
 
 const resultsTestSearchBy = searchNodes(searchTextQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 1;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 0;
+expectedNodeCount = 3;
+expectedEdgeCount = 2;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTestSearchBy.total),
   test.assertEqual(expectedNodeCount, resultsTestSearchBy.nodes.length),
@@ -171,8 +172,8 @@ const RelatedByPropertyDifferentFromID = {
 };
 
 const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
-expectedCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 4 : 3;
-const expectedEdgeCountDifferentFromID = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
+expectedCountDifferentFromID = 5;
+const expectedEdgeCountDifferentFromID = 6;
 assertions.concat([
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.total),
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
@@ -186,8 +187,8 @@ const conceptFilterQuery = {
 };
 
 const resultsConceptFilter = searchNodes(conceptFilterQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 7 : 6;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 1 : 0;
+expectedNodeCount = 7;
+expectedEdgeCount = 1;
 
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsConceptFilter.total),
@@ -203,8 +204,8 @@ const conceptFilterQuery2 = {
 
 const resultsConceptFilter2 = searchNodes(conceptFilterQuery2);
 
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 7 : 6;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 0;
+expectedNodeCount = 7;
+expectedEdgeCount = 2;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsConceptFilter2.total),
   test.assertEqual(expectedNodeCount, resultsConceptFilter2.nodes.length, xdmp.toJsonString(conceptFilterQuery2)),
@@ -218,8 +219,8 @@ const conceptFilterQuery3 = {
 };
 
 const resultsConceptFilter3 = searchNodes(conceptFilterQuery3);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 8 : 6;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 0;
+expectedNodeCount = 8;
+expectedEdgeCount = 3;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsConceptFilter3.total),
   test.assertEqual(expectedNodeCount, resultsConceptFilter3.nodes.length, xdmp.toJsonString(conceptFilterQuery3)),
@@ -233,8 +234,8 @@ const ConceptWithHasRelationship = {
 };
 
 const resultConceptWithHasRelationship = searchNodes(ConceptWithHasRelationship);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 2 : 0;
+expectedNodeCount = 3;
+expectedEdgeCount = 2;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultConceptWithHasRelationship.total),
   test.assertEqual(expectedNodeCount, resultConceptWithHasRelationship.nodes.length, xdmp.toJsonString(resultConceptWithHasRelationship)),
@@ -259,8 +260,8 @@ const structuredConceptQuery = {
   "selectedFacets": {}
 };
 const structuredConceptQueryResults = searchNodes(structuredConceptQuery);
-expectedNodeCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
-expectedEdgeCount = graphUtils.supportsGraphConceptsSearch() ? 1 : 0;
+expectedNodeCount = 3;
+expectedEdgeCount = 2;
 assertions.concat([
   test.assertEqual(expectedNodeCount, structuredConceptQueryResults.total, "Includes 2 customer nodes and 1 structured property concept node"),
   test.assertEqual(expectedNodeCount, structuredConceptQueryResults.nodes.length, xdmp.toJsonString(structuredConceptQueryResults)),
