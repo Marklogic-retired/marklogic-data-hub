@@ -13,6 +13,7 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips, RunToolTips} from "@config/tooltips.config";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCard, HCDivider, HCTooltip, HCModal} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 interface Props {
   data: any;
@@ -317,7 +318,13 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div><button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <div aria-label="step-in-no-flows-confirmation" className={styles.modalSelectRunHeader}>
+          Choose the flow in which to add and run the step:&nbsp;
+          <strong>
+            <AddTooltipWhenTextOverflow text={loadArtifactName}/>
+          </strong>.
+        </div>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
