@@ -16,6 +16,7 @@ import Steps from "../../steps/steps";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./mapping-card.module.scss";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 interface Props {
   data: any;
@@ -328,7 +329,12 @@ const MappingCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mappingArtifactName}</strong>.</div>
+        <div aria-label="step-in-no-flows-confirmation" className={styles.modalSelectRunHeader}>
+          Choose the flow in which to add and run the step:&nbsp;
+          <strong>
+            <AddTooltipWhenTextOverflow text={mappingArtifactName}/>
+          </strong>
+        </div>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
       </Modal.Header>
       <Modal.Body className={"pb-2"}>

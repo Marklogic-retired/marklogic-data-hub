@@ -26,7 +26,7 @@ export function AddTooltipWhenTextOverflow({text}) {
         <HCTooltip
           text={text}
           id="additional-collections-tooltip"
-          placement="top">
+          placement="auto">
           <div style={{zIndex: 1, position: "absolute", width: labelWidth}}>&nbsp;</div>
         </HCTooltip>
         :

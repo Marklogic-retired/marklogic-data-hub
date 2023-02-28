@@ -17,6 +17,7 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCCard, HCDivider, HCTooltip, HCButton, HCModal} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 interface Props {
   matchingStepsArray: MatchingStep[];
@@ -294,7 +295,12 @@ const MatchingCard: React.FC<Props> = (props) => {
       onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{matchingArtifactName}</strong>.</div>
+        <div aria-label="step-in-no-flows-confirmation" className={styles.modalSelectRunHeader}>
+          Choose the flow in which to add and run the step:&nbsp;
+          <strong>
+            <AddTooltipWhenTextOverflow text={matchingArtifactName}/>
+          </strong>
+        </div>
         <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
