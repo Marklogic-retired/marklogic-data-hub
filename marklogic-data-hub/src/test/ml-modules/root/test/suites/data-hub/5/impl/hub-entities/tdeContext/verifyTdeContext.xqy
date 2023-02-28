@@ -46,5 +46,13 @@ return (
   test:assert-equal("/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '1.0' or info/version = '1.0'][(oex:TdeContextNamespacedEntity|TdeContextNamespacedEntity)]",
     $namespaced-context,
     "The avoidance of wildcards and the use of 'or' for the version check should avoid false positives and thus unnecessary reindexing of documents. Actual: "|| $namespaced-context || " Expected : /(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '1.0' or info/version = '1.0'][(oex:TdeContextNamespacedEntity|TdeContextNamespacedEntity)]"
+  ),
+  test:assert-true(
+    fn:empty($no-namespace-tde//tde:val[fn:contains(fn:string(.), "DataHubGeneratedPrimaryKey")]),
+    "Data Hub generated key should have been properly replaced in no namepspace template."
+  ),
+  test:assert-true(
+    fn:empty($namespaced-tde//tde:val[fn:contains(fn:string(.), "DataHubGeneratedPrimaryKey")]),
+    "Data Hub generated key should have been properly replaced in namepspaced template."
   )
 )

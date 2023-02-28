@@ -1,0 +1,23 @@
+{
+  "info": {
+    "title": "Purchase",
+    "description": "Intentionally doesn't set a primary key to test that a generated ID is used properly in the TDE generation.",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Purchase": {
+      "properties": {
+        "purchaseId": {
+          "datatype": "integer",
+          "sortable": true
+        },
+        "boughtBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        }
+      }
+    }
+  }
+}

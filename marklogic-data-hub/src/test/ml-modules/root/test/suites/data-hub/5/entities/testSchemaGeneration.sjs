@@ -29,4 +29,15 @@ function verifySchemaGeneration() {
   ];
 }
 
-[].concat(verifySchemaGeneration());
+function verifyTdeGenerationWithoutPrimaryId() {
+  const purchaseTDE = getSchema("/tde/Purchase-0.0.1.tdex");
+  return [
+    test.assertTrue(fn.exists(purchaseTDE), "TDE should exist."),
+    test.assertFalse(fn.exists(purchaseTDE.xpath(".//*:val[contains(., 'DataHubGeneratedPrimaryKey')]")), `DataHubGeneratedPrimaryKey should be properly replaced in TDE generated:
+    ${xdmp.quote(purchaseTDE)}`)
+  ];
+}
+
+[]
+  .concat(verifySchemaGeneration())
+  .concat(verifyTdeGenerationWithoutPrimaryId());
