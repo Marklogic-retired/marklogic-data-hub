@@ -294,7 +294,7 @@ class LoadPage {
   }
 
   addStepToNewFlow(stepName: string) {
-    cy.get(`[aria-label="${stepName}"]`).trigger("mouseover");
+    cy.get(`[aria-label="${stepName}"]`).trigger("mouseover", {force: true});
     this.addToNewFlow(stepName).click();
   }
 
@@ -309,7 +309,7 @@ class LoadPage {
   }
 
   addStepToExistingFlow(stepName: string, flowName: string) {
-    this.stepName(stepName).trigger("mouseover");
+    this.stepName(stepName).trigger("mouseover", {force: true});
     this.existingFlowsList(stepName).click();
     cy.findByLabelText(`${flowName}-option`).click();
   }

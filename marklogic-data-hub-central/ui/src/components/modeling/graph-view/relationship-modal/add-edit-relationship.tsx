@@ -292,6 +292,14 @@ const AddEditRelationship: React.FC<Props> = ({
     const edge = edgeData.find((edge) => edge.from === definitionName && edge.label === propertyName && edge.structParent !== "");
     if (edge) {
       updatedDefinitions[edge.structParent]["properties"][propertyName] = newProperty;
+      if (propertyName !== editPropertyOptions.name) {
+        let reMapDefinition = Object.keys(updatedDefinitions[edge.structParent]["properties"]).map((key) => {
+          const newKey = key === propertyName ? editPropertyOptions.name : key;
+          const value = key === propertyName ? newProperty : updatedDefinitions[edge.structParent]["properties"][key];
+          return {[newKey]: value};
+        });
+        updatedDefinitions[edge.structParent]["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
+      }
     } else {
       entityTypeDefinition["properties"][propertyName] = newProperty;
 
