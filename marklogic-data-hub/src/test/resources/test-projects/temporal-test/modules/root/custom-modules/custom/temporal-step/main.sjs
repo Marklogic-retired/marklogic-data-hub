@@ -1,4 +1,4 @@
-const DataHub = require('/data-hub/5/datahub.sjs');
+const DataHub = require('/data-hub/5/datahub.mjs');
 const datahub = new DataHub();
 
 function main(content, options) {
