@@ -42,7 +42,7 @@ const withStructurePropertiesOnHover = {
   "entityTypeIds": [ "Customer" ]
 };
 const resultsWithStructureProperties = searchNodes(withStructurePropertiesOnHover);
-let expectedCount = graphUtils.supportsGraphConceptsSearch() ? 3 : 2;
+let expectedCount = 3;
 assertions.concat([
   test.assertEqual(expectedCount, resultsWithStructureProperties.total, `wrong total: ${xdmp.toJsonString(resultsWithStructureProperties)}`),
   test.assertEqual(expectedCount, resultsWithStructureProperties.nodes.length, `wrong nodes length: ${xdmp.toJsonString(resultsWithStructureProperties)}`)

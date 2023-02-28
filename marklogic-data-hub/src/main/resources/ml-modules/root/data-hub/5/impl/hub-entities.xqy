@@ -598,7 +598,18 @@ declare private function hent:remove-duplicate-range-indexes($database-config as
 };
 
 declare variable $generated-primary-key-column as xs:string := "DataHubGeneratedPrimaryKey";
-declare variable $generated-primary-key-expression as xs:string := "xdmp:node-uri(.) || fn:string(fn:node-name(.)) || (fn:count(preceding-sibling::*) + 1)";
+declare variable $generated-primary-key-expression as xs:string := "(xdmp:node-uri(.) || fn:string(fn:node-name(.)) || (fn:count(preceding-sibling::*) + 1))";
+
+declare function hent:replace-generated-key($value as xs:string) {
+  if (fn:contains($value, $generated-primary-key-column)) then
+    fn:replace(
+      $value,
+      "([^:/]+:)?"|| $generated-primary-key-column|| "(\|" || $generated-primary-key-column || "\))?",
+      $generated-primary-key-expression
+    )
+  else
+    $value
+};
 
 declare function hent:dump-tde($entities as json:array)
 {
@@ -669,6 +680,8 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           return
             if (fn:ends-with($col-name, $generated-primary-key-column)) then
               $generated-primary-key-expression
+            else if (fn:contains(fn:string($n), $generated-primary-key-column)) then
+              hent:replace-generated-key(fn:string($n))
             else if (fn:starts-with($n, $col-name)) then
               let $parts := fn:tokenize($n, "/")
               let $uber-definitions := $uber-model => map:get("definitions")
@@ -677,8 +690,8 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                 if (fn:exists($entity-definition)) then
                   let $primary-key := $entity-definition => map:get("primaryKey")
                   return
-                    if ($primary-key = $generated-primary-key-column) then
-                      $generated-primary-key-expression
+                    if (fn:contains($primary-key, $generated-primary-key-column)) then
+                      fn:string($n) || "/" || hent:replace-generated-key($primary-key)
                     else
                       fn:string($n) || "/" || $primary-key
                 else
@@ -745,7 +758,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
               let $entityItems := map:get($entityContextItemMap, "items")
               let $relatedEntityType := if (fn:exists($entityItems)) then fn:string(map:get($entityItems, "relatedEntityType")) else ()
               let $primaryKey := fn:string(map:get($entityMap, "primaryKey"))
-              let $ancestorKey := fn:replace(fn:string($rows/tde:columns/tde:column[tde:name = $primaryKey]/tde:val), "([^:/]+:)?"||$generated-primary-key-column||"(\|"|| $generated-primary-key-column || "\))?$", "("||$generated-primary-key-expression||")")
+              let $ancestorKey := hent:replace-generated-key(fn:string($rows/tde:columns/tde:column[tde:name = $primaryKey]/tde:val))
               return (
               element tde:rows {
                 element tde:row {
@@ -779,7 +792,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                    <tde:vars>
                     <tde:var>
                        <tde:name>subject-iri</tde:name>
-                       <tde:val>sem:iri(concat("{ $model_iri }/{ $entityName }/", fn:encode-for-uri(xs:string(./{$ancestorKey}))))</tde:val>
+                       <tde:val>$top-subject-iri</tde:val>
                      </tde:var>
                    </tde:vars>,
                    <tde:triples>
@@ -809,11 +822,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-model, ())
         }
       case text() return
-        fn:replace(
-          fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)"),
-          "\./([^:]+:)?"||$generated-primary-key-column||"(\|"|| $generated-primary-key-column || "\))?",
-          $generated-primary-key-expression
-        )
+        fn:replace($n, "^\.\./(.+)$", "(../$1|parent::array-node()/../$1)")
       default return $n
 };
 

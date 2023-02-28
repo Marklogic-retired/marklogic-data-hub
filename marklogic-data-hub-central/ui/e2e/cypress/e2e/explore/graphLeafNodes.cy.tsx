@@ -14,11 +14,10 @@ describe("Leaf Nodes", () => {
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
-  });
-  before(() => {
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.clearAllSessionStorage();
@@ -77,7 +76,7 @@ describe("Leaf Nodes", () => {
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       //Hover to bring focus
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-
+      cy.waitForAsyncRequest();
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
@@ -90,6 +89,7 @@ describe("Leaf Nodes", () => {
 
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.clickShowRelated();
+      cy.waitForAsyncRequest();
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
@@ -140,6 +140,37 @@ describe("Leaf Nodes", () => {
       cy.log("**Coordinates should not exist because it was collapsed**");
       expect(orderCoordinates).to.be.undefined;
     });
+    browsePage.removeBaseEntity("Customer");
+    cy.waitForAsyncRequest();
+    cy.wait(5000);
+  });
+
+  it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
+    entitiesSidebar.selectBaseEntityOption("Product");
+    cy.waitForAsyncRequest();
+    cy.wait(2000);
+
+    graphExplore.fit();
+    graphExplore.stopStabilization();
+    graphView.physicsAnimationToggle();
+    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
+    graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
+      let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      //Hover to bring focus
+      canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
+
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
+      graphView.physicsAnimationToggle();
+
+      graphExplore.clickShowRelated();
+      cy.waitForAsyncRequest();
+      graphExplore.stopStabilization();
+      graphView.physicsAnimationToggle();
+    });
   });
 
   it("Verify expanded node leaf node is expanded and expanded node is visible in the canvas", () => {
@@ -150,6 +181,7 @@ describe("Leaf Nodes", () => {
 
       //Click on node to open side panel
       canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
+      cy.waitForAsyncRequest();
       cy.wait(2000);
       graphView.physicsAnimationToggle();
       graphExploreSidePanel.getSidePanel().should("exist");
@@ -166,6 +198,7 @@ describe("Leaf Nodes", () => {
 
       // Right click and expand the remaining records of the node
       canvas.rightclick(jeansCoordinates.x, jeansCoordinates.y, {force: true});
+      cy.waitForAsyncRequest();
       graphExplore.stopStabilization();
     });
   });

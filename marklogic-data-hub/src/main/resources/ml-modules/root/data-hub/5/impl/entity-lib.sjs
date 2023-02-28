@@ -715,23 +715,30 @@ function getLabelFromHubConfigByEntityType(entityType, hubCentralConfig) {
   return "";
 }
 
-function getValueFromProperty(propertyName, docUri,entityType) {
-  const doc = cts.doc(docUri);
-  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName))){
-    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName));
+function getValueFromProperty(propertyName, doc, entityType) {
+  const propertyNode = doc.xpath(".//*:envelope/*:instance/*:"+entityType+"/*:"+propertyName);
+  if (fn.exists(propertyNode)) {
+    return fn.data(propertyNode);
   }
   return "";
 }
+
+const labelsByEntityType = new Map();
 
 function getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralConfig) {
-  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType+"/propertiesOnHover"))){
-    const obj = JSON.parse(hubCentralConfig);
-    return obj.modeling.entities[entityType].propertiesOnHover;
+  if (entityType && !labelsByEntityType.has(entityType)) {
+    const propertiesOnHoverNode = fn.exists(hubCentralConfig) ? hubCentralConfig.xpath("/modeling/entities/" + entityType + "/propertiesOnHover"): null;
+    if (fn.exists(propertiesOnHoverNode)) {
+      const obj = JSON.parse(hubCentralConfig);
+      labelsByEntityType.set(entityType, obj.modeling.entities[entityType].propertiesOnHover);
+    } else {
+      labelsByEntityType.set(entityType, "");
+    }
   }
-  return "";
+  return labelsByEntityType.get(entityType);
 }
 
-function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
+function getValuesPropertiesOnHover(doc,entityType, hubCentralConfig) {
   let resultPropertiesOnHover = [];
   let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralConfig);
   if(configPropertiesOnHover.toString().length > 0){
@@ -741,7 +748,7 @@ function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
       if(!entityPropertyName.includes(".")){
         //create an Property on hover object
         let objPropertyOnHover = new Object();
-        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,docUri,entityType);
+        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,doc,entityType);
         resultPropertiesOnHover.push(objPropertyOnHover);
       }else{
 
@@ -757,7 +764,7 @@ function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
           }
 
         }
-        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,docUri,entityType, newPath);
+        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,doc,entityType, newPath);
         resultPropertiesOnHover.push(objPropertyOnHover);
       }
     }
@@ -765,10 +772,10 @@ function getValuesPropertiesOnHover(docUri,entityType, hubCentralConfig) {
   return resultPropertiesOnHover;
 }
 
-function getValueFromPropertyPath(path, docUri,entityType,propertyPath) {
-  const doc = cts.doc(docUri);
-  if(fn.exists(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath))){
-    return fn.data(doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath));
+function getValueFromPropertyPath(path, doc,entityType,propertyPath) {
+  const propertyNode = doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath);
+  if(fn.exists(propertyNode)){
+    return fn.data(propertyNode);
   }
   return "";
 }
