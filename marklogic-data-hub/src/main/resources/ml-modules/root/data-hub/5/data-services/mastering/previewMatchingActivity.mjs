@@ -30,6 +30,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge",
 
 
 const step = core.getArtifact("matching", stepName);
+
 const sourceQuery = hubUtils.evalInDatabase(step.sourceQuery, step.sourceDatabase);
 
 let resultFunction = function() { return previewMatchingActivityLib.previewMatchingActivity(step, sourceQuery, uris, restrictToUris, nonMatches, sampleSize); }

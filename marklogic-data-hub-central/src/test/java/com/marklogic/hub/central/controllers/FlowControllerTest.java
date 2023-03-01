@@ -164,6 +164,8 @@ public class FlowControllerTest extends AbstractMvcTest {
                 mappingJobId[0] = response.get("jobId").asText();
             });
 
+        FlowRunner flowRunner = FlowController.FlowUtil.getInstance().flowMap.get(mappingJobId[0]);
+        flowRunner.awaitCompletion();
         // Check on the Job
         getJson("/api/jobs/" + URLEncoder.encode(mappingJobId[0],"UTF-8"))
                 .andExpect(status().isOk())
