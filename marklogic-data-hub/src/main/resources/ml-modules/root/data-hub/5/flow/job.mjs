@@ -18,7 +18,6 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import jobs from "/data-hub/5/impl/jobs.mjs";
-import {updateJob} from "/data-hub/5/impl/jobs.mjs";
 
 /**
  * Encapsulates a Job object and provides convenience operations for updating the object and persisting it
@@ -49,7 +48,7 @@ export default class Job {
   }
 
   update() {
-    updateJob(this.data);
+    jobs.updateJob(this.data);
     return this.data;
   }
 
