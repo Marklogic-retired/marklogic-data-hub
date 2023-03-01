@@ -27,11 +27,6 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
        setExecuteSortOrder(390);
    }
 
-    @Override
-    public boolean cmaShouldBeUsed(CommandContext context) {
-        return false;
-    }
-
     /**
      * The parent class's execute method eagerly grabs amps for performance reasons. That causes an unexpected failure
      * when a data-hub-developer mistakenly runs this command, but there aren't any amps to deploy. To avoid this,
