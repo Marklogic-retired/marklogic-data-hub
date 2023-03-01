@@ -308,7 +308,7 @@ public class FlowController extends BaseController {
 
     public static class FlowUtil {
         private static FlowUtil instance = null;
-        private Map<String, FlowRunner> flowMap = new HashMap<>();
+        Map<String, FlowRunner> flowMap = new HashMap<>();
 
         public static FlowUtil getInstance()
         {
