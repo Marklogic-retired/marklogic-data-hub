@@ -21,6 +21,7 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
 
     private static final String CREATED_BY_STEP = "datahubCreatedByStep";
     private static final String FIXED_COLLECTION = "datahubCreatedByStep-fixed";
+    private static final String RAN_BY_STEP = "datahubRanBySteps";
 
     private List<String> customerUris = new ArrayList<>();
     private CreatedByStepFixer createdByStepFixer;
@@ -174,9 +175,9 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         GenericDocumentManager mgr = getHubClient().getFinalClient().newDocumentManager();
         customerUris.forEach(uri -> {
             DocumentMetadataHandle metadata = mgr.readMetadata(uri, new DocumentMetadataHandle());
-            assertEquals(expectedValue, metadata.getMetadataValues().get(CREATED_BY_STEP),
+            assertEquals(expectedValue, metadata.getMetadataValues().get(RAN_BY_STEP),
                 "The fix script should have found the triple that identifies the step name that last modified the document, " +
-                    "and that should now be the value of datahubCreatedByStep");
+                    "and that should now be the value of datahubRanBySteps");
         });
     }
 
