@@ -10,8 +10,7 @@
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
     "data-hub-custom-reader",
-    "data-hub-step-definition-reader",
-    "data-hub-job-internal"
+    "data-hub-step-definition-reader"
   ],
   "privilege": [
     {
