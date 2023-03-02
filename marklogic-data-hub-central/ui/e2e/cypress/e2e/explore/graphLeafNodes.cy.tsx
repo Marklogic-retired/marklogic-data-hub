@@ -25,6 +25,34 @@ describe("Leaf Nodes", () => {
     cy.clearAllLocalStorage();
   });
 
+  it("Verify if concepts leaf can be expanded properly. Select 'BabyRegistry' entity", () => {
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
+
+    graphExplore.fit();
+    graphExplore.stopStabilization();
+    graphView.physicsAnimationToggle();
+    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
+    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_301);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_301).then((nodePositions: any) => {
+      let officeCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_301];
+      const canvas = graphExplore.getGraphVisCanvas();
+
+      //Hover to bring focus
+      canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
+
+      // Right click and expand the remaining records of the node
+      canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
+      graphView.physicsAnimationToggle();
+
+      graphExplore.clickShowRelated();
+      graphExplore.stopStabilization();
+      graphView.physicsAnimationToggle();
+    });
+  });
+
   it("Validate leaf nodes are working correctly", () => {
     //Graph view
     cy.log("**Go to graph view**");
@@ -113,33 +141,7 @@ describe("Leaf Nodes", () => {
       expect(orderCoordinates).to.be.undefined;
     });
   });
-  it("Verify if concepts leaf can be expanded properly. Select 'BabyRegistry' entity", () => {
-    browsePage.removeBaseEntity("Customer");
-    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    cy.wait(2000);
-    cy.waitForAsyncRequest();
 
-    graphExplore.fit();
-    graphExplore.stopStabilization();
-    graphView.physicsAnimationToggle();
-    cy.log("**Verify expanded node leaf node is expanded and expanded node is visible in the canvas**");
-    graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_301);
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_301).then((nodePositions: any) => {
-      let officeCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_301];
-      const canvas = graphExplore.getGraphVisCanvas();
-
-      //Hover to bring focus
-      canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
-
-      // Right click and expand the remaining records of the node
-      canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
-      graphView.physicsAnimationToggle();
-
-      graphExplore.clickShowRelated();
-      graphExplore.stopStabilization();
-      graphView.physicsAnimationToggle();
-    });
-  });
   it("Verify expanded node leaf node is expanded and expanded node is visible in the canvas", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
