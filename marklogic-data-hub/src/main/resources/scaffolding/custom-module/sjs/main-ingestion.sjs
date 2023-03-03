@@ -4,7 +4,8 @@
  * any or all of the comments at any point.
  */
 
- const flowApi = require('/data-hub/public/flow/flow-api.sjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const flowApi = mjsProxy.requireMjsModule('/data-hub/public/flow/flow-api.mjs');
 
  /**
   * Performs the main step processing on the given content, returning zero or many content objects. DHF will run this function
