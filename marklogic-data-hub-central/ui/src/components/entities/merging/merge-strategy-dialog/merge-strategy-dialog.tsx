@@ -347,6 +347,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     setStrategyNameErrorMessage("");
     setPriorityOrderOptions([defaultPriorityOption]);
     setDropdownOption("Length");
+    setStrategyName("");
     setRadioDefaultOptionClicked(2);
     setRadioValuesOptionClicked(1);
     setRadioSourcesOptionClicked(1);
