@@ -496,7 +496,7 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
         key: "relationshipName",
         headerFormatter: () => <span aria-label="relationshipName-header">Relationship Name</span>,
         formatter: (_, row) => {
-          if (row?.predicate.length>20) {
+          if (row?.predicate.length > 20) {
             let render = <div>
               <HCTooltip text={row?.predicate} id={`property-tooltip`} placement="top">
                 <span data-testid={`relationship-name-${row?.predicate}`} onClick={() => handleRelatedConceptClassesClick(row)} className={styles.link}>{row?.predicateUI}</span>
@@ -777,21 +777,21 @@ const GraphViewSidePanel: React.FC<Props> = ({dataModel,
             aria-label="propertiesTabInSidePanel"
             id="propertiesTabInSidePanel"
             title={<span className={styles.sidePanelTabLabel}>Entity Properties</span>}
-            tabClassName={`${styles.tab} ${currentTab === "properties" && styles.active}`}></Tab>
+            tabClassName={`${styles.tab} ${currentTab === "properties" && styles.active}`} />
           <Tab
             eventKey="entityType"
             aria-label="entityTypeTabInSidePanel"
             id="entityTypeTabInSidePanel"
             title={<span className={styles.sidePanelTabLabel}>Entity Type</span>}
             tabClassName={`${styles.tab}
-          ${currentTab === "entityType" && styles.active}`}></Tab>
+          ${currentTab === "entityType" && styles.active}`} />
           <Tab
             eventKey="relatedConceptClasses"
             aria-label="relatedConceptClassesTabInSidePanel"
             id="relatedConceptClassesTabInSidePanel"
             title={<span className={styles.sidePanelTabLabel}>Related Concept Classes</span>}
             tabClassName={`${styles.tab}
-          ${currentTab === "relatedConceptClasses" && styles.active}`}></Tab>
+          ${currentTab === "relatedConceptClasses" && styles.active}`} />
         </Tabs>
       </div>}
       {isConceptNode && <HCDivider className={"mt-2 mb-2"} style={{backgroundColor: "#ccc"}} />}

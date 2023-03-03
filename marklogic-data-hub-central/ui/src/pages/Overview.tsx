@@ -180,9 +180,9 @@ const Overview: React.FC<Props> = (props) => {
             ref={cardRefMap["load"]} tabIndex={0}
             onClick={() => { goToTile("load"); }} onKeyDown={(e) => cardKeyDownHandler(e, "load")}
           >
-            <div className={styles.head}></div>
+            <div className={styles.head} />
             <div className={styles.subtitle}>
-              <span className={styles.icon} aria-label="load-icon"></span>Load
+              <span className={styles.icon} aria-label="load-icon" />Load
             </div>
             <div className={styles.body}>Create and configure steps that define how data should be loaded.
               <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "load"); }}>
@@ -201,9 +201,9 @@ const Overview: React.FC<Props> = (props) => {
             ref={cardRefMap["model"]} tabIndex={0}
             onClick={() => { goToTile("model"); }} onKeyDown={(e) => cardKeyDownHandler(e, "model")}
           >
-            <div className={styles.head}></div>
+            <div className={styles.head} />
             <div className={styles.subtitle}>
-              <span className={styles.icon} aria-label="model-icon"></span>Model
+              <span className={styles.icon} aria-label="model-icon" />Model
             </div>
             <div className={styles.body}>Define the entity models that describe and standardize your data.
               <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "model"); }}>
@@ -222,9 +222,9 @@ const Overview: React.FC<Props> = (props) => {
             ref={cardRefMap["curate"]} tabIndex={0}
             onClick={() => { goToTile("curate"); }} onKeyDown={(e) => cardKeyDownHandler(e, "curate")}
           >
-            <div className={styles.head}></div>
+            <div className={styles.head} />
             <div className={styles.subtitle}>
-              <span className={styles.icon} aria-label="curate-icon"></span>Curate
+              <span className={styles.icon} aria-label="curate-icon" />Curate
             </div>
             <div className={styles.body}>Create and configure steps that curate and refine your data.
               <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "curate"); }}>
@@ -245,7 +245,7 @@ const Overview: React.FC<Props> = (props) => {
           >
             <div className={styles.head}>
               <div className={styles.subtitle}>
-                <span className={styles.icon} aria-label="run-icon"></span>Run
+                <span className={styles.icon} aria-label="run-icon" />Run
               </div>
               <div className={styles.body}>{tiles.run.intro}
                 <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "run"); }}>
@@ -266,7 +266,7 @@ const Overview: React.FC<Props> = (props) => {
             onClick={() => { goToTile("explore"); }} onKeyDown={(e) => cardKeyDownHandler(e, "explore")}
           >
             <div className={styles.head}>
-              <span className={styles.icon} aria-label="explore-icon"></span>
+              <span className={styles.icon} aria-label="explore-icon" />
               <div className={styles.subtitle}>Explore</div>
               <div className={styles.body}>{tiles.explore.intro}
                 <div className={styles.docLink} tabIndex={0} onKeyDown={(e) => { openDocumentation(e, "explore"); }}>

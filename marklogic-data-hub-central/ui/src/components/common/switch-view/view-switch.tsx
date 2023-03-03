@@ -65,7 +65,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
       </div>
     ) : (<div className={"switch-button-group outline"}>
       <span tabIndex={0} onKeyDown={(event) => {
-        if (event.key === "Enter"|| event.key === " ") { handleViewChange("graph"); }
+        if (event.key === "Enter" || event.key === " ") { handleViewChange("graph"); }
       }}>
         <input
           type="radio"
@@ -86,7 +86,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
         </HCTooltip>
       </span>
       <span tabIndex={0} onKeyDown={(event) => {
-        if (event.key === "Enter"|| event.key === " ") { handleViewChange("table"); }
+        if (event.key === "Enter" || event.key === " ") { handleViewChange("table"); }
       }}>
         <input
           type="radio"
@@ -109,7 +109,7 @@ const ViewSwitch: FC<Props> = ({handleViewChange, selectedView, snippetView, loa
 
       {snippetView &&
         (<span tabIndex={0} onKeyDown={(event) => {
-          if (event.key === "Enter"|| event.key === " ") { handleViewChange(ViewType.snippet); }
+          if (event.key === "Enter" || event.key === " ") { handleViewChange(ViewType.snippet); }
         }}>
           <input
             type="radio"

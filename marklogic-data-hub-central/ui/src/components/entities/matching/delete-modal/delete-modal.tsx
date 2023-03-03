@@ -47,21 +47,21 @@ const DeleteModal: React.FC<Props> = (props) => {
       onHide={closeModal}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
       <Modal.Body className={"pt-0 px-4"}>
         <p aria-label="delete-slider-text" >Are you sure you want to delete a&nbsp;<span>{props.editRuleset.hasOwnProperty("name") ? "ruleset" : "threshold"}</span>&nbsp;
-          <b>{props.editRuleset.hasOwnProperty("name")? props.editRuleset.name : (props.editRuleset.thresholdName + " - " + props.editRuleset.action)} </b> ?
+          <b>{props.editRuleset.hasOwnProperty("name") ? props.editRuleset.name : (props.editRuleset.thresholdName + " - " + props.editRuleset.action)} </b> ?
         </p>
         <div className={"d-flex justify-content-center pt-4 pb-2"}>
           <HCButton
-            aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-no`: `confirm-${props.editRuleset.thresholdName}-no`}
+            aria-label={props.editRuleset.hasOwnProperty("name") ? `confirm-${props.editRuleset.name}-no` : `confirm-${props.editRuleset.thresholdName}-no`}
             variant="outline-light"
             className={"me-2"}
             onClick={closeModal}
           >No</HCButton>
           <HCButton
-            aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-yes`: `confirm-${props.editRuleset.thresholdName}-yes`}
+            aria-label={props.editRuleset.hasOwnProperty("name") ? `confirm-${props.editRuleset.name}-yes` : `confirm-${props.editRuleset.thresholdName}-yes`}
             variant="primary"
             onClick={() => confirmAction()}
           >Yes</HCButton>

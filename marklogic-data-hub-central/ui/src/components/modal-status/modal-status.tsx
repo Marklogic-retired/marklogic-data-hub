@@ -142,7 +142,7 @@ const ModalStatus: React.FC<Props> = (props) => {
     >
       <Modal.Header className={"pe-4"}>
         <span className={"fs-4"}>{title}</span>
-        {sessionWarning ? null : <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button> }
+        {sessionWarning ? null : <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} /> }
       </Modal.Header>
       <Modal.Body className={"py-4"}>
         {sessionWarning && user.error.type !== "MODAL" && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}

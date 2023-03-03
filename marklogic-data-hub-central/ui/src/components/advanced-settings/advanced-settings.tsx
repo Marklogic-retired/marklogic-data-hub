@@ -980,7 +980,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 inputId="additionalColl"
                 isMulti
                 tabIndex={0}
-                onKeyDown={(e) => { e.key === "Enter" ? handleAddColl :null; }}
+                onKeyDown={(e) => { e.key === "Enter" ? handleAddColl : null; }}
                 isClearable={false}
                 openMenuOnFocus={true}
                 tabSelectsValue={false}

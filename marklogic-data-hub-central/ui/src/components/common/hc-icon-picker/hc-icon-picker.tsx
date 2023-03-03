@@ -50,7 +50,7 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
           onKeyDown={(e) => {
             if (e.key === "Escape") { setIsVisible(isVisible => !isVisible); e.preventDefault(); }
           }}
-        ></div>
+        />
       </div>
       {isVisible && (
         <div

@@ -139,7 +139,13 @@ describe("Verify load step failures in a flow", () => {
   test("Verify errors when flow with Load step fails with jobStatus finished_with_errors", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByText, getByLabelText, getAllByLabelText, getAllByText, getByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider
+    const {
+      getByText,
+      getByLabelText,
+      getAllByLabelText,
+      getAllByText,
+      getByTestId
+    } = await render(<MemoryRouter><AuthoritiesContext.Provider
       value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
@@ -182,7 +188,12 @@ describe("Verify load step failures in a flow", () => {
   test("Verify errors when flow with Load step fails with jobStatus failed", async () => {
     mocks.runFailedAPI(axiosMock);
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve(data.response)));
-    let result = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    let result = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>);
     const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     // Click disclosure icon
@@ -226,7 +237,16 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can create", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {getByText, getByPlaceholderText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText,
+      getByPlaceholderText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
     fireEvent.click(getByText("Create Flow"));
@@ -241,7 +261,16 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can update", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {getByText, getByPlaceholderText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText,
+      getByPlaceholderText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     const existingFlowName = data.flows.data[0].name;
     const updateFlowURL = `/api/flows/${existingFlowName}`;
@@ -259,7 +288,16 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can delete", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {getByText, getByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText,
+      getByTestId
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     const existingFlowName = data.flows.data[0].name;
     const updateFlowURL = `/api/flows/${existingFlowName}`;
@@ -275,7 +313,18 @@ describe("Verify Run CRUD operations", () => {
   test.skip("Verify a user with readFlow authority only cannot create/update/delete", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow"]);
-    const {getByPlaceholderText, getByText, getByLabelText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByPlaceholderText,
+      getByText,
+      getByLabelText,
+      queryByText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     const existingFlowName = data.flows.data[0].name;
 
@@ -311,7 +360,10 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.click(getByLabelText("Save"));
     // Create new flow
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
-    const newStepValues = {stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType, stepName: data.newStepToFlowOptions.newStepName};
+    const newStepValues = {
+      stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType,
+      stepName: data.newStepToFlowOptions.newStepName
+    };
     // Add step to new flow and Run step
     await wait(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
@@ -359,7 +411,13 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   test("Verify errors when flow with mapping/matching/merging/mastering step fails with jobStatus failed", async () => {
     mocks.runFailedAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const result = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const result = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
     const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     let steps = data.flows.data[0].steps;
@@ -417,7 +475,17 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   test("Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByLabelText, getAllByText, getByTestId} = await render(<MemoryRouter><AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByLabelText,
+      getAllByText,
+      getByTestId
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon

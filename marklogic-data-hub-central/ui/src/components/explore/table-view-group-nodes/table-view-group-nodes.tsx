@@ -112,8 +112,8 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   const modalTitle = () => {
     const {entityTypeId, parentNode} = relatedToData;
     let parentNodeURIParts = parentNode?.split("/");
-    let baseEntity = parentNodeURIParts && parentNodeURIParts[parentNodeURIParts.length-2];
-    let baseRecordLabel = parentNodeURIParts && parentNodeURIParts[parentNodeURIParts.length-1];
+    let baseEntity = parentNodeURIParts && parentNodeURIParts[parentNodeURIParts.length - 2];
+    let baseRecordLabel = parentNodeURIParts && parentNodeURIParts[parentNodeURIParts.length - 1];
     return (
       <div className={styles.modalTitleContainer}>
         <div className={styles.modalTitle} aria-label={`title-${entityTypeId}`}>{`Group of ${entityTypeId} records`}</div>
@@ -282,7 +282,7 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
       <div className={styles.modalInfoContainer}>
         <Modal.Header className={"bb-none align-items-start"}>
           {modalTitle()}
-          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
         </Modal.Header>
         {displayWarning() && exceededThresholdWarning}
       </div>

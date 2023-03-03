@@ -659,7 +659,7 @@ describe("Advanced step settings", () => {
         onCancel={jest.fn()}
       />
     );
-    const ariaLabels =[
+    const ariaLabels = [
       "sourceDatabase-select",
       "targetDatabase-select",
       "additionalColl-select",
@@ -690,7 +690,7 @@ describe("Advanced step settings", () => {
     userEvent.tab();
     expect(await findByLabelText("interceptors-textarea")).toHaveFocus();
     userEvent.tab();
-    expect(getAllByLabelText("icon: question-circle")[Index+1]).toHaveFocus();
+    expect(getAllByLabelText("icon: question-circle")[Index + 1]).toHaveFocus();
 
   }, 90000);
 

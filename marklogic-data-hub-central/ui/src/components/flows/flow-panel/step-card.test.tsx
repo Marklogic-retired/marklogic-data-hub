@@ -47,7 +47,7 @@ describe("Flow Card test suite", () => {
         {...defaultProps}
       /></Router>
     );
-    const flowName=flow.name;
+    const flowName = flow.name;
 
     // Curate link
     const pathname = `http://localhost/tiles/curate`;
@@ -63,7 +63,7 @@ describe("Flow Card test suite", () => {
         step={newStep}
       /></Router>
     );
-    const flowName=flow.name;
+    const flowName = flow.name;
 
     // Load link
     const pathname = `http://localhost/tiles/load`;

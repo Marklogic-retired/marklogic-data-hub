@@ -105,7 +105,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
           return (
             <TreeNode
               active={isActive}
-              className={ isActive ? styles.activeTreeNode: ""}
+              className={ isActive ? styles.activeTreeNode : ""}
               key={value}
               value={value}
               title={renderBasicPropertyTitle(structProperty)}
@@ -121,7 +121,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       return (
         <TreeNode
           active={isActive}
-          className={ isActive ? styles.activeTreeNode: ""}
+          className={ isActive ? styles.activeTreeNode : ""}
           selectable={isFirstLevelProperty && props.isForMerge}
           key={value}
           value={value}

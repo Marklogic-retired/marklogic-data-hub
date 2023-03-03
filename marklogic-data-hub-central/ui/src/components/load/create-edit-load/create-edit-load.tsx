@@ -703,7 +703,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               ref={descInputRef}
               tabIndex={0}
               placeholder="Enter description"
-              value={description ? description: " "}
+              value={description ? description : " "}
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
               onKeyDown={(e) => serviceNameKeyDownHandler(e, "descInput")}
@@ -779,7 +779,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                       ref={fieldSepInputRef}
                       tabIndex={0}
                       onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepInput")}
-                      value={otherSeparator ? otherSeparator: " "}
+                      value={otherSeparator ? otherSeparator : " "}
                       onChange={handleOtherSeparator}
                       style={{width: 75}}
                       disabled={props.canReadOnly && !props.canReadWrite}
@@ -869,7 +869,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 ref={srcTypeInputRef}
                 tabIndex={0}
                 placeholder="Enter Source Type"
-                value={sourceType ? sourceType: " "}
+                value={sourceType ? sourceType : " "}
                 onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcTypeInput")}
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
@@ -894,7 +894,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               ref={tgtPrefixInputRef}
               tabIndex={0}
               placeholder="Enter URI Prefix"
-              value={outputUriPrefix ? outputUriPrefix: " "}
+              value={outputUriPrefix ? outputUriPrefix : " "}
               onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPrefixInput")}
               onChange={handleOutputUriPrefix}
               disabled={props.canReadOnly && !props.canReadWrite}
@@ -916,7 +916,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               <HCButton tabIndex={-1} aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
             </span>
             &nbsp;&nbsp;
-            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
+            {!props.canReadWrite ? <HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
               className={styles.disabledSaveButton}
               aria-label="Save"
               size="sm"

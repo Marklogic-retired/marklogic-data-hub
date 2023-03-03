@@ -69,7 +69,12 @@ interface ISearchContextInterface {
   setConceptFilterTypeIds: (option: any[]) => void;
   setAllFilterTypeIds: (entities: any[], concepts: any[]) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionVals?: string) => void;
+  setLatestJobFacet: (
+    vals: string,
+    entityName: string,
+    stepName: string,
+    targetDatabase?: string,
+    collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearAllFacetsLS: () => void;
@@ -92,7 +97,14 @@ interface ISearchContextInterface {
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setBaseEntitiesWithProperties: (baseEntities: string[], propertiesToDisplay: string[]) => void;
   setView: (tileId: string, viewId: JSX.Element | null) => void;
-  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
+  setPageWithEntity: (
+    option: [],
+    pageNumber: number,
+    start: number,
+    facets: any,
+    searchString: string,
+    sortOrder: [],
+    targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
@@ -334,7 +346,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   //The "targetDatabase" parameter is temporary optional. Passing the database from the model view needs to be handleled in the separate story DHFPROD-6152.
-  const setLatestJobFacet = (vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionValues?: string) => {
+  const setLatestJobFacet = (
+    vals: string, entityName: string, stepName: string, targetDatabase?: string, collectionValues?: string
+  ) => {
     let facets = {};
     facets = {
       createdByJob: {
@@ -396,10 +410,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
         delete facets[constraint];
       }
       setSearchOptions({...searchOptions, selectedFacets: facets});
-      if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) { clearGreyFacet(constraint, val); }
+      if (Object.entries(greyedOptions.selectedFacets).length > 0
+      && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+        clearGreyFacet(constraint, val);
+      }
     }
   };
-
 
   const clearAllFacets = () => {
     setSearchOptions({
@@ -537,11 +553,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const clearConstraint = (constraint: string) => {
     let selectedFacet = {...searchOptions.selectedFacets};
     let greyFacets = {...greyedOptions.selectedFacets};
-    if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (Object.entries(greyedOptions.selectedFacets).length > 0
+    && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
       delete greyFacets[constraint];
       setGreyedOptions({...greyedOptions, selectedFacets: greyFacets});
     }
-    if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (Object.entries(searchOptions.selectedFacets).length > 0
+    && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
       delete selectedFacet[constraint];
       setSearchOptions({...searchOptions, selectedFacets: selectedFacet});
     }
@@ -675,7 +693,15 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setPageWithEntity = (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => {
+  const setPageWithEntity = (
+    option: [],
+    pageNumber: number,
+    start: number,
+    facets: any,
+    searchString: string,
+    sortOrder: [],
+    targetDatabase: string
+  ) => {
     setSearchOptions({
       ...searchOptions,
       entityTypeIds: option,

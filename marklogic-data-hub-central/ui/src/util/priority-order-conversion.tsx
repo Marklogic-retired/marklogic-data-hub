@@ -26,10 +26,10 @@ export const addSliderOptions =  (priorityOrderOptions, dropdownOption) => {
   let priorityOrderDropdownOptions = [...priorityOrderOptions];
   for (let key of priorityOrderDropdownOptions) {
     let priorityName;
-    if (key.value.split(":")[0] === "Length") priorityName=key.value.split(":")[0];
+    if (key.value.split(":")[0] === "Length") priorityName = key.value.split(":")[0];
     else {
-      let name=key.value.split(":")[0];
-      priorityName=name.split(" - ")[1];
+      let name = key.value.split(":")[0];
+      priorityName = name.split(" - ")[1];
     }
     if (key.hasOwnProperty("value") && priorityName === dropdownOption) {
       return priorityOrderDropdownOptions;

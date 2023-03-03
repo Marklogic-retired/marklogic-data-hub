@@ -248,7 +248,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
         <span className={"fs-4"}>
           Data model display settings
         </span>
-        <button type="button" className="btn-close" aria-label="Close" id={"close-settings-modal"} onClick={() => closeModal()}></button>
+        <button type="button" className="btn-close" aria-label="Close" id={"close-settings-modal"} onClick={() => closeModal()} />
       </Modal.Header>
       <Modal.Body>
         {errorMessage &&

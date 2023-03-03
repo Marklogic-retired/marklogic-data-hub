@@ -173,7 +173,7 @@ const Query: React.FC<Props> = (props) => {
     onClick={() => setDeleteModalVisibility(false)}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)} />
     </Modal.Header>
     <Modal.Body className={"pt-0 px-4"}>
       <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
@@ -224,17 +224,18 @@ const Query: React.FC<Props> = (props) => {
   };
 
   const isSaveQueryChanged = () => {
+    const {selectedQuery, selectedFacets, sortOrder, query, selectedTableProperties, entityTypeIds} = searchOptions;
     if (currentQuery && currentQuery.hasOwnProperty("savedQuery") && currentQuery.savedQuery.hasOwnProperty("query")) {
-      if (currentQuery.savedQuery.name !== searchOptions.selectedQuery) {
+      if (currentQuery.savedQuery.name !== selectedQuery) {
         if (Array.isArray(savedQueries) === false) {
-          if (savedQueries.savedQuery.name === searchOptions.selectedQuery) {
+          if (savedQueries.savedQuery.name === selectedQuery) {
             setCurrentQuery(savedQueries.savedQuery);
             setCurrentQueryName(savedQueries.savedQuery.name);
             setCurrentQueryDescription(savedQueries.savedQuery.description);
           }
         } else {
           for (let key of savedQueries) {
-            if (key.savedQuery.name === searchOptions.selectedQuery) {
+            if (key.savedQuery.name === selectedQuery) {
               setCurrentQuery(key);
               setCurrentQueryName(key.savedQuery.name);
               setCurrentQueryDescription(key.savedQuery.description);
@@ -244,12 +245,13 @@ const Query: React.FC<Props> = (props) => {
       }
 
       if ((
-        (JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
-        (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
-        (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
-        (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
-        (currentQuery.savedQuery.query.entityTypeIds.sort().join("") !== searchOptions.entityTypeIds.sort().join("")) ||
-        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
+        (JSON.stringify(
+          currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(selectedFacets)) ||
+        (currentQuery.savedQuery.query.searchText !== query) ||
+        (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(sortOrder)) ||
+        (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(selectedTableProperties)) ||
+        (currentQuery.savedQuery.query.entityTypeIds.sort().join("") !== entityTypeIds.sort().join("")) ||
+        (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && selectedQuery !== SELECT_QUERY_PLACEHOLDER) {
         return true;
       }
     }
@@ -364,7 +366,9 @@ const Query: React.FC<Props> = (props) => {
     const {entityDefArray, setCurrentBaseEntities} = props;
     const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
       && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && isSaveQueryChanged();
-    const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
+    const resetQueryNewConfirmation = props.isSavedQueryUser &&
+    props.queries.length > 0 &&
+    searchOptions.entityTypeIds.length > 0 &&
       (props.selectedFacets.length > 0 || searchOptions.query.length > 0
         || searchOptions.sortOrder.length > 0)
       && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
@@ -459,7 +463,12 @@ const Query: React.FC<Props> = (props) => {
     });
   };
 
-  const isEnabledSaveButton = props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
+  const isEnabledSaveButton =
+  props.isSavedQueryUser && (props.selectedFacets.length > 0 ||
+    searchOptions.query ||
+    props.isColumnSelectorTouched ||
+    searchOptions.sortOrder.length > 0)
+  && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER;
 
   return (
     <>
@@ -495,10 +504,15 @@ const Query: React.FC<Props> = (props) => {
                   onKeyDown={(event) => { if (event.key === "Enter") { isEnabledSaveButton ? setOpenSaveModal(true) : setOpenSaveModal(false); } }}>
                   <HCTooltip
                     text={
-                      props.isSavedQueryUser ? (((props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) && searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) ?
-                        exploreSidebarQueries.saveNewQuery :
-                        exploreSidebarQueries.disabledSaveButton
-                      ) :
+                      props.isSavedQueryUser ?
+                        (((props.selectedFacets.length > 0 ||
+                          searchOptions.query ||
+                          props.isColumnSelectorTouched ||
+                          searchOptions.sortOrder.length > 0) &&
+                      searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER) ?
+                          exploreSidebarQueries.saveNewQuery :
+                          exploreSidebarQueries.disabledSaveButton
+                        ) :
                         exploreSidebarQueries.saveWithoutPermisions
                     }
                     show={isTooltipVisible.saveQuery ? isTooltipVisible.saveQuery : undefined}
@@ -597,7 +611,9 @@ const Query: React.FC<Props> = (props) => {
                     />}
                 </div>}
 
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
+              {props.isSavedQueryUser &&
+              searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER &&
+              props.queries.length > 0 &&
                 <div>
                   {openEditDetail &&
                     <EditQueryDetails
@@ -610,7 +626,9 @@ const Query: React.FC<Props> = (props) => {
                     />
                   }
                 </div>}
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER && props.queries.length > 0 &&
+              {props.isSavedQueryUser &&
+              searchOptions.selectedQuery !== SELECT_QUERY_PLACEHOLDER &&
+              props.queries.length > 0 &&
                 <div>
                   {openSaveCopyModal &&
                     <SaveQueryModal
@@ -669,11 +687,14 @@ const Query: React.FC<Props> = (props) => {
               onHide={onResetCancel}
             >
               <Modal.Header className={"bb-none"}>
-                <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
+                <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel} />
               </Modal.Header>
               <Modal.Body className={"pt-0 px-4"}>
                 {showResetQueryEditedConfirmation &&
-                  <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                  <div>
+                    <p>Your unsaved changes in the query
+                      <strong>{searchOptions.selectedQuery}</strong>
+                      will be lost.</p>
                     <p>Would you like to save the changes before switching to another query?</p>
                   </div>}
                 {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}

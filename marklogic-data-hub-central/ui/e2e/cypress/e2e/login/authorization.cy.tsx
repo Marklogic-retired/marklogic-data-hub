@@ -114,7 +114,7 @@ describe("login", () => {
   it("should only enable Load and Explorer tile for hub-central-load-reader", () => {
 
     let stepName = "loadCustomersJSON";
-    let flowName= "personJSON";
+    let flowName = "personJSON";
     cy.loginAsTestUserWithRoles("hub-central-load-reader").withUI()
       .url().should("include", "/tiles");
     //All tiles but Explore and Model, should show a tooltip that says contact your administrator

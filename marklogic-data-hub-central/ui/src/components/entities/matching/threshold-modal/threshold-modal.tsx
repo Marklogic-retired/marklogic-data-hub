@@ -481,7 +481,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     >
       <Modal.Header>
         <span className={"fs-5"}>{Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}</span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
       <Modal.Body>
         <Form

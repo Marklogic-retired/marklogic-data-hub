@@ -72,7 +72,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const componentIsMounted = useRef(true);
   const authorityService = useContext(AuthoritiesContext);
 
-  const entityDefinition = entityDefinitionsArray?.find(entity => entity.name === data?.envelope?.instance?.info?.title);
+  const entityDefinition = entityDefinitionsArray?.find(
+    entity => entity.name === data?.envelope?.instance?.info?.title
+  );
   const entityRelatedProperties = entityDefinition?.properties?.filter(property => property.related);
 
   let tableView = detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true;
@@ -478,7 +480,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const renderEntityRelations = (entityRelatedProperty, property) => {
     const entities = hubCentralConfig?.modeling?.entities;
     if (!property) return;
-    const relatedEntityDefinition = entityDefinitionsArray.find(entity => entity.name === entityRelatedProperty.related);
+    const relatedEntityDefinition = entityDefinitionsArray.find(
+      entity => entity.name === entityRelatedProperty.related
+    );
     const propertyValues = _.isArray(property) ? property : [property];
     const body = propertyValues.map((value, i) => {
       return (
@@ -488,14 +492,21 @@ const Detail: React.FC<Props> = ({history, location}) => {
       );
     });
     const icon = entities && relatedEntityDefinition?.name && entities[relatedEntityDefinition.name]?.icon ? entities[relatedEntityDefinition.name].icon : "FaShapes";
-    const bgColor = entities && relatedEntityDefinition.name && entities[relatedEntityDefinition.name]?.color ? entities[relatedEntityDefinition.name].color : themeColors.defaults.entityColor;
+    const bgColor = entities && relatedEntityDefinition.name && entities[relatedEntityDefinition.name]?.color ?
+      entities[relatedEntityDefinition.name].color :
+      themeColors.defaults.entityColor;
     accordionsKey.add(relatedEntityDefinition.name);
-    const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name) ? relatedEntityDefinition.name : undefined;
+    const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name) ?
+      relatedEntityDefinition.name :
+      undefined;
     return (
       <div className="my-3" key={relatedEntityDefinition.name}>
         <Accordion activeKey={defaultActiveKey}>
           <Accordion.Item eventKey={relatedEntityDefinition.name} className={styles.itemClean}>
-            <Accordion.Header className={styles.entityRelationsHeader} style={{backgroundColor: bgColor}} onClick={() => handleOnclickItem(relatedEntityDefinition.name)}>
+            <Accordion.Header
+              className={styles.entityRelationsHeader}
+              style={{backgroundColor: bgColor}}
+              onClick={() => handleOnclickItem(relatedEntityDefinition.name)}>
               <div className={styles.entityRelationsHeaderContainer}>
                 <span className={styles.entityRelationsHeaderIcon} >
                   <DynamicIcons name={icon} />
@@ -515,9 +526,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const renderRelatedEntities = () => {
     const sections = entityRelatedProperties?.reduce((result, entityRelatedProperty, i) => {
       if (!data?.envelope?.instance?.info?.title || !entityRelatedProperty?.name) return result;
-      const propertyValue = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
-      if (!entityRelatedProperty || !propertyValue) return result;
-      const entityRelations = renderEntityRelations(entityRelatedProperty, propertyValue);
+      const propertyVal = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
+      if (!entityRelatedProperty || !propertyVal) return result;
+      const entityRelations = renderEntityRelations(entityRelatedProperty, propertyVal);
       if (entityRelations) result.push(entityRelations);
       return result;
     }, []);
@@ -527,7 +538,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
     if (!entityDefinition || entityDefinition?.relatedConcepts?.length === 0) return;
     const concepts = entityDefinition?.relatedConcepts.reduce((result, concept, index) => {
       if (!concept || !concept.context) return result;
-      let value = (data && data?.envelope?.instance?.info?.title && data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]) ? data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context] : "";
+      let value = (data && data?.envelope?.instance?.info?.title &&
+      data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]) ? data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context] : "";
       if (!value) return result;
       result.push(<div className={styles.conceptItems} key={index}><span>{value}</span></div>);
       return result;
@@ -544,7 +556,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
 
     return (<div className={styles.relationshipsContainer}>
-      {relatedEntitiesToDisplay && relatedEntitiesToDisplay.length > 0 && <div className={styles.relationshipsEntitySection}>
+      {relatedEntitiesToDisplay &&
+      relatedEntitiesToDisplay.length > 0 &&
+      <div className={styles.relationshipsEntitySection}>
         <div className={styles.relationshipsEntityHeader}>
           <span data-testid="related-entities-title" className={styles.relationshipsSectionTitle}>Related Entities</span>
           <div><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></div>
@@ -553,10 +567,15 @@ const Detail: React.FC<Props> = ({history, location}) => {
           {relatedEntitiesToDisplay}
         </div>
       </div>}
-      {(relatedEntitiesToDisplay && relatedEntitiesToDisplay.length > 0) && (relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0) && <div className={styles.relationshipsSeparatorSection}>
-        <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
-      </div>}
-      {relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0 && <div className={styles.relationshipsConceptsSection}>
+      {(relatedEntitiesToDisplay &&
+        relatedEntitiesToDisplay.length > 0) &&
+        (relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0) &&
+        <div className={styles.relationshipsSeparatorSection}>
+          <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
+        </div>}
+      {relatedConceptsToDisplay &&
+      relatedConceptsToDisplay?.length > 0 &&
+      <div className={styles.relationshipsConceptsSection}>
         <div className={styles.relationshipsConceptsHeader}>
           <span data-testid="related-concepts-title" className={styles.relationshipsSectionTitle}>Related Concepts</span>
         </div>
@@ -604,16 +623,14 @@ const Detail: React.FC<Props> = ({history, location}) => {
                         <FontAwesomeIcon icon={faThList} size="lg" />
                         <span className={styles.subMenu}>Instance</span>
                       </span>
-                    </HCTooltip>}>
-                  </Tab>
+                    </HCTooltip>} />
                   <Tab eventKey="full" id="full" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
                     title={<HCTooltip id="source-view-tooltip" placement="top" text={"Show the complete " + contentType.toUpperCase()} >
                       <span className="d-flex align-items-center">
                         {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
                         <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
                       </span>
-                    </HCTooltip>}>
-                  </Tab>
+                    </HCTooltip>} />
                   {hasRelations && <Tab eventKey="relationships" id="relationships" data-cy="relationships-view" tabClassName={`${styles.tabActive} ${selected === "relationships" && styles.active}`} title={
                     <HCTooltip id="relationships-tooltip" placement="top" text={"Show the relationships"}>
                       <span>
@@ -621,8 +638,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
                         <span className={styles.subMenu} >Relationships</span>
                       </span>
                     </HCTooltip>
-                  }>
-                  </Tab>}
+                  } />}
                   <Tab eventKey="metadata" id="metadata" data-cy="metadata-view" tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`} title={
                     <HCTooltip id="metadata-tooltip" placement="top" text={"Show the metadata"}>
                       <span>
@@ -630,8 +646,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
                         <span className={styles.subMenu}>Metadata</span>
                       </span>
                     </HCTooltip>
-                  }>
-                  </Tab>
+                  } />
                 </Tabs>
               </div>
             </div>
@@ -666,24 +681,57 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       (collections) &&
                       <div className={styles.collectionsTableContainer}>
                         <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                        {/* <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" /> */}
-                        <HCTable pagination={true} data={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" rowKey="key" />
+                        {/* <Table
+                        bordered
+                        dataSource={collections}
+                        columns={collectionColumns}
+                        className={styles.collectionsTable}
+                        data-testid="collections-table" /> */}
+                        <HCTable
+                          pagination={true}
+                          data={collections}
+                          columns={collectionColumns}
+                          className={styles.collectionsTable}
+                          data-testid="collections-table"
+                          rowKey="key" />
                       </div>
                     }
                     {
                       (recordPermissions) &&
                       <div className={styles.recordPermissionsTableContainer}>
                         <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                        {/* <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" /> */}
-                        <HCTable pagination={true} data={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" rowKey="key" />
+                        {/* <Table
+                        bordered
+                        dataSource={recordPermissions}
+                        columns={recordPermissionsColumns}
+                        className={styles.recordPermissionsTable}
+                        data-testid="record-permissions-table" /> */}
+                        <HCTable
+                          pagination={true}
+                          data={recordPermissions}
+                          columns={recordPermissionsColumns}
+                          className={styles.recordPermissionsTable}
+                          data-testid="record-permissions-table"
+                          rowKey="key" />
                       </div>
                     }
                     {
                       (recordMetadata) &&
                       <div className={styles.recordMetadataTableContainer}>
                         <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                        {/* <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" /> */}
-                        <HCTable pagination={true} data={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" rowKey="key" />
+                        {/* <Table
+                        bordered
+                        dataSource={recordMetadata}
+                        columns={recordMetadataColumns}
+                        className={styles.recordMetadataTable}
+                        data-testid="record-metadata-table" /> */}
+                        <HCTable
+                          pagination={true}
+                          data={recordMetadata}
+                          columns={recordMetadataColumns}
+                          className={styles.recordMetadataTable}
+                          data-testid="record-metadata-table"
+                          rowKey="key" />
                       </div>
                     }
                     <div className={styles.documentPropertiesContainer}>
@@ -703,7 +751,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
               }
               return block;
             })()}</div>
-            <div></div>
+            <div />
           </div>
         </div> :
         <DetailPageNonEntity

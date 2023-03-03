@@ -85,7 +85,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Edit Query Details"}</span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
         <Form name="basic" className={"container-fluid"} >
@@ -96,7 +96,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
                 <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
                   <HCInput
                     id="edit-query-detail-name"
-                    value={queryName ? queryName: " "}
+                    value={queryName ? queryName : " "}
                     placeholder={"Enter new query name"}
                     onChange={handleChange}
                   />
@@ -112,7 +112,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
             <Col className={"d-flex"}>
               <HCInput
                 id="edit-query-detail-description"
-                value={queryDescription ? queryDescription: " "}
+                value={queryDescription ? queryDescription : " "}
                 onChange={handleChange}
                 placeholder={"Enter new query description"}
               />

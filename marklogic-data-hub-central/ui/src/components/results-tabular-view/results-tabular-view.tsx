@@ -216,7 +216,7 @@ const ResultsTabularView = (props) => {
         <tbody>
           {
             dataToRender.length !== 0 ? dataToRender : <tr>{
-              properties?.map((col, index) => <td key={`${col?.propertyPath}-${index}`} className={styles.noData}></td>)
+              properties?.map((col, index) => <td key={`${col?.propertyPath}-${index}`} className={styles.noData} />)
             }</tr>
           }
         </tbody>
@@ -385,7 +385,7 @@ const ResultsTabularView = (props) => {
             {item.format.toUpperCase() !== "JSON" ?
               <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
               :
-              <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
+              <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
             }
           </HCTooltip>
         </Link>
@@ -512,7 +512,7 @@ const ResultsTabularView = (props) => {
     const result1 = results[0];
     const result2 = results[1];
 
-    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {

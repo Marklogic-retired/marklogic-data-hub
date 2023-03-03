@@ -12,7 +12,7 @@ const TimelineVis: React.FC<Props> = (props) => {
 
   return (
     <div style={{paddingTop: "10px", paddingLeft: props.borderMargin, paddingRight: props.borderMargin}}>
-      <Timeline items={props.items} options={props.options} clickHandler={props.clickHandler}></Timeline>
+      <Timeline items={props.items} options={props.options} clickHandler={props.clickHandler} />
     </div>
   );
 };

@@ -110,7 +110,16 @@ describe("Curate component", () => {
 
   test("Verify user with no authorities cannot access page", async () => {
     const authorityService = new AuthoritiesService();
-    const {getByText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText,
+      queryByText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Curate />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     expect(await (waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
 

@@ -1082,7 +1082,7 @@ const AddEditRelationship: React.FC<Props> = ({
   >
     <Modal.Header className={"pe-4"}>
       <span aria-label="relationshipHeader" className={"fs-3"}>{isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"py-4"}>
       <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
@@ -1129,7 +1129,7 @@ const AddEditRelationship: React.FC<Props> = ({
         </HCTooltip>
         <HCDivider />
         <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
-          <div ref={dummyNode}></div>
+          <div ref={dummyNode} />
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>SOURCE</span>
             <HCCard data-testid={"sourceEntityNode"} style={{width: 240, backgroundColor: relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
@@ -1147,7 +1147,7 @@ const AddEditRelationship: React.FC<Props> = ({
               <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
             </HCTooltip>
           </div>
-          <hr className={styles.horizontalLineBeforeName}></hr>
+          <hr className={styles.horizontalLineBeforeName} />
           </>}
           <div className={styles.relationshipInputContainer}>
             <HCInput
@@ -1168,7 +1168,7 @@ const AddEditRelationship: React.FC<Props> = ({
               <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
             </HCTooltip>
           </div>
-          <hr className={styles.horizontalLine} style={{width: visibleSettings === eVisibleSettings.EntityToConceptClass ? "100px" : "185px"}}></hr>
+          <hr className={styles.horizontalLine} style={{width: visibleSettings === eVisibleSettings.EntityToConceptClass ? "100px" : "185px"}} />
           {visibleSettings === eVisibleSettings.EntityToConceptClass ? <span>
             <HCButton variant="onlined-light" className={styles.cardinalityButtonConcept} data-testid="cardinalityButton">
               <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} style={{marginRight: "-10px"}} src={oneToOneIcon} alt={""} />

@@ -70,7 +70,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
         onHide={onCancel}
       >
         <Modal.Header className={"bb-none"}>
-          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
         </Modal.Header>
         <Modal.Body className={"pt-0 px-4"}>
           <p data-testid="discard-changes-message">Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery}?</strong></p>

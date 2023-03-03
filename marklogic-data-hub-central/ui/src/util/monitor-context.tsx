@@ -112,7 +112,8 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       delete facets[constraint];
     }
     setMonitorOptions({...monitorOptions, selectedFacets: facets});
-    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0 && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) { clearMonitorGreyFacet(constraint, val); }
+    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0
+    && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) { clearMonitorGreyFacet(constraint, val); }
   };
 
   const setAllMonitorFacets = (facets: any) => {
@@ -148,11 +149,13 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
   const clearMonitorConstraint = (constraint: string) => {
     let selectedFacet = monitorOptions.selectedFacets;
     let greyFacets = monitorGreyedOptions.selectedFacets;
-    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0 && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0
+    && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) {
       delete greyFacets[constraint];
       setMonitorGreyedOptions({...monitorGreyedOptions, selectedFacets: greyFacets});
     }
-    if (Object.entries(monitorOptions.selectedFacets).length > 0 && monitorOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (Object.entries(monitorOptions.selectedFacets).length > 0
+    && monitorOptions.selectedFacets.hasOwnProperty(constraint)) {
       delete selectedFacet[constraint];
       setMonitorOptions({...monitorOptions, selectedFacets: selectedFacet});
     }

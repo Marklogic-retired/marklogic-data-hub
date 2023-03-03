@@ -246,7 +246,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
             <HCTooltip placement="top" id={`${stepName}-explore-button`} text={isButtonDisabled ? RunToolTips.exploreButtonDisabled : RunToolTips.exploreButtonEnabled()}>
               <span>
                 <HCButton data-testid={`${stepName}-explorer-link`} size="sm" disabled={isButtonDisabled} onClick={() => { goToExplorer(entityName, targetDatabase, jobId, stepDefinitionType, stepName); }} className={styles.exploreCuratedData}>
-                  <span className={styles.exploreActionIcon}></span>
+                  <span className={styles.exploreActionIcon} />
                   <span className={styles.exploreActionText}>Explore Data</span>
                 </HCButton>
               </span>
@@ -354,7 +354,7 @@ const JobResponse: React.FC<Props> = ({jobId, setOpenJobResponse, setUserCanStop
         </span>
         :
         <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> {jobResponse.jobStatus === "canceled" ? "was canceled" : "completed"}</span>}
-      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => onCloseModal()}></button>
+      <button type="button" className="btn-close" aria-label={`${jobResponse.flow}-close`} data-testid={`${jobResponse.flow}-close`} onClick={() => onCloseModal()} />
     </Modal.Header>
     <Modal.Body>
       <div aria-label="jobResponse" id="jobResponse" className={styles.jobResponseContainer} >

@@ -243,7 +243,7 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={"mb-4"} style={{fontSize: "16px"}} >
@@ -267,7 +267,7 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div aria-label="add-step-confirmation" className={"mb-4"} style={{fontSize: "16px"}}>
@@ -294,7 +294,7 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4`} style={{fontSize: "16px"}}>
@@ -324,7 +324,7 @@ const LoadCard: React.FC<Props> = (props) => {
             <AddTooltipWhenTextOverflow text={loadArtifactName}/>
           </strong>.
         </div>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
@@ -334,7 +334,7 @@ const LoadCard: React.FC<Props> = (props) => {
             ))}</div>
           </Col>
           <Col xs={"auto"}>
-            <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
+            <HCDivider type="vertical" className={styles.verticalDiv} />
           </Col>
           <Col>
             <Link data-testid="link" id="tiles-add-run-new-flow" to={
@@ -363,7 +363,7 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px"}}>
@@ -389,7 +389,7 @@ const LoadCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px"}}>
@@ -595,7 +595,7 @@ const LoadCard: React.FC<Props> = (props) => {
               </HCCard>
 
             </div>
-          </Col>)) : <span></span>}
+          </Col>)) : <span />}
       </Row>
       {deleteConfirmation}
       {addConfirmation}

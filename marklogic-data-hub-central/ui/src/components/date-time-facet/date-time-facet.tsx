@@ -66,7 +66,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.name} data-testid="facet-date-time-picker" id={`${props.name}-facet-date-picker`}>
-      <p className={styles.facetName}><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name+"-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
+      <p className={styles.facetName}><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name + "-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
       <HCDateTimePicker key={props.name} name={props.name}
         time={true}
         placeholder={["Start Date Time", "End Date Time"]}

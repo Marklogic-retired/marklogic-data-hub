@@ -20,7 +20,9 @@ interface HubCentralConfigContextInterface {
   updateHubCentralConfigOnServer: (config: any) => void;
 }
 
-export const HubCentralConfigContext = React.createContext<HubCentralConfigContextInterface>({...defaultContextOptions});
+export const HubCentralConfigContext = React.createContext<HubCentralConfigContextInterface>(
+  {...defaultContextOptions}
+);
 
 const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
   const {handleError} = useContext(UserContext);
@@ -51,19 +53,21 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
             icon: defaultConceptIcon
           };
 
-          mockConcepts.data.entitites.forEach(({relatedConcepts}) => relatedConcepts.forEach(({conceptClass, conceptIRI}) => {
-            const semanticConcept = conceptIRI.split("/").pop();
-            if (!updatedHubCentralConfig["modeling"]["concepts"][conceptClass]) {
-              updatedHubCentralConfig["modeling"]["concepts"][conceptClass] = Object.assign({semanticConcepts: {}}, defaultConceptsData);
-            }
-            if (semanticConcept) {
-              if (updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts) {
-                updatedHubCentralConfig["modeling"]["concepts"][conceptClass]["semanticConcepts"][semanticConcept] = Object.assign({}, defaultConceptsData);
-              } else {
-                updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts = {[semanticConcept]: {...defaultConceptsData}};
+          mockConcepts.data.entitites.forEach(
+            ({relatedConcepts}) => relatedConcepts.forEach(({conceptClass, conceptIRI}
+            ) => {
+              const semanticConcept = conceptIRI.split("/").pop();
+              if (!updatedHubCentralConfig["modeling"]["concepts"][conceptClass]) {
+                updatedHubCentralConfig["modeling"]["concepts"][conceptClass] = Object.assign({semanticConcepts: {}}, defaultConceptsData);
               }
-            }
-          }));
+              if (semanticConcept) {
+                if (updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts) {
+                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass]["semanticConcepts"][semanticConcept] = Object.assign({}, defaultConceptsData);
+                } else {
+                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts = {[semanticConcept]: {...defaultConceptsData}};
+                }
+              }
+            }));
           setConfig(updatedHubCentralConfig);
         }
       }

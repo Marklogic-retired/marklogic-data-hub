@@ -29,7 +29,7 @@ const SearchSummary: React.FC<Props> = (props) => {
   return (
     <div className={styles.searchSummaryContainer}>
       <span>Showing </span>
-      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter(props.start)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start + props.pageSize -1)}</span> <span>of</span> <span className={styles.summaryValue} data-cy="total-documents" data-testid="total-documents">{numberConverter(props.total)}</span>
+      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter(props.start)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start + props.pageSize - 1)}</span> <span>of</span> <span className={styles.summaryValue} data-cy="total-documents" data-testid="total-documents">{numberConverter(props.total)}</span>
       <span> results</span>
     </div>
   );

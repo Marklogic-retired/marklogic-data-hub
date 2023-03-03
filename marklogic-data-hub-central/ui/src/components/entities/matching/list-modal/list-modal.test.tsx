@@ -53,7 +53,7 @@ describe("Test input validation values to ignore", () => {
       updateListValues={() => {}}
       listValues={["One"]}
     />);
-    const inputListValues =screen.getByPlaceholderText("Enter values to remove");
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
     fireEvent.change(inputListValues, {target: {value: "abcd"}});
     fireEvent.click(screen.getByRole("option"));
     fireEvent.change(inputListValues, {target: {value: "abcd"}});
@@ -82,7 +82,7 @@ describe("Test input validation values to ignore", () => {
       listValues={["One"]}
     />);
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
-    const inputListValues =screen.getByPlaceholderText("Enter values to remove");
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
     fireEvent.change(inputListValues, {target: {value: "ab$cd"}});
     fireEvent.click(screen.getByRole("option"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
@@ -107,7 +107,7 @@ describe("Test input validation values to ignore", () => {
       listValues={["One"]}
     />);
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
-    const inputListValues =screen.getByPlaceholderText("Enter values to remove");
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
     fireEvent.change(inputListValues, {target: {value: "ab cd"}});
     fireEvent.click(screen.getByRole("option"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
@@ -124,7 +124,7 @@ describe("Test input validation values to ignore", () => {
       listValues={["One"]}
     />);
     expect(screen.queryAllByText("This list name already exists.")).toHaveLength(0);
-    const inputListName =screen.getByPlaceholderText("Enter title");
+    const inputListName = screen.getByPlaceholderText("Enter title");
     fireEvent.change(inputListName, {target: {value: "abcd"}});
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
     expect(screen.getByText((content, node) => {
@@ -143,7 +143,7 @@ describe("Test input validation values to ignore", () => {
       listValues={["One"]}
     />);
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
-    const inputListName =screen.getByPlaceholderText("Enter title");
+    const inputListName = screen.getByPlaceholderText("Enter title");
     fireEvent.change(inputListName, {target: {value: "Listt$"}});
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
@@ -161,7 +161,7 @@ describe("Test input validation values to ignore", () => {
     />);
     const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
-    const inputListName =screen.getByPlaceholderText("Enter title");
+    const inputListName = screen.getByPlaceholderText("Enter title");
     fireEvent.change(inputListName, {target: {value: "1List"}});
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);

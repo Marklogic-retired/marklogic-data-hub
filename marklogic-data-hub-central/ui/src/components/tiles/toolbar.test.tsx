@@ -72,7 +72,7 @@ describe("Toolbar component", () => {
 
     // pressing down arrow sequentially moves focus down
     for (i = 1; i < 6; ++i) {
-      fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i-1] + "-link"), {key: "ArrowDown", code: "ArrowDown"});
+      fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i - 1] + "-link"), {key: "ArrowDown", code: "ArrowDown"});
       expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();
     }
 
@@ -82,7 +82,7 @@ describe("Toolbar component", () => {
 
     // pressing up arrow sequentially moves focus up
     for (i = 3; i >= 0; --i) {
-      fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i+1] + "-link"), {key: "ArrowUp", code: "ArrowUp"});
+      fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i + 1] + "-link"), {key: "ArrowUp", code: "ArrowUp"});
       expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();
     }
   });

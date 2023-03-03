@@ -14,8 +14,7 @@ const HCDivider: React.FC<Props> = (props) => {
       props.type === "vertical" ? styles.vl : styles.hl,
       props.className ? props.className : "",
       props.dashed ? props.type === "vertical" ? styles.dashedVertical : styles.dashedHorizontal : "",
-    ].join(" ")} style={props.style}>
-    </hr>
+    ].join(" ")} style={props.style} />
   );
 };
 

@@ -10,7 +10,7 @@ import {HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/common";
 import {deepCopy} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
 
-const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
+const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
 const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
@@ -136,7 +136,7 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
                   </HCCheckbox>
                   {isNotEmptyIndicatorData &&
                     <span className={styles.indicatorContainer} aria-label={`related-entity-${name}-amountbar`}>
-                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name]?.amount*100/entityIndicatorData.max} isActive={checked} />
+                      <HCFacetIndicator percentage={isNaN(entityIndicatorData.max) ? 0 : entityIndicatorData.entities[name]?.amount * 100 / entityIndicatorData.max} isActive={checked} />
                     </span>
                   }
                 </div>

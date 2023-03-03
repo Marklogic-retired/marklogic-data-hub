@@ -137,7 +137,7 @@ const HCPopoverSearch: React.FC<Props> = ({
           role="tooltip"
           className={`fade show popover bs-popover-bottom position-absolute top-100 start-50 translate-middle-x mt-1 ${styles.popoverStyle}`}
         >
-          <div className={`popover-arrow ${styles.popoverIndicator}`}></div>
+          <div className={`popover-arrow ${styles.popoverIndicator}`} />
           <div className="popover-body">
             <HCInput
               id={inputId}

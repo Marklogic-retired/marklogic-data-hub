@@ -213,9 +213,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     let aParts = a.value.split(":");
     let bParts = b.value.split(":");
     // If weights not equal
-    if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+    if (bParts[bParts.length - 1] !== aParts[aParts.length - 1]) {
       // By weight
-      return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+      return parseInt(bParts[bParts.length - 1]) - parseInt(aParts[aParts.length - 1]);
     } else {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
@@ -247,7 +247,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     onMove: function(item, callback) {
       if (item.start >= 0 && item.start <= 100) {
         setPriorityOrderTouched(true);
-        item.value= getStrategyName(item);
+        item.value = getStrategyName(item);
         callback(item);
         updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
       } else {
@@ -276,7 +276,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     },
     template: function(item) {
       if (item && item.hasOwnProperty("value")) {
-        return "<div data-testid=\"strategy"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1]+ "</div></div>";
+        return "<div data-testid=\"strategy" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
       }
     },
     maxMinorChars: 4,
@@ -296,7 +296,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const getStrategyName = (item) => {
-    let strategyName=item.value.split(":")[0];
+    let strategyName = item.value.split(":")[0];
     let startTime;
     if (item.start === 100 || item.start === 1) {
       startTime = item.start;
@@ -304,9 +304,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       startTime = item.start.getMilliseconds().toString();
     }
     if ((strategyName !== "Length" && strategyName !== "Timestamp") && item.value.indexOf("Source - ") === -1) {
-      item.value = "Source - " + strategyName + ":"+ startTime;
+      item.value = "Source - " + strategyName + ":" + startTime;
     } else {
-      item.value = item.value.split(":")[0] + ":"+ startTime;
+      item.value = item.value.split(":")[0] + ":" + startTime;
     }
     return item.value;
   };
@@ -655,7 +655,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     </div>
   );
 
-  const handleToggleCheck =(event) => {
+  const handleToggleCheck = (event) => {
     const {target, type, key} = event;
     if (type === "keydown") {
       if (key === "Enter") {
@@ -679,7 +679,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         <span className={"fs-5"}>
           {props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
         </span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
         {validationWarnings && validationWarnings.length > 0 ? (
@@ -990,8 +990,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         defaultChecked={false}
                         onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
                         onKeyDown={(e) => { handleToggleCheck(e); }}
-                        className={styles.switchToggleMergeStrategy}>
-                      </FormCheck>
+                        className={styles.switchToggleMergeStrategy} />
                       <span>
                         <HCTooltip text={MergeRuleTooltips.strategyScale} id="priority-order-tooltip" placement="right">
                           <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>

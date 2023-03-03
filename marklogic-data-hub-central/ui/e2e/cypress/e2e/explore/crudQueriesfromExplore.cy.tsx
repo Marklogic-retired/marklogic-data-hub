@@ -10,7 +10,7 @@ import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
 import table from "../../support/components/common/tables";
 
-let qName="";
+let qName = "";
 
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {

@@ -116,7 +116,7 @@ const TableView: React.FC<Props> = (props) => {
     }
   };
 
-  const unmergeIcon= () => {
+  const unmergeIcon = () => {
     if (props.data) {
       if (!props.isUnmergeAvailable?.(props.data.docUri)) return null;
       if (props.data.unmerge) {

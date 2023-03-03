@@ -151,7 +151,7 @@ const NewFlowDialog: React.FC<Props> = ({
   >
     <Modal.Header className={"bb-none"}>
       <span className={"fs-3"}>{title || "New Flow"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}} />
     </Modal.Header>
     <Modal.Body className={"py-2"}>
       <div className={styles.newFlowForm}>

@@ -80,7 +80,7 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
     if (onKeyDown) { onKeyDown(event, inputRefAux); }
   };
 
-  useEffect(() => { if (props?.value) setMessage(props.value === " "? "" : props.value); }, [props?.value]);
+  useEffect(() => { if (props?.value) setMessage(props.value === " " ? "" : props.value); }, [props?.value]);
 
   return (
     <>

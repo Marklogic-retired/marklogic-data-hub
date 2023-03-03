@@ -13,7 +13,7 @@ import curateData from "../../../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
 
-const getSubElements=(content, node, title) => {
+const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
   const childrenDontHaveText = Array.from(node.children).every(

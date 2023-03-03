@@ -226,7 +226,7 @@ const LoadList: React.FC<Props> = (props) => {
       show={addDialogVisible}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" className={"mb-4"} style={{fontSize: "16px"}}>
@@ -250,7 +250,7 @@ const LoadList: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4`} style={{fontSize: "16px"}}>
@@ -274,7 +274,7 @@ const LoadList: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div><button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div><button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
@@ -284,7 +284,7 @@ const LoadList: React.FC<Props> = (props) => {
             ))}</div>
           </Col>
           <Col xs={"auto"}>
-            <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
+            <HCDivider type="vertical" className={styles.verticalDiv} />
           </Col>
           <Col>
             <Link data-testid="link" id="tiles-add-run-new-flow" to={
@@ -313,7 +313,7 @@ const LoadList: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px"}}>
@@ -339,7 +339,7 @@ const LoadList: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px"}}>
@@ -385,11 +385,11 @@ const LoadList: React.FC<Props> = (props) => {
       >
         {props.canWriteFlow ?
           <HCTooltip id="add-to-flow-tooltip" text={"Add to Flow"} placement="bottom">
-            <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"} tabIndex={0}></span>
+            <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"} tabIndex={0} />
           </HCTooltip>
           :
           <HCTooltip id="missing-permission-tooltip" text={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltip}>
-            <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span>
+            <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"} />
           </HCTooltip>}
       </Dropdown.Toggle>
       <Dropdown.Menu className={styles.dropdownMenu} >
@@ -445,7 +445,7 @@ const LoadList: React.FC<Props> = (props) => {
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div style={{fontSize: "16px"}} className={"mb-4"}>
@@ -474,7 +474,7 @@ const LoadList: React.FC<Props> = (props) => {
         <><span data-testid="loadTableName">Name</span>{sortElement}</>
       ),
       formatter: (text: any, record: any) => (
-        <span><span tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter"|| event.key === " ") { OpenStepSettings(record); } }}
+        <span><span tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { OpenStepSettings(record); } }}
           onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
       ),
       sortFunc: columnSorter,

@@ -522,7 +522,7 @@ const EntityTiles = (props) => {
     if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
   };
   const customArtifactsAux = (entityType: string, returnCount: boolean) => {
-    let artifacts =customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
+    let artifacts = customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId);
     if (returnCount) { return artifacts?.artifacts ? artifacts.artifacts.length : 0; } else { return artifacts; }
   };
 

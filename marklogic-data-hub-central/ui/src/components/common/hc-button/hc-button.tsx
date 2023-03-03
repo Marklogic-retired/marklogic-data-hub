@@ -7,7 +7,7 @@ export interface HCButtonProps extends ButtonProps {
   loading?: boolean
 }
 
-const HCButton= React.forwardRef<HTMLButtonElement, HCButtonProps>(({loading, children, ...others}, ref) => {
+const HCButton = React.forwardRef<HTMLButtonElement, HCButtonProps>(({loading, children, ...others}, ref) => {
   return (
     <Button data-testid="hc-button-component" disabled={loading ?? loading} {...others} ref={ref}>
       {children}

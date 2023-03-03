@@ -44,7 +44,11 @@ const INITIAL_SELECTION = ""; // '' for no tile initially
 
 const TilesView = (props) => {
   const {handleError} = useContext(UserContext);
-  const {hubCentralConfig, getHubCentralConfigFromServer, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
+  const {
+    hubCentralConfig,
+    getHubCentralConfigFromServer,
+    updateHubCentralConfigOnServer
+  } = useContext(HubCentralConfigContext);
   const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
   const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
   const [options, setOptions] = useState<TileItem|null>(null);
@@ -97,7 +101,11 @@ const TilesView = (props) => {
   const enabledViews: Record<TileId, boolean> = {
     load: auth.canReadLoad() || auth.canWriteLoad(),
     model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
-    curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
+    curate: auth.canReadMapping() ||
+            auth.canWriteMapping() ||
+            auth.canReadMatchMerge() ||
+            auth.canWriteMatchMerge() ||
+            auth.canReadCustom(),
     run: auth.canReadFlow() || auth.canWriteFlow(),
     explore: true,
     detail: true,

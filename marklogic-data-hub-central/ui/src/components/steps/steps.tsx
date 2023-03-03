@@ -102,7 +102,7 @@ const Steps: React.FC<Props> = (props) => {
     onHide={onErrorCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div className={"d-flex align-items-start justify-content-center"}>
@@ -314,7 +314,7 @@ const Steps: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"bb-none pb-0"}>
       <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"pt-0 pb-4"}>
       <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>

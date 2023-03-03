@@ -93,7 +93,7 @@ const formatCardUri = (str) => {
   if (str.length <= 25) {
     return str;
   } else {
-    return str.substring(0, 5).concat("...").concat(str.substring(str.length -20));
+    return str.substring(0, 5).concat("...").concat(str.substring(str.length - 20));
   }
 };
 

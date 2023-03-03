@@ -169,7 +169,7 @@ describe("Merge Strategy Dialog component", () => {
   });
 
   it("Accessibility", () => {
-    const {getAllByTestId, getByLabelText, getAllByLabelText} =render(
+    const {getAllByTestId, getByLabelText, getAllByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
           {...data.mergeStrategyDataProps}

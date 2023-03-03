@@ -397,8 +397,8 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
   const dataRowKey = typeof row[rowKey] === "string" && row[rowKey].includes(".") ? row[rowKey] : expandKey;
 
   const indicatorContent = showIndicator ?
-    <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell}></div>:
-    <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>;
+    <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell} /> :
+    <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell} />;
 
   return <div key={expandKey} className={`${isEntityMapping(keyUtil, showHeader) ? styles.childrenIndentTableRowColored : styles.childrenIndentTableRow} hc-table_row`} data-row-key={dataRowKey}>
     {["property", "explore", "ruleset-multiple-modal", "mapping-step-detail"].includes(component) ? indicatorContent : null}
@@ -423,8 +423,8 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, component, indentLis
           {isKeyColumn(colIndex) && expandIcon ?
             <div className={styles.childrenTextContainer}>
               {isKeyColumn(colIndex) ? expandIcon : null}
-              <span style={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", lineHeight: "normal", maxWidth: isMapping(keyUtil) ? `${col.width - indentation*baseIndent}px` : component === "explore" ? `${500 - indentation*baseIndent}px` : component === "property" ? `${480 - indentation*baseIndent}px` : `${165 - indentation*baseIndent}px`}}>{childElement}</span>
-            </div> : <span style={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", lineHeight: "normal", maxWidth: isMapping(keyUtil) ? `${col.width - indentation*baseIndent}px` : component === "explore" ?`${500 - indentation*baseIndent}px` : component === "property" ? `${480 - indentation*baseIndent}px` : `${165 - indentation*baseIndent}px`}}>{childElement}</span>}
+              <span style={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", lineHeight: "normal", maxWidth: isMapping(keyUtil) ? `${col.width - indentation * baseIndent}px` : component === "explore" ? `${500 - indentation * baseIndent}px` : component === "property" ? `${480 - indentation * baseIndent}px` : `${165 - indentation * baseIndent}px`}}>{childElement}</span>
+            </div> : <span style={{whiteSpace: "nowrap", textOverflow: "ellipsis", overflow: "hidden", lineHeight: "normal", maxWidth: isMapping(keyUtil) ? `${col.width - indentation * baseIndent}px` : component === "explore" ? `${500 - indentation * baseIndent}px` : component === "property" ? `${480 - indentation * baseIndent}px` : `${165 - indentation * baseIndent}px`}}>{childElement}</span>}
         </div>
         : <div key={`${col.dataField}-${colIndex}`} className={styles.childrenIndentElementCell} style={{padding: `16px`, width: col.width || "auto"}}>
           {childElement}

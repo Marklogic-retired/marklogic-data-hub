@@ -181,7 +181,7 @@ const Tiles: React.FC<Props> = (props) => {
       >
         <div className={styles.title}>
           {(options["iconType"] === "custom") ? (<>
-            <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}}></span>
+            <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}} />
             <div className={styles.exploreText} aria-label={"title-" + viewId}>{options["title"]}</div>
             {["model", "explore"].includes(viewId) && <span id={`${viewId}Info`}>
               <OverlayTrigger

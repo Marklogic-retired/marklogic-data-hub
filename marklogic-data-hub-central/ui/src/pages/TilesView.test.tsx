@@ -163,13 +163,13 @@ describe("Tiles View component tests for Developer user", () => {
 
     ["model", "curate", "run"].forEach((tileId) => {
       // Curate tile not shown initially
-      expect(queryByText("icon-"+tileId)).not.toBeInTheDocument();
-      expect(queryByText("title-"+tileId)).not.toBeInTheDocument();
+      expect(queryByText("icon-" + tileId)).not.toBeInTheDocument();
+      expect(queryByText("title-" + tileId)).not.toBeInTheDocument();
 
-      fireEvent.click(getByLabelText("tool-"+tileId));
+      fireEvent.click(getByLabelText("tool-" + tileId));
 
       // Other tile not shown after click
-      expect(queryByLabelText("title-"+tileId)).not.toBeInTheDocument();
+      expect(queryByLabelText("title-" + tileId)).not.toBeInTheDocument();
     });
 
   });

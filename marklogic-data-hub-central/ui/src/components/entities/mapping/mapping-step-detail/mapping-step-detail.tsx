@@ -791,7 +791,7 @@ const MappingStepDetail: React.FC = () => {
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
-        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriInput"); }}></HCInput>&nbsp;
+        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriInput"); }} />&nbsp;
           <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "closeEditUri")}/>&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "submitEditUri"); }}/>
         </span>
       </div>
@@ -1476,7 +1476,7 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const handleColOptionsChecked = async (e) => {
-    let obj =getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() : checkedEntityColumns;
+    let obj = getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() : checkedEntityColumns;
     obj[e.target.value] = e.target.checked;
     let newEntityStorage;
     newEntityStorage = {
@@ -1488,7 +1488,7 @@ const MappingStepDetail: React.FC = () => {
     };
     setViewSettings(newEntityStorage);
     await setCheckedEntityColumns({...obj});
-    checkedEntityColumnsFlag ? checkedEntityColumnsFlag === "false" ? setCheckedEntityColumnsFlag("true"): setCheckedEntityColumnsFlag("false"):setCheckedEntityColumnsFlag("true");
+    checkedEntityColumnsFlag ? checkedEntityColumnsFlag === "false" ? setCheckedEntityColumnsFlag("true") : setCheckedEntityColumnsFlag("false") : setCheckedEntityColumnsFlag("true");
   };
 
   const columnOptionsDropdown = (
@@ -1504,7 +1504,7 @@ const MappingStepDetail: React.FC = () => {
             handleClick={handleColOptionsChecked}
             value={entLabel}
             label={columnOptionsLabel[entLabel]}
-            checked={getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel]: checkedEntityColumns[entLabel]}
+            checked={getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel] : checkedEntityColumns[entLabel]}
             dataTestId={`columnOptionsCheckBox-${entLabel}`}
             handleKeyDown={(e) => { serviceCheckKeyDownHandler(e, i); }}
           />
@@ -1784,7 +1784,7 @@ const MappingStepDetail: React.FC = () => {
         </span>
         <div className={styles.legendContainer}><ModelingLegend /></div>
         <div className={styles.header}>
-          {errorInSaving ? success() : <span className={styles.noMessage}></span>}
+          {errorInSaving ? success() : <span className={styles.noMessage} />}
         </div>
         <br />
         <br />
@@ -1883,7 +1883,7 @@ const MappingStepDetail: React.FC = () => {
                                 baseIndent={0}
                                 expandedRowRender={(row) => {
                                   const expandedRows = <div key={1} style={{display: "table", width: "100%"}} className="hc-table_row">
-                                    <div key={`indicator_${1}`} style={{display: "table-cell"}}></div>
+                                    <div key={`indicator_${1}`} style={{display: "table-cell"}} />
                                   </div>;
                                   return expandedRows;
                                 }}
@@ -1941,10 +1941,10 @@ const MappingStepDetail: React.FC = () => {
               data-testid="entityContainer"
               className={styles.entityContainer}>
               <div className={styles.entityDetails}>
-                <span className={styles.entityTypeTitle}><p className={styles.entityTypeText}><span className={styles.entityIcon}></span><strong>Entity Type: {curationOptions.activeStep.entityName}</strong></p></span>
+                <span className={styles.entityTypeTitle}><p className={styles.entityTypeText}><span className={styles.entityIcon} /><strong>Entity Type: {curationOptions.activeStep.entityName}</strong></p></span>
 
               </div>
-              <div ref={dummyNode}></div>
+              <div ref={dummyNode} />
               <div className={styles.columnOptionsSelectorContainer}>
                 <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
                 <span className={styles.entityCollapseButtons}><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>

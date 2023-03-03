@@ -55,13 +55,13 @@ export const getAllExcludeValuesList = async() => {
   return await axios.get(`/api/steps/matching/exclusionList`);
 };
 
-export const createEditExcludeValuesList = async(listName, listValues, oldName="") => {
+export const createEditExcludeValuesList = async(listName, listValues, oldName = "") => {
   const body = {
     name: listName,
     values: listValues
   };
   try {
-    let response =  await axios.put(`/api/steps/matching/exclusionList/${oldName !== "" ? oldName:listName}`, body);
+    let response =  await axios.put(`/api/steps/matching/exclusionList/${oldName !== "" ? oldName : listName}`, body);
     if (response.status === 200) {
       return true;
     } else {

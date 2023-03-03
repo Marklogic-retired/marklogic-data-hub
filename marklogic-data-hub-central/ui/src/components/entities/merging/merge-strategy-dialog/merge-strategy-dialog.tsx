@@ -128,12 +128,12 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
     let editPriorityName = id.split(":")[0];
     for (let priority of priorityOrderOptions) {
-      let id2=priority.id;
+      let id2 = priority.id;
       let priorityName  = id2.split(":")[0];
       if (priorityName === editPriorityName) {
         let name = priorityName + ":" + parseInt(newValue);
-        priority.start=parseInt(newValue);
-        priority.value= name;
+        priority.start = parseInt(newValue);
+        priority.value = name;
       }
     }
     return priorityOrderOptions;
@@ -151,9 +151,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     let aParts = a.value.split(":");
     let bParts = b.value.split(":");
     // If weights not equal
-    if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+    if (bParts[bParts.length - 1] !== aParts[aParts.length - 1]) {
       // By weight
-      return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+      return parseInt(bParts[bParts.length - 1]) - parseInt(aParts[aParts.length - 1]);
     } else {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
@@ -185,7 +185,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     onMove: function(item, callback) {
       setPriorityOrderTouched(true);
       if (item.start >= 0 && item.start <= 100) {
-        item.value= getStrategyName(item);
+        item.value = getStrategyName(item);
         callback(item);
         updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
       } else {
@@ -214,7 +214,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     },
     template: function(item) {
       if (item && item.hasOwnProperty("value")) {
-        return "<div data-testid=\"strategy"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1]+ "</div></div>";
+        return "<div data-testid=\"strategy" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
       }
     },
     maxMinorChars: 4,
@@ -278,7 +278,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const getStrategyName = (item) => {
-    let strategyName=item.value.split(":")[0];
+    let strategyName = item.value.split(":")[0];
     let startTime;
     if (item.start === 100 || item.start === 1) {
       startTime = item.start;
@@ -286,9 +286,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       startTime = item.start.getMilliseconds().toString();
     }
     if ((strategyName !== "Length" && strategyName !== "Timestamp") && item.value.indexOf("Source - ") === -1) {
-      item.value = "Source - " + strategyName + ":"+ startTime;
+      item.value = "Source - " + strategyName + ":" + startTime;
     } else {
-      item.value = item.value.split(":")[0] + ":"+ startTime;
+      item.value = item.value.split(":")[0] + ":" + startTime;
     }
     return item.value;
   };
@@ -409,7 +409,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           if (key.priorityOrder.hasOwnProperty("timeWeight")) {
             const priorityOrderTimeObject = {
               id: "Timestamp:" + key.priorityOrder.timeWeight.toString(),
-              value: "Timestamp:"+  key.priorityOrder.timeWeight.toString(),
+              value: "Timestamp:" +  key.priorityOrder.timeWeight.toString(),
               start: key.priorityOrder.timeWeight,
             };
             priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
@@ -419,7 +419,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               const priorityOrderSourceObject = {
                 id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
                 start: key1.weight,
-                value: "Source - "  +key1.sourceName + ":" + key1.weight.toString(),
+                value: "Source - "  + key1.sourceName + ":" + key1.weight.toString(),
               };
               priorityOrderStrategyOptions.push(priorityOrderSourceObject);
             }
@@ -427,7 +427,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           if (key.priorityOrder.hasOwnProperty("lengthWeight")) {
             const priorityOrderLengthObject = {
               id: "Length:" + key.priorityOrder.lengthWeight.toString(),
-              value: "Length:"+  key.priorityOrder.lengthWeight.toString(),
+              value: "Length:" +  key.priorityOrder.lengthWeight.toString(),
               start: key.priorityOrder.lengthWeight,
             };
             priorityOrderStrategyOptions.push(priorityOrderLengthObject);
@@ -466,7 +466,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleToggleCheck =(event) => {
+  const handleToggleCheck = (event) => {
     const {target, type, key} = event;
     if (type === "keydown") {
       if (key === "Enter") {
@@ -488,7 +488,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         <span className={"fs-5"}>
           {props.isEditStrategy ? "Edit Strategy" : "Add Strategy"}
         </span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
         <Form
@@ -589,8 +589,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     value={2}
                     aria-label="defaultStrategyNo"
                     className={"mb-0 flex-shrink-0"}
-                  >
-                  </Form.Check>
+                  />
                   <HCTooltip text={MergingStepTooltips.defaultStrategy} id="default-strategy-tooltip" placement="top">
                     <QuestionCircleFill color="#7F86B5" className={`flex-shrink-1 ${styles.questionCircleDefault}`} size={13} aria-label="icon: question-circle" tabIndex={0}/>
                   </HCTooltip>
@@ -645,8 +644,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                   defaultChecked={false}
                   onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
                   onKeyDown={(e) => { handleToggleCheck(e); }}
-                  className={styles.switchToggleMergeStrategy}>
-                </FormCheck>
+                  className={styles.switchToggleMergeStrategy} />
                 <span>
                   <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
                     <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle" tabIndex={0} />

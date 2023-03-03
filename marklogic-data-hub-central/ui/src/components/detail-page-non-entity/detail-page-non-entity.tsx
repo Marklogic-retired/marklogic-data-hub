@@ -220,16 +220,14 @@ const DetailPageNonEntity = (props) => {
   const viewSelector = <div id="menu" className={styles.menu}>
     <Tabs onSelect={(event) => handleMenuSelect(event)} className="border-0 ms-0">
       <Tab eventKey="record" key="record" id="record" data-testid="record-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
-        title={tabTitle}>
-      </Tab>
+        title={tabTitle} />
     </Tabs>
   </div>;
 
   const textViewSelector = <div id="menu" className={styles.menuText}>
     <Tabs>
       <Tab eventKey="record" id="record" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
-        title={tabTitle}>
-      </Tab>
+        title={tabTitle} />
     </Tabs>
   </div>;
 

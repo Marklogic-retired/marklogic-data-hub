@@ -645,7 +645,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                         setShowQueryPopover(false);
                       }
                     }}
-                  ></Typeahead>
+                  />
                   {props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
                   id="srcQuery"
                   placeholder="Enter source query"

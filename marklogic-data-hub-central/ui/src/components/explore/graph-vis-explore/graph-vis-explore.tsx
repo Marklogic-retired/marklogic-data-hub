@@ -612,7 +612,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     setLeafNodes(leafNodeObj);
   };
 
-  const updateGraphPageInfo = (nodesToHide=[]) => {
+  const updateGraphPageInfo = (nodesToHide = []) => {
     const hiddenNodesCount = nodesToHide.length;
     const visibleNodesCount = network.body.data.nodes.length - hiddenNodesCount;
 
@@ -926,8 +926,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         break;
       }
       case "Unmerge": {
-        const filteredData= props.data.filter((item) => item["uri"] === clickedNode["nodeId"]);
-        if (filteredData.length >0 && canWriteMatchMerge) {
+        const filteredData = props.data.filter((item) => item["uri"] === clickedNode["nodeId"]);
+        if (filteredData.length > 0 && canWriteMatchMerge) {
           props.openUnmergeCompare(filteredData[0].uri);
         }
         break;

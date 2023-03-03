@@ -317,7 +317,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     return (<div className={styles.paginationContainer}>
       <div onClick={handlePrevious}>
         <span className={(currentPage > 1) ? styles.paginationArrow : styles.paginationArrowDisabled}>
-          <FontAwesomeIcon icon={faChevronLeft} size="lg" style={{color: "#fff"}}></FontAwesomeIcon>
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" style={{color: "#fff"}} />
         </span>
       </div>
       <div className={styles.paginationLegend}>
@@ -327,7 +327,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       </div>
       <div onClick={handleNextPage}>
         <span className={(currentPage < totalPages) ? styles.paginationArrow : styles.paginationArrowDisabled}>
-          <FontAwesomeIcon icon={faChevronRight} size="lg" style={{color: "#fff"}}></FontAwesomeIcon>
+          <FontAwesomeIcon icon={faChevronRight} size="lg" style={{color: "#fff"}} />
         </span>
       </div>
     </div>);
@@ -434,7 +434,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       <Modal.Body>
         <div style={{display: "flex"}}>
           <div style={{padding: "24px 0px 0px 15px"}}>
-            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
+            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}} />
           </div>
           <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
             {props.isMerge ?
@@ -509,7 +509,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           null
       }
 
-      <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
     </Modal.Header>
     <Modal.Body>
       <div className={styles.compareValuesModelBodyContainer}>
@@ -517,18 +517,18 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           <span className={styles.compareValuesEntityName}>Entity: <strong>{props.isPreview ? props.activeStepDetails.entityName : props?.activeStepDetails[0]?.name || ""}</strong></span>
         </div>
         <div className={styles.paginationRow}>
-          <div className={props?.isMerge ? styles.paginationRowCleanSpaceMerge: styles.paginationRowCleanSpaceUnmerge}></div>
+          <div className={props?.isMerge ? styles.paginationRowCleanSpaceMerge : styles.paginationRowCleanSpaceUnmerge} />
           <div className={styles.paginationRowActions}>
             {props.uris.length > pageSize && renderPagination()}
           </div>
-          <div className={props.isMerge ? styles.paginationRowLegendMerge: styles.paginationRowLegendUnmerge}>
-            <span className={styles.matchIconContainer}><img src={backgroundImage} className={styles.matchIcon}></img></span>
+          <div className={props.isMerge ? styles.paginationRowLegendMerge : styles.paginationRowLegendUnmerge}>
+            <span className={styles.matchIconContainer}><img src={backgroundImage} className={styles.matchIcon} /></span>
             <span className={styles.matchIconText}>Match</span>
           </div>
         </div>
         <div>
           {columns.length > 0 && <HCTable columns={columns}
-            className={props.isMerge ? `compare-values-model ${styles.compareValuesModelTable}`: `compare-values-model-unmerge ${styles.compareValuesModelTable}`}
+            className={props.isMerge ? `compare-values-model ${styles.compareValuesModelTable}` : `compare-values-model-unmerge ${styles.compareValuesModelTable}`}
             data={compareValuesTableData}
             onExpand={onExpand}
             expandedRowKeys={expandedRows}

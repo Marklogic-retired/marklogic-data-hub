@@ -55,7 +55,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
   const [originalUri, setOriginalUri] = useState<string>("");
   const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
   const [compareModalVisible, setCompareModalVisible] = useState(false);
-  const [alertStabilizeVisible, setAlertStabilizeVisible] = useState(localStorage.alertStabilizeGraphVisible !== undefined ? localStorage.alertStabilizeGraphVisible: true);
+  const [alertStabilizeVisible, setAlertStabilizeVisible] = useState(localStorage.alertStabilizeGraphVisible !== undefined ? localStorage.alertStabilizeGraphVisible : true);
 
   const {exploreSidebar} = tooltipsConfig;
 
@@ -159,8 +159,8 @@ const GraphViewExplore: React.FC<Props> = (props) => {
     togglePhysicsAnimation(e.target.checked);
   };
 
-  const handleCloseAlert=() => {
-    localStorage.alertStabilizeGraphVisible=false;
+  const handleCloseAlert = () => {
+    localStorage.alertStabilizeGraphVisible = false;
     updateUserPreferences(user.name, localStorage);
     setAlertStabilizeVisible(false);
   };
@@ -327,7 +327,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const graphViewExploreMainPanel = (
     !Object.keys(entityTypeInstances).length
-      ? <span></span>
+      ? <span />
       : (<div className={styles.graphViewExploreContainer}>
         <div className={styles.graphHeader}>
           {alertStabilizeVisible && <HCAlert
@@ -342,7 +342,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             {headerButtons}
           </div>
         </div>
-        <div className={styles.borderBelowHeader}></div>
+        <div className={styles.borderBelowHeader} />
         <div>
           <GraphVisExplore
             entityTypeInstances={entityTypeInstances}

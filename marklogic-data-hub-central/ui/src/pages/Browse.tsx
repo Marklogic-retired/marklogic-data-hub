@@ -102,7 +102,13 @@ const Browse: React.FC<Props> = ({location}) => {
   const [showApply, toggleApply] = useState(false);
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
-  const [selectedView, setSelectedView] = useState<ViewType>(viewOptions.graphView ? ViewType.graph : (viewOptions.tableView ? ViewType.table : ViewType.snippet));
+  const [selectedView, setSelectedView] = useState<ViewType>(
+    viewOptions.graphView ?
+      ViewType.graph :
+      (viewOptions.tableView ?
+        ViewType.table :
+        ViewType.snippet
+      ));
   const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
   const [viewConcepts, setViewConcepts] = useState(true);
   const [physicsAnimation, setPhysicsAnimation] = useState(true);
@@ -310,14 +316,20 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const fetchUpdatedSearchResults = () => {
     let entityTypesExist = searchOptions.entityTypeIds.length > 0;
-    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (searchOptions.entityTypeIds.length > 0 || cardView);
+    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType &&
+    (searchOptions.entityTypeIds.length > 0 || cardView);
     let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !entitySpecificPanel);
     let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !entitySpecificPanel);
     let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
     let selectingColumnsInOneEntity = searchOptions.entityTypeIds.length === 1 && isColumnSelectorTouched;
     let notSelectingCardViewWhenNoEntities = !cardView && !searchOptions.entityTypeIds.length;
 
-    if (selectingAllDataOption || (entityTypesExist && (defaultOptionsForPageRefresh || selectingAllEntitiesOption || selectingEntityType || selectingColumnsInOneEntity))) {
+    if (selectingAllDataOption ||
+      (entityTypesExist &&
+        (defaultOptionsForPageRefresh ||
+          selectingAllEntitiesOption ||
+          selectingEntityType ||
+          selectingColumnsInOneEntity))) {
       getSearchResults(searchOptions.entityTypeIds);
       setColumnSelectorTouched(false);
     } else {
@@ -363,7 +375,9 @@ const Browse: React.FC<Props> = ({location}) => {
 
         // this block is to add colors an icons to the entities
         let entitiesWithFullProperties = parsedEntityDef;
-        if (hubCentralConfig && hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling.entities).length > 0) {
+        if (hubCentralConfig &&
+          hubCentralConfig.modeling &&
+          Object.keys(hubCentralConfig.modeling.entities).length > 0) {
           const {modeling: {entities}} = hubCentralConfig;
           entitiesWithFullProperties = parsedEntityDef.map(entity => {
             let tmpEntity = {...entity};
@@ -437,7 +451,19 @@ const Browse: React.FC<Props> = ({location}) => {
     return () => {
       setGraphSearchData({});
     };
-  }, [viewOptions.graphView, searchOptions.entityTypeIds, searchOptions.relatedEntityTypeIds, searchOptions.conceptFilterTypeIds, searchOptions.database, searchOptions.datasource, searchOptions.query, searchOptions.selectedFacets, user.error.type, hideDataHubArtifacts, hubCentralConfig]);
+  }, [
+    viewOptions.graphView,
+    searchOptions.entityTypeIds,
+    searchOptions.relatedEntityTypeIds,
+    searchOptions.conceptFilterTypeIds,
+    searchOptions.database,
+    searchOptions.datasource,
+    searchOptions.query,
+    searchOptions.selectedFacets,
+    user.error.type,
+    hideDataHubArtifacts,
+    hubCentralConfig
+  ]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -446,8 +472,15 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, []);
 
-  const getClearEnititesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => ({...previousValue, [entityType]: {filter: 0, amount: 0}}), {});
-  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => entities && entities.hasOwnProperty(entityType) && previousValue < entities[entityType].amount ? entities[entityType].amount : previousValue, 0);
+  const getClearEnititesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => (
+    {...previousValue, [entityType]: {filter: 0, amount: 0}}
+  ), {});
+  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => entities &&
+  entities.hasOwnProperty(entityType) &&
+  previousValue < entities[entityType].amount ?
+    entities[entityType].amount :
+    previousValue, 0
+  );
 
   useEffect(() => {
     if (hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling?.entities).length > 0) {
@@ -575,7 +608,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const handleUserPreferences = () => {
     setUserPreferences();
 
-    if (searchOptions.entityTypeIds.length > 0 && !searchOptions.entityTypeIds.includes(searchOptions.entityTypeIds[0])) {
+    if (searchOptions.entityTypeIds.length > 0 &&
+      !searchOptions.entityTypeIds.includes(searchOptions.entityTypeIds[0])) {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
@@ -678,7 +712,12 @@ const Browse: React.FC<Props> = ({location}) => {
     <span>
       <HCTooltip text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
         {graphPageInfo["pageLength"] > 100 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
-          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>}
+          <QuestionCircleFill
+            color={themeColors.defaults.questionCircle}
+            className={styles.questionCircle}
+            size={13}
+            tabIndex={0}/>
+        }
       </HCTooltip>
     </span>
   );
@@ -743,7 +782,7 @@ const Browse: React.FC<Props> = ({location}) => {
               entityIndicatorData={entityIndicatorData}
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
               entityRelationships={entityRelationships}
-              isBackToResultsClicked={state ? true :false}
+              isBackToResultsClicked={state ? true : false}
             />
           </>
         </HCSider>
@@ -820,7 +859,9 @@ const Browse: React.FC<Props> = ({location}) => {
                             <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>
                             <div className={styles.loadingMsg}>Graph Loading...</div>
                             <br/>
-                            <div className={styles.loadingMsgSubtext}>(This process may take longer depending on the size of your data)</div>
+                            <div className={styles.loadingMsgSubtext}>
+                              (This process may take longer depending on the size of your data)
+                            </div>
                           </div>
                         }
                         <div style={{opacity: graphLoading && physicsAnimation ? 0 : 1}}>

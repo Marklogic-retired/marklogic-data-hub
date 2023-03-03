@@ -76,7 +76,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
   if (item.primaryKey && Object.keys(item.primaryKey).length) {
     primaryKeyValue = item.primaryKey.propertyValue;
-    primaryKey = item.primaryKey.propertyPath === "uri" ? "URI": item.primaryKey.propertyPath;
+    primaryKey = item.primaryKey.propertyPath === "uri" ? "URI" : item.primaryKey.propertyPath;
   }
 
   if (item.hasOwnProperty("entityName")) {
@@ -147,7 +147,7 @@ const SearchResult: React.FC<Props> = (props) => {
     const result1 = results[0];
     const result2 = results[1];
 
-    const flowName= result1.data.recordMetadata.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
@@ -182,7 +182,7 @@ const SearchResult: React.FC<Props> = (props) => {
       <div className={"w-100"}>
         <div className={`d-flex align-items-center ${styles.title}`} onClick={() => onExpand()}>
           {isExpanded
-            ?<ChevronDown
+            ? <ChevronDown
               className={styles.expandableIcon}
               aria-label="icon: chevron-down"
               data-cy="expandable-icon"
@@ -195,7 +195,7 @@ const SearchResult: React.FC<Props> = (props) => {
                 }
               }}
             />
-            :<ChevronRight
+            : <ChevronRight
               className={styles.expandableIcon}
               aria-label="icon: chevron-right"
               data-cy="expandable-icon"
@@ -248,7 +248,7 @@ const SearchResult: React.FC<Props> = (props) => {
                 {recordTypeVal.toUpperCase() === "XML" ?
                   <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid="source-icon"/></i>
                   :
-                  <span className={styles.jsonIcon} data-testid="source-icon"></span>
+                  <span className={styles.jsonIcon} data-testid="source-icon" />
                 }
               </HCTooltip>
             </Link>

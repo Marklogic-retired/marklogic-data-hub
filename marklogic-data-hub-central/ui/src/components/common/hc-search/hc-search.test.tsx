@@ -9,19 +9,19 @@ afterEach(() => {
 });
 
 test("should render a HCSearch component", () => {
-  render(<HCSearch placeholder={"Search"}></HCSearch>);
+  render(<HCSearch placeholder={"Search"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   expect(inputElement).toBeInTheDocument();
 });
 
 test("should render a HCSearch component with size and value", () => {
-  render(<HCSearch placeholder={"Search"} size={"sm"} value={"test"}></HCSearch>);
+  render(<HCSearch placeholder={"Search"} size={"sm"} value={"test"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   expect(inputElement).toBeInTheDocument();
 });
 
 test("should render a HCSearch component with addon before", () => {
-  render(<HCSearch addonBefore={"Addon Before"} placeholder={"Search"}></HCSearch>);
+  render(<HCSearch addonBefore={"Addon Before"} placeholder={"Search"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   const inputAddonElement = screen.getByTestId("hc-input-addonBefore");
   expect(inputElement).toBeInTheDocument();
@@ -29,7 +29,7 @@ test("should render a HCSearch component with addon before", () => {
 });
 
 test("should render a HCSearch component with addon before and prefix", () => {
-  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} placeholder={"Search"}></HCSearch>);
+  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} placeholder={"Search"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   const inputAddonElement = screen.getByTestId("hc-input-addonBefore");
   expect(inputElement).toBeInTheDocument();
@@ -37,7 +37,7 @@ test("should render a HCSearch component with addon before and prefix", () => {
 });
 
 test("should render a HCSearch component with addon before, prefix and suffix", () => {
-  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} placeholder={"Search"}></HCSearch>);
+  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} placeholder={"Search"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   const inputAddonElement = screen.getByTestId("hc-input-addonBefore");
   const inputSuffixElement = screen.getByTestId("hc-input-suffix");
@@ -47,7 +47,7 @@ test("should render a HCSearch component with addon before, prefix and suffix", 
 });
 
 test("should render a HCSearch component with addon before, prefix, suffix and allow clear", () => {
-  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} allowClear placeholder={"Search"}></HCSearch>);
+  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} allowClear placeholder={"Search"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");
@@ -61,7 +61,7 @@ test("should render a HCSearch component with addon before, prefix, suffix and a
 });
 
 test("should click the HCSearch component after click clean icon", () => {
-  render(<HCSearch allowClear placeholder={"Search"} onSearch={() => {}}></HCSearch>);
+  render(<HCSearch allowClear placeholder={"Search"} onSearch={() => {}} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");
@@ -72,7 +72,7 @@ test("should click the HCSearch component after click clean icon", () => {
 });
 
 test("should click the HCSearch component with error and label", () => {
-  render(<HCSearch allowClear placeholder={"Search"} onSearch={() => {}} error errorMessage={"You have an error, please check the content"}></HCSearch>);
+  render(<HCSearch allowClear placeholder={"Search"} onSearch={() => {}} error errorMessage={"You have an error, please check the content"} />);
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");

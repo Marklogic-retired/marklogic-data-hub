@@ -153,7 +153,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     let structuredTypes = structuredDefinitions
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(definition => {
-        const isSameStructuredType = (structuredTypeLabel===definition.name);
+        const isSameStructuredType = (structuredTypeLabel === definition.name);
         return {
           label: isSameStructuredType ? (
             <HCTooltip
@@ -485,7 +485,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const confirmName =(e: any) => {
+  const confirmName = (e: any) => {
     setIsNamedConfirmed(true);
     setShowConfirmNameModal(false);
   };
@@ -757,7 +757,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   };
 
   const onCheckboxChange = (event, checkboxName) => {
-    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName]: event.target.checked});
+    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName] : event.target.checked});
   };
 
   const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
@@ -773,7 +773,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
             onChange={(event) => onRadioChange(event, radio.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter"|| event.key === " ") { onRadioChange("t", radio.value); }
+              if (event.key === "Enter" || event.key === " ") { onRadioChange("t", radio.value); }
             }}
             label={"Yes"}
             value={"yes"}
@@ -789,7 +789,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             defaultChecked={selectedPropertyOptions[radio.value] === "no"}
             onChange={(event) => onRadioChange(event, radio.value)}
             onKeyDown={(event) => {
-              if (event.key === "Enter"|| event.key === " ") { onRadioChange(event, radio.value); }
+              if (event.key === "Enter" || event.key === " ") { onRadioChange(event, radio.value); }
             }}
             label={"No"}
             value={"no"}
@@ -820,7 +820,7 @@ const PropertyModal: React.FC<Props> = (props) => {
               onChange={(event) => onCheckboxChange(event, checkbox.value)}
               tabIndex={0}
               onKeyDown={(event) => {
-                if (event.key === "Enter"|| event.key === " ") { onCheckboxChange("keyboard", checkbox.value); }
+                if (event.key === "Enter" || event.key === " ") { onCheckboxChange("keyboard", checkbox.value); }
               }}
             />
             <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
@@ -881,7 +881,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{modalTitle}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"py-4"}>
       {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&

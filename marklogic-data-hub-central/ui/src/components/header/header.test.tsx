@@ -127,13 +127,13 @@ describe("Header component", () => {
     element_logo.focus();
     for (i = 0; i < 4; ++i) {
       fireEvent.keyDown(header[i], {key: "ArrowRight", code: "ArrowRight"});
-      expect(header[i+1]).toHaveFocus();
+      expect(header[i + 1]).toHaveFocus();
     }
 
     // verify left arrow key reverses progression of elements in same order
     for (i = 4; i > 0; --i) {
       fireEvent.keyDown(header[i], {key: "ArrowLeft", code: "ArrowLeft"});
-      expect(header[i-1]).toHaveFocus();
+      expect(header[i - 1]).toHaveFocus();
     }
   });
 

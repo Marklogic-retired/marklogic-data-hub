@@ -17,7 +17,7 @@ const testMatchedUriTableColumns = [
   {
     text: "Ruleset",
     dataField: "ruleName",
-    key: "ruleName "+ (counter++),
+    key: "ruleName " + (counter++),
     width: "40%",
     formatter: (ruleName, key) => (ruleName.map(property => {
       return <span className={styles.rulesetColumn} key={key} aria-label={ruleName}>{property}
@@ -96,7 +96,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " score",
     width: "15%",
     formatter: (scores, key) =>  <span key={key}  aria-label={"score " + scores.scores[0]}>
-      {scores.scores[0]>0 && <ProgressBar now={scores.scores[0]} label={scores.matchedRule[0] !== "Reduce" ? `${scores.scores[0]}` : `-${scores.scores[0]}`} variant={scores.matchedRule[0] !== "Reduce" ? "success" : "danger"}/>}
+      {scores.scores[0] > 0 && <ProgressBar now={scores.scores[0]} label={scores.matchedRule[0] !== "Reduce" ? `${scores.scores[0]}` : `-${scores.scores[0]}`} variant={scores.matchedRule[0] !== "Reduce" ? "success" : "danger"}/>}
     </span>
   }
 ];
@@ -104,34 +104,34 @@ const testMatchedUriTableColumns = [
 const ExpandableTableView: React.FC<Props> = (props) => {
   const [expandedNestedRows, setExpandedNestedRows] = React.useState([]);
   let allRuleset = props.allRuleset;
-  let multipleRuleset=[{}];
+  let multipleRuleset = [{}];
   let data = props.entityData.stepArtifact.matchRulesets;
-  for (let i=0; i<data.length;i++) {
+  for (let i = 0; i < data.length;i++) {
     let ruleset = data[i];
     if (!ruleset.name.includes(" - ")) {
       multipleRuleset.push(ruleset);
     }
   }
-  let localData=[{}];
+  let localData = [{}];
   let actionPreviewData = props.rowData.matchRulesets.map(matchRulseset => {
-    localData=[{ruleName: [""], matchedRulesetType: [""], scores: {scores: [0], matchedRule: [""]}}];
+    localData = [{ruleName: [""], matchedRulesetType: [""], scores: {scores: [0], matchedRule: [""]}}];
     let matchedRulesetProperty: string[] = [];
     let matchedRulesetType: string[] = [];
     let scores: string[] = [];
     let ruleName: string[] = [];
-    let key= counter++;
+    let key = counter++;
     let updatedMatchRuleset =  matchRulseset.replace(/([.])/g, " > ");
     ruleName.push(updatedMatchRuleset);
     let ruleset = updatedMatchRuleset.split(" - ");
-    if (ruleset.length <2) {
-      for (let i=0;i<props.entityData.stepArtifact.matchRulesets.length;i++) {
+    if (ruleset.length < 2) {
+      for (let i = 0;i < props.entityData.stepArtifact.matchRulesets.length;i++) {
         let name = props.entityData.stepArtifact.matchRulesets[i].name;
         if (name === ruleset[0]) {
-          for (let j=0;j<props.entityData.stepArtifact.matchRulesets[i].matchRules.length;j++) {
-            let ruleset=props.entityData.stepArtifact.matchRulesets[i].matchRules[j];
-            let entityPropertyPath=[""];
-            let matchedRuleset=[""];
-            let score=[0];
+          for (let j = 0;j < props.entityData.stepArtifact.matchRulesets[i].matchRules.length;j++) {
+            let ruleset = props.entityData.stepArtifact.matchRulesets[i].matchRules[j];
+            let entityPropertyPath = [""];
+            let matchedRuleset = [""];
+            let score = [0];
             score.push(0);
             entityPropertyPath.push(ruleset.entityPropertyPath.replace(/([.])/g, " > "));
             matchedRuleset.push(ruleset.matchType);
@@ -141,7 +141,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
             let data2 = {
               ruleName: entityPropertyPath,
               matchedRulesetType: matchedRuleset,
-              key: ruleName + " "+counter++,
+              key: ruleName + " " + counter++,
               scores: {scores: score, matchedRule: matchedRuleset}
             };
             localData.push(data2);
@@ -152,7 +152,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     localData.shift();
     matchedRulesetProperty.push(ruleset[0]);
     matchedRulesetType.push(ruleset[1]);
-    for (let i=0;i<allRuleset.length;i++) {
+    for (let i = 0;i < allRuleset.length;i++) {
       if (matchRulseset === allRuleset[i].name) {
         scores.push(allRuleset[i].weight);
       }

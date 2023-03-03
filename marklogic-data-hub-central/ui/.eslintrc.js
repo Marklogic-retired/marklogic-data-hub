@@ -18,7 +18,8 @@ module.exports = {
   plugins: [
     "react",
     "@typescript-eslint",
-    "cypress"
+    "cypress",
+    "react-hooks",
   ],
   rules: {
     "no-prototype-builtins": "off",
@@ -45,7 +46,10 @@ module.exports = {
     "space-in-parens": "error",
     "space-before-blocks": "error",
     "no-var": "error",
-    "indent": ["error", 2]
+    "indent": ["error", 2],
+    "react-hooks/rules-of-hooks": "error",
+    "react/self-closing-comp": ["warn", {"component": true, "html": true}],
+    "space-infix-ops": ["error", {"int32Hint": false}],
   },
   ignorePatterns: [
     "**/node_modules/**",

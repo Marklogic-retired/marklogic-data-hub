@@ -47,7 +47,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const updateEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
-      let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      let index = newModifiedEntitiesArray.map(
+        (entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
       newModifiedEntitiesArray[index] = entityModified;
     } else {
       newModifiedEntitiesArray.push(entityModified);
@@ -58,9 +59,15 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const removeEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
-      let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      let index = newModifiedEntitiesArray.map(
+        (entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
       newModifiedEntitiesArray.splice(index, 1);
-      setModelingOptions({...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0});
+      setModelingOptions(
+        {...modelingOptions,
+          modifiedEntitiesArray:
+          newModifiedEntitiesArray,
+          isModified: newModifiedEntitiesArray.length > 0
+        });
     }
   };
 

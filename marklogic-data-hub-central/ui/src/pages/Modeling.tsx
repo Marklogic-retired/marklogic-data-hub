@@ -228,7 +228,7 @@ const Modeling: React.FC = () => {
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
-      setAutoExpand(entityName+"-Entity Type");
+      setAutoExpand(entityName + "-Entity Type");
     }
     toggleShowEntityModal(false);
     await setDataModelFromServer().then((resp => {
@@ -258,7 +258,12 @@ const Modeling: React.FC = () => {
     setViewSettings(viewSettings);
   };
 
-  const editConceptClassDescription = (conceptClassName: string, conceptClassDescription: string, conceptClassColor: string, conceptClassIcon: string) => {
+  const editConceptClassDescription = (
+    conceptClassName: string,
+    conceptClassDescription: string,
+    conceptClassColor: string,
+    conceptClassIcon: string
+  ) => {
     if (canWriteEntityModel) {
       toggleIsEditConceptClassModal(true);
       toggleShowConceptClassModal(true);
@@ -272,7 +277,11 @@ const Modeling: React.FC = () => {
   const confirmAction = () => {
     if (confirmType === ConfirmationType.PublishAll) {
       publishDraftModelToServer();
-    } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntity) {
+    } else if (
+      confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn ||
+      confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn ||
+      confirmType === ConfirmationType.DeleteEntity
+    ) {
       deleteEntityFromServer();
       resetCurateTabs();
     } else if (confirmType === ConfirmationType.DeleteConceptClass) {
@@ -394,12 +403,12 @@ const Modeling: React.FC = () => {
         className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
         disabled={!canWriteEntityModel}>
         <Dropdown.Item eventKey="addNewEntityType" onKeyDown={(event) => {
-          if (event.key === "Enter"|| event.key === " ") { handleAddMenu("addNewEntityType"); }
+          if (event.key === "Enter" || event.key === " ") { handleAddMenu("addNewEntityType"); }
         }}>
           <span aria-label={"add-entity-type"}>Add new entity type</span>
         </Dropdown.Item>
         <Dropdown.Item eventKey="addNewConceptClass"  onKeyDown={(event) => {
-          if (event.key === "Enter"|| event.key === " ") { handleAddMenu("addNewConceptClass"); }
+          if (event.key === "Enter" || event.key === " ") { handleAddMenu("addNewConceptClass"); }
         }}>
           <span aria-label={"add-concept-class"}>Add new concept class</span>
         </Dropdown.Item>
@@ -534,7 +543,7 @@ const Modeling: React.FC = () => {
               </div>
             )}
             <h1>Data Model</h1>
-            <div className={styles.borderBelowHeader}></div>
+            <div className={styles.borderBelowHeader} />
             <GraphView
               canReadEntityModel={canReadEntityModel}
               canWriteEntityModel={canWriteEntityModel}
@@ -562,7 +571,11 @@ const Modeling: React.FC = () => {
           </>
         }
         {modelingOptions.view === ViewType.table ? <div
-          className={modelingOptions.isModified ? styles.entityTableContainer : styles.entityTableContainerWithoutAlert}>
+          className={
+            modelingOptions.isModified ?
+              styles.entityTableContainer :
+              styles.entityTableContainerWithoutAlert
+          }>
           <EntityTypeTable
             canReadEntityModel={canReadEntityModel}
             canWriteEntityModel={canWriteEntityModel}

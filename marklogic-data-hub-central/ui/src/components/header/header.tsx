@@ -200,7 +200,7 @@ const Header: React.FC<Props> = (props) => {
         </Nav.Item>
 
         <Nav.Item tabIndex={-1}>
-          <div className={styles.vertical}></div>
+          <div className={styles.vertical} />
         </Nav.Item>
 
         <Nav.Item>
@@ -280,7 +280,7 @@ const Header: React.FC<Props> = (props) => {
             onKeyDown={logoKeyDownHandler} onMouseDown={logoClickHandler}>
             <Image className={styles.logo} src={logo} />
           </Link>
-          <div className={styles.vertical}></div>
+          <div className={styles.vertical} />
         </div>
         <div className={styles.titleContainer} aria-label="title-container">
           <div id="title" className={styles.title} aria-label="title-link" tabIndex={1} ref={titleRef}
