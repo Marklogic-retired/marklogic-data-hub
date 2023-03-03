@@ -226,9 +226,11 @@ const Run = (props) => {
     (flow && _stepsRunning) ? setFlowRunning({...flow, steps: _stepsRunning}) : setFlowRunning(InitialFlow);
   };
 
-  const finishRun = () => {
+  const finishRun = (flowName:string) => {
     setIsLoading(false);
-    setFlowRunning(InitialFlow);
+    let InitialFlowAux = {...InitialFlow};
+    InitialFlowAux.description = flowName;
+    setFlowRunning(InitialFlowAux);
   };
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
@@ -277,7 +279,7 @@ const Run = (props) => {
               }
             });
         }, pollConfig.interval);
-        finishRun();
+        finishRun(flowName);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -322,7 +324,7 @@ const Run = (props) => {
               setRunEnded({flowId: flowName, stepId: step.stepNumber});
             });
         }, pollConfig.interval);
-        finishRun();
+        finishRun(flowName);
       }
     } catch (error) {
       console.error("Error running step", error);
