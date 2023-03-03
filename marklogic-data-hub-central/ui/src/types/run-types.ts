@@ -6,7 +6,8 @@ export interface Flow {
 
 export const InitialFlow: Flow = {
   name: "",
-  steps: []
+  steps: [],
+  description: ""
 };
 
 export interface Step {

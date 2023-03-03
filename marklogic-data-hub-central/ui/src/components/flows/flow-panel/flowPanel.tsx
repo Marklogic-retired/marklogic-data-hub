@@ -281,8 +281,8 @@ const FlowPanel: React.FC<Props> = ({
   };
 
   const showStopButton = (flowName: string): boolean => {
-    if (!flowRunning) return false;
-    return (isStepRunning && flowRunning.name === flowName);
+    if (!flowRunning) { return false; }
+    return (isStepRunning && flowRunning?.description === flowName);
   };
 
   const addStepsMenu = (flowName, i) => (
