@@ -86,7 +86,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             throw new IllegalArgumentException(format("A step definition already exists with the name '%s' and type '%s'", name, type));
         }
 
-        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.mjs", type.toLowerCase(), name));
+        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.sjs", type.toLowerCase(), name));
         stepDefinitionManager.saveStepDefinition(stepDef);
         createCustomModule(name, type, format);
 
@@ -234,12 +234,15 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             if("sjs".equalsIgnoreCase(format)) {
                 moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".sjs";
             }
+            else if("mjs".equalsIgnoreCase(format)) {
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".mjs";
+            }
             else if("xqy".equalsIgnoreCase(format)) {
                 moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main-" + stepType.toLowerCase() + ".sjs";
                 libScaffoldingSrcFile = "scaffolding/custom-module/xqy/lib-" + stepType.toLowerCase() + ".xqy";
             }
             else {
-                throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' or 'sjs'");
+                throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' , 'sjs' or 'mjs'");
             }
             moduleFile = customModuleDir.resolve("main.sjs").toFile();
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(moduleScaffoldingSrcFile);
