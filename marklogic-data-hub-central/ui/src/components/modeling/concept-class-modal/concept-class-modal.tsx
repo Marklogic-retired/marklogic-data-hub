@@ -247,7 +247,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{isEditModal ? "Edit Concept Class" : "Add Concept Class"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"py-4"}>
       <Form

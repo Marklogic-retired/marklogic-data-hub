@@ -108,10 +108,10 @@ describe("Flows component", () => {
     let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
-    expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
+    expect(getByLabelText("deleteFlowDisabled-" + flowName)).toBeInTheDocument();
 
     // test delete, create flow, add step buttons display correct tooltip when disabled
-    fireEvent.mouseOver(getByLabelText("deleteFlowDisabled-"+flowName));
+    fireEvent.mouseOver(getByLabelText("deleteFlowDisabled-" + flowName));
     expect(await screen.findAllByText("Delete Flow: " + SecurityTooltips.missingPermission)).toHaveLength(1);
     fireEvent.mouseOver(getAllByText("Add Step")[0]);
     expect(await screen.findAllByText(SecurityTooltips.missingPermission)).toHaveLength(1);
@@ -122,8 +122,8 @@ describe("Flows component", () => {
     // Open flow
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("runStep-"+flowStepName)).toBeInTheDocument(); // Has operator priv's, can still run
-    expect(getByLabelText("deleteStepDisabled-"+flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("runStep-" + flowStepName)).toBeInTheDocument(); // Has operator priv's, can still run
+    expect(getByLabelText("deleteStepDisabled-" + flowStepName)).toBeInTheDocument();
 
     // Open Add Step
     let addStep = getAllByText("Add Step")[0];
@@ -145,13 +145,13 @@ describe("Flows component", () => {
     let flowButton = document.querySelector(".accordion-button")!;
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
-    expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
+    expect(getByLabelText("deleteFlowDisabled-" + flowName)).toBeInTheDocument();
 
     // Open flow
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("runStepDisabled-"+flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("deleteStepDisabled-"+flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("runStepDisabled-" + flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("deleteStepDisabled-" + flowStepName)).toBeInTheDocument();
 
     // Open Add Step
     let addStep = getAllByText("Add Step")[0];
@@ -213,20 +213,20 @@ describe("Flows component", () => {
     expect(getByText(flowStepName)).toBeInTheDocument();
 
     // Middle step(s) have both left and right arrows
-    expect(getByLabelText("rightArrow-"+flowStepName)).toBeInTheDocument();
-    expect(getByLabelText("leftArrow-"+flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("rightArrow-" + flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("leftArrow-" + flowStepName)).toBeInTheDocument();
 
     // First step only has right arrow, and no left arrow
     // @ts-ignore
     const firstFlowStep = data.flows.data[0].steps[0].stepName;
-    expect(getByLabelText("rightArrow-"+firstFlowStep)).toBeInTheDocument();
-    expect(queryByLabelText("leftArrow-"+firstFlowStep)).not.toBeInTheDocument();
+    expect(getByLabelText("rightArrow-" + firstFlowStep)).toBeInTheDocument();
+    expect(queryByLabelText("leftArrow-" + firstFlowStep)).not.toBeInTheDocument();
 
     // Last step only has left arrow, and no right arrow
     // @ts-ignore
-    const lastFlowStep = data.flows.data[0].steps[data.flows.data[0].steps.length-1].stepName;
-    expect(getByLabelText("leftArrow-"+lastFlowStep)).toBeInTheDocument();
-    expect(queryByLabelText("rightArrow-"+lastFlowStep)).not.toBeInTheDocument();
+    const lastFlowStep = data.flows.data[0].steps[data.flows.data[0].steps.length - 1].stepName;
+    expect(getByLabelText("leftArrow-" + lastFlowStep)).toBeInTheDocument();
+    expect(queryByLabelText("rightArrow-" + lastFlowStep)).not.toBeInTheDocument();
 
   });
 
@@ -241,8 +241,8 @@ describe("Flows component", () => {
     let flowButton = document.querySelector(".accordion-button")!;
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
-    expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
-    expect(queryByLabelText("leftArrow-"+flowStepName)).not.toBeInTheDocument();
+    expect(queryByLabelText("rightArrow-" + flowStepName)).not.toBeInTheDocument();
+    expect(queryByLabelText("leftArrow-" + flowStepName)).not.toBeInTheDocument();
   });
 });
 

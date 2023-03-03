@@ -9,7 +9,7 @@ export const deleteConfirmationModal = (isVisible: boolean, flowName: string, on
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
@@ -31,7 +31,7 @@ export const deleteStepConfirmationModal = (isVisible: boolean, stepName, stepNu
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
@@ -53,7 +53,7 @@ export const addStepConfirmationModal = (isVisible: boolean, onOk, onCancel, flo
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div className={`mb-4 ${styles.confirmationText}`}>
@@ -83,7 +83,7 @@ export const addExistingStepConfirmationModal = (isVisible: boolean, stepName, f
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
       <div className={`mb-4 ${styles.confirmationText}`}>

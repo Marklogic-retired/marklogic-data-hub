@@ -95,7 +95,7 @@ const EditQueryDialog = (props) => {
       >
         <Modal.Header className={"bb-none"}>
           <span className={styles.title}>{"Edit Query"}</span>
-          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
         </Modal.Header>
         <Modal.Body className={"pt-0 pb-4"}>
           <Form name="basic" className={"container-fluid"}>
@@ -107,7 +107,7 @@ const EditQueryDialog = (props) => {
                     <HCInput
                       id="name"
                       placeholder="Edit name"
-                      value={queryName ? queryName: " "}
+                      value={queryName ? queryName : " "}
                       onChange={handleChange}
                       className={styles.text}
                     />
@@ -124,7 +124,7 @@ const EditQueryDialog = (props) => {
                 <HCInput
                   id="description"
                   placeholder="Edit description"
-                  value={queryDescription ? queryDescription: " "}
+                  value={queryDescription ? queryDescription : " "}
                   onChange={handleChange}
                   className={styles.text}
                 />

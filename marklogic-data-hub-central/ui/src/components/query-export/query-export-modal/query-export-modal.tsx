@@ -66,7 +66,7 @@ const QueryExportModal = (props) => {
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Export"}</span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onClose} />
       </Modal.Header>
       <Modal.Body>
         <Form name="basic" data-testid="query-export-form" className={"container-fluid"} >

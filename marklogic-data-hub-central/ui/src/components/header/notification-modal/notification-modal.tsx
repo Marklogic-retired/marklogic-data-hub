@@ -336,8 +336,7 @@ const NotificationModal = (props) => {
         <Modal.Body className={styles.notificationModalBody} >
           <Modal.Header className={"bb-none"}>
             {notificationOptions.totalCount < 1 ? null : <span className={"fs-3"} aria-label={"notification-modal-title"}>{"Merge Notifications"}</span>}
-            <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}}>
-            </button>
+            <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}} />
           </Modal.Header>
           <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
             {notificationOptions.totalCount < 1 ?
@@ -363,7 +362,7 @@ const NotificationModal = (props) => {
                   pageNumber={pageTableNotification}
                   maxRowsPerPage={pageLength}
                   updatePage={updatePage}
-                ></SearchPaginationSimple>
+                />
               </>
             }
           </div>

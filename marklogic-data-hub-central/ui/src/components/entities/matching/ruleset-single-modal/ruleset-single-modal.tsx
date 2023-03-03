@@ -40,7 +40,7 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const presetListMock=[{name: "Preset List 0", value: []}];
+const presetListMock = [{name: "Preset List 0", value: []}];
 
 const MatchRulesetModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -967,7 +967,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       setClickedExcludeList([]);
       return;
     }
-    if (selected.length>0 && selected[selected.length-1].name !== presetListMock[0].name) {
+    if (selected.length > 0 && selected[selected.length - 1].name !== presetListMock[0].name) {
       setClickedExcludeList(selected);
     } else {
       handleClick(e, "A", {});
@@ -985,7 +985,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           <div className={"fs-5"}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
         </div>
         <div className={`flex-column ${styles.modalTitleLegend}`}>
-          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
           <div className={"d-flex mt-3"}>
             <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} />Multiple</div>
             <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>

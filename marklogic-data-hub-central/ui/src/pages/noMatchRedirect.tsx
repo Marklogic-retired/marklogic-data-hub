@@ -54,11 +54,11 @@ const NoMatchRedirect: React.FC<Props> = ({history, ...props}) => {
                     <div className={styles.spacer}>
                       <strong>The operation failed because of {user.error.type ? "the following errors:" : "an unknown error."}</strong>
                     </div>
-                    {(user.error.message || props.message)&& <>
+                    {(user.error.message || props.message) && <>
                       <div className={styles.errorContainer}>
                         {user.error.title && <h3>{user.error.title}</h3>}
                         {user.error.encounteredErrors && user.error.encounteredErrors}
-                        {props.message? props.message : user.error.message }
+                        {props.message ? props.message : user.error.message }
                       </div>
                       <div className={styles.buttonCopyCol}>
                         <HCButton data-testid={`copy-button-error`} className={styles.copyButton} onClick={copyToClipboard}>{copyClicked}</HCButton>

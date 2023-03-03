@@ -72,10 +72,10 @@ describe("Mapping Card component", () => {
     });
 
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
-    await wait(() => expect(getByText("Curate: "+ SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Curate: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByText("Mapping1"));
-    await wait(() => expect(getByText("Curate: "+ SecurityTooltips.missingPermission)).toBeInTheDocument());
+    await wait(() => expect(getByText("Curate: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByTestId("Mapping1-stepDetails"));
     await wait(() => expect(getByText("Step Details")).toBeInTheDocument());

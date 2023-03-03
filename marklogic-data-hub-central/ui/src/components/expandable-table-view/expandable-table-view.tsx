@@ -13,7 +13,7 @@ interface Props {
 
 
 const ExpandableTableView: React.FC<Props> = (props) => {
-  const [expandedNestedRows, setExpandedNestedRows]= useState([]);
+  const [expandedNestedRows, setExpandedNestedRows] = useState([]);
 
   const {
     searchOptions,

@@ -17,7 +17,7 @@ interface Props {
 const FacetName: React.FC<Props> = ({category, name, facet, checked, index, handleClick}) => {
   const facetValue: string = category && category === "concept" ? facet.value.split("/").pop()! : facet.value;
   const id = `${stringConverter(name)}-${facetValue}-checkbox`;
-  const percentage = isNaN(facet.max) ? 0 : facet.count*100/facet.max;
+  const percentage = isNaN(facet.max) ? 0 : facet.count * 100 / facet.max;
   const isActive = checked.includes(facet.value);
   const facetLabel = category && category === "concept" ? <span><DynamicIcons name={defaultConceptIcon}/> {facet.name}</span> : facet.value;
   return (

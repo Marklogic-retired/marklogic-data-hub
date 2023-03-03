@@ -131,7 +131,7 @@ const ListModal: React.FC<Props> = (props) => {
   const handleListValues = (selections) => {
     if (Array.isArray(selections)) {
       resetModalValuesIgnore();
-      let ruleError  =false;
+      let ruleError  = false;
       // Remove duplicated values
       const filteredSelections = selections.filter(
         (item, index, arr) => {
@@ -214,7 +214,7 @@ const ListModal: React.FC<Props> = (props) => {
     >
       <Modal.Header className={`bb-none ${styles.modalHeader}`}>
         <div className={`flex-column ${styles.modalTitleLegend}`}>{`${textModalHeader} List`}</div>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
 
       <Modal.Body className={"pt-4 px-3"}>
@@ -237,7 +237,7 @@ const ListModal: React.FC<Props> = (props) => {
               />
             </Col>
             <Row>
-              <Col xs={3}></Col>
+              <Col xs={3} />
               <Col xs={9} className={styles.validationErrorIgnore} id="errorListName" data-testid={"ListNameErrorMessage"}>{processListNameErrorMessage(listNameErrorMessage)}</Col>
             </Row>
           </Row>
@@ -265,7 +265,7 @@ const ListModal: React.FC<Props> = (props) => {
               </div>
             </Col>
             <Row>
-              <Col xs={3}></Col>
+              <Col xs={3} />
               <Col xs={9} className={styles.validationErrorIgnore} id="errorListValues" data-testid={"ListValuesErrorMessage"}>{processListValueErrorMessage(listValuesErrorMessage)}</Col>
             </Row>
           </Row>

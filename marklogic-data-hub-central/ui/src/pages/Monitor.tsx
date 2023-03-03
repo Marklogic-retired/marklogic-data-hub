@@ -132,20 +132,19 @@ const Monitor: React.FC = () => {
           <div id="top-search-pagination-bar" className={styles.monitorPagination}>
             <SearchPagination
               total={totalDocuments}
-              pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
-              pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
+              pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable() : monitorOptions.pageNumber}
+              pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable() : monitorOptions.pageSize}
               pageLength={monitorOptions.pageLength}
               maxRowsPerPage={monitorOptions.maxRowsPerPage}
-            >
-            </SearchPagination>
+            />
           </div>
           <div>
             <JobResultsTableView data={data} />
           </div>
           <SearchPagination
             total={totalDocuments}
-            pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable(): monitorOptions.pageNumber}
-            pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable(): monitorOptions.pageSize}
+            pageNumber={getCurrentPageTable() !== 1 ? getCurrentPageTable() : monitorOptions.pageNumber}
+            pageSize={getCurrentPageSizeTable() !== 20 ? getCurrentPageSizeTable() : monitorOptions.pageSize}
             pageLength={monitorOptions.pageLength}
             maxRowsPerPage={monitorOptions.maxRowsPerPage}
           />

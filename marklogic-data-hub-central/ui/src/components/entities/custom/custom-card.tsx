@@ -113,7 +113,7 @@ const CustomCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
@@ -262,7 +262,7 @@ const CustomCard: React.FC<Props> = (props) => {
               </div>
             </Col>
           ))
-            : <span></span>
+            : <span />
         }
       </Row>
       {addConfirmation}

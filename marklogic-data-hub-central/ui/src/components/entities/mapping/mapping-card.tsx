@@ -131,7 +131,7 @@ const MappingCard: React.FC<Props> = (props) => {
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"pt-0 pb-4"}>
       <span style={{fontSize: "16px"}}>Are you sure you want to delete the <strong>{mappingArtifactName}</strong> step?</span>
@@ -278,7 +278,7 @@ const MappingCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
@@ -304,7 +304,7 @@ const MappingCard: React.FC<Props> = (props) => {
       onHide={onConfirmOk}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4`} style={{fontSize: "16px"}}>
@@ -335,7 +335,7 @@ const MappingCard: React.FC<Props> = (props) => {
             <AddTooltipWhenTextOverflow text={mappingArtifactName}/>
           </strong>
         </div>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
@@ -345,7 +345,7 @@ const MappingCard: React.FC<Props> = (props) => {
             ))}</div>
           </Col>
           <Col xs={"auto"}>
-            <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
+            <HCDivider type="vertical" className={styles.verticalDiv} />
           </Col>
           <Col>
             <Link data-testid="link" id="tiles-add-run-new-flow" to={
@@ -375,7 +375,7 @@ const MappingCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px"}}>
@@ -401,7 +401,7 @@ const MappingCard: React.FC<Props> = (props) => {
       onHide={onCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px"}}>
@@ -637,7 +637,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 </div>
               </Col>
             ))
-            : <span></span>
+            : <span />
         }
       </Row>
       {deleteConfirmation}

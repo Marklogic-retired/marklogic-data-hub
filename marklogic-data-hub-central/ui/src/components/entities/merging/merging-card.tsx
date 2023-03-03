@@ -244,7 +244,7 @@ const MergingCard: React.FC<Props> = (props) => {
       onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 px-4 text-center"}>
         <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
@@ -272,7 +272,7 @@ const MergingCard: React.FC<Props> = (props) => {
       onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4`} style={{fontSize: "16px"}}>
@@ -303,7 +303,7 @@ const MergingCard: React.FC<Props> = (props) => {
             <AddTooltipWhenTextOverflow text={mergingArtifactName}/>
           </strong>
         </div>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel} />
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
@@ -313,7 +313,7 @@ const MergingCard: React.FC<Props> = (props) => {
             ))}</div>
           </Col>
           <Col xs={"auto"}>
-            <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
+            <HCDivider type="vertical" className={styles.verticalDiv} />
           </Col>
           <Col>
             <Link data-testid="link" id="tiles-add-run-new-flow" to={
@@ -342,7 +342,7 @@ const MergingCard: React.FC<Props> = (props) => {
       onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px", padding: "10px"}}>
@@ -368,7 +368,7 @@ const MergingCard: React.FC<Props> = (props) => {
       onHide={onAddCancel}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>

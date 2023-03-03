@@ -386,7 +386,7 @@ const FlowPanel: React.FC<Props> = ({
             disabled={!canUserStopFlow}
             tabIndex={0}
             onKeyDown={(event) => {
-              if (event.key === "Enter"|| event.key === " ") { stopRun(); }
+              if (event.key === "Enter" || event.key === " ") { stopRun(); }
             }}
           >
             <FontAwesomeIcon icon={faStopCircle} size="1x" aria-label="icon: info-circle" className={canUserStopFlow ? styles.stopIcon : styles.stopIconDisabled} />

@@ -172,7 +172,7 @@ const SystemInfo = (props) => {
   };
 
   const copyToClipBoard = async (copyMe, event) => {
-    if (event.type === "click" || event.key==="Enter") {
+    if (event.type === "click" || event.key === "Enter") {
       try {
         await navigator.clipboard.writeText(copyMe);
         setCopySuccess("Copied!");
@@ -291,7 +291,7 @@ const SystemInfo = (props) => {
       <Modal.Body>
         <div style={{display: "flex"}}>
           <div style={{padding: "24px 0px 0px 15px"}}>
-            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
+            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}} />
           </div>
           <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
             {selectedDeleteOpt !== "deleteAll" ?
@@ -336,7 +336,7 @@ const SystemInfo = (props) => {
       className={clearDataVisible ? styles.disabledMain : ""}
     >
       <Modal.Body className={styles.systemModalBody} >
-        <Modal.Header closeButton className={"bb-none"}></Modal.Header>
+        <Modal.Header closeButton className={"bb-none"} />
         <div className={styles.systemContainer}>
           <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
             <HCAlert variant="success" showIcon>{selectedDeleteOpt !== "deleteAll" ? <span>A subset of user data was cleared successfully</span> : <span>All user data was cleared successfully</span>}</HCAlert>
@@ -472,7 +472,7 @@ const SystemInfo = (props) => {
                             }}
                           />
                           <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="" >
-                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0:-1}/>
+                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}/>
                           </HCTooltip>
                         </Col>
                       </Row>
@@ -506,7 +506,7 @@ const SystemInfo = (props) => {
                             }}
                           />
                           <HCTooltip text={ClearDataMessages.basedOnTooltip} placement="bottom" id="">
-                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0:-1}/>
+                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}/>
                           </HCTooltip>
                         </Col>
                       </Row>
@@ -525,7 +525,7 @@ const SystemInfo = (props) => {
                               onInputChange={handleCollectionSearch}
                               onChange={handleCollectionChange}
                               minLength={3}
-                            ></Typeahead>
+                            />
                             <span aria-label={"collection-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyCollectionError : null}</span>
                             <Search className={styles.searchIcon} /></div>
                             : ""}
@@ -540,7 +540,7 @@ const SystemInfo = (props) => {
                               onInputChange={handleEntitiesSearch}
                               onChange={handleEntitiesChange}
                               minLength={3}
-                            ></Typeahead>
+                            />
                             <span aria-label={"entities-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyEntityError : null}</span>
                             <Search className={styles.searchIcon} /></div> : ""}
                         </Col>

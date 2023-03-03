@@ -61,9 +61,9 @@ const timelineOrder = (a, b) => {
   let aParts = a.value.split(":");
   let bParts = b.value.split(":");
   // If weights not equal
-  if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+  if (bParts[bParts.length - 1] !== aParts[aParts.length - 1]) {
     // By weight
-    return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+    return parseInt(bParts[bParts.length - 1]) - parseInt(aParts[aParts.length - 1]);
   } else {
     // Else alphabetically
     let aUpper = a.value.toUpperCase();
@@ -105,7 +105,7 @@ const strategyOptions:any = {
   },
   template: function(item) {
     if (item && item.hasOwnProperty("value")) {
-      return "<div data-testid=\"strategy"+"-"+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1]+ "</div></div>";
+      return "<div data-testid=\"strategy" + "-" + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
     }
   },
   maxMinorChars: 4,
@@ -245,7 +245,7 @@ const MergingStepDetail: React.FC = () => {
             id={"strategy-name-link"}
             onClick={() => editMergeStrategy(text)}
             tabIndex={0}
-            onKeyPress={(e) => { if (e.key ==="Enter") editMergeStrategy(text); }}>
+            onKeyPress={(e) => { if (e.key === "Enter") editMergeStrategy(text); }}>
             {text}</span>
         );
       }
@@ -305,7 +305,7 @@ const MergingStepDetail: React.FC = () => {
             tabIndex={0}
             data-testid={mergeRuleLabel}
             onClick={() => editMergeRule(mergeRuleLabel)}
-            onKeyPress={(e) => { if (e.key ==="Enter") editMergeRule(mergeRuleLabel); }}>
+            onKeyPress={(e) => { if (e.key === "Enter") editMergeRule(mergeRuleLabel); }}>
             {text}</span>
         );
       }
@@ -350,7 +350,7 @@ const MergingStepDetail: React.FC = () => {
   }
 
   const deleteIsAvailable = (i) => {
-    return commonStrategyNames.indexOf(i["strategyName"]) !==-1;
+    return commonStrategyNames.indexOf(i["strategyName"]) !== -1;
   };
 
 
@@ -364,7 +364,7 @@ const MergingStepDetail: React.FC = () => {
         priorityOrder: i.hasOwnProperty("priorityOrder") ? true : false,
         delete: <HCTooltip text={deleteIsAvailable(i) ? MergeStrategyTooltips.delete : ""} id="delete-strategy-tooltip" placement="top">
           <i
-            onKeyPress={(e) => { if (e.key ==="Enter" && !deleteIsAvailable(i)) onDelete(i); }}
+            onKeyPress={(e) => { if (e.key === "Enter" && !deleteIsAvailable(i)) onDelete(i); }}
             tabIndex={0}
             data-testid={`mergestrategy-${i.strategyName}`}>
             <FontAwesomeIcon
@@ -388,7 +388,7 @@ const MergingStepDetail: React.FC = () => {
         strategy: i["mergeStrategyName"],
         delete:
          <i
-           onKeyPress={(e) => { if (e.key ==="Enter") onDelete(i); }}
+           onKeyPress={(e) => { if (e.key === "Enter") onDelete(i); }}
            tabIndex={0}>
            <FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color={themeColors.info} size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/>
          </i>
@@ -403,7 +403,7 @@ const MergingStepDetail: React.FC = () => {
         if (strategy.priorityOrder.hasOwnProperty("timeWeight")) {
           const priorityOrderTimeObject = {
             id: "Timestamp:" + strategy.priorityOrder.timeWeight.toString(),
-            value: "Timestamp:"+  strategy.priorityOrder.timeWeight.toString(),
+            value: "Timestamp:" +  strategy.priorityOrder.timeWeight.toString(),
             start: strategy.priorityOrder.timeWeight,
           };
           priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
@@ -413,7 +413,7 @@ const MergingStepDetail: React.FC = () => {
             const priorityOrderSourceObject = {
               id: strategy.strategyName + ":" + key.sourceName,
               start: key.weight,
-              value: "Source" +" - " +key.sourceName + ":" + key.weight.toString(),
+              value: "Source" + " - " + key.sourceName + ":" + key.weight.toString(),
             };
             priorityOrderStrategyOptions.push(priorityOrderSourceObject);
           });
@@ -453,7 +453,7 @@ const MergingStepDetail: React.FC = () => {
       onHide={() => setDeleteModalVisibility(false)}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 px-4"}>
         {currentMergeObj.hasOwnProperty("entityPropertyPath") ? <p aria-label="delete-merge-rule-text">Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :

@@ -604,7 +604,7 @@ const Flows: React.FC<Props> = ({
           {addStepConfirmationModal(addStepDialogVisible, onAddStepOk, onCancel, flowName, stepName, stepType, isStepInFlow)}
           {addExistingStepConfirmationModal(addExistingStepDialogVisible, stepName, flowName, onConfirmOk, onCancel)}
         </> :
-        <div></div>
+        <div />
       }
     </div>
   );

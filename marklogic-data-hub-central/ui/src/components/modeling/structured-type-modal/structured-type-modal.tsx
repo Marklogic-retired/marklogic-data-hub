@@ -121,7 +121,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     } else {
       let submittedSucceeded = true;
       setIsLoading(true);
-      await props.updateStructuredTypesAndHideModal(name, namespace ? namespace: undefined, prefix ? prefix: undefined, async (error) => {
+      await props.updateStructuredTypesAndHideModal(name, namespace ? namespace : undefined, prefix ? prefix : undefined, async (error) => {
         submittedSucceeded = false;
         // reset entity name
         removeEntityFromList(name);
@@ -168,7 +168,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-4"}>{"Add New Structured Property Type"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"py-4"}>
       <Form
@@ -197,7 +197,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {isErrorOfType("name") ? getErrorMessage(): ""}
+                {isErrorOfType("name") ? getErrorMessage() : ""}
               </Col>
             </Row>
           </Col>
@@ -232,7 +232,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {isErrorOfType("namespacePrefix") || isErrorOfType("namespace") ? getErrorMessage(): ""}
+                {isErrorOfType("namespacePrefix") || isErrorOfType("namespace") ? getErrorMessage() : ""}
               </Col>
             </Row>
           </Col>

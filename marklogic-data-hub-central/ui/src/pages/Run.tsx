@@ -283,7 +283,10 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error running step", error);
       setRunEnded({flowId: flowName, stepId: steps});
-      if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
+      if (error.response &&
+        error.response.data &&
+        (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") ||
+        error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
       } else {
         handleError(error);
@@ -329,7 +332,10 @@ const Run = (props) => {
       console.error("Error running step", error);
       setRunEnded({flowId: flowName, stepId: step.stepNumber});
       setIsStepRunning(false);
-      if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
+      if (error.response &&
+        error.response.data &&
+        (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") ||
+        error.response.data.message.includes("Uploading files to server failed"))) {
         setUploadError(error.response.data.message);
       } else {
         handleError(error);
@@ -411,8 +417,14 @@ const Run = (props) => {
             <p>{MissingPagePermission}</p>
         }
       </div>
-      {openJobResponse && <JobResponse setUserCanStopFlow={setUserCanStopFlow}
-        setIsStepRunning={setIsStepRunning} stopRun={stopRun} jobId={jobId} setOpenJobResponse={setOpenJobResponse} runningFlow={flowRunning} />}
+      {openJobResponse &&
+      <JobResponse
+        setUserCanStopFlow={setUserCanStopFlow}
+        setIsStepRunning={setIsStepRunning}
+        stopRun={stopRun}
+        jobId={jobId}
+        setOpenJobResponse={setOpenJobResponse}
+        runningFlow={flowRunning} />}
     </div>
   );
 };

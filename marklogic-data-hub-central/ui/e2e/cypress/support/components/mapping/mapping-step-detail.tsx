@@ -374,11 +374,11 @@ class MappingStepDetail {
   }
 
   selectColumnPopover(classColumn:string) {
-    cy.get(`${"."+classColumn}`).click();
+    cy.get(`${"." + classColumn}`).click();
   }
 
   selectColumnPopoverById(columnId:string) {
-    return cy.get(`${"#"+columnId}`);
+    return cy.get(`${"#" + columnId}`);
   }
 
   verifyCheckboxPopoverState(state:boolean) {

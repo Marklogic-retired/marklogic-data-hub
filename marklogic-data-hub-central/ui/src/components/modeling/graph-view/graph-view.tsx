@@ -213,7 +213,7 @@ const GraphView: React.FC<Props> = (props) => {
     </HCTooltip>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
       <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" tabIndex={0} onClick={() => { setExportPngButtonClicked(true); }} onKeyDown={(event) => {
-        if (event.key === "Enter"|| event.key === " ") {  setExportPngButtonClicked(true); }
+        if (event.key === "Enter" || event.key === " ") {  setExportPngButtonClicked(true); }
       }}
       /></i>
     </HCTooltip>
@@ -259,7 +259,7 @@ const GraphView: React.FC<Props> = (props) => {
     } else if (colorExistsOnServer) {
       color = colorOfNode(nodeName, modelCategory, props.hubCentralConfig);
     } else {
-      color = !isConcept ? themeColors.defaults.entityColor: themeColors.defaults.conceptColor;
+      color = !isConcept ? themeColors.defaults.entityColor : themeColors.defaults.conceptColor;
     }
     return color;
   };

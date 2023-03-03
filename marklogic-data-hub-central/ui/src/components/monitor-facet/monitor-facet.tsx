@@ -163,7 +163,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
           label={facet ? checkFacetLabel(facet.value) : ""}
           checked={checked.includes(facet.value)}
           dataTestId={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
-          tooltip={facet?.value.toLowerCase() === "ingestion" ? "Loading": facet.value[0].toUpperCase() + facet.value.substring(1)}
+          tooltip={facet?.value.toLowerCase() === "ingestion" ? "Loading" : facet.value[0].toUpperCase() + facet.value.substring(1)}
         />
       </div>
     );

@@ -671,7 +671,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
         properties.forEach((p, i) => {
           let pObj = e.model.definitions[e.entityName].properties[p];
-          let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined :"Edit Relationship";
+          let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
           let relationshipName = p;
           if (relationshipName.length > 20) {
             relationshipName = relationshipName.substring(0, 20) + "...";
@@ -691,7 +691,7 @@ const GraphVis: React.FC<Props> = (props) => {
           let relatedConcepts: any = e.model.definitions[e.entityName].relatedConcepts;
           relatedConcepts.forEach(obj => {
             let relationshipName = obj.predicate;
-            let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined :"Edit Relationship";
+            let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
             if (obj.predicate.length > 20) {
               relationshipName = relationshipName.substring(0, 20) + "...";
               title = obj.predicate + "\n" + (title || "");
@@ -750,7 +750,7 @@ const GraphVis: React.FC<Props> = (props) => {
     let targetNodeColor;
     let edgeInfo = event && event.edges?.length > 0 ? event.edges[0] : "";
     const edge = network.body.data.edges.get(edgeInfo);
-    const sourceName = sourceNodeName? sourceNodeName : edge.from;
+    const sourceName = sourceNodeName ? sourceNodeName : edge.from;
     let isConcept = isConceptNode(targetNodeName);
     if (targetNodeName === "Select target entity type*") {
       targetNodeColor = "#ececec";
@@ -1064,7 +1064,7 @@ const GraphVis: React.FC<Props> = (props) => {
     centered
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="closeInvalidSourceTypeAlert" onClick={closeInvalidSourceAlert}></button>
+      <button type="button" className="btn-close" aria-label="closeInvalidSourceTypeAlert" onClick={closeInvalidSourceAlert} />
     </Modal.Header>
     <Modal.Body>
       <HCAlert

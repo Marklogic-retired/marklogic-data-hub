@@ -10,7 +10,7 @@ export interface HCAlertProps extends AlertProps {
   handleCloseAlert?:()=>void
 }
 
-function HCAlert({showIcon, children, variant, className, heading, closeButton=false, handleCloseAlert=() => {}, ...others}: HCAlertProps) {
+function HCAlert({showIcon, children, variant, className, heading, closeButton = false, handleCloseAlert = () => {}, ...others}: HCAlertProps) {
   let icon;
   if (variant === "success") {
     icon = <CheckCircleFill data-testid="success-icon" />;
@@ -33,8 +33,8 @@ function HCAlert({showIcon, children, variant, className, heading, closeButton=f
 
       </div>
       {closeButton ? <div className={styles.closeButton}>
-        <button type="button" className="btn-close" aria-label="Close-alert" onClick={() => handleCloseAlert()}></button>
-      </div>:null}
+        <button type="button" className="btn-close" aria-label="Close-alert" onClick={() => handleCloseAlert()} />
+      </div> : null}
     </Alert>
   );
 }

@@ -55,8 +55,7 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
       onClick={handleEditColorMenu} id={`${entityType}-color-button`}
       data-testid={`${entityType}-color-button`} aria-label={`${entityType}-color-button`}
       data-color={color}>
-      <div data-testid={`${entityType}-color`} style={{width: "32px", height: "30px", background: color, margin: "8px"}}>
-      </div>
+      <div data-testid={`${entityType}-color`} style={{width: "32px", height: "30px", background: color, margin: "8px"}} />
       {isVisible ?
         <div ref={colorRef} id={`${entityType}-color-picker-menu`}
           aria-label={`${entityType}-color-picker-menu`} className={styles.colorPickerContainer}>

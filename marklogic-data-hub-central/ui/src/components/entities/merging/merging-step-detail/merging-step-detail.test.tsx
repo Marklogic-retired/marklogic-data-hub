@@ -201,7 +201,7 @@ describe("Merging Step Detail view component", () => {
     expect(container.querySelector("#strategy-name-link")).toHaveFocus();
     userEvent.tab();
     expect(getByTestId("mergestrategy-myFavoriteSource")).toHaveFocus();
-    for (let i=0;i<=3;i++) { // jump over the  remaining rows
+    for (let i = 0;i <= 3;i++) { // jump over the  remaining rows
       userEvent.tab();
     }
     expect(getByTestId("page-<")).toHaveFocus();

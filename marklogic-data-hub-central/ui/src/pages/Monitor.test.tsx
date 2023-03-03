@@ -10,7 +10,15 @@ describe("Monitor component", () => {
 
   test("Verify user with no authorities cannot access page", async () => {
     const authorityService = new AuthoritiesService();
-    const {getByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Monitor/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Monitor/>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     expect(await(waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
   });
@@ -19,7 +27,15 @@ describe("Monitor component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["jobMonitor"]);
 
-    const {getByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Monitor/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {
+      getByText
+    } = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Monitor/>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
 
     let intro = tiles?.monitor?.intro;
     if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text

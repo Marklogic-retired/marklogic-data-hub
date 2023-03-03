@@ -123,7 +123,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     >
       <Modal.Header>
         <span className={"fs-5"}>{"Save Query"}</span>
-        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
         <Form name="basic" className={"container-fluid"}>

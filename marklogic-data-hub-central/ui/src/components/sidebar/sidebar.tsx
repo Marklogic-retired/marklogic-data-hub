@@ -902,7 +902,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.panelTitle}>
         {title}
         <span
-          tabIndex={props.graphView || stringTitle==="base entities" ? 0 : undefined}
+          tabIndex={props.graphView || stringTitle === "base entities" ? 0 : undefined}
           onBlur={(e) => onLostFocusEventHandlerTooltip(e, stringTitle)}
           onFocus={(e) => onFocusHandlerTooltip(e, stringTitle)}>
           <HCTooltip
@@ -1019,7 +1019,7 @@ const Sidebar: React.FC<Props> = (props) => {
           aria-label="switch-datasource-all-data"
           label={
             <span className="w-100 h-100" tabIndex={0} onKeyDown={(e) => onKeyDownEnter(e, setDatasourcePreferences, "all-data")}>
-              <span id="all-data" className="loadIcon"></span>
+              <span id="all-data" className="loadIcon" />
               <span>All Data</span>
             </span>
           }
@@ -1177,7 +1177,7 @@ const Sidebar: React.FC<Props> = (props) => {
           props.currentRelatedConcepts?.size > 0 &&
           <div className={styles.relatedEntityPanel}>
             <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
+              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
                 <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
                   <div className={"p-0 d-flex"}>
                     <Accordion.Button tabIndex={-1} className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
@@ -1225,7 +1225,7 @@ const Sidebar: React.FC<Props> = (props) => {
               </span>
             </div>
           }
-        ></Form.Check>
+        />
         {/* <FormCheck
           type="switch"
           data-testid="toggleHubArtifacts"

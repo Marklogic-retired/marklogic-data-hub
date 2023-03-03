@@ -93,7 +93,10 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         inputId="dropdownList"
         components={{MenuList: props => MenuList("query", props)}}
         placeholder={SELECT_QUERY_PLACEHOLDER}
-        value={searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER ? null : options.find(oItem => oItem.value === searchOptions.selectedQuery)}
+        value={searchOptions.selectedQuery === SELECT_QUERY_PLACEHOLDER ?
+          null :
+          options.find(oItem => oItem.value === searchOptions.selectedQuery)
+        }
         onChange={checkCurrentQueryChange}
         isSearchable={false}
         noOptionsMessage={() => "There are no saved queries"}
@@ -137,11 +140,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         onHide={onCancel}
       >
         <Modal.Header className={"bb-none"}>
-          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
         </Modal.Header>
         <Modal.Body className={"pt-0 px-4"}>
           <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
-          <p>Would you like to save the changes to <strong>{props.currentQueryName}</strong> before switching to the new query</p>
+          <p>Would you like to save the changes to
+            <strong>{props.currentQueryName}</strong>
+            before switching to the new query</p>
           <div className={"d-flex justify-content-center"}>
             <HCButton variant="outline-light" key="back" className={"me-2"} id="query-confirmation-no-button" onClick={() => onNoClick()}>
               No

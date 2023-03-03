@@ -28,10 +28,19 @@ export const NotificationContext = React.createContext<INotificationContextInter
 
 const NotificationProvider: React.FC<{ children: any }> = ({children}) => {
 
-  const [notificationOptions, setNotificationOptions] = useState<NotificationContextInterface>(defaultNotificationOptions);
+  const [
+    notificationOptions,
+    setNotificationOptions
+  ] = useState<NotificationContextInterface>(defaultNotificationOptions);
 
   const setNotificationsObj = (notificationsList: any[], count: number, length: number, updated: boolean) => {
-    setNotificationOptions({...notificationOptions, notifications: notificationsList, totalCount: count, pageLength: length, runUpdated: updated});
+    setNotificationOptions(
+      {...notificationOptions,
+        notifications: notificationsList,
+        totalCount: count,
+        pageLength: length,
+        runUpdated: updated
+      });
   };
 
   return (

@@ -349,7 +349,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
           <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> {nodeType} throughout your project.</span>}>
-            <div tabIndex={0} style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
+            <div tabIndex={0} style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`} />
           </HCTooltip>
         );
       }

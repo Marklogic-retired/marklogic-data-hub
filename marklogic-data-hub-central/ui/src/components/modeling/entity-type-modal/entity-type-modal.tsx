@@ -281,7 +281,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   >
     <Modal.Header className={"pe-4"}>
       <span className={"fs-3"}>{props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"py-4"}>
       <Form

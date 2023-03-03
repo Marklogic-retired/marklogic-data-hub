@@ -26,7 +26,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
 
   const getLabel = () => {
     if (tooltip) {
-      return <HCTooltip text={tooltip} placement={placementTooltip ? placementTooltip: "top"} id={`${id}-tooltip`}>{checkLabel}</HCTooltip>;
+      return <HCTooltip text={tooltip} placement={placementTooltip ? placementTooltip : "top"} id={`${id}-tooltip`}>{checkLabel}</HCTooltip>;
     }
     return label;
   };
@@ -47,7 +47,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
       />
       :
       tooltip ?
-        <HCTooltip text={tooltip} placement={placementTooltip ? placementTooltip: "top"} id={`${id}-tooltip`}>
+        <HCTooltip text={tooltip} placement={placementTooltip ? placementTooltip : "top"} id={`${id}-tooltip`}>
           <FormCheck.Input
             type="checkbox"
             value={value}

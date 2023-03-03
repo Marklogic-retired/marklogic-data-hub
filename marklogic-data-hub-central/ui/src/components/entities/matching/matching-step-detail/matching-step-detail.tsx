@@ -800,12 +800,12 @@ const MatchingStepDetail: React.FC = () => {
       onSelect={handleAddMenu}
     >
       <Dropdown.Item eventKey="singlePropertyRuleset" onKeyDown={(event) => {
-        if (event.key === "Enter"|| event.key === " ") { handleAddMenu("singlePropertyRuleset"); }
+        if (event.key === "Enter" || event.key === " ") { handleAddMenu("singlePropertyRuleset"); }
       }}>
         <span aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
       </Dropdown.Item>
       <Dropdown.Item eventKey="multiPropertyRuleset" onKeyDown={(event) => {
-        if (event.key === "Enter"|| event.key === " ") {
+        if (event.key === "Enter" || event.key === " ") {
           handleAddMenu("multiPropertyRuleset");
         }
       }}>
@@ -851,7 +851,7 @@ const MatchingStepDetail: React.FC = () => {
                             if (arr.length - 1 === index) {
                               return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
                             } else {
-                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>;
+                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period} /> </span>;
                             }
                           })}</div>;
 

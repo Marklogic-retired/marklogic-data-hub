@@ -25,7 +25,7 @@ const MergeDeleteModal: React.FC<Props> = (props) => {
   return (
     <HCModal show={props.isVisible} onHide={closeModal}>
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
       <Modal.Body className={"pt-0 px-4"}>
         <p aria-label="delete-merge-strategy-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{props.deletePriorityName}</b> priority?</p>

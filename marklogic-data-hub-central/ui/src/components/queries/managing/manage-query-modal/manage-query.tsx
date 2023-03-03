@@ -168,7 +168,9 @@ const QueryModal = (props) => {
       }
     });
 
-    let hasArray = query.savedQuery.propertiesToDisplay.length > 0 && arrayProperties.length > 0 && query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)));
+    let hasArray = query.savedQuery.propertiesToDisplay.length > 0 &&
+    arrayProperties.length > 0 &&
+    query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)));
     let isStructured = query && query.savedQuery.propertiesToDisplay && query.savedQuery.propertiesToDisplay.some(column => column.includes("."));
     setStructured(hasArray || isStructured);
     (hasArray || isStructured) && getPreview(id);
@@ -326,7 +328,7 @@ const QueryModal = (props) => {
     onHide={onCancel}
   >
     <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"pt-0 px-4"}>
       <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
@@ -374,7 +376,14 @@ const QueryModal = (props) => {
 
   return (
     <div>
-      <ExportQueryModal hasStructured={hasStructured} queries={queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} />
+      <ExportQueryModal
+        hasStructured={hasStructured}
+        queries={queries}
+        tableColumns={tableColumns}
+        tableData={tableData}
+        recordID={recordID}
+        exportModalVisibility={exportModalVisibility}
+        setExportModalVisibility={setExportModalVisibility} />
       <HCModal
         show={props.modalVisibility}
         size={"lg"}
@@ -383,7 +392,7 @@ const QueryModal = (props) => {
       >
         <Modal.Header className={"bb-none"} data-testid="manage-queries-modal">
           <span className={styles.title}>{"Manage Queries"}</span>
-          <button type="button" className="btn-close manage-modal-close-icon" aria-label="Close" onClick={onClose}></button>
+          <button type="button" className="btn-close manage-modal-close-icon" aria-label="Close" onClick={onClose} />
         </Modal.Header>
         <Modal.Body>
           <HCTable

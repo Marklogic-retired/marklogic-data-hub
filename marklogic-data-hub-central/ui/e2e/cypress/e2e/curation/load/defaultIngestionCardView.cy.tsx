@@ -6,8 +6,8 @@ import LoginPage from "../../../support/pages/login";
 import {advancedSettings} from "../../../support/components/common/index";
 
 let stepName = "cyCardView";
-let flowName= "newE2eFlow";
-let flowName1= "newE2eFlow1";
+let flowName = "newE2eFlow";
+let flowName1 = "newE2eFlow1";
 let flowName2 = "newE2eFlow2";
 
 describe("Validate CRUD functionality from card view and run in a flow", () => {

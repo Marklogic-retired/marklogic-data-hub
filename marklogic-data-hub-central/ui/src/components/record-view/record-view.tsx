@@ -225,7 +225,7 @@ const RecordCardView = (props) => {
     const result1 = results[0];
     const result2 = results[1];
 
-    const flowName= result1.data.recordMetadata?.datahubCreatedInFlow;
+    const flowName = result1.data.recordMetadata?.datahubCreatedInFlow;
     const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
@@ -412,7 +412,7 @@ const RecordCardView = (props) => {
                 </span>
               </HCCard>
             </div>
-          </Col>)) : <span></span>}
+          </Col>)) : <span />}
       </Row>
       <CompareValuesModal
         isVisible={compareModalVisible}

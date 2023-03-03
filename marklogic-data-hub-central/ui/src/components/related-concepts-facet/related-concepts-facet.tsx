@@ -10,7 +10,7 @@ import * as _ from "lodash";
 import {DynamicIcons, HCFacetIndicator} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
-const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
+const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length;
 // const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
 const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
@@ -115,7 +115,7 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
                 </HCCheckbox>
                 {count > 0 &&
                     <span className={styles.indicatorContainer} aria-label={`related-concept-${name}-amountbar`}>
-                      <HCFacetIndicator percentage={isNaN(count) || count < 1 ? 0 : count*100/entityIndicatorData.max} isActive={checked} />
+                      <HCFacetIndicator percentage={isNaN(count) || count < 1 ? 0 : count * 100 / entityIndicatorData.max} isActive={checked} />
                     </span>
                 }
               </div>

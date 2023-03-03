@@ -76,7 +76,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       onHide={closeModal}
     >
       <Modal.Header className={"bb-none"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4"}>
         <div className={styles.modalBody}>

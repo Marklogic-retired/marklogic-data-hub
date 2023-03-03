@@ -32,8 +32,19 @@ describe("Load component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion"]);
 
-    const {baseElement, getByText, getByPlaceholderText, getByLabelText, getByTestId, queryByTestId, queryByTitle} = render(
-      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
+    const {
+      baseElement,
+      getByText,
+      getByPlaceholderText,
+      getByLabelText,
+      getByTestId,
+      queryByTestId,
+      queryByTitle} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Load/>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
     );
 
     expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
@@ -94,8 +105,19 @@ describe("Load component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "writeIngestion"]);
 
-    const {baseElement, getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId, queryAllByText} = render(
-      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
+    const {
+      baseElement,
+      getByText,
+      getAllByText,
+      getByLabelText,
+      getByPlaceholderText,
+      getByTestId,
+      queryAllByText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Load/>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
     );
 
     expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
@@ -190,7 +212,11 @@ describe("Load component", () => {
     authorityService.setAuthorities(["readIngestion", "writeIngestion"]);
 
     const {getByText, getAllByText, getByLabelText, getByTestId} = render(
-      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Load/>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
     );
 
     expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();

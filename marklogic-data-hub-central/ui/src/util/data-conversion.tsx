@@ -537,8 +537,8 @@ export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropert
 };
 
 export const trimText  = (text, lettersToCut = 19) => {
-  if (text?.length>lettersToCut+1) {
-    text= text.slice(0, lettersToCut) +"...";
+  if (text?.length > lettersToCut + 1) {
+    text = text.slice(0, lettersToCut) + "...";
   }
   return text;
 };

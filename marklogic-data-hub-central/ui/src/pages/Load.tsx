@@ -16,7 +16,7 @@ import {ErrorMessageContext} from "@util/error-message-context";
 import {ViewType} from "../types/modeling-types";
 
 
-const INITIAL_VIEW= ViewType.card;
+const INITIAL_VIEW = ViewType.card;
 
 const Load: React.FC = () => {
 

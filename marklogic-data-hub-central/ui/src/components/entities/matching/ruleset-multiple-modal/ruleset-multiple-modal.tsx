@@ -418,7 +418,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       selectedRowKeys.forEach(key => {
         let propertyPath = key;
         if (key?.includes(".")) { indentMainKeyPropertyRow = key.split(".")[0]; }
-        if (key && key!==indentMainKeyPropertyRow && !matchTypes[key]) {
+        if (key && key !== indentMainKeyPropertyRow && !matchTypes[key]) {
           matchErrorMessageObj[key] = "A match type is required";
         } else {
           switch (matchTypes[key]) {
@@ -685,7 +685,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const inputUriStyle = (propertyPath, fieldType, hasParent?) => {
     const inputFieldStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? hasParent ? "19vw": "25vw": "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? hasParent ? "19vw" : "25vw" : "13vw"),
       marginRight: "5px",
       marginLeft: ["distance-threshold-input", "function-input"].includes(fieldType) ? "15px" : "0px",
       justifyContent: "top",
@@ -754,7 +754,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           id={`${propertyPath}-filter-input`}
           ariaLabel={`${propertyPath}-filter-input`}
           placeholder="Enter a node in the thesaurus to use as a filter"
-          className={ hasParent ? styles.filterInputChild: styles.filterInput}
+          className={ hasParent ? styles.filterInputChild : styles.filterInput}
           value={filterValues[propertyPath] || ""}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -847,7 +847,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           id={`${propertyPath}-namespace-input`}
           ariaLabel={`${propertyPath}-namespace-input`}
           placeholder="Enter a namespace"
-          className={hasParent ? styles.functionInputChild:styles.functionInput}
+          className={hasParent ? styles.functionInputChild : styles.functionInput}
           value={namespaceValues[propertyPath] || ""}
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
@@ -1165,11 +1165,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const rowSelection = {
     onSelect: (record, selected) => {
-      const rowMainParentKey = record?.hasParent ? record.parentKeys[0].split(",")[0]: "";
+      const rowMainParentKey = record?.hasParent ? record.parentKeys[0].split(",")[0] : "";
       if (selectedRowKeys.includes(record.propertyPath)) {
 
         let selectedRowsKeysAux = [...selectedRowKeys.filter(key => key !== record.propertyPath)];
-        const existAux = selectedRowsKeysAux?.filter(key => key ? key.includes(rowMainParentKey) && key.length !== rowMainParentKey.length: "");
+        const existAux = selectedRowsKeysAux?.filter(key => key ? key.includes(rowMainParentKey) && key.length !== rowMainParentKey.length : "");
 
         if (existAux.length === 0) {
           selectedRowsKeysAux = [...selectedRowsKeysAux.filter(key => key !== rowMainParentKey)];
@@ -1312,7 +1312,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       scrollable={true}
     >
       <Modal.Header className={"bb-none align-items-start headerModal"}>
-        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
         {modalTitle}
         <Form
           id="matching-multiple-ruleset"
