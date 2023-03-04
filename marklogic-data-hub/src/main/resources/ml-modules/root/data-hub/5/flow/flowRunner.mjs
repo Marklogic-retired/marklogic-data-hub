@@ -41,7 +41,7 @@ const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
  * @return a JSON object conforming to RunFlowResponse.schema.json
  */
 function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
-  let currentContentArray = normalizeContentArray(contentArray);
+  let currentContentArray = hubUtils.normalizeToArray(contentArray);
   runtimeOptions = runtimeOptions || {};
   jobId = jobId || sem.uuidString();
 
@@ -87,13 +87,6 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
 
   finishFlowExecution(flowExecutionContext, writeQueue);
   return flowExecutionContext.flowResponse;
-}
-
-function normalizeContentArray(contentArray) {
-  if (contentArray == null || contentArray == undefined) {
-    return [];
-  }
-  return Array.isArray(contentArray) ? contentArray : [contentArray];
 }
 
 /**
