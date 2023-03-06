@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
-import axios from "axios";
+import axios from "@config/axios";
 import {UserContext} from "@util/user-context";
 import {parseVersion} from "@util/environment";
 import logo from "./logo.svg";

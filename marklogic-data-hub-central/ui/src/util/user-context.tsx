@@ -8,7 +8,7 @@ import {AuthoritiesContext} from "./authorities";
 import {MAX_SESSION_TIME} from "@config/application.config";
 import {Subscription} from "rxjs";
 import {ViewSettingsType} from "../types/view-types";
-import axios from "axios";
+import axios from "@config/axios";
 import {useHistory} from "react-router-dom";
 
 const defaultUserData = {

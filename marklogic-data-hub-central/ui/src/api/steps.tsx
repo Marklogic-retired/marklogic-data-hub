@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 
 export const createStep = async (name, type, settings) => {
   return await axios.post(`/api/steps/${type}`, settings);

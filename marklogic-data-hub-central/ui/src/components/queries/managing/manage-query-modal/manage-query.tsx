@@ -12,7 +12,7 @@ import {Modal} from "react-bootstrap";
 import {QueryOptions} from "../../../../types/query-types";
 import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
-import axios from "axios";
+import axios from "@config/axios";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {getExportPreview} from "../../../query-export/export-preview/export-preview";
 import {getSavedQueryPreview} from "@api/queries";

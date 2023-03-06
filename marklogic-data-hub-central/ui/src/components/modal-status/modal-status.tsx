@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
 import {RouteComponentProps, withRouter, useLocation, useHistory} from "react-router-dom";
 import {Modal} from "react-bootstrap";
-import axios from "axios";
+import axios from "@config/axios";
 
 import {UserContext} from "@util/user-context";
 import {useInterval} from "../../hooks/use-interval";

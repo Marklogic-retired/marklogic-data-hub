@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 
 export const rangeFacet = async (props, database) => {
   return await axios({

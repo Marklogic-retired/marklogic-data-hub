@@ -2,6 +2,7 @@
   "name": "marklogic-data-hub-central",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@emotion/css": "^11.1.3",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
