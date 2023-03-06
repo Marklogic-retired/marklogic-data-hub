@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
-import axios from "axios";
+import axios from "@config/axios";
 import dayjs from "dayjs";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";

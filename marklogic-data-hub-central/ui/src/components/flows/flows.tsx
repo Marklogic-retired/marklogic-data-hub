@@ -7,7 +7,7 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {getUserPreferences, updateUserPreferences} from "../../../src/services/user-preferences";
 import {Flow} from "../../types/run-types";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
-import axios from "axios";
+import axios from "@config/axios";
 import styles from "./flows.module.scss";
 import {useDropzone} from "react-dropzone";
 import {
