@@ -77,12 +77,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     //Fix for Windows, if accordion it's not collapsed
-    runPage.getPatientFlowAccordion(flowName).then(($ele) => {
-      if (!$ele.hasClass("show")) {
-        cy.log("**Toggling accordion because it was closed.**");
-        runPage.toggleExpandFlow(flowName);
-      }
-    });
+    runPage.toggleFlowAccordion(flowName);
     cy.verifyStepAddedToFlow("Loading", loadStepName, flowName);
     runPage.runStep(loadStepName, flowName);
     cy.waitUntil(() => cy.get("input[type=\"file\"]"));
