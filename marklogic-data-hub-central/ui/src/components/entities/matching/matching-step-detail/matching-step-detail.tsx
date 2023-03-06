@@ -785,6 +785,7 @@ const MatchingStepDetail: React.FC = () => {
   const handleAddMenu = (key) => {
     if (key === "singlePropertyRuleset") {
       addNewSingleRuleset();
+      setEditRuleset({});
     }
     if (key === "multiPropertyRuleset") {
       addNewMultipleRuleset();

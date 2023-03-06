@@ -73,3 +73,19 @@ export const createEditExcludeValuesList = async(listName, listValues, oldName =
     return false;
   }
 };
+
+export const deleteExcludeValuesList = async(listName) => {
+
+  try {
+    let response =  await axios.delete(`/api/steps/matching/exclusionList/${listName}`);
+    if (response.status === 200 && response.data.success) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error creating list!", message);
+    return false;
+  }
+};
