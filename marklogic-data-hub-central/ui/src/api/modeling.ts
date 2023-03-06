@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 import {EntityModified} from "../types/modeling-types";
 
 export const primaryEntityTypes = async () => {
