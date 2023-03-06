@@ -12,7 +12,7 @@
 - [ ] Rebase the branch with upstream
 - [ ] Squashed all commits into a single commit
 - [ ] Added Tests
-- [ ] Ran cypress tests on firefox locally
+- [ ] Ran newly added/edited cypress tests on Firefox locally
   
 
 - ##### Reviewer:

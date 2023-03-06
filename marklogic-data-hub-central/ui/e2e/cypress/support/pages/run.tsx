@@ -217,8 +217,13 @@ class RunPage {
   getStepFailureSummary(stepName: string) {
     return cy.get(`[data-testid="${stepName}-error-list"]`);
   }
-  getPatientFlowAccordion(flowName: string) {
-    return cy.get(`#${flowName} div[class^="accordion-collapse collapse"]`);
+  toggleFlowAccordion(flowName: string) {
+    cy.get(`#${flowName} div[class^="accordion-collapse collapse"]`).then(($ele) => {
+      if (!$ele.hasClass("show")) {
+        cy.log("**Toggling accordion because it was closed.**");
+        runPage.toggleExpandFlow(flowName);
+      }
+    });
   }
 
   getSpinner() {
