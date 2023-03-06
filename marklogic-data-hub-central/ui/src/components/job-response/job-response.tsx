@@ -6,7 +6,7 @@ import {SearchContext} from "@util/search-context";
 import {canStopFlow, isFlowRunning} from "@util/run-utils";
 import {dateConverter, renderDuration, durationFromDateTime} from "@util/date-conversion";
 import styles from "./job-response.module.scss";
-import axios from "axios";
+import axios from "@config/axios";
 import {UserContext} from "@util/user-context";
 import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";

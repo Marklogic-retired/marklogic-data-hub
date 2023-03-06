@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "@components/flows/flows";
-import axios from "axios";
+import axios from "@config/axios";
 import {AuthoritiesContext} from "@util/authorities";
 import {UserContext} from "@util/user-context";
 import tiles from "../config/tiles.config";

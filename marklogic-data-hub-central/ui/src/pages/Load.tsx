@@ -5,7 +5,7 @@ import ViewSwitch from "@components/common/switch-view/view-switch";
 import LoadList from "@components/load/load-list";
 import LoadCard from "@components/load/load-card";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
-import axios from "axios";
+import axios from "@config/axios";
 import {createStep, updateStep, getSteps, deleteStep} from "@api/steps";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import {AuthoritiesContext} from "@util/authorities";
