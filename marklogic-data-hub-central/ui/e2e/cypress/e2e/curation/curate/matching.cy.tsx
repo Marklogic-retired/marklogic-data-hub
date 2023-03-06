@@ -585,6 +585,7 @@ describe("Matching", () => {
     matchingStepDetail.getSinglePropertyOption();
 
     // OpenModal
+    cy.wait(1000);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
 
@@ -715,5 +716,44 @@ describe("Matching", () => {
       cy.findByText("Word1, Word2, Word3, dog");
       rulesetSingleModal.closeButton().click();
     }
+  });
+
+  it("Select and save values to ignore", () => {
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
+    cy.findByLabelText("inputUriRadio").scrollIntoView().click();
+
+    //adding ruleset for a single property
+    cy.log("**Add To list to ignore**");
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getSinglePropertyOption();
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.createNewList();
+    rulesetSingleModal.addValuesToListToIgnore("Word1");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "swim");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.createNewList();
+    rulesetSingleModal.addValuesToListToIgnore("Word1");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "List1");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.selectItemFromList("swim");
+    rulesetSingleModal.selectItemFromList("List1");
+
+    rulesetSingleModal.selectPropertyToMatch("id");
+    rulesetSingleModal.selectMatchTypeDropdown("exact");
+    rulesetSingleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.contains("id - Exact").should("have.length.gt", 0);
+    cy.findByLabelText("ruleset-scale-switch").click();
+    cy.findByText("id - Exact").click();
+    cy.findByText("swim");
+    cy.findByText("List1");
   });
 });

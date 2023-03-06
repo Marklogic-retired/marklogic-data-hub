@@ -3,7 +3,7 @@ import {Modal} from "react-bootstrap";
 import {HCButton, HCModal} from "@components/common";
 import styles from "./flows.module.scss";
 
-export const deleteConfirmationModal = (isVisible: boolean, flowName: string, onOk, onCancel) => {
+export const deleteConfirmationModal = (isVisible: boolean, flowName: string, onOk, onCancel, itemType = "flow?") => {
   return (<HCModal
     show={isVisible}
     onHide={onCancel}
@@ -12,7 +12,7 @@ export const deleteConfirmationModal = (isVisible: boolean, flowName: string, on
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
     </Modal.Header>
     <Modal.Body className={"text-center pt-0 pb-4"}>
-      <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
+      <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to delete the <strong>{flowName}</strong> {itemType}</div>
       <div>
         <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
           No

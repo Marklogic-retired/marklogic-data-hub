@@ -119,6 +119,9 @@ class RulesetSingleModal {
     return cy.get(`[id="copy-${listName}"]`).click();
   }
 
+  selectItemFromList(listName:string) {
+    return cy.findByText(listName).click();
+  }
 }
 
 const rulesetSingleModal = new RulesetSingleModal();

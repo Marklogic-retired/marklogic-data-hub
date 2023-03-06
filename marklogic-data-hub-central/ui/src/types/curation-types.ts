@@ -78,6 +78,7 @@ export interface MatchRule {
   entityPropertyPath: string,
   matchType: string,
   options?: any,
+  exclusionLists?:string[],
   // custom options
   algorithmModuleNamespace?: string,
   algorithmModulePath?: string,

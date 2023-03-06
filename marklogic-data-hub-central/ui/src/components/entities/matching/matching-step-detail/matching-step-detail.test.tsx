@@ -19,7 +19,7 @@ describe("Matching Step Detail view component", () => {
   });
 
   it("can render matching step with no rulesets or thresholds and click less/more text", async() => {
-
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const {getByLabelText, queryByLabelText, getByTestId, getAllByPlaceholderText, getByText} =  render(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
         <MatchingStepDetail/>
@@ -69,6 +69,7 @@ describe("Matching Step Detail view component", () => {
   });
 
   it("Keyboard Navigation sequence is correct", async () => {
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const {getByLabelText} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>

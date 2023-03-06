@@ -12,13 +12,14 @@ import {CurationContext} from "@util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "@config/tooltips.config";
-import {getAllExcludeValuesList, updateMatchingArtifact} from "@api/matching";
+import {deleteExcludeValuesList, getAllExcludeValuesList, updateMatchingArtifact} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {faCopy, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import ListModal from "../list-modal/list-modal";
+import {deleteConfirmationModal} from "../../../flows/confirmation-modals";
 
 type Props = {
   editRuleset: any;
@@ -89,7 +90,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [listName, setListName] = useState("");
   const [listValues, setListValues] = useState<string[]>([]);
   const [excludeList, setExcludeList] = useState(presetListMock);
-  const [clickedExcludeLists, setClickedExcludeList] = useState<any>([]);
+  const [selectedExcludeList, setSelectedExcludeList] = useState<any[]>([]);
+  const [selectedExcludeListToInput, setSelectedExcludeListToInput] = useState<any[]>([]);
+  const [deleteConformationVisible, setDeleteConformationVisible] = useState<boolean>(false);
+  const [listToDelete, setListToDelete] = useState<string>("");
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -98,6 +102,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
+    fetchExcludeValueList();
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
@@ -132,12 +137,28 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.isVisible) {
-      fetchExcludeValueList();
+      if (props.editRuleset.matchRules?.length > 0 && props.editRuleset.matchRules[0].exclusionLists) {
+        const listToIgnore:any[] = [];
+        props.editRuleset.matchRules[0].exclusionLists.forEach((item) => {
+          const listValue = checkIfListExists(item);
+          if (listValue) {
+            listToIgnore.push(listValue);
+          }
+        });
+        setSelectedExcludeListToInput(listToIgnore);
+      } else {
+        setSelectedExcludeListToInput([]);
+      }
     }
-  }, [props.isVisible]);
+    return (() => {
+      setSelectedExcludeListToInput([]);
+      setSelectedExcludeList([]);
+    });
+  }, [excludeList]);
 
   const fetchExcludeValueList = async() => {
     const  excludeValuesList =  await getAllExcludeValuesList();
+
     const fixData = excludeValuesList.data.map((item) => {
       return {
         name: item.name,
@@ -146,6 +167,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       };
     });
     setExcludeList([presetListMock[0], ...fixData]);
+
+  };
+
+  const checkIfListExists = (name) => {
+    return excludeList.find((item) => item.name === name);
   };
 
   const handleInputChange = (event) => {
@@ -298,7 +324,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchRule: MatchRule = {
         entityPropertyPath: propertyName,
         matchType: matchType,
-        options: {}
+        options: {},
+        exclusionLists: selectedExcludeList
       };
 
       let matchRuleset: MatchRuleset = {
@@ -330,7 +357,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         options: {
           thesaurusURI: thesaurusValue,
           filter: filterValue
-        }
+        },
+        exclusionLists: selectedExcludeList
       };
 
       let matchRuleset: MatchRuleset = {
@@ -370,7 +398,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         options: {
           dictionaryURI: dictionaryValue,
           distanceThreshold: distanceThresholdValue
-        }
+        },
+        exclusionLists: selectedExcludeList
       };
 
       let matchRuleset: MatchRuleset = {
@@ -409,7 +438,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         algorithmModulePath: uriValue,
         algorithmFunction: functionValue,
         algorithmModuleNamespace: namespaceValue,
-        options: {}
+        options: {},
+        exclusionLists: selectedExcludeList
       };
 
       let matchRuleset: MatchRuleset = {
@@ -845,6 +875,14 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     }
   };
 
+  const removeList = async () => {
+    const response = await deleteExcludeValuesList(listToDelete);
+    if (response) {
+      fetchExcludeValueList();
+      setDeleteConformationVisible(false);
+    }
+  };
+
   const confirmAction = () => {
     props.toggleModal(false);
     resetModal();
@@ -857,21 +895,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   );
 
   const handleClick = (event, btn, itemInfo) => {
-    setShowListModal(true);
     if (btn === "A") {
+      setShowListModal(true);
       setActionListModal("A");
       resetModalValuesIgnore();
       return;
     } else if (btn === "C") {
+      setListValues(itemInfo.valuesIgnore);
+      setShowListModal(true);
       setActionListModal("C");
       setListValues(itemInfo.valuesIgnore);
     } else if (btn === "E") {
+      setShowListModal(true);
       setListName(itemInfo.name);
       setListValues(itemInfo.valuesIgnore);
       setActionListModal("E");
     } else if (btn === "D") {
-      setActionListModal("D");
-      resetModalValuesIgnore();
+      setListToDelete(itemInfo?.name);
+      setDeleteConformationVisible(true);
     }
     event.stopPropagation();
   };
@@ -964,11 +1005,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const handleChangeValuesToIgnore = (selected, e) => {
     if (selected.length === 0) {
-      setClickedExcludeList([]);
+      setSelectedExcludeListToInput([]);
       return;
     }
     if (selected.length > 0 && selected[selected.length - 1].name !== presetListMock[0].name) {
-      setClickedExcludeList(selected);
+      setSelectedExcludeList(selected.map((item) => item.name));
+      setSelectedExcludeListToInput(selected);
     } else {
       handleClick(e, "A", {});
     }
@@ -1137,7 +1179,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       tabSelectsValue={false}
                       openMenuOnFocus={true}
                       placeholder="Search previous lists"
-                      value={clickedExcludeLists}
+                      value={selectedExcludeListToInput}
                       onChange={handleChangeValuesToIgnore}
                       options={excludeList}
                       styles={reactSelectThemeConfig}
@@ -1194,6 +1236,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
+      {deleteConfirmationModal(deleteConformationVisible, listToDelete, removeList, () => { setDeleteConformationVisible(false); }, "list?")}
     </HCModal>
   );
 };

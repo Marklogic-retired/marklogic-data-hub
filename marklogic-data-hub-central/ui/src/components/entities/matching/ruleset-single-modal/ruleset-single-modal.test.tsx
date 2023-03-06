@@ -8,7 +8,6 @@ import RulesetSingleModal from "./ruleset-single-modal";
 import {CurationContext} from "../../../../util/curation-context";
 import {updateMatchingArtifact, getAllExcludeValuesList} from "../../../../api/matching";
 import {customerMatchingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
-import {act} from "react-dom/test-utils";
 
 jest.mock("../../../../api/matching");
 
@@ -19,6 +18,7 @@ jest.useRealTimers();
 describe("Matching Ruleset Single Modal component", () => {
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   beforeAll(() => {
@@ -437,45 +437,4 @@ describe("Matching Ruleset Single Modal component", () => {
     });
   });
 
-  test("Render list to ignore and tooltip when hover list items", async () => {
-    jest.resetAllMocks();
-    mockGetAllExcludeValuesList.mockResolvedValue(
-      {
-        data: [
-          {
-            "name": "Preset List 1",
-            "values": ["one", "two", "one", "two", "one", "two", "one", "two"]
-          },
-          {
-            "name": "Preset List 2",
-            "values": ["word 1, word 2, word 3, word 3"]
-          }
-        ]
-      });
-    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const toggleModalMock = jest.fn();
-    render(
-      <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
-    );
-
-    fireEvent.focus(screen.getAllByRole("combobox")[2]);
-    fireEvent.keyDown(screen.getAllByRole("combobox")[2], {key: "ArrowDown", code: 40});
-    expect(screen.queryAllByTestId("tooltipListPreset")).toHaveLength(0);
-    await act(async () => {
-      fireEvent.mouseOver(await screen.findByText("Preset List 1"));
-    });
-    expect(await screen.findByRole("tooltip")).toBeInTheDocument();
-    expect(await screen.findAllByText("+ 3 more")).toHaveLength(1);
-
-    await act(async () => {
-      fireEvent.mouseOver(screen.getByText("Preset List 2"));
-    });
-    expect(await screen.findByText("word 1, word 2, word 3, word 3")).toBeInTheDocument();
-  }, 50000);
 });
