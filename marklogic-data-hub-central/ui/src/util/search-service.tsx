@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 
 const getUris = async (stepName: string, count: number) => {
   let resp = await axios.get(`/api/steps/mapping/${stepName}/uris?limit=${count}`);
