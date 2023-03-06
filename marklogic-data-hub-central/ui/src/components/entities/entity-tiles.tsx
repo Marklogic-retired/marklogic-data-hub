@@ -13,7 +13,7 @@ import MappingCard from "./mapping/mapping-card";
 import {MappingStepMessages} from "@config/tooltips.config";
 import MatchingCard from "./matching/matching-card";
 import MergingCard from "./merging/merging-card";
-import axios from "axios";
+import axios from "@config/axios";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
