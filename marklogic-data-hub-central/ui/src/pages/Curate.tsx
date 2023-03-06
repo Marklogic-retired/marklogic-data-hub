@@ -5,7 +5,7 @@ import {AuthoritiesContext} from "@util/authorities";
 import EntityTiles from "@components/entities/entity-tiles";
 import {ErrorMessageContext} from "@util/error-message-context";
 import {MissingPagePermission} from "@config/messages.config";
-import axios from "axios";
+import axios from "@config/axios";
 import styles from "./Curate.module.scss";
 import tiles from "@config/tiles.config";
 import {useHistory} from "react-router-dom";

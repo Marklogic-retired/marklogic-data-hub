@@ -3,7 +3,7 @@ import React from "react";
 import SockJS from "sockjs-client";
 import {Subject, BehaviorSubject} from "rxjs";
 import {Client, Message, Stomp} from "stompjs/lib/stomp.min";
-import axios from "axios";
+import axios from "@config/axios";
 
 /** possible states for the STOMP service */
 export enum STOMPState {

@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./pop-over-search.module.scss";
-import axios from "axios";
+import axios from "@config/axios";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
