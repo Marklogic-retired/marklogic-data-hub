@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 
 export const getRecord = async (uri, database) => {
   let encodedUri = encodeURIComponent(uri);

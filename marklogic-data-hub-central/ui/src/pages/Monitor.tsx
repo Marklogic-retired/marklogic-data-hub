@@ -3,7 +3,7 @@ import styles from "./Monitor.module.scss";
 import {AuthoritiesContext} from "@util/authorities";
 import tiles from "@config/tiles.config";
 import {MissingPagePermission} from "@config/messages.config";
-import axios from "axios";
+import axios from "@config/axios";
 import {UserContext} from "@util/user-context";
 import JobResultsTableView from "@components/job-results-table-view/job-results-table-view";
 import SearchPagination from "@components/search-pagination/search-pagination";

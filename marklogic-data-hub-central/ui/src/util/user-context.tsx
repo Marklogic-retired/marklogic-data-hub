@@ -8,7 +8,7 @@ import {AuthoritiesContext} from "./authorities";
 import {MAX_SESSION_TIME} from "@config/application.config";
 import {Subscription} from "rxjs";
 import {ViewSettingsType} from "../types/view-types";
-import axios from "axios";
+import axios from "@config/axios";
 import {useHistory} from "react-router-dom";
 
 const defaultUserData = {
@@ -88,13 +88,13 @@ const UserProvider: React.FC<{children: any}> = ({children}) => {
       if (request) {
         const requestHash = getConfigHash(request);
         if (encounteredErrors.includes(requestHash)) {
-          throw new axios.Cancel(requestHash);
+          throw new Error("Cancel Request");
         }
       }
       return request;
     },
     error => {
-      if (error instanceof axios.Cancel && encounteredErrors.includes(error.message)) {
+      if (error instanceof Error && encounteredErrors.includes(error.message)) {
         return new Promise(r => setTimeout(r, 5000)).then(r => {
           // forget the error after 5 seconds.
           if (encounteredErrors.includes(error.message)) {
