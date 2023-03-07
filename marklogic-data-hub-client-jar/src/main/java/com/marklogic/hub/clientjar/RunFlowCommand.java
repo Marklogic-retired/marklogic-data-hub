@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @Parameters(commandDescription = "Run a flow defined by a flow artifact in a MarkLogic server. " +
     "Parameter names and values are space-delimited - e.g. -host myHost -username myUsername. " +
@@ -50,7 +51,12 @@ public class RunFlowCommand extends ClientJarFlowInputs implements Runnable {
         FlowRunnerImpl flowRunner = new FlowRunnerImpl(buildHubConfig().newHubClient());
         Pair<FlowInputs, String> pair = super.buildFlowInputs();
         logger.info(pair.getRight());
-
+        //TODO We need to wait here for the tests to work because of the mjs upgrade, let's update this part later, taking more time to understand the root problem. DHFPROD-10008
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         RunFlowResponse response = flowRunner.runFlow(pair.getLeft());
         flowRunner.awaitCompletion();
         logger.info("Output:");
