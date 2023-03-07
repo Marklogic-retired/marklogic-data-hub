@@ -186,7 +186,7 @@ class RunPage {
   }
 
   verifyStepRunResult(stepName: string, jobSatus: string) {
-    cy.get(`[data-testid="${stepName}-${jobSatus}"]`).should("be.visible");
+    cy.get(`[data-testid="${stepName}-${jobSatus}"]`).scrollIntoView().should("be.visible");
   }
 
   verifyNoStepRunResult(stepName: string, jobSatus: string) {

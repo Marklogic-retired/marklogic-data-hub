@@ -59,11 +59,11 @@ class ModelPage {
   }
 
   scrollPageBottom() {
-    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
+    cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
   }
 
   scrollPageTop() {
-    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
+    cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
   }
 
   openIconSelector(entityName: string) {

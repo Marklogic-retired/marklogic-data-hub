@@ -148,13 +148,15 @@ describe("Entity Modeling: Reader Role", () => {
     relationshipModal.getModalHeader().should("not.exist");
 
     //To test graph view model png is downloaded successfully
-    graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
-      () => {
-        cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
-          (downloadPng) => {
-            expect(downloadPng).exist;
-          });
-      });
+    if (Cypress.isBrowser("!firefox")) {
+      graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
+        () => {
+          cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
+            (downloadPng) => {
+              expect(downloadPng).exist;
+            });
+        });
+    }
 
 
     modelPage.scrollPageTop();

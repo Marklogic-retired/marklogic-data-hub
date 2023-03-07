@@ -377,6 +377,7 @@ class BrowsePage {
     this.getGraphView().click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    cy.wait(3000);
   }
 
   // common
