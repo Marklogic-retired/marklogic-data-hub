@@ -3,7 +3,9 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
-import matcher from "/data-hub/5/mastering/matching/matcher.mjs"
+
+const groupQueries = common.groupQueries;
+const optimizeCtsQueries = common.optimizeCtsQueries;
 
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
@@ -25,10 +27,10 @@ export function buildActionDetails(matchingDocumentSet, thresholdBucket) {
   const thresholdName = thresholdBucket.name();
   const uris = matchingDocumentSet
     .map((contentObj) => {
-      if (contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/")) {
+      if (fn.startsWith(contentObj.uri, "/com.marklogic.smart-mastering/merged/")) {
         return fn.distinctValues(contentObj.value.xpath("/*:envelope/*:headers/*:merges/*:document-uri")).toArray();
       }
-      return contentObj.uri;
+      return fn.string(contentObj.uri);
     })
     .reduce((acc, cur) => acc.concat(cur), [])
     .filter((uri, index, uris) => index === uris.indexOf(uri))
@@ -51,7 +53,8 @@ export function buildActionDetails(matchingDocumentSet, thresholdBucket) {
       thresholdName,
       threshold: thresholdName,
       thresholdScore,
-      uris
+      uris,
+      matchResults: matchingDocumentSet.map((match) => ({uri: match.uri, score: match.score || "referenceDocument"}) )
     };
   }
   return {
@@ -81,7 +84,9 @@ export class Matchable {
     if (!this._model) {
       this._model = this._genericModel;
     }
-    this._propertyQueryFunctions = {};
+    this._propertyQueryFunctions = new Map();
+    this._cachedScores = new Map();
+    this._cachedRulesetScores = new Map();
   }
 
   /*
@@ -183,6 +188,10 @@ export class Matchable {
    * @since 5.8.0
    */
   scoreDocument(contentObjectA, contentObjectB) {
+    const scoreKey = [contentObjectA.uri, contentObjectB.uri].sort().join(":");
+    if (this._cachedScores.has(scoreKey)) {
+      return this._cachedScores.get(scoreKey);
+    }
     const matchingRulesetDefinitions = this.matchRulesetDefinitions();
     let defaultScore = 0;
     for (const matchRuleset of matchingRulesetDefinitions) {
@@ -207,7 +216,9 @@ export class Matchable {
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Base score set to ${defaultScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
     }
-    return common.applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
+    const results = common.applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
+    this._cachedScores.set(scoreKey, results);
+    return results;
   }
 
   buildActionDetails(matchingDocumentSet, thresholdBucket) {
@@ -232,7 +243,7 @@ export class Matchable {
     if (valuesAreQueries) {
       return values;
     }
-    if (!this._propertyQueryFunctions[propertyPath]) {
+    if (!this._propertyQueryFunctions.has(propertyPath)) {
       let indexes = this.model().propertyIndexes(propertyPath);
       if (this._genericModel && !(indexes && indexes.length)) {
         indexes = this._genericModel.propertyIndexes(propertyPath);
@@ -240,7 +251,7 @@ export class Matchable {
       if (indexes && indexes.length) {
         const scalarType = cts.referenceScalarType(indexes[0]);
         const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]) : null;
-        this._propertyQueryFunctions[propertyPath] = (values) => {
+        this._propertyQueryFunctions.set(propertyPath, (values) => {
           let typedValues = [];
           for (const value of values) {
             if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", scalarType, value)) {
@@ -258,7 +269,7 @@ export class Matchable {
             typedValues = Sequence.from(extendedValues);
           }
           return cts.rangeQuery(indexes, "=", typedValues)
-        };
+        });
       } else {
         const pathParts = propertyPath.split(".").filter((path) => path);
         const propertyDefinitions = pathParts
@@ -266,16 +277,16 @@ export class Matchable {
         if (matchingDebugTraceEnabled) {
           xdmp.trace(matchingTraceEvent, `Property for ${propertyPath} has property definitions ${xdmp.describe(propertyDefinitions, Sequence.from([]), Sequence.from([]))}`);
         }
-        this._propertyQueryFunctions[propertyPath] = (values) => {
+        this._propertyQueryFunctions.set(propertyPath, (values) => {
           const propertyQuery = this._buildQueryFromPropertyDefinitionsAndValues(propertyDefinitions, values);
           if (matchingTraceEnabled) {
             xdmp.trace(matchingTraceEvent, `Property query for ${propertyPath} is ${xdmp.describe(propertyQuery, Sequence.from([]), Sequence.from([]))}`);
           }
           return propertyQuery;
-        };
+        });
       }
     }
-    return this._propertyQueryFunctions[propertyPath](values);
+    return this._propertyQueryFunctions.get(propertyPath)(values);
   }
 
   /*
@@ -331,17 +342,17 @@ export class Matchable {
       xdmp.trace(matchingTraceEvent, `Atomic values for ${localname}: ${xdmp.describe(atomicValues, Sequence.from([]), Sequence.from([]))}.`);
     }
     if (this.matchStep.dataFormat === "json") {
-      const lastQuery = matcher.groupQueries(queryValues.concat(atomicValues.length ? [cts.jsonPropertyValueQuery(localname, atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.jsonPropertyValueQuery(localname, atomicValues, ["case-insensitive"])]: []), cts.orQuery);
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.jsonPropertyScopeQuery(propertyDef.localname, acc) : acc, lastQuery);
     } else {
       atomicValues = atomicValues.map((val) => fn.string(val));
-      const lastQuery = matcher.groupQueries(queryValues.concat(atomicValues.length ? [cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), atomicValues, ["case-insensitive"])]: []), cts.orQuery);
+      const lastQuery = groupQueries(queryValues.concat(atomicValues.length ? [cts.elementValueQuery(fn.QName(lastPropertyDefinition.namespace, localname), atomicValues, ["case-insensitive"])]: []), cts.orQuery);
       return parentPropertyDefinitions.reduce((acc, propertyDef) => propertyDef.localname ? cts.elementQuery(fn.QName(propertyDef.namespace, propertyDef.localname), acc) : acc, lastQuery);
     }
   }
 }
 
-const cachedPropertyValues = {};
+const cachedPropertyValues = new Map();
 
 class MatchRulesetDefinition {
   constructor(matchRulesetNode, matchable) {
@@ -349,9 +360,9 @@ class MatchRulesetDefinition {
     this.matchRulesNodes = this.matchRulesetNode.xpath("matchRules");
     this.matchRuleset = matchRulesetNode.toObject();
     this.matchable = matchable;
-    this._matchRuleFunctions = [];
-    this._cachedCtsQueries = {};
-    this._cachedQueryHashes = {};
+    this._id = sem.uuidString();
+    this._cachedCtsQueries = new Map();
+    this._cachedQueryHashes = new Map();
   }
 
   name() {
@@ -366,14 +377,14 @@ class MatchRulesetDefinition {
     if (!matchRule._valueFunction) {
       matchRule._valueFunction = (documentNode) => {
         const key = `${xdmp.nodeUri(documentNode)}:${matchRule.documentXPath || matchRule.entityPropertyPath}`;
-        if (!cachedPropertyValues[key]) {
+        if (!cachedPropertyValues.has(key)) {
           if (matchRule.documentXPath) {
-            cachedPropertyValues[key] = documentNode.xpath(matchRule.documentXPath, matchRule.namespaces);
+            cachedPropertyValues.set(key, documentNode.xpath(matchRule.documentXPath, matchRule.namespaces));
           } else {
-            cachedPropertyValues[key] = model.propertyValues(matchRule.entityPropertyPath, documentNode);
+            cachedPropertyValues.set(key, model.propertyValues(matchRule.entityPropertyPath, documentNode));
           }
         }
-        return cachedPropertyValues[key];
+        return cachedPropertyValues.get(key);
       }
     }
     return matchRule._valueFunction;
@@ -428,14 +439,14 @@ class MatchRulesetDefinition {
   }
 
   zipMatchFunction(value, passMatchRule) {
-    let node =  hubUtils.normalizeToArray(value).map((val) => fn.string(val)).toString();
+    let node =  fn.head(hubUtils.normalizeToSequence(value));
     let result = [node];
     if(node.length === 5) {
       let wildcardValue = node + "-*";
       result.push(wildcardValue);
     }
-    else {
-      let val = (node).substring(0,5);
+    else if (node) {
+      let val = fn.string(node).substring(0,5);
       result.push(val);
     }
     return result;
@@ -487,45 +498,71 @@ class MatchRulesetDefinition {
   }
 
   score(contentObjectA, contentObjectB) {
+    const cacheKey = `${this._id}:${[contentObjectA.uri, contentObjectB.uri].sort().join(":")}`;
+    const cachedMatchRuleScores = this.matchable._cachedRulesetScores;
+    if (cachedMatchRuleScores.has(cacheKey)) {
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Using cached score. key:${cacheKey}, score:${cachedMatchRuleScores.get(cacheKey)}.`);
+      }
+      return cachedMatchRuleScores.get(cacheKey);
+    }
     let score = 0;
     const query = this.buildCtsQuery(contentObjectA.value);
     if (fn.exists(query)) {
-      const model = this.matchable.model();
-      let pos = 1;
-      for (const matchRule of this.matchRuleset.matchRules) {
-        if (!matchRule.node) {
-          matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
+      const hashesA = this.queryHashes(contentObjectA.value);
+      const hashesB = this.queryHashes(contentObjectB.value);
+      if (matchingDebugTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Comparing cts.doc('${contentObjectA.uri}') hashes with cts.doc('${contentObjectB.uri}') hashes.
+        Hashes A: ${xdmp.toJsonString([...hashesA])}.
+        Hashes B: ${xdmp.toJsonString([...hashesB])}`)
+      }
+      const outerHash = hashesA.size >= hashesB.size ? hashesA: hashesB;
+      const innerHash = outerHash === hashesA ? hashesB: hashesA;
+      let queryMatches = false;
+      if (outerHash.size === 0 || innerHash.size === 0) {
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(matchingTraceEvent, `Hashes are empty, so using cts.contains.`)
         }
-        pos++;
-        const valueFunction = this._valueFunction(matchRule, model);
-        const matchFunction = this._matchFunction(matchRule, model);
-        const values = valueFunction(contentObjectA.value);
-        const query = fn.exists(values) ? matchFunction(values) : null;
-        if (query instanceof Function) {
-          this._matchRuleFunctions.push(query);
+        queryMatches = cts.contains(contentObjectB.value, query);
+      }
+      for (const hash1 of outerHash) {
+        if (innerHash.has(hash1)) {
+          queryMatches = true;
+          break;
+        }
+      }
+      if (queryMatches) {
+        let pos = 1;
+        const model = this.matchable.model();
+        const matchRuleFunctions = [];
+        for (const matchRule of this.matchRuleset.matchRules) {
+          if (!matchRule.node) {
+            matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
+          }
+          pos++;
+          const valueFunction = this._valueFunction(matchRule, model);
+          const matchFunction = this._matchFunction(matchRule, model);
+          const values = valueFunction(contentObjectA.value);
+          const query = fn.exists(values) ? matchFunction(values) : null;
+          if (query instanceof Function) {
+            matchRuleFunctions.push(query);
+          }
+        }
+        if (matchRuleFunctions.length === 0 || matchRuleFunctions.every((rule) => rule(contentObjectB.value))) {
+          if (matchingDebugTraceEnabled) {
+            xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
+          }
+          score = this.weight();
         }
       }
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
       }
-      let queryMatches = false;
-      if (this.fuzzyMatch()) {
-        const hashesA = this.queryHashes(contentObjectA.value);
-        const hashesB = this.queryHashes(contentObjectB.value);
-        queryMatches = hashesA.some((hash) => hashesB.includes(hash));
-      } else {
-        queryMatches = cts.contains(contentObjectB.value, query);
-      }
-      if (queryMatches && this._matchRuleFunctions.every((rule) => rule(contentObjectB.value))) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
-        }
-        score = this.weight();
-      }
     }
     if (matchingDebugTraceEnabled && score === 0) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query didn't match!");
     }
+    cachedMatchRuleScores.set(cacheKey, score);
     return score;
   }
 
@@ -534,7 +571,7 @@ class MatchRulesetDefinition {
       xdmp.trace(matchingTraceEvent, `Building cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()}`);
     }
     const uri = xdmp.nodeUri(documentNode);
-    if (!this._cachedCtsQueries[uri]) {
+    if (!this._cachedCtsQueries.has(uri)) {
       const queries = [];
       const model = this.matchable.model();
       let pos = 1;
@@ -557,26 +594,27 @@ class MatchRulesetDefinition {
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} before optimization is ${xdmp.describe(queries)}`);
       }
-      const optimizedCtsQuery = matcher.optimizeCtsQueries(matcher.groupQueries(queries, cts.andQuery));
+      const optimizedCtsQuery = optimizeCtsQueries(groupQueries(queries, cts.andQuery));
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()} returned ${xdmp.describe(optimizedCtsQuery, Sequence.from([]), Sequence.from([]))}`);
       }
-      this._cachedCtsQueries[uri] = optimizedCtsQuery;
+      this._cachedCtsQueries.set(uri, optimizedCtsQuery);
     }
-    return this._cachedCtsQueries[uri];
+    return this._cachedCtsQueries.get(uri);
   }
 
   queryHashes(documentNode) {
     const uri = xdmp.nodeUri(documentNode);
-    if (!this._cachedQueryHashes[uri]) {
+    if (!this._cachedQueryHashes.has(uri)) {
       const query = this.buildCtsQuery(documentNode);
-      if (!query) {
-        return [];
+      let hashes = [];
+      if (query) {
+        const queryHasher = hubUtils.requireFunction("/data-hub/5/mastering/matching/queryHasher.xqy", "queryToHashes");
+        hashes = [...queryHasher(query, this.fuzzyMatch())];
       }
-      const queryHasher = hubUtils.requireFunction("/data-hub/5/mastering/matching/queryHasher.xqy", "queryToHashes");
-      this._cachedQueryHashes[uri] = hubUtils.normalizeToArray(queryHasher(query, this.fuzzyMatch()));
+      this._cachedQueryHashes.set(uri, new Set(hashes.map(h => String(h))));
     }
-    return this._cachedQueryHashes[uri];
+    return this._cachedQueryHashes.get(uri);
   }
 
   weight() {
@@ -693,7 +731,7 @@ export class ThresholdDefinition {
     let key;
     switch (action) {
       case "merge":
-        const currentMergeDoc = matchingDocumentSet.find((contentObj) => contentObj.uri.startsWith("/com.marklogic.smart-mastering/merged/"));
+        const currentMergeDoc = matchingDocumentSet.find((contentObj) => fn.startsWith(contentObj.uri,"/com.marklogic.smart-mastering/merged/"));
         if (currentMergeDoc) {
           return currentMergeDoc.uri;
         }

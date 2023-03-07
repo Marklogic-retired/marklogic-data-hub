@@ -15,8 +15,6 @@
  */
 'use strict';
 
-const mjsModules = {};
-
 function requireMjsModule(modulePath) {
   return requireMjsModules(modulePath)[0];
 }

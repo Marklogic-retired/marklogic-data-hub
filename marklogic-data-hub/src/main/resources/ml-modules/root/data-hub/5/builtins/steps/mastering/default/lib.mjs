@@ -22,7 +22,6 @@ const mergeImpl = require("/com.marklogic.smart-mastering/survivorship/merging/b
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
 const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
-const emptySequence = Sequence.from([]);
 
 function matchDetailsByMergedQuery(mergedQuery) {
   let mergedURIs = cts.uris(null, [], mergedQuery);

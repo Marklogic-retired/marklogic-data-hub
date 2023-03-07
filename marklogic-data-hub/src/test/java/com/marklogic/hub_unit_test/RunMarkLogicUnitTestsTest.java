@@ -1,6 +1,8 @@
 package com.marklogic.hub_unit_test;
 
+import com.marklogic.bootstrap.TestAppInstaller;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.FinishHubDeploymentCommand;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
@@ -35,9 +37,10 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
             logger.info("Initializing before first test module runs");
             // Need to do these things just once, before the first test module is run
             resetHubProject();
-            applyDatabasePropertiesForTests(getHubConfig());
-
-            new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
+            HubConfig hubConfig = getHubConfig();
+            applyDatabasePropertiesForTests(hubConfig);
+            TestAppInstaller.loadTestModules(hubConfig, false);
+            new FinishHubDeploymentCommand(hubConfig).execute(newCommandContext());
             runAsDataHubDeveloper();
             initialized = true;
             logger.info("Finished one-time initialization before running test modules");

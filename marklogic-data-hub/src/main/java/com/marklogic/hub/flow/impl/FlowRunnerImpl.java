@@ -544,7 +544,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 logger.error("Caught error while running FlowRunnerTask: " + t.getMessage());
                 FlowRunnerTask flowRunnerTask = (FlowRunnerTask)r;
                 //Run the next queued flow if stop-on-error is set or if the step queue is empty
-                if (flowRunnerTask.getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
+                if (flowRunnerTask.getStepQueue() == null || flowRunnerTask.getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
                     jobQueue.remove();
                     if (!jobQueue.isEmpty()) {
                         initializeFlow(flowRunnerTask.stepRunnerFactory, jobQueue.peek());

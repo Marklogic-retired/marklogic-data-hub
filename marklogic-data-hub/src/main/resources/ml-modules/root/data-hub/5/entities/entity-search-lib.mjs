@@ -524,6 +524,9 @@ function addDocumentMetadataToSearchResults(searchResponse) {
   searchResponse.results.forEach(result => {
     const docUri = result.uri;
     const doc = cts.doc(docUri);
+    if (!doc) {
+      return;
+    }
     let hubMetadata = entitySearchXqy.getDocumentMetadata(doc);
     const sources = getEntitySources(doc);
     if (sources.length) {
