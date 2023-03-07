@@ -372,7 +372,7 @@ function testScoreDocument() {
       },
       {
         weight: 3,
-        name: "name - exact",
+        name: "name - custom",
         matchRules: [
           { entityPropertyPath: "name",
             matchType: "exact"
@@ -386,7 +386,7 @@ function testScoreDocument() {
       },
       {
         weight: 2,
-        name: "name - exact",
+        name: "name - custom 2",
         matchRules: [
           { entityPropertyPath: "name",
             matchType: "exact"

@@ -1,12 +1,9 @@
-import common from "/data-hub/5/mastering/common.mjs";
-
-'use strict';
-
 /*
  * A class that encapsulates the configurable portions of the merging process.
  */
+import common from "/data-hub/5/mastering/common.mjs";
 import hubUtil from '/data-hub/5/impl/hub-utils.mjs';
-import consts from "../../impl/consts.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
 
 const sem = require("/MarkLogic/semantics.xqy");
 
@@ -15,7 +12,9 @@ const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDe
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
 const rdfType = sem.curieExpand("rdf:type");
 const rdfsIsDefinedBy = sem.curieExpand("rdfs:isDefinedBy");
-
+const tripleQueryPredicates = [rdfType, rdfsIsDefinedBy];
+const ctsTriplesOptions = ["concurrent", "eager"];
+const emptyArray = [];
 
 export default class Mergeable {
 
@@ -155,7 +154,7 @@ export default class Mergeable {
       }))
       ];
       const uris = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
-      const tdeTriples = cts.triples(null, [rdfType, rdfsIsDefinedBy], null, ["=","=","="], [], cts.documentQuery(uris));
+      const tdeTriples = cts.triples(emptyArray, tripleQueryPredicates, emptyArray, "=", ctsTriplesOptions, cts.documentQuery(uris));
       for (const tdeTriple of tdeTriples) {
         if (!fn.string(sem.tripleObject(tdeTriple)).startsWith("http://marklogic.com/view/")) {
           if (fn.string(sem.triplePredicate(tdeTriple)) === fn.string(rdfsIsDefinedBy)) {

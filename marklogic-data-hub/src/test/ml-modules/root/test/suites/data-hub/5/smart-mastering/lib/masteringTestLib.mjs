@@ -123,8 +123,8 @@ export function assertMatchExists(matchSummary, urisOfMatchingDocuments) {
 
     urisOfMatchingDocuments.forEach(uri => {
       assertions.push(
-        test.assertTrue(actualUris.includes(uri),
-          `Expected actionDetails.uris to include ${uri}; actual URIs: ${prettyActionDetailsUris}`
+        test.assertTrue(actualUris.some(u => u == uri),
+          `Expected actionDetails.uris to include ${xdmp.describe(uri)}; actual URIs: ${prettyActionDetailsUris}`
         )
       );
     });

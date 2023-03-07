@@ -17,8 +17,7 @@
 declareUpdate();
 
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const esMappingLib = mjsProxy.requireMjsModule('/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs');
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const [esMappingLib, httpUtils]  = mjsProxy.requireMjsModules("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs", "/data-hub/5/impl/http-utils.mjs");
 
 var uri;
 
@@ -39,7 +38,7 @@ try {
 
   // Use ES to generate the XSLT version of the XML mapping in the modules database
   xdmp.invokeFunction(function () {
-      const es = require('/MarkLogic/entity-services/entity-services');
+      const es = require('/MarkLogic/entity-services/entity-services.xqy');
       es.mappingPut(xmlURI);
     }, {database: xdmp.modulesDatabase(), update: "true", commit: "auto"}
   );

@@ -5,7 +5,7 @@ import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
 
-const es = require("/MarkLogic/entity-services/entity-services");
+const es = require("/MarkLogic/entity-services/entity-services.xqy");
 const datahub = DataHubSingleton.instance();
 const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 function mlGenerateFunctionMetadata(uri) {

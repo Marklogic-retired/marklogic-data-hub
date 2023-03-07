@@ -2,8 +2,12 @@ xquery version "1.0-ml";
 
 module namespace qh = "http://marklogic.com/smart-mastering/query-hasher";
 
+declare function number-friendly-double-metaphone($value) {
+  spell:double-metaphone(fn:translate($value, "0123456789", "abcdfghlmn"))
+};
+
 declare function query-to-hashes($query as cts:query, $is-fuzzy as xs:boolean) as xs:unsignedLong* {
-  build-hashes(document {$query}, if ($is-fuzzy) then spell:double-metaphone#1 else function($val) {fn:lower-case(fn:string($val))})
+  build-hashes(document {$query}, if ($is-fuzzy) then number-friendly-double-metaphone#1 else function($val) {fn:lower-case(fn:string($val))})
 };
 
 declare function build-hashes($node as node(), $value-convert-function as function(item()?) as item()*) {
@@ -29,4 +33,8 @@ declare function build-hashes($node as node(), $value-convert-function as functi
       else
         $node/node() ! build-hashes(., $value-convert-function)
     default return ()
+};
+
+declare function compare-hashes($hashesA as xs:unsignedLong*, $hashesB as xs:unsignedLong*) as xs:boolean {
+  $hashesA = $hashesB
 };

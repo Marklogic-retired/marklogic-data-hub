@@ -50,6 +50,7 @@ class EntityModel {
         });
         this.topLevelDefinition = this.definitions[this.topLevelDefinitionName];
         this._primaryEntityTypeIRI = `${this.entityModelIRI}/${this.topLevelDefinitionName}`;
+        this.propertyPathsToDefinions = new Map();
     }
 
     topLevelProperties() {
@@ -82,9 +83,9 @@ class EntityModel {
                         xdmp.trace(consts.TRACE_ENTITY_DEBUG, `Index for property ${fullPropPath} of ${this.entityModelIRI} configured`);
                     }
                     try {
-                        const scalarType = propertyDefinition.datatype === "array" ? propertyDefinition.items.datatype: propertyDefinition.items.datatype;
+                        const scalarType = propertyDefinition.datatype === "array" ? propertyDefinition.items.datatype: propertyDefinition.datatype;
                         const collation = scalarType === "string" ? propertyDefinition.collation || fn.defaultCollation() : null;
-                        this._indexes[fullPropPath] = [ cts.reference({
+                        this._indexes[fullPropPath] = [ cts.referenceParse({
                             "pathReference": {
                                 "pathExpression": `/(es:envelope|envelope)/(es:instance|instance)/${accumulatedXPath.concat([propertyXPath]).join("/")}`,
                                 scalarType,
@@ -172,9 +173,16 @@ class EntityModel {
         if (entityDebugTraceEnabled) {
             xdmp.trace(consts.TRACE_ENTITY_DEBUG, `Retrieving property definition ${propertyPath} of ${this.entityModelIRI} from ${JSON.stringify(this._propertyDefinitions)}`);
         }
-        const propertyDefinition = this._propertyDefinitions[propertyPath] || { namespace: this.topLevelDefinition.namespaceURI, localname: propertyPath };
-        const indexReferences = this.propertyIndexes(propertyPath);
-        Object.assign(propertyDefinition,{ indexReferences });
+        if (!this.propertyPathsToDefinions.has(propertyPath)) {
+            const propertyDefinition = this._propertyDefinitions[propertyPath] || {
+                namespace: this.topLevelDefinition.namespaceURI,
+                localname: propertyPath
+            };
+            const indexReferences = this.propertyIndexes(propertyPath);
+            Object.assign(propertyDefinition, {indexReferences});
+            this.propertyPathsToDefinions.set(propertyPath, propertyDefinition);
+        }
+        const propertyDefinition = this.propertyPathsToDefinions.get(propertyPath);
         if (entityDebugTraceEnabled) {
             xdmp.trace(consts.TRACE_ENTITY_DEBUG, `Property definition ${propertyPath} of ${this.entityModelIRI} is ${JSON.stringify(propertyDefinition, null, 2)}`);
         }

@@ -1,246 +1,19 @@
-'use strict';
 import consts from "/data-hub/5/impl/consts.mjs";
+import common from "/data-hub/5/mastering/common.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+
+const {populateContentObjects, getContentObject, groupQueries, optimizeCtsQueries} = common;
+
 const getBlocksOfUris = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocksOfUris");
 
 const queryHashPredicate = sem.iri("http://marklogic.com/data-hub/mastering#hasMatchingHash");
 const hashBelongToPredicate = sem.iri("http://marklogic.com/data-hub/mastering#belongsTo");
 
+const fuzzyMatchHashesCollection = "http://marklogic.com/data-hub/matching/fuzzy-hashes";
+
 const matchingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING_DEBUG);
 const matchingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MATCHING) || matchingDebugTraceEnabled;
 const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRACE_MATCHING : consts.TRACE_MATCHING_DEBUG;
-const pathJoinString = "##";
-const stepJoinString = "|";
-
-export function groupQueries(queries, joinFunction) {
-  queries = hubUtils.normalizeToArray(queries);
-  if (queries.length === 0) {
-    return null;
-  }
-  if (queries.length === 1) {
-    return queries[0];
-  }
-  return joinFunction(queries);
-}
-
-function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinFunction) {
-  if (matchingDebugTraceEnabled) {
-    xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Consolidating query group ${groupByKey} with groups: ${xdmp.toJsonString(groupBy)}`);
-  }
-  let prefix, scopeQueryFunction;
-  if (isJSON) {
-    prefix = `json:${pathJoinString}`;
-    scopeQueryFunction = (stepParts, query) => {
-      const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
-      return isScope ?
-        cts.jsonPropertyScopeQuery(stepParts, groupQueries(query, joinFunction)) : cts.jsonPropertyValueQuery(stepParts, fn.distinctValues(Sequence.from(query)));
-    }
-  } else {
-    prefix = `element:${pathJoinString}`;
-    scopeQueryFunction = (stepParts, query) => {
-      const qnames = stepParts.map((stepPart) => xdmp.QNameFromKey(stepPart));
-      const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
-      return isScope ?
-        cts.elementQuery(qnames, groupQueries(query, joinFunction)): cts.elementValueQuery(qnames, fn.distinctValues(Sequence.from(query)));
-    };
-  }
-  const suffix = groupByKey.substring(prefix.length);
-  const pathParts = suffix.split(pathJoinString);
-  let matchingPaths = [];
-  let shortestMatchingPath = "";
-  let lastMatchCount = 1;
-  for (let j = 0; j < pathParts.length; j++) {
-    const path = `${prefix}${pathParts.slice(0, j + 1).join(pathJoinString)}`;
-    matchingPaths = groupByKeys.filter((gKey) => gKey !== path && gKey.startsWith(path));
-    if (matchingPaths.length === 0 || matchingPaths.length < lastMatchCount) {
-      break;
-    }
-    shortestMatchingPath = path;
-    lastMatchCount = matchingPaths.length
-  }
-  if (!shortestMatchingPath) {
-    shortestMatchingPath = groupByKey;
-  }
-  let query = null;
-  if (shortestMatchingPath === groupByKey || (!groupByKeys.includes(shortestMatchingPath) && groupByKey === groupByKeys.find((gk) => gk.startsWith(shortestMatchingPath)))) {
-    const uniqueMatchingPaths = matchingPaths.filter((path, index, array) => array.indexOf(path) === index);
-    if (!uniqueMatchingPaths.includes(groupByKey)) {
-      uniqueMatchingPaths.push(groupByKey);
-    }
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Unique matching paths for ${groupByKey}: ${xdmp.toJsonString(uniqueMatchingPaths)}`);
-    }
-    const lowerQueries = groupByKeys.filter((key) => key.startsWith(shortestMatchingPath)).map((matchingPath) => {
-      let remainingPath = matchingPath.substring(shortestMatchingPath.length);
-      const query = groupBy[matchingPath];
-      delete groupBy[matchingPath];
-      if (remainingPath) {
-        return remainingPath.split(pathJoinString).reverse().reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, query);
-      } else {
-        return query;
-      }
-    });
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Lower queries for shortest path ${shortestMatchingPath}: ${xdmp.toJsonString(lowerQueries)}`);
-    }
-    query = shortestMatchingPath.substring(prefix.length).split(pathJoinString).reverse().reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, groupQueries(lowerQueries, cts.andQuery));
-  }
-  if (matchingDebugTraceEnabled) {
-    xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Consolidated query for ${groupByKey} is ${xdmp.toJsonString(query)}`);
-  }
-  return query;
-}
-
-/*
- * Optimizes a cts.query by collapsing nested cts.orQuery and cts.andQuery types and groups element/property scope queries together.
- * @param {cts.query} ctsQuery
- * @return {cts.query}
- * @since 5.8.0
- */
-function optimizeCtsQueries(ctsQuery) {
-  if (matchingTraceEnabled) {
-    xdmp.trace(matchingTraceEvent, `Optimizing cts query: ${xdmp.describe(ctsQuery, Sequence.from([]), Sequence.from([]))}`);
-  }
-  const isAndQuery = ctsQuery instanceof cts.andQuery;
-  const isOrQuery = ctsQuery instanceof cts.orQuery;
-  if (isAndQuery || isOrQuery) {
-    let joinFunction, queriesFunction;
-    if (isAndQuery) {
-      joinFunction = cts.andQuery;
-      queriesFunction = cts.andQueryQueries;
-    } else {
-      joinFunction = cts.orQuery;
-      queriesFunction = cts.orQueryQueries;
-    }
-    let queries = hubUtils.normalizeToArray(queriesFunction(ctsQuery));
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Sub queries to group for optimization: ${xdmp.describe(queries)}`);
-    }
-    const groupBy = {other: []};
-    for (let i = 0; i < queries.length; i++) {
-      let query = queries[i];
-      if (query instanceof cts.andQuery || query instanceof cts.orQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Sub-query group to optimize found: ${xdmp.describe(query)}`);
-        }
-        if ((query instanceof cts.andQuery && isAndQuery) || (query instanceof cts.orQuery && isOrQuery)) {
-          if (matchingDebugTraceEnabled) {
-            xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Flattening query: ${xdmp.describe(query)}`);
-          }
-          queries.splice(i, 1, hubUtils.normalizeToArray(queriesFunction(query)));
-          i--;
-        } else {
-          groupBy.other.push(optimizeCtsQueries(query));
-        }
-      } else if (query instanceof cts.elementQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Element scope query found to group: ${xdmp.describe(query)}`);
-        }
-        let key = "element:";
-        const groupFunction = (scopeQuery) => {
-          if (scopeQuery instanceof cts.elementQuery) {
-            key = key + `${pathJoinString}${cts.elementQueryElementName(scopeQuery).toArray().map((qname) => xdmp.keyFromQName(qname)).join(stepJoinString)}`;
-            groupFunction(cts.elementQueryQuery(scopeQuery));
-          } else if (scopeQuery instanceof cts.elementValueQuery) {
-            key = key + `${pathJoinString}${cts.elementValueQueryElementName(scopeQuery).toArray().map((qname) => xdmp.keyFromQName(qname)).join(stepJoinString)}`;
-            groupFunction(cts.elementValueQueryText(scopeQuery));
-          } else {
-            groupBy[key] = groupBy[key] || [];
-            groupBy[key].push(scopeQuery);
-          }
-        };
-        groupFunction(query);
-      } else if (query instanceof cts.jsonPropertyScopeQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `JSON property scope query found to group: ${xdmp.describe(query)}`);
-        }
-        let key = "json:";
-        const groupFunction = (scopeQuery) => {
-          if (scopeQuery instanceof cts.jsonPropertyScopeQuery) {
-            key = key + `${pathJoinString}${cts.jsonPropertyScopeQueryPropertyName(scopeQuery).toArray().join(stepJoinString)}`;
-            groupFunction(cts.jsonPropertyScopeQueryQuery(scopeQuery));
-          } else if (scopeQuery instanceof cts.jsonPropertyValueQuery) {
-            key = key + `${pathJoinString}${cts.jsonPropertyValueQueryPropertyName(scopeQuery).toArray().join(stepJoinString)}`;
-            groupFunction(cts.jsonPropertyValueQueryValue(scopeQuery));
-          } else {
-            groupBy[key] = groupBy[key] || [];
-            groupBy[key].push(scopeQuery);
-          }
-        };
-        groupFunction(query);
-      } else if (query instanceof cts.jsonPropertyValueQuery && isOrQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `JSON property value query found to group: ${xdmp.describe(query)}`);
-        }
-        let key = `json:${pathJoinString}${cts.jsonPropertyValueQueryPropertyName(query).toArray().join(stepJoinString)}`;
-        groupBy[key] = groupBy[key] || [];
-        const value = cts.jsonPropertyValueQueryValue(query);
-        if (!groupBy[key].includes(value)) {
-          groupBy[key].push(value);
-        }
-      } else if (query instanceof cts.elementValueQuery && isOrQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Element value query found to group: ${xdmp.describe(query)}`);
-        }
-        let key = `element:${pathJoinString}${cts.elementValueQueryElementName(query).toArray().map((qname) => xdmp.keyFromQName(qname)).join(stepJoinString)}`;
-        groupBy[key] = groupBy[key] || [];
-        const value = cts.elementValueQueryText(query);
-        if (!groupBy[key].includes(value)) {
-          groupBy[key].push(value);
-        }
-      } else if (query instanceof cts.rangeQuery && isOrQuery) {
-        if (matchingDebugTraceEnabled) {
-          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Range query found to group: ${xdmp.describe(query)}`);
-        }
-        const index = cts.rangeQueryIndex(query);
-        const operator = cts.rangeQueryOperator(query);
-        let key = `range:${xdmp.describe(index, Sequence.from([]), Sequence.from([]))}${xdmp.describe(operator, Sequence.from([]), Sequence.from([]))}`;
-        groupBy[key] = groupBy[key] || { index, operator, values: []};
-        const value = cts.rangeQueryValue(query);
-        if (!groupBy[key].values.includes(value)) {
-          groupBy[key].values.push(value);
-        }
-      } else {
-          if (matchingDebugTraceEnabled) {
-            xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Other query found: ${xdmp.describe(query)}`);
-          }
-          groupBy.other.push(query);
-        }
-      }
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Grouped queries for optimization: ${xdmp.toJsonString(groupBy)}`);
-    }
-    let finalQueries = [];
-    const groupByKeys = Object.keys(groupBy).sort();
-    for (const groupByKey of groupByKeys) {
-      if (!groupBy[groupByKey]) {
-        continue;
-      }
-      if (groupByKey.startsWith(`element:${pathJoinString}`)) {
-        finalQueries = finalQueries.concat(consolidateScopeQueries(groupBy, groupByKey, groupByKeys, false, joinFunction));
-      } else if (groupByKey.startsWith(`json:${pathJoinString}`)) {
-        finalQueries = finalQueries.concat(consolidateScopeQueries(groupBy, groupByKey, groupByKeys, true, joinFunction));
-      } else if (groupByKey.startsWith("range:")) {
-        const rangeInfo = groupBy[groupByKey];
-        finalQueries.push(cts.rangeQuery(rangeInfo.index, rangeInfo.operator, rangeInfo.values));
-      }
-    }
-    finalQueries = finalQueries.concat(groupBy.other);
-    if (matchingDebugTraceEnabled) {
-      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Final set of queries for optimization: ${xdmp.describe(finalQueries, Sequence.from([]), Sequence.from([]))}`);
-    }
-    const optimizedQuery = groupQueries(finalQueries, joinFunction);
-    if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, `Optimized cts query: ${xdmp.describe(optimizedQuery, Sequence.from([]), Sequence.from([]))}`);
-    }
-    return optimizedQuery;
-  } else {
-    if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, "No query optimization necessary");
-    }
-    return ctsQuery;
-  }
-}
 
 /*
  * Returns a cts.query based on the document node and the array of MatchRulesetDefinition
@@ -272,40 +45,7 @@ function buildMatchSummary(matchable, content) {
     xdmp.trace(matchingTraceEvent, `Building match summary with matchable: ${xdmp.describe(matchable, Sequence.from([]), Sequence.from([]))} and content: ${xdmp.toJsonString(content)}`);
   }
   const matchRulesetDefinitions = matchable.matchRulesetDefinitions();
-  const useFuzzyMatch = matchRulesetDefinitions.some(def => def.fuzzyMatch());
-  let hashMatchInfo = null;
-  const urisToContentObjects = {};
-  const triplesByUri = {};
-  if (useFuzzyMatch) {
-    hashMatchInfo = {
-      matchRulesetScores: matchRulesetDefinitions.reduce((scores, def) => {
-        scores[def.name()] = def.weight();
-        return scores;
-      }, {}),
-      thresholds: matchable.thresholdDefinitions().map((def) => def.raw())
-    };
-  }
-  for (const contentObject of content) {
-    urisToContentObjects[contentObject.uri] = contentObject;
-    if (useFuzzyMatch) {
-      triplesByUri[contentObject.uri] = [];
-      for (const matchRuleset of matchRulesetDefinitions) {
-        for (const queryHash of matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch())) {
-          triplesByUri[contentObject.uri].push(sem.triple(contentObject.uri, queryHashPredicate, queryHash));
-          triplesByUri[contentObject.uri].push(sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name()));
-        }
-      }
-    }
-  }
-  matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
-  const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
-  const dataFormat = matchable.matchStep.dataFormat;
-  let urisToActOn = [];
-  const allActionDetails = {};
-  const uriToMerged = {};
-  const baselineQuery = cts.registeredQuery(cts.register(matchable.baselineQuery()));
-  // get thresholds with actions associated with them
-  const thresholdDefinitions = matchable.thresholdDefinitions().filter((def => def.action()));
+  const thresholdDefinitions = matchable.thresholdDefinitions().filter(def => def.action());
   const thresholdQueryFunctions =  thresholdDefinitions.map((def, index, array) => {
     const nextDef = array[index + 1];
     const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
@@ -314,18 +54,54 @@ function buildMatchSummary(matchable, content) {
       const positiveQuery = groupQueries(minimumCombos.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery);
       if (notQuery) {
         return cts.andNotQuery(
-              positiveQuery,
-              groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery)
-          );
-        } else {
-          return positiveQuery;
-        }
+          positiveQuery,
+          groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery)
+        );
+      } else {
+        return positiveQuery;
+      }
     }
   });
+  const thresholdNames = thresholdDefinitions.map(def => def.name());
+  const triplesByUri = new Map();
+  const hashMatchInfo = {
+      matchRulesetScores: matchRulesetDefinitions.reduce((scores, def) => {
+        scores[def.name()] = def.reduce() ? -(fn.abs(def.weight())): def.weight();
+        return scores;
+      }, {}),
+      thresholds: thresholdDefinitions.map((def) => def.raw())
+    };
+
+  matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
+  const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
+  let urisToActOn = [];
   // prime triple cache on blocked merges
   getBlocksOfUris(Sequence.from(allUris));
-
+  const inMemoryTriples = [];
+  const allActionDetails = {};
+  matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
+  const dataFormat = matchable.matchStep.dataFormat;
+  const baselineQuery = cts.registeredQuery(cts.register(matchable.baselineQuery()));
+  const uriToMerged = new Map();
   for (const contentObject of content) {
+    // We don't want to generate hashes for mastering documents.
+    if (fn.startsWith(contentObject.uri, "/com.marklogic.smart-mastering/")) {
+      continue;
+    }
+    for (const matchRuleset of matchRulesetDefinitions) {
+      const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
+      for (const queryHash of queryHashes) {
+        let uriTriples = triplesByUri.get(contentObject.uri);
+        if (!uriTriples) {
+          uriTriples = [];
+          triplesByUri.set(contentObject.uri, uriTriples);
+        }
+        const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
+        const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
+        inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
+        uriTriples.push(uriToHashTriple, hashToRulesetTriple);
+      }
+    }
     let documentIsMerged = false;
     const filterQuery = matchable.filterQuery(contentObject.value);
     const thresholdGroups = {};
@@ -337,7 +113,7 @@ function buildMatchSummary(matchable, content) {
         xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
       }
       if (total === 0) {
-        continue;
+        break;
       }
       const maxScan = Math.min(matchable.maxScan(), total);
       let matchingUris;
@@ -345,8 +121,8 @@ function buildMatchSummary(matchable, content) {
       if (total > matchable.maxScan()) {
         const halfMaxScan = Math.ceil(maxScan / 2);
         matchingUris = fn.distinctValues(Sequence.from([
-            cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
-            cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
+          cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
+          cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
         ])).toArray();
       } else {
         matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
@@ -355,15 +131,13 @@ function buildMatchSummary(matchable, content) {
     }
     const urisToSearch = allMatchingBatchUris.filter(uri => !allUris.includes(uri));
     if (urisToSearch.length > 0) {
-      hubUtils
-        .documentsToContentDescriptorArray(fn.doc(urisToSearch))
-        .forEach((contentObj) => urisToContentObjects[contentObj.uri] = contentObj);
+      populateContentObjects(urisToSearch);
     }
     for (const matchingUri of allMatchingBatchUris) {
-      if (!(dataFormat === xdmp.uriFormat(matchingUri))) {
+      if (dataFormat !== xdmp.uriFormat(matchingUri)) {
         continue;
       }
-      const matchingContentObject = urisToContentObjects[matchingUri];
+      const matchingContentObject = getContentObject(matchingUri);
       const score = matchable.scoreDocument(contentObject, matchingContentObject);
       let currentThresholdDefinition = null;
       for (const thresholdDefinition of thresholdDefinitions) {
@@ -385,21 +159,23 @@ function buildMatchSummary(matchable, content) {
         thresholdGroups[currentThresholdDefinition.name()].push(matchingContentObject);
       }
     }
-    const thresholdNames = Object.keys(thresholdGroups);
     for (const thresholdName of thresholdNames) {
       const matchingDocumentSet = thresholdGroups[thresholdName];
-      matchingDocumentSet.unshift(contentObject);
-      const thresholdDefinition = thresholdDefinitions.find((def) => thresholdName === def.name());
-      const actionDetails = matchable.buildActionDetails(matchingDocumentSet, thresholdDefinition);
-      const actionURI = Object.keys(actionDetails)[0];
-      if (allActionDetails[actionURI]) {
-        allActionDetails[actionURI].uris = allActionDetails[actionURI].uris.concat(actionDetails[actionURI].uris).filter((uri, index, uris) => index === uris.indexOf(uri));
-      } else {
-        Object.assign(allActionDetails, actionDetails);
-      }
-      if (thresholdDefinition.action() === "merge") {
-        for (const uri of allActionDetails[actionURI].uris) {
-          uriToMerged[uri] = actionURI;
+      if (matchingDocumentSet) {
+        matchingDocumentSet.unshift(contentObject);
+        const thresholdDefinition = thresholdDefinitions.find((def) => thresholdName === def.name());
+        const actionDetails = matchable.buildActionDetails(matchingDocumentSet, thresholdDefinition);
+        const actionURI = Object.keys(actionDetails)[0];
+        actionDetails[actionURI].uris = actionDetails[actionURI].uris.map((uri) => uriToMerged.has(uri) ? uriToMerged.get(uri): uri);
+        if (allActionDetails[actionURI]) {
+          allActionDetails[actionURI].uris = allActionDetails[actionURI].uris.concat(actionDetails[actionURI].uris).filter((uri, index, uris) => index === uris.indexOf(uri) && uri !== actionURI);
+        } else {
+          Object.assign(allActionDetails, actionDetails);
+        }
+        if (thresholdDefinition.action() === "merge") {
+          for (const uri of allActionDetails[actionURI].uris) {
+            uriToMerged.set(uri, actionURI);
+          }
         }
       }
     }
@@ -410,13 +186,6 @@ function buildMatchSummary(matchable, content) {
   if (matchingDebugTraceEnabled) {
     xdmp.trace(consts.TRACE_MATCHING_DEBUG, `URIs mapped to merge URIs: ${JSON.stringify(uriToMerged, null, 2)}`);
   }
-  // substitute notification URIs
-  for (const actionURI of Object.keys(allActionDetails)) {
-    const actionDetail = allActionDetails[actionURI];
-    if (actionDetail.action === "notify") {
-      actionDetail.uris = actionDetail.uris.map((uri) => uriToMerged[uri] || uri).filter((uri, index, array) => array.indexOf(uri) === index);
-    }
-  }
   urisToActOn = urisToActOn.concat(Object.keys(allActionDetails));
   const matchSummary = {
     matchSummary: {
@@ -425,20 +194,27 @@ function buildMatchSummary(matchable, content) {
       matchStepFlow: matchable.matchStep.flow,
       URIsToProcess: urisToActOn,
       actionDetails: allActionDetails,
-      useFuzzyMatch,
       hashMatchInfo
     }
   };
+  addHashMatchesToMatchSummary(matchable, matchSummary, urisToActOn, inMemoryTriples);
+  // substitute notification URIs
+  for (const actionURI of Object.keys(allActionDetails)) {
+    const actionDetail = allActionDetails[actionURI];
+    if (actionDetail.action === "notify") {
+      actionDetail.uris = actionDetail.uris.map((uri) => uriToMerged.get(uri) || uri).filter((uri, index, array) => array.indexOf(uri) === index && uri !== actionURI);
+    }
+  }
   const output = [matchSummary];
-  const fuzzyMatchUris = Object.keys(triplesByUri);
-  for (let fuzzyMatchUri of fuzzyMatchUris) {
+  const fuzzyMatchEntries = triplesByUri.entries();
+  for (let fuzzyMatchEntry of fuzzyMatchEntries) {
     output.push({
-      uri: `/matching/data-hub/fuzzy-hashes/${xdmp.hash64(fuzzyMatchUri)}.json`,
+      uri: `/matching/data-hub/fuzzy-hashes/${xdmp.hash64(fuzzyMatchEntry[0])}.json`,
       value: {
-        triples: triplesByUri[fuzzyMatchUri]
+        triples: fuzzyMatchEntry[1]
       },
       context: {
-        collections: ["http://marklogic.com/data-hub/matching/fuzzy-hashes"],
+        collections: [fuzzyMatchHashesCollection],
         permissions: [xdmp.permission(consts.DATA_HUB_COMMON_ROLE, "read"), xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, "update")]
       }
     });
@@ -449,8 +225,124 @@ function buildMatchSummary(matchable, content) {
   return output;
 }
 
+function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTriples) {
+  const hashMatchInfo = matchSummary.matchSummary.hashMatchInfo;
+  const actionDetails = matchSummary.matchSummary.actionDetails;
+  const thresholds = hashMatchInfo.thresholds;
+  const thresholdNames = hashMatchInfo.thresholds.map(threshold => threshold.thresholdName);
+  const thresholdDefinitionsByName = matchable.thresholdDefinitions().reduce((definitions, def) => {
+    definitions[def.name()] = def;
+    return definitions;
+  }, {});
+
+  const matchRulesetScores = hashMatchInfo.matchRulesetScores;
+  const results = sem.sparql(`SELECT DISTINCT ?originalUri ?matchingUri ?matchRuleset FROM <http://marklogic.com/data-hub/matching/fuzzy-hashes> WHERE {
+        ?matchingUri <http://marklogic.com/data-hub/mastering#hasMatchingHash> ?uriHash.
+        ?uriHash <http://marklogic.com/data-hub/mastering#belongsTo> ?matchRuleset.
+        ?originalUri <http://marklogic.com/data-hub/mastering#hasMatchingHash> ?uriHash.
+        FILTER (?matchingUri = $uris)
+    }`, { uris }, [], [sem.inMemoryStore(inMemoryTriples), sem.store(["document"], cts.collectionQuery(fuzzyMatchHashesCollection))]).toArray().reduce((hashMatches, triple) => {
+    let { originalUri, matchingUri, matchRuleset } = triple;
+    originalUri = fn.string(originalUri), matchingUri = fn.string(matchingUri), matchRuleset = fn.string(matchRuleset);
+    let currentHashMatch = hashMatches.get(originalUri);
+    if (!currentHashMatch) {
+      currentHashMatch = { matches: new Map() };
+      hashMatches.set(originalUri, currentHashMatch);
+    }
+    const uriMatches = currentHashMatch.matches;
+    if (matchingUri === originalUri) {
+      return hashMatches;
+    }
+    let match = uriMatches.get(matchingUri);
+    if (!match) {
+      match = { matchedRulesets: [] };
+      uriMatches.set(matchingUri, match);
+    }
+    match.matchedRulesets.push(matchRuleset);
+    return hashMatches;
+  }, new Map());
+  for (const resultEntry of results.entries()) {
+    const matchUri = resultEntry[0];
+    const matches = resultEntry[1];
+    const currentContentObject = getContentObject(matchUri);
+    if (!currentContentObject) {
+      continue;
+    }
+    const groupByThreshold = {};
+    for (const matchesEntry of matches.matches.entries()) {
+      const matchedUri = matchesEntry[0];
+      const match = matchesEntry[1];
+      if (!(match && match.matchedRulesets)) {
+        continue;
+      }
+      const score = match.matchedRulesets.map(ruleset => matchRulesetScores[ruleset] || 0).reduce((sum, score) => sum + score, 0);
+      let currentThreshold = null;
+      for (const threshold of thresholds) {
+        if (score >= threshold.score) {
+          currentThreshold = threshold;
+          continue;
+        }
+        break;
+      }
+      if (currentThreshold) {
+        groupByThreshold[currentThreshold.thresholdName] = groupByThreshold[currentThreshold.thresholdName] || [];
+        groupByThreshold[currentThreshold.thresholdName].push(matchedUri);
+        if (currentThreshold.action === "merge") {
+          const matchedUriIndex = uris.indexOf(matchedUri);
+          if (matchedUriIndex >= 0) {
+            uris.splice(matchedUriIndex, 1);
+          }
+        }
+      }
+    }
+    const additionalUris = [];
+    for (const thresholdName of thresholdNames) {
+      if (groupByThreshold[thresholdName]) {
+        additionalUris.push(...groupByThreshold[thresholdName]);
+      }
+    }
+    populateContentObjects(additionalUris);
+    for (const thresholdName of thresholdNames) {
+      let existingDetails = actionDetails[matchUri];
+      let thresholdMatches = groupByThreshold[thresholdName];
+      if (!thresholdMatches) {
+        continue;
+      }
+      const thresholdDefinition = thresholdDefinitionsByName[thresholdName];
+      populateContentObjects(thresholdMatches);
+      const matchDocSet = thresholdMatches.map((uri) => getContentObject(uri)).filter((content) => {
+        return content && (matchable.scoreDocument(currentContentObject, content) >= thresholdDefinition.score());
+      });
+      thresholdMatches = matchDocSet.map(content => content.uri);
+      if (thresholdMatches.length === 0) {
+        continue;
+      }
+      const threshold = thresholdDefinition.raw();
+      if (threshold.action === "merge") {
+        const matchedUriIndex = uris.indexOf(matchUri);
+        if (matchedUriIndex >= 0) {
+          uris.splice(matchedUriIndex, 1);
+        }
+      }
+      // if action already exists for the uri then add matching URIs and continue
+      if (existingDetails && existingDetails.action === threshold.action) {
+        existingDetails.uris.push(...thresholdMatches);
+        continue;
+      }
+      const action = matchable.buildActionDetails(matchDocSet, thresholdDefinition);
+
+      const actionUri = Object.keys(action)[0];
+      if (actionDetails[actionUri]) {
+        actionDetails[actionUri].uris.push(...(action[actionUri].uris));
+        actionDetails[actionUri].uris = actionDetails[actionUri].uris.filter((uri, index, array) => array.indexOf(uri) === index);
+      } else {
+        uris.push(actionUri);
+        Object.assign(actionDetails, action);
+      }
+    }
+  }
+}
+
 export default {
-  buildMatchSummary,
-  groupQueries,
-  optimizeCtsQueries
+  buildMatchSummary
 }

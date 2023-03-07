@@ -412,7 +412,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
-    browsePage.getTotalDocuments().should("eq", 4);
+    browsePage.getTotalDocuments().should("eq", 3);
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("be.visible");
