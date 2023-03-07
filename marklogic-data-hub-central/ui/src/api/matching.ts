@@ -93,3 +93,7 @@ export const deleteExcludeValuesList = async listName => {
     return false;
   }
 };
+
+export const getReferencesExcludeValuesList = async listName => {
+  return await axios.get(`/api/steps/matching/exclusionList/${listName}/references`);
+};

@@ -9,6 +9,7 @@ export enum ConfirmationType {
   DeleteEntityPropertyWithForeignKeyReferences = "deleteEntityPropertyWithForeignKeyReferences",
   DeletePropertyWarn = "deletePropertyWarn",
   DeletePropertyStepWarn = "deletePropertyStepWarn",
+  DeleteListValueToIgnore = "deleteListValueToIgnore",
   ModuleNotFound = "moduleNotFound",
   MissingParameterFunction = "missingParameterFunction",
   SaveEntity = "saveEntity",

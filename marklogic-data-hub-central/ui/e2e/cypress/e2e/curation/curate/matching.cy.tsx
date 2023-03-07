@@ -142,7 +142,7 @@ describe("Matching", () => {
     matchingStepDetail.addThresholdButton().click();
     thresholdModal.setThresholdName("test");
     thresholdModal.selectActionDropdown("Merge");
-    thresholdModal.saveButton().click();
+    thresholdModal.saveButton().click({force: true});
     cy.waitForAsyncRequest();
     cy.findByText("test - merge").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("test", "merge").should("be.visible");
@@ -534,7 +534,7 @@ describe("Matching", () => {
       for (let i in compareValuesData) {
         cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
         cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
-      //cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
+        //cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
       }
       compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
@@ -589,13 +589,10 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
 
-
     // Try to save with empty fields
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.findByText("A title for this list is required.");
     cy.findByText("Values to ignore in this list are required.");
-
-
 
     // Don't allow values to ignore with special characters
     rulesetSingleModal.addValuesToListToIgnore("Word$1");
@@ -616,7 +613,6 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
 
     // Create new List
-
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
     rulesetSingleModal.addValuesToListToIgnore("Word1");
     rulesetSingleModal.addValuesToListToIgnore("Word2");
@@ -662,7 +658,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
 
-    // create and close valid list
+    // Create and close valid list
     rulesetSingleModal.clearListTitle("values-to-ignore-input");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1Test");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
@@ -670,7 +666,6 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
 
     // Edit list of values to ignore
-
     rulesetSingleModal.editListButton("TitleList1");
     cy.findByText("Edit List");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "22");
@@ -680,7 +675,6 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.hoverItemPresetList("TitleList122");
     cy.findByText("Word1, Word2, Word3");
-
 
     // Copy List
     rulesetSingleModal.copyListButton("TitleList122");
@@ -755,5 +749,26 @@ describe("Matching", () => {
     cy.findByText("id - Exact").click();
     cy.findByText("swim");
     cy.findByText("List1");
+
+    cy.log("**Deleting a list with references**");
+    rulesetSingleModal.saveModalButton("cancel-single-ruleset");
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getSinglePropertyOption();
+    rulesetSingleModal.selectValuesToIgnoreInput();
+
+    rulesetSingleModal.deleteListButton("List1");
+    rulesetSingleModal.getElementByAriaLabel("confirm-deleteListValueToIgnore-close").click();
+
+    cy.log("**Creating and deleting a new list without references**");
+    rulesetSingleModal.createNewList();
+    rulesetSingleModal.addValuesToListToIgnore("Word3");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "swim1");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.deleteListButton("swim1");
+    rulesetSingleModal.saveModalButton("Yes");
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.findText("swim1").should("not.exist");
+
   });
 });

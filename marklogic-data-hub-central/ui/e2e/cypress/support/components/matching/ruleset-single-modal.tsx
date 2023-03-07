@@ -103,25 +103,38 @@ class RulesetSingleModal {
     cy.get(`[id="valuesToIgnore"]`).click({force: true});
   }
 
-  hoverItemPresetList(listName:string) {
+  hoverItemPresetList(listName: string) {
     return cy.findByText(listName).trigger("mouseover");
   }
 
   createNewList() {
-    return  cy.findByText("Create new list").click({force: true});
+    return cy.findByText("Create new list").click({force: true});
   }
 
-  editListButton(listName:string) {
+  editListButton(listName: string) {
     return cy.get(`[id="edit-${listName}"]`).click({force: true});
   }
 
-  copyListButton(listName:string) {
+  copyListButton(listName: string) {
     return cy.get(`[id="copy-${listName}"]`).click();
   }
 
-  selectItemFromList(listName:string) {
+  selectItemFromList(listName: string) {
     return cy.findByText(listName).click();
   }
+
+  deleteListButton(listName: string) {
+    return cy.get(`[id="delete-${listName}"]`).click({force: true});
+  }
+
+  findText(text: string) {
+    return cy.findByText(text);
+  }
+
+  getElementByAriaLabel(label: string) {
+    return cy.get(`[aria-label=${label}]`);
+  }
+
 }
 
 const rulesetSingleModal = new RulesetSingleModal();

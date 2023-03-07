@@ -12,7 +12,12 @@ import {CurationContext} from "@util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "@config/tooltips.config";
-import {deleteExcludeValuesList, getAllExcludeValuesList, updateMatchingArtifact} from "@api/matching";
+import {
+  deleteExcludeValuesList,
+  getAllExcludeValuesList,
+  updateMatchingArtifact,
+  getReferencesExcludeValuesList,
+} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip, HCModal} from "@components/common";
@@ -20,6 +25,8 @@ import {themeColors} from "@config/themes.config";
 import {faCopy, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import ListModal from "../list-modal/list-modal";
 import {deleteConfirmationModal} from "../../../flows/confirmation-modals";
+import ConfirmationModal from "@components/confirmation-modal/confirmation-modal";
+import {ConfirmationType} from "../../../../types/common-types";
 
 type Props = {
   editRuleset: any;
@@ -93,6 +100,8 @@ const MatchRulesetModal: React.FC<Props> = props => {
   const [selectedExcludeListToInput, setSelectedExcludeListToInput] = useState<any[]>([]);
   const [deleteConformationVisible, setDeleteConformationVisible] = useState<boolean>(false);
   const [listToDelete, setListToDelete] = useState<string>("");
+  const [deleteWarning, setDeleteWarning] = useState<boolean>(false);
+  const [referencesListValuesToIgnore, setReferencesListValuesToIgnore] = useState<string[]>([]);
 
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
@@ -174,6 +183,20 @@ const MatchRulesetModal: React.FC<Props> = props => {
 
   const checkIfListExists = name => {
     return excludeList.find(item => item.name === name);
+  };
+
+  const fetchReferencesExcludeValuesList = async (listName: string) => {
+    await getReferencesExcludeValuesList(listName).then(res => {
+      let references = res.data.stepNames;
+      setReferencesListValuesToIgnore(res.data.stepNames);
+      if (references?.length > 0) {
+        setDeleteWarning(true);
+      } else {
+        setListToDelete(listName);
+        setDeleteConformationVisible(true);
+        resetModalValuesIgnore();
+      }
+    });
   };
 
   const handleInputChange = event => {
@@ -976,8 +999,8 @@ const MatchRulesetModal: React.FC<Props> = props => {
       setListValues(itemInfo.valuesIgnore);
       setActionListModal("E");
     } else if (btn === "D") {
-      setListToDelete(itemInfo?.name);
-      setDeleteConformationVisible(true);
+      setActionListModal("D");
+      fetchReferencesExcludeValuesList(itemInfo?.name);
     }
     event.stopPropagation();
   };
@@ -1103,259 +1126,272 @@ const MatchRulesetModal: React.FC<Props> = props => {
   };
 
   return (
-    <HCModal show={props.isVisible} size={"lg"} onHide={closeModal}>
-      <Modal.Header className={"pb-0"}>
-        <div>
-          <div className={"fs-5"}>
-            {Object.keys(curationRuleset).length !== 0
-              ? "Edit Match Ruleset for Single Property"
-              : "Add Match Ruleset for Single Property"}
-          </div>
-        </div>
-        <div className={`flex-column ${styles.modalTitleLegend}`}>
-          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
-          <div className={"d-flex mt-3"}>
-            <div className={styles.legendText}>
-              <img className={styles.arrayImage} src={arrayIcon} />
-              Multiple
-            </div>
-            <div className={styles.legendText}>
-              <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type
+    <>
+      <HCModal show={props.isVisible} size={"lg"} onHide={closeModal}>
+        <Modal.Header className={"pb-0"}>
+          <div>
+            <div className={"fs-5"}>
+              {Object.keys(curationRuleset).length !== 0
+                ? "Edit Match Ruleset for Single Property"
+                : "Add Match Ruleset for Single Property"}
             </div>
           </div>
-        </div>
-      </Modal.Header>
-      <Modal.Body>
-        <Form id="matching-single-ruleset" onSubmit={onSubmit} className={"container-fluid"}>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={styles.reduceWeightText}>
-              {"Reduce Weight"}
-            </FormLabel>
-            <Col className={"d-flex align-items-center"}>
-              <FormCheck
-                type="switch"
-                data-testid="reduceToggle"
-                defaultChecked={props.editRuleset.reduce}
-                className={styles.switchReduceToggle}
-                onChange={onToggleReduce}
-                onKeyDown={(event: any) => {
-                  if (event.key === "Enter") {
-                    event.target.checked = !event.target.checked;
-                    onToggleReduce(event);
-                  }
-                }}
-                aria-label="reduceToggle"
-              />
-              <div
-                className={"p-2 d-flex align-items-center"}
-                tabIndex={0}
-                onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
-                onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
-              >
-                <HCTooltip
-                  show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
-                  text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
-                  id="reduce-tooltip"
-                  placement="right"
-                >
-                  <QuestionCircleFill
-                    color={themeColors.defaults.questionCircle}
-                    className={styles.icon}
-                    size={13}
-                    aria-label="icon: question-circle-reduce"
-                  />
-                </HCTooltip>
+          <div className={`flex-column ${styles.modalTitleLegend}`}>
+            <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
+            <div className={"d-flex mt-3"}>
+              <div className={styles.legendText}>
+                <img className={styles.arrayImage} src={arrayIcon} />
+                Multiple
               </div>
-            </Col>
-          </Row>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={styles.reduceWeightText}>
-              {"Fuzzy Matching"}
-            </FormLabel>
-            <Col className={"d-flex align-items-center"}>
-              <FormCheck
-                type="switch"
-                data-testid="fuzzyMatching"
-                defaultChecked={props.editRuleset.fuzzyMatch}
-                className={styles.switchReduceToggle}
-                onChange={onFuzzyMatching}
-                aria-label="fuzzyMatching"
-                onKeyDown={(event: any) => {
-                  if (event.key === "Enter") {
-                    event.target.checked = !event.target.checked;
-                    onFuzzyMatching(event);
-                  }
-                }}
-              />
-              <div
-                className={"p-2 d-flex align-items-center"}
-                tabIndex={0}
-                onFocus={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: true})}
-                onBlur={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: false})}
-              >
-                <HCTooltip
-                  show={isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined}
-                  text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>}
-                  id="fuzzy-tooltip"
-                  placement="top"
-                >
-                  <QuestionCircleFill
-                    color={themeColors.defaults.questionCircle}
-                    className={styles.icon}
-                    size={13}
-                    aria-label="icon: question-circle"
-                  />
-                </HCTooltip>
+              <div className={styles.legendText}>
+                <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type
               </div>
-            </Col>
-          </Row>
-
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>
-              {"Property to Match:"}
-              <span className={styles.asterisk}>*</span>
-            </FormLabel>
-            <Col>
-              <Row>
-                <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <EntityPropertyTreeSelect
-                    isForMerge={false}
-                    propertyDropdownOptions={entityTypeDefinition.properties}
-                    entityDefinitionsArray={curationOptions.entityDefinitionsArray}
-                    value={selectedProperty}
-                    onValueSelected={onPropertySelect}
-                  />
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {propertyTypeErrorMessage}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>
-              {"Match Type:"}
-              <span className={styles.asterisk}>*</span>
-            </FormLabel>
-            <Col>
-              <Row>
-                <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <div className={styles.inputMatchType}>
-                    <Select
-                      id="match-type-select-wrapper"
-                      inputId="match-type"
-                      components={{MenuList: props => MenuList("match-type", props)}}
-                      placeholder="Select match type"
-                      value={renderMatchOptions.find(oItem => oItem.value === matchType)}
-                      onChange={onMatchTypeSelect}
-                      aria-label="match-type-dropdown"
-                      options={renderMatchOptions}
-                      styles={reactSelectThemeConfig}
-                      tabSelectsValue={false}
-                      openMenuOnFocus={true}
-                      formatOptionLabel={({value, label}) => {
-                        return <span aria-label={`${value}-option`}>{label}</span>;
-                      }}
-                    />
-                  </div>
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {matchTypeErrorMessage}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>
-              {"Values to Ignore:"}
-            </FormLabel>
-            <Col>
-              <Row>
-                <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <div className={styles.selectIgnore}>
-                    <Select
-                      inputId="valuesToIgnore"
-                      data-testid="valuesToIgnore"
-                      isMulti
-                      closeMenuOnSelect={false}
-                      isClearable={true}
-                      isSearchable={true}
-                      components={{Option}}
-                      tabSelectsValue={false}
-                      openMenuOnFocus={true}
-                      placeholder="Search previous lists"
-                      value={selectedExcludeListToInput}
-                      onChange={handleChangeValuesToIgnore}
-                      options={excludeList}
-                      styles={reactSelectThemeConfig}
-                      formatOptionLabel={({value, name}) => {
-                        return (
-                          <span aria-label={`${value}-option`} style={{backgroundColor: "silver", width: "100%"}}>
-                            <div>{name}</div>
-                          </span>
-                        );
-                      }}
-                    />
-                  </div>
-                  <div
-                    className={"p-2 d-flex align-items-center"}
-                    tabIndex={0}
-                    onFocus={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: true})}
-                    onBlur={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: false})}
+            </div>
+          </div>
+        </Modal.Header>
+        <Modal.Body>
+          <Form id="matching-single-ruleset" onSubmit={onSubmit} className={"container-fluid"}>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3} className={styles.reduceWeightText}>
+                {"Reduce Weight"}
+              </FormLabel>
+              <Col className={"d-flex align-items-center"}>
+                <FormCheck
+                  type="switch"
+                  data-testid="reduceToggle"
+                  defaultChecked={props.editRuleset.reduce}
+                  className={styles.switchReduceToggle}
+                  onChange={onToggleReduce}
+                  onKeyDown={(event: any) => {
+                    if (event.key === "Enter") {
+                      event.target.checked = !event.target.checked;
+                      onToggleReduce(event);
+                    }
+                  }}
+                  aria-label="reduceToggle"
+                />
+                <div
+                  className={"p-2 d-flex align-items-center"}
+                  tabIndex={0}
+                  onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
+                  onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
+                >
+                  <HCTooltip
+                    show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
+                    text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
+                    id="reduce-tooltip"
+                    placement="top"
                   >
-                    <HCTooltip
-                      show={isTooltipVisible.valuesIgnore ? isTooltipVisible.valuesIgnore : undefined}
-                      text={<span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>}
-                      id="reduce-tooltip"
-                      placement="top"
-                    >
-                      <QuestionCircleFill
-                        color={themeColors.defaults.questionCircle}
-                        className={styles.icon}
-                        size={13}
-                        aria-label="icon: question-circle-values-ignore"
-                      />
-                    </HCTooltip>
-                  </div>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+                    <QuestionCircleFill
+                      color={themeColors.defaults.questionCircle}
+                      className={styles.icon}
+                      size={13}
+                      aria-label="icon: question-circle-reduce"
+                    />
+                  </HCTooltip>
+                </div>
+              </Col>
+            </Row>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3} className={styles.reduceWeightText}>
+                {"Fuzzy Matching"}
+              </FormLabel>
+              <Col className={"d-flex align-items-center"}>
+                <FormCheck
+                  type="switch"
+                  data-testid="fuzzyMatching"
+                  defaultChecked={props.editRuleset.fuzzyMatch}
+                  className={styles.switchReduceToggle}
+                  onChange={onFuzzyMatching}
+                  aria-label="fuzzyMatching"
+                  onKeyDown={(event: any) => {
+                    if (event.key === "Enter") {
+                      event.target.checked = !event.target.checked;
+                      onFuzzyMatching(event);
+                    }
+                  }}
+                />
+                <div
+                  className={"p-2 d-flex align-items-center"}
+                  tabIndex={0}
+                  onFocus={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: true})}
+                  onBlur={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: false})}
+                >
+                  <HCTooltip
+                    show={isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined}
+                    text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>}
+                    id="fuzzy-tooltip"
+                    placement="top"
+                  >
+                    <QuestionCircleFill
+                      color={themeColors.defaults.questionCircle}
+                      className={styles.icon}
+                      size={13}
+                      aria-label="icon: question-circle"
+                    />
+                  </HCTooltip>
+                </div>
+              </Col>
+            </Row>
 
-          {matchType === "synonym" && renderSynonymOptions}
-          {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}
-          {matchType === "custom" && renderCustomOptions}
-          {modalFooter}
-        </Form>
-        {discardChanges}
-        <ListModal
-          isVisible={showListModal}
-          toggleModal={setShowListModal}
-          action={actionListModal}
-          listName={listName}
-          listValues={listValues}
-          confirmAction={confirmAction}
-          updateListValues={fetchExcludeValueList}
-          checkIfExistInList={checkIfExistInList}
-        />
-        <DeleteModal
-          isVisible={showDeleteConfirmModal}
-          toggleModal={toggleDeleteConfirmModal}
-          editRuleset={curationRuleset}
-          confirmAction={confirmAction}
-        />
-      </Modal.Body>
-      {deleteConfirmationModal(
-        deleteConformationVisible,
-        listToDelete,
-        removeList,
-        () => {
-          setDeleteConformationVisible(false);
-        },
-        "list?",
-      )}
-    </HCModal>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Property to Match:"}
+                <span className={styles.asterisk}>*</span>
+              </FormLabel>
+              <Col>
+                <Row>
+                  <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                    <EntityPropertyTreeSelect
+                      isForMerge={false}
+                      propertyDropdownOptions={entityTypeDefinition.properties}
+                      entityDefinitionsArray={curationOptions.entityDefinitionsArray}
+                      value={selectedProperty}
+                      onValueSelected={onPropertySelect}
+                    />
+                  </Col>
+                  <Col xs={12} className={styles.validationError}>
+                    {propertyTypeErrorMessage}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Match Type:"}
+                <span className={styles.asterisk}>*</span>
+              </FormLabel>
+              <Col>
+                <Row>
+                  <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                    <div className={styles.inputMatchType}>
+                      <Select
+                        id="match-type-select-wrapper"
+                        inputId="match-type"
+                        components={{MenuList: props => MenuList("match-type", props)}}
+                        placeholder="Select match type"
+                        value={renderMatchOptions.find(oItem => oItem.value === matchType)}
+                        onChange={onMatchTypeSelect}
+                        aria-label="match-type-dropdown"
+                        options={renderMatchOptions}
+                        styles={reactSelectThemeConfig}
+                        tabSelectsValue={false}
+                        openMenuOnFocus={true}
+                        formatOptionLabel={({value, label}) => {
+                          return <span aria-label={`${value}-option`}>{label}</span>;
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={12} className={styles.validationError}>
+                    {matchTypeErrorMessage}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Values to Ignore:"}
+              </FormLabel>
+              <Col>
+                <Row>
+                  <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                    <div className={styles.selectIgnore}>
+                      <Select
+                        inputId="valuesToIgnore"
+                        data-testid="valuesToIgnore"
+                        isMulti
+                        closeMenuOnSelect={false}
+                        isClearable={true}
+                        isSearchable={true}
+                        components={{Option}}
+                        tabSelectsValue={false}
+                        openMenuOnFocus={true}
+                        placeholder="Search previous lists"
+                        value={selectedExcludeListToInput}
+                        onChange={handleChangeValuesToIgnore}
+                        options={excludeList}
+                        styles={reactSelectThemeConfig}
+                        formatOptionLabel={({value, name}) => {
+                          return (
+                            <span aria-label={`${value}-option`} style={{backgroundColor: "silver", width: "100%"}}>
+                              <div>{name}</div>
+                            </span>
+                          );
+                        }}
+                      />
+                    </div>
+                    <div
+                      className={"p-2 d-flex align-items-center"}
+                      tabIndex={0}
+                      onFocus={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: true})}
+                      onBlur={() => setIsTooltipVisible({...isTooltipVisible, valuesIgnore: false})}
+                    >
+                      <HCTooltip
+                        show={isTooltipVisible.valuesIgnore ? isTooltipVisible.valuesIgnore : undefined}
+                        text={
+                          <span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>
+                        }
+                        id="reduce-tooltip"
+                        placement="top"
+                      >
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.icon}
+                          size={13}
+                          aria-label="icon: question-circle-values-ignore"
+                        />
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            {matchType === "synonym" && renderSynonymOptions}
+            {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}
+            {matchType === "custom" && renderCustomOptions}
+            {modalFooter}
+          </Form>
+          {discardChanges}
+          <ListModal
+            isVisible={showListModal}
+            toggleModal={setShowListModal}
+            action={actionListModal}
+            listName={listName}
+            listValues={listValues}
+            confirmAction={confirmAction}
+            updateListValues={fetchExcludeValueList}
+            checkIfExistInList={checkIfExistInList}
+          />
+          <DeleteModal
+            isVisible={showDeleteConfirmModal}
+            toggleModal={toggleDeleteConfirmModal}
+            editRuleset={curationRuleset}
+            confirmAction={confirmAction}
+          />
+        </Modal.Body>
+        {deleteConfirmationModal(
+          deleteConformationVisible,
+          listToDelete,
+          removeList,
+          () => {
+            setDeleteConformationVisible(false);
+          },
+          "list?",
+        )}
+      </HCModal>
+
+      <ConfirmationModal
+        isVisible={deleteWarning}
+        type={ConfirmationType.DeleteListValueToIgnore}
+        boldTextArray={referencesListValuesToIgnore ? referencesListValuesToIgnore : []}
+        arrayValues={referencesListValuesToIgnore ? referencesListValuesToIgnore : []}
+        toggleModal={() => setDeleteWarning(false)}
+        confirmAction={() => setDeleteWarning(false)}
+      />
+    </>
   );
 };
 
