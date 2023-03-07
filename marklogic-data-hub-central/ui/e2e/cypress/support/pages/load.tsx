@@ -295,7 +295,7 @@ class LoadPage {
 
   addStepToNewFlow(stepName: string) {
     cy.get(`[aria-label="${stepName}"]`).trigger("mouseover", {force: true});
-    this.addToNewFlow(stepName).click();
+    this.addToNewFlow(stepName).click({force: true});
   }
 
   addStepToNewFlowListView(stepName: string) {

@@ -17,6 +17,7 @@ type Props = {
 const ConfirmationModal: React.FC<Props> = props => {
   const [showSteps, toggleSteps] = useState(false);
   const [showEntities, toggleEntities] = useState(false);
+  const [showRelated, setShowRelated] = useState(false);
   const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
@@ -153,6 +154,23 @@ const ConfirmationModal: React.FC<Props> = props => {
               {showSteps && <ul className={styles.stepList}>{renderArrayValues}</ul>}
             </>
           )}
+          {props.type === ConfirmationType.DeleteListValueToIgnore && (
+            <>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"The list is used in one or more places."}
+              </HCAlert>
+
+              <p aria-label="delete-list-text">
+                Edit these matching steps and unselect this exclusion list in the any match ruleset before deleting.
+              </p>
+              <p aria-label="toggle-steps" className={styles.toggleSteps} onClick={() => setShowRelated(!showRelated)}>
+                {showRelated ? "Hide Steps..." : "Show Steps..."}
+              </p>
+
+              {showRelated && <ul className={styles.stepList}>{renderArrayValues}</ul>}
+            </>
+          )}
+
           {props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences && (
             <>
               <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
@@ -333,7 +351,8 @@ const ConfirmationModal: React.FC<Props> = props => {
         {props.type === ConfirmationType.DeleteEntityStepWarn ||
         props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences ||
         props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences ||
-        props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes
+        props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes ||
+        props.type === ConfirmationType.DeleteListValueToIgnore
           ? modalFooterClose
           : modalFooter}
       </Modal.Body>
