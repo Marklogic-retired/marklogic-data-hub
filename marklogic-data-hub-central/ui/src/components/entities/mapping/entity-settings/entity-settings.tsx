@@ -167,6 +167,7 @@ const EntitySettings: React.FC<Props> = (props) => {
     //Make selection when user presses space or enter key
     if ((event.keyCode === 13) || (event.keyCode === 32)) {
       if (component === "settingsIcon") {
+        event.preventDefault();
         setTarget(event.target);
         togglePopover();
       }
