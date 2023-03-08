@@ -23,6 +23,8 @@ import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import provLib from "/data-hub/5/impl/prov.mjs";
 import WriteQueue from "/data-hub/5/flow/writeQueue.mjs";
+import featuresCore from "/data-hub/features/core.mjs";
+
 
 const INFO_EVENT = consts.TRACE_FLOW;
 const DEBUG_EVENT = consts.TRACE_FLOW_DEBUG;
@@ -137,6 +139,8 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
     hookRunner.runHook(contentArray);
   }
 
+  invokeFeatureBefore(stepExecutionContext, contentArray);
+
   invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
@@ -150,6 +154,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 
   stepExecutionContext.finalizeCollectionsAndPermissions(outputContentArray);
 
+  invokeFeatureBefore(stepExecutionContext, contentArray);
   invokeInterceptors(stepExecutionContext, outputContentArray, "beforeContentPersisted");
 
   if (hookRunner && !hookRunner.runBefore) {
@@ -385,6 +390,20 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
       throw error;
     }
   }
+}
+
+function invokeFeatureBefore(stepExecutionContext, contentArray) {
+    const flowStep = stepExecutionContext.flowStep;
+    this.flowStep.options.targetEntityType;
+    const features = Object.keys(featuresCore.getFeatures());
+   contentArray.forEach(content => {
+       features.forEach(feat => {
+           const funct = hubUtils.requireFunction(feat, "onInstancePassToStep");
+           if (funct) {
+               funct(flowStep, this.flowStep.options.targetEntityType, content);
+           }
+       });
+   });
 }
 
 /**
