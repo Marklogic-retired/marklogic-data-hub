@@ -963,7 +963,7 @@ const GraphViewSidePanel: React.FC<Props> = ({
             defaultActiveKey={DEFAULT_TAB}
             activeKey={currentTab}
             onSelect={handleTabChange}
-            className={styles.tabsContainer}
+            className={styles.sidePanel}
           >
             <Tab
               eventKey="properties"
