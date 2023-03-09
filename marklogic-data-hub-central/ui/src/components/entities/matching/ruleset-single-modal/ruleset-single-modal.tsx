@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
-import Select, {components as SelectComponents, components, /*OptionProps*/} from "react-select";
+import Select, {components as SelectComponents, components /*OptionProps*/} from "react-select";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
@@ -25,12 +25,11 @@ type Props = {
   editRuleset: any;
   isVisible: boolean;
   toggleModal: (isVisible: boolean) => void;
-
 };
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
-  properties: []
+  properties: [],
 };
 
 const MATCH_TYPE_OPTIONS = [
@@ -43,7 +42,7 @@ const MATCH_TYPE_OPTIONS = [
 
 const presetListMock = [{name: "Preset List 0", value: []}];
 
-const MatchRulesetModal: React.FC<Props> = (props) => {
+const MatchRulesetModal: React.FC<Props> = props => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
 
   const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
@@ -98,13 +97,20 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
     let index = props.editRuleset.index;
-    curationRuleset = ({...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index});
+    curationRuleset = {...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index};
   }
 
   useEffect(() => {
     fetchExcludeValueList();
-    if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
-      let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
+    if (
+      props.isVisible &&
+      curationOptions.entityDefinitionsArray.length > 0 &&
+      curationOptions.activeStep.entityName !== ""
+    ) {
+      let entityTypeDefinition: Definition =
+        curationOptions.entityDefinitionsArray.find(
+          entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName,
+        ) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
     }
     if (Object.keys(curationRuleset).length !== 0 && props.isVisible) {
@@ -122,15 +128,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         setUriValue(editRuleset["matchRules"][0]["algorithmModulePath"]);
         setFunctionValue(editRuleset["matchRules"][0]["algorithmFunction"]);
         setNamespaceValue(editRuleset["matchRules"][0]["algorithmModuleNamespace"]);
-
       } else if (matchType === "doubleMetaphone") {
         setDictionaryValue(editRuleset["matchRules"][0]["options"]["dictionaryURI"]);
         setDistanceThresholdValue(editRuleset["matchRules"][0]["options"]["distanceThreshold"]);
-
       } else if (matchType === "synonym") {
         setThesaurusValue(editRuleset["matchRules"][0]["options"]["thesaurusURI"]);
         setFilterValue(editRuleset["matchRules"][0]["options"]["filter"]);
-
       }
     }
   }, [props.isVisible]);
@@ -138,8 +141,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.isVisible) {
       if (props.editRuleset.matchRules?.length > 0 && props.editRuleset.matchRules[0].exclusionLists) {
-        const listToIgnore:any[] = [];
-        props.editRuleset.matchRules[0].exclusionLists.forEach((item) => {
+        const listToIgnore: any[] = [];
+        props.editRuleset.matchRules[0].exclusionLists.forEach(item => {
           const listValue = checkIfListExists(item);
           if (listValue) {
             listToIgnore.push(listValue);
@@ -150,31 +153,30 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         setSelectedExcludeListToInput([]);
       }
     }
-    return (() => {
+    return () => {
       setSelectedExcludeListToInput([]);
       setSelectedExcludeList([]);
-    });
+    };
   }, [excludeList]);
 
-  const fetchExcludeValueList = async() => {
-    const  excludeValuesList =  await getAllExcludeValuesList();
+  const fetchExcludeValueList = async () => {
+    const excludeValuesList = await getAllExcludeValuesList();
 
-    const fixData = excludeValuesList.data.map((item) => {
+    const fixData = excludeValuesList.data.map(item => {
       return {
         name: item.name,
         value: item.name,
-        valuesIgnore: item.values
+        valuesIgnore: item.values,
       };
     });
     setExcludeList([presetListMock[0], ...fixData]);
-
   };
 
-  const checkIfListExists = (name) => {
-    return excludeList.find((item) => item.name === name);
+  const checkIfListExists = name => {
+    return excludeList.find(item => item.name === name);
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     switch (event.target.id) {
     case "thesaurus-uri-input":
       if (event.target.value === "") {
@@ -297,11 +299,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setFuzzyMatching(false);
   };
 
-  const getSelectedPropertyValue = (selectedProperty) => {
+  const getSelectedPropertyValue = selectedProperty => {
     return selectedProperty ? selectedProperty.split(" > ").join(".") : "";
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = event => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let matchErrorMessage = "";
@@ -319,21 +321,20 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
     switch (matchType) {
     case "exact":
-    case "zip":
-    {
+    case "zip": {
       let matchRule: MatchRule = {
         entityPropertyPath: propertyName,
         matchType: matchType,
         options: {},
-        exclusionLists: selectedExcludeList
+        exclusionLists: selectedExcludeList,
       };
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
-        ...({reduce: reduceValue}),
+        ...{reduce: reduceValue},
         fuzzyMatch: fuzzyMatching,
-        matchRules: [matchRule]
+        matchRules: [matchRule],
       };
 
       if (propertyErrorMessage === "" && matchErrorMessage === "") {
@@ -344,8 +345,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       break;
     }
 
-    case "synonym":
-    {
+    case "synonym": {
       let thesaurusErrorMessage = "";
       if (thesaurusValue === "") {
         thesaurusErrorMessage = "A thesaurus URI is required";
@@ -356,17 +356,17 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         matchType: matchType,
         options: {
           thesaurusURI: thesaurusValue,
-          filter: filterValue
+          filter: filterValue,
         },
-        exclusionLists: selectedExcludeList
+        exclusionLists: selectedExcludeList,
       };
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
-        ...({reduce: reduceValue}),
+        ...{reduce: reduceValue},
         fuzzyMatch: fuzzyMatching,
-        matchRules: [synonymMatchRule]
+        matchRules: [synonymMatchRule],
       };
 
       if (thesaurusErrorMessage === "" && propertyErrorMessage === "") {
@@ -378,8 +378,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       break;
     }
 
-    case "doubleMetaphone":
-    {
+    case "doubleMetaphone": {
       let dictionaryUriErrorMessage = "";
       if (dictionaryValue === "") {
         dictionaryUriErrorMessage = "A dictionary URI is required";
@@ -397,17 +396,17 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         matchType: matchType,
         options: {
           dictionaryURI: dictionaryValue,
-          distanceThreshold: distanceThresholdValue
+          distanceThreshold: distanceThresholdValue,
         },
-        exclusionLists: selectedExcludeList
+        exclusionLists: selectedExcludeList,
       };
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
-        ...({reduce: reduceValue}),
+        ...{reduce: reduceValue},
         fuzzyMatch: fuzzyMatching,
-        matchRules: [doubleMetaphoneMatchRule]
+        matchRules: [doubleMetaphoneMatchRule],
       };
 
       if (propertyErrorMessage === "" && dictionaryUriErrorMessage === "" && distanceThresholdErrorMessage === "") {
@@ -420,8 +419,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       break;
     }
 
-    case "custom":
-    {
+    case "custom": {
       let uriErrorMessage = "";
       if (uriValue === "") {
         uriErrorMessage = "A URI is required";
@@ -439,15 +437,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         algorithmFunction: functionValue,
         algorithmModuleNamespace: namespaceValue,
         options: {},
-        exclusionLists: selectedExcludeList
+        exclusionLists: selectedExcludeList,
       };
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
-        ...({reduce: reduceValue}),
+        ...{reduce: reduceValue},
         fuzzyMatch: fuzzyMatching,
-        matchRules: [customMatchRule]
+        matchRules: [customMatchRule],
       };
 
       if (propertyErrorMessage === "" && uriErrorMessage === "" && functionErrorMessage === "") {
@@ -488,7 +486,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       updateStep.matchRulesets[curationRuleset["index"]] = matchRuleset;
     } else {
       // add match step
-      if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
+      if (updateStep.matchRulesets) {
+        updateStep.matchRulesets.push(matchRuleset);
+      }
     }
     let success = await updateMatchingArtifact(updateStep);
     if (success) {
@@ -499,30 +499,21 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     if (matchType === "custom") {
       let checkCustomValues = hasCustomFormValuesChanged();
-      if (!isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkCustomValues
-      ) {
+      if (!isPropertyTypeTouched && !isMatchTypeTouched && !checkCustomValues) {
         return false;
       } else {
         return true;
       }
     } else if (matchType === "synonym") {
       let checkSynonymValues = hasSynonymFormValuesChanged();
-      if (!isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkSynonymValues
-      ) {
+      if (!isPropertyTypeTouched && !isMatchTypeTouched && !checkSynonymValues) {
         return false;
       } else {
         return true;
       }
     } else if (matchType === "doubleMetaphone") {
       let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
-      if (!isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkDoubleMetaphoneValues
-      ) {
+      if (!isPropertyTypeTouched && !isMatchTypeTouched && !checkDoubleMetaphoneValues) {
         return false;
       } else {
         return true;
@@ -537,10 +528,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   const hasCustomFormValuesChanged = () => {
-    if (!isUriTouched
-      && !isFunctionTouched
-      && !isNamespaceTouched
-    ) {
+    if (!isUriTouched && !isFunctionTouched && !isNamespaceTouched) {
       return false;
     } else {
       return true;
@@ -548,9 +536,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   const hasSynonymFormValuesChanged = () => {
-    if (!isThesaurusTouched
-      && !isFilterTouched
-    ) {
+    if (!isThesaurusTouched && !isFilterTouched) {
       return false;
     } else {
       return true;
@@ -558,9 +544,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   const hasDoubleMetaphoneFormValuesChanged = () => {
-    if (!isDictionaryTouched
-      && !isDistanceTouched
-    ) {
+    if (!isDictionaryTouched && !isDistanceTouched) {
       return false;
     } else {
       return true;
@@ -576,12 +560,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     resetTouched();
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
+  const discardChanges = (
+    <ConfirmYesNo visible={discardChangesVisible} type="discardChanges" onYes={discardOk} onNo={discardCancel} />
+  );
 
   const [isTooltipVisible, setIsTooltipVisible] = useState({
     thesaurusURI: false,
@@ -596,12 +577,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     valuesIgnore: false,
   });
 
-  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
+  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({
+    value: matchType.value,
+    label: matchType.name,
+  }));
 
   const renderSynonymOptions = (
     <>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Thesaurus URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"Thesaurus URI:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row>
             <Col className={thesaurusErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -620,10 +607,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, thesaurusURI: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, thesaurusURI: false})}
               >
-                <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top" show={
-                  isTooltipVisible.thesaurusURI ? isTooltipVisible.thesaurusURI : undefined
-                }>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                <HCTooltip
+                  text={MatchingStepTooltips.thesaurusUri}
+                  id="thesaurus-uri-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.thesaurusURI ? isTooltipVisible.thesaurusURI : undefined}
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
@@ -635,7 +630,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       </Row>
 
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Filter:"}</FormLabel>
+        <FormLabel column lg={3}>
+          {"Filter:"}
+        </FormLabel>
         <Col className={"d-flex"}>
           <HCInput
             id="filter-input"
@@ -652,10 +649,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             onFocus={() => setIsTooltipVisible({...isTooltipVisible, filter: true})}
             onBlur={() => setIsTooltipVisible({...isTooltipVisible, filter: false})}
           >
-            <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top" show={
-              isTooltipVisible.filter ? isTooltipVisible.filter : undefined
-            }>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+            <HCTooltip
+              text={MatchingStepTooltips.filter}
+              id="filter-tooltip"
+              placement="top"
+              show={isTooltipVisible.filter ? isTooltipVisible.filter : undefined}
+            >
+              <QuestionCircleFill
+                color={themeColors.defaults.questionCircle}
+                className={styles.icon}
+                size={13}
+                aria-label="icon: question-circle"
+              />
             </HCTooltip>
           </div>
         </Col>
@@ -666,7 +671,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const renderDoubleMetaphoneOptions = (
     <>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Dictionary URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"Dictionary URI:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row>
             <Col className={dictionaryErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -685,10 +693,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, dictionaryURI: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, dictionaryURI: false})}
               >
-                <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top" show={
-                  isTooltipVisible.dictionaryURI ? isTooltipVisible.dictionaryURI : undefined
-                }>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                <HCTooltip
+                  text={MatchingStepTooltips.dictionaryUri}
+                  id="dictionary-uri-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.dictionaryURI ? isTooltipVisible.dictionaryURI : undefined}
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
@@ -700,7 +716,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       </Row>
 
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Distance Threshold:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"Distance Threshold:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row>
             <Col className={distanceThresholdErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -718,12 +737,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 tabIndex={0}
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, distanceThreshold: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, distanceThreshold: false})}
-
               >
-                <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top" show={
-                  isTooltipVisible.distanceThreshold ? isTooltipVisible.distanceThreshold : undefined
-                }>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                <HCTooltip
+                  text={MatchingStepTooltips.distanceThreshold}
+                  id="distance-threshold-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.distanceThreshold ? isTooltipVisible.distanceThreshold : undefined}
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
@@ -739,7 +765,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const renderCustomOptions = (
     <>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"URI:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row>
             <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -758,10 +787,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, uri: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, uri: false})}
               >
-                <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top" show={
-                  isTooltipVisible.uri ? isTooltipVisible.uri : undefined
-                }>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                <HCTooltip
+                  text={MatchingStepTooltips.uri}
+                  id="uri-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.uri ? isTooltipVisible.uri : undefined}
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
@@ -772,7 +809,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         </Col>
       </Row>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Function:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"Function:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row>
             <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -790,12 +830,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 tabIndex={0}
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, function: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, function: false})}
-
               >
-                <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top" show={
-                  isTooltipVisible.function ? isTooltipVisible.function : undefined
-                }>
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                <HCTooltip
+                  text={MatchingStepTooltips.function}
+                  id="function-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.function ? isTooltipVisible.function : undefined}
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
@@ -806,7 +853,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         </Col>
       </Row>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
+        <FormLabel column lg={3}>
+          {"Namespace:"}
+        </FormLabel>
         <Col className={"d-flex"}>
           <HCInput
             id="namespace-input"
@@ -823,10 +872,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
             onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
           >
-            <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top" show={
-              isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
-            }>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+            <HCTooltip
+              text={MatchingStepTooltips.namespace}
+              id="namespace-tooltip"
+              placement="top"
+              show={isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined}
+            >
+              <QuestionCircleFill
+                color={themeColors.defaults.questionCircle}
+                className={styles.icon}
+                size={13}
+                aria-label="icon: question-circle"
+              />
             </HCTooltip>
           </div>
         </Col>
@@ -836,23 +893,31 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      {(Object.keys(curationRuleset).length !== 0) && <HCButton size="sm" aria-label="editSingleRulesetDeleteIcon" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
-      </HCButton>}
-      <div className={((Object.keys(curationRuleset).length) === 0) ? styles.footerNewRuleset : styles.footer}>
+      {Object.keys(curationRuleset).length !== 0 && (
         <HCButton
           size="sm"
-          variant="outline-light"
-          aria-label={`cancel-single-ruleset`}
-          onClick={closeModal}
-        >Cancel</HCButton>
+          aria-label="editSingleRulesetDeleteIcon"
+          variant="link"
+          onClick={() => {
+            toggleDeleteConfirmModal(true);
+          }}
+        >
+          <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
+        </HCButton>
+      )}
+      <div className={Object.keys(curationRuleset).length === 0 ? styles.footerNewRuleset : styles.footer}>
+        <HCButton size="sm" variant="outline-light" aria-label={`cancel-single-ruleset`} onClick={closeModal}>
+          Cancel
+        </HCButton>
         <HCButton
           className={styles.saveButton}
           aria-label={`confirm-single-ruleset`}
           variant="primary"
           size="sm"
-          onClick={(e) => onSubmit(e)}
-        >Save</HCButton>
+          onClick={e => onSubmit(e)}
+        >
+          Save
+        </HCButton>
       </div>
     </div>
   );
@@ -917,90 +982,111 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     event.stopPropagation();
   };
 
-  const formatTextTooltip = (arrText) => {
+  const formatTextTooltip = arrText => {
     if (Array.isArray(arrText)) {
       const itemsToShow = 5;
       if (arrText.length <= itemsToShow) {
-        return  arrText.join(", ");
+        return arrText.join(", ");
       }
-      return  (
+      return (
         <div data-testid="tooltipListPreset">
-          {arrText.slice(0, itemsToShow).join(", ")}<span style={{color: "#808080"}}>{" + " + (arrText.length - itemsToShow) + " more"  }</span>
-        </div>);
+          {arrText.slice(0, itemsToShow).join(", ")}
+          <span style={{color: "#808080"}}>{" + " + (arrText.length - itemsToShow) + " more"}</span>
+        </div>
+      );
     }
   };
 
-  const Option = (renderMatchOptions) => {
+  const Option = renderMatchOptions => {
     return (
       <div>
-        {renderMatchOptions.data.name === "Preset List 0" &&
-        <components.Option {...renderMatchOptions} >
-          <div className={styles.createNewListOption}
-            id="createNewListOption"
-            data-test-id="createNewListOption"
-            onClick={(event) => { handleClick(event, "A", renderMatchOptions.data); }}
-            tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") handleClick(event, "A", renderMatchOptions.data); }}
-          >Create new list</div>
-        </components.Option>}
-        {renderMatchOptions.data.name !== "Preset List 0" &&
-              <components.Option {...renderMatchOptions}>
-                <div
+        {renderMatchOptions.data.name === "Preset List 0" && (
+          <components.Option {...renderMatchOptions}>
+            <div
+              className={styles.createNewListOption}
+              id="createNewListOption"
+              data-test-id="createNewListOption"
+              onClick={event => {
+                handleClick(event, "A", renderMatchOptions.data);
+              }}
+              tabIndex={0}
+              onKeyDown={event => {
+                if (event.key === "Enter") handleClick(event, "A", renderMatchOptions.data);
+              }}
+            >
+              Create new list
+            </div>
+          </components.Option>
+        )}
+        {renderMatchOptions.data.name !== "Preset List 0" && (
+          <components.Option {...renderMatchOptions}>
+            <div
+              tabIndex={0}
+              onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
+              onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
+            >
+              <HCTooltip
+                show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
+                text={
+                  <span aria-label="reduce-tooltip-text">
+                    {formatTextTooltip(renderMatchOptions.data.valuesIgnore)}
+                  </span>
+                }
+                id="reduce-tooltip"
+                placement="top"
+              >
+                <div>{renderMatchOptions.data.name} </div>
+              </HCTooltip>
+            </div>
+
+            <div className={styles.optionsList}>
+              <i>
+                <FontAwesomeIcon
+                  className={styles.iconHover}
+                  id={`edit-${renderMatchOptions.data.name}`}
+                  icon={faPencilAlt}
+                  color={themeColors.info}
+                  size="sm"
+                  onClick={event => {
+                    handleClick(event, "E", renderMatchOptions.data);
+                  }}
+                />
+              </i>
+              <i>
+                <FontAwesomeIcon
+                  className={styles.iconHover}
+                  id={`copy-${renderMatchOptions.data.name}`}
+                  icon={faCopy}
+                  color={themeColors.info}
+                  size="sm"
+                  onClick={event => {
+                    handleClick(event, "C", renderMatchOptions.data);
+                  }}
                   tabIndex={0}
-                  onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
-                  onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
-                >
-                  <HCTooltip show={
-                    isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined
-                  }
-                  text={<span aria-label="reduce-tooltip-text">{formatTextTooltip(renderMatchOptions.data.valuesIgnore)}</span>}
-                  id="reduce-tooltip"
-                  placement="top">
-                    <div>{renderMatchOptions.data.name} </div>
-                  </HCTooltip>
-                </div>
-
-                <div className={styles.optionsList}>
-                  <i>
-                    <FontAwesomeIcon
-                      className={styles.iconHover}
-                      id={`edit-${renderMatchOptions.data.name}`}
-                      icon={faPencilAlt}
-                      color={themeColors.info}
-                      size="sm" onClick={(event) => { handleClick(event, "E", renderMatchOptions.data); }}
-
-                    />
-                  </i>
-                  <i>
-                    <FontAwesomeIcon
-                      className={styles.iconHover}
-                      id={`copy-${renderMatchOptions.data.name}`}
-                      icon={faCopy}
-                      color={themeColors.info}
-                      size="sm"
-                      onClick={(event) => { handleClick(event, "C", renderMatchOptions.data); }}
-                      tabIndex={0}
-                    />
-                  </i>
-                  <i>
-                    <FontAwesomeIcon
-                      className={styles.iconHover}
-                      id={`delete-${renderMatchOptions.data.name}`}
-                      icon={faTrashAlt}
-                      color={themeColors.info}
-                      size="sm"
-                      onClick={(event) => { handleClick(event, "D", renderMatchOptions.data); }}
-                      tabIndex={0}
-                    />
-                  </i>
-                </div>
-              </components.Option>
-        }
+                />
+              </i>
+              <i>
+                <FontAwesomeIcon
+                  className={styles.iconHover}
+                  id={`delete-${renderMatchOptions.data.name}`}
+                  icon={faTrashAlt}
+                  color={themeColors.info}
+                  size="sm"
+                  onClick={event => {
+                    handleClick(event, "D", renderMatchOptions.data);
+                  }}
+                  tabIndex={0}
+                />
+              </i>
+            </div>
+          </components.Option>
+        )}
       </div>
     );
   };
 
-  const checkIfExistInList = (name) => {
-    return excludeList.some((item) => item.name === name);
+  const checkIfExistInList = name => {
+    return excludeList.some(item => item.name === name);
   };
 
   const handleChangeValuesToIgnore = (selected, e) => {
@@ -1009,7 +1095,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       return;
     }
     if (selected.length > 0 && selected[selected.length - 1].name !== presetListMock[0].name) {
-      setSelectedExcludeList(selected.map((item) => item.name));
+      setSelectedExcludeList(selected.map(item => item.name));
       setSelectedExcludeListToInput(selected);
     } else {
       handleClick(e, "A", {});
@@ -1017,31 +1103,34 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={props.isVisible}
-      size={"lg"}
-      onHide={closeModal}
-    >
-      <Modal.Header className={"pb-0"} >
+    <HCModal show={props.isVisible} size={"lg"} onHide={closeModal}>
+      <Modal.Header className={"pb-0"}>
         <div>
-          <div className={"fs-5"}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
+          <div className={"fs-5"}>
+            {Object.keys(curationRuleset).length !== 0
+              ? "Edit Match Ruleset for Single Property"
+              : "Add Match Ruleset for Single Property"}
+          </div>
         </div>
         <div className={`flex-column ${styles.modalTitleLegend}`}>
           <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
           <div className={"d-flex mt-3"}>
-            <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} />Multiple</div>
-            <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>
+            <div className={styles.legendText}>
+              <img className={styles.arrayImage} src={arrayIcon} />
+              Multiple
+            </div>
+            <div className={styles.legendText}>
+              <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type
+            </div>
           </div>
         </div>
       </Modal.Header>
       <Modal.Body>
-        <Form
-          id="matching-single-ruleset"
-          onSubmit={onSubmit}
-          className={"container-fluid"}
-        >
+        <Form id="matching-single-ruleset" onSubmit={onSubmit} className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+            <FormLabel column lg={3} className={styles.reduceWeightText}>
+              {"Reduce Weight"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <FormCheck
                 type="switch"
@@ -1062,20 +1151,27 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                 tabIndex={0}
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
-
               >
                 <HCTooltip
                   show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
                   text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
                   id="reduce-tooltip"
-                  placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-reduce" />
+                  placement="top"
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle-reduce"
+                  />
                 </HCTooltip>
               </div>
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={styles.reduceWeightText}>{"Fuzzy Matching"}</FormLabel>
+            <FormLabel column lg={3} className={styles.reduceWeightText}>
+              {"Fuzzy Matching"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <FormCheck
                 type="switch"
@@ -1101,15 +1197,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                   show={isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined}
                   text={<span aria-label="fuzzy-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>}
                   id="fuzzy-tooltip"
-                  placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle" />
+                  placement="top"
+                >
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                    aria-label="icon: question-circle"
+                  />
                 </HCTooltip>
               </div>
             </Col>
           </Row>
 
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Property to Match:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Property to Match:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -1129,7 +1234,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           </Row>
 
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Match Type:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Match Type:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -1147,11 +1255,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       tabSelectsValue={false}
                       openMenuOnFocus={true}
                       formatOptionLabel={({value, label}) => {
-                        return (
-                          <span aria-label={`${value}-option`}>
-                            {label}
-                          </span>
-                        );
+                        return <span aria-label={`${value}-option`}>{label}</span>;
                       }}
                     />
                   </div>
@@ -1163,7 +1267,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Values to Ignore:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Values to Ignore:"}
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -1186,9 +1292,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       formatOptionLabel={({value, name}) => {
                         return (
                           <span aria-label={`${value}-option`} style={{backgroundColor: "silver", width: "100%"}}>
-                            <div>
-                              {name}
-                            </div>
+                            <div>{name}</div>
                           </span>
                         );
                       }}
@@ -1204,8 +1308,14 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
                       show={isTooltipVisible.valuesIgnore ? isTooltipVisible.valuesIgnore : undefined}
                       text={<span aria-label="values-ignore-tooltip-text">{MatchingStepTooltips.valuesToIgnore}</span>}
                       id="reduce-tooltip"
-                      placement="top">
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} aria-label="icon: question-circle-values-ignore" />
+                      placement="top"
+                    >
+                      <QuestionCircleFill
+                        color={themeColors.defaults.questionCircle}
+                        className={styles.icon}
+                        size={13}
+                        aria-label="icon: question-circle-values-ignore"
+                      />
                     </HCTooltip>
                   </div>
                 </Col>
@@ -1236,7 +1346,15 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
-      {deleteConfirmationModal(deleteConformationVisible, listToDelete, removeList, () => { setDeleteConformationVisible(false); }, "list?")}
+      {deleteConfirmationModal(
+        deleteConformationVisible,
+        listToDelete,
+        removeList,
+        () => {
+          setDeleteConformationVisible(false);
+        },
+        "list?",
+      )}
     </HCModal>
   );
 };

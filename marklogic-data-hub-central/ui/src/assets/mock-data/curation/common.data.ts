@@ -9,14 +9,14 @@ const flows = [
       {
         name: "stepA1",
         type: "Load Data",
-        format: "JSON"
+        format: "JSON",
       },
       {
         name: "stepA2",
         type: "Mapping",
-        format: "JSON"
-      }
-    ]
+        format: "JSON",
+      },
+    ],
   },
   {
     name: "FlowB",
@@ -24,20 +24,20 @@ const flows = [
       {
         name: "stepB1",
         type: "Load Data",
-        format: "XML"
+        format: "XML",
       },
       {
         name: "stepB2",
         type: "Mapping",
-        format: "XML"
+        format: "XML",
       },
       {
         name: "stepB3",
         type: "Mastering",
-        format: "XML"
+        format: "XML",
       },
-    ]
-  }
+    ],
+  },
 ];
 
 const flowsAdd = [
@@ -49,9 +49,9 @@ const flowsAdd = [
         stepName: "testLoad456", // has step NOT IN loadData
         stepDefinitionType: "Load Data",
         stepId: "testLoad456-ingestion",
-        format: "xml"
+        format: "xml",
       },
-    ]
+    ],
   },
   {
     name: "FlowStepExist",
@@ -61,16 +61,16 @@ const flowsAdd = [
         stepName: "testLoadXML", // has step IN loadData
         stepDefinitionType: "Load Data",
         stepId: "testLoadXML-ingestion",
-        format: "xml"
+        format: "xml",
       },
       {
         stepNum: "2",
         stepName: "testLoad", // step exists in more than one flow
         stepDefinitionType: "Load Data",
         stepId: "testLoad-ingestion",
-        format: "json"
-      }
-    ]
+        format: "json",
+      },
+    ],
   },
   {
     name: "FlowStepMultExist",
@@ -81,9 +81,9 @@ const flowsAdd = [
         stepDefinitionType: "Load Data",
         stepId: "testLoad-ingestion",
         format: "json",
-      }
-    ]
-  }
+      },
+    ],
+  },
 ];
 
 const loadData = {
@@ -102,15 +102,15 @@ const loadData = {
       collections: ["testLoad"],
       additionalCollections: ["addedCollection"],
       headers: {
-        "header": true
+        "header": true,
       },
       interceptors: {
-        "interceptor": true
+        "interceptor": true,
       },
       customHook: {
-        "hook": true
+        "hook": true,
       },
-      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00",
     },
     {
       name: "testLoadXML",
@@ -119,7 +119,7 @@ const loadData = {
       targetFormat: "xml",
       outputURIReplacement: "",
       inputFilePath: "/xml-test/data-sets/testLoad",
-      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00",
     },
     {
       name: "testLoad123",
@@ -128,14 +128,13 @@ const loadData = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
-    }
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
+    },
   ],
   deleteLoadArtifact: jest.fn(),
   createLoadArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
-
 };
 
 const jsonSourceDataMultipleSiblings = {
@@ -147,21 +146,21 @@ const jsonSourceDataMultipleSiblings = {
         "FirstNamePreferred": "John",
         "LastName": {
           "#text": "Smith",
-          "suffix": "Sr."
-        }
+          "suffix": "Sr.",
+        },
       },
       {
         "FirstNamePreferred": "Eric",
         "LastName": {
           "#text": "Johnson",
-          "suffix": "Jr."
-        }
-      }
+          "suffix": "Jr.",
+        },
+      },
     ],
     "proteinCat": "commercial",
     "withNutsOrganism": {
       "OrganismName": "Frog virus 3",
-      "OrganismType": "scientific"
+      "OrganismType": "scientific",
     },
     "proteinDog": "retriever, golden, labrador",
     "emptyString": "",
@@ -171,10 +170,10 @@ const jsonSourceDataMultipleSiblings = {
     "whitespaceValue": " ",
     "emptyArrayValue": [],
     "numberArray": [1, 2, 3],
-    "booleanArray": [true, false, true]
+    "booleanArray": [true, false, true],
   },
   "namespaces": {},
-  "format": "JSON"
+  "format": "JSON",
 };
 
 const jsonSourceDataMultipleSiblingsEntireRecord = {
@@ -182,7 +181,7 @@ const jsonSourceDataMultipleSiblingsEntireRecord = {
     "entity-services:envelope": {
       "entity-service:headers": {
         "createdOn": "2021-02-26T14:09:13.783548-08:00",
-        "createdBy": "hc-developer"
+        "createdBy": "hc-developer",
       },
       "entity-service:instance": {
         "proteinId": "123EAC",
@@ -192,21 +191,21 @@ const jsonSourceDataMultipleSiblingsEntireRecord = {
             "FirstNamePreferred": "John",
             "LastName": {
               "#text": "Smith",
-              "suffix": "Sr."
-            }
+              "suffix": "Sr.",
+            },
           },
           {
             "FirstNamePreferred": "Eric",
             "LastName": {
               "#text": "Johnson",
-              "suffix": "Jr."
-            }
-          }
+              "suffix": "Jr.",
+            },
+          },
         ],
         "proteinCat": "commercial",
         "withNutsOrganism": {
           "OrganismName": "Frog virus 3",
-          "OrganismType": "scientific"
+          "OrganismType": "scientific",
         },
         "proteinDog": "retriever, golden, labrador",
         "emptyString": "",
@@ -216,13 +215,13 @@ const jsonSourceDataMultipleSiblingsEntireRecord = {
         "whitespaceValue": " ",
         "emptyArrayValue": [],
         "numberArray": [1, 2, 3],
-        "booleanArray": [true, false, true]
-      }
+        "booleanArray": [true, false, true],
+      },
     },
     "entity-service:triples": "",
   },
   "namespaces": {},
-  "format": "JSON"
+  "format": "JSON",
 };
 
 const jsonSourceDataDefault = {
@@ -234,9 +233,9 @@ const jsonSourceDataDefault = {
         "FirstNamePreferred": "John",
         "LastName": {
           "#text": "Smith",
-          "suffix": "Sr."
-        }
-      }
+          "suffix": "Sr.",
+        },
+      },
     ],
     "proteinCat": "commercial",
     "proteinDog": ["retriever, golden, labrador"],
@@ -247,10 +246,10 @@ const jsonSourceDataDefault = {
     "whitespaceValue": " ",
     "emptyArrayValue": [],
     "numberArray": [1, 2, 3],
-    "booleanArray": [true, false, true]
+    "booleanArray": [true, false, true],
   },
   "namespaces": {},
-  "format": "JSON"
+  "format": "JSON",
 };
 
 const jsonSourceDataRelated = {
@@ -262,9 +261,9 @@ const jsonSourceDataRelated = {
         "FirstNamePreferred": "John",
         "LastName": {
           "#text": "Smith",
-          "suffix": "Sr."
-        }
-      }
+          "suffix": "Sr.",
+        },
+      },
     ],
     "proteinCat": "commercial",
     "proteinDog": ["retriever, golden, labrador"],
@@ -279,12 +278,12 @@ const jsonSourceDataRelated = {
     "BabyRegistry": [
       {
         "BabyRegistryId": "3039",
-        "Arrival_Date": "2021-06-07"
-      }
-    ]
+        "Arrival_Date": "2021-06-07",
+      },
+    ],
   },
   "namespaces": {},
-  "format": "JSON"
+  "format": "JSON",
 };
 
 const jsonSourceDataLargeDataset = {
@@ -292,12 +291,9 @@ const jsonSourceDataLargeDataset = {
     "CustomerID": 105,
     "Name": {
       "FirstName": "Holland",
-      "LastName": "Wells"
+      "LastName": "Wells",
     },
-    "nicknames": [
-      "holly",
-      "well"
-    ],
+    "nicknames": ["holly", "well"],
     "Email": "hollandwells@nutralab.com",
     "Address": [
       {
@@ -305,25 +301,25 @@ const jsonSourceDataLargeDataset = {
           "Street": "Hanover Place",
           "City": "Marshall",
           "State": "Oklahoma",
-          "Postal": "19111-1001"
-        }
+          "Postal": "19111-1001",
+        },
       },
       {
         "Shipping": {
           "Street": "1800 Tysons Blvd",
           "City": "McLean",
           "State": "Virginia",
-          "Postal": "22102-2021"
-        }
+          "Postal": "22102-2021",
+        },
       },
       {
         "Billing": {
           "Street": "Sunnyside Avenue",
           "City": "Brutus",
           "State": "Wisconsin",
-          "Postal": "30706-8854"
-        }
-      }
+          "Postal": "30706-8854",
+        },
+      },
     ],
     "Phone": "(887) 571-2692",
     "PIN": 1772,
@@ -504,9 +500,9 @@ const jsonSourceDataLargeDataset = {
         "State": "California",
         "Postal": {
           "fiveDigit": "94025",
-          "plusFour": "8854"
-        }
-      }
+          "plusFour": "8854",
+        },
+      },
     },
     "prop170": "value1",
     "prop171": "value1",
@@ -637,909 +633,909 @@ const jsonSourceDataLargeDataset = {
     "prop296": "value1",
     "prop297": "value1",
     "prop298": "value1",
-    "prop299": "value1"
+    "prop299": "value1",
   },
   "namespaces": {},
-  "format": "JSON"
+  "format": "JSON",
 };
 
 const entityDefLargePropSet = {
   "propId": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId2": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId3": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId4": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId5": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId6": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId7": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId8": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId9": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId10": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId11": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId12": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId13": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId14": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId15": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId16": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId17": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId18": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId19": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId20": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId21": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId22": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId23": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId24": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId25": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId26": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId27": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId28": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId29": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId30": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId31": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId32": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId33": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId34": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId35": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId36": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId37": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId38": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId39": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId40": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId41": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId42": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId43": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId44": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId45": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId46": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId47": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId48": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId49": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId50": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId51": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId52": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId53": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId54": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId55": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId56": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId57": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId58": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId59": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId60": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId61": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId62": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId63": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId64": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId65": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId66": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId67": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId68": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId69": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId70": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId71": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId72": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId73": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId74": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId75": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId76": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId77": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId78": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId79": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId80": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId81": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId82": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId83": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId84": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId85": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId86": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId87": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId88": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId89": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId90": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId91": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId92": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId93": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId94": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId95": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId96": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId97": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId98": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId99": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId100": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId101": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId102": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId103": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId104": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId105": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId106": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId107": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId108": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId109": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId110": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId111": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId112": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId113": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId114": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId115": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId116": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId117": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId118": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId119": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId120": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId121": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId122": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId123": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId124": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId125": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId126": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId127": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId128": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId129": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId130": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId131": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId132": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId133": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId134": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId135": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId136": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId137": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId138": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId139": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId140": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId141": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId142": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId143": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId144": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId145": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId146": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId147": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId148": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId149": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId150": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId151": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId152": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId153": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId154": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId155": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId156": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId157": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId158": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId159": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId160": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId161": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId162": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId163": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId164": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId165": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId166": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId167": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId168": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId169": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId170": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId171": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId172": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId173": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId174": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId175": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId176": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId177": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId178": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId179": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId180": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId181": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId182": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId183": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId184": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId185": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId186": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId187": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId188": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId189": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId190": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId191": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId192": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId193": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId194": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId195": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId196": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId197": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId198": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId199": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId200": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId201": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId202": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId203": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId204": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId205": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId206": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId207": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId208": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId209": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId210": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId211": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId212": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId213": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId214": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId215": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId216": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId217": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId218": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId219": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId220": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId221": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId222": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId223": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId224": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId225": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId226": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId227": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId228": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId229": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId230": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId231": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId232": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId233": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId234": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId235": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId236": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId237": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId238": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId239": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId240": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId241": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId242": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId243": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId244": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId245": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId246": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId247": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId248": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId249": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId250": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId251": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId252": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId253": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId254": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId255": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId256": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId257": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId258": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId259": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId260": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId261": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId262": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId263": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId264": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId265": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId266": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId267": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId268": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId269": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId270": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId271": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId272": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId273": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId274": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId275": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId276": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId277": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId278": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId279": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId280": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId281": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId282": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId283": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId284": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId285": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId286": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId287": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId288": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId289": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId290": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId291": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId292": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId293": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId294": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId295": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId296": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId297": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId298": {
-    "datatype": "string"
+    "datatype": "string",
   },
   "propId299": {
-    "datatype": "string"
+    "datatype": "string",
   },
 };
 
@@ -1551,26 +1547,26 @@ const xmlSourceDataMultipleSiblings = {
       "nutFree:name": [
         {
           "FirstNamePreferred": "John",
-          "LastName": "Smith"
+          "LastName": "Smith",
         },
         {
           "FirstNamePreferred": "Eric",
-          "LastName": "Johnson"
-        }
+          "LastName": "Johnson",
+        },
       ],
       "proteinCat": "commercial",
       "withNuts:Organism": {
         "OrganismName": "Frog virus 3",
-        "OrganismType": "scientific"
-      }
-    }
+        "OrganismType": "scientific",
+      },
+    },
   },
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services",
     "nutFree": "http://uniprot.org/nutFree",
-    "withNuts": "http://uniprot.org/withNuts"
+    "withNuts": "http://uniprot.org/withNuts",
   },
-  "format": "XML"
+  "format": "XML",
 };
 
 const xmlNamespacedSourceData = {
@@ -1589,15 +1585,15 @@ const xmlNamespacedSourceData = {
       "level": 0,
       "name": "org:example:test",
       "struct": true,
-      "xpath": "/org:example:test"
+      "xpath": "/org:example:test",
     },
     {
       "level": 1,
       "name": "org:example:hello",
       "struct": false,
-      "xpath": "/org:example:test/org:example:hello"
-    }
-  ]
+      "xpath": "/org:example:test/org:example:hello",
+    },
+  ],
 };
 
 const xmlSourceDataDefault = {
@@ -1608,53 +1604,58 @@ const xmlSourceDataDefault = {
       "nutFree:name": [
         {
           "FirstNamePreferred": "John",
-          "LastName": "Smith"
-        }
+          "LastName": "Smith",
+        },
       ],
       "proteinCat": "commercial",
-      "nutFree:proteinDog": [
-        "retriever",
-        "",
-        "golden",
-        "labrador"
-      ]
-    }
+      "nutFree:proteinDog": ["retriever", "", "golden", "labrador"],
+    },
   },
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services",
     "nutFree": "http://uniprot.org/nutFree",
-    "withNuts": "http://uniprot.org/withNuts"
+    "withNuts": "http://uniprot.org/withNuts",
   },
-  "format": "XML"
+  "format": "XML",
 };
 
 const xmlSourceData = [
   {
-    rowKey: 1, key: "sampleProtein", children: [
+    rowKey: 1,
+    key: "sampleProtein",
+    children: [
       {rowKey: 2, key: "proteinId", val: "123EAC"},
       {rowKey: 3, key: "@proteinType", val: "home"},
       {
-        rowKey: 4, key: "nutFree:name", children: [
+        rowKey: 4,
+        key: "nutFree:name",
+        children: [
           {rowKey: 5, key: "FirstNamePreferred", val: "John"},
-          {rowKey: 6, key: "LastName", val: "Smith"}
-        ]
+          {rowKey: 6, key: "LastName", val: "Smith"},
+        ],
       },
       {rowKey: 7, key: "proteinCat", val: "commercial"},
-      {rowKey: 8, key: "nutFree:proteinDog", val: "retriever, , golden, labrador", array: true}
-    ]
-  }
+      {rowKey: 8, key: "nutFree:proteinDog", val: "retriever, , golden, labrador", array: true},
+    ],
+  },
 ];
 
 const jsonSourceData = [
   {rowKey: 1, key: "proteinId", val: "123EAC", datatype: "string"},
   {rowKey: 2, key: "proteinType", val: "home", datatype: "string"},
   {
-    rowKey: 3, key: "nutFreeName", children: [
+    rowKey: 3,
+    key: "nutFreeName",
+    children: [
       {rowKey: 4, key: "FirstNamePreferred", val: "John", datatype: "string"},
-      {rowKey: 5, key: "LastName", val: "Smith", datatype: "string", children: [
-        {rowKey: 6, key: "suffix", val: "Sr.", datatype: "string"}
-      ]}
-    ]
+      {
+        rowKey: 5,
+        key: "LastName",
+        val: "Smith",
+        datatype: "string",
+        children: [{rowKey: 6, key: "suffix", val: "Sr.", datatype: "string"}],
+      },
+    ],
   },
   {rowKey: 7, key: "proteinCat", val: "commercial", datatype: "string"},
   {rowKey: 8, key: "proteinDog", val: "retriever, golden, labrador", array: true, datatype: "string"},
@@ -1673,29 +1674,36 @@ const entityTypeProperties = [
   {key: 2, name: "propName", type: "string"},
   {key: 3, name: "propAttribute", type: "string"},
   {
-    key: 4, name: "items", type: "parent-ItemType [ ]", children: [
+    key: 4,
+    name: "items",
+    type: "parent-ItemType [ ]",
+    children: [
       {key: 5, name: "items/itemTypes", type: "string"},
       {
-        key: 6, name: "items/itemCategory", type: "parent-catItem", children: [
+        key: 6,
+        name: "items/itemCategory",
+        type: "parent-catItem",
+        children: [
           {key: 7, name: "items/itemCategory/artCraft", type: "string"},
-          {key: 8, name: "items/itemCategory/automobile", type: "string"}
-        ]
-      }]
+          {key: 8, name: "items/itemCategory/automobile", type: "string"},
+        ],
+      },
+    ],
   },
-  {key: 9, name: "gender", type: "string"}
+  {key: 9, name: "gender", type: "string"},
 ];
 
 const JSONSourceDataToTruncate = {
   "data": {
     "proteinId": "extremelylongusername@marklogic.com",
-    "proteinType": "s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"
-  }
+    "proteinType": "s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com",
+  },
 };
 
 const truncatedEntityProps = [
   {key: 1, name: "propId", type: "int"},
   {key: 2, name: "propName", type: "string [ ]"},
-  {key: 3, name: "propAttribute", type: "string [ ]"}
+  {key: 3, name: "propAttribute", type: "string [ ]"},
 ];
 
 const mapFunctions = [
@@ -1708,16 +1716,19 @@ const mapFunctions = [
   {"functionName": "unparsed-text", "category": "xpath", "signature": "unparsed-text(xs:string)"},
   {"functionName": "month-from-dateTime", "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)"},
   {"functionName": "seconds-from-dateTime", "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)"},
-  {"functionName": "concat", "category": "xpath", "signature": "concat(xs:anyAtomicType?)"}
+  {"functionName": "concat", "category": "xpath", "signature": "concat(xs:anyAtomicType?)"},
 ];
 
-const mapReferences = [{
-  name: "$URI",
-  description: "The URI of the source document"
-}, {
-  name: "$ZIP_POINTS",
-  description: "Maps zip codes to points"
-}];
+const mapReferences = [
+  {
+    name: "$URI",
+    description: "The URI of the source document",
+  },
+  {
+    name: "$ZIP_POINTS",
+    description: "Maps zip codes to points",
+  },
+];
 
 const mapProps = {
   sourceData: jsonSourceData,
@@ -1733,17 +1744,13 @@ const mapProps = {
       propId: {sourcedFrom: "id"},
       propName: {sourcedFrom: "testNameInExp"},
       propAttribute: {sourcedFrom: "placeholderAttribute"},
-      items: {sourcedFrom: "",
-        properties:
-        {itemTypes: {sourcedFrom: ""}},
-        targetEntityType: "#/definitions/ItemType"
-      }
-    }
+      items: {sourcedFrom: "", properties: {itemTypes: {sourcedFrom: ""}}, targetEntityType: "#/definitions/ItemType"},
+    },
   },
   tgtEntityReferences: {"items": "#/definitions/ItemType"},
   namespaces: {
     nutFree: "http://namespaces/nutfree",
-    withNuts: "http://namespaces/withNuts"
+    withNuts: "http://namespaces/withNuts",
   },
   mapName: "testMap",
   getMappingArtifactByMapName: jest.fn(),
@@ -1763,7 +1770,7 @@ const mapProps = {
   entityTypeTitle: "Person",
   extractCollectionFromSrcQuery: jest.fn(),
   mapFunctions: mapFunctions,
-  openStepSettings: jest.fn()
+  openStepSettings: jest.fn(),
 };
 
 const newMap = {
@@ -1802,8 +1809,8 @@ const editMap = {
     sourceQuery: "cts.collectionQuery(['map-collection'])",
     properties: {
       id: {sourcedFrom: "id"},
-      name: {sourcedFrom: "name"}
-    }
+      name: {sourcedFrom: "name"},
+    },
   },
   targetEntityType: "",
   sourceDatabase: "",
@@ -1823,42 +1830,48 @@ const dropDownWithSearch = {
   setDisplayMenu: jest.fn(),
   displaySelectList: true,
   displayMenu: true,
-  srcData: [{key: "id", value: "id"}, {key: "name", value: "name"}]
+  srcData: [
+    {key: "id", value: "id"},
+    {key: "name", value: "name"},
+  ],
 };
 
-const customData = [{
-  "name": "customJSON",
-  "stepDefinitionName": "custom-step",
-  "additionalSettings": {
-    "dummy": "value"
+const customData = [
+  {
+    "name": "customJSON",
+    "stepDefinitionName": "custom-step",
+    "additionalSettings": {
+      "dummy": "value",
+    },
+    "dummy": "value",
+    "stepDefinitionType": "custom",
+    "sourceDatabase": "data-hub-STAGING",
+    "targetDatabase": "data-hub-FINAL",
+    "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+    "stepId": "customJSON-custom",
+    "selectedSource": "query",
+    "sourceQuery": "cts.collectionQuery(['loadCustomerJSON'])",
+    "permissions": "role1,read,role2,update",
+    "batchSize": 50,
+    "collections": ["Customer", "mapCustomerJSON"],
+    "lastUpdated": "2020-06-19T16:31:04.360975-07:00",
   },
-  "dummy": "value",
-  "stepDefinitionType": "custom",
-  "sourceDatabase": "data-hub-STAGING",
-  "targetDatabase": "data-hub-FINAL",
-  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
-  "stepId": "customJSON-custom",
-  "selectedSource": "query",
-  "sourceQuery": "cts.collectionQuery(['loadCustomerJSON'])",
-  "permissions": "role1,read,role2,update",
-  "batchSize": 50,
-  "collections": ["Customer", "mapCustomerJSON"],
-  "lastUpdated": "2020-06-19T16:31:04.360975-07:00"
-},
-{
-  "name": "customXML",
-  "stepDefinitionName": "custom-mapping",
-  "stepDefinitionType": "custom",
-  "stepId": "customXML-custom",
-  "selectedSource": "collection",
-  "sourceQuery": "cts.collectionQuery(['loadCustomersXML'])",
-  "lastUpdated": "2020-06-19T16:31:05.372697-07:00",
-  "targetFormat": "XML"
-}
+  {
+    "name": "customXML",
+    "stepDefinitionName": "custom-mapping",
+    "stepDefinitionType": "custom",
+    "stepId": "customXML-custom",
+    "selectedSource": "collection",
+    "sourceQuery": "cts.collectionQuery(['loadCustomersXML'])",
+    "lastUpdated": "2020-06-19T16:31:05.372697-07:00",
+    "targetFormat": "XML",
+  },
 ];
 
-const namespacedXmlInstance = "<Document><content><es:envelope xmlns:es=\"http://marklogic.com/entity-services\"><es:instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></es:instance></es:envelope></content></Document>";
-const noNamespaceXmlInstance = "<Document><content><envelope xmlns:es=\"http://marklogic.com/entity-services\"><instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></instance></envelope></content></Document>";
+const namespacedXmlInstance =
+  "<Document><content><es:envelope xmlns:es=\"http://marklogic.com/entity-services\"><es:instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></es:instance></es:envelope></content></Document>";
+const noNamespaceXmlInstance =
+  "<Document><content><envelope xmlns:es=\"http://marklogic.com/entity-services\"><instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></instance></envelope></content></Document>";
 
 const viewCustom = {
   tabKey: "1",
@@ -1871,9 +1884,8 @@ const viewCustom = {
   currentTab: "1",
   setIsValid: () => {},
   resetTabs: () => {},
-  setHasChanged: () => {}
+  setHasChanged: () => {},
 };
-
 
 const loadDataPagination = {
   data: [
@@ -1884,7 +1896,7 @@ const loadDataPagination = {
       targetFormat: "json",
       outputURIReplacement: "",
       inputFilePath: "/json-test/data-sets/testLoad",
-      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00",
     },
     {
       name: "testLoad2",
@@ -1893,7 +1905,7 @@ const loadDataPagination = {
       targetFormat: "xml",
       outputURIReplacement: "",
       inputFilePath: "/xml-test/data-sets/testLoad",
-      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00",
     },
     {
       name: "testLoad3",
@@ -1902,7 +1914,7 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
     },
     {
       name: "testLoad4",
@@ -1911,7 +1923,7 @@ const loadDataPagination = {
       targetFormat: "json",
       outputURIReplacement: "",
       inputFilePath: "/json-test/data-sets/testLoad",
-      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00",
     },
     {
       name: "testLoad5",
@@ -1920,7 +1932,7 @@ const loadDataPagination = {
       targetFormat: "xml",
       outputURIReplacement: "",
       inputFilePath: "/xml-test/data-sets/testLoad",
-      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00",
     },
     {
       name: "testLoad6",
@@ -1929,7 +1941,7 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
     },
     {
       name: "testLoad7",
@@ -1938,7 +1950,7 @@ const loadDataPagination = {
       targetFormat: "json",
       outputURIReplacement: "",
       inputFilePath: "/json-test/data-sets/testLoad",
-      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00",
     },
     {
       name: "testLoad8",
@@ -1947,7 +1959,7 @@ const loadDataPagination = {
       targetFormat: "xml",
       outputURIReplacement: "",
       inputFilePath: "/xml-test/data-sets/testLoad",
-      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00",
     },
     {
       name: "testLoad9",
@@ -1956,7 +1968,7 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
     },
     {
       name: "testLoad10",
@@ -1965,7 +1977,7 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
     },
     {
       name: "testLoad11",
@@ -1974,7 +1986,7 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
     },
     {
       name: "testLoad12",
@@ -1983,17 +1995,16 @@ const loadDataPagination = {
       targetFormat: "csv",
       outputURIReplacement: "",
       inputFilePath: "/csv-test/data-sets/testLoad",
-      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
-    }
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00",
+    },
   ],
   deleteLoadArtifact: jest.fn(),
   createLoadArtifact: jest.fn(),
   canReadWrite: true,
   canReadOnly: false,
-
 };
 
-const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+const columnSorter = (a: any, b: any, order: string) => (order === "asc" ? a.localeCompare(b) : b.localeCompare(a));
 
 const loadTableColumns: any = [
   {
@@ -2030,19 +2041,20 @@ const loadTableColumns: any = [
     key: "lastUpdated",
     sort: true,
     defaultSortOrder: "desc",
-    sortFunc: (a: any, b: any, order: string) => order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
+    sortFunc: (a: any, b: any, order: string) =>
+      order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
   },
   {
     text: "Action",
     dataField: "actions",
     key: "actions",
-  }
+  },
 ];
 
 const data = {
   data: {
     canRead: false,
-    canWrite: true
+    canWrite: true,
   },
   flows: flows,
   flowsAdd: flowsAdd,
@@ -2069,7 +2081,7 @@ const data = {
   jsonSourceDataRelated: jsonSourceDataRelated,
   xmlSourceDataDefault: xmlSourceDataDefault,
   jsonSourceDataLargeDataset: jsonSourceDataLargeDataset,
-  entityDefLargePropSet: entityDefLargePropSet
+  entityDefLargePropSet: entityDefLargePropSet,
 };
 
 export default data;

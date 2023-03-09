@@ -19,7 +19,6 @@ describe("Hub Central Table component", () => {
     expect(tableColumns.getByText("Target Format")).toBeInTheDocument();
     expect(tableColumns.getByText("Last Updated")).toBeInTheDocument();
     expect(tableColumns.getByText("Action")).toBeInTheDocument();
-
   });
 
   test("should render a 'No Data' indicator when the table does not have elements", () => {
@@ -29,17 +28,20 @@ describe("Hub Central Table component", () => {
   });
 
   test("should allow pagination over the HCTable", () => {
-    const {container} = render(<HCTable
-      rowKey="name"
-      data={data.loadDataPagination.data}
-      columns={data.loadTableColumns}
-      pagination={{
-        showSizeChanger: true,
-        pageSizeOptions: [10, 20, 30, 40],
-        defaultCurrent: 1,
-        current: 1,
-        pageSize: 10
-      }} />);
+    const {container} = render(
+      <HCTable
+        rowKey="name"
+        data={data.loadDataPagination.data}
+        columns={data.loadTableColumns}
+        pagination={{
+          showSizeChanger: true,
+          pageSizeOptions: [10, 20, 30, 40],
+          defaultCurrent: 1,
+          current: 1,
+          pageSize: 10,
+        }}
+      />,
+    );
 
     expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
     expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
@@ -48,16 +50,19 @@ describe("Hub Central Table component", () => {
   });
 
   test("should allow pagination over the HCTable without showing the size changer", () => {
-    const {container} = render(<HCTable
-      rowKey="name"
-      data={data.loadDataPagination.data}
-      columns={data.loadTableColumns}
-      pagination={{
-        showSizeChanger: false,
-        defaultCurrent: 1,
-        current: 1,
-        pageSize: 10
-      }} />);
+    const {container} = render(
+      <HCTable
+        rowKey="name"
+        data={data.loadDataPagination.data}
+        columns={data.loadTableColumns}
+        pagination={{
+          showSizeChanger: false,
+          defaultCurrent: 1,
+          current: 1,
+          pageSize: 10,
+        }}
+      />,
+    );
 
     expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
     expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
@@ -66,7 +71,9 @@ describe("Hub Central Table component", () => {
   });
 
   test("should allow sorting columns after clicking on the header", () => {
-    const {getByText, container} = render(<HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />);
+    const {getByText, container} = render(
+      <HCTable rowKey="name" data={data.loadData.data} columns={data.loadTableColumns} />,
+    );
     const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
     const tableRowCells = container.querySelectorAll(".hc-table_row td");
 

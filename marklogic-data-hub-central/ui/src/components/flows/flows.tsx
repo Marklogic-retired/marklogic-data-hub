@@ -10,7 +10,12 @@ import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import axios from "axios";
 import styles from "./flows.module.scss";
 import {useDropzone} from "react-dropzone";
-import {deleteConfirmationModal, deleteStepConfirmationModal, addStepConfirmationModal, addExistingStepConfirmationModal} from "./confirmation-modals";
+import {
+  deleteConfirmationModal,
+  deleteStepConfirmationModal,
+  addStepConfirmationModal,
+  addExistingStepConfirmationModal,
+} from "./confirmation-modals";
 import FlowPanel from "./flow-panel/flowPanel";
 import {ReorderFlowOrderDirection, SelectedSteps} from "./types";
 import Spinner from "react-bootstrap/Spinner";
@@ -68,7 +73,7 @@ const Flows: React.FC<Props> = ({
   // Setup for file upload
   const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
     noClick: true,
-    noKeyboard: true
+    noKeyboard: true,
   });
   const storage = getViewSettings();
   const prevOpenFlows = storage?.run?.openFlows;
@@ -89,11 +94,15 @@ const Flows: React.FC<Props> = ({
   const [runningFlow, setRunningFlow] = useState<any>("");
   const [fileList, setFileList] = useState<any[]>([]);
   const [showUploadError, setShowUploadError] = useState(false);
-  const [openNewFlow, setOpenNewFlow] = useState(newStepToFlowOptions?.addingStepToFlow && !newStepToFlowOptions?.existingFlow);
+  const [openNewFlow, setOpenNewFlow] = useState(
+    newStepToFlowOptions?.addingStepToFlow && !newStepToFlowOptions?.existingFlow,
+  );
   const [openFlows, setOpenFlows] = useState(
-    hasDefaultKey && (newStepToFlowOptions?.flowsDefaultKey ?? []).length > 0 ?
-      newStepToFlowOptions?.flowsDefaultKey :
-      (prevOpenFlows ? prevOpenFlows : [])
+    hasDefaultKey && (newStepToFlowOptions?.flowsDefaultKey ?? []).length > 0
+      ? newStepToFlowOptions?.flowsDefaultKey
+      : prevOpenFlows
+        ? prevOpenFlows
+        : [],
   );
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});
@@ -116,8 +125,7 @@ const Flows: React.FC<Props> = ({
     setViewSettings(newStorage);
   }, [openFlows]);
 
-
-  const tryParseJson = (userPreferences) => {
+  const tryParseJson = userPreferences => {
     try {
       return JSON.parse(userPreferences);
     } catch (e) {
@@ -132,7 +140,9 @@ const Flows: React.FC<Props> = ({
       userPreferences = getUserPreferences(sessionUser);
       if (userPreferences) {
         oldOptions = tryParseJson(userPreferences);
-      } else { return false; }
+      } else {
+        return false;
+      }
     }
     return oldOptions;
   };
@@ -184,7 +194,10 @@ const Flows: React.FC<Props> = ({
   }, [flows]);
 
   useEffect(() => {
-    if (JSON.stringify(flowsDefaultActiveKey) !== JSON.stringify([]) && flowsDefaultActiveKey.length >= openFlows.length) {
+    if (
+      JSON.stringify(flowsDefaultActiveKey) !== JSON.stringify([]) &&
+      flowsDefaultActiveKey.length >= openFlows.length
+    ) {
       setOpenFlows([...flowsDefaultActiveKey]);
     }
 
@@ -193,7 +206,13 @@ const Flows: React.FC<Props> = ({
       if (JSON.stringify(flows) !== JSON.stringify([])) {
         let stepsInFlow = flows[newStepToFlowOptions?.flowsDefaultKey]?.steps;
         if (stepsInFlow === undefined) return;
-        if (newStepToFlowOptions && newStepToFlowOptions.addingStepToFlow && newStepToFlowOptions.existingFlow && newStepToFlowOptions.flowsDefaultKey && newStepToFlowOptions.flowsDefaultKey !== -1) {
+        if (
+          newStepToFlowOptions &&
+          newStepToFlowOptions.addingStepToFlow &&
+          newStepToFlowOptions.existingFlow &&
+          newStepToFlowOptions.flowsDefaultKey &&
+          newStepToFlowOptions.flowsDefaultKey !== -1
+        ) {
           getFlowWithJobInfo(newStepToFlowOptions.flowsDefaultKey);
           if (startRun) {
             //run step after step is added to an existing flow
@@ -210,7 +229,13 @@ const Flows: React.FC<Props> = ({
             }
           }
           //run step that is already inside a flow
-        } else if (newStepToFlowOptions && !newStepToFlowOptions.addingStepToFlow && newStepToFlowOptions.startRunStep && newStepToFlowOptions.flowsDefaultKey && newStepToFlowOptions.flowsDefaultKey !== -1) {
+        } else if (
+          newStepToFlowOptions &&
+          !newStepToFlowOptions.addingStepToFlow &&
+          newStepToFlowOptions.startRunStep &&
+          newStepToFlowOptions.flowsDefaultKey &&
+          newStepToFlowOptions.flowsDefaultKey !== -1
+        ) {
           let runStepNum = stepsInFlow.findIndex(s => s.stepName === newStepToFlowOptions?.newStepName);
           if (startRun) {
             if (newStepToFlowOptions.stepDefinitionType.toLowerCase() === "ingestion") {
@@ -259,7 +284,7 @@ const Flows: React.FC<Props> = ({
 
   // Get the latest job info after a step (in a flow) run
   useEffect(() => {
-    let num = flows.findIndex((flow) => flow.name === runEnded.flowId);
+    let num = flows.findIndex(flow => flow.name === runEnded.flowId);
     if (num >= 0) {
       getFlowWithJobInfo(num);
     }
@@ -302,7 +327,7 @@ const Flows: React.FC<Props> = ({
     setStepType(stepType);
   };
 
-  const handleFlowDelete = (name) => {
+  const handleFlowDelete = name => {
     setDialogVisible(true);
     setFlowName(name);
   };
@@ -315,19 +340,19 @@ const Flows: React.FC<Props> = ({
     setStepNumber(stepDetails.stepNumber);
   };
 
-  const onDeleteFlowOk = (name) => {
+  const onDeleteFlowOk = name => {
     deleteFlow(name);
     setDialogVisible(false);
   };
 
   const deleteStepInArray = () => {
     let newSelectedSteps = [...allSelectedSteps[flowName]];
-    newSelectedSteps = newSelectedSteps.filter((stepAux) => {
+    newSelectedSteps = newSelectedSteps.filter(stepAux => {
       return stepAux.stepName !== stepName;
     });
     const allSelectedStepsAux = {
       ...allSelectedSteps,
-      [flowName]: [...newSelectedSteps]
+      [flowName]: [...newSelectedSteps],
     };
     saveLocalStoragePreferences(allSelectedStepsAux);
   };
@@ -406,9 +431,7 @@ const Flows: React.FC<Props> = ({
       }
     });
     if (!flag) {
-      await runFlowSteps(name, allSelectedSteps[name])
-        .then(() => {
-        });
+      await runFlowSteps(name, allSelectedSteps[name]).then(() => {});
     }
   };
 
@@ -428,23 +451,21 @@ const Flows: React.FC<Props> = ({
       });
 
       if (singleIngest) {
-        await runStep(runningFlow, runningStep, formData)
-          .then(resp => {
-            setShowUploadError(true);
-            setFileList([]);
-          });
+        await runStep(runningFlow, runningStep, formData).then(resp => {
+          setShowUploadError(true);
+          setFileList([]);
+        });
       } else {
-        await runFlowSteps(runningFlow, allSelectedSteps[runningFlow], formData)
-          .then(resp => {
-            setShowUploadError(true);
-            setFileList([]);
-          });
+        await runFlowSteps(runningFlow, allSelectedSteps[runningFlow], formData).then(resp => {
+          setShowUploadError(true);
+          setFileList([]);
+        });
       }
     }
   };
 
   const reorderFlow = (stepNumber: number, flowName: string, direction: ReorderFlowOrderDirection) => {
-    let flowIdx = flows.findIndex((flow) => flow.name === flowName);
+    let flowIdx = flows.findIndex(flow => flow.name === flowName);
     const {steps, description} = flows[flowIdx];
 
     const stepIndex = stepNumber - 1;
@@ -476,7 +497,7 @@ const Flows: React.FC<Props> = ({
     updateFlow(flowName, description, reorderedSteps);
   };
 
-  const getFlowWithJobInfo = async (flowNum) => {
+  const getFlowWithJobInfo = async flowNum => {
     let currentFlow = flows[flowNum];
     if (currentFlow === undefined || currentFlow["steps"] === undefined) {
       return;
@@ -488,9 +509,7 @@ const Flows: React.FC<Props> = ({
         if (response.status === 200 && response.data) {
           let currentFlowJobInfo = {};
           currentFlowJobInfo[currentFlow["name"]] = response.data["steps"];
-          setLatestJobData(prevJobData => (
-            {...prevJobData, ...currentFlowJobInfo}
-          ));
+          setLatestJobData(prevJobData => ({...prevJobData, ...currentFlowJobInfo}));
         }
       } catch (error) {
         console.error("Error getting latest job info ", error);
@@ -498,7 +517,7 @@ const Flows: React.FC<Props> = ({
     }
   };
 
-  const createFlowKeyDownHandler = (event) => {
+  const createFlowKeyDownHandler = event => {
     if (event.key === "Enter") {
       OpenAddNewDialog();
       event.preventDefault();
@@ -506,13 +525,12 @@ const Flows: React.FC<Props> = ({
   };
   return (
     <div id="flows-container" className={styles.flowsContainer}>
-      {canReadFlow || canWriteFlow ?
+      {canReadFlow || canWriteFlow ? (
         <>
           <div className={styles.createContainer}>
-            {
-              canWriteFlow ?
-                <span>
-                  {/* //Bootstrap Button
+            {canWriteFlow ? (
+              <span>
+                {/* //Bootstrap Button
                   <Button
                     variant="primary"
                     onClick={OpenAddNewDialog}
@@ -520,70 +538,87 @@ const Flows: React.FC<Props> = ({
                     aria-label={"create-flow"}
                     tabIndex={0}
                   >Create Flow</Button> */}
+                <HCButton
+                  className={styles.createButton}
+                  variant="primary"
+                  onClick={OpenAddNewDialog}
+                  onKeyDown={createFlowKeyDownHandler}
+                  aria-label={"create-flow"}
+                  tabIndex={0}
+                >
+                  Create Flow
+                </HCButton>
+              </span>
+            ) : (
+              <HCTooltip
+                id="missing-permission-tooltip"
+                placement="top"
+                text={SecurityTooltips.missingPermission}
+                className={styles.tooltipOverlay}
+              >
+                <span className={styles.disabledCursor}>
                   <HCButton
-                    className={styles.createButton}
-                    variant="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
-                    aria-label={"create-flow"}
-                    tabIndex={0}
-                  >Create Flow</HCButton>
+                    className={styles.createButtonDisabled}
+                    variant="primary"
+                    disabled={true}
+                    aria-label={"create-flow-disabled"}
+                    tabIndex={-1}
+                  >
+                    Create Flow
+                  </HCButton>
                 </span>
-                :
-                <HCTooltip id="missing-permission-tooltip" placement="top" text={SecurityTooltips.missingPermission} className={styles.tooltipOverlay}>
-                  <span className={styles.disabledCursor}>
-                    <HCButton
-                      className={styles.createButtonDisabled}
-                      variant="primary"
-                      disabled={true}
-                      aria-label={"create-flow-disabled"}
-                      tabIndex={-1}
-                    >Create Flow</HCButton>
-                  </span>
-                </HCTooltip>
-            }
+              </HCTooltip>
+            )}
           </div>
-          {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+          {isLoading && (
+            <div className={styles.spinnerContainer}>
+              <Spinner animation="border" data-testid="spinner" variant="primary" />
+            </div>
+          )}
           {flows?.map((flow, i) => {
-            return (<FlowPanel
-              key={i}
-              idx={i}
-              flowRef={flowPanelsRef[flow.name]}
-              flow={flow}
-              flowRunning={flowRunning}
-              flows={flows}
-              steps={steps}
-              setAllSelectedSteps={setAllSelectedSteps}
-              runningStep={runningStep}
-              isStepRunning={isStepRunning}
-              latestJobData={latestJobData}
-              canWriteFlow={canWriteFlow}
-              canUserStopFlow={canUserStopFlow}
-              hasOperatorRole={hasOperatorRole}
-              getFlowWithJobInfo={getFlowWithJobInfo}
-              openFilePicker={openFilePicker}
-              handleRunSingleStep={handleRunSingleStep}
-              handleRunFlow={handleRunFlow}
-              handleStepAdd={handleStepAdd}
-              handleStepDelete={handleStepDelete}
-              handleFlowDelete={handleFlowDelete}
-              stopRun={stopRun}
-              reorderFlow={reorderFlow}
-              getRootProps={getRootProps}
-              getInputProps={getInputProps}
-              showUploadError={showUploadError}
-              uploadError={uploadError}
-              setRunningFlow={setRunningFlow}
-              setRunningStep={setRunningStep}
-              setJobId={setJobId}
-              setShowUploadError={setShowUploadError}
-              setSingleIngest={setSingleIngest}
-              setOpenJobResponse={setOpenJobResponse}
-              setNewFlow={setNewFlow}
-              setFlowData={setFlowData}
-              setTitle={setTitle}
-              setOpenFlows={setOpenFlows}
-              openFlows={openFlows}
-              getLSFlows={getLSFlows}
-            />);
+            return (
+              <FlowPanel
+                key={i}
+                idx={i}
+                flowRef={flowPanelsRef[flow.name]}
+                flow={flow}
+                flowRunning={flowRunning}
+                flows={flows}
+                steps={steps}
+                setAllSelectedSteps={setAllSelectedSteps}
+                runningStep={runningStep}
+                isStepRunning={isStepRunning}
+                latestJobData={latestJobData}
+                canWriteFlow={canWriteFlow}
+                canUserStopFlow={canUserStopFlow}
+                hasOperatorRole={hasOperatorRole}
+                getFlowWithJobInfo={getFlowWithJobInfo}
+                openFilePicker={openFilePicker}
+                handleRunSingleStep={handleRunSingleStep}
+                handleRunFlow={handleRunFlow}
+                handleStepAdd={handleStepAdd}
+                handleStepDelete={handleStepDelete}
+                handleFlowDelete={handleFlowDelete}
+                stopRun={stopRun}
+                reorderFlow={reorderFlow}
+                getRootProps={getRootProps}
+                getInputProps={getInputProps}
+                showUploadError={showUploadError}
+                uploadError={uploadError}
+                setRunningFlow={setRunningFlow}
+                setRunningStep={setRunningStep}
+                setJobId={setJobId}
+                setShowUploadError={setShowUploadError}
+                setSingleIngest={setSingleIngest}
+                setOpenJobResponse={setOpenJobResponse}
+                setNewFlow={setNewFlow}
+                setFlowData={setFlowData}
+                setTitle={setTitle}
+                setOpenFlows={setOpenFlows}
+                openFlows={openFlows}
+                getLSFlows={getLSFlows}
+              />
+            );
           })}
           <NewFlowDialog
             newFlow={newFlow || openNewFlow}
@@ -601,11 +636,20 @@ const Flows: React.FC<Props> = ({
           />
           {deleteConfirmationModal(dialogVisible, flowName, onDeleteFlowOk, onCancel)}
           {deleteStepConfirmationModal(stepDialogVisible, stepName, stepNumber, flowName, onDeleteStepOk, onCancel)}
-          {addStepConfirmationModal(addStepDialogVisible, onAddStepOk, onCancel, flowName, stepName, stepType, isStepInFlow)}
+          {addStepConfirmationModal(
+            addStepDialogVisible,
+            onAddStepOk,
+            onCancel,
+            flowName,
+            stepName,
+            stepType,
+            isStepInFlow,
+          )}
           {addExistingStepConfirmationModal(addExistingStepDialogVisible, stepName, flowName, onConfirmOk, onCancel)}
-        </> :
+        </>
+      ) : (
         <div />
-      }
+      )}
     </div>
   );
 };

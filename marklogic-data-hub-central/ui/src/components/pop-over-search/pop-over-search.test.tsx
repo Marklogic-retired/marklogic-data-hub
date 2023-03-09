@@ -26,8 +26,11 @@ describe("<PopOverSearch/>", () => {
             popOvercheckedValues={[]}
             facetValues={[]}
             facetName={""}
-          />);
-        </SearchContext.Provider></MemoryRouter>);
+          />
+          );
+        </SearchContext.Provider>
+      </MemoryRouter>,
+    );
 
     fireEvent.click(getByText("See all"));
     let inputField = getByPlaceholderText("Search");
@@ -41,7 +44,7 @@ describe("<PopOverSearch/>", () => {
       "propertyPath": "name",
       "limit": 10,
       "dataType": "string",
-      "pattern": "ad"
+      "pattern": "ad",
     };
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
@@ -53,10 +56,13 @@ describe("<PopOverSearch/>", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
-        <SearchContext.Provider value={{
-          ...searchContextInterfaceByDefault,
-          ...searchContextInterfaceByDefault, searchOptions: {...defaultSearchOptions, tileId: "monitor"}
-        }}>
+        <SearchContext.Provider
+          value={{
+            ...searchContextInterfaceByDefault,
+            ...searchContextInterfaceByDefault,
+            searchOptions: {...defaultSearchOptions, tileId: "monitor"},
+          }}
+        >
           <PopOverSearch
             referenceType={""}
             entityTypeId={""}
@@ -65,8 +71,11 @@ describe("<PopOverSearch/>", () => {
             popOvercheckedValues={[]}
             facetValues={[]}
             facetName={"stepName"}
-          />);
-        </SearchContext.Provider></MemoryRouter>);
+          />
+          );
+        </SearchContext.Provider>
+      </MemoryRouter>,
+    );
 
     fireEvent.click(getByText("See all"));
     let inputField = getByPlaceholderText("Search");
@@ -76,7 +85,7 @@ describe("<PopOverSearch/>", () => {
     let url = "/api/jobs/stepResponses/facetValues";
     let payload = {
       "facetName": "stepName",
-      "searchTerm": "ad"
+      "searchTerm": "ad",
     };
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
@@ -84,5 +93,3 @@ describe("<PopOverSearch/>", () => {
     expect(getByLabelText("icon: check-square-o")).toBeInTheDocument();
   });
 });
-
-

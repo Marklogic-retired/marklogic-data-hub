@@ -21,7 +21,6 @@ jest.mock("axios");
 const mockDevRolesService = authorities.DeveloperRolesService;
 
 describe("App component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -30,11 +29,15 @@ describe("App component", () => {
   test("Verify header title links return to overview", async () => {
     mocks.loadAPI(axiosMock);
     const firstTool = Object.keys(tiles)[0];
-    const {getByLabelText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <UserContext.Provider value={userAuthenticated}><App/></UserContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <UserContext.Provider value={userAuthenticated}>
+            <App />
+          </UserContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Defaults to overview
     expect(getByLabelText("overview")).toBeInTheDocument();
@@ -55,7 +58,7 @@ describe("App component", () => {
     Object.defineProperty(window, "localStorage", {
       value: {
         // have getItem return a value so it appears we just authenticated
-        getItem: jest.fn((key) => {
+        getItem: jest.fn(key => {
           switch (key) {
           case "dataHubUser":
             return "hub-user";
@@ -65,26 +68,27 @@ describe("App component", () => {
             return null;
           }
         }),
-        setItem: jest.fn(() => null)
+        setItem: jest.fn(() => null),
       },
-      writable: true
+      writable: true,
     });
     // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
     history.push("/tiles");
-    const {getByLabelText} = render(<Router history={history}>
-      <StompContext.Provider value={defaultStompContext}>
-        <AuthoritiesContext.Provider value={mockDevRolesService}>
-          <UserProvider><App/></UserProvider>
-        </AuthoritiesContext.Provider>
-      </StompContext.Provider>
-    </Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <StompContext.Provider value={defaultStompContext}>
+          <AuthoritiesContext.Provider value={mockDevRolesService}>
+            <UserProvider>
+              <App />
+            </UserProvider>
+          </AuthoritiesContext.Provider>
+        </StompContext.Provider>
+      </Router>,
+    );
     // Defaults to overview
     await expect(getByLabelText("overview")).toBeInTheDocument();
     // check localStorage for session token
-    expect(window.localStorage.setItem).toHaveBeenCalledWith(
-      "hubCentralSessionToken",
-      "mySessionToken"
-    );
+    expect(window.localStorage.setItem).toHaveBeenCalledWith("hubCentralSessionToken", "mySessionToken");
   });
 
   test("Pendo token retrieved properly upon login", async () => {
@@ -94,24 +98,28 @@ describe("App component", () => {
       value: {
         // have initialize and identify functions to return a value, so it appears we just authenticated
         initialize: jest.fn(() => null),
-        identify: jest.fn(() => null)
+        identify: jest.fn(() => null),
       },
-      writable: true
+      writable: true,
     });
 
     Object.defineProperty(window, "usePendo", {
       value: jest.fn(() => null),
-      writable: true
+      writable: true,
     });
     // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
     history.push("/tiles");
-    const {getByLabelText} = render(<Router history={history}>
-      <StompContext.Provider value={defaultStompContext}>
-        <AuthoritiesContext.Provider value={mockDevRolesService}>
-          <UserProvider><App/></UserProvider>
-        </AuthoritiesContext.Provider>
-      </StompContext.Provider>
-    </Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <StompContext.Provider value={defaultStompContext}>
+          <AuthoritiesContext.Provider value={mockDevRolesService}>
+            <UserProvider>
+              <App />
+            </UserProvider>
+          </AuthoritiesContext.Provider>
+        </StompContext.Provider>
+      </Router>,
+    );
     // Defaults to overview
     await expect(getByLabelText("overview")).toBeInTheDocument();
 
@@ -119,7 +127,7 @@ describe("App component", () => {
     expect(window.usePendo).toHaveBeenCalledWith(systemInfoData.environment.pendoKey);
     expect(window.pendo.initialize).toHaveBeenCalledWith({
       excludeAllText: true,
-      excludeTitle: true
+      excludeTitle: true,
     });
     expect(window.pendo.identify).toHaveBeenCalledTimes(1);
   });

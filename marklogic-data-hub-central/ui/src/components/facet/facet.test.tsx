@@ -25,11 +25,12 @@ describe("Facet component", () => {
     expect(getByText(/999/i)).toBeInTheDocument();
     // Search link not shown for facets < 20
     expect(queryByLabelText("popover-search-label")).not.toBeInTheDocument();
-
   });
 
   it("Facet component renders with nested data properly", () => {
-    const {getByTestId, getByText, queryByText} = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
+    const {getByTestId, getByText, queryByText} = render(
+      <Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />,
+    );
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
     expect(getByText(/50/i)).toBeInTheDocument();
@@ -50,7 +51,7 @@ describe("Facet component", () => {
   });
 
   it("Facet component shortens long name paths in structured properties", () => {
-    const {getByText, queryByText} = render(<Facet {...facetProps} name="client.shipping.address.state"/>);
+    const {getByText, queryByText} = render(<Facet {...facetProps} name="client.shipping.address.state" />);
 
     // facet name should show client > ... > state
     expect(getByText(/client/)).toBeInTheDocument();
@@ -72,7 +73,7 @@ describe("Facet component", () => {
   });
 
   it("Search link shown only when facet number greater than limit", () => {
-    const LIMIT =  20,
+    const LIMIT = 20,
       facetValsNew: any = [];
     for (let i = 0; i < LIMIT; i++) {
       facetValsNew.push({"name": "fName", "count": 1, "value": "fVal"});
@@ -82,7 +83,7 @@ describe("Facet component", () => {
     // Search link NOT shown for facets < LIMIT
     expect(queryByLabelText("sales_region-popover-search-label")).not.toBeInTheDocument();
 
-    rerender(<Facet {...facetProps} facetValues={facetValsNew}/>);
+    rerender(<Facet {...facetProps} facetValues={facetValsNew} />);
 
     // Search link shown for facets >= LIMIT
     expect(getByLabelText("sales_region-popover-search-label")).toBeInTheDocument();
@@ -98,7 +99,7 @@ describe("Facet component", () => {
     expect(getByText(/12/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceName"));
-    await(waitForElement(() => (getByText("The name of the source of the files."))));
+    await waitForElement(() => getByText("The name of the source of the files."));
 
     let i: number;
 
@@ -109,7 +110,14 @@ describe("Facet component", () => {
     let loadPersonJSONSourceName = getByTestId("sourcename-loadPersonJSON-checkbox");
     let ingestOrdersSourceName = getByTestId("sourcename-ingest-orders-checkbox");
 
-    const facetActions = [sourceNameTooltip, clearFacet, toggleFacetPanel, loadPersonJSONSourceName, ingestOrdersSourceName, showMoreLink];
+    const facetActions = [
+      sourceNameTooltip,
+      clearFacet,
+      toggleFacetPanel,
+      loadPersonJSONSourceName,
+      ingestOrdersSourceName,
+      showMoreLink,
+    ];
 
     // verify element exists and can be focused
     facetActions.forEach((element, i) => async () => {
@@ -124,7 +132,6 @@ describe("Facet component", () => {
       userEvent.tab();
       expect(facetActions[i]).toHaveFocus();
     }
-
 
     // verify elements tab backwards in same order
     for (i = 3; i >= 0; --i) {
@@ -143,7 +150,6 @@ describe("Facet component", () => {
     expect(getByText(/5/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceType"));
-    await(waitForElement(() => (getByText("The type of source of the files."))));
+    await waitForElement(() => getByText("The type of source of the files."));
   });
-
 });

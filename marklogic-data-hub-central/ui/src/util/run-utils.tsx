@@ -1,5 +1,4 @@
-
-export const isFlowRunning = (jobResponse) => {
+export const isFlowRunning = jobResponse => {
   return !jobResponse.timeEnded || jobResponse === "N/A";
 };
 

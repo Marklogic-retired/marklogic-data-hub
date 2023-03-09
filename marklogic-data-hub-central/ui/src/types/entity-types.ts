@@ -1,32 +1,32 @@
 export interface InfoProps {
-    title: string;
-    draft: boolean;
-    version: string;
-    baseUri: string;
-  }
+  title: string;
+  draft: boolean;
+  version: string;
+  baseUri: string;
+}
 
 export interface RelatedConceptProps {
-    context: string;
-    conceptExpression: string;
-    conceptClass: string;
-    predicate: string;
-  }
+  context: string;
+  conceptExpression: string;
+  conceptClass: string;
+  predicate: string;
+}
 
 export interface PropertyProps {
-    name: string;
-    ref: string;
-    related: string
-    datatype: string;
-    collation: any;
-  }
+  name: string;
+  ref: string;
+  related: string;
+  datatype: string;
+  collation: any;
+}
 
 export interface EntityProps {
-    color: string;
-    icon: string;
-    name: string;
-    primaryKey: string;
-    properties: PropertyProps[];
-    relatedConcepts: RelatedConceptProps[];
-    relatedEntities: string[];
-    info: InfoProps;
-  }
+  color: string;
+  icon: string;
+  name: string;
+  primaryKey: string;
+  properties: PropertyProps[];
+  relatedConcepts: RelatedConceptProps[];
+  relatedEntities: string[];
+  info: InfoProps;
+}

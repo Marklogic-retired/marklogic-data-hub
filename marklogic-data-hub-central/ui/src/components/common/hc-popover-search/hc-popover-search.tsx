@@ -7,37 +7,47 @@ import styles from "./hc-popover-search.module.scss";
 
 interface Props {
   // input props
-  inputValue: string,
-  inputId?: string,
-  inputAriaLabel?: string,
-  inputPlaceholder?: string,
+  inputValue: string;
+  inputId?: string;
+  inputAriaLabel?: string;
+  inputPlaceholder?: string;
 
   // dialog props
-  popoverId?: string,
-  popoverAriaLabel?: string,
-  closeOnClickOutside?: boolean
+  popoverId?: string;
+  popoverAriaLabel?: string;
+  closeOnClickOutside?: boolean;
 
   // icon props
-  searchIconId?: string,
-  searchIconAriaLabel?: string,
+  searchIconId?: string;
+  searchIconAriaLabel?: string;
 
   // button search props
-  searchButtonText?: string,
-  searchButtonId?: string,
-  onSearch: (value: string) => void,
+  searchButtonText?: string;
+  searchButtonId?: string;
+  onSearch: (value: string) => void;
 
   // button reset props
-  resetButtonText?: string,
-  resetButtonId?: string,
-  onReset: () => void,
+  resetButtonText?: string;
+  resetButtonId?: string;
+  onReset: () => void;
 }
 
 const HCPopoverSearch: React.FC<Props> = ({
-  inputValue, inputId, inputAriaLabel, inputPlaceholder,
-  popoverId, popoverAriaLabel, closeOnClickOutside,
-  searchIconId, searchIconAriaLabel,
-  searchButtonText, searchButtonId, onSearch,
-  resetButtonText, resetButtonId, onReset
+  inputValue,
+  inputId,
+  inputAriaLabel,
+  inputPlaceholder,
+  popoverId,
+  popoverAriaLabel,
+  closeOnClickOutside,
+  searchIconId,
+  searchIconAriaLabel,
+  searchButtonText,
+  searchButtonId,
+  onSearch,
+  resetButtonText,
+  resetButtonId,
+  onReset,
 }: Props) => {
   const [searchText, setSearchText] = useState(inputValue);
   const [isVisible, setIsVisible] = useState(false);
@@ -49,13 +59,12 @@ const HCPopoverSearch: React.FC<Props> = ({
     setIsVisible(isVisible => !isVisible);
   };
 
-  const handleOuterClick = useCallback(
-    e => {
-      if (popoverBodyRef.current && !popoverBodyRef.current.contains(e.target) && closeOnClickOutside) {
-        // Clicked outside the popover
-        hideDialog();
-      }
-    }, []);
+  const handleOuterClick = useCallback(e => {
+    if (popoverBodyRef.current && !popoverBodyRef.current.contains(e.target) && closeOnClickOutside) {
+      // Clicked outside the popover
+      hideDialog();
+    }
+  }, []);
 
   useEffect(() => {
     if (isEventValid) {
@@ -76,21 +85,20 @@ const HCPopoverSearch: React.FC<Props> = ({
     setIsVisible(false);
   };
 
-  const handleOnReset = (event) => {
+  const handleOnReset = event => {
     event.stopPropagation();
     hideDialog();
     setSearchText("");
     onReset();
   };
 
-  const handleOnSearch = (event) => {
+  const handleOnSearch = event => {
     event.stopPropagation();
     hideDialog();
     onSearch(searchText);
   };
 
   const serviceNameKeyDownHandler = async (event, component) => {
-
     //reset when user presses tab out of popover
     if (event.keyCode === 9) {
       if (!event.shiftKey) {
@@ -101,9 +109,13 @@ const HCPopoverSearch: React.FC<Props> = ({
     }
 
     //Make selection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "searchIcon") {
-        if (event.target !== document.getElementById("searchInput-source") && event.target !== document.getElementById("searchInput-entity") && event.target !== document.getElementById("searchInput-settingns")) {
+        if (
+          event.target !== document.getElementById("searchInput-source") &&
+          event.target !== document.getElementById("searchInput-entity") &&
+          event.target !== document.getElementById("searchInput-settingns")
+        ) {
           event.preventDefault();
           toggleVisibility();
         }
@@ -118,7 +130,12 @@ const HCPopoverSearch: React.FC<Props> = ({
   };
 
   return (
-    <div onClick={e => e.stopPropagation()} className={"position-relative d-inline-block"} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "searchIcon")}>
+    <div
+      onClick={e => e.stopPropagation()}
+      className={"position-relative d-inline-block"}
+      tabIndex={0}
+      onKeyDown={e => serviceNameKeyDownHandler(e, "searchIcon")}
+    >
       <span>
         <FontAwesomeIcon
           className={isVisible || searchText ? styles.filterIconActive : styles.filterIcon}
@@ -129,7 +146,7 @@ const HCPopoverSearch: React.FC<Props> = ({
           onClick={() => toggleVisibility()}
         />
       </span>
-      {isVisible &&
+      {isVisible && (
         <div
           id={popoverId}
           ref={popoverBodyRef}
@@ -146,7 +163,7 @@ const HCPopoverSearch: React.FC<Props> = ({
               value={searchText}
               onChange={handleOnChange}
               className={`${styles.searchInput} mb-2`}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "searchInput")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "searchInput")}
             />
             <HCButton
               id={resetButtonId}
@@ -155,7 +172,7 @@ const HCPopoverSearch: React.FC<Props> = ({
               size="sm"
               className={styles.resetButton}
               onClick={handleOnReset}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "submitReset")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "submitReset")}
             >
               {resetButtonText}
             </HCButton>
@@ -166,14 +183,14 @@ const HCPopoverSearch: React.FC<Props> = ({
               size="sm"
               className={styles.searchSubmitButton}
               onClick={handleOnSearch}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "submitSearch")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "submitSearch")}
             >
-              <Search className={styles.searchIcon}/>
+              <Search className={styles.searchIcon} />
               {searchButtonText}
             </HCButton>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };
@@ -196,7 +213,7 @@ HCPopoverSearch.defaultProps = {
 
   // button reset props
   resetButtonText: "Reset",
-  resetButtonId: "hc-popover-search-reset-button"
+  resetButtonId: "hc-popover-search-reset-button",
 };
 
 export default HCPopoverSearch;

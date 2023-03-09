@@ -52,16 +52,13 @@ let entityMetadata = {};
 // TODO temp hardcoded node data, remove when retrieved from db
 // entityMetadata = graphConfig.sampleMetadata;
 
-const GraphVis: React.FC<Props> = (props) => {
-
-  const {
-    user
-  } = useContext(UserContext);
+const GraphVis: React.FC<Props> = props => {
+  const {user} = useContext(UserContext);
   const userPreferences = JSON.parse(getUserPreferences(user.name));
 
-  const setGraphPreferences = (options) => {
+  const setGraphPreferences = options => {
     let preferencesObject = {
-      modelingGraphOptions: options
+      modelingGraphOptions: options,
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -79,8 +76,10 @@ const GraphVis: React.FC<Props> = (props) => {
         let isConcept = node.hasOwnProperty("conceptName");
         let nodeName = !isConcept ? node.entityName : node.conceptName;
         let modelCategory = getCategoryWithinModel(isConcept);
-        if (!allNodeCoordinates[modelCategory][nodeName] ||
-          (!allNodeCoordinates[modelCategory][nodeName].graphX && !allNodeCoordinates[modelCategory][nodeName].graphY)) {
+        if (
+          !allNodeCoordinates[modelCategory][nodeName] ||
+          (!allNodeCoordinates[modelCategory][nodeName].graphX && !allNodeCoordinates[modelCategory][nodeName].graphY)
+        ) {
           //count number of new nodes, if they only added one, no need for physics to stabilize entire graph on line 184
           newNodeCounter = newNodeCounter + 1;
         }
@@ -100,7 +99,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
-  const [menuPosition, setMenuPosition] = useState<{ x: number, y: number }>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{x: number; y: number}>({x: 0, y: 0});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
   const [coordsLoaded, setCoordsLoaded] = useState(false);
@@ -109,7 +108,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
-  const initNetworkInstance = (networkInstance) => {
+  const initNetworkInstance = networkInstance => {
     setNetwork(networkInstance);
   };
   const [networkHeight, setNetworkHeight] = useState(graphConfig.defaultOptions.height);
@@ -132,7 +131,7 @@ const GraphVis: React.FC<Props> = (props) => {
     } else {
       setGraphData({
         nodes: getNodes(),
-        edges: getEdges()
+        edges: getEdges(),
       });
     }
   }, [props.hubCentralConfig]);
@@ -160,7 +159,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const updateNetworkHeight = async () => {
     let baseHeight = Math.round(window.innerHeight - network.body.container.offsetTop);
     if (window.devicePixelRatio < 2) {
-      baseHeight = Math.round(window.innerHeight - (network.body.container.offsetTop * window.devicePixelRatio));
+      baseHeight = Math.round(window.innerHeight - network.body.container.offsetTop * window.devicePixelRatio);
     }
     let height = (baseHeight < 505 ? 505 : baseHeight) + "px";
     setNetworkHeight(height);
@@ -191,7 +190,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
       setGraphData({
         nodes: getNodes(),
-        edges: getEdges()
+        edges: getEdges(),
       });
 
       const updateGraphSettings = async () => {
@@ -228,10 +227,11 @@ const GraphVis: React.FC<Props> = (props) => {
   const coordsExist = (nodeName, isConcept) => {
     let result = false;
     if (entitiesConfigExist(props.hubCentralConfig)) {
-      let model = !isConcept ? props.hubCentralConfig["modeling"]["entities"] : props.hubCentralConfig["modeling"]["concepts"];
+      let model = !isConcept
+        ? props.hubCentralConfig["modeling"]["entities"]
+        : props.hubCentralConfig["modeling"]["concepts"];
       if (model[nodeName]) {
-        if (model[nodeName].graphX &&
-          model[nodeName].graphY) {
+        if (model[nodeName].graphX && model[nodeName].graphY) {
           result = true;
         }
       }
@@ -247,7 +247,7 @@ const GraphVis: React.FC<Props> = (props) => {
     });
   };
 
-  const saveUnsavedCoords = async (positions) => {
+  const saveUnsavedCoords = async positions => {
     if (props.dataModel) {
       let newCoords = {...coords};
       props.dataModel.forEach(ent => {
@@ -266,14 +266,18 @@ const GraphVis: React.FC<Props> = (props) => {
         }
       });
       setCoords(newCoords);
-      if (props.updateHubCentralConfig && (Object.keys(newCoords["modeling"]["entities"]).length > 0 || Object.keys(newCoords["modeling"]["concepts"]).length > 0)) {
+      if (
+        props.updateHubCentralConfig &&
+        (Object.keys(newCoords["modeling"]["entities"]).length > 0 ||
+          Object.keys(newCoords["modeling"]["concepts"]).length > 0)
+      ) {
         await props.updateHubCentralConfig(newCoords);
         props.setCoordsChanged(true);
       }
     }
   };
 
-  const escFunction = useCallback((event) => {
+  const escFunction = useCallback(event => {
     if (event.keyCode === 27) {
       //Detect when esc is pressed, set state to disable edit mode
       setEscKeyPressed(true);
@@ -372,28 +376,33 @@ const GraphVis: React.FC<Props> = (props) => {
   useLayoutEffect(() => {
     if (testingMode && network) {
       window.graphVisApi = {
-        getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
-        canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
+        getNodePositions: (nodeIds?: any) => {
+          return !nodeIds ? network.getPositions() : network.getPositions(nodeIds);
+        },
+        canvasToDOM: (xCoordinate, yCoordinate) => {
+          return network.canvasToDOM({x: xCoordinate, y: yCoordinate});
+        },
       };
     }
   }, [network]);
 
   // TODO update when icons are implemented
-  const getIcon = (entityName) => {
+  const getIcon = entityName => {
     let icon = <FontAwesomeIcon icon={faFileExport} aria-label="node-icon" />;
     return ReactDOMServer.renderToString(icon);
   };
 
-  const getDescription = (entityName) => {
+  const getDescription = entityName => {
     let entityIndex = props.dataModel.findIndex(obj => (obj.entityName || obj.conceptName) === entityName);
-    return props.dataModel[entityIndex].model.definitions ?
-      (props.dataModel[entityIndex].model.definitions[entityName] ?
-        props.dataModel[entityIndex].model.definitions[entityName].description : "") :
-      props.dataModel[entityIndex].model.info.description;
+    return props.dataModel[entityIndex].model.definitions
+      ? props.dataModel[entityIndex].model.definitions[entityName]
+        ? props.dataModel[entityIndex].model.definitions[entityName].description
+        : ""
+      : props.dataModel[entityIndex].model.info.description;
   };
 
   // TODO remove when num instances is retrieved from db
-  const getNumInstances = (entityName) => {
+  const getNumInstances = entityName => {
     let num = -123;
     if (entityMetadata[entityName] && entityMetadata[entityName].instances) {
       num = entityMetadata[entityName].instances;
@@ -413,105 +422,136 @@ const GraphVis: React.FC<Props> = (props) => {
   const getNodes = () => {
     let nodes;
     if (graphType === "shape") {
-      const {boxWidth: defaultBoxWidth, boxHeight, boxPadding, boxRadius, iconWidth, iconHeight, iconRightMargin} = DEFAULT_NODE_CONFIG;
-      nodes = props.dataModel && props.dataModel?.map((e) => {
-        const isConcept = e.hasOwnProperty("conceptName");
-        let nodeName = !isConcept ? e.entityName : e.conceptName;
-        const nodeId = nodeName;
-        const nodeSettings: any = {
-          id: nodeId,
-          shape: "custom"
-        };
-        let node = !isConcept ? props.hubCentralConfig?.modeling?.entities[nodeId] : props.hubCentralConfig?.modeling?.concepts[nodeId];
-        let modelCategory = getCategoryWithinModel(isConcept);
-        let boxLabel = nodeName;
-        if (nodeName.length > 20) {
-          nodeSettings.title = nodeName;
-          boxLabel = nodeName.substring(0, 20) + "...";
-        }
-        if (getDescription(nodeName) && getDescription(nodeName).length > 0) {
-          nodeSettings.title = nodeName.length > 20 ? nodeSettings.title + "\n" + getDescription(nodeName) : getDescription(nodeName);
-        }
-
-        if (!!coords.modeling[modelCategory][nodeName] &&
-          !!coords.modeling[modelCategory][nodeName].graphX &&
-          !!coords.modeling[modelCategory][nodeName].graphY) {
-          nodeSettings.x = coords.modeling[modelCategory][nodeName].graphX;
-          nodeSettings.y = coords.modeling[modelCategory][nodeName].graphY;
-        }
-
-        return {
-          ...nodeSettings,
-          ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
-            let iconName = iconExistsForNode(nodeId, isConcept, props.hubCentralConfig) ? node.icon : (isConcept ? defaultConceptIcon : defaultIcon);
-            ctx.font = "bold 14px Arial";
-            let measureText = ctx.measureText(boxLabel);
-            let boxWidth = measureText.width + iconWidth + iconRightMargin + boxPadding * 2;
-            boxWidth = boxWidth < defaultBoxWidth ? defaultBoxWidth : boxWidth;
-            const drawNode = () => {
-
-              roundedRect(ctx, x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight, boxRadius);
-              ctx.lineWidth = nodeName === modelingOptions.selectedEntity && props.entitySelected ? 2 : isConcept ? 2 : 0;
-              if (isConcept) {
-                ctx.setLineDash([5, 5]);
-              }
-              if (selected && hover) {
-                ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
-                ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
-                ctx.lineWidth = isConcept ? 3 : 2;
-              } else if (selected) {
-                ctx.fillStyle = props.getColor(nodeId, isConcept);
-                ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
-                ctx.lineWidth = isConcept ? 3 : 2;
-              } else if (hover) {
-                ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
-                ctx.strokeStyle = graphConfig.nodeStyles.hoverColor;
-                ctx.lineWidth = 2;
-              } else {
-                ctx.fillStyle = props.getColor(nodeName, isConcept);
-                ctx.strokeStyle = isConcept ? themeColors["text-color-secondary"] : props.getColor(nodeName, isConcept);
-                ctx.lineWidth = isConcept ? 2 : 0;
-              }
-              ctx.closePath();
-              ctx.save();
-              ctx.fill();
-              ctx.stroke();
-              ctx.restore();
-
-              ctx.fillStyle = "Black";
-              ctx.textAlign = "left";
-              ctx.textBaseline = "middle";
-              const textOffsetX = x - boxWidth / 2 + boxPadding + iconWidth + iconRightMargin;
-              ctx.fillText(boxLabel, textOffsetX, y);
-              let img = new Image();   // Create new img element
-              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
-              //Drawing the image on canvas
-              const iconOffsetX = x - boxWidth / 2 + boxPadding;
-              const iconOffsetY = y - iconHeight / 2;
-              ctx.drawImage(img, iconOffsetX, iconOffsetY, iconWidth, iconHeight);
-            };
-            return {
-              drawNode,
-              nodeDimensions: {width: boxWidth, height: boxHeight},
-            };
+      const {
+        boxWidth: defaultBoxWidth,
+        boxHeight,
+        boxPadding,
+        boxRadius,
+        iconWidth,
+        iconHeight,
+        iconRightMargin,
+      } = DEFAULT_NODE_CONFIG;
+      nodes =
+        props.dataModel &&
+        props.dataModel?.map(e => {
+          const isConcept = e.hasOwnProperty("conceptName");
+          let nodeName = !isConcept ? e.entityName : e.conceptName;
+          const nodeId = nodeName;
+          const nodeSettings: any = {
+            id: nodeId,
+            shape: "custom",
+          };
+          let node = !isConcept
+            ? props.hubCentralConfig?.modeling?.entities[nodeId]
+            : props.hubCentralConfig?.modeling?.concepts[nodeId];
+          let modelCategory = getCategoryWithinModel(isConcept);
+          let boxLabel = nodeName;
+          if (nodeName.length > 20) {
+            nodeSettings.title = nodeName;
+            boxLabel = nodeName.substring(0, 20) + "...";
           }
-        };
-      });
-    } else if (graphType === "image") { // TODO for custom SVG node, not currently used
-      nodes = props.dataModel && props.dataModel?.map((e) => {
-        const node = new NodeSvg(e.entityName, props.getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
-        let tempTitle;
-        if (getDescription(e.entityName) && getDescription(e.entityName).length) {
-          tempTitle = getDescription(e.entityName);
-        }
-        return {
-          id: e.entityName,
-          label: "",
-          title: tempTitle,
-          image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
-          shape: "image"
-        };
-      });
+          if (getDescription(nodeName) && getDescription(nodeName).length > 0) {
+            nodeSettings.title =
+              nodeName.length > 20 ? nodeSettings.title + "\n" + getDescription(nodeName) : getDescription(nodeName);
+          }
+
+          if (
+            !!coords.modeling[modelCategory][nodeName] &&
+            !!coords.modeling[modelCategory][nodeName].graphX &&
+            !!coords.modeling[modelCategory][nodeName].graphY
+          ) {
+            nodeSettings.x = coords.modeling[modelCategory][nodeName].graphX;
+            nodeSettings.y = coords.modeling[modelCategory][nodeName].graphY;
+          }
+
+          return {
+            ...nodeSettings,
+            ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
+              let iconName = iconExistsForNode(nodeId, isConcept, props.hubCentralConfig)
+                ? node.icon
+                : isConcept
+                  ? defaultConceptIcon
+                  : defaultIcon;
+              ctx.font = "bold 14px Arial";
+              let measureText = ctx.measureText(boxLabel);
+              let boxWidth = measureText.width + iconWidth + iconRightMargin + boxPadding * 2;
+              boxWidth = boxWidth < defaultBoxWidth ? defaultBoxWidth : boxWidth;
+              const drawNode = () => {
+                roundedRect(ctx, x - boxWidth / 2, y - boxHeight / 2, boxWidth, boxHeight, boxRadius);
+                ctx.lineWidth =
+                  nodeName === modelingOptions.selectedEntity && props.entitySelected ? 2 : isConcept ? 2 : 0;
+                if (isConcept) {
+                  ctx.setLineDash([5, 5]);
+                }
+                if (selected && hover) {
+                  ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
+                  ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
+                  ctx.lineWidth = isConcept ? 3 : 2;
+                } else if (selected) {
+                  ctx.fillStyle = props.getColor(nodeId, isConcept);
+                  ctx.strokeStyle = graphConfig.nodeStyles.selectColor;
+                  ctx.lineWidth = isConcept ? 3 : 2;
+                } else if (hover) {
+                  ctx.fillStyle = graphConfig.nodeStyles.hoverColor;
+                  ctx.strokeStyle = graphConfig.nodeStyles.hoverColor;
+                  ctx.lineWidth = 2;
+                } else {
+                  ctx.fillStyle = props.getColor(nodeName, isConcept);
+                  ctx.strokeStyle = isConcept
+                    ? themeColors["text-color-secondary"]
+                    : props.getColor(nodeName, isConcept);
+                  ctx.lineWidth = isConcept ? 2 : 0;
+                }
+                ctx.closePath();
+                ctx.save();
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.fillStyle = "Black";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "middle";
+                const textOffsetX = x - boxWidth / 2 + boxPadding + iconWidth + iconRightMargin;
+                ctx.fillText(boxLabel, textOffsetX, y);
+                let img = new Image(); // Create new img element
+                img.src = `data:image/svg+xml,${encodeURIComponent(
+                  renderToStaticMarkup(createElement(FontIcon[iconName])),
+                )}`;
+                //Drawing the image on canvas
+                const iconOffsetX = x - boxWidth / 2 + boxPadding;
+                const iconOffsetY = y - iconHeight / 2;
+                ctx.drawImage(img, iconOffsetX, iconOffsetY, iconWidth, iconHeight);
+              };
+              return {
+                drawNode,
+                nodeDimensions: {width: boxWidth, height: boxHeight},
+              };
+            },
+          };
+        });
+    } else if (graphType === "image") {
+      // TODO for custom SVG node, not currently used
+      nodes =
+        props.dataModel &&
+        props.dataModel?.map(e => {
+          const node = new NodeSvg(
+            e.entityName,
+            props.getColor(e.entityName),
+            getNumInstances(e.entityName),
+            getIcon(e.entityName),
+          );
+          let tempTitle;
+          if (getDescription(e.entityName) && getDescription(e.entityName).length) {
+            tempTitle = getDescription(e.entityName);
+          }
+          return {
+            id: e.entityName,
+            label: "",
+            title: tempTitle,
+            image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
+            shape: "image",
+          };
+        });
     }
     return nodes;
   };
@@ -543,24 +583,24 @@ const GraphVis: React.FC<Props> = (props) => {
       if (to === edge.to && from === edge.from) {
         count++;
         // This works so...
-        reversed = (reversed === undefined) ? false : reversed;
+        reversed = reversed === undefined ? false : reversed;
       } else if (from === edge.to && to === edge.from) {
         count++;
-        reversed = (reversed === undefined) ? true : reversed;
+        reversed = reversed === undefined ? true : reversed;
       }
     });
     // Space out same edges using visjs "smooth" options
     let space = 0.16;
     let type = "";
     if (!reversed) {
-      type = (count % 2 === 0) ? "curvedCW" : "curvedCCW";
+      type = count % 2 === 0 ? "curvedCW" : "curvedCCW";
     } else {
-      type = (count % 2 === 0) ? "curvedCCW" : "curvedCW";
+      type = count % 2 === 0 ? "curvedCCW" : "curvedCW";
     }
     return {
-      enabled: (count > 0),
+      enabled: count > 0,
       type: type,
-      roundness: (count % 2 === 0) ? (space * count / 2) : (space * (count + 1) / 2)
+      roundness: count % 2 === 0 ? (space * count) / 2 : (space * (count + 1)) / 2,
     };
   };
 
@@ -578,8 +618,8 @@ const GraphVis: React.FC<Props> = (props) => {
       to: {
         enabled: true,
         src: graphConfig.customEdgeSVG.oneToOne,
-        type: "image"
-      }
+        type: "image",
+      },
     },
     arrowStrikethrough: true,
     color: "#666",
@@ -589,72 +629,68 @@ const GraphVis: React.FC<Props> = (props) => {
     chosen: {
       label: onChosen,
       edge: onChosen,
-      node: false
+      node: false,
     },
-    smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges)
+    smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges),
   });
 
-  const oneToManyEdges = (title, entityName, parts, relationshipName, p, pObj, edges, structParent = "") => (
-    {
-      ...graphConfig.defaultEdgeProps,
-      from: entityName,
-      structParent: structParent,
-      to: parts[parts.length - 1],
-      label: relationshipName,
-      predicate: p,
-      joinPropertyName: pObj.items.joinPropertyName,
-      id: entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName || structParent,
-      title: title,
-      arrowStrikethrough: true,
-      arrows: {
-        to: {
-          enabled: true,
-          src: graphConfig.customEdgeSVG.oneToMany,
-          type: "image"
-        }
+  const oneToManyEdges = (title, entityName, parts, relationshipName, p, pObj, edges, structParent = "") => ({
+    ...graphConfig.defaultEdgeProps,
+    from: entityName,
+    structParent: structParent,
+    to: parts[parts.length - 1],
+    label: relationshipName,
+    predicate: p,
+    joinPropertyName: pObj.items.joinPropertyName,
+    id: entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName || structParent,
+    title: title,
+    arrowStrikethrough: true,
+    arrows: {
+      to: {
+        enabled: true,
+        src: graphConfig.customEdgeSVG.oneToMany,
+        type: "image",
       },
-      color: "#666",
-      font: {align: "top"},
-      chosen: {
-        label: onChosen,
-        edge: onChosen,
-        node: false
-      },
-      smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges)
-    }
-  );
+    },
+    color: "#666",
+    font: {align: "top"},
+    chosen: {
+      label: onChosen,
+      edge: onChosen,
+      node: false,
+    },
+    smooth: getSmoothOpts(entityName, parts[parts.length - 1], edges),
+  });
 
-  const conceptEdges = (title, entityName, relationshipName, obj, edges) => (
-    {
-      ...graphConfig.defaultEdgeProps,
-      from: entityName,
-      to: obj.conceptClass,
-      label: relationshipName,
-      predicate: obj.predicate,
-      joinPropertyName: obj.context,
-      id: entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
-      title: title,
-      arrows: {
-        to: {
-          enabled: true,
-          src: graphConfig.customEdgeSVG.oneToOne,
-          type: "image"
-        }
+  const conceptEdges = (title, entityName, relationshipName, obj, edges) => ({
+    ...graphConfig.defaultEdgeProps,
+    from: entityName,
+    to: obj.conceptClass,
+    label: relationshipName,
+    predicate: obj.predicate,
+    joinPropertyName: obj.context,
+    id: entityName + "-" + obj.predicate + "-" + obj.conceptClass + "-via-" + obj.context,
+    title: title,
+    arrows: {
+      to: {
+        enabled: true,
+        src: graphConfig.customEdgeSVG.oneToOne,
+        type: "image",
       },
-      arrowStrikethrough: true,
-      color: "#666",
-      font: {
-        align: "top",
-      },
-      chosen: {
-        label: onChosen,
-        edge: onChosen,
-        node: false
-      },
-      smooth: getSmoothOpts(entityName, obj.conceptClass, edges),
-      conceptExpression: obj.conceptExpression
-    }
-  );
+    },
+    arrowStrikethrough: true,
+    color: "#666",
+    font: {
+      align: "top",
+    },
+    chosen: {
+      label: onChosen,
+      edge: onChosen,
+      node: false,
+    },
+    smooth: getSmoothOpts(entityName, obj.conceptClass, edges),
+    conceptExpression: obj.conceptExpression,
+  });
 
   const getEdges = () => {
     let edges: any = [];
@@ -665,7 +701,6 @@ const GraphVis: React.FC<Props> = (props) => {
         if (!e.model.definitions[e.entityName]) {
           return [];
         }
-
 
         let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
 
@@ -715,22 +750,42 @@ const GraphVis: React.FC<Props> = (props) => {
               }
               if (propertiesItem?.relatedEntityType) {
                 let parts = propertiesItem.relatedEntityType.split("/");
-                edges.push(oneToOneEdges(title, e.entityName, parts, relationshipName, property, propertiesItem, edges, definition));
+                edges.push(
+                  oneToOneEdges(
+                    title,
+                    e.entityName,
+                    parts,
+                    relationshipName,
+                    property,
+                    propertiesItem,
+                    edges,
+                    definition,
+                  ),
+                );
               } else if (propertiesItem.items?.relatedEntityType) {
                 let parts = propertiesItem.items.relatedEntityType.split("/");
-                edges.push(oneToManyEdges(title, e.entityName, parts, relationshipName, property, propertiesItem, edges, definition));
+                edges.push(
+                  oneToManyEdges(
+                    title,
+                    e.entityName,
+                    parts,
+                    relationshipName,
+                    property,
+                    propertiesItem,
+                    edges,
+                    definition,
+                  ),
+                );
               }
             }
-
           }
         }
       }
-
     });
     return edges;
   };
 
-  const isConceptNode = (nodeId) => {
+  const isConceptNode = nodeId => {
     return props.dataModel.some(e => {
       let isConcept = e.hasOwnProperty("conceptName");
       let nodeName = !isConcept ? "" : e.conceptName;
@@ -784,18 +839,18 @@ const GraphVis: React.FC<Props> = (props) => {
     physics: {
       enabled: physicsEnabled,
       repulsion: {
-        nodeDistance: 150
+        nodeDistance: 150,
       },
       minVelocity: 0.75,
       solver: "repulsion",
       stabilization: {
-        fit: true
+        fit: true,
       },
     },
     interaction: {
       navigationButtons: true,
       hover: true,
-      zoomView: false
+      zoomView: false,
     },
     manipulation: {
       enabled: false,
@@ -810,25 +865,30 @@ const GraphVis: React.FC<Props> = (props) => {
         if (isConceptNode(data.from)) {
           setInvalidSource(true);
         } else {
-          if (data.to === data.from) {  //if node is just clicked on during add edge mode, not dragged
+          if (data.to === data.from) {
+            //if node is just clicked on during add edge mode, not dragged
             let isConcept = isConceptNode(data.to);
-            relationshipInfo = getRelationshipInfo(data.from, !isConcept ? "Select target entity type*" : "Select a concept class*", "");
-          } else { //if edge is dragged
+            relationshipInfo = getRelationshipInfo(
+              data.from,
+              !isConcept ? "Select target entity type*" : "Select a concept class*",
+              "",
+            );
+          } else {
+            //if edge is dragged
             relationshipInfo = getRelationshipInfo(data.from, data.to, "");
           }
           setSelectedRelationship(relationshipInfo);
           setNewRelationship(true);
           setOpenRelationshipModal(true);
         }
-
-      }
+      },
     },
   };
 
-  const centerOnEntity = async (event) => {
+  const centerOnEntity = async event => {
     setContextMenuVisible(false);
     if (network) {
-      await network.focus(clickedNode, {offset: {x: 0, y: (modelingOptions.selectedEntity ? -200 : -60)}});
+      await network.focus(clickedNode, {offset: {x: 0, y: modelingOptions.selectedEntity ? -200 : -60}});
       let viewPosition: any = await network.getViewPosition();
       setClickedNode(undefined);
       let viewPositionPayload = defaultHubCentralConfig;
@@ -840,10 +900,16 @@ const GraphVis: React.FC<Props> = (props) => {
   const menu = () => {
     return (
       <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
-        {clickedNode &&
-          <div key="1" className={styles.contextMenuItem} data-testid={`centerOnEntityType-${clickedNode}`} onClick={centerOnEntity}>
+        {clickedNode && (
+          <div
+            key="1"
+            className={styles.contextMenuItem}
+            data-testid={`centerOnEntityType-${clickedNode}`}
+            onClick={centerOnEntity}
+          >
             Center on entity type
-          </div>}
+          </div>
+        )}
         {/*{ clickedEdge &&
       <Menu.Item key="2">
         {"Edit relationship "}
@@ -870,7 +936,7 @@ const GraphVis: React.FC<Props> = (props) => {
     props.updateHubCentralConfig(ZoomScalePayload);
   }, 400);
 
-  const updateConfigOnNavigation = _.debounce(async (event) => {
+  const updateConfigOnNavigation = _.debounce(async event => {
     let {nodes} = event;
     if (!nodes.length || modelingOptions.selectedEntity) {
       if (entitiesConfigExist(props.hubCentralConfig)) {
@@ -879,7 +945,11 @@ const GraphVis: React.FC<Props> = (props) => {
         let updatedHubCentralConfig: any = props.hubCentralConfig || defaultHubCentralConfig;
         updatedHubCentralConfig["modeling"]["scale"] = scale;
         updatedHubCentralConfig["modeling"]["viewPosition"] = viewPosition;
-        if (props.updateHubCentralConfig && (Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length > 0 || Object.keys(updatedHubCentralConfig["modeling"]["concepts"]).length > 0)) {
+        if (
+          props.updateHubCentralConfig &&
+          (Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length > 0 ||
+            Object.keys(updatedHubCentralConfig["modeling"]["concepts"]).length > 0)
+        ) {
           await props.updateHubCentralConfig(updatedHubCentralConfig);
           props.setCoordsChanged(true);
         }
@@ -896,8 +966,10 @@ const GraphVis: React.FC<Props> = (props) => {
         let nodeName = !isConcept ? node.entityName : node.conceptName;
         let modelCategory = getCategoryWithinModel(isConcept);
         let nodeObjectExists = !!allNodeCoordinates[modelCategory][nodeName];
-        if (!nodeObjectExists ||
-          (nodeObjectExists && !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphX") &&
+        if (
+          !nodeObjectExists ||
+          (nodeObjectExists &&
+            !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphX") &&
             !allNodeCoordinates[modelCategory][nodeName].hasOwnProperty("graphY"))
         ) {
           coordsExist = false;
@@ -909,7 +981,7 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const events = {
-    select: (event) => {
+    select: event => {
       if (!props.graphEditMode) {
         // console.info("SELECT", event);
         let {nodes} = event;
@@ -918,7 +990,7 @@ const GraphVis: React.FC<Props> = (props) => {
         }
       }
     },
-    click: (event) => {
+    click: event => {
       //if click is on an edge
       if (event.edges.length > 0 && event.nodes.length < 1 && props.canWriteEntityModel) {
         let connectedNodes = network.getConnectedNodes(event.edges[0]);
@@ -932,14 +1004,14 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     },
 
-    dragStart: (event) => {
+    dragStart: event => {
       if (!props.graphEditMode) {
         if (physicsEnabled) {
           setPhysicsEnabled(false);
         }
       }
     },
-    dragEnd: async (event) => {
+    dragEnd: async event => {
       let {nodes} = event;
       if (nodes.length > 0) {
         let positions = network.getPositions([nodes[0]])[nodes[0]];
@@ -967,25 +1039,27 @@ const GraphVis: React.FC<Props> = (props) => {
         }
       }
     },
-    hoverNode: (event) => {
+    hoverNode: event => {
       event.event.target.style.cursor = "pointer";
     },
-    blurNode: (event) => {
+    blurNode: event => {
       event.event.target.style.cursor = "";
     },
-    hoverEdge: (event) => {
+    hoverEdge: event => {
       event.event.target.style.cursor = !props.canWriteEntityModel && props.canReadEntityModel ? "" : "pointer";
     },
-    blurEdge: (event) => {
+    blurEdge: event => {
       event.event.target.style.cursor = "";
     },
-    doubleClick: (event) => {
-    },
-    stabilized: (event) => {
+    doubleClick: event => {},
+    stabilized: event => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
       if (hasStabilized) return;
-      if (network && (userPreferences?.modelingGraphOptions?.physicsEnabled || !userPreferences?.modelingGraphOptions)) {
+      if (
+        network &&
+        (userPreferences?.modelingGraphOptions?.physicsEnabled || !userPreferences?.modelingGraphOptions)
+      ) {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
         if (positions && Object.keys(positions).length) {
@@ -1000,7 +1074,8 @@ const GraphVis: React.FC<Props> = (props) => {
           }
         }
         if (modelingOptions.selectedEntity && selectedEntityExists()) {
-          try { // Visjs might not have new entity yet, catch error
+          try {
+            // Visjs might not have new entity yet, catch error
             network.selectNodes([modelingOptions.selectedEntity]);
           } catch (err) {
             console.error(err);
@@ -1008,7 +1083,7 @@ const GraphVis: React.FC<Props> = (props) => {
         }
       }
     },
-    oncontext: (event) => {
+    oncontext: event => {
       let nodeId = network.getNodeAt(event.pointer.DOM);
       if (nodeId) {
         event.event.preventDefault();
@@ -1018,37 +1093,38 @@ const GraphVis: React.FC<Props> = (props) => {
         setClickedNode(undefined);
       }
     },
-    dragging: (event) => {
+    dragging: event => {
       if (clickedNode) {
         setClickedNode(undefined);
       }
     },
-    zoom: async (event) => {
+    zoom: async event => {
       let networkScale: any = await network.getScale();
       if (network) {
         if (networkScale >= graphConfig.scale.min) {
           network.moveTo({
-            scale: graphConfig.scale.min
+            scale: graphConfig.scale.min,
           });
         }
         if (networkScale <= graphConfig.scale.max) {
           network.moveTo({
-            scale: graphConfig.scale.max
+            scale: graphConfig.scale.max,
           });
         }
       }
       handleZoom(event, networkScale);
     },
-    release: (event) => {
+    release: event => {
       if (!props.graphEditMode) {
         let targetClassName = event.event.target.className;
         let usingNavigationButtons = targetClassName || event.event.deltaX || event.event.deltaY ? true : false;
-        let usingZoomButtons = targetClassName === "vis-button vis-zoomOut" || targetClassName === "vis-button vis-zoomIn";
+        let usingZoomButtons =
+          targetClassName === "vis-button vis-zoomOut" || targetClassName === "vis-button vis-zoomIn";
         if (usingNavigationButtons && !usingZoomButtons) {
           updateConfigOnNavigation(event);
         }
       }
-    }
+    },
   };
 
   const closeInvalidSourceAlert = () => {
@@ -1057,55 +1133,56 @@ const GraphVis: React.FC<Props> = (props) => {
     setInvalidSource(false);
   };
 
-  const invalidAlert = () => <HCModal
-    show={invalidSource}
-    onHide={closeInvalidSourceAlert}
-    dialogClassName={styles.dialog960w}
-    centered
-  >
-    <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="closeInvalidSourceTypeAlert" onClick={closeInvalidSourceAlert} />
-    </Modal.Header>
-    <Modal.Body>
-      <HCAlert
-        className={`${styles.alert}`}
-        variant="danger"
-        showIcon
-        key={"invalidSourceTypeError"}
-        onClose={closeInvalidSourceAlert}
-      >{"Invalid Relationship"}</HCAlert>
-      <p aria-label="invalidSourceTypeError">{ModelingMessages.invalidSourceTypeError}</p>
-    </Modal.Body>
-  </HCModal>;
+  const invalidAlert = () => (
+    <HCModal show={invalidSource} onHide={closeInvalidSourceAlert} dialogClassName={styles.dialog960w} centered>
+      <Modal.Header className={"bb-none"}>
+        <button
+          type="button"
+          className="btn-close"
+          aria-label="closeInvalidSourceTypeAlert"
+          onClick={closeInvalidSourceAlert}
+        />
+      </Modal.Header>
+      <Modal.Body>
+        <HCAlert
+          className={`${styles.alert}`}
+          variant="danger"
+          showIcon
+          key={"invalidSourceTypeError"}
+          onClose={closeInvalidSourceAlert}
+        >
+          {"Invalid Relationship"}
+        </HCAlert>
+        <p aria-label="invalidSourceTypeError">{ModelingMessages.invalidSourceTypeError}</p>
+      </Modal.Body>
+    </HCModal>
+  );
 
   return (
     <div id="graphVis">
       <div className={styles.graphContainer}>
-        <Graph
-          graph={graphData}
-          options={options}
-          events={events}
-          getNetwork={initNetworkInstance}
-        />
+        <Graph graph={graphData} options={options} events={events} getNetwork={initNetworkInstance} />
         {contextMenuVisible && menu()}
       </div>
       {invalidAlert()}
-      {!invalidSource && <AddEditRelationship
-        edgeData={graphData.edges}
-        openRelationshipModal={openRelationshipModal}
-        setOpenRelationshipModal={setOpenRelationshipModal}
-        isEditing={!newRelationship}
-        relationshipInfo={selectedRelationship}
-        dataModel={props.dataModel}
-        updateSavedEntity={props.updateSavedEntity}
-        relationshipModalVisible={props.relationshipModalVisible}
-        toggleRelationshipModal={props.toggleRelationshipModal}
-        canReadEntityModel={props.canReadEntityModel}
-        canWriteEntityModel={props.canWriteEntityModel}
-        hubCentralConfig={props.hubCentralConfig}
-        getColor={props.getColor}
-        mapFunctions={mapFunctions}
-      />}
+      {!invalidSource && (
+        <AddEditRelationship
+          edgeData={graphData.edges}
+          openRelationshipModal={openRelationshipModal}
+          setOpenRelationshipModal={setOpenRelationshipModal}
+          isEditing={!newRelationship}
+          relationshipInfo={selectedRelationship}
+          dataModel={props.dataModel}
+          updateSavedEntity={props.updateSavedEntity}
+          relationshipModalVisible={props.relationshipModalVisible}
+          toggleRelationshipModal={props.toggleRelationshipModal}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
+          hubCentralConfig={props.hubCentralConfig}
+          getColor={props.getColor}
+          mapFunctions={mapFunctions}
+        />
+      )}
     </div>
   );
 };

@@ -15,7 +15,7 @@ export const jobResults = {
       "failedItemCount": 0,
       "user": "pari",
       "jobId": "2fe6a65e-0996-43c5-83c7-6bbf4e0db6b3",
-      "flowName": "CurateClientJSON"
+      "flowName": "CurateClientJSON",
     },
     {
       "stepName": "loadClientJSON",
@@ -28,7 +28,7 @@ export const jobResults = {
       "failedItemCount": 0,
       "user": "hc-developer",
       "jobId": "2fe6a65e-0996-43c5-83c7-6bbf4e0db6b3",
-      "flowName": "CurateClientJSON"
+      "flowName": "CurateClientJSON",
     },
     {
       "stepName": "map-orders",
@@ -41,7 +41,7 @@ export const jobResults = {
       "failedItemCount": 0,
       "user": "hc-developer",
       "jobId": "61040854-2894-44b9-8fbd-fc6e71357692",
-      "flowName": "convertedFlow"
-    }
-  ]
+      "flowName": "convertedFlow",
+    },
+  ],
 };

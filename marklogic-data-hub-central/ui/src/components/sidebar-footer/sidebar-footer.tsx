@@ -15,24 +15,25 @@ const SidebarFooter: React.FC = () => {
     setQuery,
     clearAllFacetsLS,
   } = useContext(SearchContext);
-  const {
-    monitorOptions,
-    monitorGreyedOptions,
-    clearAllMonitorFacets,
-    setAllMonitorFacets,
-    clearAllMonitorGreyFacets,
-  } = useContext(MonitorContext);
+  const {monitorOptions, monitorGreyedOptions, clearAllMonitorFacets, setAllMonitorFacets, clearAllMonitorGreyFacets} =
+    useContext(MonitorContext);
 
   const applyFacets = () => {
     let facets = {...greyedOptions.selectedFacets};
     if (Object.keys(facets).length !== 0) {
       for (let constraint in searchOptions.selectedFacets) {
         if (facets.hasOwnProperty(constraint)) {
-          if (searchOptions.selectedFacets[constraint].hasOwnProperty("rangeValues")) { continue; }
-          for (let sValue of searchOptions.selectedFacets[constraint].stringValues) {
-            if (facets[constraint].stringValues.indexOf(sValue) === -1) { facets[constraint].stringValues.push(sValue); }
+          if (searchOptions.selectedFacets[constraint].hasOwnProperty("rangeValues")) {
+            continue;
           }
-        } else { facets[constraint] = searchOptions.selectedFacets[constraint]; }
+          for (let sValue of searchOptions.selectedFacets[constraint].stringValues) {
+            if (facets[constraint].stringValues.indexOf(sValue) === -1) {
+              facets[constraint].stringValues.push(sValue);
+            }
+          }
+        } else {
+          facets[constraint] = searchOptions.selectedFacets[constraint];
+        }
       }
       setSearchOptions({
         ...searchOptions,
@@ -40,14 +41,13 @@ const SidebarFooter: React.FC = () => {
         selectedFacets: facets,
         start: 1,
         pageNumber: 1,
-        pageLength: searchOptions.pageSize
+        pageLength: searchOptions.pageSize,
       });
       clearAllGreyFacets();
       clearAllFacetsLS();
     } else {
       if (greyedOptions.query !== searchOptions.query) setQuery(greyedOptions.query);
     }
-
   };
 
   const applyMonitorFacets = () => {
@@ -55,9 +55,13 @@ const SidebarFooter: React.FC = () => {
     for (let constraint in monitorOptions.selectedFacets) {
       if (facets.hasOwnProperty(constraint)) {
         for (let sValue of monitorOptions.selectedFacets[constraint]) {
-          if (facets[constraint].indexOf(sValue) === -1) { facets[constraint].push(sValue); }
+          if (facets[constraint].indexOf(sValue) === -1) {
+            facets[constraint].push(sValue);
+          }
         }
-      } else { facets[constraint] = monitorOptions.selectedFacets[constraint]; }
+      } else {
+        facets[constraint] = monitorOptions.selectedFacets[constraint];
+      }
     }
     setAllMonitorFacets(facets);
     clearAllMonitorGreyFacets();
@@ -69,30 +73,39 @@ const SidebarFooter: React.FC = () => {
 
   return (
     <div>
-      <HCDivider style={{"backgroundColor": themeColors.light, "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
+      <HCDivider
+        style={{"backgroundColor": themeColors.light, "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}}
+      />
       <div className={styles.facetFooter}>
         <HCButton
           variant="outline-light"
           size="sm"
           aria-label="clear-facets-button"
-          disabled={searchOptions.tileId === "explore"
-            ? (Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === "")
-            : (Object.keys(monitorOptions.selectedFacets).length === 0 && Object.keys(monitorGreyedOptions.selectedFacets).length === 0)}
-          onClick={searchOptions.tileId === "explore" ? () => clearFacets() : () => clearAllMonitorFacets()}>
+          disabled={
+            searchOptions.tileId === "explore"
+              ? Object.keys(searchOptions.selectedFacets).length === 0 &&
+                Object.keys(greyedOptions.selectedFacets).length === 0 &&
+                greyedOptions.query === ""
+              : Object.keys(monitorOptions.selectedFacets).length === 0 &&
+                Object.keys(monitorGreyedOptions.selectedFacets).length === 0
+          }
+          onClick={searchOptions.tileId === "explore" ? () => clearFacets() : () => clearAllMonitorFacets()}
+        >
           Clear Selection
         </HCButton>
         <HCButton
           className={styles.button}
           size="sm"
           aria-label="apply-facets-button"
-          disabled={searchOptions.tileId === "explore"
-            ? Object.keys(greyedOptions.selectedFacets).length === 0  && greyedOptions.query === searchOptions.query
-            : Object.keys(monitorGreyedOptions.selectedFacets).length === 0}
-          onClick={searchOptions.tileId === "explore"
-            ? () => applyFacets()
-            : () => applyMonitorFacets()}
-          variant="primary" >
-            Search
+          disabled={
+            searchOptions.tileId === "explore"
+              ? Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === searchOptions.query
+              : Object.keys(monitorGreyedOptions.selectedFacets).length === 0
+          }
+          onClick={searchOptions.tileId === "explore" ? () => applyFacets() : () => applyMonitorFacets()}
+          variant="primary"
+        >
+          Search
         </HCButton>
       </div>
     </div>

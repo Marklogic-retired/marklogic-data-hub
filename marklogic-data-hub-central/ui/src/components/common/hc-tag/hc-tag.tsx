@@ -14,26 +14,43 @@ interface Props {
 }
 
 const colors = {
-  "black": styles.spanTagBlack, "blue": styles.spanTagBlue, "green": styles.spanTagGreen, "grey": styles.spanTagGrey,
-  "magenta": styles.spanTagMagenta, "red": styles.spanTagRed, "yellow": styles.spanTagYellow
+  "black": styles.spanTagBlack,
+  "blue": styles.spanTagBlue,
+  "green": styles.spanTagGreen,
+  "grey": styles.spanTagGrey,
+  "magenta": styles.spanTagMagenta,
+  "red": styles.spanTagRed,
+  "yellow": styles.spanTagYellow,
 };
 
-const HCTag: React.FC<Props> = (props) => {
+const HCTag: React.FC<Props> = props => {
   return (
-    <span aria-label={props.ariaLabel}
+    <span
+      aria-label={props.ariaLabel}
       data-testid="tag-component"
-      className={[styles.spanTag, props.className ? props.className : "", props?.color && colors[props.color],
-        props.dashed && styles.spanTagDashed, props.visible === false && styles.spanTagInvisible].join(" ")}
-      style={props.style}>
+      className={[
+        styles.spanTag,
+        props.className ? props.className : "",
+        props?.color && colors[props.color],
+        props.dashed && styles.spanTagDashed,
+        props.visible === false && styles.spanTagInvisible,
+      ].join(" ")}
+      style={props.style}
+    >
       {props.label}
-      {(props?.closable || props?.closable === undefined) &&
+      {(props?.closable || props?.closable === undefined) && (
         <XLg
           data-testid="iconClose-tagComponent"
           tabIndex={0}
-          onKeyDown={(event) => { if (props.onClose && event.key === "Enter") { props?.onClose(); } }}
+          onKeyDown={event => {
+            if (props.onClose && event.key === "Enter") {
+              props?.onClose();
+            }
+          }}
           onClick={props?.onClose}
-          className={styles.spanIcon} />
-      }
+          className={styles.spanIcon}
+        />
+      )}
     </span>
   );
 };

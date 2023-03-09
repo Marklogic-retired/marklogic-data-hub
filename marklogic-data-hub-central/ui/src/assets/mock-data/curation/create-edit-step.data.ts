@@ -46,7 +46,7 @@ const editMerging = {
 
 const data = {
   newMerging,
-  editMerging
+  editMerging,
 };
 
 export default data;

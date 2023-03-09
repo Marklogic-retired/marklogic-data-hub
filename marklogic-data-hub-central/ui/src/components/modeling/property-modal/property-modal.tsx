@@ -25,7 +25,7 @@ import {
   DROPDOWN_PLACEHOLDER,
   MORE_DATE_TYPES,
   MORE_NUMBER_TYPES,
-  MORE_STRING_TYPES
+  MORE_STRING_TYPES,
 } from "@config/modeling.config";
 type Props = {
   entityName: any;
@@ -35,8 +35,17 @@ type Props = {
   structuredTypeOptions: StructuredTypeOptions;
   toggleModal: (isVisible: boolean) => void;
   addPropertyToDefinition: (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => void;
-  addStructuredTypeToDefinition: (structuredTypeName: string, namespace: string | undefined, prefix: string | undefined, errorHandler: Function | undefined) => void;
-  editPropertyUpdateDefinition: (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => void;
+  addStructuredTypeToDefinition: (
+    structuredTypeName: string,
+    namespace: string | undefined,
+    prefix: string | undefined,
+    errorHandler: Function | undefined,
+  ) => void;
+  editPropertyUpdateDefinition: (
+    definitionName: string,
+    propertyName: string,
+    editPropertyOptions: EditPropertyOptions,
+  ) => void;
   deletePropertyFromDefinition: (definitionName: string, propertyName: string) => void;
 };
 
@@ -44,30 +53,30 @@ const ALL_RADIO_DISPLAY_VALUES = [
   {
     label: "Identifier",
     value: "identifier",
-    tooltip: ModelingTooltips.identifier
+    tooltip: ModelingTooltips.identifier,
   },
   {
     label: "Allow Multiple Values",
     value: "multiple",
-    tooltip: ModelingTooltips.multiple
+    tooltip: ModelingTooltips.multiple,
   },
   {
     label: "PII",
     value: "pii",
-    tooltip: ModelingTooltips.pii
-  }
+    tooltip: ModelingTooltips.pii,
+  },
 ];
 
 const ALL_CHECKBOX_DISPLAY_VALUES = [
   {
     label: "Sort",
     value: "sortable",
-    tooltip: ModelingTooltips.sort
+    tooltip: ModelingTooltips.sort,
   },
   {
     label: "Facet",
     value: "facetable",
-    tooltip: ModelingTooltips.facet
+    tooltip: ModelingTooltips.facet,
   },
   // {
   //   label: 'Wildcard Search',
@@ -82,9 +91,9 @@ const DEFAULT_STRUCTURED_DROPDOWN_OPTIONS = {
   children: [
     {
       label: "New Property Type",
-      value: "newPropertyType"
-    }
-  ]
+      value: "newPropertyType",
+    },
+  ],
 };
 
 const DEFAULT_DROPDOWN_OPTIONS = [
@@ -94,7 +103,7 @@ const DEFAULT_DROPDOWN_OPTIONS = [
   DROPDOWN_PLACEHOLDER("2"),
   MORE_STRING_TYPES,
   MORE_NUMBER_TYPES,
-  MORE_DATE_TYPES
+  MORE_DATE_TYPES,
 ];
 
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
@@ -107,12 +116,12 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   pii: "no",
   facetable: false,
   sortable: false,
-  wildcard: false
+  wildcard: false,
 };
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
-const PropertyModal: React.FC<Props> = (props) => {
+const PropertyModal: React.FC<Props> = props => {
   const {handleError} = useContext(UserContext);
   const {modelingOptions, setEntityPropertiesNamesArray} = useContext(ModelingContext);
 
@@ -140,41 +149,50 @@ const PropertyModal: React.FC<Props> = (props) => {
   const createRelatedEntityDropdown = () => {
     let entityTypes = modelingOptions.entityTypeNamesArray
       .sort((a, b) => a.name?.localeCompare(b.name))
-      .map(entity => { return {label: entity.name, value: entity.name}; });
+      .map(entity => {
+        return {label: entity.name, value: entity.name};
+      });
 
     return {
       label: "Related Entity",
       value: "relatedEntity",
-      children: entityTypes
+      children: entityTypes,
     };
   };
 
-  const createStructuredDropdown = (structuredDefinitions) => {
+  const createStructuredDropdown = structuredDefinitions => {
     let structuredTypes = structuredDefinitions
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(definition => {
-        const isSameStructuredType = (structuredTypeLabel === definition.name);
+        const isSameStructuredType = structuredTypeLabel === definition.name;
         return {
           label: isSameStructuredType ? (
             <HCTooltip
               text={ModelingTooltips.structuredTypeProperty}
               id="structured-type-tooltip"
               placement="right-end"
-              className={styles.tooltip}>
+              className={styles.tooltip}
+            >
               <span>{definition.name}</span>
-            </HCTooltip>) : definition.name,
+            </HCTooltip>
+          ) : (
+            definition.name
+          ),
           value: definition.name,
-          disabled: isSameStructuredType
+          disabled: isSameStructuredType,
         };
       });
 
     return {
       ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
-      children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS["children"], ...structuredTypes]
+      children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS["children"], ...structuredTypes],
     };
   };
 
-  const [dropdownOptions, setDropdownOptions] = useState<any[]>([...DEFAULT_DROPDOWN_OPTIONS, createRelatedEntityDropdown()]);
+  const [dropdownOptions, setDropdownOptions] = useState<any[]>([
+    ...DEFAULT_DROPDOWN_OPTIONS,
+    createRelatedEntityDropdown(),
+  ]);
   const [radioValues, setRadioValues] = useState<any[]>([]);
   const [showConfigurationOptions, toggleShowConfigurationOptions] = useState(false);
 
@@ -190,16 +208,23 @@ const PropertyModal: React.FC<Props> = (props) => {
     let typeDisplayValueAux;
 
     if (props.editPropertyOptions.isEdit) {
-      let isCommonType = COMMON_PROPERTY_TYPES.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+      let isCommonType = COMMON_PROPERTY_TYPES.some(
+        property => property.value === props.editPropertyOptions.propertyOptions.type,
+      );
 
       if (props.editPropertyOptions.isEdit) {
         typeDisplayValueAux = [props.editPropertyOptions.propertyOptions.type];
         if (!isCommonType && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
-
           let type = "";
-          let isMoreStringType = MORE_STRING_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
-          let isMoreNumberType = MORE_NUMBER_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
-          let isMoreDateType = MORE_DATE_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreStringType = MORE_STRING_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
+          let isMoreNumberType = MORE_NUMBER_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
+          let isMoreDateType = MORE_DATE_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
 
           if (isMoreStringType) {
             type = "moreStringTypes";
@@ -232,7 +257,9 @@ const PropertyModal: React.FC<Props> = (props) => {
         let structuredLabel = "";
         let typeDisplayValue = [props.editPropertyOptions.propertyOptions.type];
         let joinDisplayValue = "";
-        let isCommonType = COMMON_PROPERTY_TYPES.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+        let isCommonType = COMMON_PROPERTY_TYPES.some(
+          property => property.value === props.editPropertyOptions.propertyOptions.type,
+        );
         let showConfigOptions = true;
         let showJoinProp = false;
         let newRadioValues = ALL_RADIO_DISPLAY_VALUES;
@@ -240,9 +267,15 @@ const PropertyModal: React.FC<Props> = (props) => {
 
         if (!isCommonType && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
           let type = "";
-          let isMoreStringType = MORE_STRING_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
-          let isMoreNumberType = MORE_NUMBER_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
-          let isMoreDateType = MORE_DATE_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreStringType = MORE_STRING_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
+          let isMoreNumberType = MORE_NUMBER_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
+          let isMoreDateType = MORE_DATE_TYPES.children.some(
+            property => property.value === props.editPropertyOptions.propertyOptions.type,
+          );
 
           if (isMoreStringType) {
             type = "moreStringTypes";
@@ -253,16 +286,17 @@ const PropertyModal: React.FC<Props> = (props) => {
           }
 
           typeDisplayValue = [type, props.editPropertyOptions.propertyOptions.type];
-
         } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.RelatedEntity) {
           joinDisplayValue = props.editPropertyOptions.propertyOptions.joinPropertyName;
           typeDisplayValue = ["relatedEntity", props.editPropertyOptions.propertyOptions.joinPropertyType];
-          createJoinMenu(props.editPropertyOptions.propertyOptions.joinPropertyType, props.editPropertyOptions.propertyOptions.joinPropertyName);
+          createJoinMenu(
+            props.editPropertyOptions.propertyOptions.joinPropertyType,
+            props.editPropertyOptions.propertyOptions.joinPropertyName,
+          );
           showJoinProp = true;
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
           structuredLabel = props.structuredTypeOptions.name;
-
         } else if (props.structuredTypeOptions.isStructured) {
           structuredLabel = props.structuredTypeOptions.name;
           newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1, 3);
@@ -333,7 +367,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     if (event.target.id === "property-name") {
       if (event.target.value === "") {
         toggleIsNameDisabled(true);
@@ -384,7 +418,10 @@ const PropertyModal: React.FC<Props> = (props) => {
       case "moreDateTypes":
         newSelectedPropertyOptions.propertyType = PropertyType.Basic;
         typeValue = value[1];
-        if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName) {
+        if (
+          props.structuredTypeOptions.isStructured &&
+            props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName
+        ) {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1, 3));
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
@@ -395,7 +432,10 @@ const PropertyModal: React.FC<Props> = (props) => {
       default:
         newSelectedPropertyOptions.propertyType = PropertyType.Basic;
         typeValue = value[0];
-        if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName) {
+        if (
+          props.structuredTypeOptions.isStructured &&
+            props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName
+        ) {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1, 3));
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
@@ -407,7 +447,6 @@ const PropertyModal: React.FC<Props> = (props) => {
 
       setTypeDisplayValue(value);
       setSelectedPropertyOptions({...newSelectedPropertyOptions, type: typeValue});
-
     } else {
       setTypeDisplayValue([]);
       toggleShowJoinProperty(false);
@@ -425,21 +464,28 @@ const PropertyModal: React.FC<Props> = (props) => {
       setErrorMessage(ModelingTooltips.nameEntityProperty);
     } else {
       if (props.editPropertyOptions.isEdit) {
-        let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(propertyName => propertyName !== props.editPropertyOptions.name);
+        let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(
+          propertyName => propertyName !== props.editPropertyOptions.name,
+        );
 
         if (editEntityPropertyNamesArray.includes(name)) {
           setErrorMessage("name-error");
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
         } else {
-
           let definitionName = props.entityName;
           let typeChangeCheck = props.editPropertyOptions.propertyOptions.propertyType;
 
-          if (props.structuredTypeOptions.isStructured && props.structuredTypeOptions.name !== props.editPropertyOptions.propertyOptions.propertyType) {
+          if (
+            props.structuredTypeOptions.isStructured &&
+            props.structuredTypeOptions.name !== props.editPropertyOptions.propertyOptions.propertyType
+          ) {
             definitionName = props.structuredTypeOptions.name;
           }
-          if (props.structuredTypeOptions.isStructured && props.structuredTypeOptions.name === props.editPropertyOptions.propertyOptions.type) {
+          if (
+            props.structuredTypeOptions.isStructured &&
+            props.structuredTypeOptions.name === props.editPropertyOptions.propertyOptions.type
+          ) {
             definitionName = props.entityName;
           }
           if (typeChangeCheck === PropertyType.Structured && typeChangeCheck !== selectedPropertyOptions.propertyType) {
@@ -449,13 +495,17 @@ const PropertyModal: React.FC<Props> = (props) => {
           // Ensure correct types for related case
           if (selectedPropertyOptions.propertyType === "relatedEntity") {
             selectedPropertyOptions.type = typeDisplayValue ? typeDisplayValue[1] : "";
-            selectedPropertyOptions.joinPropertyType = joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName) ? joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type : "string";
+            selectedPropertyOptions.joinPropertyType = joinProperties.find(
+              prop => prop.value === selectedPropertyOptions.joinPropertyName,
+            )
+              ? joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type
+              : "string";
           }
 
           const newEditPropertyOptions: EditPropertyOptions = {
             name: name,
             isEdit: true,
-            propertyOptions: selectedPropertyOptions
+            propertyOptions: selectedPropertyOptions,
           };
 
           props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
@@ -474,7 +524,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           // Show confirmation modal
           setShowConfirmNameModal(true);
         } else {
-          let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
+          let definitionName = props.structuredTypeOptions.isStructured
+            ? props.structuredTypeOptions.name
+            : props.entityName;
           props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
@@ -506,7 +558,10 @@ const PropertyModal: React.FC<Props> = (props) => {
     } else {
       // Delete Property
       let definitionName = props.entityName;
-      if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name) {
+      if (
+        props.structuredTypeOptions.isStructured &&
+        props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name
+      ) {
         definitionName = props.structuredTypeOptions.name;
       }
 
@@ -519,7 +574,12 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const addStructuredType = async (name: string, namespace: string | undefined, namespacePrefix: string | undefined, errorHandler: Function | undefined) => {
+  const addStructuredType = async (
+    name: string,
+    namespace: string | undefined,
+    namespacePrefix: string | undefined,
+    errorHandler: Function | undefined,
+  ) => {
     let newStructuredDefinitionObject = {
       name,
       namespace,
@@ -530,7 +590,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       rangeIndex: [],
       required: [],
       wordLexicon: [],
-      properties: []
+      properties: [],
     };
 
     let structuredDefinitions = props.entityDefinitionsArray.filter(entity => entity.name !== props.entityName);
@@ -547,7 +607,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
+        MORE_DATE_TYPES,
       ]);
       setEntityPropertyNamesArray([...entityPropertyNamesArray, name]);
     }
@@ -556,13 +616,18 @@ const PropertyModal: React.FC<Props> = (props) => {
     setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1, 3));
     toggleShowConfigurationOptions(false);
 
-    await props.addStructuredTypeToDefinition(name, namespace, namespacePrefix, (error) => {
+    await props.addStructuredTypeToDefinition(name, namespace, namespacePrefix, error => {
       if (errorHandler) {
         errorHandler(error);
       }
       updateTypeDropdown();
       setTypeDisplayValue(["structured", "newPropertyType"]);
-      setSelectedPropertyOptions({...selectedPropertyOptions, propertyType: PropertyType.Structured, identifier: "", type: "newPropertyType"});
+      setSelectedPropertyOptions({
+        ...selectedPropertyOptions,
+        propertyType: PropertyType.Structured,
+        identifier: "",
+        type: "newPropertyType",
+      });
     });
   };
 
@@ -585,7 +650,6 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length === 0) {
       setDropdownOptions([...DEFAULT_DROPDOWN_OPTIONS, createRelatedEntityDropdown()]);
-
     } else if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length === 0) {
       let relatedEntityDropdown = createRelatedEntityDropdown();
 
@@ -597,9 +661,8 @@ const PropertyModal: React.FC<Props> = (props) => {
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
+        MORE_DATE_TYPES,
       ]);
-
     } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
       let relatedEntityDropdown = createRelatedEntityDropdown();
@@ -612,19 +675,14 @@ const PropertyModal: React.FC<Props> = (props) => {
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
+        MORE_DATE_TYPES,
       ]);
     } else if (
-      (
-        props.editPropertyOptions.isEdit
-        && (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured)
-      )
-      ||
-      (
-        (modelingOptions.entityTypeNamesArray.length > 1)
-        && (structuredDefinitions.length > 0)
-        && !props.structuredTypeOptions.isStructured
-      )
+      (props.editPropertyOptions.isEdit &&
+        props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) ||
+      (modelingOptions.entityTypeNamesArray.length > 1 &&
+        structuredDefinitions.length > 0 &&
+        !props.structuredTypeOptions.isStructured)
     ) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
       let relatedEntityDropdown = createRelatedEntityDropdown();
@@ -637,9 +695,8 @@ const PropertyModal: React.FC<Props> = (props) => {
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
+        MORE_DATE_TYPES,
       ]);
-
     } else if (props.structuredTypeOptions.isStructured) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
       let relatedEntityDropdown = createRelatedEntityDropdown();
@@ -652,14 +709,15 @@ const PropertyModal: React.FC<Props> = (props) => {
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
-        MORE_DATE_TYPES
+        MORE_DATE_TYPES,
       ]);
     }
     setEntityPropertyNamesArray([...propertyNamesArray, ...entityNamesArray]);
   };
 
   const getJoinMenuProps = (model, modelUpdated) => {
-    let alreadyAdded: string[] = [], result;
+    let alreadyAdded: string[] = [],
+      result;
     // Check each property from saved model and build menu items
     if (model) {
       result = Object.keys(model.properties).map(key => {
@@ -680,14 +738,14 @@ const PropertyModal: React.FC<Props> = (props) => {
             value: key,
             label: key,
             type: "", // TODO
-            disabled: true
+            disabled: true,
           };
         } else {
           // Default case
           return {
             value: key,
             label: key,
-            type: model.properties[key].datatype
+            type: model.properties[key].datatype,
           };
         }
       });
@@ -700,7 +758,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             value: key,
             label: key,
             type: modelUpdated.properties[key].datatype,
-            disabled: true
+            disabled: true,
           });
         }
       });
@@ -730,10 +788,11 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onJoinPropertyChange = (selectedItem) => {
+  const onJoinPropertyChange = selectedItem => {
     setJoinDisplayValue(selectedItem.value);
     let joinPropertyVal = selectedItem.value === "None" ? "" : selectedItem.value;
-    const type = selectedItem.value === "None" ? "" : joinProperties.find(prop => prop["value"] === selectedItem.value).type;
+    const type =
+      selectedItem.value === "None" ? "" : joinProperties.find(prop => prop["value"] === selectedItem.value).type;
     setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: joinPropertyVal, joinPropertyType: type});
   };
 
@@ -750,84 +809,101 @@ const PropertyModal: React.FC<Props> = (props) => {
       } else {
         setSelectedPropertyOptions({...selectedPropertyOptions, [radioName]: event.target.value});
       }
-
     } else {
       setSelectedPropertyOptions({...selectedPropertyOptions, [radioName]: event.target.value});
     }
   };
 
   const onCheckboxChange = (event, checkboxName) => {
-    setSelectedPropertyOptions({...selectedPropertyOptions, [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName] : event.target.checked});
+    setSelectedPropertyOptions({
+      ...selectedPropertyOptions,
+      [checkboxName]: event === "keyboard" ? !selectedPropertyOptions[checkboxName] : event.target.checked,
+    });
   };
 
-  const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
-    return (
-      <Row className={"mb-3"} key={index}>
-        <FormLabel column lg={3}>{`${radio.label}:`}</FormLabel>
-        <Col className={"d-flex align-items-center"}>
-          <Form.Check
-            inline
-            id={`${radio.value}-yes`}
-            name={radio.value}
-            type={"radio"}
-            defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
-            onChange={(event) => onRadioChange(event, radio.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") { onRadioChange("t", radio.value); }
-            }}
-            label={"Yes"}
-            value={"yes"}
-            aria-label={radio.value + "-yes"}
-            className={"mb-0"}
-            tabIndex={0}
-          />
-          <Form.Check
-            inline
-            id={`${radio.value}-no`}
-            name={radio.value}
-            type={"radio"}
-            defaultChecked={selectedPropertyOptions[radio.value] === "no"}
-            onChange={(event) => onRadioChange(event, radio.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") { onRadioChange(event, radio.value); }
-            }}
-            label={"No"}
-            value={"no"}
-            aria-label={radio.value + "-no"}
-            className={"mb-0"}
-            tabIndex={0}
-          />
-          <div className={"p-2 d-flex align-items-center"}>
-            <HCTooltip text={radio.tooltip} id={radio.value + "-tooltip"} placement="top">
-              <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.radioQuestionIcon} />
-            </HCTooltip>
-          </div>
-        </Col>
-      </Row>
-    );
-  });
+  const renderRadios =
+    radioValues.length > 0 &&
+    radioValues.map((radio, index) => {
+      return (
+        <Row className={"mb-3"} key={index}>
+          <FormLabel column lg={3}>{`${radio.label}:`}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <Form.Check
+              inline
+              id={`${radio.value}-yes`}
+              name={radio.value}
+              type={"radio"}
+              defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
+              onChange={event => onRadioChange(event, radio.value)}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  onRadioChange("t", radio.value);
+                }
+              }}
+              label={"Yes"}
+              value={"yes"}
+              aria-label={radio.value + "-yes"}
+              className={"mb-0"}
+              tabIndex={0}
+            />
+            <Form.Check
+              inline
+              id={`${radio.value}-no`}
+              name={radio.value}
+              type={"radio"}
+              defaultChecked={selectedPropertyOptions[radio.value] === "no"}
+              onChange={event => onRadioChange(event, radio.value)}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  onRadioChange(event, radio.value);
+                }
+              }}
+              label={"No"}
+              value={"no"}
+              aria-label={radio.value + "-no"}
+              className={"mb-0"}
+              tabIndex={0}
+            />
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={radio.tooltip} id={radio.value + "-tooltip"} placement="top">
+                <QuestionCircleFill
+                  tabIndex={0}
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={styles.radioQuestionIcon}
+                />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+      );
+    });
 
   const renderCheckboxes = ALL_CHECKBOX_DISPLAY_VALUES.map((checkbox, index) => {
     return (
       <Row className={"mb-3"} key={index}>
-        <FormLabel column lg={3}>{" "}</FormLabel>
+        <FormLabel column lg={3}>
+          {" "}
+        </FormLabel>
         <Col className={"d-flex"}>
           <FormCheck id={checkbox.value} className={styles.formCheck}>
             <FormCheck.Input
               type="checkbox"
               value={checkbox.value}
               checked={selectedPropertyOptions[checkbox.value]}
-              onChange={(event) => onCheckboxChange(event, checkbox.value)}
+              onChange={event => onCheckboxChange(event, checkbox.value)}
               tabIndex={0}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") { onCheckboxChange("keyboard", checkbox.value); }
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  onCheckboxChange("keyboard", checkbox.value);
+                }
               }}
             />
             <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
           </FormCheck>
           <div className={"p-2 ps-4 d-flex align-items-center"}>
             <HCTooltip text={checkbox.tooltip} id={checkbox.value + "-tooltip"} placement="top">
-              <QuestionCircleFill  tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
+              <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
             </HCTooltip>
           </div>
         </Col>
@@ -836,36 +912,47 @@ const PropertyModal: React.FC<Props> = (props) => {
   });
 
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
-  const placeHolderOrEditValue = [props?.editPropertyOptions?.propertyOptions?.type].length ? [props?.editPropertyOptions?.propertyOptions?.type][0] !== "" ? false : true : true;
+  const placeHolderOrEditValue = [props?.editPropertyOptions?.propertyOptions?.type].length
+    ? [props?.editPropertyOptions?.propertyOptions?.type][0] !== ""
+      ? false
+      : true
+    : true;
 
-  const modalFooter = <div className={`w-100 ${props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}`}>
-    {props.editPropertyOptions.isEdit &&
-      <HCButton variant="link" onClick={async () => {
-        if (confirmType === ConfirmationType.Identifer) {
-          await getEntityReferences();
-        }
-        toggleConfirmIdentifierModal(true);
-      }}>
-        <FontAwesomeIcon data-testid={"delete-" + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
-      </HCButton>
-    }
-    <div>
-      <HCButton
-        aria-label="property-modal-cancel"
-        variant="outline-light"
-        className={"me-2"}
-        onClick={onCancel}
-      >Cancel</HCButton>
-      <HCButton
-        aria-label="property-modal-submit"
-        variant="primary"
-        type="submit"
-        onClick={onSubmit}
-      >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</HCButton>
+  const modalFooter = (
+    <div className={`w-100 ${props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}`}>
+      {props.editPropertyOptions.isEdit && (
+        <HCButton
+          variant="link"
+          onClick={async () => {
+            if (confirmType === ConfirmationType.Identifer) {
+              await getEntityReferences();
+            }
+            toggleConfirmIdentifierModal(true);
+          }}
+        >
+          <FontAwesomeIcon
+            data-testid={"delete-" + props.editPropertyOptions.name}
+            className={styles.trashIcon}
+            icon={faTrashAlt}
+          />
+        </HCButton>
+      )}
+      <div>
+        <HCButton aria-label="property-modal-cancel" variant="outline-light" className={"me-2"} onClick={onCancel}>
+          Cancel
+        </HCButton>
+        <HCButton aria-label="property-modal-submit" variant="primary" type="submit" onClick={onSubmit}>
+          {props.editPropertyOptions.isEdit ? "OK" : "Add"}
+        </HCButton>
+      </div>
     </div>
-  </div>;
+  );
 
-  const foreignKeyOptions = joinProperties.map((prop, index) => ({value: prop.value, label: prop.label === "None" ? "- " + prop.label + " -" : prop.label, isDisabled: prop.disabled}));
+  const foreignKeyOptions = joinProperties.map((prop, index) => ({
+    value: prop.value,
+    label: prop.label === "None" ? "- " + prop.label + " -" : prop.label,
+    isDisabled: prop.disabled,
+  }));
 
   const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
@@ -873,203 +960,211 @@ const PropertyModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  return (<HCModal
-    show={props.isVisible}
-    size={"lg"}
-    aria-label="property-modal"
-    onHide={onCancel}
-  >
-    <Modal.Header className={"pe-4"}>
-      <span className={"fs-3"}>{modalTitle}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"py-4"}>
-      {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&
-        <div className={styles.warningContainer}>
-          <HCAlert
-            className={styles.alert}
-            showIcon
-            variant="warning"
-          >{"Entity type is used in one or more steps."}</HCAlert>
-          <p className={styles.stepWarning}>
-            The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this entity property,
-            you may need to modify these steps to correlate with your changes to this entity property.
-          </p>
-          <p
-            aria-label="toggle-steps"
-            className={styles.toggleSteps}
-            onClick={() => toggleSteps(!showSteps)}
-          >{showSteps ? "Hide Steps..." : "Show Steps..."}</p>
+  return (
+    <HCModal show={props.isVisible} size={"lg"} aria-label="property-modal" onHide={onCancel}>
+      <Modal.Header className={"pe-4"}>
+        <span className={"fs-3"}>{modalTitle}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"py-4"}>
+        {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 && (
+          <div className={styles.warningContainer}>
+            <HCAlert className={styles.alert} showIcon variant="warning">
+              {"Entity type is used in one or more steps."}
+            </HCAlert>
+            <p className={styles.stepWarning}>
+              The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this
+              entity property, you may need to modify these steps to correlate with your changes to this entity
+              property.
+            </p>
+            <p aria-label="toggle-steps" className={styles.toggleSteps} onClick={() => toggleSteps(!showSteps)}>
+              {showSteps ? "Hide Steps..." : "Show Steps..."}
+            </p>
 
-          {showSteps && (
-            <ul className={styles.stepList}>
-              {renderSteps}
-            </ul>
-          )}
-        </div>
-      }
-      <Form
-        id="property-form"
-        onSubmit={onSubmit}
-        className={"container-fluid"}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Entity Type:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            {props.entityName}
-          </Col>
-        </Row>
-
-        {props.structuredTypeOptions.isStructured
-          && selectedPropertyOptions.type !== props.structuredTypeOptions.name
-          && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Structured Type:"}</FormLabel>
-            <Col id="structured-label" className={"d-flex align-items-center"}>
-              {structuredTypeLabel}
-            </Col>
-          </Row>
+            {showSteps && <ul className={styles.stepList}>{renderSteps}</ul>}
+          </div>
         )}
+        <Form id="property-form" onSubmit={onSubmit} className={"container-fluid"}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Entity Type:"}
+            </FormLabel>
+            <Col className={"d-flex align-items-center"}>{props.entityName}</Col>
+          </Row>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <HCInput
-                  id="property-name"
-                  ariaLabel="input-name"
-                  placeholder="Enter the entity property name"
-                  className={styles.input}
-                  value={name ? name : " "}
-                  onChange={handleInputChange}
-                  onBlur={handleInputChange}
-                />
-                <div className={"p-2 d-flex align-items-center"}>
-                  <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.icon} />
-                  </HCTooltip>
-                </div>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {errorMessage === "name-error" ? <span data-testid="property-name-error">A property or structured type are already using the name <b>{name}</b>. A property cannot use the same name as an existing property or structured type.</span> : errorMessage}
+          {props.structuredTypeOptions.isStructured &&
+            selectedPropertyOptions.type !== props.structuredTypeOptions.name &&
+            props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Structured Type:"}
+              </FormLabel>
+              <Col id="structured-label" className={"d-flex align-items-center"}>
+                {structuredTypeLabel}
               </Col>
             </Row>
-          </Col>
-        </Row>
+          )}
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} htmlFor={"type-container"}>{"Type:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={typeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Cascader
-                  aria-label="type-dropdown"
-                  placeholder="Select the entity property type"
-                  options={dropdownOptions}
-                  displayRender={(label, selectedOption) => {
-                    if (label[label.length - 1]) {
-                      if (label[0] === "Related Entity") {
-                        return "Relationship: " + label[label.length - 1];
-                      } else if (label[0] === "Structured") {
-                        return "Structured: " + selectedOption[selectedOption.length - 1].value;
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                  <HCInput
+                    id="property-name"
+                    ariaLabel="input-name"
+                    placeholder="Enter the entity property name"
+                    className={styles.input}
+                    value={name ? name : " "}
+                    onChange={handleInputChange}
+                    onBlur={handleInputChange}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.icon}
+                      />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorMessage === "name-error" ? (
+                    <span data-testid="property-name-error">
+                      A property or structured type are already using the name <b>{name}</b>. A property cannot use the
+                      same name as an existing property or structured type.
+                    </span>
+                  ) : (
+                    errorMessage
+                  )}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} htmlFor={"type-container"}>
+              {"Type:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
+            <Col>
+              <Row>
+                <Col className={typeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <Cascader
+                    aria-label="type-dropdown"
+                    placeholder="Select the entity property type"
+                    options={dropdownOptions}
+                    displayRender={(label, selectedOption) => {
+                      if (label[label.length - 1]) {
+                        if (label[0] === "Related Entity") {
+                          return "Relationship: " + label[label.length - 1];
+                        } else if (label[0] === "Structured") {
+                          return "Structured: " + selectedOption[selectedOption.length - 1].value;
+                        } else {
+                          return label[label.length - 1];
+                        }
                       } else {
                         return label[label.length - 1];
                       }
-                    } else {
-                      return label[label.length - 1];
-                    }
-                  }}
-                  value={typeDisplayValue}
-                  onChange={onPropertyTypeChange}
-                  className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
-                  style={{"width": "520px", "zIndex": 9000}}
-                  defaultValue={placeHolderOrEditValue ? ["Select the entity property type"] : editDisplayValue()}
-                  allowClear={true}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {typeErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-
-        {showJoinProperty && (
-          <Row className={"mb-3"}>
-            <Col lg={{span: 9, offset: 3}}>
-              <div className={`${styles.joinPropertyContainer}`}>
-                <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
-                <div className={`ms-3 ${styles.joinPropertyInput}`}>
-                  <Select
-                    id="foreignKey-select-wrapper"
-                    inputId="foreignKey-select"
-                    components={{MenuList: props => MenuList("foreignKey", props)}}
-                    placeholder="Select foreign key"
-                    value={foreignKeyOptions.find(oItem => oItem.value === joinDisplayValue)}
-                    onChange={onJoinPropertyChange}
-                    isSearchable={false}
-                    aria-label="foreignKey-select"
-                    options={foreignKeyOptions}
-                    styles={reactSelectThemeConfig}
-                    openMenuOnFocus
-                    formatOptionLabel={({value, label}) => {
-                      return (
-                        <span aria-label={`${value}-option`} role={"option"}>
-                          {label}
-                        </span>
-                      );
                     }}
+                    value={typeDisplayValue}
+                    onChange={onPropertyTypeChange}
+                    className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
+                    style={{"width": "520px", "zIndex": 9000}}
+                    defaultValue={placeHolderOrEditValue ? ["Select the entity property type"] : editDisplayValue()}
+                    allowClear={true}
                   />
-                  <div className={"d-flex p-2 align-items-center"}>
-                    <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
-                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
-                    </HCTooltip>
-                  </div>
-                </div>
-              </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {typeErrorMessage}
+                </Col>
+              </Row>
             </Col>
           </Row>
-        )}
 
-        {renderRadios}
+          {showJoinProperty && (
+            <Row className={"mb-3"}>
+              <Col lg={{span: 9, offset: 3}}>
+                <div className={`${styles.joinPropertyContainer}`}>
+                  <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
+                  <div className={`ms-3 ${styles.joinPropertyInput}`}>
+                    <Select
+                      id="foreignKey-select-wrapper"
+                      inputId="foreignKey-select"
+                      components={{MenuList: props => MenuList("foreignKey", props)}}
+                      placeholder="Select foreign key"
+                      value={foreignKeyOptions.find(oItem => oItem.value === joinDisplayValue)}
+                      onChange={onJoinPropertyChange}
+                      isSearchable={false}
+                      aria-label="foreignKey-select"
+                      options={foreignKeyOptions}
+                      styles={reactSelectThemeConfig}
+                      openMenuOnFocus
+                      formatOptionLabel={({value, label}) => {
+                        return (
+                          <span aria-label={`${value}-option`} role={"option"}>
+                            {label}
+                          </span>
+                        );
+                      }}
+                    />
+                    <div className={"d-flex p-2 align-items-center"}>
+                      <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
+                        <QuestionCircleFill
+                          tabIndex={0}
+                          color={themeColors.defaults.questionCircle}
+                          size={13}
+                          className={styles.icon}
+                          data-testid={"foreign-key-tooltip"}
+                        />
+                      </HCTooltip>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )}
 
-        {showConfigurationOptions && (
-          <>
-            <h4>Configuration Options</h4>
-            {renderCheckboxes}
-          </>
-        )
-        }
-      </Form>
-      <StructuredTypeModal
-        isVisible={showStructuredTypeModal}
-        toggleModal={toggleStructuredTypeModal}
-        entityDefinitionsArray={props.entityDefinitionsArray}
-        updateStructuredTypesAndHideModal={addStructuredType}
-      />
-      <ConfirmationModal
-        isVisible={showConfirmIdentifierModal}
-        type={confirmType}
-        boldTextArray={confirmBoldTextArray}
-        arrayValues={stepValuesArray}
-        toggleModal={toggleConfirmIdentifierModal}
-        confirmAction={confirmAction}
-      />
+          {renderRadios}
 
-      <ConfirmationModal
-        isVisible={showConfirmNameModal}
-        type={ConfirmationType.PropertyName}
-        boldTextArray={[name]}
-        arrayValues={stepValuesArray}
-        toggleModal={setShowConfirmNameModal}
-        confirmAction={confirmName}
-      />
-    </Modal.Body>
-    <Modal.Footer className={"py-2"}>
-      {modalFooter}
-    </Modal.Footer>
-  </HCModal>
+          {showConfigurationOptions && (
+            <>
+              <h4>Configuration Options</h4>
+              {renderCheckboxes}
+            </>
+          )}
+        </Form>
+        <StructuredTypeModal
+          isVisible={showStructuredTypeModal}
+          toggleModal={toggleStructuredTypeModal}
+          entityDefinitionsArray={props.entityDefinitionsArray}
+          updateStructuredTypesAndHideModal={addStructuredType}
+        />
+        <ConfirmationModal
+          isVisible={showConfirmIdentifierModal}
+          type={confirmType}
+          boldTextArray={confirmBoldTextArray}
+          arrayValues={stepValuesArray}
+          toggleModal={toggleConfirmIdentifierModal}
+          confirmAction={confirmAction}
+        />
+
+        <ConfirmationModal
+          isVisible={showConfirmNameModal}
+          type={ConfirmationType.PropertyName}
+          boldTextArray={[name]}
+          arrayValues={stepValuesArray}
+          toggleModal={setShowConfirmNameModal}
+          confirmAction={confirmName}
+        />
+      </Modal.Body>
+      <Modal.Footer className={"py-2"}>{modalFooter}</Modal.Footer>
+    </HCModal>
   );
 };
 

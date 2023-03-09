@@ -6,11 +6,11 @@ const stepData = {
   permissions: "data-hub-common,read,data-hub-common,update",
   lastUpdated: "2020-01-01T00:00:00.000001-07:00",
   interceptors: {
-    "interceptor": true
+    "interceptor": true,
   },
   customHook: {
-    "hook": true
-  }
+    "hook": true,
+  },
 };
 
 // Step data (Load, Mapping, Matching, Merging, Custom)
@@ -27,8 +27,8 @@ const stepLoad = {
   stepId: "AdvancedLoad-ingestion",
   targetDatabase: "data-hub-STAGING",
   headers: {
-    "header": true
-  }
+    "header": true,
+  },
 };
 
 const stepMapping = {
@@ -47,8 +47,8 @@ const stepMapping = {
   targetFormat: "JSON",
   validateEntity: "doNotValidate",
   headers: {
-    "header": true
-  }
+    "header": true,
+  },
 };
 
 const stepMatching = {
@@ -63,7 +63,7 @@ const stepMatching = {
   stepDefinitionType: "matching",
   stepId: "AdvancedMatching-matching",
   sourceDatabase: "data-hub-FINAL",
-  targetDatabase: "data-hub-FINAL"
+  targetDatabase: "data-hub-FINAL",
 };
 
 const stepMerging = {
@@ -75,7 +75,7 @@ const stepMerging = {
     onMerge: {"add": ["merged"]},
     onNoMatch: {"add": ["noMatch"]},
     onArchive: {"add": ["archived"]},
-    onNotification: {"add": ["notification"]}
+    onNotification: {"add": ["notification"]},
   },
   selectedSource: "collection",
   sourceQuery: "cts.collectionQuery(['test'])",
@@ -83,7 +83,7 @@ const stepMerging = {
   stepDefinitionType: "merging",
   stepId: "AdvancedMerging-merging",
   sourceDatabase: "data-hub-FINAL",
-  targetDatabase: "data-hub-FINAL"
+  targetDatabase: "data-hub-FINAL",
 };
 
 const stepCustom = {
@@ -92,17 +92,17 @@ const stepCustom = {
   provenanceGranularityLevel: "coarse",
   stepDefinitionType: "custom",
   stepDefinitionName: "custom-step",
-  stepId: "CustomLoad-ingestion"
+  stepId: "CustomLoad-ingestion",
 };
 
-const defaultTargetCollections = {"data":
-    {
-      "onMerge": ["sm-Test-merged", "sm-Test-mastered"],
-      "onNoMatch": ["sm-Test-mastered"],
-      "onArchive": ["sm-Test-archived"],
-      "onNotification": ["sm-Test-notification"]
-    },
-"status": 200
+const defaultTargetCollections = {
+  "data": {
+    "onMerge": ["sm-Test-merged", "sm-Test-mastered"],
+    "onNoMatch": ["sm-Test-mastered"],
+    "onArchive": ["sm-Test-archived"],
+    "onNotification": ["sm-Test-notification"],
+  },
+  "status": 200,
 };
 
 // Shared edit props across ALL steps
@@ -119,39 +119,39 @@ const stepsProps = {
   setOpenStepSettings: jest.fn(),
   activityType: "",
   canWrite: true,
-  openStepDetails: jest.fn()
+  openStepDetails: jest.fn(),
 };
 
 // Mocks for EDIT steps
 const editLoad = {
   ...stepsProps,
   activityType: "ingestion",
-  stepData: stepLoad
+  stepData: stepLoad,
 };
 
 const editMapping = {
   ...stepsProps,
   activityType: "mapping",
   stepData: stepMapping,
-  targetEntityName: "entityName"
+  targetEntityName: "entityName",
 };
 
 const editMatching = {
   ...stepsProps,
   activityType: "matching",
-  stepData: stepMatching
+  stepData: stepMatching,
 };
 
 const editMerging = {
   ...stepsProps,
   activityType: "merging",
-  stepData: stepMatching
+  stepData: stepMatching,
 };
 
 const editCustom = {
   ...stepsProps,
   activityType: "custom",
-  stepData: stepCustom
+  stepData: stepCustom,
 };
 
 // Mocks for NEW steps
@@ -159,28 +159,28 @@ const newLoad = {
   ...editLoad,
   isEditing: false,
   stepData: {},
-  defaultCollections: []
+  defaultCollections: [],
 };
 
 const newMapping = {
   ...editMapping,
   isEditing: false,
   stepData: {},
-  defaultCollections: []
+  defaultCollections: [],
 };
 
 const newMatching = {
   ...editMatching,
   isEditing: false,
   stepData: {},
-  defaultCollections: []
+  defaultCollections: [],
 };
 
 const newMerging = {
   ...editMerging,
   isEditing: false,
   stepData: {},
-  defaultCollections: []
+  defaultCollections: [],
 };
 
 const data = {
@@ -198,7 +198,7 @@ const data = {
   newMapping: newMapping,
   newMatching: newMatching,
   newMerging: newMerging,
-  defaultTargetCollections: defaultTargetCollections
+  defaultTargetCollections: defaultTargetCollections,
 };
 
 export default data;

@@ -13,14 +13,14 @@ describe("Entity Property Tree Select component", () => {
   it("can render and can select a value", () => {
     const mockOnValueSelected = jest.fn();
 
-    const {getByText} =  render(
+    const {getByText} = render(
       <EntityPropertyTreeSelect
         isForMerge={false}
         propertyDropdownOptions={entityTypeDefinition?.properties || []}
         entityDefinitionsArray={customerEntityDefsArray}
         value={undefined}
         onValueSelected={mockOnValueSelected}
-      />
+      />,
     );
 
     userEvent.click(getByText("Select property"));
@@ -31,7 +31,7 @@ describe("Entity Property Tree Select component", () => {
     const mockOnValueSelected = jest.fn();
     const customIdentifier = "customIdentifier";
 
-    const {getAllByLabelText} =  render(
+    const {getAllByLabelText} = render(
       <EntityPropertyTreeSelect
         isForMerge={false}
         propertyDropdownOptions={entityTypeDefinition?.properties || []}
@@ -39,7 +39,7 @@ describe("Entity Property Tree Select component", () => {
         value={undefined}
         onValueSelected={mockOnValueSelected}
         identifier={customIdentifier}
-      />
+      />,
     );
 
     expect(getAllByLabelText(`${customIdentifier}-property-to-match-dropdown`)[0]).toBeInTheDocument();

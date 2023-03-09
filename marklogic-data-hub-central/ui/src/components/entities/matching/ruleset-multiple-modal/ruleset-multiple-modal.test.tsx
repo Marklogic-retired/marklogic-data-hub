@@ -6,7 +6,10 @@ import RulesetMultipleModal from "./ruleset-multiple-modal";
 
 import {CurationContext} from "../../../../util/curation-context";
 import {updateMatchingArtifact} from "../../../../api/matching";
-import {customerMatchingStep, customerMatchStepWithLargePropCount} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {
+  customerMatchingStep,
+  customerMatchStepWithLargePropCount,
+} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {within, fireEvent} from "@testing-library/dom";
 
 jest.mock("../../../../api/matching");
@@ -24,29 +27,21 @@ describe("Matching Multiple Rulesets Modal component", () => {
     const toggleModalMock = jest.fn();
     let editRuleset = {
       ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[0],
-      index: 0
+      index: 0,
     };
 
-    const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} =  render(
+    const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Multiple Properties")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Multiple Properties")).toBeInTheDocument();
@@ -85,12 +80,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     // To verify delete icon is present for editing multiple ruleset modal
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{editRuleset}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{editRuleset}} />
+      </CurationContext.Provider>,
     );
     expect(queryByLabelText("editMultipleRulesetDeleteIcon")).toBeInTheDocument();
   });
@@ -99,14 +90,10 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {getByText} =  render(
+    const {getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
@@ -118,8 +105,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(screen.getByLabelText("doubleMetaphone-option"));
     expect(screen.getByLabelText("customerId-dictionary-uri-input")).toBeInTheDocument();
     expect(screen.getByLabelText("customerId-distance-threshold-input")).toBeInTheDocument();
-
-
 
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByLabelText("custom-option"));
@@ -143,12 +128,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
     });
 
@@ -173,7 +154,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(allZipExpandIcon[0]);
     userEvent.click(allZipExpandIcon[1]);
 
-    let selectAllCheckbox:any = document.querySelector(`.selection-cell-header input[type="checkbox"]`);
+    let selectAllCheckbox: any = document.querySelector(`.selection-cell-header input[type="checkbox"]`);
     expect(selectAllCheckbox).not.toBeChecked();
     await wait(() => userEvent.click(selectAllCheckbox));
 
@@ -210,12 +191,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
     });
@@ -238,19 +215,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
       queryByTitle = renderResults.queryByTitle;
       queryByLabelText = renderResults.queryByLabelText;
     });
 
-    let customerId:any = document.querySelector(`[name="customerId"]`);
+    let customerId: any = document.querySelector(`[name="customerId"]`);
 
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(getByLabelText("synonym-option"));
@@ -270,8 +243,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     //userEvent.click(screen.getAllByLabelText("synonym-option")[1]); // ToDo: fix deselect dropdown value
     expect(customerId).toBeChecked();
     expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument();
-    await(() => expect(getByLabelText("customerId-thesaurus-uri-input")).toHaveValue(""));
-    await(() => expect(getByLabelText("customerId-filter-input")).toHaveValue(""));
+    await (() => expect(getByLabelText("customerId-thesaurus-uri-input")).toHaveValue(""));
+    await (() => expect(getByLabelText("customerId-filter-input")).toHaveValue(""));
   });
 
   it("can manipulate match on tags using row selection checkboxes and vice-versa ", async () => {
@@ -282,21 +255,17 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
       queryByTitle = renderResults.queryByTitle;
       queryByLabelText = renderResults.queryByLabelText;
     });
 
-    let customerId:any = document.querySelector(`[name="customerId"]`);
-    const validateMatchOnTag = async (matchOnTag) => {
-      await(() => expect(getByLabelText(matchOnTag)).toBeInTheDocument());
+    let customerId: any = document.querySelector(`[name="customerId"]`);
+    const validateMatchOnTag = async matchOnTag => {
+      await (() => expect(getByLabelText(matchOnTag)).toBeInTheDocument());
     };
 
     expect(queryByLabelText("customerId-matchOn-tag")).not.toBeInTheDocument();
@@ -313,14 +282,14 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
     userEvent.type(getByLabelText("customerId-filter-input"), "filterInputText");
 
-    let shippingStreet:any = document.querySelector(`[name="shipping.street"]`);
+    let shippingStreet: any = document.querySelector(`[name="shipping.street"]`);
     userEvent.click(shippingStreet);
     validateMatchOnTag("shipping.street-matchOn-tag");
 
     let allZipExpandIcon: any = document.querySelector(`svg[data-testid^="zip"]`);
     await wait(() => userEvent.click(allZipExpandIcon)); // ToDo: fix auto-expanded inner children
 
-    let shippingZipFiveDigit:any = document.querySelector(`[name="shipping.zip.fiveDigit"]`);
+    let shippingZipFiveDigit: any = document.querySelector(`[name="shipping.zip.fiveDigit"]`);
     await (() => expect(shippingZipFiveDigit).toBeInTheDocument());
     await (() => userEvent.click(shippingZipFiveDigit));
 
@@ -358,12 +327,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       queryByText = renderResults.queryByText;
       getByText = renderResults.getByText;
@@ -381,7 +346,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
 
     //Selecting a property without providing the ruleset name
-    let customerIdSelectionCheckbox: any =  document.querySelector(`[name="customerId"]`);
+    let customerIdSelectionCheckbox: any = document.querySelector(`[name="customerId"]`);
     userEvent.click(customerIdSelectionCheckbox);
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(getByLabelText("exact-option"));
@@ -409,12 +374,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       queryByTestId = renderResults.queryByTestId;
       getByText = renderResults.getByText;
@@ -462,12 +423,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
@@ -501,12 +458,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
@@ -552,12 +505,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
@@ -606,12 +555,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByLabelText, getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
@@ -638,12 +583,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByLabelText, getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
@@ -672,12 +613,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByTestId = renderResults.getByTestId;
     });
@@ -696,7 +633,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     let billingZipFiveDigit = document.querySelector(`[data-row-key="billing.zip.fiveDigit"]`);
     let billingZipPlusFour = document.querySelector(`[data-row-key="billing.zip.plusFour"]`);
 
-
     //The structured properties should be visible by default
     expect(shippingStreet).toBeVisible();
     expect(shippingCity).toBeVisible();
@@ -711,30 +647,29 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     //Collapse all structured properties and see if the nested rows are not visible
     userEvent.click(collapseAllButton);
-    await(() => expect(shippingStreet).not.toBeVisible());
-    await(() => expect(shippingCity).not.toBeVisible());
-    await(() => expect(shippingState).not.toBeVisible());
-    await(() => expect(shippingZipFiveDigit).not.toBeVisible());
-    await(() => expect(shippingZipPlusFour).not.toBeVisible());
-    await(() => expect(billingStreet).not.toBeVisible());
-    await(() => expect(billingCity).not.toBeVisible());
-    await(() => expect(billingState).not.toBeVisible());
-    await(() => expect(billingZipFiveDigit).not.toBeVisible());
-    await(() => expect(billingZipPlusFour).not.toBeVisible());
-
+    await (() => expect(shippingStreet).not.toBeVisible());
+    await (() => expect(shippingCity).not.toBeVisible());
+    await (() => expect(shippingState).not.toBeVisible());
+    await (() => expect(shippingZipFiveDigit).not.toBeVisible());
+    await (() => expect(shippingZipPlusFour).not.toBeVisible());
+    await (() => expect(billingStreet).not.toBeVisible());
+    await (() => expect(billingCity).not.toBeVisible());
+    await (() => expect(billingState).not.toBeVisible());
+    await (() => expect(billingZipFiveDigit).not.toBeVisible());
+    await (() => expect(billingZipPlusFour).not.toBeVisible());
 
     //Expand All structured properties and see if the nested rows are visible
     userEvent.click(expandAllButton);
     expect(shippingStreet).toBeVisible();
     expect(shippingCity).toBeVisible();
     expect(shippingState).toBeVisible();
-    await(() => expect(shippingZipFiveDigit).toBeVisible());
-    await(() => expect(shippingZipPlusFour).toBeVisible());
+    await (() => expect(shippingZipFiveDigit).toBeVisible());
+    await (() => expect(shippingZipPlusFour).toBeVisible());
     expect(billingStreet).toBeVisible();
     expect(billingCity).toBeVisible();
     expect(billingState).toBeVisible();
-    await(() => expect(billingZipFiveDigit).toBeVisible());
-    await(() => expect(billingZipPlusFour).toBeVisible());
+    await (() => expect(billingZipFiveDigit).toBeVisible());
+    await (() => expect(billingZipPlusFour).toBeVisible());
   });
 
   it("can verify that pagination works properly", async () => {
@@ -744,12 +679,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchStepWithLargePropCount}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
+          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        </CurationContext.Provider>,
       );
       getByTitle = renderResults.getByTitle;
     });
@@ -791,7 +722,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(testProp30).not.toBeInTheDocument();
     //Change the page size and verify that all rows should be abailable now in one page.
     userEvent.click(rowsPerPageOptionsDropdown);
-    let rowsPerPageOptions:any = document.querySelector(".dropdown-menu");
+    let rowsPerPageOptions: any = document.querySelector(".dropdown-menu");
     userEvent.click(within(rowsPerPageOptions).getByText("40 / page"));
     expect(page1_Option).toBeInTheDocument();
     expect(document.querySelector(`[data-testid="customerId-checkbox"]`)).toBeInTheDocument();

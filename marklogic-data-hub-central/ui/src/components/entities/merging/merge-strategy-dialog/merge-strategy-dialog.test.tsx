@@ -11,7 +11,6 @@ jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
 
 describe("Merge Strategy Dialog component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -19,13 +18,18 @@ describe("Merge Strategy Dialog component", () => {
 
   it("Verify Add Merge Strategy dialog renders correctly", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByText, getByPlaceholderText, getByTestId, getByLabelText, getAllByLabelText, queryByTestId, queryByLabelText} = render(
+    const {
+      getByText,
+      getByPlaceholderText,
+      getByTestId,
+      getByLabelText,
+      getAllByLabelText,
+      queryByTestId,
+      queryByLabelText,
+    } = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          isEditStrategy={false}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} isEditStrategy={false} />
+      </CurationContext.Provider>,
     );
 
     expect(getByText("Add Strategy")).toBeInTheDocument();
@@ -43,11 +47,11 @@ describe("Merge Strategy Dialog component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
-    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("priorityOrderTooltip"))).toBeInTheDocument();
 
     //Verify Default Strategy Tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
-    expect((await(waitForElement(() => getByLabelText("defaultStrategyTooltip"))))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("defaultStrategyTooltip"))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
@@ -69,11 +73,8 @@ describe("Merge Strategy Dialog component", () => {
   it("Verify if add merge strategy dialog can be closed without saving", () => {
     const {getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          isEditStrategy={false}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} isEditStrategy={false} />
+      </CurationContext.Provider>,
     );
     let cancelButton = getByText("Cancel");
     fireEvent.click(cancelButton);
@@ -86,11 +87,8 @@ describe("Merge Strategy Dialog component", () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const {getByText, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          isEditStrategy={false}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} isEditStrategy={false} />
+      </CurationContext.Provider>,
     );
 
     //testing Add strategy scenario
@@ -107,12 +105,11 @@ describe("Merge Strategy Dialog component", () => {
     expect(getByLabelText("default-strategy-error")).toBeInTheDocument();
 
     //rerender to test edit scenario
-    rerender(<CurationContext.Provider value={customerMergingStep}>
-      <MergeStrategyDialog
-        {...data.mergeStrategyDataProps}
-        strategyName={"myFavouriteSource"}
-      />
-    </CurationContext.Provider>);
+    rerender(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} strategyName={"myFavouriteSource"} />
+      </CurationContext.Provider>,
+    );
 
     expect(getByText("Edit Strategy")).toBeInTheDocument();
 
@@ -124,17 +121,13 @@ describe("Merge Strategy Dialog component", () => {
     //selecting "Yes" when there is an existing default strategy should prompt error message
     fireEvent.click(getByLabelText("Yes"));
     expect(getByLabelText("default-strategy-error")).toBeInTheDocument();
-
   });
 
   it("Verify Edit Merge Strategy dialog renders correctly with priority order options", () => {
     const {getByText, getByPlaceholderText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          strategyName={"myFavouriteSource"}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} strategyName={"myFavouriteSource"} />
+      </CurationContext.Provider>,
     );
 
     expect(getByText("Edit Strategy")).toBeInTheDocument();
@@ -157,11 +150,8 @@ describe("Merge Strategy Dialog component", () => {
   it("Verify Edit Merge Strategy dialog renders correctly for custom step", () => {
     const {getByText, getByPlaceholderText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          strategyName={"customMergeStrategy"}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} strategyName={"customMergeStrategy"} />
+      </CurationContext.Provider>,
     );
     expect(getByText("Edit Strategy")).toBeInTheDocument();
     let strategyText = getByPlaceholderText("Enter strategy name");
@@ -171,11 +161,8 @@ describe("Merge Strategy Dialog component", () => {
   it("Accessibility", () => {
     const {getAllByTestId, getByLabelText, getAllByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergeStrategyDialog
-          {...data.mergeStrategyDataProps}
-          isEditStrategy={false}
-        />
-      </CurationContext.Provider>
+        <MergeStrategyDialog {...data.mergeStrategyDataProps} isEditStrategy={false} />
+      </CurationContext.Provider>,
     );
 
     userEvent.tab();

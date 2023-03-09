@@ -1,12 +1,10 @@
 import React from "react";
-import {
-  cleanup,
-  fireEvent,
-  render, screen, wait,
-  waitForElement
-} from "@testing-library/react";
+import {cleanup, fireEvent, render, screen, wait, waitForElement} from "@testing-library/react";
 import {CurationContext} from "../../../../util/curation-context";
-import {customerMergingStep, customerMergingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {
+  customerMergingStep,
+  customerMergingStepEmpty,
+} from "../../../../assets/mock-data/curation/curation-context-mock";
 import MergingStepDetail from "./merging-step-detail";
 import userEvent from "@testing-library/user-event";
 import {updateMergingArtifact} from "../../../../api/merging";
@@ -18,25 +16,21 @@ const mockMergingUpdate = updateMergingArtifact as jest.Mock;
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
+  const childrenDontHaveText = Array.from(node.children).every(child => !hasText(child));
   return nodeHasText && childrenDontHaveText;
 };
 
 describe("Merging Step Detail view component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
   });
 
   it("can render merging step with no strategies or merge rules", () => {
-
     const {getByText, getAllByText, container} = render(
       <CurationContext.Provider value={customerMergingStepEmpty}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
     expect(getByText("Define merge strategies")).toBeInTheDocument();
@@ -46,11 +40,10 @@ describe("Merging Step Detail view component", () => {
   });
 
   it("can render merging step with merge strategies and rulesets", async () => {
-
     const {getByText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     //Verify Merge Strategies table is rendered with data
@@ -66,7 +59,7 @@ describe("Merging Step Detail view component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getByLabelText("icon: question-circle"));
-    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("priorityOrderTooltip"))).toBeInTheDocument();
 
     //Verify default timeline is visible and no edit strategy button is present
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
@@ -96,7 +89,7 @@ describe("Merging Step Detail view component", () => {
     const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByTestId("mergestrategy-myFavoriteSource")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("mergestrategy-myFavoriteSource"));
@@ -108,13 +101,17 @@ describe("Merging Step Detail view component", () => {
     const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByTestId("mergerule-address")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-address"));
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you want to delete address - custom merge rule ?");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "Are you sure you want to delete address - custom merge rule ?");
+        }),
+      ),
+    ).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
     //Clicking on yes will delete the merge rule
     userEvent.click(getByText("Yes"));
@@ -126,13 +123,21 @@ describe("Merging Step Detail view component", () => {
     const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByTestId("mergerule-phone")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-phone"));
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you want to delete phone - property-specific merge rule ?");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(
+            content,
+            node,
+            "Are you sure you want to delete phone - property-specific merge rule ?",
+          );
+        }),
+      ),
+    ).toBeInTheDocument();
     userEvent.click(getByText("No"));
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
     expect(getByText("phone")).toBeInTheDocument();
@@ -143,13 +148,17 @@ describe("Merging Step Detail view component", () => {
     const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByTestId("mergestrategyIcon-customMergeStrategy")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategyIcon-customMergeStrategy"));
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you want to delete customMergeStrategy merge strategy ?");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "Are you sure you want to delete customMergeStrategy merge strategy ?");
+        }),
+      ),
+    ).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
     //Clicking on yes will delete the merge rule
     userEvent.click(getByText("Yes"));
@@ -161,13 +170,17 @@ describe("Merging Step Detail view component", () => {
     const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
     expect(getByTestId("mergestrategyIcon-testMerge")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategyIcon-testMerge"));
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you want to delete testMerge merge strategy ?");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "Are you sure you want to delete testMerge merge strategy ?");
+        }),
+      ),
+    ).toBeInTheDocument();
     userEvent.click(getByText("No"));
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
   });
@@ -176,9 +189,8 @@ describe("Merging Step Detail view component", () => {
     const {getAllByLabelText, getAllByText, getByLabelText, getByTestId, container} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
-      </CurationContext.Provider>
+      </CurationContext.Provider>,
     );
-
 
     userEvent.tab();
     expect(getByLabelText("Back")).toHaveFocus();
@@ -201,7 +213,8 @@ describe("Merging Step Detail view component", () => {
     expect(container.querySelector("#strategy-name-link")).toHaveFocus();
     userEvent.tab();
     expect(getByTestId("mergestrategy-myFavoriteSource")).toHaveFocus();
-    for (let i = 0;i <= 3;i++) { // jump over the  remaining rows
+    for (let i = 0; i <= 3; i++) {
+      // jump over the  remaining rows
       userEvent.tab();
     }
     expect(getByTestId("page-<")).toHaveFocus();

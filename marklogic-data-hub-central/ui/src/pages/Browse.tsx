@@ -37,15 +37,11 @@ import {baseEntitiesSorting} from "@util/entities-sorting";
 import {getRelatedConcepts} from "@api/facets";
 import {getEnvironment} from "@util/environment";
 
-interface Props extends RouteComponentProps<any> {
-}
+interface Props extends RouteComponentProps<any> {}
 
 const Browse: React.FC<Props> = ({location}) => {
   const componentIsMounted = useRef(true);
-  const {
-    user,
-    handleError
-  } = useContext(UserContext);
+  const {user, handleError} = useContext(UserContext);
   const userPreferences = JSON.parse(getUserPreferences(user.name));
   const {
     searchOptions,
@@ -59,7 +55,7 @@ const Browse: React.FC<Props> = ({location}) => {
     clearAllGreyFacets,
     setEntityTypeIds,
     savedNode,
-    setSavedNode
+    setSavedNode,
   } = useContext(SearchContext);
   const {hubCentralConfig} = useContext(HubCentralConfigContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
@@ -77,7 +73,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [viewOptions, setViewOptions] = useState({
     graphView: userPreferences.graphView ? userPreferences.graphView : false,
-    tableView: userPreferences.tableView ? userPreferences.tableView : false
+    tableView: userPreferences.tableView ? userPreferences.tableView : false,
   });
   const [endScroll, setEndScroll] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
@@ -90,7 +86,9 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   let state: any = location.state;
-  const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : userPreferences.cardView ? true : false);
+  const [cardView, setCardView] = useState(
+    state && state["isEntityInstance"] ? true : userPreferences.cardView ? true : false,
+  );
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(userPreferences.query?.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
@@ -103,12 +101,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
   const [selectedView, setSelectedView] = useState<ViewType>(
-    viewOptions.graphView ?
-      ViewType.graph :
-      (viewOptions.tableView ?
-        ViewType.table :
-        ViewType.snippet
-      ));
+    viewOptions.graphView ? ViewType.graph : viewOptions.tableView ? ViewType.table : ViewType.snippet,
+  );
   const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
   const [viewConcepts, setViewConcepts] = useState(true);
   const [physicsAnimation, setPhysicsAnimation] = useState(true);
@@ -128,7 +122,7 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions.selectedFacets,
     searchOptions.mergeUnmerge,
     user.error.type,
-    hideDataHubArtifacts
+    hideDataHubArtifacts,
   ];
 
   const isGraphView = () => {
@@ -136,7 +130,7 @@ const Browse: React.FC<Props> = ({location}) => {
     return isGraph;
   };
 
-  const setEntitySpecificFacets = (entity) => {
+  const setEntitySpecificFacets = entity => {
     const {name} = entity;
     let entityFacets: any[] = [];
     let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === entity.name);
@@ -144,8 +138,16 @@ const Browse: React.FC<Props> = ({location}) => {
     if (newEntityFacets) {
       for (let i in newEntityFacets) {
         newEntityFacets[i].referenceType = "path";
-        newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
-        newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".") + 1);
+        newEntityFacets[i].entityTypeId =
+          entityDef?.info["baseUri"] +
+          entityDef?.info["title"] +
+          "-" +
+          entityDef?.info["version"] +
+          "/" +
+          entityDef?.name;
+        newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(
+          newEntityFacets[i]["facetName"].indexOf(".") + 1,
+        );
       }
     }
     entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
@@ -164,7 +166,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const onSetEntitySpecificPanel = (entity) => {
+  const onSetEntitySpecificPanel = entity => {
     const entityFacets = setEntitySpecificFacets(entity);
     setEntitySpecificPanel(entity);
     setFacetsEntitySpecificPanel(entityFacets);
@@ -198,7 +200,9 @@ const Browse: React.FC<Props> = ({location}) => {
   }, [physicsAnimation]);
 
   const getAllFacetsExceptConcepts = () => {
-    return Object.fromEntries(Object.entries(searchOptions.selectedFacets).filter(([key, value]) => key !== "RelatedConcepts"));
+    return Object.fromEntries(
+      Object.entries(searchOptions.selectedFacets).filter(([key, value]) => key !== "RelatedConcepts"),
+    );
   };
 
   const getGraphSearchResult = async (allEntities: any[]) => {
@@ -213,11 +217,11 @@ const Browse: React.FC<Props> = ({location}) => {
             "searchText": searchOptions.query,
             "entityTypeIds": allEntities,
             "selectedFacets": searchOptions.selectedFacets,
-            "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
+            "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds,
           },
           "start": 0,
           "pageLength": 100,
-        }
+        },
       };
       if (conceptFilterTypeIds.length) {
         payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.conceptFilterTypeIds;
@@ -227,7 +231,7 @@ const Browse: React.FC<Props> = ({location}) => {
         setGraphSearchData(response.data);
         let pageInfo = {
           pageLength: response.data.limit,
-          total: response.data.total
+          total: response.data.total,
         };
         setGraphPageInfo(pageInfo);
       }
@@ -251,14 +255,16 @@ const Browse: React.FC<Props> = ({location}) => {
           query: {
             searchText,
             entityTypeIds: searchOptions.nextEntityType === "All Data" ? [] : allEntities,
-            selectedFacets: searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts") ? filteredSelectedFacets : searchOptions.selectedFacets,
-            hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true
+            selectedFacets: searchOptions.selectedFacets.hasOwnProperty("RelatedConcepts")
+              ? filteredSelectedFacets
+              : searchOptions.selectedFacets,
+            hideHubArtifacts: searchOptions.nextEntityType === "All Data" ? hideDataHubArtifacts : true,
           },
           propertiesToDisplay: searchOptions.nextEntityType === "All Data" ? [] : searchOptions.selectedTableProperties,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
-          sortOrder: searchOptions.sortOrder
-        }
+          sortOrder: searchOptions.sortOrder,
+        },
       };
 
       const response = await searchResultsQuery(searchPayload);
@@ -304,7 +310,7 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   // Check if entity name has no matching definition
-  const titleNoDefinition = (selectedEntityName) => {
+  const titleNoDefinition = selectedEntityName => {
     for (let i = 0; i < entitiesData.length; i++) {
       if (entitiesData[i].info.title === selectedEntityName) {
         if (!entitiesData[i].definitions.hasOwnProperty(selectedEntityName)) return true;
@@ -316,20 +322,28 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const fetchUpdatedSearchResults = () => {
     let entityTypesExist = searchOptions.entityTypeIds.length > 0;
-    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType &&
-    (searchOptions.entityTypeIds.length > 0 || cardView);
-    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !entitySpecificPanel);
-    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !entitySpecificPanel);
-    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
+    let defaultOptionsForPageRefresh =
+      !searchOptions.nextEntityType && (searchOptions.entityTypeIds.length > 0 || cardView);
+    let selectingAllEntitiesOption =
+      searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !entitySpecificPanel;
+    let selectingAllDataOption =
+      searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !entitySpecificPanel;
+    let selectingEntityType =
+      (searchOptions.nextEntityType &&
+        !["All Entities", "All Data"].includes(searchOptions.nextEntityType) &&
+        searchOptions.entityTypeIds[0] === searchOptions.nextEntityType) ||
+      entitySpecificPanel;
     let selectingColumnsInOneEntity = searchOptions.entityTypeIds.length === 1 && isColumnSelectorTouched;
     let notSelectingCardViewWhenNoEntities = !cardView && !searchOptions.entityTypeIds.length;
 
-    if (selectingAllDataOption ||
+    if (
+      selectingAllDataOption ||
       (entityTypesExist &&
         (defaultOptionsForPageRefresh ||
           selectingAllEntitiesOption ||
           selectingEntityType ||
-          selectingColumnsInOneEntity))) {
+          selectingColumnsInOneEntity))
+    ) {
       getSearchResults(searchOptions.entityTypeIds);
       setColumnSelectorTouched(false);
     } else {
@@ -346,7 +360,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const fetchConceptFacets = async () => {
     try {
-      const response =  await getRelatedConcepts(searchOptions.database);
+      const response = await getRelatedConcepts(searchOptions.database);
       if (response.status === 200) {
         setEntitiesWithRelatedConcepts(response.data);
       }
@@ -375,10 +389,14 @@ const Browse: React.FC<Props> = ({location}) => {
 
         // this block is to add colors an icons to the entities
         let entitiesWithFullProperties = parsedEntityDef;
-        if (hubCentralConfig &&
+        if (
+          hubCentralConfig &&
           hubCentralConfig.modeling &&
-          Object.keys(hubCentralConfig.modeling.entities).length > 0) {
-          const {modeling: {entities}} = hubCentralConfig;
+          Object.keys(hubCentralConfig.modeling.entities).length > 0
+        ) {
+          const {
+            modeling: {entities},
+          } = hubCentralConfig;
           entitiesWithFullProperties = parsedEntityDef.map(entity => {
             let tmpEntity = {...entity};
             if (entities[entity.name]) {
@@ -399,7 +417,6 @@ const Browse: React.FC<Props> = ({location}) => {
           setEntityDefArray(entitiesWithFullProperties);
           setCurrentBaseEntities(entitiesWithFullProperties);
         }
-
       } catch (error) {
         handleError(error);
       }
@@ -434,7 +451,6 @@ const Browse: React.FC<Props> = ({location}) => {
       if (!cardView) setCardView(true);
     }
     fetchUpdatedSearchResults();
-
   }, searchResultDependencies);
 
   useEffect(() => {
@@ -462,7 +478,7 @@ const Browse: React.FC<Props> = ({location}) => {
     searchOptions.selectedFacets,
     user.error.type,
     hideDataHubArtifacts,
-    hubCentralConfig
+    hubCentralConfig,
   ]);
 
   useEffect(() => {
@@ -472,15 +488,19 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, []);
 
-  const getClearEnititesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => (
-    {...previousValue, [entityType]: {filter: 0, amount: 0}}
-  ), {});
-  const getMaxOnEntitiesObject = entities => Object.keys(entities).reduce((previousValue, entityType) => entities &&
-  entities.hasOwnProperty(entityType) &&
-  previousValue < entities[entityType].amount ?
-    entities[entityType].amount :
-    previousValue, 0
-  );
+  const getClearEnititesObject = entities =>
+    Object.keys(entities).reduce(
+      (previousValue, entityType) => ({...previousValue, [entityType]: {filter: 0, amount: 0}}),
+      {},
+    );
+  const getMaxOnEntitiesObject = entities =>
+    Object.keys(entities).reduce(
+      (previousValue, entityType) =>
+        entities && entities.hasOwnProperty(entityType) && previousValue < entities[entityType].amount
+          ? entities[entityType].amount
+          : previousValue,
+      0,
+    );
 
   useEffect(() => {
     if (hubCentralConfig.modeling && Object.keys(hubCentralConfig.modeling?.entities).length > 0) {
@@ -511,12 +531,12 @@ const Browse: React.FC<Props> = ({location}) => {
       }
       setEntityIndicatorData({
         max: getMaxOnEntitiesObject(tmpEntities),
-        entities: tmpEntities
+        entities: tmpEntities,
       });
     } else {
       setEntityIndicatorData({
         max: 0,
-        entities: {}
+        entities: {},
       });
     }
   }, [hubCentralConfig, viewOptions, graphSearchData.nodes, data, selectedFacets]);
@@ -539,23 +559,31 @@ const Browse: React.FC<Props> = ({location}) => {
       };
       applySaveQuery(options);
     } else if (state && state.hasOwnProperty("isBackToResultsClicked") && state["isBackToResultsClicked"]) {
-      setPageWithEntity(state["entity"],
+      setPageWithEntity(
+        state["entity"],
         state["pageNumber"],
         state["start"],
         state["searchFacets"],
         state["query"],
         state["sortOrder"],
-        state["targetDatabase"]);
-      state["tableView"] ? setViewOptions({...viewOptions, tableView: true}) : setViewOptions({...viewOptions, tableView: false});
+        state["targetDatabase"],
+      );
+      state["tableView"]
+        ? setViewOptions({...viewOptions, tableView: true})
+        : setViewOptions({...viewOptions, tableView: false});
     } else if (state && state.hasOwnProperty("uri")) {
-      setPageWithEntity(state["entity"],
+      setPageWithEntity(
+        state["entity"],
         state["pageNumber"],
         state["start"],
         state["searchFacets"],
         state["query"],
         state["sortOrder"],
-        state["targetDatabase"]);
-      state["tableView"] ? setViewOptions({...viewOptions, tableView: true}) : setViewOptions({...viewOptions, tableView: false});
+        state["targetDatabase"],
+      );
+      state["tableView"]
+        ? setViewOptions({...viewOptions, tableView: true})
+        : setViewOptions({...viewOptions, tableView: false});
     } else if (state && state.hasOwnProperty("entity")) {
       if (Array.isArray(state["entity"])) {
         setEntityClearQuery(state["entity"][0]);
@@ -587,7 +615,7 @@ const Browse: React.FC<Props> = ({location}) => {
         searchText: searchOptions.query,
         entityTypeIds: searchOptions.entityTypeIds,
         selectedFacets: searchOptions.selectedFacets,
-        hideHubArtifacts: cardView ? hideDataHubArtifacts : true
+        hideHubArtifacts: cardView ? hideDataHubArtifacts : true,
       },
       pageLength: searchOptions.pageLength,
       pageNumber: searchOptions.pageNumber,
@@ -600,7 +628,7 @@ const Browse: React.FC<Props> = ({location}) => {
       cardView: cardView,
       graphView: view ? (view === "graph" ? true : false) : viewOptions.graphView,
       database: searchOptions.database,
-      baseEntities: searchOptions.baseEntities
+      baseEntities: searchOptions.baseEntities,
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -608,8 +636,10 @@ const Browse: React.FC<Props> = ({location}) => {
   const handleUserPreferences = () => {
     setUserPreferences();
 
-    if (searchOptions.entityTypeIds.length > 0 &&
-      !searchOptions.entityTypeIds.includes(searchOptions.entityTypeIds[0])) {
+    if (
+      searchOptions.entityTypeIds.length > 0 &&
+      !searchOptions.entityTypeIds.includes(searchOptions.entityTypeIds[0])
+    ) {
       // entityName is not part of entity model from model payload
       // change user preferences to default user pref.
       createUserPreferences(user.name);
@@ -624,7 +654,7 @@ const Browse: React.FC<Props> = ({location}) => {
       let oldOptions = JSON.parse(userPreferences);
       let newOptions = {
         ...oldOptions,
-        database: option
+        database: option,
       };
       updateUserPreferences(user.name, newOptions);
     }
@@ -652,7 +682,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [endScroll]);
 
-  const onResultScroll = (event) => {
+  const onResultScroll = event => {
     if (resultsRef && resultsRef.current) {
       const bottom = event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight;
       if (resultsRef.current.scrollTop > 0 && !bottom) {
@@ -663,18 +693,18 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const updateSelectedFacets = (facets) => {
+  const updateSelectedFacets = facets => {
     setSelectedFacets(facets);
     if (updateSpecificFacets) {
       setUpdateSpecificFacets(false);
     }
   };
 
-  const updateCheckedFacets = (facets) => {
+  const updateCheckedFacets = facets => {
     setGreyFacets(facets);
   };
 
-  const handleViewChange = (view) => {
+  const handleViewChange = view => {
     let tableView = "";
     if (view === "graph") {
       setViewOptions({graphView: true, tableView: false});
@@ -698,7 +728,7 @@ const Browse: React.FC<Props> = ({location}) => {
     let style: CSSProperties = {
       width: "100%",
       display: "flex",
-      justifyContent: "flex-end"
+      justifyContent: "flex-end",
     };
     if (viewOptions.graphView) {
       style["marginLeft"] = "20px";
@@ -710,23 +740,36 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const helpIcon = () => (
     <span>
-      <HCTooltip text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        {graphPageInfo["pageLength"] > 100 ? <i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i> :
+      <HCTooltip
+        text={graphPageInfo["pageLength"] > 100 ? ExploreToolTips.largeDatasetWarning : ExploreToolTips.numberOfResults}
+        id="asterisk-help-tooltip"
+        placement="right"
+      >
+        {graphPageInfo["pageLength"] > 100 ? (
+          <i data-testid="warning-large-data">
+            <FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} />
+          </i>
+        ) : (
           <QuestionCircleFill
             color={themeColors.defaults.questionCircle}
             className={styles.questionCircle}
             size={13}
-            tabIndex={0}/>
-        }
+            tabIndex={0}
+          />
+        )}
       </HCTooltip>
     </span>
   );
 
-  const numberOfResultsBanner = Object.keys(graphPageInfo).length > 0 && <span aria-label="results-count" className={styles.graphViewSummaryIcon}>Viewing {graphPageInfo["pageLength"]} of {graphPageInfo["total"]} results {helpIcon()}</span>;
+  const numberOfResultsBanner = Object.keys(graphPageInfo).length > 0 && (
+    <span aria-label="results-count" className={styles.graphViewSummaryIcon}>
+      Viewing {graphPageInfo["pageLength"]} of {graphPageInfo["total"]} results {helpIcon()}
+    </span>
+  );
 
   return (
     <div className={styles.layout}>
-      {showEntitySpecificPanel ?
+      {showEntitySpecificPanel ? (
         <HCSider placement="left" show={showMainSidebar} width="55px">
           <EntityIconsSidebar
             currentBaseEntities={currentEntitiesIcons}
@@ -736,10 +779,12 @@ const Browse: React.FC<Props> = ({location}) => {
             graphView={viewOptions.graphView}
           />
         </HCSider>
-        : <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
+      ) : (
+        <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
           <>
             <div className="p-2">
-              <Query queries={queries || []}
+              <Query
+                queries={queries || []}
                 setQueries={setQueries}
                 isSavedQueryUser={isSavedQueryUser}
                 columns={columns}
@@ -786,9 +831,16 @@ const Browse: React.FC<Props> = ({location}) => {
             />
           </>
         </HCSider>
-      }
-      {entitySpecificPanel &&
-        <HCSider identity={entitySpecificPanel.name} color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
+      )}
+      {entitySpecificPanel && (
+        <HCSider
+          identity={entitySpecificPanel.name}
+          color={entitySpecificPanel.color}
+          placement="left"
+          show={showEntitySpecificPanel}
+          footer={<SidebarFooter />}
+          updateVisibility={updateVisibility}
+        >
           <EntitySpecificSidebar
             entitySelected={entitySpecificPanel}
             entityFacets={facetsSpecificPanel}
@@ -797,20 +849,22 @@ const Browse: React.FC<Props> = ({location}) => {
             updateSpecificFacets={updateSpecificFacets}
           />
         </HCSider>
-      }
+      )}
       <div className={styles.content} id="browseContainer">
-
-        {user.error.type === "ALERT" ?
+        {user.error.type === "ALERT" ? (
           <AsyncLoader />
-          :
-
+        ) : (
           <>
             <div className={styles.stickyHeader}>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
-              <div className={styles.searchBar} ref={searchBarRef} >
-                {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
+              <div className={styles.searchBar} ref={searchBarRef}>
+                {showNoDefinitionAlertMessage ? (
+                  <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>
+                    {ModelingMessages.titleNoDefinition}
+                  </div>
+                ) : (
                   <span className="d-flex justify-content-between">
-                    {!isGraphView() &&
+                    {!isGraphView() && (
                       <div className={styles.searchSummaryGraphView}>
                         <SearchSummary
                           total={totalDocuments}
@@ -819,17 +873,29 @@ const Browse: React.FC<Props> = ({location}) => {
                           pageSize={searchOptions.pageSize}
                         />
                       </div>
-                    }
+                    )}
 
                     <div className={styles.spinViews}>
                       <div style={switchViewsGraphStyle()}>
-                        {isGraphView() && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
-                          {numberOfResultsBanner}
-                        </div>}
-                        {isLoading && !isGraphView() && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
-                        {!cardView ? <ViewSwitch handleViewChange={handleViewChange} selectedView={selectedView} snippetView /> : ""}
+                        {isGraphView() && (
+                          <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
+                            {numberOfResultsBanner}
+                          </div>
+                        )}
+                        {isLoading && !isGraphView() && (
+                          <div className={styles.spinnerContainer}>
+                            <Spinner animation="border" data-testid="spinner" variant="primary" />
+                          </div>
+                        )}
+                        {!cardView ? (
+                          <ViewSwitch handleViewChange={handleViewChange} selectedView={selectedView} snippetView />
+                        ) : (
+                          ""
+                        )}
                       </div>
-                    </div></span>}
+                    </div>
+                  </span>
+                )}
               </div>
               <div className="mt-4">
                 <SelectedFacets
@@ -837,71 +903,88 @@ const Browse: React.FC<Props> = ({location}) => {
                   greyFacets={greyFacets}
                   applyClicked={applyClicked}
                   showApply={showApply}
-                  toggleApply={(clicked) => toggleApply(clicked)}
-                  toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                  toggleApply={clicked => toggleApply(clicked)}
+                  toggleApplyClicked={clicked => toggleApplyClicked(clicked)}
                 />
               </div>
             </div>
-            {!showNoDefinitionAlertMessage &&
-              <div className={isGraphView() ? styles.viewGraphContainer : styles.viewContainer} >
+            {!showNoDefinitionAlertMessage && (
+              <div className={isGraphView() ? styles.viewGraphContainer : styles.viewContainer}>
                 <div>
-                  {cardView ?
+                  {cardView ? (
                     <RecordCardView
                       data={data}
                       entityPropertyDefinitions={entityPropertyDefinitions}
                       selectedPropertyDefinitions={selectedPropertyDefinitions}
                       entityDefArray={entityDefArray}
                     />
-                    : viewOptions.graphView ?
-                      <div className="position-relative">
-                        {graphLoading && physicsAnimation &&
-                          <div className={styles.loadingContainer} aria-label={"spinner-message-container"}>
-                            <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>
-                            <div className={styles.loadingMsg}>Graph Loading...</div>
-                            <br/>
-                            <div className={styles.loadingMsgSubtext}>
-                              (This process may take longer depending on the size of your data)
-                            </div>
+                  ) : viewOptions.graphView ? (
+                    <div className="position-relative">
+                      {graphLoading && physicsAnimation && (
+                        <div className={styles.loadingContainer} aria-label={"spinner-message-container"}>
+                          <div className={styles.spinnerContainer}>
+                            <Spinner animation="border" data-testid="spinner" variant="primary" />
                           </div>
-                        }
-                        <div style={{opacity: graphLoading && physicsAnimation ? 0 : 1}}>
-                          <GraphViewExplore
-                            entityTypeInstances={graphSearchData}
-                            graphView={viewOptions.graphView}
-                            setViewConcepts={setViewConcepts}
-                            setGraphPageInfo={setGraphPageInfo}
-                            setIsLoading={setGraphLoading}
-                            setPhysicsAnimation={setPhysicsAnimation}
-                            entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
-                            graphConceptsSearchSupported={conceptsSupport}
-                            data={data}
-                            entityDefArray={entityDefArray}
-                          />
+                          <div className={styles.loadingMsg}>Graph Loading...</div>
+                          <br />
+                          <div className={styles.loadingMsgSubtext}>
+                            (This process may take longer depending on the size of your data)
+                          </div>
                         </div>
-                      </div> :
-                      (viewOptions.tableView ?
-                        <div className={styles.tableViewResult}>
-                          <ResultsTabularView
-                            data={data}
-                            entityPropertyDefinitions={entityPropertyDefinitions}
-                            selectedPropertyDefinitions={selectedPropertyDefinitions}
-                            entityDefArray={entityDefArray}
-                            columns={columns}
-                            selectedEntities={searchOptions.entityTypeIds}
-                            setColumnSelectorTouched={setColumnSelectorTouched}
-                            tableView={viewOptions.tableView}
-                            isLoading={isLoading}
-                            handleViewChange={handleViewChange}
-                          />
-                        </div>
-                        : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
-                          handleViewChange={handleViewChange}
-                          entityDefArray={entityDefArray} tableView={viewOptions.tableView} columns={columns} /></div>
                       )}
+                      <div style={{opacity: graphLoading && physicsAnimation ? 0 : 1}}>
+                        <GraphViewExplore
+                          entityTypeInstances={graphSearchData}
+                          graphView={viewOptions.graphView}
+                          setViewConcepts={setViewConcepts}
+                          setGraphPageInfo={setGraphPageInfo}
+                          setIsLoading={setGraphLoading}
+                          setPhysicsAnimation={setPhysicsAnimation}
+                          entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
+                          graphConceptsSearchSupported={conceptsSupport}
+                          data={data}
+                          entityDefArray={entityDefArray}
+                        />
+                      </div>
+                    </div>
+                  ) : viewOptions.tableView ? (
+                    <div className={styles.tableViewResult}>
+                      <ResultsTabularView
+                        data={data}
+                        entityPropertyDefinitions={entityPropertyDefinitions}
+                        selectedPropertyDefinitions={selectedPropertyDefinitions}
+                        entityDefArray={entityDefArray}
+                        columns={columns}
+                        selectedEntities={searchOptions.entityTypeIds}
+                        setColumnSelectorTouched={setColumnSelectorTouched}
+                        tableView={viewOptions.tableView}
+                        isLoading={isLoading}
+                        handleViewChange={handleViewChange}
+                      />
+                    </div>
+                  ) : isLoading ? (
+                    <></>
+                  ) : (
+                    <div
+                      id="snippetViewResult"
+                      className={styles.snippetViewResult}
+                      ref={resultsRef}
+                      onScroll={onResultScroll}
+                    >
+                      <SearchResults
+                        data={data}
+                        handleViewChange={handleViewChange}
+                        entityDefArray={entityDefArray}
+                        tableView={viewOptions.tableView}
+                        columns={columns}
+                      />
+                    </div>
+                  )}
                 </div>
                 <br />
-              </div>}
-            {!showNoDefinitionAlertMessage && !isGraphView() &&
+              </div>
+            )}
+            {!showNoDefinitionAlertMessage && !isGraphView() && (
               <div>
                 <SearchSummary
                   total={totalDocuments}
@@ -916,9 +999,10 @@ const Browse: React.FC<Props> = ({location}) => {
                   pageLength={searchOptions.pageLength}
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
-              </div>}
+              </div>
+            )}
           </>
-        }
+        )}
       </div>
     </div>
   );

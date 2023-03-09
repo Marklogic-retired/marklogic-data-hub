@@ -13,7 +13,7 @@ interface Props {
   maxRowsPerPage: number;
 }
 
-const SearchPagination: React.FC<Props> = (props) => {
+const SearchPagination: React.FC<Props> = props => {
   const {searchOptions, setPage, setPageLength} = useContext(SearchContext);
   const {setMonitorPage, setMonitorPageLength} = useContext(MonitorContext);
 
@@ -35,22 +35,23 @@ const SearchPagination: React.FC<Props> = (props) => {
     setPageSizeOptions(pageOptionsDropdown);
   };
 
-
   useEffect(() => {
     setPerPageSelector(props.maxRowsPerPage);
   }, [props.maxRowsPerPage]);
 
-  const onPageChange = (pageNumber) => {
+  const onPageChange = pageNumber => {
     if (pageNumber !== props.pageNumber) {
       if (searchOptions.tileId === "explore") setPage(pageNumber, props.total);
-      else setMonitorPage(pageNumber, props.total); saveCurrentPageSizeSession(pageNumber, "");
+      else setMonitorPage(pageNumber, props.total);
+      saveCurrentPageSizeSession(pageNumber, "");
     }
   };
 
   const onPageSizeChange = ({target}) => {
     const {value} = target;
     if (searchOptions.tileId === "explore") setPageLength(props.pageNumber, +value);
-    else setMonitorPageLength(props.pageNumber, +value); saveCurrentPageSizeSession("", value);
+    else setMonitorPageLength(props.pageNumber, +value);
+    saveCurrentPageSizeSession("", value);
   };
 
   const handleNext = () => {
@@ -71,11 +72,12 @@ const SearchPagination: React.FC<Props> = (props) => {
     let newDataStorage;
     if (searchOptions.tileId === "monitor") {
       newDataStorage = {
-        ...storage, monitorStepsFlowsTable: {
+        ...storage,
+        monitorStepsFlowsTable: {
           ...storage.monitorStepsFlowsTable,
           pageNumberTable: page !== "" ? page : storage?.monitorStepsFlowsTable?.pageNumberTable,
           pageSizeTable: size !== "" ? size : storage?.monitorStepsFlowsTable?.pageSizeTable,
-        }
+        },
       };
       setViewSettings(newDataStorage);
     }
@@ -87,12 +89,12 @@ const SearchPagination: React.FC<Props> = (props) => {
       onPageChange(pageNumber);
     }
   };
-  const arrowNextKeyDownHandler = (event) => {
+  const arrowNextKeyDownHandler = event => {
     if (event.key === "Enter" || event.key === " ") {
       handleNext();
     }
   };
-  const arrowPreviousKeyDownHandler = (event) => {
+  const arrowPreviousKeyDownHandler = event => {
     if (event.key === "Enter" || event.key === " ") {
       handlePrev();
     }
@@ -104,8 +106,8 @@ const SearchPagination: React.FC<Props> = (props) => {
     const isFirstPageActive = currentPage === 1;
     const isSecondPageActive = currentPage === 2;
     const isLastPageActive = currentPage === totalPage;
-    const isSecondLastPageActive = currentPage === (totalPage - 1);
-    const rangeLimit = isFirstPageActive || isLastPageActive ? 4 : (isSecondPageActive || isSecondLastPageActive ? 3 : 2);
+    const isSecondLastPageActive = currentPage === totalPage - 1;
+    const rangeLimit = isFirstPageActive || isLastPageActive ? 4 : isSecondPageActive || isSecondLastPageActive ? 3 : 2;
     const isCurrentPageWithinRangeLimit = Math.abs(pageNumber - currentPage) <= rangeLimit;
 
     if (isCurrentPageWithinRangeLimit) {
@@ -117,7 +119,8 @@ const SearchPagination: React.FC<Props> = (props) => {
           id={`pagination-item-${pageNumber}`}
           active={props.pageNumber === pageNumber}
           onClick={() => onPageChange(pageNumber)}
-          onKeyDown={(event) => pageKeyDownHandler(event, pageNumber)}>
+          onKeyDown={event => pageKeyDownHandler(event, pageNumber)}
+        >
           {pageNumber}
         </Pagination.Item>
       );
@@ -128,7 +131,17 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const renderOptions = () => {
     const options = pageSizeOptions.map((item, index) => {
-      return <option key={index} tabIndex={0} className={+item === +props.pageSize ? styles.optionSelected : ""} data-testid={item} value={item}>{item} / page</option>;
+      return (
+        <option
+          key={index}
+          tabIndex={0}
+          className={+item === +props.pageSize ? styles.optionSelected : ""}
+          data-testid={item}
+          value={item}
+        >
+          {item} / page
+        </option>
+      );
     });
     return options;
   };
@@ -136,22 +149,37 @@ const SearchPagination: React.FC<Props> = (props) => {
   const renderPagination = (
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
-        <Pagination.Prev onClick={handlePrev} onKeyDown={arrowPreviousKeyDownHandler} disabled={props.pageNumber === 1} tabIndex={0} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
+        <Pagination.Prev
+          onClick={handlePrev}
+          onKeyDown={arrowPreviousKeyDownHandler}
+          disabled={props.pageNumber === 1}
+          tabIndex={0}
+          className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`}
+        />
         {renderPages}
-        <Pagination.Next onClick={handleNext} onKeyDown={arrowNextKeyDownHandler} disabled={props.pageNumber === totalPage} tabIndex={0} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
+        <Pagination.Next
+          onClick={handleNext}
+          onKeyDown={arrowNextKeyDownHandler}
+          disabled={props.pageNumber === totalPage}
+          tabIndex={0}
+          className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`}
+        />
       </Pagination>
-      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" tabIndex={0} value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
+      <Form.Select
+        data-testid="pageSizeSelect"
+        color="secondary"
+        id="pageSizeSelect"
+        tabIndex={0}
+        value={props.pageSize}
+        onChange={onPageSizeChange}
+        className={styles.select}
+      >
         {renderOptions()}
       </Form.Select>
     </div>
   );
 
-
-  return (
-    <div className={styles.searchPaginationContainer}>
-      {props.total > 10 && renderPagination}
-    </div>
-  );
+  return <div className={styles.searchPaginationContainer}>{props.total > 10 && renderPagination}</div>;
 };
 
 export default SearchPagination;

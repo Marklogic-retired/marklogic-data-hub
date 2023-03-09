@@ -1,7 +1,7 @@
 import axios from "axios";
 import {getStep, updateStep} from "./steps";
 
-export const updateMappingArtifact = async (mapping) => {
+export const updateMappingArtifact = async mapping => {
   try {
     let response = await updateStep(mapping.name, "mapping", mapping);
     if (response.status === 200) {
@@ -25,7 +25,6 @@ export const getMappingArtifactByMapName = async (entityTypeId, mapName) => {
       if (mapArtifacts.targetEntityType === entityTypeId) {
         return mapArtifacts;
       }
-
     }
   } catch (error) {
     let message = error;
@@ -39,7 +38,9 @@ export const getMappingFunctions = async (excludeMLMappingFunctions?: boolean) =
     if (!excludeMLMappingFunctions) {
       response = await axios.get(`/api/artifacts/mapping/functions`);
     } else {
-      response = await axios.get(`/api/artifacts/mapping/functions?excludeMLMappingFunctions=${excludeMLMappingFunctions}`);
+      response = await axios.get(
+        `/api/artifacts/mapping/functions?excludeMLMappingFunctions=${excludeMLMappingFunctions}`,
+      );
     }
 
     if (response && response.status === 200) {
@@ -51,7 +52,7 @@ export const getMappingFunctions = async (excludeMLMappingFunctions?: boolean) =
   }
 };
 
-export const getMappingRefs = async (stepName) => {
+export const getMappingRefs = async stepName => {
   try {
     let response = await axios.get(`/api/steps/mapping/${stepName}/references`);
     if (response && response.status === 200) {
@@ -63,7 +64,7 @@ export const getMappingRefs = async (stepName) => {
   }
 };
 
-export const getMappingArtifactByStepName = async (stepName) => {
+export const getMappingArtifactByStepName = async stepName => {
   try {
     let response = await getStep(stepName, "mapping");
     if (response.status === 200) {

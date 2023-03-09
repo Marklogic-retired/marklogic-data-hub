@@ -30,7 +30,7 @@ const props = {
     searchButtonId: "hc-popover-search-search-button",
     // button reset props
     resetButtonText: "Reset",
-    resetButtonId: "hc-popover-search-reset-button"
+    resetButtonId: "hc-popover-search-reset-button",
   },
   customs: {
     // input props
@@ -49,18 +49,22 @@ const props = {
     searchButtonId: "custom-search-button-id",
     // button reset props
     resetButtonText: "Reset Button Text",
-    resetButtonId: "custom-reset-button-id"
-  }
+    resetButtonId: "custom-reset-button-id",
+  },
 };
 
 test("should render a HCPopoverSearch component", () => {
-  const {getByTestId, queryByTestId} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />);
+  const {getByTestId, queryByTestId} = render(
+    <HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />,
+  );
   expect(getByTestId(props.defaults.searchIconId)).toBeInTheDocument();
   expect(queryByTestId(props.defaults.popoverId)).toBeNull();
 });
 
 test("should open the popover on click hover over search icon", () => {
-  const {getByTestId, getByLabelText} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />);
+  const {getByTestId, getByLabelText} = render(
+    <HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />,
+  );
   fireEvent.click(getByTestId(props.defaults.searchIconId));
   expect(getByLabelText(props.defaults.searchIconAriaLabel)).toBeInTheDocument();
 
@@ -85,7 +89,6 @@ test("should render with personalized optional props", () => {
       inputValue={props.customs.inputValue}
       onSearch={props.onSearch}
       onReset={props.onReset}
-
       inputId={props.customs.inputId}
       inputAriaLabel={props.customs.inputAriaLabel}
       inputPlaceholder={props.customs.inputPlaceholder}
@@ -97,7 +100,7 @@ test("should render with personalized optional props", () => {
       searchButtonId={props.customs.searchButtonId}
       resetButtonText={props.customs.resetButtonText}
       resetButtonId={props.customs.resetButtonId}
-    />
+    />,
   );
 
   fireEvent.click(getByTestId(props.customs.searchIconId));
@@ -119,7 +122,9 @@ test("should render with personalized optional props", () => {
 });
 
 test("can enter value to search and interact with search and reset button", () => {
-  const {getByTestId, queryByTestId} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />);
+  const {getByTestId, queryByTestId} = render(
+    <HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />,
+  );
   fireEvent.click(getByTestId(props.defaults.searchIconId));
   userEvent.type(getByTestId(props.defaults.inputId), props.customs.inputValue);
   expect(getByTestId(props.defaults.inputId)).toHaveValue(props.customs.inputValue);
@@ -142,7 +147,9 @@ test("can enter value to search and interact with search and reset button", () =
 });
 
 test("popover should close when clicked outside", () => {
-  const {getByTestId, queryByTestId} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />);
+  const {getByTestId, queryByTestId} = render(
+    <HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} />,
+  );
   fireEvent.click(getByTestId(props.defaults.searchIconId));
   expect(getByTestId(props.defaults.popoverId)).toBeInTheDocument();
 
@@ -151,7 +158,14 @@ test("popover should close when clicked outside", () => {
 });
 
 test("popover should not close when clicked outside passing prop closeOnClickOutside on false", () => {
-  const {getByTestId} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} closeOnClickOutside={false} />);
+  const {getByTestId} = render(
+    <HCPopoverSearch
+      inputValue={props.defaults.inputValue}
+      onSearch={props.onSearch}
+      onReset={props.onReset}
+      closeOnClickOutside={false}
+    />,
+  );
   fireEvent.click(getByTestId(props.defaults.searchIconId));
   expect(getByTestId(props.defaults.popoverId)).toBeInTheDocument();
 
@@ -159,9 +173,15 @@ test("popover should not close when clicked outside passing prop closeOnClickOut
   expect(getByTestId(props.defaults.popoverId)).toBeInTheDocument();
 });
 
-
 test("keyboard navigation on popover search", () => {
-  const {getByTestId, getByLabelText} = render(<HCPopoverSearch inputValue={props.defaults.inputValue} onSearch={props.onSearch} onReset={props.onReset} closeOnClickOutside={false} />);
+  const {getByTestId, getByLabelText} = render(
+    <HCPopoverSearch
+      inputValue={props.defaults.inputValue}
+      onSearch={props.onSearch}
+      onReset={props.onReset}
+      closeOnClickOutside={false}
+    />,
+  );
   let searchIcon = getByTestId(props.defaults.searchIconId);
   searchIcon.focus();
   fireEvent.keyDown(searchIcon, {key: "Enter", code: "Enter", keyCode: 13, charCode: 13});

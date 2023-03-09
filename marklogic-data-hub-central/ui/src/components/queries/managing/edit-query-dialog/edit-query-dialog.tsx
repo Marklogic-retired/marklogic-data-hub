@@ -5,15 +5,10 @@ import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
 import {HCInput, HCButton, HCModal} from "@components/common";
 
-const EditQueryDialog = (props) => {
-  const {
-    handleError
-  } = useContext(UserContext);
+const EditQueryDialog = props => {
+  const {handleError} = useContext(UserContext);
 
-  const {
-    searchOptions,
-    setSelectedQuery
-  } = useContext(SearchContext);
+  const {searchOptions, setSelectedQuery} = useContext(SearchContext);
 
   const [query, setQuery] = useState(props.query);
   const [queryName, setQueryName] = useState("");
@@ -23,7 +18,12 @@ const EditQueryDialog = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (props.query && JSON.stringify(props.query) !== JSON.stringify({}) && props.query.hasOwnProperty("savedQuery") && props.query.savedQuery.hasOwnProperty("name")) {
+    if (
+      props.query &&
+      JSON.stringify(props.query) !== JSON.stringify({}) &&
+      props.query.hasOwnProperty("savedQuery") &&
+      props.query.savedQuery.hasOwnProperty("name")
+    ) {
       setQuery(props.query);
       setQueryName(props.query.savedQuery.name);
 
@@ -34,7 +34,6 @@ const EditQueryDialog = (props) => {
       setQueryNameTouched(false);
       setQueryDescriptionTouched(false);
     }
-
   }, [props.query]);
 
   const onCancel = () => {
@@ -42,7 +41,7 @@ const EditQueryDialog = (props) => {
     props.setEditModalVisibility(false);
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "name") {
       if (event.target.value === " ") {
         setQueryNameTouched(false);
@@ -62,7 +61,7 @@ const EditQueryDialog = (props) => {
     }
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
     query.savedQuery.name = queryName.trim();
     query.savedQuery.description = queryDescription;
@@ -70,9 +69,11 @@ const EditQueryDialog = (props) => {
       let status = await props.editQuery(query);
       if (status && status.code === 200) {
         props.setEditModalVisibility(false);
-        if (searchOptions.selectedQuery !== "select a query" &&
+        if (
+          searchOptions.selectedQuery !== "select a query" &&
           query.savedQuery.name !== searchOptions.selectedQuery &&
-          props.currentQueryName === searchOptions.selectedQuery) {
+          props.currentQueryName === searchOptions.selectedQuery
+        ) {
           setSelectedQuery(query.savedQuery.name);
         }
       }
@@ -89,10 +90,7 @@ const EditQueryDialog = (props) => {
 
   return (
     <div>
-      <HCModal
-        show={props.editModalVisibility}
-        onHide={onCancel}
-      >
+      <HCModal show={props.editModalVisibility} onHide={onCancel}>
         <Modal.Header className={"bb-none"}>
           <span className={styles.title}>{"Edit Query"}</span>
           <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
@@ -100,7 +98,10 @@ const EditQueryDialog = (props) => {
         <Modal.Body className={"pt-0 pb-4"}>
           <Form name="basic" className={"container-fluid"}>
             <Row className={"mb-3"}>
-              <FormLabel column lg={3}>{"Query Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+              <FormLabel column lg={3}>
+                {"Query Name:"}
+                <span className={styles.asterisk}>*</span>
+              </FormLabel>
               <Col>
                 <Row>
                   <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
@@ -119,7 +120,9 @@ const EditQueryDialog = (props) => {
               </Col>
             </Row>
             <Row className={"mb-3"}>
-              <FormLabel column lg={3}>{"Description:"}</FormLabel>
+              <FormLabel column lg={3}>
+                {"Description:"}
+              </FormLabel>
               <Col className={"d-flex"}>
                 <HCInput
                   id="description"
@@ -133,9 +136,18 @@ const EditQueryDialog = (props) => {
             <Row className={`mb-1 mt-3 ${styles.submitButtonsForm}`}>
               <Col className={"d-flex"}>
                 <div className={styles.submitButtons}>
-                  <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
-                                &nbsp;&nbsp;
-                  <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
+                  <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>
+                    Cancel
+                  </HCButton>
+                  &nbsp;&nbsp;
+                  <HCButton
+                    variant="primary"
+                    type="submit"
+                    disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0}
+                    onClick={handleSubmit}
+                  >
+                    Save
+                  </HCButton>
                 </div>
               </Col>
             </Row>

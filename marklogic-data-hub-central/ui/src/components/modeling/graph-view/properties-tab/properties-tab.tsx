@@ -10,12 +10,13 @@ interface Props {
   updateSavedEntity: any;
 }
 
-
-const PropertiesTab: React.FC<Props> = (props) => {
+const PropertiesTab: React.FC<Props> = props => {
   const {entityTypeData, dataModel, canWriteEntityModel, canReadEntityModel, updateSavedEntity} = props;
   return (
     <div className={`divPropertyTable`}>
-      <div><ModelingLegend/></div>
+      <div>
+        <ModelingLegend />
+      </div>
       <PropertyTable
         entityName={entityTypeData?.entityName}
         definitions={entityTypeData?.model.definitions}

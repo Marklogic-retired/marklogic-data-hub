@@ -10,15 +10,13 @@ import {Application} from "../../config/application.config";
 import {fireEvent} from "@testing-library/dom";
 
 describe("Header component", () => {
-
   afterEach(cleanup);
 
   test.only("should render correctly when a user is not logged in", () => {
-
     const {getByText, getByLabelText, queryByText} = render(
       <Router>
         <Header environment={data.environment} /*notificationStruct={notificationData}*/ />
-      </Router>
+      </Router>,
     );
 
     expect(getByLabelText("header-logo")).toBeInTheDocument();
@@ -30,13 +28,17 @@ describe("Header component", () => {
   });
 
   test("should render correctly when a user is logged in", async () => {
-
     const {getByText, getByLabelText, rerender} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} /*notificationStruct={notificationData}*//>
+          <Header
+            environment={{
+              ...data.environment,
+              dataHubVersion: "5.3-SNAPSHOT",
+            }} /*notificationStruct={notificationData}*/
+          />
         </UserContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(getByText(Application.title)).toBeInTheDocument();
     expect(getByLabelText("header-logo")).toBeInTheDocument();
@@ -65,9 +67,11 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.2.1"}} /*notificationStruct={notificationData}*//>
+          <Header
+            environment={{...data.environment, dataHubVersion: "5.2.1"}} /*notificationStruct={notificationData}*/
+          />
         </UserContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(document.querySelector("#help-link")).toHaveAttribute("href", "https://docs.marklogic.com/datahub/5.2");
 
@@ -75,12 +79,13 @@ describe("Header component", () => {
     rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.64.123456"}} /*notificationStruct={notificationData}*//>
+          <Header
+            environment={{...data.environment, dataHubVersion: "5.64.123456"}} /*notificationStruct={notificationData}*/
+          />
         </UserContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(document.querySelector("#help-link")).toHaveAttribute("href", "https://docs.marklogic.com/datahub/5.64");
-
   });
 
   test("verify tabbing and arrow key controls", async () => {
@@ -89,9 +94,14 @@ describe("Header component", () => {
     const {getByLabelText, getByTestId} = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
-          <Header environment = {{...data.environment, dataHubVersion: "5.3-SNAPSHOT"}} /*notificationStruct={notificationData}*//>
+          <Header
+            environment={{
+              ...data.environment,
+              dataHubVersion: "5.3-SNAPSHOT",
+            }} /*notificationStruct={notificationData}*/
+          />
         </UserContext.Provider>
-      </Router>
+      </Router>,
     );
 
     const element_logo = getByLabelText("logo-link");
@@ -136,5 +146,4 @@ describe("Header component", () => {
       expect(header[i - 1]).toHaveFocus();
     }
   });
-
 });

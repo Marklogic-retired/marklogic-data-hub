@@ -13,12 +13,12 @@ interface Props {
   isEntityInstance: boolean;
   isSidePanel?: boolean;
   data?: any;
-  openUnmergeCompare?:(item: object)=>void;
-  loadingCompare?:string;
-  isUnmergeAvailable?:(nodeid: string) => boolean;
+  openUnmergeCompare?: (item: object) => void;
+  loadingCompare?: string;
+  isUnmergeAvailable?: (nodeid: string) => boolean;
 }
 
-const TableView: React.FC<Props> = (props) => {
+const TableView: React.FC<Props> = props => {
   const [expandedRows, setExpandedRows] = useState<any[]>([]);
   const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
 
@@ -37,7 +37,7 @@ const TableView: React.FC<Props> = (props) => {
         expandRow = currRow.concat(expandRow);
         expandRow.push(counter);
       }
-      if (obj[i] !== null && typeof (obj[i]) === "object") {
+      if (obj[i] !== null && typeof obj[i] === "object") {
         currRow.push(counter);
         parsedData.push({key: counter++, property: i, children: parseJson(obj[i])});
         currRow.pop();
@@ -52,26 +52,25 @@ const TableView: React.FC<Props> = (props) => {
     data = parseJson(props.document);
   }
 
-
   const columns = [
     {
       text: "Property",
       dataField: "property",
       key: "property",
       width: props.isEntityInstance ? "20%" : "40%",
-      formatter: (value) => {
+      formatter: value => {
         return <span>{value}</span>;
-      }
+      },
     },
     {
       text: "Value",
       dataField: "value",
       key: "value",
-      formatter: (value) => {
+      formatter: value => {
         return <span>{value}</span>;
       },
       width: props.isEntityInstance ? "80%" : "60%",
-    }
+    },
   ];
 
   const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
@@ -86,7 +85,7 @@ const TableView: React.FC<Props> = (props) => {
     return allKeysToExpand;
   };
 
-  const handleSourceExpandCollapse = (option) => {
+  const handleSourceExpandCollapse = option => {
     let keys = getKeysToExpandFromTable(data, "key", [], true);
     if (option === "collapse") {
       setExpandedRows([]);
@@ -110,7 +109,7 @@ const TableView: React.FC<Props> = (props) => {
 
     setExpandedRows(newExpandedRows);
   };
-  const handleOpenCompare = (docUri) => {
+  const handleOpenCompare = docUri => {
     if (props.openUnmergeCompare && typeof props.openUnmergeCompare === "function") {
       props.openUnmergeCompare(docUri);
     }
@@ -141,9 +140,7 @@ const TableView: React.FC<Props> = (props) => {
                       className={styles.unMergeIcon}
                       data-testid={`unmergeIcon`}
                       aria-label={`unmerge-icon`}
-                      onClick={() =>
-                        handleOpenCompare(props.data.docUri)
-                      }
+                      onClick={() => handleOpenCompare(props.data.docUri)}
                     />
                   </i>
                 </HCTooltip>
@@ -153,8 +150,18 @@ const TableView: React.FC<Props> = (props) => {
         } else {
           return (
             <div className={styles.unMergeIcon}>
-              <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
-                <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
+              <HCTooltip
+                text={SecurityTooltips.missingPermissionUnMerge}
+                id="missing-permission-tooltip"
+                placement="top-end"
+              >
+                <i>
+                  <MdCallSplit
+                    className={styles.unMergeIconDisabled}
+                    data-testid={`unmergeIcon`}
+                    aria-label={`unmerge-icon`}
+                  />
+                </i>
               </HCTooltip>
             </div>
           );
@@ -165,15 +172,16 @@ const TableView: React.FC<Props> = (props) => {
   };
   return (
     <>
-      {props.isSidePanel &&
-          <div className={styles.extraButtonContainer}>
-            {unmergeIcon()}
-            <span>
-              <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />
-            </span>
-          </div>
-      }
-      <HCTable columns={columns}
+      {props.isSidePanel && (
+        <div className={styles.extraButtonContainer}>
+          {unmergeIcon()}
+          <span>
+            <ExpandCollapse handleSelection={id => handleSourceExpandCollapse(id)} currentSelection={""} />
+          </span>
+        </div>
+      )}
+      <HCTable
+        columns={columns}
         className={props.isEntityInstance ? "document-table-demo" : styles.tableViewNonEntity}
         data={data}
         onExpand={onExpand}

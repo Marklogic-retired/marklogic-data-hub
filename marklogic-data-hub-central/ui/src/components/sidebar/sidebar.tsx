@@ -52,7 +52,7 @@ interface Props {
   entityRelationships: any;
   isBackToResultsClicked?: boolean;
 }
-const Sidebar: React.FC<Props> = (props) => {
+const Sidebar: React.FC<Props> = props => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
   const finalDbName: string = getEnvironment().finalDb ? getEnvironment().finalDb : "Final";
   const componentIsMounted = useRef(true);
@@ -71,12 +71,9 @@ const Sidebar: React.FC<Props> = (props) => {
     setRelatedEntityTypeIds,
     setConceptFilterTypeIds,
     setAllFilterTypeIds,
-    setDatabaseAndDatasource
+    setDatabaseAndDatasource,
   } = useContext(SearchContext);
-  const {
-    user,
-    handleError
-  } = useContext(UserContext);
+  const {user, handleError} = useContext(UserContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [maxQuantityOnFacets, setMaxQuantityOnFacets] = useState<number>(0);
@@ -128,7 +125,10 @@ const Sidebar: React.FC<Props> = (props) => {
       props.entityRelationships[entityName].map(entityName => {
         const currentRelatedEntity = props.currentRelatedEntities.get(entityName);
         const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
-        relatedEntitiesList.set(entityName, {...relEntity, checked: currentRelatedEntity?.checked || checkAllRelatedEntities});
+        relatedEntitiesList.set(entityName, {
+          ...relEntity,
+          checked: currentRelatedEntity?.checked || checkAllRelatedEntities,
+        });
       });
     });
 
@@ -136,7 +136,7 @@ const Sidebar: React.FC<Props> = (props) => {
     const checkedValues = values.filter(({checked}) => checked);
 
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
-      relatedConceptsValues["facetValues"].map((obj) => {
+      relatedConceptsValues["facetValues"].map(obj => {
         const currentRelatedConcept = props.currentRelatedConcepts.get(obj.name);
         relatedConceptsList.set(obj.name, {...obj, checked: currentRelatedConcept?.checked || checkAllRelatedConcepts});
       });
@@ -144,7 +144,14 @@ const Sidebar: React.FC<Props> = (props) => {
 
     const conceptsValues = Array.from(relatedConceptsList.values());
     const checkedConceptsValues = conceptsValues.filter(({checked}) => checked);
-    setAllFilterTypeIds(checkedValues.map(function (i) { return i.name; }), checkedConceptsValues.map(function (i) { return i.value; }));
+    setAllFilterTypeIds(
+      checkedValues.map(function (i) {
+        return i.name;
+      }),
+      checkedConceptsValues.map(function (i) {
+        return i.value;
+      }),
+    );
     props.setCurrentRelatedConcepts(relatedConceptsList);
     props.setCurrentRelatedEntities(relatedEntitiesList);
   }, [props.currentBaseEntities, relatedConceptsValues]);
@@ -153,11 +160,11 @@ const Sidebar: React.FC<Props> = (props) => {
     getByDefaultCheckedFacetsLS();
   }, [props.currentBaseEntities]);
 
-  const onSettingRelatedEntitiesCheckedList = (list) => {
+  const onSettingRelatedEntitiesCheckedList = list => {
     setCheckAllRelatedEntities(list.length === props.currentRelatedEntities.size);
   };
 
-  const onSettingRelatedConceptsCheckedList = (list) => {
+  const onSettingRelatedConceptsCheckedList = list => {
     setCheckAllRelatedConcepts(list.length === props.currentRelatedConcepts.size);
   };
 
@@ -168,7 +175,11 @@ const Sidebar: React.FC<Props> = (props) => {
     });
     const values = Array.from(relatedEntitiesList.values());
     const checkedValues = values.filter(({checked}) => checked);
-    setRelatedEntityTypeIds(checkedValues.map(function (i) { return i.name; }));
+    setRelatedEntityTypeIds(
+      checkedValues.map(function (i) {
+        return i.name;
+      }),
+    );
     props.setCurrentRelatedEntities(relatedEntitiesList);
   };
 
@@ -178,7 +189,7 @@ const Sidebar: React.FC<Props> = (props) => {
     onCheckAll(checked);
   };
 
-  const onCheckAllRelatedEntities = (event) => {
+  const onCheckAllRelatedEntities = event => {
     if (event.key === "Enter" && activeRelatedEntities) {
       const {target} = event;
       const {checked} = target;
@@ -187,24 +198,28 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
-  const onCheckAllRelatedConcepts = (checked) => {
+  const onCheckAllRelatedConcepts = checked => {
     let relatedConceptsList = new Map();
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
-      relatedConceptsValues["facetValues"].map((obj) => {
+      relatedConceptsValues["facetValues"].map(obj => {
         relatedConceptsList.set(obj.name, {...obj, checked: checked});
       });
     }
     const values = Array.from(relatedConceptsList.values());
     const checkedValues = values.filter(({checked}) => checked);
     if (checkedValues.length) {
-      setConceptFilterTypeIds(checkedValues.map(function (i) { return i.value; }));
+      setConceptFilterTypeIds(
+        checkedValues.map(function (i) {
+          return i.value;
+        }),
+      );
     } else {
       setConceptFilterTypeIds(["#"]);
     }
     props.setCurrentRelatedConcepts(relatedConceptsList);
   };
 
-  const onCheckAllRelatedConceptsKeyDown = (event) => {
+  const onCheckAllRelatedConceptsKeyDown = event => {
     if (event.key === "Enter" && activeRelatedConcepts) {
       const {target} = event;
       const {checked} = target;
@@ -213,7 +228,7 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
-  const onCheckAllRelatedConceptsClick = (event) => {
+  const onCheckAllRelatedConceptsClick = event => {
     if (activeRelatedConcepts) {
       const {target} = event;
       const {checked} = target;
@@ -222,15 +237,15 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
-
-
-
   useEffect(() => {
     if (props.facets) {
       let {defaultActiveKeys} = exploreSidebarConfig;
       setActiveKey(defaultActiveKeys);
       for (let i in hubFacets) {
-        if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName)) {
+        if (
+          searchOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName) ||
+          greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName)
+        ) {
           setActiveKey(defaultActiveKeys);
         }
       }
@@ -238,7 +253,13 @@ const Sidebar: React.FC<Props> = (props) => {
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
-        tmpMaxQuantityOnFacets = (hubFacetValues && hubFacetValues.hasOwnProperty("facetValues")) ? hubFacetValues.facetValues.reduce((previousValue, {count}) => previousValue < count ? count : previousValue, tmpMaxQuantityOnFacets) : tmpMaxQuantityOnFacets;
+        tmpMaxQuantityOnFacets =
+          hubFacetValues && hubFacetValues.hasOwnProperty("facetValues")
+            ? hubFacetValues.facetValues.reduce(
+              (previousValue, {count}) => (previousValue < count ? count : previousValue),
+              tmpMaxQuantityOnFacets,
+            )
+            : tmpMaxQuantityOnFacets;
         return hubFacetValues && {...hubFacet, ...hubFacetValues};
       });
 
@@ -256,28 +277,40 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        searchOptions.entityTypeIds?.length && activeRelatedEntities && activeKey.includes("related-entities") ?
-          setActiveKey([...defaultActiveKeys, "related-entities"])
+        searchOptions.entityTypeIds?.length && activeRelatedEntities && activeKey.includes("related-entities")
+          ? setActiveKey([...defaultActiveKeys, "related-entities"])
           : setActiveKey(["database", "hubProperties", "baseEntities"]);
       }
 
       let entityFacets: any[] = [];
-      let relatedConceptsObj: any = [], result = 0; // eslint-disable-line @typescript-eslint/no-unused-vars
+      let relatedConceptsObj: any = [],
+        result = 0; // eslint-disable-line @typescript-eslint/no-unused-vars
       if (searchOptions.entityTypeIds?.length) {
-        let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === searchOptions.entityTypeIds[0]);
+        let newEntityFacets = parsedFacets.filter(
+          facet => facet.facetName.split(".")[0] === searchOptions.entityTypeIds[0],
+        );
         const entityDef = props.entityDefArray.find(entity => entity.name === searchOptions.entityTypeIds[0]);
 
         if (newEntityFacets) {
           for (let i in newEntityFacets) {
             newEntityFacets[i].referenceType = "path";
-            newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
-            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".") + 1);
+            newEntityFacets[i].entityTypeId =
+              entityDef?.info["baseUri"] +
+              entityDef?.info["title"] +
+              "-" +
+              entityDef?.info["version"] +
+              "/" +
+              entityDef?.name;
+            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(
+              newEntityFacets[i]["facetName"].indexOf(".") + 1,
+            );
           }
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
         setEntityFacets(entityFacets);
 
-        result = props.entitiesWithRelatedConcepts?.entitites?.forEach(obj => { // eslint-disable-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        result = props.entitiesWithRelatedConcepts?.entitites?.forEach(obj => {
           if (searchOptions.entityTypeIds.includes(obj.entityType.split("/").pop())) {
             for (let conceptIdx in obj.relatedConcepts) {
               relatedConceptsObj.push(obj.relatedConcepts[conceptIdx]);
@@ -299,14 +332,14 @@ const Sidebar: React.FC<Props> = (props) => {
             max: 1,
             name: facetName,
             value: concept.conceptIRI,
-            count: concept.count
+            count: concept.count,
           };
         });
         let finalConcepts: any = {
           facetName: "RelatedConcepts",
           type: "concept",
           facetValues: conceptFacets,
-          entityTypeId: searchOptions.entityTypeIds
+          entityTypeId: searchOptions.entityTypeIds,
         };
         setRelatedConceptsValues(finalConcepts);
       }
@@ -355,7 +388,6 @@ const Sidebar: React.FC<Props> = (props) => {
       }
     }
   }, [searchOptions.entityTypeIds, props.facets]);
-
 
   useEffect(() => {
     if (Object.entries(greyedOptions.selectedFacets).length !== 0) {
@@ -407,31 +439,32 @@ const Sidebar: React.FC<Props> = (props) => {
 
   //To handle default views for first-time user experience
   useEffect(() => {
-    getEntities().then((res) => {
-      entitiesArrayRef.current! = ([...entityFromJSON(res.data).map(entity => entity.info.title)]);
-      checkDataInDatabase("final").then((countEntityFinalCount) => {
-        //By Default entities datasource and final database is selected
-        if (countEntityFinalCount === 0 && !props.isBackToResultsClicked) {
-          checkDataInDatabase("staging").then((countEntityStagingCount) => {
-            if (countEntityStagingCount > 0) {
-              //Setting the staging database if there is no data in final database
-              props.setDatabasePreferences("staging");
-            } else {
-              //Setting the All Data datasource with staging database at end
-              checkDataInDatabase("final", "all-data").then((countAllDataFinalCount) => {
-                if (countAllDataFinalCount === 0) {
-                  //Setting the staging database if there is no data in final database
-                  setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
-                } else {
-                  setDatasourcePreferences("all-data");
-                }
-              });
-            }
-          });
-        }
-      });
-    })
-      .catch((error) => {
+    getEntities()
+      .then(res => {
+        entitiesArrayRef.current! = [...entityFromJSON(res.data).map(entity => entity.info.title)];
+        checkDataInDatabase("final").then(countEntityFinalCount => {
+          //By Default entities datasource and final database is selected
+          if (countEntityFinalCount === 0 && !props.isBackToResultsClicked) {
+            checkDataInDatabase("staging").then(countEntityStagingCount => {
+              if (countEntityStagingCount > 0) {
+                //Setting the staging database if there is no data in final database
+                props.setDatabasePreferences("staging");
+              } else {
+                //Setting the All Data datasource with staging database at end
+                checkDataInDatabase("final", "all-data").then(countAllDataFinalCount => {
+                  if (countAllDataFinalCount === 0) {
+                    //Setting the staging database if there is no data in final database
+                    setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
+                  } else {
+                    setDatasourcePreferences("all-data");
+                  }
+                });
+              }
+            });
+          }
+        });
+      })
+      .catch(error => {
         handleError(error);
       });
   }, []);
@@ -444,11 +477,11 @@ const Sidebar: React.FC<Props> = (props) => {
           "query": {
             "searchText": "",
             "entityTypeIds": entitiesArrayRef.current!,
-            "selectedFacets": searchOptions.selectedFacets
+            "selectedFacets": searchOptions.selectedFacets,
           },
           "start": 0,
           "pageLength": 1,
-        }
+        },
       };
 
       let response;
@@ -505,15 +538,22 @@ const Sidebar: React.FC<Props> = (props) => {
         greyFacetsLS[facetName][valueKey] = newArrayLS;
 
         let newOptions = {
-          ...oldOptions, preselectedFacets: greyFacetsLS
+          ...oldOptions,
+          preselectedFacets: greyFacetsLS,
         };
         updateUserPreferences(user.name, newOptions);
       }
     }
   };
 
-  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
-
+  const updateSelectedFacets = (
+    constraint: string,
+    vals: string[],
+    datatype: string,
+    isNested: boolean,
+    toDelete = false,
+    toDeleteAll: boolean = false,
+  ) => {
     let facets = {...allSelectedFacets};
     let greyFacets = {...greyedOptions.selectedFacets};
     let type = "";
@@ -547,24 +587,29 @@ const Sidebar: React.FC<Props> = (props) => {
         ...facets,
         [facetName]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
       greyFacets = {
         ...greyFacets,
         [facetName]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
     } else {
       delete facets[facetName];
     }
     if (toDelete) {
-
-      if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
+      if (
+        Object.entries(searchOptions.selectedFacets).length > 0 &&
+        searchOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearFacet(constraint, vals[0]);
-      } else if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+      } else if (
+        Object.entries(greyedOptions.selectedFacets).length > 0 &&
+        greyedOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearGreyFacet(constraint, vals[0]);
         facetName !== "RelatedConcepts" && deleteGreyFacetLS(facetName, valueKey, vals[0]);
       }
@@ -591,7 +636,7 @@ const Sidebar: React.FC<Props> = (props) => {
       let oldOptions = JSON.parse(userPreferences);
       let newOptions = {
         ...oldOptions,
-        preselectedFacets: facets
+        preselectedFacets: facets,
       };
       updateUserPreferences(user.name, newOptions);
     }
@@ -620,8 +665,8 @@ const Sidebar: React.FC<Props> = (props) => {
           ...newAllSelectedfacets,
           [constraint]: {
             dataType,
-            [valueKey]: vals
-          }
+            [valueKey]: vals,
+          },
         };
         for (let i = 0; i < additionalFacetVals.length; i++) {
           for (let j = 0; j < newEntityFacets[index]["facetValues"].length; j++) {
@@ -648,8 +693,8 @@ const Sidebar: React.FC<Props> = (props) => {
           ...newAllSelectedfacets,
           [constraint]: {
             dataType,
-            [valueKey]: vals
-          }
+            [valueKey]: vals,
+          },
         };
         for (let i = 0; i < additionalFacetVals.length; i++) {
           for (let j = 0; j < newHubFacets[index]["facetValues"].length; j++) {
@@ -689,8 +734,8 @@ const Sidebar: React.FC<Props> = (props) => {
         ...newAllSelectedfacets,
         [constraint]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
     } else {
       delete newAllSelectedfacets[constraint];
@@ -705,7 +750,8 @@ const Sidebar: React.FC<Props> = (props) => {
     if (userPreferences) {
       let oldOptions = JSON.parse(userPreferences);
       let newOptions = {
-        ...oldOptions, preselectedFacets: {...oldOptions.preselectedFacets, createdOnRange: dateObject}
+        ...oldOptions,
+        preselectedFacets: {...oldOptions.preselectedFacets, createdOnRange: dateObject},
       };
       updateUserPreferences(user.name, newOptions);
     }
@@ -720,8 +766,8 @@ const Sidebar: React.FC<Props> = (props) => {
     let updateFacets = {...allSelectedFacets};
     let createdOnRangeVal = {
       dataType: "date",
-      stringValues: [option.value, (-1 * new Date().getTimezoneOffset())],
-      rangeValues: {lowerBound: "", upperBound: ""}
+      stringValues: [option.value, -1 * new Date().getTimezoneOffset()],
+      rangeValues: {lowerBound: "", upperBound: ""},
     };
     updateFacets = {...updateFacets, createdOnRange: createdOnRangeVal};
     setAllSelectedFacets(updateFacets);
@@ -729,7 +775,7 @@ const Sidebar: React.FC<Props> = (props) => {
     saveOptionSelectDateLS(createdOnRangeVal);
   };
 
-  const timeWindow = (selectedDateRangeValue) => {
+  const timeWindow = selectedDateRangeValue => {
     let date = "";
     if (selectedDateRangeValue === "This Week") {
       const startOfWeek = dayjs().startOf("week").format("MMM DD");
@@ -754,13 +800,13 @@ const Sidebar: React.FC<Props> = (props) => {
     if (endDate && endDate.isValid()) {
       createdOnRangeAux = {
         dataType: "date",
-        stringValues: ["Custom", (-1 * new Date().getTimezoneOffset())],
-        rangeValues: {lowerBound: dayjs(dateArray[0]).format(), upperBound: dayjs(dateArray[1]).format()}
+        stringValues: ["Custom", -1 * new Date().getTimezoneOffset()],
+        rangeValues: {lowerBound: dayjs(dateArray[0]).format(), upperBound: dayjs(dateArray[1]).format()},
       };
       updateFacets = {...updateFacets, createdOnRange: createdOnRangeAux};
       dateArrayAux = [dayjs(dateArray[0]), dayjs(dateArray[1])];
       setDatePickerValue(dateArrayAux);
-      saveOptionSelectDateLS(createdOnRangeAux/*, dateArrayAux*/);
+      saveOptionSelectDateLS(createdOnRangeAux /*, dateArrayAux*/);
     } else {
       delete updateFacets.createdOnRange;
       setDatePickerValue([null, null]);
@@ -769,7 +815,7 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions(updateFacets);
   };
 
-  const setActiveAccordion = (key) => {
+  const setActiveAccordion = key => {
     const tmpActiveKeys = [...activeKey];
     const index = tmpActiveKeys.indexOf(key);
     index !== -1 ? tmpActiveKeys.splice(index, 1) : tmpActiveKeys.push(key);
@@ -777,7 +823,7 @@ const Sidebar: React.FC<Props> = (props) => {
     handleFacetPreferences(tmpActiveKeys);
   };
 
-  const setDatasourcePreferences = (datasource) => {
+  const setDatasourcePreferences = datasource => {
     setDatasource(datasource);
   };
 
@@ -791,10 +837,10 @@ const Sidebar: React.FC<Props> = (props) => {
     }
   };
 
-  const handleFacetPreferences = (key) => {
+  const handleFacetPreferences = key => {
     let options = {
       ...userPreferences,
-      activeFacets: key
+      activeFacets: key,
     };
     updateUserPreferences(user.name, options);
   };
@@ -897,35 +943,52 @@ const Sidebar: React.FC<Props> = (props) => {
   };
 
   const panelTitle = (title, tooltipTitle, stringTitle) => {
-    let disabled = !props.graphView && (tooltipTitle === ExploreGraphViewToolTips.relatedEntities || tooltipTitle === ExploreGraphViewToolTips.relatedConcepts);
+    let disabled =
+      !props.graphView &&
+      (tooltipTitle === ExploreGraphViewToolTips.relatedEntities ||
+        tooltipTitle === ExploreGraphViewToolTips.relatedConcepts);
     return (
       <div className={styles.panelTitle}>
         {title}
         <span
           tabIndex={props.graphView || stringTitle === "base entities" ? 0 : undefined}
-          onBlur={(e) => onLostFocusEventHandlerTooltip(e, stringTitle)}
-          onFocus={(e) => onFocusHandlerTooltip(e, stringTitle)}>
+          onBlur={e => onLostFocusEventHandlerTooltip(e, stringTitle)}
+          onFocus={e => onFocusHandlerTooltip(e, stringTitle)}
+        >
           <HCTooltip
             text={disabled ? "" : tooltipTitle}
             id="entities-tooltip"
             placement="right"
             show={
-              stringTitle === "base entities" ? isTooltipVisible.baseEntities ? isTooltipVisible.baseEntities : undefined :
-                stringTitle === "related entities" ? isTooltipVisible.relatedEntities ? isTooltipVisible.relatedEntities : undefined :
-                  stringTitle === "related concepts" ? isTooltipVisible.relatedConcepts ? isTooltipVisible.relatedConcepts : undefined
+              stringTitle === "base entities"
+                ? isTooltipVisible.baseEntities
+                  ? isTooltipVisible.baseEntities
+                  : undefined
+                : stringTitle === "related entities"
+                  ? isTooltipVisible.relatedEntities
+                    ? isTooltipVisible.relatedEntities
                     : undefined
-            }>
+                  : stringTitle === "related concepts"
+                    ? isTooltipVisible.relatedConcepts
+                      ? isTooltipVisible.relatedConcepts
+                      : undefined
+                    : undefined
+            }
+          >
             <i>
-              <FontAwesomeIcon className={disabled ? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" />
+              <FontAwesomeIcon
+                className={disabled ? styles.disabledEntitiesInfoIcon : styles.entitiesInfoIcon}
+                icon={faInfoCircle}
+                size="sm"
+              />
             </i>
           </HCTooltip>
         </span>
-
       </div>
     );
   };
 
-  const handleToggleDataHubArtifacts = (event) => {
+  const handleToggleDataHubArtifacts = event => {
     const {target, type, key} = event;
     if (target) {
       if (type === "keydown") {
@@ -946,12 +1009,12 @@ const Sidebar: React.FC<Props> = (props) => {
     searchOptions.query && setQueryGreyedOptions(searchOptions.query);
   }, [searchOptions]);
 
-  const handleSearchBox = (e) => {
+  const handleSearchBox = e => {
     setQueryGreyedOptions(e.target.value);
     setSearchBox(e.target.value);
   };
 
-  const handleSetCurrentBaseEntities = (entities) => {
+  const handleSetCurrentBaseEntities = entities => {
     setCheckAllRelatedEntities(true);
     setCheckAllRelatedConcepts(true);
     props.setCurrentBaseEntities(entities);
@@ -982,16 +1045,20 @@ const Sidebar: React.FC<Props> = (props) => {
               icon={faSearch}
               data-testid="search-icon"
               size="sm"
-              className={Object.keys(greyedOptions.selectedFacets).length === 0  && greyedOptions.query === searchOptions.query ? styles.disabledSearchIcon : styles.searchIcon}
+              className={
+                Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === searchOptions.query
+                  ? styles.disabledSearchIcon
+                  : styles.searchIcon
+              }
               onClick={handleSearchFromInput}
             />
           }
           placeholder="Search"
-          size="sm" />
+          size="sm"
+        />
       </div>
 
       <Form className={"m-3 switch-button-group"}>
-
         <Form.Check
           tabIndex={-1}
           id="switch-datasource-entities"
@@ -1001,10 +1068,15 @@ const Sidebar: React.FC<Props> = (props) => {
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-entities"
           label={
-            <span className="w-100 h-100" tabIndex={0} onKeyDown={(e) => onKeyDownEnter(e, setDatasourcePreferences, "entities")}>
-              <span id="all-entities" className="curateIcon"/>
+            <span
+              className="w-100 h-100"
+              tabIndex={0}
+              onKeyDown={e => onKeyDownEnter(e, setDatasourcePreferences, "entities")}
+            >
+              <span id="all-entities" className="curateIcon" />
               <span>Entities</span>
-            </span>}
+            </span>
+          }
           value={"entities"}
           className={`mb-0 p-0  ${styles.datasourceSwitch}`}
         />
@@ -1018,7 +1090,11 @@ const Sidebar: React.FC<Props> = (props) => {
           onChange={e => setDatasourcePreferences(e.target.value)}
           aria-label="switch-datasource-all-data"
           label={
-            <span className="w-100 h-100" tabIndex={0} onKeyDown={(e) => onKeyDownEnter(e, setDatasourcePreferences, "all-data")}>
+            <span
+              className="w-100 h-100"
+              tabIndex={0}
+              onKeyDown={e => onKeyDownEnter(e, setDatasourcePreferences, "all-data")}
+            >
               <span id="all-data" className="loadIcon" />
               <span>All Data</span>
             </span>
@@ -1027,10 +1103,23 @@ const Sidebar: React.FC<Props> = (props) => {
         />
       </Form>
 
-      <Accordion aria-label="switch-database" id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
+      <Accordion
+        aria-label="switch-database"
+        id="database"
+        className={"w-100 accordion-sidebar"}
+        flush
+        activeKey={activeKey.includes("database") ? "database" : ""}
+        defaultActiveKey={activeKey.includes("database") ? "database" : ""}
+      >
         <Accordion.Item eventKey="database" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
-            <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}><span tabIndex={0}>Database</span></Accordion.Button>
+            <Accordion.Button
+              tabIndex={-1}
+              className={`after-indicator ${styles.title}`}
+              onClick={() => setActiveAccordion("database")}
+            >
+              <span tabIndex={0}>Database</span>
+            </Accordion.Button>
           </div>
           <Accordion.Body>
             <Form className={"switch-button-group"}>
@@ -1046,7 +1135,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 label={
                   <span
                     tabIndex={0}
-                    onKeyDown={(e) => onKeyDownEnter(e, props.setDatabasePreferences, "final")}
+                    onKeyDown={e => onKeyDownEnter(e, props.setDatabasePreferences, "final")}
                     onFocus={() => setTooltipVisible({...isTooltipVisible, finalDb: true})}
                     onBlur={() => setTooltipVisible({...isTooltipVisible, finalDb: false})}
                   >
@@ -1054,12 +1143,9 @@ const Sidebar: React.FC<Props> = (props) => {
                       text={finalDbName}
                       id={`${finalDbName}-tooltip`}
                       placement="top-start"
-                      show={
-                        isTooltipVisible.finalDb ? isTooltipVisible.finalDb : undefined
-                      }>
-                      <span>
-                        {getFinalDbLabel()}
-                      </span>
+                      show={isTooltipVisible.finalDb ? isTooltipVisible.finalDb : undefined}
+                    >
+                      <span>{getFinalDbLabel()}</span>
                     </HCTooltip>
                   </span>
                 }
@@ -1077,16 +1163,21 @@ const Sidebar: React.FC<Props> = (props) => {
                 label={
                   <span
                     tabIndex={0}
-                    onKeyDown={(e) => { if (e.key === "Enter") { props.setDatabasePreferences("staging"); } }}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") {
+                        props.setDatabasePreferences("staging");
+                      }
+                    }}
                     onFocus={() => setTooltipVisible({...isTooltipVisible, stagingDb: true})}
-                    onBlur={() => setTooltipVisible({...isTooltipVisible, stagingDb: false})}>
-                    <HCTooltip text={stagingDbName} id={`${stagingDbName}-tooltip`} placement="top-start"
-                      show={
-                        isTooltipVisible.stagingDb ? isTooltipVisible.stagingDb : undefined
-                      }>
-                      <span>
-                        {getStagingDbLabel()}
-                      </span>
+                    onBlur={() => setTooltipVisible({...isTooltipVisible, stagingDb: false})}
+                  >
+                    <HCTooltip
+                      text={stagingDbName}
+                      id={`${stagingDbName}-tooltip`}
+                      placement="top-start"
+                      show={isTooltipVisible.stagingDb ? isTooltipVisible.stagingDb : undefined}
+                    >
+                      <span>{getStagingDbLabel()}</span>
                     </HCTooltip>
                   </span>
                 }
@@ -1097,136 +1188,271 @@ const Sidebar: React.FC<Props> = (props) => {
         </Accordion.Item>
       </Accordion>
       <HCDivider className={"mt-1 mb-2"} style={{backgroundColor: "#ccc"}} />
-      {(searchOptions.datasource && searchOptions.datasource !== "all-data") && <>
-        <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
-          <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
-            <div className={"p-0 d-flex"}>
-              <Accordion.Button
-                tabIndex={-1}
-                className={`after-indicator ${styles.titleBaseEntities}`}
-                onClick={() => setActiveAccordion("baseEntities")}>
-                {panelTitle(<span tabIndex={0}>base entities</span>, ExploreGraphViewToolTips.baseEntities, "base entities")}
-              </Accordion.Button>
+      {searchOptions.datasource && searchOptions.datasource !== "all-data" && (
+        <>
+          <Accordion
+            id="baseEntities"
+            className={"w-100 accordion-sidebar"}
+            flush
+            activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}
+            defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}
+          >
+            <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
+              <div className={"p-0 d-flex"}>
+                <Accordion.Button
+                  tabIndex={-1}
+                  className={`after-indicator ${styles.titleBaseEntities}`}
+                  onClick={() => setActiveAccordion("baseEntities")}
+                >
+                  {panelTitle(
+                    <span tabIndex={0}>base entities</span>,
+                    ExploreGraphViewToolTips.baseEntities,
+                    "base entities",
+                  )}
+                </Accordion.Button>
+              </div>
+              <Accordion.Body>
+                <BaseEntitiesFacet
+                  setCurrentBaseEntities={handleSetCurrentBaseEntities}
+                  setEntitySpecificPanel={props.setEntitySpecificPanel}
+                  currentBaseEntities={props.currentBaseEntities}
+                  entityIndicatorData={props.entityIndicatorData}
+                  setActiveAccordionRelatedEntities={setActiveAccordion}
+                  allBaseEntities={props.entityDefArray}
+                  activeKey={activeKey}
+                />
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+          <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+          {props.currentRelatedEntities?.size > 0 && (
+            <div className={styles.relatedEntityPanel}>
+              <HCTooltip
+                text={!props.graphView ? exploreSidebar.disabledRelatedEntities : ""}
+                aria-label="disabled-related-entity-tooltip"
+                id="disabled-related-entity-tooltip"
+                placement="bottom"
+              >
+                <Accordion
+                  id="related-entities"
+                  data-testid={"related-entity-panel"}
+                  className={"w-100 accordion-sidebar"}
+                  flush
+                  activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""}
+                  defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}
+                >
+                  <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+                    <div className={"p-0 d-flex"}>
+                      <Accordion.Button
+                        tabIndex={-1}
+                        className={
+                          !props.graphView
+                            ? `after-indicator ${styles.disabledTitleCheckbox}`
+                            : `after-indicator ${styles.titleCheckbox}`
+                        }
+                        onClick={() => setActiveAccordion("related-entities")}
+                      >
+                        {panelTitle(
+                          <span tabIndex={0}>
+                            <span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}>
+                              <HCCheckbox
+                                ariaLabel="related-entities-checkbox"
+                                id="check-all"
+                                value="check-all"
+                                disabled={!props.graphView}
+                                cursorDisabled={!activeRelatedEntities}
+                                handleClick={
+                                  activeRelatedEntities
+                                    ? event => onCheckAllChanges(event)
+                                    : () => {
+                                      return;
+                                    }
+                                }
+                                handleKeyDown={onCheckAllRelatedEntities}
+                                checked={checkAllRelatedEntities}
+                              />
+                            </span>
+                            related entities
+                          </span>,
+                          ExploreGraphViewToolTips.relatedEntities,
+                          "related entities",
+                        )}
+                      </Accordion.Button>
+                    </div>
+                    <Accordion.Body>
+                      <RelatedEntitiesFacet
+                        currentRelatedEntities={props.currentRelatedEntities}
+                        setCurrentRelatedEntities={props.setCurrentRelatedEntities}
+                        onSettingCheckedList={onSettingRelatedEntitiesCheckedList}
+                        setEntitySpecificPanel={props.setEntitySpecificPanel}
+                        setActiveRelatedEntities={setActiveRelatedEntities}
+                        entityIndicatorData={props.entityIndicatorData}
+                      />
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+              </HCTooltip>
+              <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
             </div>
-            <Accordion.Body>
-              <BaseEntitiesFacet
-                setCurrentBaseEntities={handleSetCurrentBaseEntities}
-                setEntitySpecificPanel={props.setEntitySpecificPanel}
-                currentBaseEntities={props.currentBaseEntities}
-                entityIndicatorData={props.entityIndicatorData}
-                setActiveAccordionRelatedEntities={setActiveAccordion}
-                allBaseEntities={props.entityDefArray}
-                activeKey={activeKey}
-              />
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
-        <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-        {props.currentRelatedEntities?.size > 0 &&
-          <div className={styles.relatedEntityPanel}>
-            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedEntities : ""} aria-label="disabled-related-entity-tooltip" id="disabled-related-entity-tooltip" placement="bottom">
-              <Accordion id="related-entities" data-testid={"related-entity-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") && props.graphView ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
-                <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
-                  <div className={"p-0 d-flex"}>
-                    <Accordion.Button tabIndex={-1} className={!props.graphView ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
-                      panelTitle(<span tabIndex={0}><span className={!activeRelatedEntities ? styles.disabledCheckbox : ""}>
-                        <HCCheckbox
-                          ariaLabel="related-entities-checkbox"
-                          id="check-all"
-                          value="check-all"
-                          disabled={!props.graphView}
-                          cursorDisabled={!activeRelatedEntities}
-                          handleClick={activeRelatedEntities ? (event) => onCheckAllChanges(event) : () => { return; }}
-                          handleKeyDown={onCheckAllRelatedEntities}
-                          checked={checkAllRelatedEntities} />
-                      </span>related entities</span>, ExploreGraphViewToolTips.relatedEntities, "related entities")}
-                    </Accordion.Button>
-                  </div>
-                  <Accordion.Body>
-                    <RelatedEntitiesFacet
-                      currentRelatedEntities={props.currentRelatedEntities}
-                      setCurrentRelatedEntities={props.setCurrentRelatedEntities}
-                      onSettingCheckedList={onSettingRelatedEntitiesCheckedList}
-                      setEntitySpecificPanel={props.setEntitySpecificPanel}
-                      setActiveRelatedEntities={setActiveRelatedEntities}
-                      entityIndicatorData={props.entityIndicatorData}
-                    />
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </HCTooltip>
-            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-          </div>
-        }
-        {!props.graphConceptsSearchSupported ?
-          <div className={styles.relatedEntityPanel}>
-            <HCTooltip text={exploreSidebar.versionLimitedConcepts(getEnvironment().marklogicVersion)} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
-                <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
-                  <div className={"p-0 d-flex"}>
-                    <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.disabledTitleCheckbox}`}>{
-                      panelTitle(<span tabIndex={0}><span className={styles.disabledCheckbox}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphConceptsSearchSupported} cursorDisabled={!props.graphConceptsSearchSupported} handleClick={() => { return; }} checked={true} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts, "related concepts")}
-                    </Accordion.Button>
-                  </div>
-                </Accordion.Item>
-              </Accordion>
-            </HCTooltip>
-            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-          </div>
-          :
-          props.currentRelatedConcepts?.size > 0 &&
-          <div className={styles.relatedEntityPanel}>
-            <HCTooltip text={!props.graphView ? exploreSidebar.disabledRelatedConcepts : !props.viewConcepts ? exploreSidebar.relatedConceptsToggledOff : ""} aria-label="disabled-related-concept-tooltip" id="disabled-related-concept-tooltip" placement="bottom">
-              <Accordion id="related-concepts" data-testid={"related-concepts-panel"} className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-concepts") && props.graphView && props.viewConcepts ? "related-concepts" : ""} defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}>
-                <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
-                  <div className={"p-0 d-flex"}>
-                    <Accordion.Button tabIndex={-1} className={(!props.graphView || !props.viewConcepts) ? `after-indicator ${styles.disabledTitleCheckbox}` : `after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-concepts")}>{
-                      panelTitle(<span tabIndex={0}><span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}><HCCheckbox ariaLabel="related-concepts-checkbox" id="check-all" value="check-all" disabled={!props.graphView || !props.viewConcepts} cursorDisabled={!activeRelatedConcepts} handleClick={onCheckAllRelatedConceptsClick} handleKeyDown={onCheckAllRelatedConceptsKeyDown} checked={checkAllRelatedConcepts} /></span>related concepts</span>, ExploreGraphViewToolTips.relatedConcepts, "related concepts")}
-                    </Accordion.Button>
-                  </div>
-                  <Accordion.Body>
-                    <RelatedConceptsFacets
-                      currentRelatedConcepts={props.currentRelatedConcepts}
-                      setCurrentRelatedConcepts={props.setCurrentRelatedConcepts}
-                      onSettingCheckedList={onSettingRelatedConceptsCheckedList}
-                      setActiveRelatedConcepts={setActiveRelatedConcepts}
-                      entityIndicatorData={props.entityIndicatorData}
-                    />
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </HCTooltip>
-            <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-          </div>
-        }
-      </>}
-
-      {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-        <Form.Check
-          type="switch"
-          data-testid="toggleHubArtifacts"
-          defaultChecked={!props.hideDataHubArtifacts}
-          tabIndex={0}
-          onChange={handleToggleDataHubArtifacts}
-          onKeyDown={(event) => handleToggleDataHubArtifacts(event)}
-          className={styles.switchToggleDataHubArtifacts}
-          label={
-            <div>
-              <span>Include Data Hub artifacts</span>
-              <span tabIndex={props.cardView ? 0 : undefined} onFocus={(e) => onFocusHandlerTooltip(e, "artifacts")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "artifacts")}>
+          )}
+          {!props.graphConceptsSearchSupported ? (
+            <div className={styles.relatedEntityPanel}>
+              <HCTooltip
+                text={exploreSidebar.versionLimitedConcepts(getEnvironment().marklogicVersion)}
+                aria-label="disabled-related-concept-tooltip"
+                id="disabled-related-concept-tooltip"
+                placement="bottom"
+              >
+                <Accordion
+                  id="related-concepts"
+                  data-testid={"related-concepts-panel"}
+                  className={"w-100 accordion-sidebar"}
+                  flush
+                  activeKey={""}
+                  defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}
+                >
+                  <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
+                    <div className={"p-0 d-flex"}>
+                      <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.disabledTitleCheckbox}`}>
+                        {panelTitle(
+                          <span tabIndex={0}>
+                            <span className={styles.disabledCheckbox}>
+                              <HCCheckbox
+                                ariaLabel="related-concepts-checkbox"
+                                id="check-all"
+                                value="check-all"
+                                disabled={!props.graphConceptsSearchSupported}
+                                cursorDisabled={!props.graphConceptsSearchSupported}
+                                handleClick={() => {
+                                  return;
+                                }}
+                                checked={true}
+                              />
+                            </span>
+                            related concepts
+                          </span>,
+                          ExploreGraphViewToolTips.relatedConcepts,
+                          "related concepts",
+                        )}
+                      </Accordion.Button>
+                    </div>
+                  </Accordion.Item>
+                </Accordion>
+              </HCTooltip>
+              <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+            </div>
+          ) : (
+            props.currentRelatedConcepts?.size > 0 && (
+              <div className={styles.relatedEntityPanel}>
                 <HCTooltip
-                  text={tooltips.includingDataHubArtifacts}
-                  aria-label="toggle-data-hub-artifacts-tooltip"
-                  id="toggle-data-hub-artifacts-tooltip"
+                  text={
+                    !props.graphView
+                      ? exploreSidebar.disabledRelatedConcepts
+                      : !props.viewConcepts
+                        ? exploreSidebar.relatedConceptsToggledOff
+                        : ""
+                  }
+                  aria-label="disabled-related-concept-tooltip"
+                  id="disabled-related-concept-tooltip"
                   placement="bottom"
-                  show={isTooltipVisible.artifacts ? isTooltipVisible.artifacts : undefined}>
-                  <i><FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} /></i>
+                >
+                  <Accordion
+                    id="related-concepts"
+                    data-testid={"related-concepts-panel"}
+                    className={"w-100 accordion-sidebar"}
+                    flush
+                    activeKey={
+                      activeKey.includes("related-concepts") && props.graphView && props.viewConcepts
+                        ? "related-concepts"
+                        : ""
+                    }
+                    defaultActiveKey={activeKey.includes("related-concepts") ? "related-concepts" : ""}
+                  >
+                    <Accordion.Item eventKey="related-concepts" className={"bg-transparent"}>
+                      <div className={"p-0 d-flex"}>
+                        <Accordion.Button
+                          tabIndex={-1}
+                          className={
+                            !props.graphView || !props.viewConcepts
+                              ? `after-indicator ${styles.disabledTitleCheckbox}`
+                              : `after-indicator ${styles.titleCheckbox}`
+                          }
+                          onClick={() => setActiveAccordion("related-concepts")}
+                        >
+                          {panelTitle(
+                            <span tabIndex={0}>
+                              <span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}>
+                                <HCCheckbox
+                                  ariaLabel="related-concepts-checkbox"
+                                  id="check-all"
+                                  value="check-all"
+                                  disabled={!props.graphView || !props.viewConcepts}
+                                  cursorDisabled={!activeRelatedConcepts}
+                                  handleClick={onCheckAllRelatedConceptsClick}
+                                  handleKeyDown={onCheckAllRelatedConceptsKeyDown}
+                                  checked={checkAllRelatedConcepts}
+                                />
+                              </span>
+                              related concepts
+                            </span>,
+                            ExploreGraphViewToolTips.relatedConcepts,
+                            "related concepts",
+                          )}
+                        </Accordion.Button>
+                      </div>
+                      <Accordion.Body>
+                        <RelatedConceptsFacets
+                          currentRelatedConcepts={props.currentRelatedConcepts}
+                          setCurrentRelatedConcepts={props.setCurrentRelatedConcepts}
+                          onSettingCheckedList={onSettingRelatedConceptsCheckedList}
+                          setActiveRelatedConcepts={setActiveRelatedConcepts}
+                          entityIndicatorData={props.entityIndicatorData}
+                        />
+                      </Accordion.Body>
+                    </Accordion.Item>
+                  </Accordion>
                 </HCTooltip>
-              </span>
-            </div>
-          }
-        />
-        {/* <FormCheck
+                <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
+              </div>
+            )
+          )}
+        </>
+      )}
+
+      {props.cardView ? (
+        <div className={styles.toggleDataHubArtifacts}>
+          <Form.Check
+            type="switch"
+            data-testid="toggleHubArtifacts"
+            defaultChecked={!props.hideDataHubArtifacts}
+            tabIndex={0}
+            onChange={handleToggleDataHubArtifacts}
+            onKeyDown={event => handleToggleDataHubArtifacts(event)}
+            className={styles.switchToggleDataHubArtifacts}
+            label={
+              <div>
+                <span>Include Data Hub artifacts</span>
+                <span
+                  tabIndex={props.cardView ? 0 : undefined}
+                  onFocus={e => onFocusHandlerTooltip(e, "artifacts")}
+                  onBlur={e => onLostFocusEventHandlerTooltip(e, "artifacts")}
+                >
+                  <HCTooltip
+                    text={tooltips.includingDataHubArtifacts}
+                    aria-label="toggle-data-hub-artifacts-tooltip"
+                    id="toggle-data-hub-artifacts-tooltip"
+                    placement="bottom"
+                    show={isTooltipVisible.artifacts ? isTooltipVisible.artifacts : undefined}
+                  >
+                    <i>
+                      <FontAwesomeIcon icon={faInfoCircle} className={styles.infoIcon} />
+                    </i>
+                  </HCTooltip>
+                </span>
+              </div>
+            }
+          />
+          {/* <FormCheck
           type="switch"
           data-testid="toggleHubArtifacts"
           defaultChecked={!props.hideDataHubArtifacts}
@@ -1245,18 +1471,44 @@ const Sidebar: React.FC<Props> = (props) => {
             </div>
           }
         /> */}
-      </div> : ""}
-      <Accordion id="hub-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("hubProperties") ? "hubProperties" : ""} defaultActiveKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}>
+        </div>
+      ) : (
+        ""
+      )}
+      <Accordion
+        id="hub-properties"
+        className={"w-100 accordion-sidebar"}
+        flush
+        activeKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}
+        defaultActiveKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}
+      >
         <Accordion.Item eventKey="hubProperties" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
-            <Accordion.Button tabIndex={-1} className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("hubProperties")}><span tabIndex={0}>Hub Properties</span></Accordion.Button>
+            <Accordion.Button
+              tabIndex={-1}
+              className={`after-indicator ${styles.title}`}
+              onClick={() => setActiveAccordion("hubProperties")}
+            >
+              <span tabIndex={0}>Hub Properties</span>
+            </Accordion.Button>
           </div>
           <Accordion.Body>
             <div className={styles.facetName} data-cy="created-on-facet">
               Created On
-              <span tabIndex={0} onFocus={(e) => onFocusHandlerTooltip(e, "created on")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "created on")}>
-                <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start" show={isTooltipVisible.createdOn ? isTooltipVisible.createdOn : undefined}>
-                  <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
+              <span
+                tabIndex={0}
+                onFocus={e => onFocusHandlerTooltip(e, "created on")}
+                onBlur={e => onLostFocusEventHandlerTooltip(e, "created on")}
+              >
+                <HCTooltip
+                  text={tooltips.createdOn}
+                  id="created-on-tooltip"
+                  placement="top-start"
+                  show={isTooltipVisible.createdOn ? isTooltipVisible.createdOn : undefined}
+                >
+                  <i>
+                    <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" />
+                  </i>
                 </HCTooltip>
               </span>
             </div>
@@ -1275,36 +1527,38 @@ const Sidebar: React.FC<Props> = (props) => {
                 styles={reactSelectThemeConfig}
               />
             </div>
-            <div className={styles.dateTimeWindow} >
-              {timeWindow(dateRangeValue)}
-            </div>
-            {dateRangeValue === "Custom" &&
-            <HCDateTimePicker
-              name="range-picker"
-              className={styles.datePicker}
-              value={datePickerValue}
-              onChange={onDateChange}
-              parentEl="#date-select-wrapper" />}
+            <div className={styles.dateTimeWindow}>{timeWindow(dateRangeValue)}</div>
+            {dateRangeValue === "Custom" && (
+              <HCDateTimePicker
+                name="range-picker"
+                className={styles.datePicker}
+                value={datePickerValue}
+                onChange={onDateChange}
+                parentEl="#date-select-wrapper"
+              />
+            )}
             {hubFacets.map(facet => {
-              return facet && (
-                <Facet
-                  name={facet.hasOwnProperty("displayName") ? facet.displayName : facet.facetName}
-                  constraint={facet.facetName}
-                  facetValues={facet.facetValues}
-                  key={facet.facetName}
-                  tooltip={facet.tooltip}
-                  facetType={facet.type}
-                  facetCategory="hub"
-                  updateSelectedFacets={updateSelectedFacets}
-                  addFacetValues={addFacetValues}
-                  referenceType={facet.referenceType}
-                  entityTypeId={facet.entityTypeId}
-                  propertyPath={facet.propertyPath}
-                  maxQuantityOnFacets={maxQuantityOnFacets}
-                  isTooltipVisible={isTooltipVisible}
-                  onFocusHandlerTooltip={onFocusHandlerTooltip}
-                  onLostFocusEventHandlerTooltip={onLostFocusEventHandlerTooltip}
-                />
+              return (
+                facet && (
+                  <Facet
+                    name={facet.hasOwnProperty("displayName") ? facet.displayName : facet.facetName}
+                    constraint={facet.facetName}
+                    facetValues={facet.facetValues}
+                    key={facet.facetName}
+                    tooltip={facet.tooltip}
+                    facetType={facet.type}
+                    facetCategory="hub"
+                    updateSelectedFacets={updateSelectedFacets}
+                    addFacetValues={addFacetValues}
+                    referenceType={facet.referenceType}
+                    entityTypeId={facet.entityTypeId}
+                    propertyPath={facet.propertyPath}
+                    maxQuantityOnFacets={maxQuantityOnFacets}
+                    isTooltipVisible={isTooltipVisible}
+                    onFocusHandlerTooltip={onFocusHandlerTooltip}
+                    onLostFocusEventHandlerTooltip={onLostFocusEventHandlerTooltip}
+                  />
+                )
               );
             })}
           </Accordion.Body>

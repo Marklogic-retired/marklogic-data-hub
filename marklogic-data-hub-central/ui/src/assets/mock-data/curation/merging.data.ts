@@ -24,7 +24,7 @@ export const mergingStep = {
       provenanceGranularityLevel: "fine",
       lastUpdatedLocation: {
         namespaces: {es: "http://marklogic.com/entity-services"},
-        documentXPath: "/es:envelope/es:headers/timestamp"
+        documentXPath: "/es:envelope/es:headers/timestamp",
       },
       mergeStrategies: [
         {
@@ -36,21 +36,21 @@ export const mergingStep = {
             sources: [
               {
                 sourceName: "favoriteSource",
-                weight: 12
+                weight: 12,
               },
               {
                 sourceName: "lessFavoriteSource",
-                weight: 8
-              }
-            ]
-          }
+                weight: 8,
+              },
+            ],
+          },
         },
         {
           strategyName: "customMergeStrategy",
           mergeModulePath: "/custom/merge/strategy.sjs",
           mergeModuleFunction: "customMergeFunction",
           mergeModuleNamespace: "",
-          options: {}
+          options: {},
         },
         {
           strategyName: "testMerge",
@@ -58,14 +58,14 @@ export const mergingStep = {
           mergeModulePath: "/custom/merge/strategy.sjs",
           mergeModuleFunction: "testMergeFunction",
           mergeModuleNamespace: "",
-          options: {}
-        }
+          options: {},
+        },
       ],
       mergeRules: [
         {
           entityPropertyPath: "name",
           mergeType: "strategy",
-          mergeStrategyName: "myFavoriteSource"
+          mergeStrategyName: "myFavoriteSource",
         },
         {
           entityPropertyPath: "address",
@@ -73,7 +73,7 @@ export const mergingStep = {
           mergeModulePath: "/custom/merge/strategy.sjs",
           mergeModuleNamespace: "",
           mergeModuleFunction: "customMergeFunction",
-          options: {}
+          options: {},
         },
         {
           entityPropertyPath: "phone",
@@ -85,48 +85,34 @@ export const mergingStep = {
             sources: [
               {
                 sourceName: "favoritePhoneSource",
-                weight: 10
-              }
-            ]
-          }
+                weight: 10,
+              },
+            ],
+          },
         },
         {
           documentXPath: "/envelope/headers/timestamp",
-          mergeStrategyName: "myFavoriteSource"
-        }
+          mergeStrategyName: "myFavoriteSource",
+        },
       ],
       targetCollections: {
         onMerge: {
-          add: [
-            "sm-Customer-mastered"
-          ],
-          remove: [
-            "sm-Customer-archived"
-          ]
+          add: ["sm-Customer-mastered"],
+          remove: ["sm-Customer-archived"],
         },
         onArchive: {
-          add: [
-            "sm-Customer-archived"
-          ],
-          remove: [
-            "sm-Customer-mastered"
-          ]
+          add: ["sm-Customer-archived"],
+          remove: ["sm-Customer-mastered"],
         },
         onNoMatch: {
-          add: [
-            "sm-Customer-mastered"
-          ],
-          remove: [
-            "sm-Customer-archived"
-          ]
+          add: ["sm-Customer-mastered"],
+          remove: ["sm-Customer-archived"],
         },
         onNotification: {
-          add: [
-            "sm-Customer-notification"
-          ],
-          remove: []
-        }
-      }
+          add: ["sm-Customer-notification"],
+          remove: [],
+        },
+      },
     },
     {
       name: "mergeCustomersEmpty",
@@ -148,7 +134,7 @@ export const mergingStep = {
       provenanceGranularityLevel: "fine",
       lastUpdatedLocation: {
         namespaces: {es: "http://marklogic.com/entity-services"},
-        documentXPath: "/es:envelope/es:headers/timestamp"
+        documentXPath: "/es:envelope/es:headers/timestamp",
       },
       mergeStrategies: [],
       mergeRules: [],
@@ -173,12 +159,12 @@ export const mergingStep = {
       provenanceGranularityLevel: "fine",
       lastUpdatedLocation: {
         namespaces: {es: "http://marklogic.com/entity-services"},
-        documentXPath: "/es:envelope/es:headers/timestamp"
+        documentXPath: "/es:envelope/es:headers/timestamp",
       },
       mergeStrategies: [],
       mergeRules: [],
-    }
-  ]
+    },
+  ],
 };
 
 const mergeRuleDataProps = {
@@ -196,7 +182,7 @@ const mergeStrategyDataProps = {
   createEditMergeStrategyDialog: true,
   setOpenEditMergeStrategyDialog: jest.fn(),
   isEditStrategy: true,
-  toggleIsEditStrategy: jest.fn()
+  toggleIsEditStrategy: jest.fn(),
 };
 
 const compareModal = {
@@ -206,14 +192,14 @@ const compareModal = {
   uriInfo: [],
   activeStepDetails: [
     {
-      "properties": [{name: "customerId", datatype: "integer", ref: ""}]
-    }
+      "properties": [{name: "customerId", datatype: "integer", ref: ""}],
+    },
   ],
   entityDefinitionsArray: [
     {
       "name": "Customer",
-      "properties": [{name: "customerId", datatype: "integer", ref: ""}]
-    }
+      "properties": [{name: "customerId", datatype: "integer", ref: ""}],
+    },
   ],
   uriCompared: [],
   entityProperties: [],
@@ -223,13 +209,13 @@ const compareModal = {
   mergeUris: jest.fn(),
   unmergeUri: jest.fn(),
   originalUri: "/com.marklogic.smart-mastering/merged/8a0b71b0a525ca7449611b2e9786d0cf.json",
-  flowName: ""
+  flowName: "",
 };
 
 const data = {
   mergeRuleDataProps,
   mergeStrategyDataProps,
-  compareModal
+  compareModal,
 };
 
 export default data;

@@ -16,15 +16,21 @@ const AsyncLoader: React.FC = () => {
 
   return (
     <>
-      {user.error.type === "ALERT" ?
-        <HCAlert variant="danger" dismissible data-cy="alert-error-message" heading={user.error.title} onClose={onClose}>
+      {user.error.type === "ALERT" ? (
+        <HCAlert
+          variant="danger"
+          dismissible
+          data-cy="alert-error-message"
+          heading={user.error.title}
+          onClose={onClose}
+        >
           {user.error.message}
         </HCAlert>
-        :
+      ) : (
         <div className={styles.spinnerContainer}>
           <Spinner animation="border" variant="primary" data-testid="spinner" />
         </div>
-      }
+      )}
     </>
   );
 };

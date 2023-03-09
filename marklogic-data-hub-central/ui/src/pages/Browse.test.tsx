@@ -16,7 +16,7 @@ const modelsAux: any = models;
 
 describe("Explorer Browse page tests ", () => {
   beforeEach(() => {
-    axiosMock.get["mockImplementation"]((url) => {
+    axiosMock.get["mockImplementation"](url => {
       switch (url) {
       case "/api/models":
         return Promise.resolve({status: 200, data: exploreModelResponse});
@@ -31,14 +31,18 @@ describe("Explorer Browse page tests ", () => {
   });
 
   test("Verify collapsible side bar", async () => {
-    const {getByLabelText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        ...searchContextInterfaceByDefault,
-        setEntityDefinitionsArray: modelsAux
-      }}
-      >
-        <Browse />
-      </SearchContext.Provider></MemoryRouter>);
+    const {getByLabelText} = render(
+      <MemoryRouter>
+        <SearchContext.Provider
+          value={{
+            ...searchContextInterfaceByDefault,
+            setEntityDefinitionsArray: modelsAux,
+          }}
+        >
+          <Browse />
+        </SearchContext.Provider>
+      </MemoryRouter>,
+    );
 
     expect(screen.getByTestId("icon-collapsed")).toBeInTheDocument();
     await fireEvent.click(getByLabelText("sider-action"));
@@ -48,13 +52,18 @@ describe("Explorer Browse page tests ", () => {
   });
 
   test("Verify snippet/table view on hover css", async () => {
-    const {getByLabelText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        ...searchContextInterfaceByDefault,
-        setEntityDefinitionsArray: modelsAux
-      }}>
-        <Browse />
-      </SearchContext.Provider></MemoryRouter>);
+    const {getByLabelText} = render(
+      <MemoryRouter>
+        <SearchContext.Provider
+          value={{
+            ...searchContextInterfaceByDefault,
+            setEntityDefinitionsArray: modelsAux,
+          }}
+        >
+          <Browse />
+        </SearchContext.Provider>
+      </MemoryRouter>,
+    );
 
     fireEvent.click(document.querySelector("#switch-view-table")!);
     expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", true);
@@ -67,5 +76,4 @@ describe("Explorer Browse page tests ", () => {
     fireEvent.mouseOver(document.querySelector("#switch-view-table")!);
     expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
-
 });

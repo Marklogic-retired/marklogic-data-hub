@@ -32,10 +32,12 @@ class GraphVis {
   getPositionsOfNodes(nodeIds?: any) {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
       let nodesList: any = !nodeIds ? null : nodeIds.split(",");
-      let nodePositionInCanvas = win.graphVisApi.getNodePositions(nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
+      let nodePositionInCanvas = win.graphVisApi.getNodePositions(
+        nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
       let nodePositionsInDOM: any = {};
       for (let nodeId in nodePositionInCanvas) {
-        nodePositionsInDOM[nodeId] = win.graphVisApi.canvasToDOM(nodePositionInCanvas[nodeId].x, nodePositionInCanvas[nodeId].y);
+        nodePositionsInDOM[nodeId] = win.graphVisApi.canvasToDOM(
+          nodePositionInCanvas[nodeId].x, nodePositionInCanvas[nodeId].y);
       }
       return nodePositionsInDOM;
     })));
@@ -58,7 +60,10 @@ class GraphVis {
       let nodesList = nodeIds.split(",");
       let fromNodeCoordinates: any = nodePositions[nodesList[0]];
       let toNodeCoordinates: any = nodePositions[nodesList[1]];
-      let edgeCenterCoordinates: any = {x: (fromNodeCoordinates.x + toNodeCoordinates.x) / 2, y: (fromNodeCoordinates.y + toNodeCoordinates.y) / 2};
+      let edgeCenterCoordinates: any = {
+        x: (fromNodeCoordinates.x + toNodeCoordinates.x) / 2,
+        y: (fromNodeCoordinates.y + toNodeCoordinates.y) / 2
+      };
       return edgeCenterCoordinates;
     })));
   }

@@ -15,23 +15,27 @@ import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 
 type Props = {
   onCloseSidePanel: () => void;
-  graphView: boolean,
-  openUnmergeCompare:any;
-  loadingCompare:string;
-  data:any[];
-  isUnmergeAvailable:(nodeId:string) => boolean;
+  graphView: boolean;
+  openUnmergeCompare: any;
+  loadingCompare: string;
+  data: any[];
+  isUnmergeAvailable: (nodeId: string) => boolean;
 };
 
 const DEFAULT_TAB = "instance";
-const INSTANCE_TITLE = <span aria-label="instanceTab"><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
+const INSTANCE_TITLE = (
+  <span aria-label="instanceTab">
+    <i>
+      <FontAwesomeIcon icon={faThList} size="sm" />
+    </i>{" "}
+    Instance
+  </span>
+);
 
-const GraphExploreSidePanel: React.FC<Props> = (props) => {
+const GraphExploreSidePanel: React.FC<Props> = props => {
   const {onCloseSidePanel, graphView} = props;
 
-  const {
-    searchOptions,
-    savedNode
-  } = useContext(SearchContext);
+  const {searchOptions, savedNode} = useContext(SearchContext);
   const {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
   const {entityName, group, primaryKey, sources, entityInstance, label, isConcept, id} = savedNode;
   const docUri = savedNode["docURI"] || savedNode["docUri"] || savedNode["uri"];
@@ -54,13 +58,14 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     xml: <span className={"mlcf mlcf-xml fs-2"} aria-label={"xmlTypeData"} />,
     text: <FileEarmarkText className={"d-inline-block fs-2"} aria-label={"icon: filetype-text"} />,
     bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
-    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
+    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />,
   };
-  const RECORD_TITLE = <span aria-label="recordTab" className="d-flex align-items-center">
-    {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
-    {contentType ? contentType.toUpperCase() : ""}
-  </span>;
-
+  const RECORD_TITLE = (
+    <span aria-label="recordTab" className="d-flex align-items-center">
+      {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
+      {contentType ? contentType.toUpperCase() : ""}
+    </span>
+  );
 
   useEffect(() => {
     if (isConcept) {
@@ -83,7 +88,6 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
         getNodeData(docUri, database);
       }
     }
-
   }, [id]);
 
   const getSemanticConceptsInfo = async () => {
@@ -94,14 +98,15 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
           let infoObject = {
             "key": index,
             "entityType": item.entityTypeIRI.split("/").pop(),
-            "relatedInstances": item.total
+            "relatedInstances": item.total,
           };
           return infoObject;
         });
         if (resp.data?.description && Object.keys(resp.data?.description).length) {
           const properties: any = {};
-          Object.keys(resp.data?.description).forEach((key) => {
-            properties[key.substring(Math.max(key.lastIndexOf("/"), key.lastIndexOf("#")) + 1)] = resp.data.description[key];
+          Object.keys(resp.data?.description).forEach(key => {
+            properties[key.substring(Math.max(key.lastIndexOf("/"), key.lastIndexOf("#")) + 1)] =
+              resp.data.description[key];
           });
           setSemanticConceptDescription(properties);
         } else {
@@ -114,7 +119,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTabChange = (key) => {
+  const handleTabChange = key => {
     setCurrentTab(key);
   };
 
@@ -152,23 +157,23 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
             data={data.current}
             openUnmergeCompare={props.openUnmergeCompare}
             loadingCompare={props.loadingCompare}
-            isUnmergeAvailable={props.isUnmergeAvailable}/>
+            isUnmergeAvailable={props.isUnmergeAvailable}
+          />
         </div>
       );
     } else {
       if (contentType === "json") {
-        block = (content) && <pre data-testid="graphView-json-container">{jsonFormatter(content["data"])}</pre>;
+        block = content && <pre data-testid="graphView-json-container">{jsonFormatter(content["data"])}</pre>;
       } else if (contentType === "xml") {
-        block = (xml) && <pre data-testid="graphView-xml-container">{xmlFormatter(xml)}</pre>;
+        block = xml && <pre data-testid="graphView-xml-container">{xmlFormatter(xml)}</pre>;
       } else {
-        block = (content) && <pre data-testid="graphView-text-container">{content}</pre>;
+        block = content && <pre data-testid="graphView-text-container">{content}</pre>;
       }
       return block;
     }
   };
 
-  const pathname = "/tiles/explore/detail"
-    ;
+  const pathname = "/tiles/explore/detail";
   let primaryKeyValue;
   if (primaryKey && Object.keys(primaryKey).length) {
     primaryKeyValue = primaryKey.propertyValue;
@@ -203,7 +208,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
       sort: true,
       formatter: (value, row) => {
         return <span aria-label={`${row.entityType}-relatedInstances`}>{value}</span>;
-      }
+      },
     },
     {
       text: "Entity Type",
@@ -212,16 +217,17 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
       key: "key",
       width: "60%",
       sort: true,
-      sortFunc: (a: string, b: string, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a),
-      formatter: (value) => {
+      sortFunc: (a: string, b: string, order: string) => (order === "asc" ? a.localeCompare(b) : b.localeCompare(a)),
+      formatter: value => {
         return <span aria-label={`${value}-entityType`}>{value}</span>;
       },
-    }
+    },
   ];
 
   const conceptInstanceInfo = (
     <div className={styles.conceptInfoContainer}>
-      <HCTable columns={conceptInfoColumns}
+      <HCTable
+        columns={conceptInfoColumns}
         className={styles.conceptInfoTable}
         data={semanticConceptInfo}
         nestedParams={{headerColumns: conceptInfoColumns, iconCellList: [], state: []}}
@@ -238,51 +244,87 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     <div data-testid="graphSidePanel" className={styles.sidePanel}>
       <div className={styles.headingContainer}>
         <span>
-          {
-            !isConcept ? <span className={styles.selectedEntityHeading} data-testid="entityHeading">
+          {!isConcept ? (
+            <span className={styles.selectedEntityHeading} data-testid="entityHeading">
               {entityInstanceTitle}
               {<ChevronRight className={styles.arrowRight} />}
               {entityInstanceLabel}
-            </span> :
-              <div>
-                <span className={styles.selectedEntityHeading} aria-label={`${conceptTitle}-conceptHeading`}>{conceptTitle}</span>
-                <span className={styles.conceptHeadingInfo} aria-label={`${conceptTitle}-conceptHeadingInfo`}>(Concept)</span>
-              </div>
-          }
-          {!isConcept && <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
-            <Link to={{pathname, state}} id="instance" data-cy="instance">
-              <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow" />
-            </Link>
-          </HCTooltip>}
+            </span>
+          ) : (
+            <div>
+              <span className={styles.selectedEntityHeading} aria-label={`${conceptTitle}-conceptHeading`}>
+                {conceptTitle}
+              </span>
+              <span className={styles.conceptHeadingInfo} aria-label={`${conceptTitle}-conceptHeadingInfo`}>
+                (Concept)
+              </span>
+            </div>
+          )}
+          {!isConcept && (
+            <HCTooltip text="View full details" id="processed-data-tooltip" placement="top-end">
+              <Link to={{pathname, state}} id="instance" data-cy="instance">
+                <ArrowRightSquare className={styles.arrowRightSquare} aria-label="graphViewRightArrow" />
+              </Link>
+            </HCTooltip>
+          )}
         </span>
         <span>
-          <i className={styles.close} tabIndex={0} aria-label="closeGraphExploreSidePanel" onClick={onCloseSidePanel} onKeyDown={(event) => { if (event.key === "Enter") onCloseSidePanel(); }}>
+          <i
+            className={styles.close}
+            tabIndex={0}
+            aria-label="closeGraphExploreSidePanel"
+            onClick={onCloseSidePanel}
+            onKeyDown={event => {
+              if (event.key === "Enter") onCloseSidePanel();
+            }}
+          >
             <XLg />
           </i>
         </span>
       </div>
-      {
-        !isConcept && docUri ? <><div>
-          {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>URI: {docUri}</span>}
-        </div>
-        <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
-          <Tab
-            eventKey="instance"
-            aria-label="instanceTabInSidePanel"
-            id="instanceTabInSidePanel"
-            title={INSTANCE_TITLE}
-            className={styles.instanceTabContainer} />
-          <Tab
-            eventKey="record"
-            aria-label="recordTabInSidePanel"
-            id="recordTabInSidePanel"
-            title={RECORD_TITLE} />
-        </Tabs>
+      {!isConcept && docUri ? (
+        <>
+          <div>
+            {docUri && (
+              <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>
+                URI: {docUri}
+              </span>
+            )}
+          </div>
+          <Tabs
+            defaultActiveKey={DEFAULT_TAB}
+            activeKey={currentTab}
+            onSelect={handleTabChange}
+            className={styles.tabsContainer}
+          >
+            <Tab
+              eventKey="instance"
+              aria-label="instanceTabInSidePanel"
+              id="instanceTabInSidePanel"
+              title={INSTANCE_TITLE}
+              className={styles.instanceTabContainer}
+            />
+            <Tab eventKey="record" aria-label="recordTabInSidePanel" id="recordTabInSidePanel" title={RECORD_TITLE} />
+          </Tabs>
 
-        {displayPanelContent()}</> : <>{conceptInstanceInfo}{semanticConceptDescription && <div aria-label="instance-view">
-          <TableView document={semanticConceptDescription} contentType="json" location={{}} isEntityInstance={false} isSidePanel={true} />
-        </div>}</>
-      }
+          {displayPanelContent()}
+        </>
+      ) : (
+        <>
+          {conceptInstanceInfo}
+          {semanticConceptDescription && (
+            <div aria-label="instance-view">
+              <TableView
+                document={semanticConceptDescription}
+                contentType="json"
+                location={{}}
+                isEntityInstance={false}
+                isSidePanel={true}
+              />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

@@ -21,7 +21,6 @@ jest.mock("react-router-dom", () => ({
 }));
 
 describe("Load Card component", () => {
-
   beforeEach(() => {
     mocks.loadAPI(axiosMock);
   });
@@ -51,7 +50,7 @@ describe("Load Card component", () => {
             canReadWrite={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Check if the card is rendered properly
@@ -83,7 +82,6 @@ describe("Load Card component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
-
   });
 
   test("Load Card - Run step in an existing flow where step DOES NOT exist", async () => {
@@ -106,7 +104,7 @@ describe("Load Card component", () => {
             canReadWrite={true}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Verify run step in an existing flow where step does not exist yet
@@ -121,8 +119,9 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("FlowStepNoExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Load Card - Add step to an existing flow where step DOES exist", async () => {
@@ -145,7 +144,7 @@ describe("Load Card component", () => {
             canReadWrite={true}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.mouseOver(getByText("testLoadXML")); // Hover over the Load Card to get more options
@@ -181,7 +180,7 @@ describe("Load Card component", () => {
             canReadWrite={true}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Click play button 'Run' icon
@@ -194,8 +193,9 @@ describe("Load Card component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+    });
   });
 
   test("Load Card - Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
@@ -218,7 +218,7 @@ describe("Load Card component", () => {
             canReadWrite={true}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Verify run step in an existing flow where step exists in more than one flow
@@ -233,7 +233,9 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("FlowStepMultExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Load Card - Verify card sort order, Add step to a new Flow, and Run step in a new Flow", async () => {
@@ -256,7 +258,7 @@ describe("Load Card component", () => {
             canReadWrite={true}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Check if the card is rendered properly
@@ -286,7 +288,6 @@ describe("Load Card component", () => {
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
-
     //Verify run step in a new flow
 
     //Click play button 'Run' icon
@@ -299,8 +300,9 @@ describe("Load Card component", () => {
     fireEvent.click(getByTestId("testLoadXML-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Verify Load card allows step to be added to flow with writeFlow authority", async () => {
@@ -310,19 +312,24 @@ describe("Load Card component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, getAllByText, getByTestId, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={mockAddStepToNew}
-      canReadOnly={authorityService.canReadLoad()}
-      canReadWrite={authorityService.canWriteLoad()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      createLoadArtifact={mockCreateLoadArtifact}
-      data={data.loadData.data}
-      deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}
-      updateLoadArtifact={jest.fn()}
-    />
-    </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getAllByText, getByTestId, getByLabelText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadCard
+            addStepToFlow={mockAddStepToFlow}
+            addStepToNew={mockAddStepToNew}
+            canReadOnly={authorityService.canReadLoad()}
+            canReadWrite={authorityService.canWriteLoad()}
+            canWriteFlow={authorityService.canWriteFlow()}
+            createLoadArtifact={mockCreateLoadArtifact}
+            data={data.loadData.data}
+            deleteLoadArtifact={mockDeleteLoadArtifact}
+            flows={data.flows}
+            updateLoadArtifact={jest.fn()}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     const loadStepName = data.loadData.data[0].name;
     fireEvent.mouseOver(getByText(loadStepName));
@@ -343,17 +350,22 @@ describe("Load Card component", () => {
   test("Verify Load card does not allow a step to be added to flow and run in a flow with readFlow authority only", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "readFlow"]);
-    const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
-      {...ingestionData.loadCardProps}
-      data={data.loadData.data}
-      flows={data.flows}
-      deleteLoadArtifact={jest.fn()}
-      createLoadArtifact={jest.fn()}
-      updateLoadArtifact={jest.fn()}
-      canReadOnly={false}
-      canReadWrite={false}
-    />
-    </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText, getByLabelText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadCard
+            {...ingestionData.loadCardProps}
+            data={data.loadData.data}
+            flows={data.flows}
+            deleteLoadArtifact={jest.fn()}
+            createLoadArtifact={jest.fn()}
+            updateLoadArtifact={jest.fn()}
+            canReadOnly={false}
+            canReadWrite={false}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     fireEvent.mouseOver(getByText(data.loadData.data[0].name));
 

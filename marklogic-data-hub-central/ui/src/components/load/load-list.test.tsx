@@ -24,7 +24,6 @@ jest.mock("react-router-dom", () => ({
 }));
 
 describe("Load data component", () => {
-
   beforeEach(() => {
     mocks.loadAPI(axiosMock);
   });
@@ -35,18 +34,24 @@ describe("Load data component", () => {
   });
 
   test("Verify Load list view renders correctly with no data", () => {
-    const {getByText} = render(<MemoryRouter><LoadList {...data.loadData} data={[]}
-      flows={[]}
-      canWriteFlow={true}
-      deleteLoadArtifact={""}
-      createLoadArtifact={""}
-      updateLoadArtifact={""}
-      addStepToFlow={jest.fn()}
-      addStepToNew={jest.fn()}
-      sortOrderInfo={""}
-      flowsLoading={false}
-    /></MemoryRouter>);
-    const tableColumns = within(getByText("Name").closest("tr")!  as HTMLElement);
+    const {getByText} = render(
+      <MemoryRouter>
+        <LoadList
+          {...data.loadData}
+          data={[]}
+          flows={[]}
+          canWriteFlow={true}
+          deleteLoadArtifact={""}
+          createLoadArtifact={""}
+          updateLoadArtifact={""}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          sortOrderInfo={""}
+          flowsLoading={false}
+        />
+      </MemoryRouter>,
+    );
+    const tableColumns = within(getByText("Name").closest("tr")! as HTMLElement);
 
     expect(getByText("Add New")).toBeInTheDocument();
     expect(tableColumns.getByText("Name")).toBeInTheDocument();
@@ -59,18 +64,23 @@ describe("Load data component", () => {
   });
 
   test("Verify Load list view renders correctly with data", async () => {
-    const {getByText, getByTestId} = render(<MemoryRouter><LoadList {...data.loadData}
-      flows={[]}
-      canWriteFlow={true}
-      deleteLoadArtifact={""}
-      createLoadArtifact={""}
-      updateLoadArtifact={""}
-      addStepToFlow={jest.fn()}
-      addStepToNew={jest.fn()}
-      sortOrderInfo={""}
-      flowsLoading={false}
-    /></MemoryRouter>);
-    const dataRow = within(getByText("testLoadXML").closest("tr")!  as HTMLElement);
+    const {getByText, getByTestId} = render(
+      <MemoryRouter>
+        <LoadList
+          {...data.loadData}
+          flows={[]}
+          canWriteFlow={true}
+          deleteLoadArtifact={""}
+          createLoadArtifact={""}
+          updateLoadArtifact={""}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          sortOrderInfo={""}
+          flowsLoading={false}
+        />
+      </MemoryRouter>,
+    );
+    const dataRow = within(getByText("testLoadXML").closest("tr")! as HTMLElement);
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
@@ -156,17 +166,20 @@ describe("Load data component", () => {
 
   test("Verify Load settings from list view renders correctly", async () => {
     const {getByText, getAllByText, getByTestId, queryByTitle, getByPlaceholderText} = render(
-      <MemoryRouter><LoadList {...data.loadData}
-        flows={[]}
-        canWriteFlow={true}
-        deleteLoadArtifact={""}
-        createLoadArtifact={""}
-        updateLoadArtifact={""}
-        addStepToFlow={jest.fn()}
-        addStepToNew={jest.fn()}
-        sortOrderInfo={""}
-        flowsLoading={false}
-      /></MemoryRouter>
+      <MemoryRouter>
+        <LoadList
+          {...data.loadData}
+          flows={[]}
+          canWriteFlow={true}
+          deleteLoadArtifact={""}
+          createLoadArtifact={""}
+          updateLoadArtifact={""}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()}
+          sortOrderInfo={""}
+          flowsLoading={false}
+        />
+      </MemoryRouter>,
     );
 
     // Click name to open default Basic settings
@@ -200,7 +213,7 @@ describe("Load data component", () => {
     expect(targetCollection).not.toBe(stepName); //Should not be same as the default collection
     expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-" + stepName)).toBeInTheDocument();
-    expect(queryByTitle(stepName)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
+    expect(queryByTitle(stepName)).not.toBeInTheDocument(); // The default collection should not be a part of the Target Collection list
     expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue("35");
 
@@ -212,27 +225,32 @@ describe("Load data component", () => {
     fireEvent.blur(targetPermissions);
 
     //TODO: Test with reference rather than hardcoded string.
-    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
+    expect(getByTestId("validationError")).toHaveTextContent(
+      "The format of the string is incorrect. The required format is role,capability,role,capability,....",
+    );
 
     fireEvent.change(targetPermissions, {target: {value: "role1,reader"}}); // BAD permissions
     expect(targetPermissions).toHaveValue("role1,reader");
     fireEvent.blur(targetPermissions);
 
     //TODO: Test with reference rather than hardcoded string.
-    expect(getByTestId("validationError")).toHaveTextContent("The string contains invalid capabilities. Capabilities must be read, insert, update, or execute.");
+    expect(getByTestId("validationError")).toHaveTextContent(
+      "The string contains invalid capabilities. Capabilities must be read, insert, update, or execute.",
+    );
 
     fireEvent.change(targetPermissions, {target: {value: "  "}}); // BAD permissions
     expect(targetPermissions).toHaveValue("  ");
     fireEvent.blur(targetPermissions);
 
     //TODO: Test with reference rather than hardcoded string.
-    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
+    expect(getByTestId("validationError")).toHaveTextContent(
+      "The format of the string is incorrect. The required format is role,capability,role,capability,....",
+    );
 
     fireEvent.change(targetPermissions, {target: {value: "role1,read"}}); // GOOD permissions
     expect(targetPermissions).toHaveValue("role1,read");
     fireEvent.blur(targetPermissions);
     expect(getByTestId("validationError")).toHaveTextContent("");
-
   });
 
   test("Load List - Add step to an existing flow where step DOES NOT exist", async () => {
@@ -254,7 +272,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Check if the list is rendered properly
@@ -281,7 +299,6 @@ describe("Load data component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
-
   });
 
   test("Load List - Add step to an existing flow where step DOES exist", async () => {
@@ -303,7 +320,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByLabelText("testLoadXML-add-icon")); // Clik over the Add to Flow Icon to get more options
@@ -342,7 +359,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Verify run step in an existing flow where step does not exist yet
@@ -357,7 +374,9 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("FlowStepNoExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Load List - Run step in an existing flow where step DOES exist", async () => {
@@ -379,7 +398,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Click play button 'Run' icon
@@ -392,7 +411,9 @@ describe("Load data component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+    });
   });
 
   test("Load List - Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
@@ -414,7 +435,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Verify run step in an existing flow where step exists in more than one flow
@@ -429,7 +450,9 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("FlowStepMultExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Load List - Add step to an new Flow", async () => {
@@ -451,7 +474,7 @@ describe("Load data component", () => {
             flowsLoading={false}
           />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     //Check if the list is rendered properly
@@ -483,7 +506,9 @@ describe("Load data component", () => {
     fireEvent.click(getByTestId("testLoadXML-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Verify Load list allows step to be added to flow with writeFlow authority", async () => {
@@ -493,21 +518,26 @@ describe("Load data component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, getByLabelText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={mockAddStepToNew}
-      canReadOnly={authorityService.canReadLoad()}
-      canReadWrite={authorityService.canWriteLoad()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      createLoadArtifact={mockCreateLoadArtifact}
-      data={data.loadData.data}
-      deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}
-      updateLoadArtifact={""}
-      sortOrderInfo={""}
-      flowsLoading={false}
-    />
-    </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getByLabelText, getByTestId} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            addStepToFlow={mockAddStepToFlow}
+            addStepToNew={mockAddStepToNew}
+            canReadOnly={authorityService.canReadLoad()}
+            canReadWrite={authorityService.canWriteLoad()}
+            canWriteFlow={authorityService.canWriteFlow()}
+            createLoadArtifact={mockCreateLoadArtifact}
+            data={data.loadData.data}
+            deleteLoadArtifact={mockDeleteLoadArtifact}
+            flows={data.flows}
+            updateLoadArtifact={""}
+            sortOrderInfo={""}
+            flowsLoading={false}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     const loadStepName = data.loadData.data[0].name;
 
@@ -536,21 +566,26 @@ describe("Load data component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={mockAddStepToNew}
-      canReadOnly={authorityService.canReadLoad()}
-      canReadWrite={authorityService.canWriteLoad()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      createLoadArtifact={mockCreateLoadArtifact}
-      data={data.loadData.data}
-      deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}
-      updateLoadArtifact={""}
-      sortOrderInfo={""}
-      flowsLoading={false}
-    />
-    </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            addStepToFlow={mockAddStepToFlow}
+            addStepToNew={mockAddStepToNew}
+            canReadOnly={authorityService.canReadLoad()}
+            canReadWrite={authorityService.canWriteLoad()}
+            canWriteFlow={authorityService.canWriteFlow()}
+            createLoadArtifact={mockCreateLoadArtifact}
+            data={data.loadData.data}
+            deleteLoadArtifact={mockDeleteLoadArtifact}
+            flows={data.flows}
+            updateLoadArtifact={""}
+            sortOrderInfo={""}
+            flowsLoading={false}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
     const loadStepName = data.loadData.data[0].name;
     // adding to new flow icon is disabled and shows correct tooltip
     fireEvent.mouseOver(getByLabelText(`${loadStepName}-disabled-add-icon`));
@@ -578,8 +613,8 @@ describe("Load data component", () => {
   describe("Verify Load List pagination", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "writeIngestion", "writeFlow"]);
-    const setPage = (pageNumber: number) => { };
-    const setPageSize = (current: number, pageSize: number) => { };
+    const setPage = (pageNumber: number) => {};
+    const setPageSize = (current: number, pageSize: number) => {};
     const setPageMock = setPage as jest.MockedFunction<typeof setPage>;
     const setPageSizeMock = setPageSize as jest.MockedFunction<typeof setPageSize>;
     let loadingOptions = {
@@ -591,11 +626,13 @@ describe("Load data component", () => {
       const {container} = render(
         <MemoryRouter>
           <AuthoritiesContext.Provider value={authorityService}>
-            <LoadingContext.Provider value={{
-              loadingOptions: loadingOptions,
-              setPage: setPageMock,
-              setPageSize: setPageSizeMock,
-            }}>
+            <LoadingContext.Provider
+              value={{
+                loadingOptions: loadingOptions,
+                setPage: setPageMock,
+                setPageSize: setPageSizeMock,
+              }}
+            >
               <LoadList
                 {...data.loadDataPagination}
                 flows={data.flowsAdd}
@@ -608,15 +645,17 @@ describe("Load data component", () => {
                 updateLoadArtifact={""}
                 flowsLoading={false}
               />
-            </LoadingContext.Provider >
+            </LoadingContext.Provider>
           </AuthoritiesContext.Provider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
       expect(container.querySelector("[title=\"2\"]")).toBeInTheDocument();
       expect(container.querySelector("[title=\"3\"]")).not.toBeInTheDocument();
-      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("10 / page");
+      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent(
+        "10 / page",
+      );
       expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
     });
 
@@ -625,11 +664,13 @@ describe("Load data component", () => {
       const {container} = render(
         <MemoryRouter>
           <AuthoritiesContext.Provider value={authorityService}>
-            <LoadingContext.Provider value={{
-              loadingOptions: loadingOptions,
-              setPage: setPageMock,
-              setPageSize: setPageSizeMock,
-            }}>
+            <LoadingContext.Provider
+              value={{
+                loadingOptions: loadingOptions,
+                setPage: setPageMock,
+                setPageSize: setPageSizeMock,
+              }}
+            >
               <LoadList
                 {...data.loadDataPagination}
                 flows={data.flowsAdd}
@@ -642,13 +683,15 @@ describe("Load data component", () => {
                 updateLoadArtifact={""}
                 flowsLoading={false}
               />
-            </LoadingContext.Provider >
+            </LoadingContext.Provider>
           </AuthoritiesContext.Provider>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       expect(container.querySelector("[title=\"1\"]")).toBeInTheDocument();
       expect(container.querySelector("[title=\"2\"]")).not.toBeInTheDocument();
-      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("20 / page");
+      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent(
+        "20 / page",
+      );
       expect(container.querySelectorAll(".hc-table_row")).toHaveLength(12);
     });
   });
@@ -659,15 +702,17 @@ describe("Load data component", () => {
     const {container} = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <LoadingContext.Provider value={{
-            loadingOptions: {
-              start: 1,
-              pageNumber: 1,
-              pageSize: 10,
-            },
-            setPageSize: jest.fn(),
-            setPage: jest.fn(),
-          }}>
+          <LoadingContext.Provider
+            value={{
+              loadingOptions: {
+                start: 1,
+                pageNumber: 1,
+                pageSize: 10,
+              },
+              setPageSize: jest.fn(),
+              setPage: jest.fn(),
+            }}
+          >
             <LoadList
               {...data.loadData}
               flows={data.flowsAdd}
@@ -680,9 +725,9 @@ describe("Load data component", () => {
               updateLoadArtifact={""}
               flowsLoading={false}
             />
-          </LoadingContext.Provider >
+          </LoadingContext.Provider>
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(container.querySelector(".ant-pagination")).toBeNull();

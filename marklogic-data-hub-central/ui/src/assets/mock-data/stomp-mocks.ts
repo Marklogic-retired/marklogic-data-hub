@@ -17,5 +17,5 @@ export const defaultStompContext: IStompContextInterface = {
   onMessage: jest.fn(),
   onError: jest.fn(),
   subscribe: jest.fn(),
-  unsubscribe: jest.fn()
+  unsubscribe: jest.fn(),
 };

@@ -11,7 +11,7 @@ interface Props {
   sources: any;
 }
 
-const DetailHeader: React.FC<Props> = (props) => {
+const DetailHeader: React.FC<Props> = props => {
   const recordType = props.contentType;
   let envelope: any = {};
   let esEnvelope: any = {};
@@ -22,9 +22,11 @@ const DetailHeader: React.FC<Props> = (props) => {
   let sources: string = "";
 
   if (props.sources && props.sources.length) {
-    sources = props.sources.map(src => {
-      return src.datahubSourceName;
-    }).join(", ");
+    sources = props.sources
+      .map(src => {
+        return src.datahubSourceName;
+      })
+      .join(", ");
   }
 
   if (recordType === "json") {
@@ -35,7 +37,7 @@ const DetailHeader: React.FC<Props> = (props) => {
           title = envelope.instance.info.hasOwnProperty("title") && envelope.instance.info.title;
         }
         if (envelope.hasOwnProperty("headers")) {
-          if (typeof (envelope.headers.createdOn) === "object") {
+          if (typeof envelope.headers.createdOn === "object") {
             timestamp = envelope.headers.hasOwnProperty("createdOn") && envelope.headers.createdOn[0];
           } else {
             timestamp = envelope.headers.hasOwnProperty("createdOn") && envelope.headers.createdOn;
@@ -89,7 +91,9 @@ const DetailHeader: React.FC<Props> = (props) => {
           timestamp = esEnvelope["es:headers"].hasOwnProperty("createdOn") && esEnvelope["es:headers"].createdOn[0];
         }
         if (esEnvelope["es:instance"].hasOwnProperty("es:info")) {
-          title = esEnvelope["es:instance"]["es:info"].hasOwnProperty("es:title") && esEnvelope["es:instance"]["es:info"]["es:title"];
+          title =
+            esEnvelope["es:instance"]["es:info"].hasOwnProperty("es:title") &&
+            esEnvelope["es:instance"]["es:info"]["es:title"];
         }
         if (props.primaryKey) {
           Object.keys(esEnvelope["es:instance"]).forEach(instance => {
@@ -112,7 +116,7 @@ const DetailHeader: React.FC<Props> = (props) => {
   return (
     <div id="header" className={styles.container}>
       <div id="title" className={styles.title}>
-        {primaryKey || id ?
+        {primaryKey || id ? (
           <>
             <span data-cy="document-title">{title} </span>
             <ChevronRight className={styles.arrowRight} />
@@ -128,23 +132,31 @@ const DetailHeader: React.FC<Props> = (props) => {
               </>
             )}
           </>
-          : ""
-        }
-
+        ) : (
+          ""
+        )}
       </div>
       <div id="summary" className={styles.summary}>
-        {timestamp &&
-          <span className={styles.meta} data-cy="document-timestamp"><span className={styles.secondary}>Created: </span>{dateConverter(timestamp)}</span>
-        }
-        {sources &&
-          <span className={styles.meta} data-cy="document-source"><span className={styles.secondary}>Sources: </span>{sources}</span>
-        }
-        {recordType &&
+        {timestamp && (
+          <span className={styles.meta} data-cy="document-timestamp">
+            <span className={styles.secondary}>Created: </span>
+            {dateConverter(timestamp)}
+          </span>
+        )}
+        {sources && (
+          <span className={styles.meta} data-cy="document-source">
+            <span className={styles.secondary}>Sources: </span>
+            {sources}
+          </span>
+        )}
+        {recordType && (
           <span className={styles.meta}>
             <span className={styles.secondary}>Record Type: </span>
-            <span className={styles.type} data-cy="document-recordtype">{recordType}</span>
+            <span className={styles.type} data-cy="document-recordtype">
+              {recordType}
+            </span>
           </span>
-        }
+        )}
       </div>
     </div>
   );

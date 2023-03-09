@@ -5,7 +5,7 @@ export const getRecord = async (uri, database) => {
   return await axios({
     url: `/api/record/download?docUri=${encodedUri}&database=${database}`,
     method: "GET",
-    responseType: "blob"
+    responseType: "blob",
   });
 };
 

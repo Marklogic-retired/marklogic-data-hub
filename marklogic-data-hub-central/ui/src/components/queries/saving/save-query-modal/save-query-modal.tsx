@@ -21,8 +21,7 @@ interface Props {
   existingQueryYesClicked: boolean;
 }
 
-const SaveQueryModal: React.FC<Props> = (props) => {
-
+const SaveQueryModal: React.FC<Props> = props => {
   const {
     clearAllGreyFacets,
     greyedOptions,
@@ -30,9 +29,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     searchOptions,
     applySaveQuery,
     setAllGreyedOptions,
-    setEntity
+    setEntity,
   } = useContext(SearchContext);
-
 
   const [queryName, setQueryName] = useState("");
   const [queryDescription, setQueryDescription] = useState("");
@@ -42,7 +40,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
   const onCancel = () => {
     props.setSaveModalVisibility();
   };
-  const onOk = async (event: { preventDefault: () => void; }) => {
+  const onOk = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
     let facets = {...searchOptions.selectedFacets};
     let selectedFacets = facets;
@@ -103,7 +101,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "save-query-name") {
       setQueryName(event.target.value);
     }
@@ -112,15 +110,12 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     }
   };
 
-  const unAppliedFacets = (e) => {
+  const unAppliedFacets = e => {
     setRadioOptionClicked(e.target.value);
   };
 
   return (
-    <HCModal
-      show={true}
-      onHide={onCancel}
-    >
+    <HCModal show={true} onHide={onCancel}>
       <Modal.Header>
         <span className={"fs-5"}>{"Save Query"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
@@ -128,7 +123,10 @@ const SaveQueryModal: React.FC<Props> = (props) => {
       <Modal.Body>
         <Form name="basic" className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={4}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={4}>
+              {"Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
@@ -146,7 +144,9 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={4}>{"Description:"}</FormLabel>
+            <FormLabel column lg={4}>
+              {"Description:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="save-query-description"
@@ -156,9 +156,11 @@ const SaveQueryModal: React.FC<Props> = (props) => {
               />
             </Col>
           </Row>
-          {props.greyFacets.length > 0 &&
+          {props.greyFacets.length > 0 && (
             <Row className={"mb-3"}>
-              <FormLabel column lg={4}>{"Unapplied Facets:"}</FormLabel>
+              <FormLabel column lg={4}>
+                {"Unapplied Facets:"}
+              </FormLabel>
               <Col>
                 <Form.Check
                   id={"unapplied-facets-1"}
@@ -192,15 +194,21 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 />
               </Col>
             </Row>
-          }
+          )}
           <Row className={"mb-3"}>
             <Col className={"d-flex justify-content-end"}>
-              <HCButton variant="outline-light" id="save-query-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+              <HCButton variant="outline-light" id="save-query-cancel-button" onClick={() => onCancel()}>
+                Cancel
+              </HCButton>
               &nbsp;&nbsp;
-              <HCButton variant="primary"
+              <HCButton
+                variant="primary"
                 type="submit"
                 disabled={queryName.length === 0}
-                onClick={(event) => onOk(event)} id="save-query-button">Save
+                onClick={event => onOk(event)}
+                id="save-query-button"
+              >
+                Save
               </HCButton>
             </Col>
           </Row>
@@ -211,5 +219,3 @@ const SaveQueryModal: React.FC<Props> = (props) => {
 };
 
 export default SaveQueryModal;
-
-

@@ -10,13 +10,12 @@ const entityIndicatorData = {
   entities: {
     "Customers": {
       filter: 2,
-      amount: 5
-    }
-  }
+      amount: 5,
+    },
+  },
 };
 
 describe("Related Entities Facet", () => {
-
   afterEach(cleanup);
 
   test("Render base entities", async () => {
@@ -32,7 +31,7 @@ describe("Related Entities Facet", () => {
         setEntitySpecificPanel={setEntitySpecificPanel}
         onSettingCheckedList={() => {}}
         entityIndicatorData={entityIndicatorData}
-      />
+      />,
     );
     const dropdown = getByLabelText("related-entities-list");
     expect(dropdown).toBeInTheDocument();
@@ -57,7 +56,7 @@ describe("Related Entities Facet", () => {
         setEntitySpecificPanel={setEntitySpecificPanel}
         onSettingCheckedList={() => {}}
         entityIndicatorData={entityIndicatorData}
-      />
+      />,
     );
     expect(getByLabelText("related-entity-Customers-filter")).toBeInTheDocument();
     expect(getByLabelText("related-entity-Customers-filter")).toHaveTextContent("5");

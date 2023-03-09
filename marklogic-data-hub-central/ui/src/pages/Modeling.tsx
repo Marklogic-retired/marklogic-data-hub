@@ -9,7 +9,16 @@ import EntityTypeTable from "@components/modeling/entity-type-table/entity-type-
 import ViewSwitch from "@components/common/switch-view/view-switch";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, clearDraftModels, updateEntityModels, deleteConceptClass, conceptClassReferences} from "@api/modeling";
+import {
+  deleteEntity,
+  entityReferences,
+  primaryEntityTypes,
+  publishDraftModels,
+  clearDraftModels,
+  updateEntityModels,
+  deleteConceptClass,
+  conceptClassReferences,
+} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {ModelingTooltips} from "@config/tooltips.config";
@@ -32,7 +41,8 @@ import {ChevronDown} from "react-bootstrap-icons";
 
 const Modeling: React.FC = () => {
   const {user, handleError} = useContext(UserContext);
-  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, setSelectedEntity} = useContext(ModelingContext);
+  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, setSelectedEntity} =
+    useContext(ModelingContext);
   const [dataModel, setDataModel] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
@@ -108,7 +118,7 @@ const Modeling: React.FC = () => {
       const response = await primaryEntityTypes();
       if (response) {
         let model: any = [];
-        let entityTypesArray:any = [];
+        let entityTypesArray: any = [];
         let isDraft = false;
         await response["data"].forEach(entity => {
           if (!entity.model.info.draftDeleted) {
@@ -137,7 +147,7 @@ const Modeling: React.FC = () => {
     try {
       if (!entitiesConfigExist(hubCentralConfig)) {
         let preferencesObject = {
-          modelingGraphOptions: {physicsEnabled: true}
+          modelingGraphOptions: {physicsEnabled: true},
         };
         updateUserPreferences(user.name, preferencesObject);
       }
@@ -146,7 +156,7 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const saveAllEntitiesToServer = async (entitiesArray, errorHandler: Function|undefined) => {
+  const saveAllEntitiesToServer = async (entitiesArray, errorHandler: Function | undefined) => {
     let isSuccess = true;
     try {
       let response;
@@ -174,12 +184,12 @@ const Modeling: React.FC = () => {
 
   const updateConceptClassAndHideModal = async (name: string, description: string) => {
     toggleShowConceptClassModal(false);
-    await setDataModelFromServer().then((resp => {
+    await setDataModelFromServer().then(resp => {
       if (!isEditModal && modelingOptions.view === ViewType.graph) {
         let isDraft = true;
         setSelectedEntity(name, isDraft);
       }
-    }));
+    });
   };
 
   const publishDraftModelToServer = async () => {
@@ -231,15 +241,22 @@ const Modeling: React.FC = () => {
       setAutoExpand(entityName + "-Entity Type");
     }
     toggleShowEntityModal(false);
-    await setDataModelFromServer().then((resp => {
+    await setDataModelFromServer().then(resp => {
       if (!isEditModal && modelingOptions.view === ViewType.graph) {
         let isDraft = true;
         setSelectedEntity(entityName, isDraft);
       }
-    }));
+    });
   };
 
-  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => {
+  const editEntityTypeDescription = (
+    entityTypeName: string,
+    entityTypeDescription: string,
+    entityTypeNamespace: string,
+    entityTypePrefix: string,
+    entityTypeColor: string,
+    entityTypeIcon: string,
+  ) => {
     if (canWriteEntityModel) {
       toggleIsEditModal(true);
       toggleShowEntityModal(true);
@@ -262,7 +279,7 @@ const Modeling: React.FC = () => {
     conceptClassName: string,
     conceptClassDescription: string,
     conceptClassColor: string,
-    conceptClassIcon: string
+    conceptClassIcon: string,
   ) => {
     if (canWriteEntityModel) {
       toggleIsEditConceptClassModal(true);
@@ -381,7 +398,7 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const handleAddMenu = (key) => {
+  const handleAddMenu = key => {
     if (key === "addNewEntityType") {
       toggleIsEditModal(false);
       toggleShowEntityModal(true);
@@ -391,76 +408,111 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const addButton =
-  <span className={styles.publishButtonParent}>
-    <span className={`${styles.publishButtonContainer} ${!canWriteEntityModel ? styles.addButton : undefined}`}>
-      <DropdownButton
-        aria-label="add-entity-type-concept-class"
-        align="end"
-        size="sm"
-        title={<span>Add<ChevronDown className="ms-2" /></span>}
-        onSelect={handleAddMenu}
-        className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
-        disabled={!canWriteEntityModel}>
-        <Dropdown.Item eventKey="addNewEntityType" onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") { handleAddMenu("addNewEntityType"); }
-        }}>
-          <span aria-label={"add-entity-type"}>Add new entity type</span>
-        </Dropdown.Item>
-        <Dropdown.Item eventKey="addNewConceptClass"  onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") { handleAddMenu("addNewConceptClass"); }
-        }}>
-          <span aria-label={"add-concept-class"}>Add new concept class</span>
-        </Dropdown.Item>
-      </DropdownButton>
+  const addButton = (
+    <span className={styles.publishButtonParent}>
+      <span className={`${styles.publishButtonContainer} ${!canWriteEntityModel ? styles.addButton : undefined}`}>
+        <DropdownButton
+          aria-label="add-entity-type-concept-class"
+          align="end"
+          size="sm"
+          title={
+            <span>
+              Add
+              <ChevronDown className="ms-2" />
+            </span>
+          }
+          onSelect={handleAddMenu}
+          className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
+          disabled={!canWriteEntityModel}
+        >
+          <Dropdown.Item
+            eventKey="addNewEntityType"
+            onKeyDown={event => {
+              if (event.key === "Enter" || event.key === " ") {
+                handleAddMenu("addNewEntityType");
+              }
+            }}
+          >
+            <span aria-label={"add-entity-type"}>Add new entity type</span>
+          </Dropdown.Item>
+          <Dropdown.Item
+            eventKey="addNewConceptClass"
+            onKeyDown={event => {
+              if (event.key === "Enter" || event.key === " ") {
+                handleAddMenu("addNewConceptClass");
+              }
+            }}
+          >
+            <span aria-label={"add-concept-class"}>Add new concept class</span>
+          </Dropdown.Item>
+        </DropdownButton>
+      </span>
     </span>
-  </span>;
+  );
 
   const publishIconStyle: CSSProperties = {
     width: "15px",
     height: "15px",
-    fill: "currentColor"
+    fill: "currentColor",
   };
 
-  const publishButton = <span className={styles.publishButtonParent}><HCButton
-    className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
-    disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
-    aria-label="publish-to-database"
-    data-testid="publish-changes"
-    variant="outline-light"
-    onClick={() => {
-      setConfirmType(ConfirmationType.PublishAll);
-      toggleConfirmModal(true);
-    }}
-    size="sm"
-  >
-    <span className={styles.publishButtonContainer}>
-      <PublishToDatabaseIcon style={publishIconStyle} />
-      <span className={styles.publishButtonText}>Publish</span>
+  const publishButton = (
+    <span className={styles.publishButtonParent}>
+      <HCButton
+        className={
+          canWriteEntityModel
+            ? !modelingOptions.isModified
+              ? styles.disabledPointerEvents
+              : ""
+            : styles.disabledPointerEvents
+        }
+        disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
+        aria-label="publish-to-database"
+        data-testid="publish-changes"
+        variant="outline-light"
+        onClick={() => {
+          setConfirmType(ConfirmationType.PublishAll);
+          toggleConfirmModal(true);
+        }}
+        size="sm"
+      >
+        <span className={styles.publishButtonContainer}>
+          <PublishToDatabaseIcon style={publishIconStyle} />
+          <span className={styles.publishButtonText}>Publish</span>
+        </span>
+      </HCButton>
     </span>
-  </HCButton>
-  </span>;
+  );
 
-  const revertButton = <span className={styles.publishButtonParent}><HCButton
-    className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
-    disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
-    aria-label="revert-changes-table-view"
-    data-testid="revert-changes"
-    variant="outline-light"
-    onClick={() => {
-      toggleRevertConfirmModal(true);
-      setConfirmType(ConfirmationType.RevertChanges);
-    }}
-    size="sm"
-  >
-    <span className={styles.publishButtonContainer}>
-      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton}/>
-      <span className={styles.publishButtonText}>Revert</span>
+  const revertButton = (
+    <span className={styles.publishButtonParent}>
+      <HCButton
+        className={
+          canWriteEntityModel
+            ? !modelingOptions.isModified
+              ? styles.disabledPointerEvents
+              : ""
+            : styles.disabledPointerEvents
+        }
+        disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
+        aria-label="revert-changes-table-view"
+        data-testid="revert-changes"
+        variant="outline-light"
+        onClick={() => {
+          toggleRevertConfirmModal(true);
+          setConfirmType(ConfirmationType.RevertChanges);
+        }}
+        size="sm"
+      >
+        <span className={styles.publishButtonContainer}>
+          <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton} />
+          <span className={styles.publishButtonText}>Revert</span>
+        </span>
+      </HCButton>
     </span>
-  </HCButton>
-  </span>;
+  );
 
-  const handleViewChange = (view) => {
+  const handleViewChange = view => {
     if (view === "table") {
       setView(ViewType.table);
     } else {
@@ -471,75 +523,95 @@ const Modeling: React.FC = () => {
   if (canAccessModel) {
     return (
       <div className={styles.modelContainer}>
-        {modelingOptions.view === ViewType.table ?
+        {modelingOptions.view === ViewType.table ? (
           <div className={styles.stickyHeader} style={{width: width - 138, maxWidth: width - 138}}>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
-                <HCAlert
-                  variant="info"
-                  aria-label="entity-modified-alert"
-                  showIcon
-                >{ModelingTooltips.entityEditedAlert}</HCAlert>
+                <HCAlert variant="info" aria-label="entity-modified-alert" showIcon>
+                  {ModelingTooltips.entityEditedAlert}
+                </HCAlert>
               </div>
             )}
             <div>
               <div className={styles.header}>
                 <h1>Data Model</h1>
                 <div className={styles.buttonContainer}>
-                  <ModelingLegend/>
+                  <ModelingLegend />
                   <div style={{float: "right"}}>
-                    {canWriteEntityModel ?
+                    {canWriteEntityModel ? (
                       <span>{addButton}</span>
-                      :
+                    ) : (
                       <HCTooltip
                         id="add-entity-disabled-tooltip"
                         text={ModelingTooltips.noWriteAccess}
-                        placement="top" className={styles.tooltipOverlay}>
+                        placement="top"
+                        className={styles.tooltipOverlay}
+                      >
                         <span className={styles.disabledCursor}>{addButton}</span>
                       </HCTooltip>
-                    }
-                    {canWriteEntityModel ?
-                      <HCTooltip id="publish-tooltip" text={ModelingTooltips.revertChanges} className={styles.tooltipOverlay} placement="top">
+                    )}
+                    {canWriteEntityModel ? (
+                      <HCTooltip
+                        id="publish-tooltip"
+                        text={ModelingTooltips.revertChanges}
+                        className={styles.tooltipOverlay}
+                        placement="top"
+                      >
                         <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>
                           {revertButton}
                         </span>
                       </HCTooltip>
-                      :
-                      <HCTooltip id="publish-disabled-tooltip" text={ModelingTooltips.revertChanges + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
+                    ) : (
+                      <HCTooltip
+                        id="publish-disabled-tooltip"
+                        text={ModelingTooltips.revertChanges + " " + ModelingTooltips.noWriteAccess}
+                        placement="top"
+                        className={styles.tooltipOverlay}
+                      >
                         <span className={styles.revertDisabledCursor}>{revertButton}</span>
                       </HCTooltip>
-                    }
-                    {canWriteEntityModel ?
-                      <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} className={styles.tooltipOverlay} placement="top">
+                    )}
+                    {canWriteEntityModel ? (
+                      <HCTooltip
+                        id="publish-tooltip"
+                        text={ModelingTooltips.publish}
+                        className={styles.tooltipOverlay}
+                        placement="top"
+                      >
                         <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>
                           {publishButton}
                         </span>
                       </HCTooltip>
-                      :
-                      <HCTooltip id="publish-disabled-tooltip" text={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
+                    ) : (
+                      <HCTooltip
+                        id="publish-disabled-tooltip"
+                        text={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess}
+                        placement="top"
+                        className={styles.tooltipOverlay}
+                      >
                         <span className={styles.disabledCursor}>{publishButton}</span>
                       </HCTooltip>
-                    }
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-          </div> : <>
+          </div>
+        ) : (
+          <>
             <div className={styles.intro}>
               <p>{tiles.model.intro}</p>
-              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view}/>}
+              {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
-                <HCAlert
-                  variant="info"
-                  aria-label="entity-modified-alert"
-                  showIcon
-                >{ModelingTooltips.entityEditedAlert}</HCAlert>
+                <HCAlert variant="info" aria-label="entity-modified-alert" showIcon>
+                  {ModelingTooltips.entityEditedAlert}
+                </HCAlert>
               </div>
             )}
             <h1>Data Model</h1>
@@ -557,7 +629,7 @@ const Modeling: React.FC = () => {
               toggleIsEditModal={toggleIsEditModal}
               setDataModelFromServer={setDataModelFromServer}
               toggleConfirmModal={toggleConfirmModal}
-              toggleRevertConfirmModal = {toggleRevertConfirmModal}
+              toggleRevertConfirmModal={toggleRevertConfirmModal}
               setConfirmType={setConfirmType}
               hubCentralConfig={hubCentralConfig}
               updateHubCentralConfig={publishHubCentralConfig}
@@ -569,26 +641,29 @@ const Modeling: React.FC = () => {
               deleteConceptClass={getConceptClassReferences}
             />
           </>
-        }
-        {modelingOptions.view === ViewType.table ? <div
-          className={
-            modelingOptions.isModified ?
-              styles.entityTableContainer :
-              styles.entityTableContainerWithoutAlert
-          }>
-          <EntityTypeTable
-            canReadEntityModel={canReadEntityModel}
-            canWriteEntityModel={canWriteEntityModel}
-            allEntityTypesData={dataModel}
-            editEntityTypeDescription={editEntityTypeDescription}
-            updateEntities={setDataModelFromServer}
-            updateSavedEntity={saveAllEntitiesToServer}
-            autoExpand={autoExpand}
-            hubCentralConfig={hubCentralConfig}
-            editConceptClassDescription={editConceptClassDescription}
-            deleteConceptClass={getConceptClassReferences}
-          />
-        </div> : ""}
+        )}
+        {modelingOptions.view === ViewType.table ? (
+          <div
+            className={
+              modelingOptions.isModified ? styles.entityTableContainer : styles.entityTableContainerWithoutAlert
+            }
+          >
+            <EntityTypeTable
+              canReadEntityModel={canReadEntityModel}
+              canWriteEntityModel={canWriteEntityModel}
+              allEntityTypesData={dataModel}
+              editEntityTypeDescription={editEntityTypeDescription}
+              updateEntities={setDataModelFromServer}
+              updateSavedEntity={saveAllEntitiesToServer}
+              autoExpand={autoExpand}
+              hubCentralConfig={hubCentralConfig}
+              editConceptClassDescription={editConceptClassDescription}
+              deleteConceptClass={getConceptClassReferences}
+            />
+          </div>
+        ) : (
+          ""
+        )}
         <ConfirmationModal
           isVisible={showConfirmModal}
           type={confirmType}

@@ -30,12 +30,12 @@ type Props = {
   physicsAnimation: boolean;
   setIsLoading: (loading: boolean) => void;
   entityDefArray: any[];
-  data:any[];
-  openUnmergeCompare:(item: object)=>void;
-  isUnmergeAvailable:(nodeId:string)=>boolean;
+  data: any[];
+  openUnmergeCompare: (item: object) => void;
+  isUnmergeAvailable: (nodeId: string) => boolean;
 };
 
-const GraphVisExplore: React.FC<Props> = (props) => {
+const GraphVisExplore: React.FC<Props> = props => {
   const {
     entityTypeInstances,
     graphView,
@@ -45,35 +45,26 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     setGraphPageInfo,
     viewConcepts,
     physicsAnimation,
-    setIsLoading
+    setIsLoading,
   } = props;
   const [expandedNodeData, setExpandedNodeData] = useState({});
   let graphData = {nodes: [], edges: []};
-  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [menuPosition, setMenuPosition] = useState<{x: number; y: number}>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState({});
   const [hasStabilized, setHasStabilized] = useState(false);
 
-
   const authorityService = useContext(AuthoritiesContext);
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
 
-  const {
-    searchOptions,
-    setGraphViewOptions,
-    savedNode,
-    setSavedNode,
-    entityInstanceId
-  } = useContext(SearchContext);
-  const {
-    user
-  } = useContext(UserContext);
+  const {searchOptions, setGraphViewOptions, savedNode, setSavedNode, entityInstanceId} = useContext(SearchContext);
+  const {user} = useContext(UserContext);
   const {hubCentralConfig} = useContext(HubCentralConfigContext);
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
-  const initNetworkInstance = (networkInstance) => {
+  const initNetworkInstance = networkInstance => {
     setIsLoading(false);
     setNetwork(networkInstance);
   };
@@ -92,10 +83,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const [relatedToData, setRelatedToData] = useState({});
   const [nodesDefocussed, setNodesDefocussed] = useState<any[]>([]);
 
-  const updateNodesData = (nodes) => {
+  const updateNodesData = nodes => {
     network.body.data.nodes.update(nodes);
   };
-  const updateEdgesData = (edges) => {
+  const updateEdgesData = edges => {
     network.body.data.edges.update(edges);
   };
 
@@ -122,7 +113,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     } catch (err) {
       console.error("Error clearing the graph data before reset.");
     } finally {
-
       //**turn this back on to investigate how to show loading while nodes are bouncing/stabilizing**/
       // setIsLoading(true);
       //****************************** */
@@ -136,7 +126,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (Object.keys(entityTypeInstances).length && network) {
-
       initializeGraphData();
 
       const updateGraphSettings = async () => {
@@ -152,7 +141,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return () => {
       setGraphDataLoaded(false);
     };
-
   }, [entityTypeInstances, viewRelationshipLabels, hubCentralConfig, viewConcepts]);
 
   useEffect(() => {
@@ -178,7 +166,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       setLeafNodes({});
       setNodesDefocussed([]);
     };
-
   }, [network, graphView]);
 
   useEffect(() => {
@@ -196,11 +183,21 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   useLayoutEffect(() => {
     if (network) {
       window.graphVisExploreApi = {
-        getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
-        canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
-        focus: (nodeId: any) => { network.focus(nodeId); },
-        fit: () => { network.fit(); },
-        stopStabilization: () => { network.stopSimulation(); },
+        getNodePositions: (nodeIds?: any) => {
+          return !nodeIds ? network.getPositions() : network.getPositions(nodeIds);
+        },
+        canvasToDOM: (xCoordinate, yCoordinate) => {
+          return network.canvasToDOM({x: xCoordinate, y: yCoordinate});
+        },
+        focus: (nodeId: any) => {
+          network.focus(nodeId);
+        },
+        fit: () => {
+          network.fit();
+        },
+        stopStabilization: () => {
+          network.stopSimulation();
+        },
       };
     }
   }, [network, graphData]);
@@ -214,8 +211,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         graphViewOptions: {
           groupNodeId: clickedNode["nodeId"],
           parentIRI: clickedNode["docIRI"],
-          predicateFilter: clickedNode["predicate"]
-        }
+          predicateFilter: clickedNode["predicate"],
+        },
       };
       updateUserPreferences(user.name, preferencesObject);
     }
@@ -239,7 +236,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       } else {
         setGraphViewOptions(undefined);
       }
-    } else if (network && entityInstanceId && !graphDataLoaded && savedNode) { //case where exploring from table/snippet view
+    } else if (network && entityInstanceId && !graphDataLoaded && savedNode) {
+      //case where exploring from table/snippet view
       let instanceId = entityInstanceId.split("-")[1];
       let selectedEntity = entityTypeInstances?.nodes?.find(node => node.id.includes(instanceId));
       if (selectedEntity) {
@@ -254,7 +252,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const updateNetworkHeight = async () => {
     let baseHeight = Math.round(window.innerHeight - network.body.container.offsetTop);
     if (window.devicePixelRatio < 2) {
-      baseHeight = Math.round(window.innerHeight - (network.body.container.offsetTop * window.devicePixelRatio));
+      baseHeight = Math.round(window.innerHeight - network.body.container.offsetTop * window.devicePixelRatio);
     }
     let height = (baseHeight < 505 ? 505 : baseHeight) + "px";
     setNetworkHeight(height);
@@ -314,7 +312,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let leafNodesObj = leafNodes;
     let entityInstNodes = entityTypeInstances?.nodes?.slice();
     entityInstNodes = !nodesToExpand ? entityInstNodes : nodesToExpand;
-    entityInstNodes.forEach((e) => {
+    entityInstNodes.forEach(e => {
       if (!viewConcepts) {
         if (e.isConcept) {
           return;
@@ -340,7 +338,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           nodeObj[nodeId] = e;
         }
       }
-      let tempLabel = e.label !== "" ? e.label : (e.docUri || nodeId);
+      let tempLabel = e.label !== "" ? e.label : e.docUri || nodeId;
       let nodeLabel = tempLabel.length > 9 ? tempLabel.substring(0, 6) + "..." : tempLabel;
       if (e.hasRelationships) {
         if (!leafNodesObj.hasOwnProperty(nodeId)) {
@@ -370,7 +368,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               scale = network.getScale();
             }
             let displayLabel = scale > 0.6;
-            let radiusByCount = r + ((e.count / 10) * 5);
+            let radiusByCount = r + (e.count / 10) * 5;
             let maxRadius = 84;
             let rad = e.count > 10 ? (radiusByCount >= 84 ? maxRadius : radiusByCount) : r;
             const radius = displayLabel ? rad * 1.5 : rad;
@@ -400,14 +398,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               ctx.fillText(customLabel, x, y + 10);
             }
             if (scale > 0.3 && scale < 0.6) {
-              let img = new Image();   // Create new img element
-              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
+              let img = new Image(); // Create new img element
+              img.src = `data:image/svg+xml,${encodeURIComponent(
+                renderToStaticMarkup(createElement(FontIcon[iconName])),
+              )}`;
               //Drawing the image on canvas
               ctx.fillStyle = defaultColor;
               ctx.drawImage(img, x - 12, imagePositionY, 24, 24);
             } else if (scale > 0.6) {
-              let img = new Image();   // Create new img element
-              img.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}`;
+              let img = new Image(); // Create new img element
+              img.src = `data:image/svg+xml,${encodeURIComponent(
+                renderToStaticMarkup(createElement(FontIcon[iconName])),
+              )}`;
               //Drawing the image on canvas
               ctx.fillStyle = defaultColor;
 
@@ -417,7 +419,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
               if (e.hasRelationships) {
                 let imgLeaf = new Image();
-                imgLeaf.src = `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaProjectDiagram"])))}`;
+                imgLeaf.src = `data:image/svg+xml,${encodeURIComponent(
+                  renderToStaticMarkup(createElement(FontIcon["FaProjectDiagram"])),
+                )}`;
                 ctx.drawImage(imgLeaf, x - 7, y + 18, 14, 14);
               }
             }
@@ -458,7 +462,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             drawNode,
             nodeDimensions: {width: 2.5 * r, height: 2.5 * r},
           };
-        }
+        },
       });
     });
     setGroupNodes(nodeObj);
@@ -473,24 +477,24 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (to === edge.to && from === edge.from) {
         count++;
         // This works so...
-        reversed = (reversed === undefined) ? false : reversed;
+        reversed = reversed === undefined ? false : reversed;
       } else if (from === edge.to && to === edge.from) {
         count++;
-        reversed = (reversed === undefined) ? true : reversed;
+        reversed = reversed === undefined ? true : reversed;
       }
     });
     // Space out same edges using visjs "smooth" options
     let space = 0.16;
     let type = "";
     if (!reversed) {
-      type = (count % 2 === 0) ? "curvedCW" : "curvedCCW";
+      type = count % 2 === 0 ? "curvedCW" : "curvedCCW";
     } else {
-      type = (count % 2 === 0) ? "curvedCCW" : "curvedCW";
+      type = count % 2 === 0 ? "curvedCCW" : "curvedCW";
     }
     return {
-      enabled: (count > 0),
+      enabled: count > 0,
       type: type,
-      roundness: (count % 2 === 0) ? (space * count / 2) : (space * (count + 1) / 2)
+      roundness: count % 2 === 0 ? (space * count) / 2 : (space * (count + 1)) / 2,
     };
   };
 
@@ -514,7 +518,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         arrows: {
           to: {
             enabled: false,
-          }
+          },
         },
         color: {
           color: "#666",
@@ -524,7 +528,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         font: {
           align: "top",
         },
-        smooth: smoothOpts
+        smooth: smoothOpts,
       };
     });
     setPredicates(predicatesObject);
@@ -542,7 +546,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         centralGravity: 0.005,
         springLength: 230,
         springConstant: 0.18,
-        avoidOverlap: 1
+        avoidOverlap: 1,
       },
       maxVelocity: 146,
       solver: "forceAtlas2Based",
@@ -556,10 +560,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     interaction: {
       navigationButtons: true,
       hover: true,
-      zoomView: false
+      zoomView: false,
     },
     manipulation: {
-      enabled: false
+      enabled: false,
     },
   };
 
@@ -575,14 +579,15 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const handleTableViewRecords = (exceededThreshold?: string) => {
     if (network) {
-      const selectedNodeType = clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"].split("/").pop().split("-").pop() : undefined;
+      const selectedNodeType =
+        clickedNode && clickedNode["nodeId"] ? clickedNode["nodeId"].split("/").pop().split("-").pop() : undefined;
       const predicate = clickedNode && clickedNode["predicateIri"];
       const {nodeObject} = clickedNode && clickedNode["parentNode"] && getExpandedNodeObject(clickedNode["parentNode"]);
       const parentNode = nodeObject["docIRI"];
       const relatedView = {
         entityTypeId: selectedNodeType,
         predicateFilter: predicate,
-        parentNode: parentNode
+        parentNode: parentNode,
       };
       if (exceededThreshold) {
         relatedView["exceededThreshold"] = true;
@@ -593,7 +598,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   };
 
-  const updateGroupAndLeafNodesDataset = async (expandedNodes) => {
+  const updateGroupAndLeafNodesDataset = async expandedNodes => {
     let groupNodeObj = groupNodes;
     let leafNodeObj = leafNodes;
     expandedNodes.forEach(e => {
@@ -616,16 +621,19 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     const hiddenNodesCount = nodesToHide.length;
     const visibleNodesCount = network.body.data.nodes.length - hiddenNodesCount;
 
-    const total = network.body.data.nodes.length < entityTypeInstances.total ? entityTypeInstances.total : network.body.data.nodes.length;
+    const total =
+      network.body.data.nodes.length < entityTypeInstances.total
+        ? entityTypeInstances.total
+        : network.body.data.nodes.length;
 
     let pageInfo = {
       pageLength: visibleNodesCount || 0,
-      total: total
+      total: total,
     };
     setGraphPageInfo(pageInfo);
   };
 
-  const handleGroupNodeExpand = async (payloadData) => {
+  const handleGroupNodeExpand = async payloadData => {
     setContextMenuVisible(false);
     let parentDoc = null;
     let nodeId = null;
@@ -641,8 +649,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       database: searchOptions.database,
       data: {
         parentIRI: parentDoc || nodeId,
-        "predicateFilter": payloadData.nodeInfo["predicateIri"]
-      }
+        "predicateFilter": payloadData.nodeInfo["predicateIri"],
+      },
     };
     try {
       let response: any;
@@ -729,7 +737,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove: any[] = []) => {
     if (expandedNodeData[leafNodeExpandId]) {
       let expandedGroupNodeObject = expandedNodeData[leafNodeExpandId];
-      const edgesToRemove = expandedGroupNodeObject.edges.filter(e => e["from"] === leafNodeExpandId || e["to"] === leafNodeExpandId);
+      const edgesToRemove = expandedGroupNodeObject.edges.filter(
+        e => e["from"] === leafNodeExpandId || e["to"] === leafNodeExpandId,
+      );
       edgesToRemove.forEach(e => {
         let id: any = e["id"];
         edgeIdsToRemove.push(id);
@@ -755,7 +765,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   };
 
-  const handleLeafNodeExpansion = async (payloadData) => {
+  const handleLeafNodeExpansion = async payloadData => {
     setContextMenuVisible(false);
     let parentIRI = null;
     if (clickedNode) {
@@ -767,8 +777,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let payload = {
       database: searchOptions.database,
       data: {
-        parentIRI
-      }
+        parentIRI,
+      },
     };
     if (clickedNode && clickedNode["isConcept"]) {
       payload["data"]["isConcept"] = true;
@@ -861,9 +871,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
     let nodesInCluster = getNodesInCluster(clickedNodeId);
     let nodesToHide = network.body.data.nodes.get({
-      filter: (node) => !nodesInCluster.hasOwnProperty(node.id)
+      filter: node => !nodesInCluster.hasOwnProperty(node.id),
     });
-    nodesToHide.forEach(node => node["hidden"] = true);
+    nodesToHide.forEach(node => (node["hidden"] = true));
     setNodesDefocussed(nodesToHide);
     resetSavedNode();
     updateNodesData(nodesToHide);
@@ -871,14 +881,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const handleDefocusCluster = () => {
-    nodesDefocussed.forEach(node => node["hidden"] = false);
+    nodesDefocussed.forEach(node => (node["hidden"] = false));
     resetSavedNode();
     updateNodesData(nodesDefocussed);
     setNodesDefocussed([]);
     updateGraphPageInfo();
   };
 
-  const handleMenuClick = async (event) => {
+  const handleMenuClick = async event => {
     setContextMenuVisible(false);
     if (network) {
       switch (event.target.id) {
@@ -926,7 +936,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         break;
       }
       case "Unmerge": {
-        const filteredData = props.data.filter((item) => item["uri"] === clickedNode["nodeId"]);
+        const filteredData = props.data.filter(item => item["uri"] === clickedNode["nodeId"]);
         if (filteredData.length > 0 && canWriteMatchMerge) {
           props.openUnmergeCompare(filteredData[0].uri);
         }
@@ -982,14 +992,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (canWriteMatchMerge) {
       return (
         <div id="Unmerge" key="9" className={styles.contextMenuItem} data-testid="UnmergeOption">
-            Unmerge this record
+          Unmerge this record
         </div>
       );
     }
     return (
       <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
         <div id="Unmerge" key="9" className={styles.contextDisabled} data-testid="UnmergeOption">
-            Unmerge this record
+          Unmerge this record
         </div>
       </HCTooltip>
     );
@@ -1006,49 +1016,53 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       entityType = clickedNode && clickedNode["entityName"] ? clickedNode["entityName"] : "";
     }
     return (
-      <div id="contextMenu" onClick={handleMenuClick} className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
-        {isGroupNode() &&
+      <div
+        id="contextMenu"
+        onClick={handleMenuClick}
+        className={styles.contextMenu}
+        style={{left: menuPosition.x, top: menuPosition.y}}
+      >
+        {isGroupNode() && (
           <div id="viewRecordsInTableView" key="1" className={styles.contextMenuItem}>
             Open related {entityType} records in a table
           </div>
-        }
-        {isLeafNode() &&
+        )}
+        {isLeafNode() && (
           <div id="showRelated" key="2" className={styles.contextMenuItem}>
             Show related
           </div>
-        }
-        {isGroupNode() && !isExpandedChildNode() && clickedNode["count"] > 3 &&
+        )}
+        {isGroupNode() && !isExpandedChildNode() && clickedNode["count"] > 3 && (
           <div id="expand3SampleRecords" key="3" className={styles.contextMenuItem}>
             Expand 3 {entityType} records from this group
           </div>
-        }
-        {isGroupNode() &&
+        )}
+        {isGroupNode() && (
           <div id="expandAllRecords" key="4" className={styles.contextMenuItem}>
             Expand all {entityType} records in this group
           </div>
-        }
-        {isExpandedChildNode() &&
+        )}
+        {isExpandedChildNode() && (
           <div id="collapseRecords" key="5" className={styles.contextMenuItem}>
             Collapse all {entityType} records into a group
           </div>
-        }
-        {isExpandedLeaf() &&
+        )}
+        {isExpandedLeaf() && (
           <div id="collapseLeafNode" key="6" className={styles.contextMenuItem}>
             Collapse related
           </div>
-        }
-        {!isClusterFocused() &&
+        )}
+        {!isClusterFocused() && (
           <div id="focusOnCluster" key="7" className={styles.contextMenuItem}>
             Show only records in this cluster
           </div>
-        }
-        {isClusterFocused() &&
+        )}
+        {isClusterFocused() && (
           <div id="defocus" key="8" className={styles.contextMenuItem}>
             Show all records
           </div>
-        }
-        {props.isUnmergeAvailable(clickedNode["nodeId"]) && unmergeOption()
-        }
+        )}
+        {props.isUnmergeAvailable(clickedNode["nodeId"]) && unmergeOption()}
         <div id="centerNode" key="10" className={styles.contextMenuItem}>
           Center this record
         </div>
@@ -1064,7 +1078,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   }, [clickedNode]);
 
-  const getExpandedNodeObject = (nodeId) => {
+  const getExpandedNodeObject = nodeId => {
     let expandedInstanceInfo = {nodeObject: {}, edgeObject: {}, currentNodeExpandId: "", parentNodeExpandId: ""};
 
     let expandId;
@@ -1080,16 +1094,20 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
     if (expandId && expandedNodeData[expandId]) {
       expandedInstanceInfo["nodeObject"] = expandedNodeData[expandId].nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = expandedNodeData[expandId].edges.find(edge => edge.to === nodeId || edge.from === nodeId);
+      expandedInstanceInfo["edgeObject"] = expandedNodeData[expandId].edges.find(
+        edge => edge.to === nodeId || edge.from === nodeId,
+      );
       expandedInstanceInfo["parentNodeExpandId"] = expandId;
     } else {
       expandedInstanceInfo["nodeObject"] = entityTypeInstances.nodes.find(node => node.id === nodeId);
-      expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(edge => edge.to === nodeId || edge.from === nodeId);
+      expandedInstanceInfo["edgeObject"] = entityTypeInstances.edges.find(
+        edge => edge.to === nodeId || edge.from === nodeId,
+      );
     }
     return expandedInstanceInfo;
   };
 
-  const handleSelect = _.debounce(async (event) => {
+  const handleSelect = _.debounce(async event => {
     const {nodes} = event;
     if (nodes.length > 0) {
       const [node] = nodes;
@@ -1098,7 +1116,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (groupNodes.hasOwnProperty(nodeId)) {
         let nodeInfo = getNodeObject(nodeId, edgeObject);
         nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
-        nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+        nodeInfo["hasRelationships"] =
+          nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
         nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
@@ -1108,7 +1127,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
         let payloadData = {
           expandAll: false,
-          nodeInfo: nodeInfo
+          nodeInfo: nodeInfo,
         };
         await handleGroupNodeExpand(payloadData);
         setUserPreferences();
@@ -1126,7 +1145,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   let doubleClick = false;
 
-  const handleClick = (event) => {
+  const handleClick = event => {
     setTimeout(() => {
       if (!doubleClick) {
         onClick(event);
@@ -1136,7 +1155,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }, 400);
   };
 
-  const onClick = (event) => {
+  const onClick = event => {
     if (event.nodes.length > 0 && event.event.tapCount === 1 && event.event.type === "tap") {
       handleSelect(event);
     }
@@ -1148,13 +1167,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     if (clickedNode && clickedNode["nodeId"]) {
       let nodeInfo = {
         nodeId: undefined,
-        isGroupNode: false
+        isGroupNode: false,
       };
       setClickedNode(nodeInfo);
     }
   };
 
-  const handleDoubleClick = (event) => {
+  const handleDoubleClick = event => {
     doubleClick = true;
     const {nodes} = event;
     if (nodes.length > 0) {
@@ -1162,14 +1181,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       const {nodeObject, edgeObject, currentNodeExpandId, parentNodeExpandId} = getExpandedNodeObject(nodeId);
       let nodeInfo = getNodeObject(nodeId, edgeObject);
       nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
-      nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+      nodeInfo["hasRelationships"] =
+        nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
       nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
       nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
       nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
       nodeInfo["docUri"] = nodeObject && nodeObject["docUri"] ? nodeObject["docUri"] : "";
       nodeInfo["docIRI"] = nodeObject && nodeObject["docIRI"] ? nodeObject["docIRI"] : "";
       nodeInfo["parentDocUri"] = nodeObject && nodeObject["parentDocUri"] ? nodeObject["parentDocUri"] : "";
-      nodeInfo["predicateIri"] = nodeObject && nodeObject["predicateIri"] ? nodeObject["predicateIri"] : nodeInfo["predicateIri"];
+      nodeInfo["predicateIri"] =
+        nodeObject && nodeObject["predicateIri"] ? nodeObject["predicateIri"] : nodeInfo["predicateIri"];
 
       //Reset ClickedNode upon double click
       setClickedNode({nodeId: undefined, isGroupNode: false});
@@ -1177,14 +1198,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (groupNodes.hasOwnProperty(nodeId)) {
         let payloadData = {
           expandAll: true,
-          nodeInfo: nodeInfo
+          nodeInfo: nodeInfo,
         };
         handleGroupNodeExpand(payloadData);
         setUserPreferences();
       } else if (leafNodes.hasOwnProperty(nodeId)) {
         let payloadData = {
           expandAll: true,
-          nodeInfo: nodeInfo
+          nodeInfo: nodeInfo,
         };
         handleLeafNodeExpansion(payloadData);
         setUserPreferences();
@@ -1192,7 +1213,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     } else {
       let nodeInfo = {
         nodeId: undefined,
-        isGroupNode: false
+        isGroupNode: false,
       };
       setClickedNode(nodeInfo);
     }
@@ -1221,15 +1242,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   }, [stabilizeAux]);
 
   const events = {
-    select: (event) => {
+    select: event => {
       //handleSelect(event);
     },
     click: handleClick,
 
-    dragStart: (event) => {
-
-    },
-    dragEnd: async (event) => {
+    dragStart: event => {},
+    dragEnd: async event => {
       let {nodes} = event;
       if (nodes.length > 0) {
         /*let positions = network.getPositions([nodes[0]])[nodes[0]];
@@ -1238,22 +1257,22 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         }*/
       }
     },
-    hoverNode: (event) => {
+    hoverNode: event => {
       event.event.target.style.cursor = "pointer";
     },
-    blurNode: (event) => {
+    blurNode: event => {
       event.event.target.style.cursor = "";
     },
-    hoverEdge: (event) => {
+    hoverEdge: event => {
       event.event.target.style.cursor = "pointer";
     },
-    blurEdge: (event) => {
+    blurEdge: event => {
       event.event.target.style.cursor = "";
     },
-    doubleClick: (event) => {
+    doubleClick: event => {
       handleDoubleClick(event);
     },
-    stabilized: (event) => {
+    stabilized: event => {
       // NOTE if user doesn't manipulate graph on load, stabilize event
       // fires forever. This avoids reacting to infinite events
       setIsLoading(false);
@@ -1270,7 +1289,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         }
       }
     },
-    oncontext: (event) => {
+    oncontext: event => {
       let nodeId = network.getNodeAt(event.pointer.DOM);
       if (nodeId) {
         event.event.preventDefault();
@@ -1288,7 +1307,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           parentNodeInfo = nodeObject;
         }
         nodeInfo["entityName"] = nodeObject && nodeObject["group"] ? nodeObject["group"].split("/").pop() : "";
-        nodeInfo["hasRelationships"] = nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
+        nodeInfo["hasRelationships"] =
+          nodeObject && nodeObject["hasRelationships"] ? nodeObject["hasRelationships"] : false;
         nodeInfo["count"] = nodeObject && nodeObject["count"] ? nodeObject["count"] : 1;
         nodeInfo["currentNodeExpandId"] = currentNodeExpandId;
         nodeInfo["parentNodeExpandId"] = parentNodeExpandId;
@@ -1298,31 +1318,26 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       } else {
         let nodeInfo = {
           nodeId: undefined,
-          isGroupNode: false
+          isGroupNode: false,
         };
         setClickedNode(nodeInfo);
       }
     },
-    dragging: (event) => {
+    dragging: event => {
       if (clickedNode && clickedNode["nodeId"]) {
         let nodeInfo = {
           nodeId: undefined,
-          isGroupNode: false
+          isGroupNode: false,
         };
         setClickedNode(nodeInfo);
       }
-    }
+    },
   };
 
   return (
     <div id="graphVisExplore">
       <div className={styles.graphContainer}>
-        <Graph
-          graph={graphData}
-          options={options}
-          events={events}
-          getNetwork={initNetworkInstance}
-        />
+        <Graph graph={graphData} options={options} events={events} getNetwork={initNetworkInstance} />
         {contextMenuVisible && menu()}
         <TableViewGroupNodes
           isVisible={openTableViewForGroupNodes}

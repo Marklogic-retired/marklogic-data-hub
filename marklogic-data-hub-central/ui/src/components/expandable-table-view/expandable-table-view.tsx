@@ -11,13 +11,10 @@ interface Props {
   tableView: boolean;
 }
 
-
-const ExpandableTableView: React.FC<Props> = (props) => {
+const ExpandableTableView: React.FC<Props> = props => {
   const [expandedNestedRows, setExpandedNestedRows] = useState([]);
 
-  const {
-    searchOptions,
-  } = useContext(SearchContext);
+  const {searchOptions} = useContext(SearchContext);
 
   let primaryKeyValue: any = "-";
   // let primaryKey: any = '-';
@@ -27,41 +24,52 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     // primaryKey = props.item.primaryKey.propertyPath;
   }
 
-  let data : any[] = [];
+  let data: any[] = [];
   let counter = 0;
   const parseJson = (obj: Object) => {
-    let parsedData : any[] = [];
+    let parsedData: any[] = [];
     for (let i in obj) {
-      if (obj[i] !== null && typeof (obj[i]) === "object") {
+      if (obj[i] !== null && typeof obj[i] === "object") {
         parsedData.push({
           key: counter++,
           property: i,
           children: parseJson(obj[i]),
-          view: <Link to={{pathname: "/tiles/explore/detail", state: {id: obj[i],
-            entity: searchOptions.entityTypeIds,
-            pageNumber: searchOptions.pageNumber,
-            start: searchOptions.start,
-            searchFacets: searchOptions.selectedFacets,
-            query: searchOptions.query,
-            tableView: props.tableView,
-            sortOrder: searchOptions.sortOrder,
-            sources: props.item.sources,
-            primaryKey: primaryKeyValue,
-            uri: props.item.uri,
-            entityInstance: props.item.entityInstance,
-            targetDatabase: searchOptions.database
-          }}} data-cy="nested-instance">
-            <HCTooltip text="Show nested detail on a separate page" id="show-nested-tooltip" placement="top">
-              <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></i>
-            </HCTooltip>
-          </Link>
+          view: (
+            <Link
+              to={{
+                pathname: "/tiles/explore/detail",
+                state: {
+                  id: obj[i],
+                  entity: searchOptions.entityTypeIds,
+                  pageNumber: searchOptions.pageNumber,
+                  start: searchOptions.start,
+                  searchFacets: searchOptions.selectedFacets,
+                  query: searchOptions.query,
+                  tableView: props.tableView,
+                  sortOrder: searchOptions.sortOrder,
+                  sources: props.item.sources,
+                  primaryKey: primaryKeyValue,
+                  uri: props.item.uri,
+                  entityInstance: props.item.entityInstance,
+                  targetDatabase: searchOptions.database,
+                },
+              }}
+              data-cy="nested-instance"
+            >
+              <HCTooltip text="Show nested detail on a separate page" id="show-nested-tooltip" placement="top">
+                <i>
+                  <FontAwesomeIcon icon={faExternalLinkAlt} size="sm" />
+                </i>
+              </HCTooltip>
+            </Link>
+          ),
         });
       } else {
         parsedData.push({
           key: counter++,
           property: i,
           value: typeof obj[i] === "boolean" ? obj[i].toString() : obj[i],
-          view: null
+          view: null,
         });
       }
     }
@@ -88,7 +96,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
       headerFormatter: () => <span aria-label="view-header">View</span>,
       dataField: "view",
       width: 200,
-    }
+    },
   ];
 
   return (

@@ -1,4 +1,3 @@
-
 import {RunToolTips} from "../../../config/tooltips.config";
 import React from "react";
 import {Router} from "react-router";
@@ -8,7 +7,6 @@ import FlowPanel, {Props} from "./flowPanel";
 import data from "../../../assets/mock-data/curation/flows.data";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
-
 
 jest.mock("axios");
 
@@ -40,7 +38,7 @@ const defaultProps: Props = {
   isStepRunning: false,
   flowRunning: {
     name: "",
-    steps: []
+    steps: [],
   },
   reorderFlow: jest.fn(),
   canWriteFlow: true,
@@ -59,10 +57,8 @@ describe("Flow Panel test suite", () => {
   it("should open and close the panel onClick", async () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router history={history}>
-        <FlowPanel
-          {...defaultProps}
-          flow={data.flows.data[0]}
-        /></Router>
+        <FlowPanel {...defaultProps} flow={data.flows.data[0]} />
+      </Router>,
     );
     const flowName = data.flows.data[0].name;
     // Open flow
@@ -87,25 +83,20 @@ describe("Flow Panel test suite", () => {
   it("should add steps to flow", () => {
     const {getByText, getAllByText} = render(
       <Router history={history}>
-        <FlowPanel
-          {...defaultProps}
-          flow={data.flows.data[0]}
-        /></Router>
+        <FlowPanel {...defaultProps} flow={data.flows.data[0]} />
+      </Router>,
     );
     const addStepName = data.steps.data["ingestionSteps"][0].name;
     // Open Add Step
     let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(getByText(addStepName)).toBeInTheDocument();
-
   });
   it("verify both runFlow and settings button disabled when flow is empty", async () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router history={history}>
-        <FlowPanel
-          {...defaultProps}
-          flow={data.flows.data[2]}
-        /></Router>
+        <FlowPanel {...defaultProps} flow={data.flows.data[2]} />
+      </Router>,
     );
 
     //verify both runFlow and settings button disabled when flow is empty
@@ -121,10 +112,8 @@ describe("Flow Panel test suite", () => {
   it("verify only runFlow button is disabled when steps exist but none selected", () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router history={history}>
-        <FlowPanel
-          {...defaultProps}
-          flow={data.flows.data[0]}
-        /></Router>
+        <FlowPanel {...defaultProps} flow={data.flows.data[0]} />
+      </Router>,
     );
 
     // verify only runFlow button is disabled when steps exist but none selected
@@ -137,15 +126,15 @@ describe("Flow Panel test suite", () => {
   it("Verify if text is displayed on an empty flow", () => {
     const {getByText, getByTestId} = render(
       <Router history={history}>
-        <FlowPanel
-          {...defaultProps}
-          flow={data.flows.data[2]}
-        /></Router>
+        <FlowPanel {...defaultProps} flow={data.flows.data[2]} />
+      </Router>,
     );
     // Open flow
     const flowButton = getByTestId("accordion-emptyFlow");
     fireEvent.click(flowButton);
     //Check for text
-    expect(getByText("There are no steps in this flow. Add a step here to populate and run the flow.")).toBeInTheDocument();
+    expect(
+      getByText("There are no steps in this flow. Add a step here to populate and run the flow."),
+    ).toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 // derived from https://github.com/sjmf/ng2-stompjs-demo
 import React from "react";
 import SockJS from "sockjs-client";
-import {Subject,  BehaviorSubject} from "rxjs";
+import {Subject, BehaviorSubject} from "rxjs";
 import {Client, Message, Stomp} from "stompjs/lib/stomp.min";
 import axios from "axios";
 
@@ -11,17 +11,11 @@ export enum STOMPState {
   TRYING,
   CONNECTED,
   SUBSCRIBED,
-  DISCONNECTING
+  DISCONNECTING,
 }
 
 /** look up states for the STOMP service */
-export const STATELOOKUP: string[] = [
-  "CLOSED",
-  "TRYING",
-  "CONNECTED",
-  "SUBSCRIBED",
-  "DISCONNECTING"
-];
+export const STATELOOKUP: string[] = ["CLOSED", "TRYING", "CONNECTED", "SUBSCRIBED", "DISCONNECTING"];
 
 export interface IStompContextInterface {
   state: BehaviorSubject<STOMPState>;
@@ -51,7 +45,6 @@ export interface IStompContextInterface {
  * messages into a Subject observable.
  */
 export class STOMPService {
-
   /* Service parameters */
 
   // State of the STOMPService
@@ -81,7 +74,6 @@ export class STOMPService {
     this.messages = new Subject<Message>();
     this.state = new BehaviorSubject<STOMPState>(STOMPState.CLOSED);
   }
-
 
   /** Set up configuration */
   public configure(endpoint: string): void {
@@ -128,7 +120,6 @@ export class STOMPService {
    * which is resolved when connected.
    */
   public tryConnect(): Promise<{}> {
-
     if (this.state.getValue() !== STOMPState.CLOSED) {
       throw Error("Can't tryConnect if not CLOSED!");
     }
@@ -136,20 +127,12 @@ export class STOMPService {
       throw Error("Client not configured!");
     }
     // Attempt connection, passing in a callback
-    this.client.connect(
-      null,
-      null,
-      this.onConnect,
-      this.onError
-    );
+    this.client.connect(null, null, this.onConnect, this.onError);
 
     this.state.next(STOMPState.TRYING);
 
-    return new Promise(
-      (resolve, reject) => this.resolvePromise = resolve
-    );
+    return new Promise((resolve, reject) => (this.resolvePromise = resolve));
   }
-
 
   /** Disconnect the STOMP client and clean up */
   public disconnect(message?: string) {
@@ -157,23 +140,19 @@ export class STOMPService {
     this.state.next(STOMPState.DISCONNECTING);
     if (this.client && this._isActive) {
       // Disconnect. Callback will set CLOSED state
-      this.client.disconnect(
-        () => {
-          this.state.next(STOMPState.CLOSED);
-          this._isActive = false;
-          // for Cypress tests only
-          if ((window as any).Cypress) {
-            delete (window as any).stompClientConnected;
-          }
-        },
-        message
-      );
+      this.client.disconnect(() => {
+        this.state.next(STOMPState.CLOSED);
+        this._isActive = false;
+        // for Cypress tests only
+        if ((window as any).Cypress) {
+          delete (window as any).stompClientConnected;
+        }
+      }, message);
     } else {
       this.state.next(STOMPState.CLOSED);
       this._isActive = false;
     }
   }
-
 
   /** Send a message to all topics */
   public publish(endpoint: string, message: string): void {
@@ -195,10 +174,8 @@ export class STOMPService {
     /* eslint-enable no-console */
   }
 
-
   // Callback run on successfully connecting to server
   public onConnect = () => {
-
     // Indicate our connected state to observers
     this.state.next(STOMPState.CONNECTED);
 
@@ -216,7 +193,7 @@ export class STOMPService {
 
     // Clear callback
     this.resolvePromise = () => {};
-  }
+  };
 
   // Handle errors from stomp.js
   public onError = async (error: string, ...other: any[]) => {
@@ -248,8 +225,7 @@ export class STOMPService {
           }
         });
     }
-  }
-
+  };
 
   // On message RX, notify the Observable with the message object
   public onMessage = (message: Message) => {
@@ -258,7 +234,7 @@ export class STOMPService {
     } else {
       console.error("Empty message received!");
     }
-  }
+  };
 
   public subscribe(endpoint: string, resolveFunc: (...args: any[]) => void): void {
     if (!this._isActive) {
@@ -269,15 +245,13 @@ export class STOMPService {
 
   /** Subscribe to server message queues */
   subscribeInternal(endpoint: string, resolveFunc: (...args: any[]) => void): void {
-
     if (this.state.getValue() === STOMPState.TRYING) {
       this._subscribeQueue.push({
         endpoint: endpoint,
-        resolveFunc: resolveFunc
+        resolveFunc: resolveFunc,
       });
     } else {
-      const resp = this.client.subscribe(
-        endpoint, this.onMessage, {ack: "auto"});
+      const resp = this.client.subscribe(endpoint, this.onMessage, {ack: "auto"});
       resolveFunc(resp.id); // this.resolveSubQueue(resp.id);
     }
   }

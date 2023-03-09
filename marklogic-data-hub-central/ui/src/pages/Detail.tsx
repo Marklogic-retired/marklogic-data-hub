@@ -26,9 +26,7 @@ import {entityFromJSON, entityParser} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
 import {ReactComponent as Ontology} from "../assets/ontology.svg";
 
-interface Props extends RouteComponentProps<any> { }
-
-
+interface Props extends RouteComponentProps<any> {}
 
 const Detail: React.FC<Props> = ({history, location}) => {
   const {setSavedQueries, entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
@@ -73,7 +71,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const authorityService = useContext(AuthoritiesContext);
 
   const entityDefinition = entityDefinitionsArray?.find(
-    entity => entity.name === data?.envelope?.instance?.info?.title
+    entity => entity.name === data?.envelope?.instance?.info?.title,
   );
   const entityRelatedProperties = entityDefinition?.properties?.filter(property => property.related);
 
@@ -175,7 +173,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
         }
 
         getSaveQueries();
-
       } catch (error) {
         handleError(error);
       }
@@ -190,25 +187,25 @@ const Detail: React.FC<Props> = ({history, location}) => {
     return () => {
       componentIsMounted.current = false;
     };
-
   }, []);
-
 
   useEffect(() => {
     let state: any = location.state;
     if (state && JSON.stringify(state) !== JSON.stringify({})) {
-      entityInstanceDocument && state.hasOwnProperty("selectedValue") && state["selectedValue"] === "source" ?
-        setSelected("full") : setSelected("instance");
+      entityInstanceDocument && state.hasOwnProperty("selectedValue") && state["selectedValue"] === "source"
+        ? setSelected("full")
+        : setSelected("instance");
     } else {
       if (state === undefined) {
         state = {};
       }
-      entityInstanceDocument && setSelected(detailPagePreferences["selected"] ? detailPagePreferences["selected"] : "instance");
+      entityInstanceDocument &&
+        setSelected(detailPagePreferences["selected"] ? detailPagePreferences["selected"] : "instance");
       handleUserPreferences();
     }
   }, [entityInstanceDocument === true || entityInstanceDocument === false]);
 
-  const generateSourcesData = (sourceData) => {
+  const generateSourcesData = sourceData => {
     let parsedData: any[] = [];
     if (sourceData.length) {
       sourceData.forEach((obj, index) => {
@@ -242,7 +239,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
     return parsedData;
   };
 
-  const generateHistoryData = (historyData) => {
+  const generateHistoryData = historyData => {
     let parsedData: any[] = [];
 
     if (historyData.length === 0) {
@@ -251,7 +248,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
         updatedTime: "none",
         flow: "none",
         step: "none",
-        user: "none"
+        user: "none",
       });
       return parsedData;
     }
@@ -259,7 +256,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
     historyData.forEach((dataObject, index) => {
       const tableObj = {};
       tableObj["key"] = index;
-      tableObj["updatedTime"] = dataObject.updatedTime ? dayjs(dataObject.updatedTime).format("yyyy-MM-DD hh:mm") : "none";
+      tableObj["updatedTime"] = dataObject.updatedTime
+        ? dayjs(dataObject.updatedTime).format("yyyy-MM-DD hh:mm")
+        : "none";
       tableObj["flow"] = dataObject.flow ? dataObject.flow : "none";
       tableObj["step"] = dataObject.step ? dataObject.step : "none";
       tableObj["user"] = dataObject.user ? dataObject.user : "none";
@@ -267,7 +266,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
     });
     return parsedData;
   };
-
 
   const collectionColumns = [
     {
@@ -277,10 +275,10 @@ const Detail: React.FC<Props> = ({history, location}) => {
       dataField: "collection",
       formatter: (_, row) => {
         return <span>{row?.collection}</span>;
-      }
-    }
+      },
+    },
   ];
-  const generateCollections = (collections) => {
+  const generateCollections = collections => {
     if (collections && collections.length) {
       let dataSource: any = [];
       collections.forEach((collection, index) => {
@@ -301,7 +299,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
       dataField: "property",
       formatter: (_, row) => {
         return <span>{row?.property}</span>;
-      }
+      },
     },
     {
       text: "Value",
@@ -310,11 +308,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
       dataField: "value",
       formatter: (_, row) => {
         return <span>{row?.value}</span>;
-      }
-    }
+      },
+    },
   ];
 
-  const generateMetadata = (metadata) => {
+  const generateMetadata = metadata => {
     if (metadata) {
       let dataSource: any = [];
       Object.keys(metadata).forEach((key, index) => {
@@ -336,7 +334,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
       dataField: "role",
       formatter: (_, row) => {
         return <span>{row?.role}</span>;
-      }
+      },
     },
     {
       text: "Capability",
@@ -345,11 +343,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
       dataField: "capability",
       formatter: (_, row) => {
         return <span>{row?.capability}</span>;
-      }
-    }
+      },
+    },
   ];
 
-  const generatePermissions = (permissions) => {
+  const generatePermissions = permissions => {
     if (permissions && permissions.length) {
       let dataSource: any = [];
       permissions.forEach((p, index) => {
@@ -377,14 +375,20 @@ const Detail: React.FC<Props> = ({history, location}) => {
       sources: detailPagePreferences["sources"] ? detailPagePreferences["sources"] : [],
       primaryKey: detailPagePreferences["primaryKey"] ? detailPagePreferences["primaryKey"] : "",
       uri: detailPagePreferences["uri"] ? detailPagePreferences["uri"] : "",
-      targetDatabase: detailPagePreferences["database"] ? detailPagePreferences["database"] : ""
+      targetDatabase: detailPagePreferences["database"] ? detailPagePreferences["database"] : "",
     };
     setParentPagePreferences({...userPref});
   };
 
   const updateDetailPagePreferences = () => {
     let state: any = location.state;
-    if (state && (state.hasOwnProperty("sources") || state.hasOwnProperty("uri") || state.hasOwnProperty("primaryKey") || state.hasOwnProperty("entityInstance"))) {
+    if (
+      state &&
+      (state.hasOwnProperty("sources") ||
+        state.hasOwnProperty("uri") ||
+        state.hasOwnProperty("primaryKey") ||
+        state.hasOwnProperty("entityInstance"))
+    ) {
       let sources: any = [];
       let primaryKey: any = "";
       let uri: any = "";
@@ -413,19 +417,19 @@ const Detail: React.FC<Props> = ({history, location}) => {
         uri: uri,
         selected: state["selectedValue"] && state["selectedValue"] === "source" ? "full" : "instance",
         entityInstance: entityInstance,
-        isEntityInstance: isEntityInstance
+        isEntityInstance: isEntityInstance,
       };
       updateUserPreferences(user.name, preferencesObject);
     }
   };
 
-  const handleClick = (key) => {
+  const handleClick = key => {
     setSelected(key);
 
     //Set the selected view property in user preferences.
     let preferencesObject = {
       ...detailPagePreferences,
-      selected: key
+      selected: key,
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -434,20 +438,27 @@ const Detail: React.FC<Props> = ({history, location}) => {
     pathname: "/tiles/explore",
     state: {
       entity: state && state.hasOwnProperty("entity") ? state["entity"] : parentPagePreferences["entity"],
-      pageNumber: state && state.hasOwnProperty("pageNumber") ? state["pageNumber"] : parentPagePreferences["pageNumber"],
+      pageNumber:
+        state && state.hasOwnProperty("pageNumber") ? state["pageNumber"] : parentPagePreferences["pageNumber"],
       start: state && state.hasOwnProperty("start") ? state["start"] : parentPagePreferences["start"],
-      searchFacets: state && state.hasOwnProperty("searchFacets") ? state["searchFacets"] : parentPagePreferences["searchFacets"],
+      searchFacets:
+        state && state.hasOwnProperty("searchFacets") ? state["searchFacets"] : parentPagePreferences["searchFacets"],
       query: state && state.hasOwnProperty("query") ? state["query"] : parentPagePreferences["query"],
       tableView,
       graphView,
       sortOrder: state && state.hasOwnProperty("sortOrder") ? state["sortOrder"] : parentPagePreferences["sortOrder"],
       sources: state && state.hasOwnProperty("sources") ? state["sources"] : parentPagePreferences["sources"],
-      isEntityInstance: state && state.hasOwnProperty("isEntityInstance") ? state["isEntityInstance"] : parentPagePreferences["isEntityInstance"],
-      targetDatabase: state && state.hasOwnProperty("targetDatabase") ? state["targetDatabase"] : parentPagePreferences["targetDatabase"],
+      isEntityInstance:
+        state && state.hasOwnProperty("isEntityInstance")
+          ? state["isEntityInstance"]
+          : parentPagePreferences["isEntityInstance"],
+      targetDatabase:
+        state && state.hasOwnProperty("targetDatabase")
+          ? state["targetDatabase"]
+          : parentPagePreferences["targetDatabase"],
       isBackToResultsClicked: true,
-    }
+    },
   };
-
 
   const iconContenType = {
     unknown: <span className={"mlcf mlcf-blank fs-2"} aria-label={"icon: filetype-unknown"} />,
@@ -455,10 +466,10 @@ const Detail: React.FC<Props> = ({history, location}) => {
     xml: <span className={"mlcf mlcf-xml fs-2"} aria-label={"icon: filetype-xml"} />,
     text: <FileEarmarkText className={"d-inline-block fs-2"} aria-label={"icon: filetype-text"} />,
     bin: <FileEarmarkBinary className={"d-inline-block fs-2"} aria-label={"icon: filetype-bin"} />,
-    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />
+    csv: <span className={"mlcf mlcf-csv fs-2"} aria-label={"icon: filetype-csv"} />,
   };
 
-  const handleEntityExpandCollapse = (option) => {
+  const handleEntityExpandCollapse = option => {
     if (option === "expand") {
       setCollapseEntity(accordionsKey);
       return;
@@ -476,12 +487,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
     setCollapseEntity(collapseEntityCopy);
   };
 
-
   const renderEntityRelations = (entityRelatedProperty, property) => {
     const entities = hubCentralConfig?.modeling?.entities;
     if (!property) return;
     const relatedEntityDefinition = entityDefinitionsArray.find(
-      entity => entity.name === entityRelatedProperty.related
+      entity => entity.name === entityRelatedProperty.related,
     );
     const propertyValues = _.isArray(property) ? property : [property];
     const body = propertyValues.map((value, i) => {
@@ -491,14 +501,18 @@ const Detail: React.FC<Props> = ({history, location}) => {
         </div>
       );
     });
-    const icon = entities && relatedEntityDefinition?.name && entities[relatedEntityDefinition.name]?.icon ? entities[relatedEntityDefinition.name].icon : "FaShapes";
-    const bgColor = entities && relatedEntityDefinition.name && entities[relatedEntityDefinition.name]?.color ?
-      entities[relatedEntityDefinition.name].color :
-      themeColors.defaults.entityColor;
+    const icon =
+      entities && relatedEntityDefinition?.name && entities[relatedEntityDefinition.name]?.icon
+        ? entities[relatedEntityDefinition.name].icon
+        : "FaShapes";
+    const bgColor =
+      entities && relatedEntityDefinition.name && entities[relatedEntityDefinition.name]?.color
+        ? entities[relatedEntityDefinition.name].color
+        : themeColors.defaults.entityColor;
     accordionsKey.add(relatedEntityDefinition.name);
-    const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name) ?
-      relatedEntityDefinition.name :
-      undefined;
+    const defaultActiveKey = collapseEntity.has(relatedEntityDefinition.name)
+      ? relatedEntityDefinition.name
+      : undefined;
     return (
       <div className="my-3" key={relatedEntityDefinition.name}>
         <Accordion activeKey={defaultActiveKey}>
@@ -506,17 +520,16 @@ const Detail: React.FC<Props> = ({history, location}) => {
             <Accordion.Header
               className={styles.entityRelationsHeader}
               style={{backgroundColor: bgColor}}
-              onClick={() => handleOnclickItem(relatedEntityDefinition.name)}>
+              onClick={() => handleOnclickItem(relatedEntityDefinition.name)}
+            >
               <div className={styles.entityRelationsHeaderContainer}>
-                <span className={styles.entityRelationsHeaderIcon} >
+                <span className={styles.entityRelationsHeaderIcon}>
                   <DynamicIcons name={icon} />
                 </span>
                 <span>{relatedEntityDefinition.name}</span>
               </div>
             </Accordion.Header>
-            <Accordion.Body className="p-0 border-0">
-              {body}
-            </Accordion.Body>
+            <Accordion.Body className="p-0 border-0">{body}</Accordion.Body>
           </Accordion.Item>
         </Accordion>
       </div>
@@ -526,9 +539,10 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const renderRelatedEntities = () => {
     const sections = entityRelatedProperties?.reduce((result, entityRelatedProperty, i) => {
       if (!data?.envelope?.instance?.info?.title || !entityRelatedProperty?.name) return result;
-      const propertyVal = data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
-      if (!entityRelatedProperty || !propertyVal) return result;
-      const entityRelations = renderEntityRelations(entityRelatedProperty, propertyVal);
+      const propertyValue =
+        data?.envelope?.instance[data?.envelope?.instance?.info?.title][entityRelatedProperty?.name];
+      if (!entityRelatedProperty || !propertyValue) return result;
+      const entityRelations = renderEntityRelations(entityRelatedProperty, propertyValue);
       if (entityRelations) result.push(entityRelations);
       return result;
     }, []);
@@ -538,10 +552,18 @@ const Detail: React.FC<Props> = ({history, location}) => {
     if (!entityDefinition || entityDefinition?.relatedConcepts?.length === 0) return;
     const concepts = entityDefinition?.relatedConcepts.reduce((result, concept, index) => {
       if (!concept || !concept.context) return result;
-      let value = (data && data?.envelope?.instance?.info?.title &&
-      data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]) ? data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context] : "";
+      let value =
+        data &&
+        data?.envelope?.instance?.info?.title &&
+        data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]
+          ? data?.envelope?.instance[data?.envelope?.instance?.info?.title][concept.context]
+          : "";
       if (!value) return result;
-      result.push(<div className={styles.conceptItems} key={index}><span>{value}</span></div>);
+      result.push(
+        <div className={styles.conceptItems} key={index}>
+          <span>{value}</span>
+        </div>,
+      );
       return result;
     }, []);
     return concepts;
@@ -554,225 +576,288 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const renderRelationship = () => {
     if (!data?.envelope?.instance?.info?.title) return;
 
-
-    return (<div className={styles.relationshipsContainer}>
-      {relatedEntitiesToDisplay &&
-      relatedEntitiesToDisplay.length > 0 &&
-      <div className={styles.relationshipsEntitySection}>
-        <div className={styles.relationshipsEntityHeader}>
-          <span data-testid="related-entities-title" className={styles.relationshipsSectionTitle}>Related Entities</span>
-          <div><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></div>
-        </div>
-        <div className={styles.relationshipsEntityContent}>
-          {relatedEntitiesToDisplay}
-        </div>
-      </div>}
-      {(relatedEntitiesToDisplay &&
-        relatedEntitiesToDisplay.length > 0) &&
-        (relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0) &&
-        <div className={styles.relationshipsSeparatorSection}>
-          <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
-        </div>}
-      {relatedConceptsToDisplay &&
-      relatedConceptsToDisplay?.length > 0 &&
-      <div className={styles.relationshipsConceptsSection}>
-        <div className={styles.relationshipsConceptsHeader}>
-          <span data-testid="related-concepts-title" className={styles.relationshipsSectionTitle}>Related Concepts</span>
-        </div>
-        <div className={styles.relationshipsConceptsContent}>
-          {relatedConceptsToDisplay}
-        </div>
-      </div>}
-    </div >);
+    return (
+      <div className={styles.relationshipsContainer}>
+        {relatedEntitiesToDisplay && relatedEntitiesToDisplay.length > 0 && (
+          <div className={styles.relationshipsEntitySection}>
+            <div className={styles.relationshipsEntityHeader}>
+              <span data-testid="related-entities-title" className={styles.relationshipsSectionTitle}>
+                Related Entities
+              </span>
+              <div>
+                <ExpandCollapse handleSelection={id => handleEntityExpandCollapse(id)} currentSelection={""} />
+              </div>
+            </div>
+            <div className={styles.relationshipsEntityContent}>{relatedEntitiesToDisplay}</div>
+          </div>
+        )}
+        {relatedEntitiesToDisplay &&
+          relatedEntitiesToDisplay.length > 0 &&
+          relatedConceptsToDisplay &&
+          relatedConceptsToDisplay?.length > 0 && (
+          <div className={styles.relationshipsSeparatorSection}>
+            <HCDivider type="vertical" className={styles.relationshipsSeparator} style={{backgroundColor: "#333"}} />
+          </div>
+        )}
+        {relatedConceptsToDisplay && relatedConceptsToDisplay?.length > 0 && (
+          <div className={styles.relationshipsConceptsSection}>
+            <div className={styles.relationshipsConceptsHeader}>
+              <span data-testid="related-concepts-title" className={styles.relationshipsSectionTitle}>
+                Related Concepts
+              </span>
+            </div>
+            <div className={styles.relationshipsConceptsContent}>{relatedConceptsToDisplay}</div>
+          </div>
+        )}
+      </div>
+    );
   };
 
-  return (
-    entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
+  return entityInstanceDocument === undefined ? (
+    <div style={{marginTop: "40px"}}>
       <AsyncLoader />
-    </div> :
-
-      entityInstanceDocument ?
-        <div>
-          <div className={styles.detailContent}>
-            <Row id="back-button" className={"py-4 header-heading-title"} onClick={() => history.push(selectedSearchOptions)}>
-              <Col>
-                <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}>
-                  <ArrowLeftShort
-                    aria-label="Back"
-                    className={"d-inline-block me-2 fs-2 header-back-button"}
-                    tabIndex={0}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        history.push(selectedSearchOptions);
-                      }
-                    }}
-                  />
-                  Back to results
-                </span>
-              </Col>
-            </Row>
-            <div className={styles.header}>
-              <div className={styles.heading}>
-                {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences["sources"]} />}
-              </div>
-              <div id="menu" className={styles.menu}>
-                <Tabs onSelect={(event) => handleClick(event)} variant="tabs" className={styles.tabsContainer} activeKey={selected}>
-                  <Tab eventKey="instance" id="instance" data-cy="instance-view" tabClassName={`${styles.tabActive} ${selected === "instance" && styles.active}`}
-                    title={<HCTooltip id="instance-view-tooltip" placement="top" text={"Show the processed data"}>
-                      <span>
-                        <FontAwesomeIcon icon={faThList} size="lg" />
-                        <span className={styles.subMenu}>Instance</span>
-                      </span>
-                    </HCTooltip>} />
-                  <Tab eventKey="full" id="full" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
-                    title={<HCTooltip id="source-view-tooltip" placement="top" text={"Show the complete " + contentType.toUpperCase()} >
-                      <span className="d-flex align-items-center">
-                        {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
-                        <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
-                      </span>
-                    </HCTooltip>} />
-                  {hasRelations && <Tab eventKey="relationships" id="relationships" data-cy="relationships-view" tabClassName={`${styles.tabActive} ${selected === "relationships" && styles.active}`} title={
+    </div>
+  ) : entityInstanceDocument ? (
+    <div>
+      <div className={styles.detailContent}>
+        <Row
+          id="back-button"
+          className={"py-4 header-heading-title"}
+          onClick={() => history.push(selectedSearchOptions)}
+        >
+          <Col>
+            <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}>
+              <ArrowLeftShort
+                aria-label="Back"
+                className={"d-inline-block me-2 fs-2 header-back-button"}
+                tabIndex={0}
+                onKeyDown={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    history.push(selectedSearchOptions);
+                  }
+                }}
+              />
+              Back to results
+            </span>
+          </Col>
+        </Row>
+        <div className={styles.header}>
+          <div className={styles.heading}>
+            {data && (
+              <DetailHeader
+                document={data}
+                contentType={contentType}
+                uri={uri}
+                primaryKey={pkValue}
+                sources={sources.length ? sources : parentPagePreferences["sources"]}
+              />
+            )}
+          </div>
+          <div id="menu" className={styles.menu}>
+            <Tabs
+              onSelect={event => handleClick(event)}
+              variant="tabs"
+              className={styles.tabsContainer}
+              activeKey={selected}
+            >
+              <Tab
+                eventKey="instance"
+                id="instance"
+                data-cy="instance-view"
+                tabClassName={`${styles.tabActive} ${selected === "instance" && styles.active}`}
+                title={
+                  <HCTooltip id="instance-view-tooltip" placement="top" text={"Show the processed data"}>
+                    <span>
+                      <FontAwesomeIcon icon={faThList} size="lg" />
+                      <span className={styles.subMenu}>Instance</span>
+                    </span>
+                  </HCTooltip>
+                }
+              />
+              <Tab
+                eventKey="full"
+                id="full"
+                data-cy="source-view"
+                tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
+                title={
+                  <HCTooltip
+                    id="source-view-tooltip"
+                    placement="top"
+                    text={"Show the complete " + contentType.toUpperCase()}
+                  >
+                    <span className="d-flex align-items-center">
+                      {iconContenType[contentType.toLowerCase()] || iconContenType.unknown}
+                      <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
+                    </span>
+                  </HCTooltip>
+                }
+              />
+              {hasRelations && (
+                <Tab
+                  eventKey="relationships"
+                  id="relationships"
+                  data-cy="relationships-view"
+                  tabClassName={`${styles.tabActive} ${selected === "relationships" && styles.active}`}
+                  title={
                     <HCTooltip id="relationships-tooltip" placement="top" text={"Show the relationships"}>
                       <span>
                         <Ontology fill="currentColor" />
-                        <span className={styles.subMenu} >Relationships</span>
+                        <span className={styles.subMenu}>Relationships</span>
                       </span>
                     </HCTooltip>
-                  } />}
-                  <Tab eventKey="metadata" id="metadata" data-cy="metadata-view" tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`} title={
-                    <HCTooltip id="metadata-tooltip" placement="top" text={"Show the metadata"}>
-                      <span>
-                        <FontAwesomeIcon icon={faInfoCircle} size="lg" />
-                        <span className={styles.subMenu}>Metadata</span>
-                      </span>
-                    </HCTooltip>
-                  } />
-                </Tabs>
-              </div>
-            </div>
-            <div className={styles.documentContainer}>{(() => {
-              let block;
-              if (isLoading || user.error.type === "ALERT") {
-                block =
-                  <div style={{marginTop: "40px"}}>
-                    <AsyncLoader />
-                  </div>;
-              } else if (selected === "relationships") {
-                block = renderRelationship();
-              } else if (selected === "instance") {
-                contentType === "json" ?
-                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={state ? state["id"] : {}} isEntityInstance={entityInstanceDocument} />
-                  :
-                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={state ? state["id"] : {}} isEntityInstance={entityInstanceDocument} />;
-              } else if (selected === "metadata") {
-                block =
-                  <div id="metadata-view">
-                    <div className={styles.docInfoContainer}>
-                      <div className={styles.metaItem} data-testid="document-uri">
-                        <span className={styles.metaLabel}>Document URI:</span>
-                        <span className={styles.metaValue}>{uri}</span>
-                      </div>
-                      <div className={styles.metaItem} data-testid="document-quality">
-                        <span className={styles.metaLabel}>Document Quality:</span>
-                        <span className={styles.metaValue}>{docQuality}</span>
-                      </div>
+                  }
+                />
+              )}
+              <Tab
+                eventKey="metadata"
+                id="metadata"
+                data-cy="metadata-view"
+                tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`}
+                title={
+                  <HCTooltip id="metadata-tooltip" placement="top" text={"Show the metadata"}>
+                    <span>
+                      <FontAwesomeIcon icon={faInfoCircle} size="lg" />
+                      <span className={styles.subMenu}>Metadata</span>
+                    </span>
+                  </HCTooltip>
+                }
+              />
+            </Tabs>
+          </div>
+        </div>
+        <div className={styles.documentContainer}>
+          {(() => {
+            let block;
+            if (isLoading || user.error.type === "ALERT") {
+              block = (
+                <div style={{marginTop: "40px"}}>
+                  <AsyncLoader />
+                </div>
+              );
+            } else if (selected === "relationships") {
+              block = renderRelationship();
+            } else if (selected === "instance") {
+              contentType === "json"
+                ? (block = entityInstance && (
+                  <TableView
+                    document={isEntityInstance ? entityInstance : {}}
+                    contentType={contentType}
+                    location={state ? state["id"] : {}}
+                    isEntityInstance={entityInstanceDocument}
+                  />
+                ))
+                : (block = entityInstance && (
+                  <TableView
+                    document={isEntityInstance ? entityInstance : {}}
+                    contentType={contentType}
+                    location={state ? state["id"] : {}}
+                    isEntityInstance={entityInstanceDocument}
+                  />
+                ));
+            } else if (selected === "metadata") {
+              block = (
+                <div id="metadata-view">
+                  <div className={styles.docInfoContainer}>
+                    <div className={styles.metaItem} data-testid="document-uri">
+                      <span className={styles.metaLabel}>Document URI:</span>
+                      <span className={styles.metaValue}>{uri}</span>
                     </div>
-                    {
-                      (collections) &&
-                      <div className={styles.collectionsTableContainer}>
-                        <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                        {/* <Table
-                        bordered
-                        dataSource={collections}
+                    <div className={styles.metaItem} data-testid="document-quality">
+                      <span className={styles.metaLabel}>Document Quality:</span>
+                      <span className={styles.metaValue}>{docQuality}</span>
+                    </div>
+                  </div>
+                  {collections && (
+                    <div className={styles.collectionsTableContainer}>
+                      <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">
+                        Collections
+                      </div>
+                      {/* <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" /> */}
+                      <HCTable
+                        pagination={true}
+                        data={collections}
                         columns={collectionColumns}
                         className={styles.collectionsTable}
-                        data-testid="collections-table" /> */}
-                        <HCTable
-                          pagination={true}
-                          data={collections}
-                          columns={collectionColumns}
-                          className={styles.collectionsTable}
-                          data-testid="collections-table"
-                          rowKey="key" />
+                        data-testid="collections-table"
+                        rowKey="key"
+                      />
+                    </div>
+                  )}
+                  {recordPermissions && (
+                    <div className={styles.recordPermissionsTableContainer}>
+                      <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">
+                        Permissions
                       </div>
-                    }
-                    {
-                      (recordPermissions) &&
-                      <div className={styles.recordPermissionsTableContainer}>
-                        <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                        {/* <Table
-                        bordered
-                        dataSource={recordPermissions}
+                      {/* <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" /> */}
+                      <HCTable
+                        pagination={true}
+                        data={recordPermissions}
                         columns={recordPermissionsColumns}
                         className={styles.recordPermissionsTable}
-                        data-testid="record-permissions-table" /> */}
-                        <HCTable
-                          pagination={true}
-                          data={recordPermissions}
-                          columns={recordPermissionsColumns}
-                          className={styles.recordPermissionsTable}
-                          data-testid="record-permissions-table"
-                          rowKey="key" />
+                        data-testid="record-permissions-table"
+                        rowKey="key"
+                      />
+                    </div>
+                  )}
+                  {recordMetadata && (
+                    <div className={styles.recordMetadataTableContainer}>
+                      <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">
+                        Metadata Values
                       </div>
-                    }
-                    {
-                      (recordMetadata) &&
-                      <div className={styles.recordMetadataTableContainer}>
-                        <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                        {/* <Table
-                        bordered
-                        dataSource={recordMetadata}
+                      {/* <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" /> */}
+                      <HCTable
+                        pagination={true}
+                        data={recordMetadata}
                         columns={recordMetadataColumns}
                         className={styles.recordMetadataTable}
-                        data-testid="record-metadata-table" /> */}
-                        <HCTable
-                          pagination={true}
-                          data={recordMetadata}
-                          columns={recordMetadataColumns}
-                          className={styles.recordMetadataTable}
-                          data-testid="record-metadata-table"
-                          rowKey="key" />
-                      </div>
-                    }
-                    <div className={styles.documentPropertiesContainer}>
-                      <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
-                      {
-                        (documentProperties) ?
-                          <pre data-testid="doc-properties-container">{xmlFormatter(documentProperties)}</pre>
-                          : <p data-testid="doc-no-properties-message">This document has no properties.</p>
-                      }
+                        data-testid="record-metadata-table"
+                        rowKey="key"
+                      />
                     </div>
-                  </div>;
-              } else {
-                contentType === "json" ?
-                  block = (data) && <pre data-testid="json-container">{jsonFormatter(data)}</pre>
-                  :
-                  block = (xml) && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>;
-              }
-              return block;
-            })()}</div>
-            <div />
-          </div>
-        </div> :
-        <DetailPageNonEntity
-          uri={uri}
-          sourcesTableData={sourcesTableData}
-          historyData={historyData}
-          selectedSearchOptions={selectedSearchOptions}
-          entityInstance={entityInstance}
-          isEntityInstance={entityInstanceDocument}
-          contentType={contentType}
-          data={data}
-          xml={xml}
-          detailPagePreferences={detailPagePreferences}
-          documentSize={documentSize}
-          database={database}
-          collections={collections}
-          recordMetadata={recordMetadata}
-          recordPermissions={recordPermissions}
-          documentProperties={documentProperties}
-          docQuality={docQuality}
-        />
+                  )}
+                  <div className={styles.documentPropertiesContainer}>
+                    <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">
+                      Document Properties
+                    </div>
+                    {documentProperties ? (
+                      <pre data-testid="doc-properties-container">{xmlFormatter(documentProperties)}</pre>
+                    ) : (
+                      <p data-testid="doc-no-properties-message">This document has no properties.</p>
+                    )}
+                  </div>
+                </div>
+              );
+            } else {
+              contentType === "json"
+                ? (block = data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
+                : (block = xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>);
+            }
+            return block;
+          })()}
+        </div>
+        <div />
+      </div>
+    </div>
+  ) : (
+    <DetailPageNonEntity
+      uri={uri}
+      sourcesTableData={sourcesTableData}
+      historyData={historyData}
+      selectedSearchOptions={selectedSearchOptions}
+      entityInstance={entityInstance}
+      isEntityInstance={entityInstanceDocument}
+      contentType={contentType}
+      data={data}
+      xml={xml}
+      detailPagePreferences={detailPagePreferences}
+      documentSize={documentSize}
+      database={database}
+      collections={collections}
+      recordMetadata={recordMetadata}
+      recordPermissions={recordPermissions}
+      documentProperties={documentProperties}
+      docQuality={docQuality}
+    />
   );
 };
 

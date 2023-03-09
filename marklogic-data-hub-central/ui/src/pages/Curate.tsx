@@ -11,9 +11,7 @@ import tiles from "@config/tiles.config";
 import {useHistory} from "react-router-dom";
 
 const Curate: React.FC = () => {
-
   const storage = getViewSettings();
-
 
   const {handleError} = useContext(UserContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
@@ -41,14 +39,12 @@ const Curate: React.FC = () => {
   const canWriteCustom = authorityService.canWriteCustom();
   const canAccessCurate = authorityService.canAccessCurate();
 
-
   useEffect(() => {
     const storedCurateArtifact = storage?.curate?.stepArtifact;
     const storedCurateModel = storage?.curate?.modelDefinition;
     const storedCurateType = storage?.curate?.entityType;
 
     if (storedCurateArtifact !== undefined && storedCurateModel !== undefined && storedCurateType !== undefined) {
-
       const stepDefinitionType = storedCurateArtifact["stepDefinitionType"];
       if (stepDefinitionType === "mapping") {
         history.push({pathname: "/tiles/curate/map"});
@@ -64,7 +60,7 @@ const Curate: React.FC = () => {
     try {
       let response = await axios.get(`/api/models/primaryEntityTypes`);
       if (response.status === 200) {
-        let models:any = {};
+        let models: any = {};
         response.data.forEach(model => {
           // model has an entityTypeId property, perhaps that should be used instead of entityName?
           //Check if in the future we are going to use concepts here
@@ -98,7 +94,6 @@ const Curate: React.FC = () => {
   const addStepToNew = async () => {
     try {
       // setIsLoading(true);
-
       //if (response.status === 200) {
       //   setIsLoading(false);
       //}
@@ -114,7 +109,7 @@ const Curate: React.FC = () => {
   const addStepToFlow = async (stepArtifactName, flowName, stepType) => {
     let stepToAdd = {
       "stepName": stepArtifactName,
-      "stepDefinitionType": stepType
+      "stepDefinitionType": stepType,
     };
     try {
       // setIsLoading(true);
@@ -130,7 +125,7 @@ const Curate: React.FC = () => {
       // setIsLoading(false);
       setErrorMessageOptions({
         isVisible: true,
-        message: `Error adding step "${stepArtifactName}" to flow "${flowName}".`
+        message: `Error adding step "${stepArtifactName}" to flow "${flowName}".`,
       });
       handleError(error);
     }
@@ -138,34 +133,32 @@ const Curate: React.FC = () => {
 
   return (
     <div className={styles.curateContainer}>
-      {
-        canAccessCurate ?
-          [
-            <div className={styles.intro} key={"curate-intro"}>
-              <p>{tiles.curate.intro}</p>
-            </div>,
-            <EntityTiles
-              key={"curate-entity-tiles"}
-              flows={flows}
-              canReadMatchMerge={canReadMatchMerge}
-              canWriteMatchMerge={canWriteMatchMerge}
-              canWriteMapping={canWriteMapping}
-              canReadMapping={canReadMapping}
-              canReadCustom={canReadCustom}
-              canWriteCustom={canWriteCustom}
-              entityModels={entityModels}
-              canWriteFlow={canWriteFlow}
-              addStepToFlow={addStepToFlow}
-              addStepToNew={addStepToNew}
-              loading={isFetching}
-            />
-          ]
-          :
-          <p>{MissingPagePermission}</p>
-      }
+      {canAccessCurate ? (
+        [
+          <div className={styles.intro} key={"curate-intro"}>
+            <p>{tiles.curate.intro}</p>
+          </div>,
+          <EntityTiles
+            key={"curate-entity-tiles"}
+            flows={flows}
+            canReadMatchMerge={canReadMatchMerge}
+            canWriteMatchMerge={canWriteMatchMerge}
+            canWriteMapping={canWriteMapping}
+            canReadMapping={canReadMapping}
+            canReadCustom={canReadCustom}
+            canWriteCustom={canWriteCustom}
+            entityModels={entityModels}
+            canWriteFlow={canWriteFlow}
+            addStepToFlow={addStepToFlow}
+            addStepToNew={addStepToNew}
+            loading={isFetching}
+          />,
+        ]
+      ) : (
+        <p>{MissingPagePermission}</p>
+      )}
     </div>
   );
-
 };
 
 export default Curate;

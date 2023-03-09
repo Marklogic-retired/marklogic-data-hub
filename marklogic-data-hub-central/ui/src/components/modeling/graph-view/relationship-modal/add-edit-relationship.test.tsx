@@ -2,11 +2,15 @@ import React from "react";
 import {render, fireEvent, cleanup, wait, waitForElement} from "@testing-library/react";
 import AddEditRelationship from "./add-edit-relationship";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
-import {mockEditRelationshipInfo, mockAddRelationshipInfo, entityTypesWithRelationship, mockHubCentralConfig} from "../../../../assets/mock-data/modeling/modeling";
+import {
+  mockEditRelationshipInfo,
+  mockAddRelationshipInfo,
+  entityTypesWithRelationship,
+  mockHubCentralConfig,
+} from "../../../../assets/mock-data/modeling/modeling";
 
 jest.mock("axios");
 describe("Add Edit Relationship component", () => {
-
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
@@ -29,7 +33,7 @@ describe("Add Edit Relationship component", () => {
         hubCentralConfig={mockHubCentralConfig}
         getColor={jest.fn()}
         mapFunctions={[]}
-      />
+      />,
     );
 
     expect(getByText("Edit Relationship")).toBeInTheDocument();
@@ -107,7 +111,7 @@ describe("Add Edit Relationship component", () => {
         hubCentralConfig={mockHubCentralConfig}
         getColor={jest.fn()}
         mapFunctions={[]}
-      />
+      />,
     );
     expect(getByText("Add a Relationship")).toBeInTheDocument();
     expect(getByLabelText("addRelationshipHeader")).toBeInTheDocument();
@@ -136,23 +140,28 @@ describe("Add Edit Relationship component", () => {
     fireEvent.mouseOver(getByTestId("error-circle"));
     await wait(() => expect(getByLabelText("targetNodeEmpty")).toBeInTheDocument());
 
-    const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer", targetNodeColor: "#ecf7fd"};
+    const mockRelationshipWithTarget = {
+      ...mockAddRelationshipInfo,
+      targetNodeName: "Customer",
+      targetNodeColor: "#ecf7fd",
+    };
 
-    rerender(<AddEditRelationship
-      openRelationshipModal={true}
-      setOpenRelationshipModal={jest.fn()}
-      isEditing={false}
-      relationshipInfo={mockRelationshipWithTarget}
-      dataModel={entityTypesWithRelationship}
-      relationshipModalVisible={true}
-      toggleRelationshipModal={true}
-      updateSavedEntity={updateSavedEntity}
-      canReadEntityModel={true}
-      canWriteEntityModel={true}
-      hubCentralConfig={mockHubCentralConfig}
-      getColor={jest.fn()}
-      mapFunctions={[]}
-    />
+    rerender(
+      <AddEditRelationship
+        openRelationshipModal={true}
+        setOpenRelationshipModal={jest.fn()}
+        isEditing={false}
+        relationshipInfo={mockRelationshipWithTarget}
+        dataModel={entityTypesWithRelationship}
+        relationshipModalVisible={true}
+        toggleRelationshipModal={true}
+        updateSavedEntity={updateSavedEntity}
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        hubCentralConfig={mockHubCentralConfig}
+        getColor={jest.fn()}
+        mapFunctions={[]}
+      />,
     );
     //verify duplicate property error message with relationship name same as entity name
     fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
@@ -167,7 +176,7 @@ describe("Add Edit Relationship component", () => {
     expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(236, 247, 253)"); //to have Customer color
 
     fireEvent.click(getByTestId("targetEntityDropdown"));
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    await waitForElement(() => getAllByRole("option"), {"timeout": 200});
     expect(getByTestId("Order-option")).toBeInTheDocument();
     fireEvent.click(getByTestId("Order-option"));
     expect(getByTestId("Order-targetNodeName")).toHaveTextContent("Order");

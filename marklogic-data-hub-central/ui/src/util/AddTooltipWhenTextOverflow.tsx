@@ -11,7 +11,6 @@ export function AddTooltipWhenTextOverflow({text}) {
     setIsEllipsisActive(ref.current!.offsetWidth < ref.current!.scrollWidth);
   }
 
-
   useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize, false);
@@ -22,16 +21,11 @@ export function AddTooltipWhenTextOverflow({text}) {
 
   return (
     <div ref={ref} style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
-      {isEllipsisActive ?
-        <HCTooltip
-          text={text}
-          id="additional-collections-tooltip"
-          placement="auto">
+      {isEllipsisActive ? (
+        <HCTooltip text={text} id="additional-collections-tooltip" placement="auto">
           <div style={{zIndex: 1, position: "absolute", width: labelWidth}}>&nbsp;</div>
         </HCTooltip>
-        :
-        null
-      }
+      ) : null}
       <>{text}</>
     </div>
   );

@@ -9,7 +9,6 @@ import axiosMock from "axios";
 jest.mock("axios");
 
 describe("Detail page for non-entity view component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -17,10 +16,8 @@ describe("Detail page for non-entity view component", () => {
   test("Detail page for non-entity with JSON data renders", () => {
     const {getByTestId, getByText, queryByTestId} = render(
       <Router>
-        <DetailPageNonEntity
-          {...testData.NonEntityDocumentData}
-        />
-      </Router>
+        <DetailPageNonEntity {...testData.NonEntityDocumentData} />
+      </Router>,
     );
 
     //Check URI
@@ -40,7 +37,9 @@ describe("Detail page for non-entity view component", () => {
 
     //Check document record data
     expect(getByTestId("record-view")).toBeInTheDocument();
-    expect(getByTestId("json-container")).toHaveTextContent(/(?=.*customerId)(?=.*1001)(?=.*firstName)(?=.*Gabriel)(?=.*lastName)(?=.*324 Wilkinson blvd)/i);
+    expect(getByTestId("json-container")).toHaveTextContent(
+      /(?=.*customerId)(?=.*1001)(?=.*firstName)(?=.*Gabriel)(?=.*lastName)(?=.*324 Wilkinson blvd)/i,
+    );
 
     //Check siderExpandCollapse Icons
     expect(getByTestId("icon-expanded")).toBeInTheDocument();
@@ -50,7 +49,6 @@ describe("Detail page for non-entity view component", () => {
     userEvent.click(getByTestId("icon-expanded"));
     expect(getByTestId("icon-collapsed")).toBeInTheDocument();
     expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
-
   });
 
   test("Detail page for non-entity with XML data renders", () => {
@@ -62,7 +60,7 @@ describe("Detail page for non-entity view component", () => {
           data={testData.xmlData}
           xml={testData.xmlInput}
         />
-      </Router>
+      </Router>,
     );
 
     //Check URI
@@ -82,7 +80,9 @@ describe("Detail page for non-entity view component", () => {
 
     //Check XML document record data
     expect(getByTestId("record-view")).toBeInTheDocument();
-    expect(getByTestId("xml-container")).toHaveTextContent(/(?=.*word)(?=.*Alexandra)(?=.*Alice)(?=.*Barbara)(?=.*Bob)/i);
+    expect(getByTestId("xml-container")).toHaveTextContent(
+      /(?=.*word)(?=.*Alexandra)(?=.*Alice)(?=.*Barbara)(?=.*Bob)/i,
+    );
 
     //Check siderExpandCollapse Icons
     expect(getByTestId("icon-expanded")).toBeInTheDocument();
@@ -92,18 +92,13 @@ describe("Detail page for non-entity view component", () => {
     userEvent.click(getByTestId("icon-expanded"));
     expect(getByTestId("icon-collapsed")).toBeInTheDocument();
     expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
-
   });
 
   test("Detail page for non-entity with Text data renders", () => {
     const {getByTestId, getByText, queryByTestId, queryByText} = render(
       <Router>
-        <DetailPageNonEntity
-          {...testData.NonEntityDocumentData}
-          contentType={"text"}
-          data={testData.textData}
-        />
-      </Router>
+        <DetailPageNonEntity {...testData.NonEntityDocumentData} contentType={"text"} data={testData.textData} />
+      </Router>,
     );
 
     //Check URI
@@ -126,7 +121,9 @@ describe("Detail page for non-entity view component", () => {
     expect(queryByText("Instance")).toBeNull();
 
     //Check TEXT document record data
-    expect(getByTestId("text-container")).toHaveTextContent("customerId 1001 firstName Gabriel lastName Stane Gender Male years_active 3 Street 324 Wilkinson blvd Apt 108 City Long Beach State CA zipCode 95034");
+    expect(getByTestId("text-container")).toHaveTextContent(
+      "customerId 1001 firstName Gabriel lastName Stane Gender Male years_active 3 Street 324 Wilkinson blvd Apt 108 City Long Beach State CA zipCode 95034",
+    );
 
     //Check siderExpandCollapse Icons
     expect(getByTestId("icon-expanded")).toBeInTheDocument();
@@ -136,45 +133,41 @@ describe("Detail page for non-entity view component", () => {
     userEvent.click(getByTestId("icon-expanded"));
     expect(getByTestId("icon-collapsed")).toBeInTheDocument();
     expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
-
   });
-
 
   test("Verify file download on Detail page", async () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.detailRecordDownloadResponse)));
 
     const {getByTestId} = render(
       <Router>
-        <DetailPageNonEntity
-          {...testData.NonEntityDocumentData}
-        />
-      </Router>
+        <DetailPageNonEntity {...testData.NonEntityDocumentData} />
+      </Router>,
     );
 
     //verify download icon
     expect(getByTestId("download-link")).toBeInTheDocument();
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("download-link"));
-    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FloadCustomers.json&database=staging"});
+    expect(axiosMock).toHaveBeenCalledWith({
+      "method": "GET",
+      "responseType": "blob",
+      "url": "/api/record/download?docUri=%2FloadCustomers.json&database=staging",
+    });
   });
 
   test("Should render the right icon when fileType is json", () => {
     const {getByLabelText} = render(
       <Router>
-        <DetailPageNonEntity
-          {...testData.NonEntityDocumentData}
-        />
-      </Router>
+        <DetailPageNonEntity {...testData.NonEntityDocumentData} />
+      </Router>,
     );
     expect(getByLabelText("icon: filetype-json")).toBeInTheDocument();
   });
   test("Should render the right icon when fileType is xml", () => {
     const {getByLabelText} = render(
       <Router>
-        <DetailPageNonEntity
-          {...testData.NonEntityDocumentData} contentType={"xml"}
-        />
-      </Router>
+        <DetailPageNonEntity {...testData.NonEntityDocumentData} contentType={"xml"} />
+      </Router>,
     );
     expect(getByLabelText("icon: filetype-xml")).toBeInTheDocument();
   });

@@ -7,7 +7,6 @@ import LoginForm from "./login-form";
 jest.mock("axios");
 
 describe("Login page test", () => {
-
   let userField, passField, loginBtn;
 
   afterEach(() => {
@@ -105,5 +104,4 @@ describe("Login page test", () => {
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
     expect(getByText("User does not have the required permissions to run Data Hub.")).toBeInTheDocument();
   });
-
 });

@@ -10,7 +10,4 @@ const getDoc = async (stepName: string, docUri: string) => {
   return resp;
 };
 
-export {
-  getUris,
-  getDoc
-};
+export {getUris, getDoc};

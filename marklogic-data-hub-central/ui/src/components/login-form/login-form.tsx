@@ -9,7 +9,6 @@ import axios from "axios";
 import styles from "./login-form.module.scss";
 
 const LoginForm: React.FC = () => {
-
   const {loginAuthenticated} = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,14 +17,13 @@ const LoginForm: React.FC = () => {
   const [isPasswordTouched, setPasswordTouched] = useState(false);
   const [message, setMessage] = useState({show: false, text: ""});
 
-
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
     try {
       setIsLoading(true);
       let response = await axios.post("/api/login", {
         username,
-        password
+        password,
       });
       if (response.status === 200) {
         setMessage({show: false, text: ""});
@@ -45,7 +43,7 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  const handleChange = (event: { target: { id: string; value: React.SetStateAction<string>; }; }) => {
+  const handleChange = (event: {target: {id: string; value: React.SetStateAction<string>}}) => {
     //if empty, set validator. otherwise, set username
     if (event.target.id === "username") {
       if (event.target.value === " ") {
@@ -70,7 +68,9 @@ const LoginForm: React.FC = () => {
   return (
     <>
       <div className={styles.unauthorized} style={message.show ? {display: "block"} : {display: "none"}}>
-        <HCAlert variant="danger" showIcon >{message.text}</HCAlert>
+        <HCAlert variant="danger" showIcon>
+          {message.text}
+        </HCAlert>
       </div>
 
       <div className={styles.loginForm}>
@@ -85,11 +85,11 @@ const LoginForm: React.FC = () => {
                 value={username}
                 onChange={handleChange}
                 onBlur={handleChange}
-                error={(username || !isUsernameTouched) ? false : true}
+                error={username || !isUsernameTouched ? false : true}
               />
             </Col>
             <Col lg={12} className={`d-block text-start ${styles.validationError}`}>
-              {(username || !isUsernameTouched) ? "" : "Username is required"}
+              {username || !isUsernameTouched ? "" : "Username is required"}
             </Col>
           </Row>
           <Row className={"mb-2"}>
@@ -102,34 +102,34 @@ const LoginForm: React.FC = () => {
                 value={password}
                 onChange={handleChange}
                 onBlur={handleChange}
-                error={(password || !isPasswordTouched) ? false : true}
+                error={password || !isPasswordTouched ? false : true}
               />
             </Col>
             <Col lg={12} className={`d-block text-start ${styles.validationError}`}>
-              {(password || !isPasswordTouched) ? "" : "Password is required"}
+              {password || !isPasswordTouched ? "" : "Password is required"}
             </Col>
           </Row>
-          { /* <div className={styles.help}>
+          {/* <div className={styles.help}>
             <span className={styles.remember}>
               <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
             </span>
             <a className={styles.forgot} href="" data-cy="forgot">
               Forgot password?
             </a>
-          </div> */ }
+          </div> */}
           <Row>
             <Col className={`d-flex ${styles.loginButton}`}>
-              <HCButton
-                id="submit"
-                variant="primary"
-                type="submit"
-              >
+              <HCButton id="submit" variant="primary" type="submit">
                 Log In
               </HCButton>
             </Col>
           </Row>
         </Form>
-        {isLoading && <div className={styles.loginSpinner}><Spinner animation="border" variant="primary" /></div>}
+        {isLoading && (
+          <div className={styles.loginSpinner}>
+            <Spinner animation="border" variant="primary" />
+          </div>
+        )}
       </div>
     </>
   );

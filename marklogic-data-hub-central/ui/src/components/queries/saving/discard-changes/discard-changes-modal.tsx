@@ -7,24 +7,16 @@ import {QueryOptions} from "../../../../types/query-types";
 import {HCButton, HCModal} from "@components/common";
 
 interface Props {
-    setDiscardChangesModalVisibility: () => void;
-    savedQueryList: any[];
-    toggleApply: (clicked: boolean) => void;
-    toggleApplyClicked: (clicked: boolean) => void;
+  setDiscardChangesModalVisibility: () => void;
+  savedQueryList: any[];
+  toggleApply: (clicked: boolean) => void;
+  toggleApplyClicked: (clicked: boolean) => void;
 }
 
-const DiscardChangesModal: React.FC<Props> = (props) => {
+const DiscardChangesModal: React.FC<Props> = props => {
+  const {applySaveQuery, clearAllGreyFacets, searchOptions} = useContext(SearchContext);
 
-  const {
-    applySaveQuery,
-    clearAllGreyFacets,
-    searchOptions
-  } = useContext(SearchContext);
-
-  const {
-    handleError
-  } = useContext(UserContext);
-
+  const {handleError} = useContext(UserContext);
 
   const onCancel = () => {
     props.setDiscardChangesModalVisibility();
@@ -39,7 +31,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
     }
   };
 
-  const getSaveQueryWithId = async (key) => {
+  const getSaveQueryWithId = async key => {
     try {
       const response = await axios.get(`/api/entitySearch/savedQueries/query`, {params: {id: key.savedQuery.id}});
       if (response.data) {
@@ -65,17 +57,22 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
 
   return (
     <>
-      <HCModal
-        show={true}
-        onHide={onCancel}
-      >
+      <HCModal show={true} onHide={onCancel}>
         <Modal.Header className={"bb-none"}>
           <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
         </Modal.Header>
         <Modal.Body className={"pt-0 px-4"}>
-          <p data-testid="discard-changes-message">Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery}?</strong></p>
+          <p data-testid="discard-changes-message">
+            Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery}?</strong>
+          </p>
           <div className={"d-flex justify-content-center pt-4 pb-2"}>
-            <HCButton id={"discard-no-button"} className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+            <HCButton
+              id={"discard-no-button"}
+              className={"me-2"}
+              variant="outline-light"
+              aria-label={"No"}
+              onClick={onCancel}
+            >
               {"No"}
             </HCButton>
             <HCButton id={"discard-yes-button"} aria-label={"Yes"} variant="primary" type="submit" onClick={onOk}>

@@ -27,7 +27,7 @@ type Props = {
 };
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
-  properties: []
+  properties: [],
 };
 
 const MATCH_TYPE_OPTIONS = [
@@ -38,7 +38,7 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
+const MatchRulesetMultipleModal: React.FC<Props> = props => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
 
   const [rulesetName, setRulesetName] = useState("");
@@ -98,11 +98,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
     let index = props.editRuleset.index;
-    curationRuleset = ({...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index});
+    curationRuleset = {...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index};
   }
 
   useEffect(() => {
-    if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
+    if (
+      props.isVisible &&
+      curationOptions.entityDefinitionsArray.length > 0 &&
+      curationOptions.activeStep.entityName !== ""
+    ) {
       let nestedEntityProps = parseDefinitionsToTable(curationOptions.entityDefinitionsArray);
       setMultipleRulesetsData(nestedEntityProps);
       let initialKeysToExpand: any = generateExpandRowKeys(nestedEntityProps);
@@ -139,11 +143,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             uriValues[propertyPath] = matchRule["algorithmModulePath"];
             functionValues[propertyPath] = matchRule["algorithmFunction"];
             namespaceValues[propertyPath] = matchRule["algorithmModuleNamespace"];
-
           } else if (matchRule.matchType === "doubleMetaphone") {
             dictionaryValues[propertyPath] = matchRule["options"]["dictionaryURI"];
             distanceThresholdValues[propertyPath] = matchRule["options"]["distanceThreshold"];
-
           } else if (matchRule.matchType === "synonym") {
             thesaurusValues[propertyPath] = matchRule["options"]["thesaurusURI"];
             filterValues[propertyPath] = matchRule["options"]["filter"];
@@ -151,7 +153,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
           selectedKeys.push(propertyPath);
         });
-
       }
 
       setSelectedRowKeys(selectedKeys);
@@ -167,12 +168,20 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   }, [props.isVisible]);
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
+    let entityTypeDefinition: Definition =
+      entityDefinitionsArray.find(definition => definition.name === curationOptions.activeStep.entityName) ||
+      DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
       if (property.datatype === "structured") {
-        const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys) => {
+        const parseStructuredProperty = (
+          entityDefinitionsArray,
+          property,
+          parentDefinitionName,
+          parentKey,
+          parentKeys,
+        ) => {
           let parsedRef = property.ref.split("/");
           if (parentKey) {
             parentKeys.push(parentKey);
@@ -186,8 +195,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                 // Recursion to handle nested structured types
                 counter++;
                 let parentDefinitionName = structuredType.name;
-                let immediateParentKey = (parentKey !== "" ? property.name : structProperty.name) + "," + index + counter;
-                return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName, immediateParentKey, parentKeys);
+                let immediateParentKey =
+                  (parentKey !== "" ? property.name : structProperty.name) + "," + index + counter;
+                return parseStructuredProperty(
+                  entityDefinitionsArray,
+                  structProperty,
+                  parentDefinitionName,
+                  immediateParentKey,
+                  parentKeys,
+                );
               } else {
                 let parentKeysArray = [...parentKeys];
                 return {
@@ -195,11 +211,14 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                   structured: structuredType.name,
                   propertyName: structProperty.name,
                   propertyPath: getPropertyPath(parentKeysArray, structProperty.name),
-                  type: structProperty.datatype === "structured" ? structProperty.ref.split("/").pop() : structProperty.datatype,
+                  type:
+                    structProperty.datatype === "structured"
+                      ? structProperty.ref.split("/").pop()
+                      : structProperty.datatype,
                   multiple: structProperty.multiple ? structProperty.name : "",
                   hasChildren: false,
                   hasParent: true,
-                  parentKeys: parentKeysArray
+                  parentKeys: parentKeysArray,
                 };
               }
             });
@@ -216,7 +235,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               children: structuredTypeProperties,
               hasChildren: true,
               hasParent: hasParent,
-              parentKeys: hasParent ? parentKeysArray : []
+              parentKeys: hasParent ? parentKeysArray : [],
             };
           }
         };
@@ -231,7 +250,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           identifier: entityTypeDefinition?.primaryKey === property.name ? property.name : "",
           multiple: property.multiple ? property.name : "",
           hasChildren: false,
-          parentKeys: []
+          parentKeys: [],
         };
       }
       return propertyRow;
@@ -240,13 +259,18 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const getPropertyPath = (parentKeys: any, propertyName: string) => {
     let propertyPath = "";
-    parentKeys.forEach(el => !propertyPath.length ? propertyPath = el.split(",")[0] : propertyPath = propertyPath + "." + el.split(",")[0]);
+    parentKeys.forEach(el =>
+      !propertyPath.length ? (propertyPath = el.split(",")[0]) : (propertyPath = propertyPath + "." + el.split(",")[0]),
+    );
     propertyPath = propertyPath + "." + propertyName;
     return propertyPath;
   };
 
   const handleInputChange = (event, propertyPath) => {
-    let eventId = event.target.id === "rulesetName-input" ? event.target.id : event.target.id.slice(event.target.id.indexOf("-") + 1);
+    let eventId =
+      event.target.id === "rulesetName-input"
+        ? event.target.id
+        : event.target.id.slice(event.target.id.indexOf("-") + 1);
     switch (eventId) {
     case "rulesetName-input":
       if (event.target.value === "") {
@@ -288,7 +312,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     case "distance-threshold-input":
       if (event.target.value === "") {
         setIsDistanceTouched(false);
-        setDistanceThresholdErrorMessages({...distanceThresholdErrorMessages, [propertyPath]: "A distance threshold is required"});
+        setDistanceThresholdErrorMessages({
+          ...distanceThresholdErrorMessages,
+          [propertyPath]: "A distance threshold is required",
+        });
       } else {
         setDistanceThresholdErrorMessages({...distanceThresholdErrorMessages, [propertyPath]: ""});
       }
@@ -386,7 +413,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       updateStep.matchRulesets[curationRuleset["index"]] = matchRuleset;
     } else {
       // add match step
-      if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
+      if (updateStep.matchRulesets) {
+        updateStep.matchRulesets.push(matchRuleset);
+      }
     }
     let success = await updateMatchingArtifact(updateStep);
     if (success) {
@@ -394,7 +423,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = event => {
     event.preventDefault();
     setSaveClicked(true);
     let rulesetNameErrorMsg = "";
@@ -417,24 +446,24 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       let indentMainKeyPropertyRow;
       selectedRowKeys.forEach(key => {
         let propertyPath = key;
-        if (key?.includes(".")) { indentMainKeyPropertyRow = key.split(".")[0]; }
+        if (key?.includes(".")) {
+          indentMainKeyPropertyRow = key.split(".")[0];
+        }
         if (key && key !== indentMainKeyPropertyRow && !matchTypes[key]) {
           matchErrorMessageObj[key] = "A match type is required";
         } else {
           switch (matchTypes[key]) {
           case "exact":
-          case "zip":
-          {
+          case "zip": {
             let matchRule: MatchRule = {
               entityPropertyPath: propertyPath,
               matchType: matchTypes[key],
-              options: {}
+              options: {},
             };
             matchRules.push(matchRule);
             break;
           }
-          case "synonym":
-          {
+          case "synonym": {
             if (thesaurusValues[key] === "" || thesaurusValues[key] === undefined) {
               thesaurusErrorMessageObj[key] = "A thesaurus URI is required";
             }
@@ -444,8 +473,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               matchType: matchTypes[key],
               options: {
                 thesaurusURI: thesaurusValues[key],
-                filter: filterValues[key]
-              }
+                filter: filterValues[key],
+              },
             };
 
             if (!thesaurusErrorMessageObj[key]) {
@@ -453,8 +482,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             }
             break;
           }
-          case "doubleMetaphone":
-          {
+          case "doubleMetaphone": {
             if (dictionaryValues[key] === "" || dictionaryValues[key] === undefined) {
               dictionaryUriErrorMessageObj[key] = "A dictionary URI is required";
             }
@@ -468,8 +496,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               matchType: matchTypes[key],
               options: {
                 dictionaryURI: dictionaryValues[key],
-                distanceThreshold: distanceThresholdValues[key]
-              }
+                distanceThreshold: distanceThresholdValues[key],
+              },
             };
 
             if (!dictionaryUriErrorMessageObj[key] && !distanceThresholdErrorMessageObj[key]) {
@@ -477,8 +505,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             }
             break;
           }
-          case "custom":
-          {
+          case "custom": {
             if (uriValues[key] === "" || uriValues[key] === undefined) {
               uriErrorMessageObj[key] = "A URI is required";
             }
@@ -493,7 +520,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
               algorithmModulePath: uriValues[key],
               algorithmFunction: functionValues[key],
               algorithmModuleNamespace: namespaceValues[key],
-              options: {}
+              options: {},
             };
 
             if (!uriErrorMessageObj[key] && !functionErrorMessageObj[key]) {
@@ -535,16 +562,21 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         if (errorInFunction) {
           setFunctionErrorMessages({...functionErrorMessageObj});
         }
-        if (!errorInMatchType && !errorInThesaurusUri
-          && !errorInDictionaryUri && !errorInDistThreshold
-          && !errorInUri && !errorInFunction) {
+        if (
+          !errorInMatchType &&
+          !errorInThesaurusUri &&
+          !errorInDictionaryUri &&
+          !errorInDistThreshold &&
+          !errorInUri &&
+          !errorInFunction
+        ) {
           let matchRuleset: MatchRuleset = {
             name: rulesetName,
             weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
-            ...({reduce: reduceValue}),
+            ...{reduce: reduceValue},
             fuzzyMatch: fuzzyMatching,
             matchRules: matchRules,
-            rulesetType: "multiple"
+            rulesetType: "multiple",
           };
           updateStepArtifact(matchRuleset);
           props.toggleModal(false);
@@ -578,33 +610,21 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         } else {
           if (matchTypes[key] === "custom") {
             let checkCustomValues = hasCustomFormValuesChanged();
-            if (!isRulesetNameTouched
-              && !isPropertyTypeTouched
-              && !isMatchTypeTouched
-              && !checkCustomValues
-            ) {
+            if (!isRulesetNameTouched && !isPropertyTypeTouched && !isMatchTypeTouched && !checkCustomValues) {
               return false;
             } else {
               return true;
             }
           } else if (matchTypes[key] === "synonym") {
             let checkSynonymValues = hasSynonymFormValuesChanged();
-            if (!isRulesetNameTouched
-              && !isPropertyTypeTouched
-              && !isMatchTypeTouched
-              && !checkSynonymValues
-            ) {
+            if (!isRulesetNameTouched && !isPropertyTypeTouched && !isMatchTypeTouched && !checkSynonymValues) {
               return false;
             } else {
               return true;
             }
           } else if (matchTypes[key] === "doubleMetaphone") {
             let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
-            if (!isRulesetNameTouched
-              && !isPropertyTypeTouched
-              && !isMatchTypeTouched
-              && !checkDoubleMetaphoneValues
-            ) {
+            if (!isRulesetNameTouched && !isPropertyTypeTouched && !isMatchTypeTouched && !checkDoubleMetaphoneValues) {
               return false;
             } else {
               return true;
@@ -619,14 +639,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         }
       }
     }
-
   };
 
   const hasCustomFormValuesChanged = () => {
-    if (!isUriTouched
-      && !isFunctionTouched
-      && !isNamespaceTouched
-    ) {
+    if (!isUriTouched && !isFunctionTouched && !isNamespaceTouched) {
       return false;
     } else {
       return true;
@@ -634,9 +650,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const hasSynonymFormValuesChanged = () => {
-    if (!isThesaurusTouched
-      && !isFilterTouched
-    ) {
+    if (!isThesaurusTouched && !isFilterTouched) {
       return false;
     } else {
       return true;
@@ -644,9 +658,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const hasDoubleMetaphoneFormValuesChanged = () => {
-    if (!isDictionaryTouched
-      && !isDistanceTouched
-    ) {
+    if (!isDictionaryTouched && !isDistanceTouched) {
       return false;
     } else {
       return true;
@@ -662,41 +674,79 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     resetTouched();
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
+  const discardChanges = (
+    <ConfirmYesNo visible={discardChangesVisible} type="discardChanges" onYes={discardOk} onNo={discardCancel} />
+  );
 
   const checkFieldInErrors = (propertyPath: string, fieldType: string) => {
     let errorCheck = false;
     switch (fieldType) {
-    case "match-type-input": { if (matchTypeErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    case "thesaurus-uri-input": { if (thesaurusErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    case "dictionary-uri-input": { if (dictionaryErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    case "distance-threshold-input": { if (distanceThresholdErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    case "uri-input": { if (uriErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    case "function-input": { if (functionErrorMessages[propertyPath]) { errorCheck = true; } break; }
-    default: break;
+    case "match-type-input": {
+      if (matchTypeErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    case "thesaurus-uri-input": {
+      if (thesaurusErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    case "dictionary-uri-input": {
+      if (dictionaryErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    case "distance-threshold-input": {
+      if (distanceThresholdErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    case "uri-input": {
+      if (uriErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    case "function-input": {
+      if (functionErrorMessages[propertyPath]) {
+        errorCheck = true;
+      }
+      break;
+    }
+    default:
+      break;
     }
     return errorCheck;
   };
 
   const inputUriStyle = (propertyPath, fieldType, hasParent?) => {
     const inputFieldStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? hasParent ? "19vw" : "25vw" : "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType)
+        ? "17vw"
+        : fieldType === "distance-threshold-input"
+          ? hasParent
+            ? "19vw"
+            : "25vw"
+          : "13vw",
       marginRight: "5px",
       marginLeft: ["distance-threshold-input", "function-input"].includes(fieldType) ? "15px" : "0px",
       justifyContent: "top",
-      borderColor: checkFieldInErrors(propertyPath, fieldType) ? "red" : ""
+      borderColor: checkFieldInErrors(propertyPath, fieldType) ? "red" : "",
     };
     return inputFieldStyle;
   };
 
-  const validationErrorStyle = (fieldType) => {
+  const validationErrorStyle = fieldType => {
     const validationErrStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? "18vw" : "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType)
+        ? "17vw"
+        : fieldType === "distance-threshold-input"
+          ? "18vw"
+          : "13vw",
       lineHeight: "normal",
       paddingTop: "6px",
       paddingLeft: "2px",
@@ -716,16 +766,20 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     fuzzy: false,
   });
 
-  const helpIconWithAsterisk = (title) => (
+  const helpIconWithAsterisk = title => (
     <span>
       <div className={styles.asterisk}>*</div>
-      <div tabIndex={0}
+      <div
+        tabIndex={0}
         onFocus={() => setIsTooltipVisible({...isTooltipVisible, asterisk: true})}
         onBlur={() => setIsTooltipVisible({...isTooltipVisible, asterisk: false})}
       >
-        <HCTooltip show={
-          isTooltipVisible.asterisk ? isTooltipVisible.asterisk : undefined
-        } text={title} id="asterisk-help-tooltip" placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}>
+        <HCTooltip
+          show={isTooltipVisible.asterisk ? isTooltipVisible.asterisk : undefined}
+          text={title}
+          id="asterisk-help-tooltip"
+          placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}
+        >
           <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
         </HCTooltip>
       </div>
@@ -733,168 +787,245 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   );
 
   const renderSynonymOptions = (propertyPath, hasParent) => {
-    return <div className={styles.matchTypeDetailsContainer}>
-      <span>
-        <span className={styles.mandatoryFieldContainer}>
-          <HCInput
-            id={`${propertyPath}-thesaurus-uri-input`}
-            ariaLabel={`${propertyPath}-thesaurus-uri-input`}
-            placeholder="Enter thesaurus URI"
-            style={inputUriStyle(propertyPath, "thesaurus-uri-input", hasParent)}
-            value={thesaurusValues[propertyPath] || ""}
-            onChange={(e) => handleInputChange(e, propertyPath)}
-            onBlur={(e) => handleInputChange(e, propertyPath)}
-          />
-          {helpIconWithAsterisk(MatchingStepTooltips.thesaurusUri)}
+    return (
+      <div className={styles.matchTypeDetailsContainer}>
+        <span>
+          <span className={styles.mandatoryFieldContainer}>
+            <HCInput
+              id={`${propertyPath}-thesaurus-uri-input`}
+              ariaLabel={`${propertyPath}-thesaurus-uri-input`}
+              placeholder="Enter thesaurus URI"
+              style={inputUriStyle(propertyPath, "thesaurus-uri-input", hasParent)}
+              value={thesaurusValues[propertyPath] || ""}
+              onChange={e => handleInputChange(e, propertyPath)}
+              onBlur={e => handleInputChange(e, propertyPath)}
+            />
+            {helpIconWithAsterisk(MatchingStepTooltips.thesaurusUri)}
+          </span>
+          {checkFieldInErrors(propertyPath, "thesaurus-uri-input") ? (
+            <div
+              id="errorInThesaurusUri"
+              data-testid={propertyPath + "-thesaurus-uri-err"}
+              style={validationErrorStyle("thesaurus-uri-input")}
+            >
+              {!thesaurusValues[propertyPath] ? "A thesaurus URI is required" : ""}
+            </div>
+          ) : (
+            ""
+          )}
         </span>
-        {checkFieldInErrors(propertyPath, "thesaurus-uri-input") ? <div id="errorInThesaurusUri" data-testid={propertyPath + "-thesaurus-uri-err"} style={validationErrorStyle("thesaurus-uri-input")}>{!thesaurusValues[propertyPath] ? "A thesaurus URI is required" : ""}</div> : ""}
-      </span>
-      <span className={"d-flex"}>
-        <HCInput
-          id={`${propertyPath}-filter-input`}
-          ariaLabel={`${propertyPath}-filter-input`}
-          placeholder="Enter a node in the thesaurus to use as a filter"
-          className={ hasParent ? styles.filterInputChild : styles.filterInput}
-          value={filterValues[propertyPath] || ""}
-          onChange={(e) => handleInputChange(e, propertyPath)}
-          onBlur={(e) => handleInputChange(e, propertyPath)}
-        />
-        <div
-          tabIndex={0}
-          onFocus={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: true})}
-          onBlur={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: false})}
-        >
-          <HCTooltip show={
-            isTooltipVisible.nodeThesaurus ? isTooltipVisible.nodeThesaurus : undefined
-          } text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
-            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
-          </HCTooltip>
-        </div>
-
-      </span>
-    </div>;
+        <span className={"d-flex"}>
+          <HCInput
+            id={`${propertyPath}-filter-input`}
+            ariaLabel={`${propertyPath}-filter-input`}
+            placeholder="Enter a node in the thesaurus to use as a filter"
+            className={hasParent ? styles.filterInputChild : styles.filterInput}
+            value={filterValues[propertyPath] || ""}
+            onChange={e => handleInputChange(e, propertyPath)}
+            onBlur={e => handleInputChange(e, propertyPath)}
+          />
+          <div
+            tabIndex={0}
+            onFocus={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: true})}
+            onBlur={() => setIsTooltipVisible({...isTooltipVisible, nodeThesaurus: false})}
+          >
+            <HCTooltip
+              show={isTooltipVisible.nodeThesaurus ? isTooltipVisible.nodeThesaurus : undefined}
+              text={MatchingStepTooltips.filter}
+              id="node-thesaurus-tooltip"
+              placement="bottom"
+            >
+              <QuestionCircleFill
+                color={themeColors.defaults.questionCircle}
+                className={`${styles.questionCircle} mt-2`}
+                size={13}
+              />
+            </HCTooltip>
+          </div>
+        </span>
+      </div>
+    );
   };
 
   const renderDoubleMetaphoneOptions = (propertyPath, hasParent) => {
-    return <div className={styles.matchTypeDetailsContainer}>
-      <span>
-        <span className={styles.mandatoryFieldContainer}>
-          <HCInput
-            id={`${propertyPath}-dictionary-uri-input`}
-            ariaLabel={`${propertyPath}-dictionary-uri-input`}
-            placeholder="Enter dictionary URI"
-            style={inputUriStyle(propertyPath, "dictionary-uri-input", hasParent)}
-            value={dictionaryValues[propertyPath] || ""}
-            onChange={(e) => handleInputChange(e, propertyPath)}
-            onBlur={(e) => handleInputChange(e, propertyPath)}
-          />
-          {helpIconWithAsterisk(MatchingStepTooltips.dictionaryUri)}
+    return (
+      <div className={styles.matchTypeDetailsContainer}>
+        <span>
+          <span className={styles.mandatoryFieldContainer}>
+            <HCInput
+              id={`${propertyPath}-dictionary-uri-input`}
+              ariaLabel={`${propertyPath}-dictionary-uri-input`}
+              placeholder="Enter dictionary URI"
+              style={inputUriStyle(propertyPath, "dictionary-uri-input", hasParent)}
+              value={dictionaryValues[propertyPath] || ""}
+              onChange={e => handleInputChange(e, propertyPath)}
+              onBlur={e => handleInputChange(e, propertyPath)}
+            />
+            {helpIconWithAsterisk(MatchingStepTooltips.dictionaryUri)}
+          </span>
+          {checkFieldInErrors(propertyPath, "dictionary-uri-input") ? (
+            <div
+              id="errorInDictionaryUri"
+              data-testid={propertyPath + "-dictionary-uri-err"}
+              style={validationErrorStyle("dictionary-uri-input")}
+            >
+              {!dictionaryValues[propertyPath] ? "A dictionary URI is required" : ""}
+            </div>
+          ) : (
+            ""
+          )}
         </span>
-        {checkFieldInErrors(propertyPath, "dictionary-uri-input") ? <div id="errorInDictionaryUri" data-testid={propertyPath + "-dictionary-uri-err"} style={validationErrorStyle("dictionary-uri-input")}>{!dictionaryValues[propertyPath] ? "A dictionary URI is required" : ""}</div> : ""}
-      </span>
-      <span>
-        <span className={styles.mandatoryFieldContainer}>
-          <HCInput
-            id={`${propertyPath}-distance-threshold-input`}
-            ariaLabel={`${propertyPath}-distance-threshold-input`}
-            placeholder="Enter distance threshold"
-            style={inputUriStyle(propertyPath, "distance-threshold-input", hasParent)}
-            value={distanceThresholdValues[propertyPath] || ""}
-            onChange={(e) => handleInputChange(e, propertyPath)}
-            onBlur={(e) => handleInputChange(e, propertyPath)}
-          />
-          {helpIconWithAsterisk(MatchingStepTooltips.distanceThreshold)}
+        <span>
+          <span className={styles.mandatoryFieldContainer}>
+            <HCInput
+              id={`${propertyPath}-distance-threshold-input`}
+              ariaLabel={`${propertyPath}-distance-threshold-input`}
+              placeholder="Enter distance threshold"
+              style={inputUriStyle(propertyPath, "distance-threshold-input", hasParent)}
+              value={distanceThresholdValues[propertyPath] || ""}
+              onChange={e => handleInputChange(e, propertyPath)}
+              onBlur={e => handleInputChange(e, propertyPath)}
+            />
+            {helpIconWithAsterisk(MatchingStepTooltips.distanceThreshold)}
+          </span>
+          {checkFieldInErrors(propertyPath, "distance-threshold-input") ? (
+            <div
+              id="errorInDistanceThreshold"
+              data-testid={propertyPath + "-distance-threshold-err"}
+              style={validationErrorStyle("distance-threshold-input")}
+            >
+              {!distanceThresholdValues[propertyPath] ? "A distance threshold is required" : ""}
+            </div>
+          ) : (
+            ""
+          )}
         </span>
-        {checkFieldInErrors(propertyPath, "distance-threshold-input") ? <div id="errorInDistanceThreshold" data-testid={propertyPath + "-distance-threshold-err"} style={validationErrorStyle("distance-threshold-input")}>{!distanceThresholdValues[propertyPath] ? "A distance threshold is required" : ""}</div> : ""}
-      </span>
-    </div>;
+      </div>
+    );
   };
 
   const renderCustomOptions = (propertyPath, hasParent) => {
-    return <div className={styles.matchTypeDetailsContainer}>
-      <span>
-        <span className={styles.mandatoryFieldContainer}>
-          <HCInput
-            id={`${propertyPath}-uri-input`}
-            ariaLabel={`${propertyPath}-uri-input`}
-            placeholder="Enter URI"
-            style={inputUriStyle(propertyPath, "uri-input", hasParent)}
-            value={uriValues[propertyPath] || ""}
-            onChange={(e) => handleInputChange(e, propertyPath)}
-            onBlur={(e) => handleInputChange(e, propertyPath)}
-          />
-          {helpIconWithAsterisk(MatchingStepTooltips.uri)}
+    return (
+      <div className={styles.matchTypeDetailsContainer}>
+        <span>
+          <span className={styles.mandatoryFieldContainer}>
+            <HCInput
+              id={`${propertyPath}-uri-input`}
+              ariaLabel={`${propertyPath}-uri-input`}
+              placeholder="Enter URI"
+              style={inputUriStyle(propertyPath, "uri-input", hasParent)}
+              value={uriValues[propertyPath] || ""}
+              onChange={e => handleInputChange(e, propertyPath)}
+              onBlur={e => handleInputChange(e, propertyPath)}
+            />
+            {helpIconWithAsterisk(MatchingStepTooltips.uri)}
+          </span>
+          {checkFieldInErrors(propertyPath, "uri-input") ? (
+            <div id="errorInURI" data-testid={propertyPath + "-uri-err"} style={validationErrorStyle("uri-input")}>
+              {!uriValues[propertyPath] ? "A URI is required" : ""}
+            </div>
+          ) : (
+            ""
+          )}
         </span>
-        {checkFieldInErrors(propertyPath, "uri-input") ? <div id="errorInURI" data-testid={propertyPath + "-uri-err"} style={validationErrorStyle("uri-input")}>{!uriValues[propertyPath] ? "A URI is required" : ""}</div> : ""}
-      </span>
-      <span>
-        <span className={styles.mandatoryFieldContainer}>
-          <HCInput
-            id={`${propertyPath}-function-input`}
-            ariaLabel={`${propertyPath}-function-input`}
-            placeholder="Enter a function"
-            style={inputUriStyle(propertyPath, "function-input", hasParent)}
-            value={functionValues[propertyPath] || ""}
-            onChange={(e) => handleInputChange(e, propertyPath)}
-            onBlur={(e) => handleInputChange(e, propertyPath)}
-          />
-          {helpIconWithAsterisk(MatchingStepTooltips.function)}
+        <span>
+          <span className={styles.mandatoryFieldContainer}>
+            <HCInput
+              id={`${propertyPath}-function-input`}
+              ariaLabel={`${propertyPath}-function-input`}
+              placeholder="Enter a function"
+              style={inputUriStyle(propertyPath, "function-input", hasParent)}
+              value={functionValues[propertyPath] || ""}
+              onChange={e => handleInputChange(e, propertyPath)}
+              onBlur={e => handleInputChange(e, propertyPath)}
+            />
+            {helpIconWithAsterisk(MatchingStepTooltips.function)}
+          </span>
+          {checkFieldInErrors(propertyPath, "function-input") ? (
+            <div
+              id="errorInFunction"
+              data-testid={propertyPath + "-function-err"}
+              style={validationErrorStyle("function-input")}
+            >
+              {!functionValues[propertyPath] ? "A function is required" : ""}
+            </div>
+          ) : (
+            ""
+          )}
         </span>
-        {checkFieldInErrors(propertyPath, "function-input") ? <div id="errorInFunction" data-testid={propertyPath + "-function-err"} style={validationErrorStyle("function-input")}>{!functionValues[propertyPath] ? "A function is required" : ""}</div> : ""}
-      </span>
-      <span className={"d-flex"}>
-        <HCInput
-          id={`${propertyPath}-namespace-input`}
-          ariaLabel={`${propertyPath}-namespace-input`}
-          placeholder="Enter a namespace"
-          className={hasParent ? styles.functionInputChild : styles.functionInput}
-          value={namespaceValues[propertyPath] || ""}
-          onChange={(e) => handleInputChange(e, propertyPath)}
-          onBlur={(e) => handleInputChange(e, propertyPath)}
-        />
-        <div
-          tabIndex={0}
-          onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
-          onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
-        >
-          <HCTooltip
-            show={
-              isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
-            }text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
-            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} mt-2`} size={13} />
-          </HCTooltip>
-        </div>
-
-      </span>
-    </div>;
+        <span className={"d-flex"}>
+          <HCInput
+            id={`${propertyPath}-namespace-input`}
+            ariaLabel={`${propertyPath}-namespace-input`}
+            placeholder="Enter a namespace"
+            className={hasParent ? styles.functionInputChild : styles.functionInput}
+            value={namespaceValues[propertyPath] || ""}
+            onChange={e => handleInputChange(e, propertyPath)}
+            onBlur={e => handleInputChange(e, propertyPath)}
+          />
+          <div
+            tabIndex={0}
+            onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
+            onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
+          >
+            <HCTooltip
+              show={isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined}
+              text={MatchingStepTooltips.namespace}
+              id="namespace-input-tooltip"
+              placement="bottom"
+            >
+              <QuestionCircleFill
+                color={themeColors.defaults.questionCircle}
+                className={`${styles.questionCircle} mt-2`}
+                size={13}
+              />
+            </HCTooltip>
+          </div>
+        </span>
+      </div>
+    );
   };
 
   const modalTitle = (
     <div className={styles.modalTitleContainer}>
-      <div className={styles.modalTitle}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Multiple Properties" : "Add Match Ruleset for Multiple Properties"}</div>
-      <p className={styles.titleDescription} aria-label="titleDescription">Select all the properties to include in the ruleset, and specify a match type for each property.</p>
+      <div className={styles.modalTitle}>
+        {Object.keys(curationRuleset).length !== 0
+          ? "Edit Match Ruleset for Multiple Properties"
+          : "Add Match Ruleset for Multiple Properties"}
+      </div>
+      <p className={styles.titleDescription} aria-label="titleDescription">
+        Select all the properties to include in the ruleset, and specify a match type for each property.
+      </p>
     </div>
   );
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      {(Object.keys(curationRuleset).length !== 0) && <HCButton aria-label="editMultipleRulesetDeleteIcon" size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
-      </HCButton>}
-      <div className={(Object.keys(curationRuleset).length === 0) ? styles.footerNewRuleset : styles.footer}>
+      {Object.keys(curationRuleset).length !== 0 && (
         <HCButton
+          aria-label="editMultipleRulesetDeleteIcon"
           size="sm"
-          variant="outline-light"
-          aria-label={`cancel-multiple-ruleset`}
-          onClick={closeModal}
-        >Cancel</HCButton>
+          variant="link"
+          onClick={() => {
+            toggleDeleteConfirmModal(true);
+          }}
+        >
+          <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
+        </HCButton>
+      )}
+      <div className={Object.keys(curationRuleset).length === 0 ? styles.footerNewRuleset : styles.footer}>
+        <HCButton size="sm" variant="outline-light" aria-label={`cancel-multiple-ruleset`} onClick={closeModal}>
+          Cancel
+        </HCButton>
         <HCButton
           className={styles.saveButton}
           size="sm"
           aria-label={`confirm-multiple-ruleset`}
           variant="primary"
-          onClick={(e) => onSubmit(e)}
-        >Save</HCButton>
+          onClick={e => onSubmit(e)}
+        >
+          Save
+        </HCButton>
       </div>
     </div>
   );
@@ -923,7 +1054,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
+  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({
+    value: matchType.value,
+    label: matchType.name,
+  }));
 
   const multipleRulesetsTableColumns = [
     {
@@ -934,7 +1068,17 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       ellipsis: true,
       headerFormatter: () => <span data-testid="nameTitle">Name</span>,
       formatter: (text, row) => {
-        return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""}>{text} {row.hasOwnProperty("children") ? <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> : ""} {row.multiple ? <img className={styles.arrayImage} src={arrayIcon} /> : ""}</span>;
+        return (
+          <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""}>
+            {text}{" "}
+            {row.hasOwnProperty("children") ? (
+              <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} />
+            ) : (
+              ""
+            )}{" "}
+            {row.multiple ? <img className={styles.arrayImage} src={arrayIcon} /> : ""}
+          </span>
+        );
       },
       attrs: (cell, row, rowIndex, colIndex) => {
         if (row.hasChildren) {
@@ -943,7 +1087,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             key: "name",
           };
         }
-      }
+      },
     },
     {
       ellipsis: true,
@@ -959,44 +1103,64 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         return "";
       },
       attrs: {
-        key: "matchTypeTitle"
+        key: "matchTypeTitle",
       },
       formatter: (text, row, rowIndex, extraData) => {
-        return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
-          <HCSelect
-            id={`${row.propertyPath}-select-wrapper`}
-            inputId={`${row.propertyPath}-select`}
-            components={{MenuList: props => MenuList(`${row.propertyPath}`, props)}}
-            onChange={(e) => onMatchTypeSelect(rowIndex, row.propertyPath, e)}
-            options={renderMatchOptions}
-            matchTypesProp={extraData.matchTypes}
-            row={row}
-            changeTagKey={changeSelect}
-            formatOptionLabel={({value, label}) => {
-              return (
-                <span aria-label={`${value}-option`}>
-                  {label}
-                </span>
-              );
-            }
-            }
-            styles={{
-              ...reactSelectThemeConfig,
-              container: (provided, state) => ({
-                ...provided,
-                width: "180px",
-              }),
-              control: (provided, state) => ({
-                ...provided,
-                border: state.menuIsOpen ? "1px solid #808cbd" : (checkFieldInErrors(row.propertyPath, "match-type-input") ? "1px solid #b32424" : "1px solid #d9d9d9"),
-              })
-            }}
-          />
+        return !row.hasOwnProperty("children") ? (
+          <div className={styles.typeContainer}>
+            <HCSelect
+              id={`${row.propertyPath}-select-wrapper`}
+              inputId={`${row.propertyPath}-select`}
+              components={{MenuList: props => MenuList(`${row.propertyPath}`, props)}}
+              onChange={e => onMatchTypeSelect(rowIndex, row.propertyPath, e)}
+              options={renderMatchOptions}
+              matchTypesProp={extraData.matchTypes}
+              row={row}
+              changeTagKey={changeSelect}
+              formatOptionLabel={({value, label}) => {
+                return <span aria-label={`${value}-option`}>{label}</span>;
+              }}
+              styles={{
+                ...reactSelectThemeConfig,
+                container: (provided, state) => ({
+                  ...provided,
+                  width: "180px",
+                }),
+                control: (provided, state) => ({
+                  ...provided,
+                  border: state.menuIsOpen
+                    ? "1px solid #808cbd"
+                    : checkFieldInErrors(row.propertyPath, "match-type-input")
+                      ? "1px solid #b32424"
+                      : "1px solid #d9d9d9",
+                }),
+              }}
+            />
 
-          {checkFieldInErrors(row.propertyPath, "match-type-input") ? <div id="errorInMatchType" data-testid={row.propertyPath + "-match-type-err"} style={validationErrorStyle("match-type-input")}>{!matchTypes[row.propertyPath] ? "A match type is required" : ""}</div> : ""}
-        </div> : null;
+            {checkFieldInErrors(row.propertyPath, "match-type-input") ? (
+              <div
+                id="errorInMatchType"
+                data-testid={row.propertyPath + "-match-type-err"}
+                style={validationErrorStyle("match-type-input")}
+              >
+                {!matchTypes[row.propertyPath] ? "A match type is required" : ""}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+        ) : null;
       },
-      formatExtraData: {selectedRowKeys, matchTypes, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
+      formatExtraData: {
+        selectedRowKeys,
+        matchTypes,
+        matchTypeErrorMessages,
+        thesaurusErrorMessages,
+        dictionaryErrorMessages,
+        distanceThresholdErrorMessages,
+        uriErrorMessages,
+        functionErrorMessages,
+      },
     },
     {
       text: "Match Type Details",
@@ -1005,7 +1169,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       isDummyField: true,
       headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
       attrs: {
-        key: "matchTypeDetails"
+        key: "matchTypeDetails",
       },
       formatter: (text, row, rowKey, extraData) => {
         if (selectedRowKeys.includes(row.propertyPath)) {
@@ -1027,8 +1191,17 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         }
         return "";
       },
-      formatExtraData: {selectedRowKeys, matchTypes, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
-    }
+      formatExtraData: {
+        selectedRowKeys,
+        matchTypes,
+        matchTypeErrorMessages,
+        thesaurusErrorMessages,
+        dictionaryErrorMessages,
+        distanceThresholdErrorMessages,
+        uriErrorMessages,
+        functionErrorMessages,
+      },
+    },
   ];
 
   useEffect(() => {
@@ -1050,13 +1223,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     });
   };
 
-  const getMatchOnTags = (selectedRowKeys) => {
+  const getMatchOnTags = selectedRowKeys => {
     let matchTags = {};
     let indentMainPropertyRow;
 
     selectedRowKeys.forEach(key => {
       if (key) {
-        if (key.includes(".")) { indentMainPropertyRow = key.split(".")[0]; }
+        if (key.includes(".")) {
+          indentMainPropertyRow = key.split(".")[0];
+        }
 
         if (key !== indentMainPropertyRow) {
           let tag = key.split(".").join(" > ");
@@ -1069,8 +1244,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const resetPropertyErrorsAndValues = (propertyPath, matchType) => {
     switch (matchType) {
-    case "synonym":
-    {
+    case "synonym": {
       if (propertyPath in thesaurusErrorMessages) {
         let thesaurusErrorMessagesObj = thesaurusErrorMessages;
         delete thesaurusErrorMessagesObj[propertyPath];
@@ -1088,8 +1262,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
       break;
     }
-    case "doubleMetaphone":
-    {
+    case "doubleMetaphone": {
       if (propertyPath in dictionaryErrorMessages) {
         let dictionaryErrorMessagesObj = dictionaryErrorMessages;
         delete dictionaryErrorMessagesObj[propertyPath];
@@ -1112,8 +1285,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
       break;
     }
-    case "custom":
-    {
+    case "custom": {
       if (propertyPath in uriErrorMessages) {
         let uriErrorMessagesObj = uriErrorMessages;
         delete uriErrorMessagesObj[propertyPath];
@@ -1146,7 +1318,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
-  const handlePropertyDeselection = (tagKey) => {
+  const handlePropertyDeselection = tagKey => {
     setChangeSelect(tagKey);
     if (tagKey in matchTypes) {
       let obj = matchTypes;
@@ -1167,9 +1339,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     onSelect: (record, selected) => {
       const rowMainParentKey = record?.hasParent ? record.parentKeys[0].split(",")[0] : "";
       if (selectedRowKeys.includes(record.propertyPath)) {
-
         let selectedRowsKeysAux = [...selectedRowKeys.filter(key => key !== record.propertyPath)];
-        const existAux = selectedRowsKeysAux?.filter(key => key ? key.includes(rowMainParentKey) && key.length !== rowMainParentKey.length : "");
+        const existAux = selectedRowsKeysAux?.filter(key =>
+          key ? key.includes(rowMainParentKey) && key.length !== rowMainParentKey.length : "",
+        );
 
         if (existAux.length === 0) {
           selectedRowsKeysAux = [...selectedRowsKeysAux.filter(key => key !== rowMainParentKey)];
@@ -1188,10 +1361,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         handlePropertyDeselection(record.propertyPath);
       }
     },
-    onSelectAll: (isSelect) => {
+    onSelectAll: isSelect => {
       if (isSelect) {
         const recursiveSelectAllKeys = (dataArr, allKeys: Array<string> = []) => {
-          dataArr.forEach((obj: { children?: any[], propertyPath: string }) => {
+          dataArr.forEach((obj: {children?: any[]; propertyPath: string}) => {
             if (obj.hasOwnProperty("children")) {
               recursiveSelectAllKeys(obj["children"], allKeys);
             } else {
@@ -1207,24 +1380,27 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
     },
     selected: selectedRowKeys,
-    nonSelectable: multipleRulesetsData.filter(record => record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren).map(record => record.propertyPath),
+    nonSelectable: multipleRulesetsData
+      .filter(record => record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren)
+      .map(record => record.propertyPath),
   };
 
-  const closeMatchOnTag = (tagKey) => {
+  const closeMatchOnTag = tagKey => {
     const filteredKeys = Object.keys(matchOnTags).filter(key => key !== tagKey);
     setSelectedRowKeys(filteredKeys);
     handlePropertyDeselection(tagKey);
   };
 
   const displayMatchOnTags = () => {
-    return Object.keys(matchOnTags).map((prop) =>
-      <HCTag key={prop}
+    return Object.keys(matchOnTags).map(prop => (
+      <HCTag
+        key={prop}
         label={matchOnTags[prop]}
         ariaLabel={`${prop}-matchOn-tag`}
         className={styles.matchOnTags}
         onClose={() => closeMatchOnTag(prop)}
       />
-    );
+    ));
   };
 
   const toggleRowExpanded = (expanded, record) => {
@@ -1253,7 +1429,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return allKeysToExpand;
   };
 
-  const handleExpandCollapse = (option) => {
+  const handleExpandCollapse = option => {
     if (option === "collapse") {
       setExpandedRowKeys([]);
     } else {
@@ -1266,22 +1442,26 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setSaveClicked(false);
   };
 
-  const noPropertyCheckedErrorMessage = <span id="noPropertyCheckedErrorMessage">
-    <HCAlert
-      variant="danger"
-      aria-label="noPropertyCheckedErrorMessage"
-      className={styles.noPropertyCheckedErrorMessage} showIcon
-      dismissible
-      onClose={onAlertClose}>
-      {"You must select at least one property for the ruleset to be created"}
-    </HCAlert>
-  </span>;
+  const noPropertyCheckedErrorMessage = (
+    <span id="noPropertyCheckedErrorMessage">
+      <HCAlert
+        variant="danger"
+        aria-label="noPropertyCheckedErrorMessage"
+        className={styles.noPropertyCheckedErrorMessage}
+        showIcon
+        dismissible
+        onClose={onAlertClose}
+      >
+        {"You must select at least one property for the ruleset to be created"}
+      </HCAlert>
+    </span>
+  );
 
   const paginationOptions = {
     defaultCurrent: 1,
     defaultPageSize: 20,
     showSizeChanger: true,
-    pageSizeOptions: ["10", "20", "40", "60"]
+    pageSizeOptions: ["10", "20", "40", "60"],
   };
   /*
   const customExpandIcon = (props) => {
@@ -1314,13 +1494,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       <Modal.Header className={"bb-none align-items-start headerModal"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
         {modalTitle}
-        <Form
-          id="matching-multiple-ruleset"
-          onSubmit={onSubmit}
-          className={"container-fluid"}
-        >
+        <Form id="matching-multiple-ruleset" onSubmit={onSubmit} className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={"auto"}>
+              {"Ruleset Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"} sm={6}>
@@ -1330,8 +1509,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                     placeholder="Enter ruleset name"
                     className={styles.rulesetName}
                     value={rulesetName}
-                    onChange={(e) => handleInputChange(e, "")}
-                    onBlur={(e) => handleInputChange(e, "")}
+                    onChange={e => handleInputChange(e, "")}
+                    onBlur={e => handleInputChange(e, "")}
                   />
                 </Col>
                 <Col xs={12} className={styles.validationError}>
@@ -1341,7 +1520,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={"auto"} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+            <FormLabel column lg={"auto"} className={styles.reduceWeightText}>
+              {"Reduce Weight"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <FormCheck
                 type="switch"
@@ -1354,23 +1535,33 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                     event.target.checked = !event.target.checked;
                     onToggleReduce(event);
                   }
-                }
-                }
+                }}
                 aria-label="reduceToggle"
               />
-              <div className={"p-2 d-flex"}
+              <div
+                className={"p-2 d-flex"}
                 tabIndex={0}
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, reduce: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, reduce: false})}
               >
-                <HCTooltip show={
-                  isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined
-                } text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
+                <HCTooltip
+                  show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
+                  text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
+                  id="reduce-weight-tooltip"
+                  placement="right"
+                >
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
 
-              <FormLabel column lg={"auto"} className={styles.fuzzyText}>{"Fuzzy Matching"}</FormLabel>
+              <FormLabel column lg={"auto"} className={styles.fuzzyText}>
+                {"Fuzzy Matching"}
+              </FormLabel>
               <FormCheck
                 type="switch"
                 data-testid="fuzzyMatchingMultiple"
@@ -1382,26 +1573,36 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
                     event.target.checked = !event.target.checked;
                     onFuzzyMatching(event);
                   }
-                }
-                }
+                }}
                 aria-label="fuzzyMatchingMultiple"
               />
-              <div className={"p-2 d-flex"}
+              <div
+                className={"p-2 d-flex"}
                 tabIndex={0}
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, fuzzy: false})}
               >
-                <HCTooltip show={
-                  isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined
-                } text={<span aria-label="fuzzy-multiple-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>} id="fuzzy-multiple-matching-tooltip" placement="right">
-                  <QuestionCircleFill aria-label="icon: question-circle-fuzzy" color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
+                <HCTooltip
+                  show={isTooltipVisible.fuzzy ? isTooltipVisible.fuzzy : undefined}
+                  text={<span aria-label="fuzzy-multiple-tooltip-text">{MatchingStepTooltips.fuzzyMatching}</span>}
+                  id="fuzzy-multiple-matching-tooltip"
+                  placement="right"
+                >
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle-fuzzy"
+                    color={themeColors.defaults.questionCircle}
+                    className={styles.icon}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
           </Row>
 
           <Row className={"mb-3"}>
-            <FormLabel column lg={"auto"}>{"Match on:"}</FormLabel>
+            <FormLabel column lg={"auto"}>
+              {"Match on:"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <span className={styles.matchOnTagsContainer}>{displayMatchOnTags()}</span>
               {!selectedRowKeys.length && saveClicked ? noPropertyCheckedErrorMessage : null}
@@ -1409,14 +1610,19 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           </Row>
 
           <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-            <div className={`d-flex align-items-center ${styles.legendText}`}><img className={"me-1"} src={arrayIcon} /> Multiple</div>
-            <div className={`d-flex align-items-center ${styles.legendText}`}><FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type</div>
-            <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
+            <div className={`d-flex align-items-center ${styles.legendText}`}>
+              <img className={"me-1"} src={arrayIcon} /> Multiple
+            </div>
+            <div className={`d-flex align-items-center ${styles.legendText}`}>
+              <FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type
+            </div>
+            <div className={styles.expandCollapseIcon}>
+              <ExpandCollapse handleSelection={id => handleExpandCollapse(id)} currentSelection={""} />
+            </div>
           </div>
         </Form>
       </Modal.Header>
       <Modal.Body>
-
         <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
           <HCTable
             pagination={paginationOptions}
@@ -1438,7 +1644,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           />
         </div>
 
-
         {discardChanges}
         <DeleteModal
           isVisible={showDeleteConfirmModal}
@@ -1447,9 +1652,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           confirmAction={confirmAction}
         />
       </Modal.Body>
-      <Modal.Footer>
-        {modalFooter}
-      </Modal.Footer>
+      <Modal.Footer>{modalFooter}</Modal.Footer>
     </HCModal>
   );
 };

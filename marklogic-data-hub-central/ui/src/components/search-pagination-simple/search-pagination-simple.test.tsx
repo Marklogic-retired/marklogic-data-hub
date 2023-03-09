@@ -4,19 +4,13 @@ import "@testing-library/jest-dom/extend-expect";
 import SearchPaginationSimple from "@components/search-pagination-simple/search-pagination-simple";
 
 describe("Search Pagination Simple Component", () => {
-
   afterEach(cleanup);
 
   describe("Count number of elements to change page ", () => {
-
     test("Renders pagination with 5 rows ", () => {
       const {getByTestId, getByText, getAllByRole} = render(
-        <SearchPaginationSimple
-          total={5}
-          pageSize={2}
-          pageNumber={1}
-          maxRowsPerPage={2}
-        />);
+        <SearchPaginationSimple total={5} pageSize={2} pageNumber={1} maxRowsPerPage={2} />,
+      );
       expect(getByTestId("pagination")).toBeInTheDocument();
       expect(getByTestId("pagination-item-1")).toBeInTheDocument();
       expect(getByTestId("pagination-item-2")).toBeInTheDocument();
@@ -29,12 +23,8 @@ describe("Search Pagination Simple Component", () => {
 
     test("Renders pagination with 10 rows ", () => {
       const {getByTestId, getByText, getAllByRole} = render(
-        <SearchPaginationSimple
-          total={10}
-          pageSize={2}
-          pageNumber={1}
-          maxRowsPerPage={2}
-        />);
+        <SearchPaginationSimple total={10} pageSize={2} pageNumber={1} maxRowsPerPage={2} />,
+      );
       expect(getByTestId("pagination")).toBeInTheDocument();
       expect(getByTestId("pagination-item-1")).toBeInTheDocument();
       expect(getByTestId("pagination-item-2")).toBeInTheDocument();
@@ -49,12 +39,8 @@ describe("Search Pagination Simple Component", () => {
 
     test("Verify not showing pagination controls if not necessary", () => {
       const {queryByTestId} = render(
-        <SearchPaginationSimple
-          total={5}
-          pageSize={5}
-          pageNumber={1}
-          maxRowsPerPage={5}
-        />);
+        <SearchPaginationSimple total={5} pageSize={5} pageNumber={1} maxRowsPerPage={5} />,
+      );
 
       expect(queryByTestId("pagination")).toBeNull();
     });

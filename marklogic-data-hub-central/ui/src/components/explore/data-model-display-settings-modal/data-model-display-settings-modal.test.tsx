@@ -19,16 +19,20 @@ const defaultContextOptions = {
 };
 
 describe("Entity type display settings modal", () => {
-
   afterEach(cleanup);
 
   test("Render entity type display settings modal", () => {
     const {getByLabelText, getAllByLabelText} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal entityModels={[]} toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal
+            entityModels={[]}
+            toggleModal={jest.fn()}
+            isVisible={true}
+            entityDefinitionsArray={entityDefinitionsArray}
+          />
         </HubCentralConfigContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(getByLabelText(`${entityType}-entityType`)).toBeInTheDocument();
     expect(getByLabelText(`${entityType}-color-button`)).toBeInTheDocument();
@@ -41,9 +45,14 @@ describe("Entity type display settings modal", () => {
     const {getByLabelText, queryByLabelText, getByText, getByTitle} = render(
       <Router>
         <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal entityModels={[]} toggleModal={jest.fn()} isVisible={true} entityDefinitionsArray={entityDefinitionsArray}/>
+          <DataModelDisplaySettingsModal
+            entityModels={[]}
+            toggleModal={jest.fn()}
+            isVisible={true}
+            entityDefinitionsArray={entityDefinitionsArray}
+          />
         </HubCentralConfigContext.Provider>
-      </Router>
+      </Router>,
     );
 
     //Open color picker
@@ -63,7 +72,9 @@ describe("Entity type display settings modal", () => {
     fireEvent.click(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`)!);
     expect(document.querySelector(`[aria-label=${entityType}-icon-picker] > div`)?.childElementCount).toBe(2);
     //filter the icons typing android on search text
-    fireEvent.input(document.querySelector(`[aria-label=${entityType}-icon-picker] input`)!, {target: {value: "android"}});
+    fireEvent.input(document.querySelector(`[aria-label=${entityType}-icon-picker] input`)!, {
+      target: {value: "android"},
+    });
     //the options are svg elements and the click event don't work on it
 
     fireEvent.keyDown(getByLabelText(`${entityType}-label-select-dropdown`), {key: "ArrowDown"});
@@ -76,5 +87,4 @@ describe("Entity type display settings modal", () => {
     userEvent.click(getByText("Save"));
     expect(defaultContextOptions.updateHubCentralConfigOnServer).toHaveBeenCalledTimes(1);
   });
-
 });

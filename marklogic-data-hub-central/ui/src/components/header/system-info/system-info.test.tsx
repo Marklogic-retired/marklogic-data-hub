@@ -16,9 +16,7 @@ jest.mock("axios");
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
+  const childrenDontHaveText = Array.from(node.children).every(child => !hasText(child));
   return nodeHasText && childrenDontHaveText;
 };
 
@@ -29,9 +27,8 @@ Object.assign(navigator, {
 });
 
 describe("Update data load settings component", () => {
-
   beforeEach(() => {
-    axiosMock.get["mockImplementation"]((url) => {
+    axiosMock.get["mockImplementation"](url => {
       switch (url) {
       case "/api/models/primaryEntityTypes":
         return Promise.resolve({status: 200, data: curateData.primaryEntityTypes.data});
@@ -49,12 +46,13 @@ describe("Update data load settings component", () => {
   test("Verify project info display, user with no authority to have \"Download\" and \"Clear\" button disabled", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities([""]);
-    const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo {...data.environment}
-        systemInfoVisible={true}
-        setSystemInfoVisible={jest.fn()}
-      />
-    </AuthoritiesContext.Provider></Router>);
+    const {getByText, getByTestId} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SystemInfo {...data.environment} systemInfoVisible={true} setSystemInfoVisible={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
     expect(getByText("Data Hub Version:")).toBeInTheDocument();
@@ -64,9 +62,19 @@ describe("Update data load settings component", () => {
     expect(getByText("Download Hub Central Files")).toBeInTheDocument();
     expect(getByText("Download Project Files")).toBeInTheDocument();
     expect(getByTestId("clearData")).toBeInTheDocument();
-    expect(getByText("Download a zip file containing only artifacts (models, steps, and flows) that were created or modified through Hub Central. You can apply these files to an existing local project.")).toBeInTheDocument();
-    expect(getByText("Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, and flows) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.")).toBeInTheDocument();
-    expect(getByText("Clear all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.")).toBeInTheDocument();
+    expect(
+      getByText(
+        "Download a zip file containing only artifacts (models, steps, and flows) that were created or modified through Hub Central. You can apply these files to an existing local project.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      getByText(
+        "Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, and flows) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      getByText("Clear all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain."),
+    ).toBeInTheDocument();
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
     expect(getByTestId("clearUserData")).toBeDisabled();
@@ -76,12 +84,13 @@ describe("Update data load settings component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["downloadProjectFiles"]);
 
-    const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo {...data.environment}
-        systemInfoVisible={true}
-        setSystemInfoVisible={jest.fn()}
-      />
-    </AuthoritiesContext.Provider></Router>);
+    const {getByText, getByTestId} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SystemInfo {...data.environment} systemInfoVisible={true} setSystemInfoVisible={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByTestId("downloadProjectFiles")).toBeEnabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeEnabled();
@@ -93,7 +102,6 @@ describe("Update data load settings component", () => {
     jest.spyOn(navigator.clipboard, "writeText");
     fireEvent.click(getByTestId("copyServiceName"));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(data.environment.serviceName);
-
   });
 
   test("Verify project info display, user with \"Clear\" button enabled and deletes all data", async () => {
@@ -101,12 +109,13 @@ describe("Update data load settings component", () => {
 
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
-    const {getByText, getByTestId, getByLabelText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo
-        systemInfoVisible={true}
-        setSystemInfoVisible={jest.fn()}
-      />
-    </AuthoritiesContext.Provider></Router>);
+    const {getByText, getByTestId, getByLabelText} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SystemInfo systemInfoVisible={true} setSystemInfoVisible={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
@@ -121,9 +130,13 @@ describe("Update data load settings component", () => {
     fireEvent.click(confirm);
     expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {});
 
-    expect(await(waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "All user data was cleared successfully");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "All user data was cleared successfully");
+        }),
+      ),
+    ).toBeInTheDocument();
   });
 
   test("Verify project info display, user with \"Clear\" button enabled and options work correctly", async () => {
@@ -131,15 +144,15 @@ describe("Update data load settings component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
 
-    const {getByText, getByTestId, getByLabelText, getByPlaceholderText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo
-        systemInfoVisible={true}
-        setSystemInfoVisible={jest.fn()}
-      />
-    </AuthoritiesContext.Provider></Router>);
+    const {getByText, getByTestId, getByLabelText, getByPlaceholderText} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SystemInfo systemInfoVisible={true} setSystemInfoVisible={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
-    await(() => expect(axiosMock.get).toHaveBeenCalledTimes(1));
-
+    await (() => expect(axiosMock.get).toHaveBeenCalledTimes(1));
 
     expect(getByTestId("clearUserData")).toBeEnabled();
     expect(getByTestId("deleteAll")).toBeChecked();
@@ -193,23 +206,27 @@ describe("Update data load settings component", () => {
 
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData",
-      {targetCollection: "Customer", targetDatabase: "data-hub-STAGING"});
+    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {
+      targetCollection: "Customer",
+      targetDatabase: "data-hub-STAGING",
+    });
 
-    expect(getByText((content, node) => {
-      return getSubElements(content, node, "A subset of user data was cleared successfully");
-    })).toBeInTheDocument();
-
+    expect(
+      getByText((content, node) => {
+        return getSubElements(content, node, "A subset of user data was cleared successfully");
+      }),
+    ).toBeInTheDocument();
   });
 
   test("Verify user with incorrect permissions sees security permissions tooltip and buttons are disabled", async () => {
     const authorityService = new AuthoritiesService();
-    const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo
-        systemInfoVisible={true}
-        setSystemInfoVisible={jest.fn()}
-      />
-    </AuthoritiesContext.Provider></Router>);
+    const {getByText, getByTestId} = render(
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SystemInfo systemInfoVisible={true} setSystemInfoVisible={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     fireEvent.mouseOver(getByTestId("downloadHubCentralFiles"));
     await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());

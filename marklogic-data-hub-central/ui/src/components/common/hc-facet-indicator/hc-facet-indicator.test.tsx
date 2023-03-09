@@ -5,10 +5,10 @@ import HCFacetIndicator from "./hc-facet-indicator";
 const config = {
   style: {
     height: "8px",
-    overflow: "hidden"
+    overflow: "hidden",
   },
   activeColor: "#1acca8",
-  inactiveColor: "#dddddd"
+  inactiveColor: "#dddddd",
 };
 
 const propsData = {
@@ -32,7 +32,10 @@ test("should render a HCFacetIndicator component with default props", () => {
   expect(getByLabelText(`default${ariaLabelPostfixes.component}`)).toBeInTheDocument();
   expect(getByLabelText(`default${ariaLabelPostfixes.barWrapper}`)).toBeInTheDocument();
   expect(getByLabelText(`default${ariaLabelPostfixes.bar}`)).toBeInTheDocument();
-  expect(getByLabelText(`default${ariaLabelPostfixes.bar}`)).toHaveStyle({width: `${propsData.percentage}%`, backgroundColor: config.inactiveColor});
+  expect(getByLabelText(`default${ariaLabelPostfixes.bar}`)).toHaveStyle({
+    width: `${propsData.percentage}%`,
+    backgroundColor: config.inactiveColor,
+  });
 });
 
 test("should have active color when pass isActive prop on true", () => {
@@ -42,7 +45,9 @@ test("should have active color when pass isActive prop on true", () => {
 });
 
 test("should render modified aria-label when pass identifier prop", () => {
-  const {getByLabelText} = render(<HCFacetIndicator percentage={propsData.percentage} identifier={propsData.identifier} />);
+  const {getByLabelText} = render(
+    <HCFacetIndicator percentage={propsData.percentage} identifier={propsData.identifier} />,
+  );
   expect(getByLabelText(`${propsData.identifier}${ariaLabelPostfixes.component}`)).toBeInTheDocument();
   expect(getByLabelText(`${propsData.identifier}${ariaLabelPostfixes.barWrapper}`)).toBeInTheDocument();
   expect(getByLabelText(`${propsData.identifier}${ariaLabelPostfixes.bar}`)).toBeInTheDocument();

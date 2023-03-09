@@ -12,20 +12,20 @@ interface Props {
 
 const ExpandCollapseStyle = {
   height: "32px",
-  padding: "8px 12px"
+  padding: "8px 12px",
 };
 
-const ExpandCollapse: React.FC<Props> = (props) => {
+const ExpandCollapse: React.FC<Props> = props => {
   let [enabled, setEnabled] = useState(props.currentSelection);
 
-  const onSelect = (val) => {
+  const onSelect = val => {
     setEnabled(val);
     props.handleSelection(val);
   };
 
   const cmpRandomData = Math.random().toString(36).substr(2, 5);
 
-  const radioKeyDownHandler = (event) => {
+  const radioKeyDownHandler = event => {
     if (event.key === "Enter") {
       switch (enabled) {
       case "expand":
@@ -42,13 +42,19 @@ const ExpandCollapse: React.FC<Props> = (props) => {
 
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      if (enabled === "collapse" || enabled === "") { onSelect("expand"); }
+      if (enabled === "collapse" || enabled === "") {
+        onSelect("expand");
+      }
     }
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      if (enabled === "expand" || enabled === "") { onSelect("collapse"); }
+      if (enabled === "expand" || enabled === "") {
+        onSelect("collapse");
+      }
     }
-    if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); }
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      event.preventDefault();
+    }
   };
 
   return (
@@ -71,13 +77,15 @@ const ExpandCollapse: React.FC<Props> = (props) => {
             onChange={e => onSelect(e.target.value)}
           />
           <HCTooltip text="Expand All" id="collapse-all-tooltip" placement="top">
-            <label aria-label="radio-button-expand" data-testid="expandBtn" htmlFor={`expandBtn-${cmpRandomData}`} className={`d-flex justify-content-center align-items-center`} style={ExpandCollapseStyle}>
+            <label
+              aria-label="radio-button-expand"
+              data-testid="expandBtn"
+              htmlFor={`expandBtn-${cmpRandomData}`}
+              className={`d-flex justify-content-center align-items-center`}
+              style={ExpandCollapseStyle}
+            >
               <i>
-                <FontAwesomeIcon
-                  id="expandIcon"
-                  icon={faAngleDoubleDown}
-                  className={styles.icon}
-                  size="xs" />
+                <FontAwesomeIcon id="expandIcon" icon={faAngleDoubleDown} className={styles.icon} size="xs" />
               </i>
             </label>
           </HCTooltip>
@@ -99,13 +107,15 @@ const ExpandCollapse: React.FC<Props> = (props) => {
             onChange={e => onSelect(e.target.value)}
           />
           <HCTooltip text="Collapse All" id="collapse-all-tooltip" placement="top">
-            <label aria-label="radio-button-collapse" data-testid="collapseBtn" htmlFor={`collapseBtn-${cmpRandomData}`} className={`d-flex justify-content-center align-items-center`} style={ExpandCollapseStyle}>
+            <label
+              aria-label="radio-button-collapse"
+              data-testid="collapseBtn"
+              htmlFor={`collapseBtn-${cmpRandomData}`}
+              className={`d-flex justify-content-center align-items-center`}
+              style={ExpandCollapseStyle}
+            >
               <i>
-                <FontAwesomeIcon
-                  id="collapseIcon"
-                  icon={faAngleDoubleUp}
-                  className={styles.icon}
-                  size="xs" />
+                <FontAwesomeIcon id="collapseIcon" icon={faAngleDoubleUp} className={styles.icon} size="xs" />
               </i>
             </label>
           </HCTooltip>

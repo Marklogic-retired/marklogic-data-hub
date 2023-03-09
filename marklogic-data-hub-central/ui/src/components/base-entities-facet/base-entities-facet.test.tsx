@@ -2,15 +2,16 @@ import React from "react";
 import {render, cleanup, fireEvent} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import BaseEntitiesFacet from "./base-entities-facet";
-import {mockEntitiesProps, mockEntityIndicatorData, mockEntityIndicatorDataNoFilter} from "../../assets/mock-data/explore/base-entities-mock";
+import {
+  mockEntitiesProps,
+  mockEntityIndicatorData,
+  mockEntityIndicatorDataNoFilter,
+} from "../../assets/mock-data/explore/base-entities-mock";
 
 describe("Base Entities Facet", () => {
-
-
   afterEach(cleanup);
 
   test("Render base entities", () => {
-
     const {getByLabelText} = render(
       <BaseEntitiesFacet
         currentBaseEntities={[]}
@@ -19,7 +20,8 @@ describe("Base Entities Facet", () => {
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
         allBaseEntities={mockEntitiesProps}
-        entityIndicatorData={mockEntityIndicatorData}/>
+        entityIndicatorData={mockEntityIndicatorData}
+      />,
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     expect(dropdown).toBeInTheDocument();
@@ -34,7 +36,8 @@ describe("Base Entities Facet", () => {
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
         allBaseEntities={mockEntitiesProps}
-        entityIndicatorData={mockEntityIndicatorData}/>
+        entityIndicatorData={mockEntityIndicatorData}
+      />,
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     fireEvent.keyDown(dropdown, {key: "ArrowDown"});
@@ -50,7 +53,8 @@ describe("Base Entities Facet", () => {
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
         allBaseEntities={mockEntitiesProps}
-        entityIndicatorData={mockEntityIndicatorData}/>
+        entityIndicatorData={mockEntityIndicatorData}
+      />,
     );
     expect(getByLabelText("base-entities-selection")).toBeInTheDocument();
     expect(getByLabelText("base-entities-Person-amountbar")).toBeInTheDocument();
@@ -66,7 +70,8 @@ describe("Base Entities Facet", () => {
         activeKey={["baseEntities"]}
         setEntitySpecificPanel={jest.fn()}
         allBaseEntities={mockEntitiesProps}
-        entityIndicatorData={mockEntityIndicatorDataNoFilter}/>
+        entityIndicatorData={mockEntityIndicatorDataNoFilter}
+      />,
     );
     expect(getByLabelText("base-entities-selection")).toBeInTheDocument();
     expect(getByLabelText("base-entities-Person-filter")).toHaveTextContent("5");

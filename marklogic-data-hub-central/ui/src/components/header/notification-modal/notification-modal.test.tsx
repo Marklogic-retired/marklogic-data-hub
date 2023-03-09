@@ -13,36 +13,39 @@ const emptyNotificationData = {
   totalCount: 0,
   currentPage: 1,
   pageLength: 10,
-  runUpdated: false
+  runUpdated: false,
 };
 
 jest.mock("axios");
 describe("Update data load settings component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
   });
 
   test("Verify empty notification modal rendering", async () => {
-    const {getByText, queryByText} = render(<Router><NotificationContext.Provider value={{notificationOptions: emptyNotificationData, setNotificationsObj: jest.fn()}}>
-      <NotificationModal
-        notificationModalVisible={true}
-        setNotificationModalVisible={jest.fn()}
-      />
-    </NotificationContext.Provider></Router>);
+    const {getByText, queryByText} = render(
+      <Router>
+        <NotificationContext.Provider
+          value={{notificationOptions: emptyNotificationData, setNotificationsObj: jest.fn()}}
+        >
+          <NotificationModal notificationModalVisible={true} setNotificationModalVisible={jest.fn()} />
+        </NotificationContext.Provider>
+      </Router>,
+    );
 
     expect(queryByText("Merge Notifications")).not.toBeInTheDocument();
     expect(getByText("No Merge Notifications Present")).toBeInTheDocument();
   });
 
   test("Verify notification modal rendering", async () => {
-    const {getByText, queryByText} = render(<Router><NotificationContext.Provider value={notificationsMock}>
-      <NotificationModal
-        notificationModalVisible={true}
-        setNotificationModalVisible={jest.fn()}
-      />
-    </NotificationContext.Provider></Router>);
+    const {getByText, queryByText} = render(
+      <Router>
+        <NotificationContext.Provider value={notificationsMock}>
+          <NotificationModal notificationModalVisible={true} setNotificationModalVisible={jest.fn()} />
+        </NotificationContext.Provider>
+      </Router>,
+    );
 
     expect(getByText("Merge Notifications")).toBeInTheDocument();
     expect(queryByText("No Merge Notifications Present")).not.toBeInTheDocument();
@@ -55,13 +58,11 @@ describe("Update data load settings component", () => {
       <Router>
         <AuthoritiesContext.Provider value={authorityService}>
           <NotificationContext.Provider value={notificationsMock}>
-            <NotificationModal
-              notificationModalVisible={true}
-              setNotificationModalVisible={jest.fn()}
-            />
+            <NotificationModal notificationModalVisible={true} setNotificationModalVisible={jest.fn()} />
           </NotificationContext.Provider>
         </AuthoritiesContext.Provider>
-      </Router>);
+      </Router>,
+    );
     expect(queryAllByTestId("disabled-merge-icon1")[0]).toHaveClass("mergeIconDisabled");
     // Check Tooltip
 
@@ -76,13 +77,11 @@ describe("Update data load settings component", () => {
       <Router>
         <AuthoritiesContext.Provider value={authorityService}>
           <NotificationContext.Provider value={notificationsMock}>
-            <NotificationModal
-              notificationModalVisible={true}
-              setNotificationModalVisible={jest.fn()}
-            />
+            <NotificationModal notificationModalVisible={true} setNotificationModalVisible={jest.fn()} />
           </NotificationContext.Provider>
         </AuthoritiesContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     expect(queryAllByTestId("merge-icon1")[0]).toHaveClass("mergeIcon");
     // Check Tooltip
@@ -91,17 +90,20 @@ describe("Update data load settings component", () => {
   });
 });
 
-
-
 test("Tooltip Label column", async () => {
-  const {findByText, getByLabelText} = render(<Router><NotificationContext.Provider value={notificationsMock}>
-    <NotificationModal
-      notificationModalVisible={true}
-      setNotificationModalVisible={jest.fn()}
-    />
-  </NotificationContext.Provider></Router>);
+  const {findByText, getByLabelText} = render(
+    <Router>
+      <NotificationContext.Provider value={notificationsMock}>
+        <NotificationModal notificationModalVisible={true} setNotificationModalVisible={jest.fn()} />
+      </NotificationContext.Provider>
+    </Router>,
+  );
   const tooltipIcon = getByLabelText("icon: question-circle");
   expect(tooltipIcon).toBeInTheDocument();
   userEvent.hover(tooltipIcon);
-  expect(await findByText("Document labels will be 'undefined' unless a property is set as an 'Identifier' in the entity model or assigned as a 'Record Label' in the explore graph display settings."));
+  expect(
+    await findByText(
+      "Document labels will be 'undefined' unless a property is set as an 'Identifier' in the entity model or assigned as a 'Record Label' in the explore graph display settings.",
+    ),
+  );
 });

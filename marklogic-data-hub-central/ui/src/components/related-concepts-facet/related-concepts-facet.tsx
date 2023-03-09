@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext}  from "react";
+import React, {useEffect, useState, useContext} from "react";
 import styles from "./related-concepts-facet.module.scss";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {entitiesSorting} from "@util/entities-sorting";
@@ -10,7 +10,7 @@ import * as _ from "lodash";
 import {DynamicIcons, HCFacetIndicator} from "@components/common";
 import {themeColors} from "@config/themes.config";
 
-const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length;
+const SHOW_MINIMUM = values => (values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length);
 // const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
 const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
@@ -21,11 +21,8 @@ interface Props {
   entityIndicatorData: any;
 }
 
-const RelatedConceptsFacets: React.FC<Props> = (props) => {
-
-  const {
-    setConceptFilterTypeIds
-  } = useContext(SearchContext);
+const RelatedConceptsFacets: React.FC<Props> = props => {
+  const {setConceptFilterTypeIds} = useContext(SearchContext);
   const {currentRelatedConcepts, onSettingCheckedList, setCurrentRelatedConcepts, entityIndicatorData} = props;
   const [conceptsList, setConceptsList] = useState<any[]>([]);
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -69,7 +66,7 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
     setShowMore(!showMore);
   };
 
-  const handleColOptionsChecked = (event) => {
+  const handleColOptionsChecked = event => {
     if (event.key && event.key === "Enter") {
       event.target.checked = !event.target.checked;
     }
@@ -81,21 +78,31 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
     const checkedValues = values.filter(({checked}) => checked);
     onSettingCheckedList(checkedValues);
     setCheckedList(checkedValues);
-    let relatedConceptIds = checkedValues.map(function(i) { return i.value; });
+    let relatedConceptIds = checkedValues.map(function (i) {
+      return i.value;
+    });
     setConceptFilterTypeIds(relatedConceptIds);
   };
 
   return (
     <>
       <div aria-label="related-concepts-list">
-        {options?.map((option) => {
+        {options?.map(option => {
           if (currentRelatedConcepts?.get(option)) {
             const {name, count, checked} = currentRelatedConcepts.get(option);
             let finalIcon = conceptsConfig.hasOwnProperty(name) ? conceptsConfig[name]["icon"] : defaultIcon;
-            let finalColor = conceptsConfig.hasOwnProperty(name) ? conceptsConfig[name]["color"] : themeColors.defaults.entityColor;
+            let finalColor = conceptsConfig.hasOwnProperty(name)
+              ? conceptsConfig[name]["color"]
+              : themeColors.defaults.entityColor;
             return (
               <div
-                style={{backgroundColor: finalColor, borderStyle: "solid", borderWidth: "1px", borderColor: "#d9d9d9", borderRadius: "4px"}}
+                style={{
+                  backgroundColor: finalColor,
+                  borderStyle: "solid",
+                  borderWidth: "1px",
+                  borderColor: "#d9d9d9",
+                  borderRadius: "4px",
+                }}
                 className={styles.conceptItem}
                 key={name}
               >
@@ -105,29 +112,35 @@ const RelatedConceptsFacets: React.FC<Props> = (props) => {
                   handleClick={handleColOptionsChecked}
                   handleKeyDown={handleColOptionsChecked}
                   value={name}
-                  ariaLabel={`related-concept-check-${name}`}>
-                  <DynamicIcons name={finalIcon}/>
-                  <span className={styles.conceptName} aria-label={`related-concept-${name}`}>{name}</span>
+                  ariaLabel={`related-concept-check-${name}`}
+                >
+                  <DynamicIcons name={finalIcon} />
+                  <span className={styles.conceptName} aria-label={`related-concept-${name}`}>
+                    {name}
+                  </span>
                   <span className={styles.conceptAmount} aria-label={`related-concept-${name}-filter`}>
                     {/* {filter && SHOW_FILTER(filter)} */}
                     {count > 0 && count}
                   </span>
                 </HCCheckbox>
-                {count > 0 &&
-                    <span className={styles.indicatorContainer} aria-label={`related-concept-${name}-amountbar`}>
-                      <HCFacetIndicator percentage={isNaN(count) || count < 1 ? 0 : count * 100 / entityIndicatorData.max} isActive={checked} />
-                    </span>
-                }
+                {count > 0 && (
+                  <span className={styles.indicatorContainer} aria-label={`related-concept-${name}-amountbar`}>
+                    <HCFacetIndicator
+                      percentage={isNaN(count) || count < 1 ? 0 : (count * 100) / entityIndicatorData.max}
+                      isActive={checked}
+                    />
+                  </span>
+                )}
               </div>
             );
           }
         })}
       </div>
-      {currentRelatedConcepts.size > MINIMUM_ENTITIES &&
+      {currentRelatedConcepts.size > MINIMUM_ENTITIES && (
         <div className={styles.more} onClick={onShowMore} data-cy="show-more-related-concepts">
-          {(showMore) ? "<< less" : "more >>"}
+          {showMore ? "<< less" : "more >>"}
         </div>
-      }
+      )}
     </>
   );
 };

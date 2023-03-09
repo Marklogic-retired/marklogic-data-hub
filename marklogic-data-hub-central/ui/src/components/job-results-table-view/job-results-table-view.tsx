@@ -27,12 +27,12 @@ const JobResultsTableView = ({data}) => {
   const [target, setTarget] = useState(null);
   const containerRef = useRef(null);
 
-  const handleOpenJobResponse = (jobId) => {
+  const handleOpenJobResponse = jobId => {
     setJobId(jobId);
     setOpenJobResponse(true);
   };
 
-  const handleCloseJobResponse = (jobId) => {
+  const handleCloseJobResponse = jobId => {
     setOpenJobResponse(false);
     setJobId("");
   };
@@ -40,9 +40,7 @@ const JobResultsTableView = ({data}) => {
   const flowName = "Flow Name";
   const user = "User";
 
-  const {
-    setMonitorSortOrder
-  } = useContext(MonitorContext);
+  const {setMonitorSortOrder} = useContext(MonitorContext);
   let sorting = true;
   const columnOptionsLabel = {
     user: user,
@@ -72,17 +70,25 @@ const JobResultsTableView = ({data}) => {
       visible: true,
       //width: 320,
       sort: true,
-      formatter: (jobId) => {
-        return <>
-          <HCTooltip text="Click the JOB ID to see the details" id="Click JOB ID to see the details" placement="right">
-            <a data-testid={`jobId-link`} onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a>
-          </HCTooltip>
-        </>;
+      formatter: jobId => {
+        return (
+          <>
+            <HCTooltip
+              text="Click the JOB ID to see the details"
+              id="Click JOB ID to see the details"
+              placement="right"
+            >
+              <a data-testid={`jobId-link`} onClick={() => handleOpenJobResponse(jobId)}>
+                {jobId}
+              </a>
+            </HCTooltip>
+          </>
+        );
       },
-      sortFunc: (a, b, dataField) => { },
+      sortFunc: (a, b, dataField) => {},
       onSort: (field, order) => {
         orderColumns(field, order);
-      }
+      },
     },
     // {
     //   text: "Step Name",
@@ -98,10 +104,10 @@ const JobResultsTableView = ({data}) => {
       //width: 140,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => { },
+      sortFunc: (a, b, dataField) => {},
       onSort: (field, order) => {
         orderColumns(field, order);
-      }
+      },
     },
     {
       text: "Status",
@@ -111,10 +117,10 @@ const JobResultsTableView = ({data}) => {
       sort: true,
       align: "center",
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => { },
+      sortFunc: (a, b, dataField) => {},
       onSort: (field, order) => {
         orderColumns(field, order);
-      }
+      },
     },
     {
       text: "Entity Type",
@@ -123,10 +129,10 @@ const JobResultsTableView = ({data}) => {
       //width: 100,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => { },
+      sortFunc: (a, b, dataField) => {},
       onSort: (field, order) => {
         orderColumns(field, order);
-      }
+      },
     },
     {
       text: "Start Date and Time",
@@ -135,10 +141,10 @@ const JobResultsTableView = ({data}) => {
       //width: 150,
       sort: true,
       formatter: emptyValue,
-      sortFunc: (a, b, dataField) => { },
+      sortFunc: (a, b, dataField) => {},
       onSort: (field, order) => {
         orderColumns(field, order);
-      }
+      },
     },
     {
       text: "Duration",
@@ -156,7 +162,7 @@ const JobResultsTableView = ({data}) => {
       sort: false,
       align: "right",
       formatter: emptyValue,
-    }
+    },
   ];
 
   const CONFIGURABLE_HEADERS = [
@@ -175,7 +181,7 @@ const JobResultsTableView = ({data}) => {
       //width: 150,
       sort: false,
       formatter: emptyValue,
-    }
+    },
   ];
 
   const StepDefinitionTypeTitles = {
@@ -190,18 +196,19 @@ const JobResultsTableView = ({data}) => {
     "MERGING": "Merging",
     "merging": "Merging",
     "CUSTOM": "Custom",
-    "custom": "Custom"
+    "custom": "Custom",
   };
 
   const saveColumnOrder = (field, order) => {
     let newDataStorage;
     const storage = getViewSettings();
     newDataStorage = {
-      ...storage, monitorStepsFlowsTable: {
+      ...storage,
+      monitorStepsFlowsTable: {
         ...storage.monitorStepsFlowsTable,
         sortColumnName: field,
-        sortColumn: order
-      }
+        sortColumn: order,
+      },
     };
     setViewSettings(newDataStorage);
   };
@@ -210,10 +217,11 @@ const JobResultsTableView = ({data}) => {
     const storage = getViewSettings();
     let newDataStorage;
     newDataStorage = {
-      ...storage, monitorStepsFlowsTable: {
+      ...storage,
+      monitorStepsFlowsTable: {
         ...storage.monitorStepsFlowsTable,
         expandedTableKeys: expandCollapseIdRows,
-      }
+      },
     };
     setViewSettings(newDataStorage);
   };
@@ -222,11 +230,12 @@ const JobResultsTableView = ({data}) => {
     const storage = getViewSettings();
     let newDataStorage;
     newDataStorage = {
-      ...storage, monitorStepsFlowsTable: {
+      ...storage,
+      monitorStepsFlowsTable: {
         ...storage.monitorStepsFlowsTable,
         columnOptions: checkedAttributes,
-        filteredColumns: filteredColumns
-      }
+        filteredColumns: filteredColumns,
+      },
     };
     setViewSettings(newDataStorage);
   };
@@ -267,54 +276,66 @@ const JobResultsTableView = ({data}) => {
     } else return [];
   };
 
-  const statusIcon = (status) => {
-    if (status && status === "running" || /^running/.test(status)) {
-      return <>
-        <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-          <ClockFill data-testid="progress" className={styles.runningStatus} />
-        </HCTooltip>
-      </>;
+  const statusIcon = status => {
+    if ((status && status === "running") || /^running/.test(status)) {
+      return (
+        <>
+          <HCTooltip text="Running" id="running-tooltip" placement="bottom">
+            <ClockFill data-testid="progress" className={styles.runningStatus} />
+          </HCTooltip>
+        </>
+      );
     } else if (status?.includes("completed")) {
-      return <>
-        <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-          <CheckCircleFill data-testid="success" className={styles.successStatus} />
-        </HCTooltip>
-      </>;
+      return (
+        <>
+          <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
+            <CheckCircleFill data-testid="success" className={styles.successStatus} />
+          </HCTooltip>
+        </>
+      );
     } else if (status?.includes("canceled")) {
-      return <>
-        <HCTooltip text="Canceled" id="canceled-tooltip" placement="bottom">
-          <i><FontAwesomeIcon
-            icon={faBan}
-            size="sm"
-            data-testid={`canceled`}
-            style={{color: "#b32424"}}
-          /></i>
-        </HCTooltip>
-      </>;
+      return (
+        <>
+          <HCTooltip text="Canceled" id="canceled-tooltip" placement="bottom">
+            <i>
+              <FontAwesomeIcon icon={faBan} size="sm" data-testid={`canceled`} style={{color: "#b32424"}} />
+            </i>
+          </HCTooltip>
+        </>
+      );
     } else if (status?.includes("failed") && !status?.includes("errors")) {
-      return <>
-        <HCTooltip text="Failed" id="failed-tooltip" placement="bottom">
-          <XCircleFill data-testid="failed" className={styles.errorStatus} />
-        </HCTooltip>
-      </>;
+      return (
+        <>
+          <HCTooltip text="Failed" id="failed-tooltip" placement="bottom">
+            <XCircleFill data-testid="failed" className={styles.errorStatus} />
+          </HCTooltip>
+        </>
+      );
     } else {
-      return <>
-        <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
-          <ExclamationCircleFill data-testid="completed-with-errors" className={styles.errorStatus} />
-        </HCTooltip>
-      </>;
+      return (
+        <>
+          <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
+            <ExclamationCircleFill data-testid="completed-with-errors" className={styles.errorStatus} />
+          </HCTooltip>
+        </>
+      );
     }
   };
   const DEFAULT_JOB_RESULTS_HEADER = [...MANDATORY_HEADERS, ...CONFIGURABLE_HEADERS];
-  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sort ? {
-    ...item, sorter: (a, b, sortOrder) => {
-      if (sorting === true) {
-        setMonitorSortOrder(item.dataField, sortOrder);
-        sorting = false;
+  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item =>
+    item.sort
+      ? {
+        ...item,
+        sorter: (a, b, sortOrder) => {
+          if (sorting === true) {
+            setMonitorSortOrder(item.dataField, sortOrder);
+            sorting = false;
+          }
+          return a - b; // DHFPROD-7711 MLTable -> Table
+        },
       }
-      return a - b; // DHFPROD-7711 MLTable -> Table
-    }
-  } : {...item}));
+      : {...item},
+  );
 
   // const getColumnsToShowHeaders = () => {
   //   const storage = getViewSettings();
@@ -346,13 +367,17 @@ const JobResultsTableView = ({data}) => {
 
   const [currentColumnHeaders, setCurrentColumnHeaders] = useState(filterVisibleColumns());
   const [checkedAttributesFlag, setCheckedAttributesFlag] = useState("");
-  const [checkedAttributes, setCheckedAttributes] = useState(getColumnsToShow() !== "" ? getColumnsToShow() : {
-    "user": true,
-    "flowName": true
-  });
+  const [checkedAttributes, setCheckedAttributes] = useState(
+    getColumnsToShow() !== ""
+      ? getColumnsToShow()
+      : {
+        "user": true,
+        "flowName": true,
+      },
+  );
   const [previousCheckedAttributes, setPreviousCheckedAttributes] = useState({
     "user": true,
-    "flowName": true
+    "flowName": true,
   });
 
   const onCancel = () => {
@@ -370,20 +395,27 @@ const JobResultsTableView = ({data}) => {
     saveColumnsToShow(filteredColumns);
   };
 
-  const handleColOptionsChecked = (e) => {
+  const handleColOptionsChecked = e => {
     let obj = checkedAttributes;
     obj[e.target.value] = e.target.checked;
     setCheckedAttributes({...obj});
-    checkedAttributesFlag ? checkedAttributesFlag === "false" ? setCheckedAttributesFlag("true") : setCheckedAttributesFlag("false") : setCheckedAttributesFlag("true");
+    checkedAttributesFlag
+      ? checkedAttributesFlag === "false"
+        ? setCheckedAttributesFlag("true")
+        : setCheckedAttributesFlag("false")
+      : setCheckedAttributesFlag("true");
   };
 
   const content = (
-    <Popover id={`popover-overview`} className={styles.popoverJobResults}
-      onKeyDown={(event) => {
+    <Popover
+      id={`popover-overview`}
+      className={styles.popoverJobResults}
+      onKeyDown={event => {
         if (event.key === "Escape") {
           setPopoverVisibility(false);
         }
-      }}>
+      }}
+    >
       <Popover.Body>
         <div data-testid="column-selector-popover" className={styles.popover}>
           <div className={styles.content}>
@@ -394,8 +426,15 @@ const JobResultsTableView = ({data}) => {
                   handleClick={handleColOptionsChecked}
                   value={attribute}
                   label={columnOptionsLabel[attribute]}
-                  checked={checkedAttributesFlag === "" ? getColumnsToShow() !== "" ? getColumnsToShow()[attribute] : checkedAttributes[attribute] : checkedAttributes[attribute]}
-                  dataTestId={`columnOptionsCheckBox-${attribute}`} />
+                  checked={
+                    checkedAttributesFlag === ""
+                      ? getColumnsToShow() !== ""
+                        ? getColumnsToShow()[attribute]
+                        : checkedAttributes[attribute]
+                      : checkedAttributes[attribute]
+                  }
+                  dataTestId={`columnOptionsCheckBox-${attribute}`}
+                />
               </div>
             ))}
           </div>
@@ -403,9 +442,26 @@ const JobResultsTableView = ({data}) => {
             <HCDivider className={styles.divider} />
             <div className={styles.footer}>
               <div>
-                <HCButton size="sm" tabIndex={0} variant="outline-light" onClick={onCancel} data-testid={"cancel-column-selector"} >Cancel</HCButton>
-                <span>  </span>
-                <HCButton tabIndex={0} variant="primary" size="sm" onClick={onApply} disabled={false} data-testid={"apply-column-selector"} >Apply</HCButton>
+                <HCButton
+                  size="sm"
+                  tabIndex={0}
+                  variant="outline-light"
+                  onClick={onCancel}
+                  data-testid={"cancel-column-selector"}
+                >
+                  Cancel
+                </HCButton>
+                <span> </span>
+                <HCButton
+                  tabIndex={0}
+                  variant="primary"
+                  size="sm"
+                  onClick={onApply}
+                  disabled={false}
+                  data-testid={"apply-column-selector"}
+                >
+                  Apply
+                </HCButton>
               </div>
             </div>
           </footer>
@@ -415,35 +471,49 @@ const JobResultsTableView = ({data}) => {
   );
 
   const filterArraybyDistinctJobId = () => {
-    let arraybyDistinctJobId = data.filter((value, index, self) =>
-      index === self.findIndex((valueAux) => (
-        valueAux.jobId === value.jobId
-      ))
+    let arraybyDistinctJobId = data.filter(
+      (value, index, self) => index === self.findIndex(valueAux => valueAux.jobId === value.jobId),
     );
     setExpandCollapseIdRowsOriginal(arraybyDistinctJobId.map(job => job.jobId));
     setArraybyDistinctJobId(arraybyDistinctJobId);
   };
 
-  const sortRows = (data) => {
+  const sortRows = data => {
     let columnOrderAux, columnNameOrderAux;
     if (!flagOrderManual) {
       columnOrderAux = getColumnOrder() ? getColumnOrder() : orderColumn;
       columnNameOrderAux = getColumnNameOrder() ? getColumnNameOrder() : orderColumnName;
 
       if (columnNameOrderAux === "jobId") {
-        columnOrderAux === "asc" && columnNameOrderAux && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
-        columnOrderAux === "desc" && columnNameOrderAux && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+        columnOrderAux === "asc" &&
+          columnNameOrderAux &&
+          data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
+        columnOrderAux === "desc" &&
+          columnNameOrderAux &&
+          data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
       } else {
-        columnOrderAux === "asc" && columnNameOrderAux && data.sort((a, b) => a[columnNameOrderAux]?.localeCompare(b[columnNameOrderAux] ? b[columnNameOrderAux] : ""));
-        columnOrderAux === "desc" && columnNameOrderAux && data.sort((a, b) => b[columnNameOrderAux]?.localeCompare(a[columnNameOrderAux] ? a[columnNameOrderAux] : ""));
+        columnOrderAux === "asc" &&
+          columnNameOrderAux &&
+          data.sort((a, b) => a[columnNameOrderAux]?.localeCompare(b[columnNameOrderAux] ? b[columnNameOrderAux] : ""));
+        columnOrderAux === "desc" &&
+          columnNameOrderAux &&
+          data.sort((a, b) => b[columnNameOrderAux]?.localeCompare(a[columnNameOrderAux] ? a[columnNameOrderAux] : ""));
       }
     } else {
       if (orderColumnName === "jobId") {
-        orderColumn === "asc" && orderColumnName && data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
-        orderColumn === "desc" && orderColumnName && data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
+        orderColumn === "asc" &&
+          orderColumnName &&
+          data.sort((a, b) => a?.stepName?.localeCompare(b?.stepName ? b?.stepName : ""));
+        orderColumn === "desc" &&
+          orderColumnName &&
+          data.sort((a, b) => b?.stepName?.localeCompare(a?.stepName ? a?.stepName : ""));
       } else {
-        orderColumn === "asc" && orderColumnName && data.sort((a, b) => a[orderColumnName]?.localeCompare(b[orderColumnName] ? b[orderColumnName] : ""));
-        orderColumn === "desc" && orderColumnName && data.sort((a, b) => b[orderColumnName]?.localeCompare(a[orderColumnName] ? a[orderColumnName] : ""));
+        orderColumn === "asc" &&
+          orderColumnName &&
+          data.sort((a, b) => a[orderColumnName]?.localeCompare(b[orderColumnName] ? b[orderColumnName] : ""));
+        orderColumn === "desc" &&
+          orderColumnName &&
+          data.sort((a, b) => b[orderColumnName]?.localeCompare(a[orderColumnName] ? a[orderColumnName] : ""));
       }
     }
 
@@ -459,7 +529,15 @@ const JobResultsTableView = ({data}) => {
   const toggleSourceTable = (expandedToggle, clicked?) => {
     clicked && saveExpandedTableKeys();
     if (expandedToggle === "expand") {
-      setExpandCollapseIdRows(flagOrderManual ? expandCollapseIdRowsOriginal : !clicked ? getExpandedTableKeys().length > 0 ? getExpandedTableKeys() : expandCollapseIdRowsOriginal : expandCollapseIdRowsOriginal);
+      setExpandCollapseIdRows(
+        flagOrderManual
+          ? expandCollapseIdRowsOriginal
+          : !clicked
+            ? getExpandedTableKeys().length > 0
+              ? getExpandedTableKeys()
+              : expandCollapseIdRowsOriginal
+            : expandCollapseIdRowsOriginal,
+      );
     } else {
       setExpandCollapseIdRows([]);
     }
@@ -477,7 +555,7 @@ const JobResultsTableView = ({data}) => {
     setExpandCollapseIdRows(newExpandedRows);
   };
 
-  const handleVisibleHeader = (headerName) => {
+  const handleVisibleHeader = headerName => {
     return currentColumnHeaders?.find(x => x.text === headerName);
   };
 
@@ -485,7 +563,7 @@ const JobResultsTableView = ({data}) => {
   const columnFlowName = handleVisibleHeader(flowName) && !handleVisibleHeader(user);
   const noCustomColumns = !handleVisibleHeader(flowName) && !handleVisibleHeader(user);
 
-  const columnsKeyDownHandler = (event) => {
+  const columnsKeyDownHandler = event => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       handleColumnSelectorViewClick(event);
@@ -495,8 +573,7 @@ const JobResultsTableView = ({data}) => {
     }
   };
 
-
-  const handleColumnSelectorViewClick = (event) => {
+  const handleColumnSelectorViewClick = event => {
     setPopoverVisibility(true);
     setTarget(event.target);
   };
@@ -505,11 +582,20 @@ const JobResultsTableView = ({data}) => {
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup} ref={containerRef}>
-          <ExpandCollapse handleSelection={(val) => toggleSourceTable(val, true)} currentSelection={""} />
+          <ExpandCollapse handleSelection={val => toggleSourceTable(val, true)} currentSelection={""} />
           <span data-testid={"tooltip-wrapper"} className={styles.spanColumnIcon}>
             <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
               <i>
-                <FontAwesomeIcon onClick={handleColumnSelectorViewClick} onKeyDown={columnsKeyDownHandler} tabIndex={0} className={styles.columnIcon} icon={faColumns} color={themeColors.info} size="2x" data-testid="column-selector-icon" />
+                <FontAwesomeIcon
+                  onClick={handleColumnSelectorViewClick}
+                  onKeyDown={columnsKeyDownHandler}
+                  tabIndex={0}
+                  className={styles.columnIcon}
+                  icon={faColumns}
+                  color={themeColors.info}
+                  size="2x"
+                  data-testid="column-selector-icon"
+                />
               </i>
             </HCTooltip>
           </span>
@@ -537,31 +623,69 @@ const JobResultsTableView = ({data}) => {
           keyUtil={"jobId"}
           onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
           expandedRowKeys={expandCollapseIdRows}
-          expandedRowRender={(row) => {
+          expandedRowRender={row => {
             saveExpandedTableKeys();
 
-            let nestedFlowRows = data.filter((obj) => {
+            let nestedFlowRows = data.filter(obj => {
               return obj.jobId === row.jobId;
             });
 
-            return sortRows(nestedFlowRows).map((row, index) => (
-              <div className="row rowExpandedDetail" style={{margin: 0}} key={index}>
-                <div style={{width: 50}} />
-                <div className="stepNameDiv" id={row.jobId + "_" + row.stepName} data-testid={`${row.stepName}-result`}>{row.stepName}</div>
-                <div className="stepType" id={row.jobId + "_" + row.stepName}>{StepDefinitionTypeTitles[row.stepDefinitionType]}</div>
-                <div className="stepStatus" id={row.jobId + "_" + row.stepName} data-testid={row.stepStatus}>{statusIcon(row.stepStatus)}</div>
-                <div className="stepEntityType" id={row.jobId + "_" + row.stepName}>{row.entityName}</div>
-                <div className="stepStartDate" id={row.jobId + "_" + row.stepName}>{(dateConverter(row.startTime))}</div>
-                <div className="stepDuration" id={row.jobId + "_" + row.stepName}>{row.duration}</div>
-                <div className={`${noCustomColumns ? "stepDocumentsAux" : "stepDocuments"}`} id={row.jobId + "_" + row.stepName}>{row.successfulItemCount}</div>
-                <div className={`${columnUser ? "stepUserAux" : "stepUser"}`} id={row.jobId + "_" + row.stepName} style={{display: handleVisibleHeader(user) ? "" : "none"}}>{row.user}</div>
-                <div className="stepFlowName" id={row.jobId + "_" + row.stepName} style={{display: handleVisibleHeader(flowName) ? "" : "none"}}>{row.flowName}</div>
-              </div>
-            ), []);
+            return sortRows(nestedFlowRows).map(
+              (row, index) => (
+                <div className="row rowExpandedDetail" style={{margin: 0}} key={index}>
+                  <div style={{width: 50}} />
+                  <div
+                    className="stepNameDiv"
+                    id={row.jobId + "_" + row.stepName}
+                    data-testid={`${row.stepName}-result`}
+                  >
+                    {row.stepName}
+                  </div>
+                  <div className="stepType" id={row.jobId + "_" + row.stepName}>
+                    {StepDefinitionTypeTitles[row.stepDefinitionType]}
+                  </div>
+                  <div className="stepStatus" id={row.jobId + "_" + row.stepName} data-testid={row.stepStatus}>
+                    {statusIcon(row.stepStatus)}
+                  </div>
+                  <div className="stepEntityType" id={row.jobId + "_" + row.stepName}>
+                    {row.entityName}
+                  </div>
+                  <div className="stepStartDate" id={row.jobId + "_" + row.stepName}>
+                    {dateConverter(row.startTime)}
+                  </div>
+                  <div className="stepDuration" id={row.jobId + "_" + row.stepName}>
+                    {row.duration}
+                  </div>
+                  <div
+                    className={`${noCustomColumns ? "stepDocumentsAux" : "stepDocuments"}`}
+                    id={row.jobId + "_" + row.stepName}
+                  >
+                    {row.successfulItemCount}
+                  </div>
+                  <div
+                    className={`${columnUser ? "stepUserAux" : "stepUser"}`}
+                    id={row.jobId + "_" + row.stepName}
+                    style={{display: handleVisibleHeader(user) ? "" : "none"}}
+                  >
+                    {row.user}
+                  </div>
+                  <div
+                    className="stepFlowName"
+                    id={row.jobId + "_" + row.stepName}
+                    style={{display: handleVisibleHeader(flowName) ? "" : "none"}}
+                  >
+                    {row.flowName}
+                  </div>
+                </div>
+              ),
+              [],
+            );
           }}
         />
       </div>
-      {openJobResponse && <JobResponse jobId={jobId} setOpenJobResponse={handleCloseJobResponse} runningFlow={undefined} />}
+      {openJobResponse && (
+        <JobResponse jobId={jobId} setOpenJobResponse={handleCloseJobResponse} runningFlow={undefined} />
+      )}
     </>
   );
 };

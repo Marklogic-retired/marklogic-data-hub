@@ -9,22 +9,30 @@ interface Props {
   placement: Placement;
   children: React.ReactElement;
   show?: boolean;
-  className?: string | undefined
+  className?: string | undefined;
 }
 
-const HCTooltip: React.FC<Props> = (props) => {
+const HCTooltip: React.FC<Props> = props => {
   const {placement, id, text, children, show} = props;
   if (text === "") {
     return children;
   }
-  return <OverlayTrigger data-testid="ml-tooltip-component" popperConfig={{strategy: "fixed"}}
-    placement={placement}
-    overlay={<Tooltip {...props} id={id}>{text}</Tooltip>}
-    show={show}
-    delay={{show: 400, hide: 200}}
-  >
-    {children}
-  </OverlayTrigger>;
+  return (
+    <OverlayTrigger
+      data-testid="ml-tooltip-component"
+      popperConfig={{strategy: "fixed"}}
+      placement={placement}
+      overlay={
+        <Tooltip {...props} id={id}>
+          {text}
+        </Tooltip>
+      }
+      show={show}
+      delay={{show: 400, hide: 200}}
+    >
+      {children}
+    </OverlayTrigger>
+  );
 };
 
 export default HCTooltip;

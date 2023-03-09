@@ -12,19 +12,19 @@ import {exploreSidebar} from "@config/explore.config";
 
 interface Props {
   entitySelected: any;
-  entityFacets: any,
+  entityFacets: any;
   checkFacetRender: (facets: any) => void;
   facetRender: (facets: any) => void;
   updateSpecificFacets: boolean;
 }
 
-const EntitySpecificSidebar: React.FC<Props> = (props) => {
+const EntitySpecificSidebar: React.FC<Props> = props => {
   const {
     entitySelected: {name, icon, isDefinitionInvalid},
     entityFacets,
     updateSpecificFacets,
     checkFacetRender,
-    facetRender
+    facetRender,
   } = props;
 
   const {
@@ -90,7 +90,10 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
     if (entityFacets.length > 0) {
       let max: number = 0;
       entityFacets.forEach(facet => {
-        max = (facet && facet.hasOwnProperty("facetValues")) ? facet.facetValues.reduce((previousValue, {count}) => previousValue < count ? count : previousValue, max) : max;
+        max =
+          facet && facet.hasOwnProperty("facetValues")
+            ? facet.facetValues.reduce((previousValue, {count}) => (previousValue < count ? count : previousValue), max)
+            : max;
       });
       setMaxQuantityOnFacets(max);
     }
@@ -144,7 +147,16 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const onDateFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     if (value.length > 1 && value[0]) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: dayjs(value[0]).format("YYYY-MM-DD"), upperBound: dayjs(value[1]).format("YYYY-MM-DD")}}};
+      updateFacets = {
+        ...updateFacets,
+        [facet]: {
+          dataType: datatype,
+          rangeValues: {
+            lowerBound: dayjs(value[0]).format("YYYY-MM-DD"),
+            upperBound: dayjs(value[1]).format("YYYY-MM-DD"),
+          },
+        },
+      };
       setAllGreyedOptions(updateFacets);
       setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {
@@ -162,7 +174,16 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const onDateTimeFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     if (value.length > 1) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: dayjs(value[0]).format("YYYY-MM-DDTHH:mm:ss"), upperBound: dayjs(value[1]).format("YYYY-MM-DDTHH:mm:ss")}}};
+      updateFacets = {
+        ...updateFacets,
+        [facet]: {
+          dataType: datatype,
+          rangeValues: {
+            lowerBound: dayjs(value[0]).format("YYYY-MM-DDTHH:mm:ss"),
+            upperBound: dayjs(value[1]).format("YYYY-MM-DDTHH:mm:ss"),
+          },
+        },
+      };
       setAllGreyedOptions(updateFacets);
       setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {
@@ -174,13 +195,23 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const onNumberFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     if (value.length > 1) {
-      updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: value[0].toString(), upperBound: value[1].toString()}}};
+      updateFacets = {
+        ...updateFacets,
+        [facet]: {dataType: datatype, rangeValues: {lowerBound: value[0].toString(), upperBound: value[1].toString()}},
+      };
     }
     setAllSelectedFacets(updateFacets);
     setAllGreyedOptions(updateFacets);
   };
 
-  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
+  const updateSelectedFacets = (
+    constraint: string,
+    vals: string[],
+    datatype: string,
+    isNested: boolean,
+    toDelete = false,
+    toDeleteAll: boolean = false,
+  ) => {
     let facets = {...allSelectedFacets};
     let greyFacets = {...greyedOptions.selectedFacets};
     let type = "";
@@ -213,23 +244,29 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
         ...facets,
         [facetName]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
       greyFacets = {
         ...greyFacets,
         [facetName]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
     } else {
       delete facets[facetName];
     }
     if (toDelete) {
-      if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
+      if (
+        Object.entries(searchOptions.selectedFacets).length > 0 &&
+        searchOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearFacet(constraint, vals[0]);
-      } else if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+      } else if (
+        Object.entries(greyedOptions.selectedFacets).length > 0 &&
+        greyedOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearGreyFacet(constraint, vals[0]);
       }
     } else if (toDeleteAll) {
@@ -239,7 +276,6 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
       setAllGreyedOptions(greyFacets);
     }
   };
-
 
   const addFacetValues = (constraint: string, vals: string[], dataType: string, facetCategory: string) => {
     let newAllSelectedfacets = {...allSelectedFacets};
@@ -273,8 +309,8 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
         ...newAllSelectedfacets,
         [constraint]: {
           dataType: type,
-          [valueKey]: vals
-        }
+          [valueKey]: vals,
+        },
       };
     } else {
       delete newAllSelectedfacets[constraint];
@@ -290,7 +326,9 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
         <span aria-label={`specif-icon-${name}`} className={styles.entityHeaderIcon} data-icon={icon}>
           <DynamicIcons name={icon} />
         </span>
-        <span className={styles.entityHeaderName} aria-label={`specif-title-${name}`}>{name}</span>
+        <span className={styles.entityHeaderName} aria-label={`specif-title-${name}`}>
+          {name}
+        </span>
       </div>
       <div className={styles.entitySearchText} aria-label="specif-search-field">
         {/* <HCInput
@@ -303,14 +341,17 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
           value={entitySpecificSearch ? entitySpecificSearch : " "} /> */}
       </div>
       <div>
-        {isDefinitionInvalid ? <div aria-label={`invalidDefinition-${name}`}>{ExploreGraphViewToolTips.invalidDefinition}</div>
-          : entityFacets.length
-            ? entityFacets.map((facet, index) => {
-              let datatype = "";
-              let step;
-              switch (facet.type) {
-              case "xs:string": {
-                return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
+        {isDefinitionInvalid ? (
+          <div aria-label={`invalidDefinition-${name}`}>{ExploreGraphViewToolTips.invalidDefinition}</div>
+        ) : entityFacets.length ? (
+          entityFacets.map((facet, index) => {
+            let datatype = "";
+            let step;
+            switch (facet.type) {
+            case "xs:string": {
+              return (
+                Object.entries(facet).length !== 0 &&
+                  facet.facetValues.length > 0 && (
                   <Facet
                     name={facet.propertyPath}
                     constraint={facet.facetName}
@@ -326,11 +367,13 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
                     addFacetValues={addFacetValues}
                     maxQuantityOnFacets={maxQuantityOnFacets}
                   />
-                );
-              }
-              case "xs:date": {
-                datatype = "date";
-                return Object.entries(facet).length !== 0 && (
+                )
+              );
+            }
+            case "xs:date": {
+              datatype = "date";
+              return (
+                Object.entries(facet).length !== 0 && (
                   <DateFacet
                     constraint={facet.facetName}
                     name={facet.propertyPath}
@@ -339,11 +382,13 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
                     propertyPath={facet.propertyPath}
                     onChange={onDateFacetChange}
                   />
-                );
-              }
-              case "xs:dateTime": {
-                datatype = "dateTime";
-                return Object.entries(facet).length !== 0 && (
+                )
+              );
+            }
+            case "xs:dateTime": {
+              datatype = "dateTime";
+              return (
+                Object.entries(facet).length !== 0 && (
                   <DateTimeFacet
                     constraint={facet.facetName}
                     name={facet.propertyPath}
@@ -352,67 +397,72 @@ const EntitySpecificSidebar: React.FC<Props> = (props) => {
                     propertyPath={facet.propertyPath}
                     onChange={onDateTimeFacetChange}
                   />
-                );
-              }
-              case "xs:int": {
-                datatype = "int";
-                step = 1;
-                break;
-              }
-              case "xs:integer": {
-                datatype = "integer";
-                step = 1;
-                break;
-              }
-              case "xs:short": {
-                datatype = "short";
-                step = 1;
-                break;
-              }
-              case "xs:long": {
-                datatype = "long";
-                step = 1;
-                break;
-              }
-              case "xs:decimal": {
-                datatype = "decimal";
-                step = 0.1;
-                break;
-              }
-              case "xs:double": {
-                datatype = "double";
-                step = 0.1;
-                break;
-              }
-              case "xs:float": {
-                datatype = "float";
-                step = 0.1;
-                break;
-              }
-              //add date type cases
+                )
+              );
+            }
+            case "xs:int": {
+              datatype = "int";
+              step = 1;
+              break;
+            }
+            case "xs:integer": {
+              datatype = "integer";
+              step = 1;
+              break;
+            }
+            case "xs:short": {
+              datatype = "short";
+              step = 1;
+              break;
+            }
+            case "xs:long": {
+              datatype = "long";
+              step = 1;
+              break;
+            }
+            case "xs:decimal": {
+              datatype = "decimal";
+              step = 0.1;
+              break;
+            }
+            case "xs:double": {
+              datatype = "double";
+              step = 0.1;
+              break;
+            }
+            case "xs:float": {
+              datatype = "float";
+              step = 0.1;
+              break;
+            }
+            //add date type cases
 
-              default:
-                break;
-              }
-              if (step && facet.facetValues.length) {
-                return (
-                  <div key={index}>
-                    <NumericFacet
-                      constraint={facet.facetName}
-                      name={facet.propertyPath}
-                      step={step}
-                      referenceType={facet.referenceType}
-                      entityTypeId={facet.entityTypeId}
-                      propertyPath={facet.propertyPath}
-                      datatype={datatype}
-                      key={facet.facetName}
-                      onChange={onNumberFacetChange}
-                    />
-                  </div>
-                );
-              }
-            })
-            : <div aria-label={isDefinitionInvalid ? `invalidDefinition-${name}` : `no-facets-${name}`}>{isDefinitionInvalid ? ExploreGraphViewToolTips.invalidDefinition : ExploreGraphViewToolTips.noFacetToolTip}</div>}
+            default:
+              break;
+            }
+            if (step && facet.facetValues.length) {
+              return (
+                <div key={index}>
+                  <NumericFacet
+                    constraint={facet.facetName}
+                    name={facet.propertyPath}
+                    step={step}
+                    referenceType={facet.referenceType}
+                    entityTypeId={facet.entityTypeId}
+                    propertyPath={facet.propertyPath}
+                    datatype={datatype}
+                    key={facet.facetName}
+                    onChange={onNumberFacetChange}
+                  />
+                </div>
+              );
+            }
+          })
+        ) : (
+          <div aria-label={isDefinitionInvalid ? `invalidDefinition-${name}` : `no-facets-${name}`}>
+            {isDefinitionInvalid ? ExploreGraphViewToolTips.invalidDefinition : ExploreGraphViewToolTips.noFacetToolTip}
+          </div>
+        )}
       </div>
     </div>
   );

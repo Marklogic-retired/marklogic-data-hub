@@ -2,232 +2,232 @@ import {IAuthoritiesContextInterface} from "../../util/authorities";
 
 // Roles service for data-hub-developer
 class DeveloperRolesService implements IAuthoritiesContextInterface {
-    public authorities: string[] = [];
+  public authorities: string[] = [];
 
-    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
-      this.authorities = authorities;
-    };
-    public canReadMapping:() => boolean = () => {
-      return true;
-    };
-    public canWriteMapping:() => boolean = () => {
-      return true;
-    };
-    public canReadMatchMerge:() => boolean = () => {
-      return true;
-    };
-    public canWriteMatchMerge:() => boolean = () => {
-      return true;
-    };
-    public canReadLoad:() => boolean = () => {
-      return true;
-    };
-    public canWriteLoad:() => boolean = () => {
-      return true;
-    };
-    public canReadEntityModel:() => boolean = () => {
-      return true;
-    };
-    public canWriteEntityModel:() => boolean = () => {
-      return true;
-    };
-    public canReadFlow:() => boolean = () => {
-      return true;
-    };
-    public canWriteFlow:() => boolean = () => {
-      return true;
-    };
-    public canReadCustom:() => boolean = () => {
-      return true;
-    };
-    public canWriteCustom:() => boolean = () => {
-      return true;
-    };
-    public canDownloadProjectFiles:() => boolean = () => {
-      return true;
-    };
-    public canExportEntityInstances:() => boolean = () => {
-      return true;
-    };
-    public isSavedQueryUser:() => boolean = () => {
-      return true;
-    };
-    public canRunStep:() => boolean = () => {
-      return true;
-    };
-    public canClearUserData:() => boolean = () => {
-      return true;
-    };
-    public canAccessLoad: () => boolean = () => {
-      return true;
-    };
-    public canAccessModel: () => boolean = () => {
-      return true;
-    };
-    public canAccessCurate: () => boolean = () => {
-      return true;
-    };
-    public canAccessRun: () => boolean = () => {
-      return true;
-    };
-    public canAccessMonitor: () => boolean = () => {
-      return true;
-    };
+  public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+    this.authorities = authorities;
+  };
+  public canReadMapping: () => boolean = () => {
+    return true;
+  };
+  public canWriteMapping: () => boolean = () => {
+    return true;
+  };
+  public canReadMatchMerge: () => boolean = () => {
+    return true;
+  };
+  public canWriteMatchMerge: () => boolean = () => {
+    return true;
+  };
+  public canReadLoad: () => boolean = () => {
+    return true;
+  };
+  public canWriteLoad: () => boolean = () => {
+    return true;
+  };
+  public canReadEntityModel: () => boolean = () => {
+    return true;
+  };
+  public canWriteEntityModel: () => boolean = () => {
+    return true;
+  };
+  public canReadFlow: () => boolean = () => {
+    return true;
+  };
+  public canWriteFlow: () => boolean = () => {
+    return true;
+  };
+  public canReadCustom: () => boolean = () => {
+    return true;
+  };
+  public canWriteCustom: () => boolean = () => {
+    return true;
+  };
+  public canDownloadProjectFiles: () => boolean = () => {
+    return true;
+  };
+  public canExportEntityInstances: () => boolean = () => {
+    return true;
+  };
+  public isSavedQueryUser: () => boolean = () => {
+    return true;
+  };
+  public canRunStep: () => boolean = () => {
+    return true;
+  };
+  public canClearUserData: () => boolean = () => {
+    return true;
+  };
+  public canAccessLoad: () => boolean = () => {
+    return true;
+  };
+  public canAccessModel: () => boolean = () => {
+    return true;
+  };
+  public canAccessCurate: () => boolean = () => {
+    return true;
+  };
+  public canAccessRun: () => boolean = () => {
+    return true;
+  };
+  public canAccessMonitor: () => boolean = () => {
+    return true;
+  };
 }
 
 // Roles service for data-hub-operator
 class OperatorRolesService implements IAuthoritiesContextInterface {
-    public authorities: string[] = [];
+  public authorities: string[] = [];
 
-    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
-      this.authorities = authorities;
-    };
-    public canReadMapping:() => boolean = () => {
-      return true;
-    };
-    public canWriteMapping:() => boolean = () => {
-      return false;
-    };
-    public canReadMatchMerge:() => boolean = () => {
-      return true;
-    };
-    public canWriteMatchMerge:() => boolean = () => {
-      return false;
-    };
-    public canReadLoad:() => boolean = () => {
-      return true;
-    };
-    public canWriteLoad:() => boolean = () => {
-      return false;
-    };
-    public canReadEntityModel:() => boolean = () => {
-      return true;
-    };
-    public canWriteEntityModel:() => boolean = () => {
-      return false;
-    };
-    public canReadFlow:() => boolean = () => {
-      return true;
-    };
-    public canWriteFlow:() => boolean = () => {
-      return false;
-    };
-    public canReadCustom:() => boolean = () => {
-      return true;
-    };
-    public canWriteCustom:() => boolean = () => {
-      return false;
-    };
-    public canDownloadProjectFiles:() => boolean = () => {
-      return false;
-    };
-    public canExportEntityInstances:() => boolean = () => {
-      return false;
-    };
-    public isSavedQueryUser:() => boolean = () => {
-      return false;
-    };
-    public canRunStep:() => boolean = () => {
-      return true;
-    };
-    public canClearUserData:() => boolean = () => {
-      return false;
-    };
-    public canAccessLoad: () => boolean = () => {
-      return true;
-    };
-    public canAccessModel: () => boolean = () => {
-      return true;
-    };
-    public canAccessCurate: () => boolean = () => {
-      return true;
-    };
-    public canAccessRun: () => boolean = () => {
-      return true;
-    };
-    public canAccessMonitor: () => boolean = () => {
-      return true;
-    };
+  public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+    this.authorities = authorities;
+  };
+  public canReadMapping: () => boolean = () => {
+    return true;
+  };
+  public canWriteMapping: () => boolean = () => {
+    return false;
+  };
+  public canReadMatchMerge: () => boolean = () => {
+    return true;
+  };
+  public canWriteMatchMerge: () => boolean = () => {
+    return false;
+  };
+  public canReadLoad: () => boolean = () => {
+    return true;
+  };
+  public canWriteLoad: () => boolean = () => {
+    return false;
+  };
+  public canReadEntityModel: () => boolean = () => {
+    return true;
+  };
+  public canWriteEntityModel: () => boolean = () => {
+    return false;
+  };
+  public canReadFlow: () => boolean = () => {
+    return true;
+  };
+  public canWriteFlow: () => boolean = () => {
+    return false;
+  };
+  public canReadCustom: () => boolean = () => {
+    return true;
+  };
+  public canWriteCustom: () => boolean = () => {
+    return false;
+  };
+  public canDownloadProjectFiles: () => boolean = () => {
+    return false;
+  };
+  public canExportEntityInstances: () => boolean = () => {
+    return false;
+  };
+  public isSavedQueryUser: () => boolean = () => {
+    return false;
+  };
+  public canRunStep: () => boolean = () => {
+    return true;
+  };
+  public canClearUserData: () => boolean = () => {
+    return false;
+  };
+  public canAccessLoad: () => boolean = () => {
+    return true;
+  };
+  public canAccessModel: () => boolean = () => {
+    return true;
+  };
+  public canAccessCurate: () => boolean = () => {
+    return true;
+  };
+  public canAccessRun: () => boolean = () => {
+    return true;
+  };
+  public canAccessMonitor: () => boolean = () => {
+    return true;
+  };
 }
 
 class HCUserRolesService implements IAuthoritiesContextInterface {
-    public authorities: string[] = [];
+  public authorities: string[] = [];
 
-    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
-      this.authorities = authorities;
-    };
-    public canReadMapping:() => boolean = () => {
-      return false;
-    };
-    public canWriteMapping:() => boolean = () => {
-      return false;
-    };
-    public canReadMatchMerge:() => boolean = () => {
-      return false;
-    };
-    public canWriteMatchMerge:() => boolean = () => {
-      return false;
-    };
-    public canReadLoad:() => boolean = () => {
-      return false;
-    };
-    public canWriteLoad:() => boolean = () => {
-      return false;
-    };
-    public canReadEntityModel:() => boolean = () => {
-      return false;
-    };
-    public canWriteEntityModel:() => boolean = () => {
-      return false;
-    };
-    public canReadFlow:() => boolean = () => {
-      return false;
-    };
-    public canWriteFlow:() => boolean = () => {
-      return false;
-    };
-    public canReadCustom:() => boolean = () => {
-      return false;
-    };
-    public canWriteCustom:() => boolean = () => {
-      return false;
-    };
-    public canDownloadProjectFiles:() => boolean = () => {
-      return false;
-    };
-    public canExportEntityInstances:() => boolean = () => {
-      return false;
-    };
-    public isSavedQueryUser:() => boolean = () => {
-      return false;
-    };
-    public canRunStep:() => boolean = () => {
-      return false;
-    };
-    public canClearUserData:() => boolean = () => {
-      return false;
-    };
-    public canAccessLoad: () => boolean = () => {
-      return false;
-    };
-    public canAccessModel: () => boolean = () => {
-      return false;
-    };
-    public canAccessCurate: () => boolean = () => {
-      return false;
-    };
-    public canAccessRun: () => boolean = () => {
-      return false;
-    };
-    public canAccessMonitor: () => boolean = () => {
-      return true;
-    };
+  public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+    this.authorities = authorities;
+  };
+  public canReadMapping: () => boolean = () => {
+    return false;
+  };
+  public canWriteMapping: () => boolean = () => {
+    return false;
+  };
+  public canReadMatchMerge: () => boolean = () => {
+    return false;
+  };
+  public canWriteMatchMerge: () => boolean = () => {
+    return false;
+  };
+  public canReadLoad: () => boolean = () => {
+    return false;
+  };
+  public canWriteLoad: () => boolean = () => {
+    return false;
+  };
+  public canReadEntityModel: () => boolean = () => {
+    return false;
+  };
+  public canWriteEntityModel: () => boolean = () => {
+    return false;
+  };
+  public canReadFlow: () => boolean = () => {
+    return false;
+  };
+  public canWriteFlow: () => boolean = () => {
+    return false;
+  };
+  public canReadCustom: () => boolean = () => {
+    return false;
+  };
+  public canWriteCustom: () => boolean = () => {
+    return false;
+  };
+  public canDownloadProjectFiles: () => boolean = () => {
+    return false;
+  };
+  public canExportEntityInstances: () => boolean = () => {
+    return false;
+  };
+  public isSavedQueryUser: () => boolean = () => {
+    return false;
+  };
+  public canRunStep: () => boolean = () => {
+    return false;
+  };
+  public canClearUserData: () => boolean = () => {
+    return false;
+  };
+  public canAccessLoad: () => boolean = () => {
+    return false;
+  };
+  public canAccessModel: () => boolean = () => {
+    return false;
+  };
+  public canAccessCurate: () => boolean = () => {
+    return false;
+  };
+  public canAccessRun: () => boolean = () => {
+    return false;
+  };
+  public canAccessMonitor: () => boolean = () => {
+    return true;
+  };
 }
 
 const authorities = {
   DeveloperRolesService: new DeveloperRolesService(),
   OperatorRolesService: new OperatorRolesService(),
-  HCUserRolesService: new HCUserRolesService()
+  HCUserRolesService: new HCUserRolesService(),
 };
 
 export default authorities;

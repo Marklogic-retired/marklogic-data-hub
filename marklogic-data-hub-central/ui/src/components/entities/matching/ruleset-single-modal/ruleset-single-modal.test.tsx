@@ -33,24 +33,16 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -64,7 +56,9 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(await screen.findAllByLabelText("values-ignore-tooltip-text"));
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("customerId")); });
+    wait(() => {
+      userEvent.click(getByText("customerId"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
@@ -88,24 +82,16 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -124,7 +110,6 @@ describe("Matching Ruleset Single Modal component", () => {
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
-
   });
 
   it("can select Synonym ruleset type and click save", async () => {
@@ -134,12 +119,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -147,13 +128,14 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    wait(() => {
+      userEvent.click(getByText("nicknames"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
     userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
     userEvent.type(getByLabelText("filter-input"), "<thsr:qualifier>birds</thsr:qualifier>");
-
 
     userEvent.click(getByText("Save"));
     wait(() => {
@@ -161,7 +143,6 @@ describe("Matching Ruleset Single Modal component", () => {
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
-
   });
 
   it("can select Double Metaphone ruleset type and click save", async () => {
@@ -171,12 +152,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -184,7 +161,9 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("orders")); });
+    wait(() => {
+      userEvent.click(getByText("orders"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Double Metaphone"));
@@ -198,7 +177,6 @@ describe("Matching Ruleset Single Modal component", () => {
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
-
   });
 
   it("can select Custom ruleset type and click save", async () => {
@@ -208,12 +186,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -221,14 +195,15 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    wait(() => {
+      userEvent.click(getByText("nicknames"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Custom"));
     userEvent.type(getByLabelText("uri-input"), "/custom-modules/matching/nameMatch.xqy");
     userEvent.type(getByLabelText("function-input"), "nameMatch");
     userEvent.type(getByLabelText("namespace-input"), "http://example.org/custom-modules/matching/nameMatch");
-
 
     userEvent.click(getByText("Save"));
     wait(() => {
@@ -245,12 +220,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -262,7 +233,9 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(screen.getByLabelText("reduceToggle"));
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(getByText("nicknames")); });
+    wait(() => {
+      userEvent.click(getByText("nicknames"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
@@ -284,24 +257,16 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -322,17 +287,13 @@ describe("Matching Ruleset Single Modal component", () => {
     const toggleModalMock = jest.fn();
     let editSynonym = {
       ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[0],
-      index: 0
+      index: 0,
     };
 
     const {queryByText, getByText, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={editSynonym}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={editSynonym} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Edit Match Ruleset for Single Property")).toBeInTheDocument();
@@ -363,12 +324,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -376,14 +333,17 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
     userEvent.click(getByTestId("property-to-match-dropdown"));
-    wait(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
-    wait(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
+    wait(() => {
+      userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down"));
+    });
+    wait(() => {
+      userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+    });
 
     fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
     userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
     userEvent.type(getByLabelText("filter-input"), "<thsr:qualifier>birds</thsr:qualifier>");
-
 
     userEvent.click(getByText("Save"));
     wait(() => {
@@ -400,12 +360,8 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
@@ -436,5 +392,4 @@ describe("Matching Ruleset Single Modal component", () => {
       userEvent.click(getByText("Save"));
     });
   });
-
 });

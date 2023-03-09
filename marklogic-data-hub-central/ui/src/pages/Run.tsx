@@ -19,9 +19,9 @@ const Statuses = {
   "FINISHED": "finished",
   "CANCELED": "canceled",
   "FAILED": "failed",
-  "FINISHED_WITH_ERRORS": "finished_with_errors"
+  "FINISHED_WITH_ERRORS": "finished_with_errors",
 };
-const Run = (props) => {
+const Run = props => {
   const {handleError} = useContext(UserContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +48,7 @@ const Run = (props) => {
 
   const pollConfig: PollConfig = {
     interval: 1000, // In millseconds
-    retryLimit: 10  // Timeout after retries
+    retryLimit: 10, // Timeout after retries
   };
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const Run = (props) => {
       if (error.response && error.response.data && error.response.data.message) {
         setErrorMessageOptions({
           isVisible: true,
-          message: error.response.data.message
+          message: error.response.data.message,
         });
       }
     } finally {
@@ -97,13 +97,13 @@ const Run = (props) => {
     }
   };
 
-  const createFlow = async (payload) => {
+  const createFlow = async payload => {
     let newFlow;
     try {
       setIsLoading(true);
       newFlow = {
         name: payload.name,
-        description: payload.description
+        description: payload.description,
       };
       let response = await axios.post(`/api/flows`, newFlow);
       if (response.status === 201) {
@@ -114,13 +114,19 @@ const Run = (props) => {
       console.error("Error posting flow", error);
       setIsLoading(false);
       let message = error.response.data.message;
-      message.indexOf(newFlow.name) > -1 ? setErrorMessageOptions({
-        isVisible: true,
-        message: <p>Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.</p>
-      }) : setErrorMessageOptions({
-        isVisible: true,
-        message
-      });
+      message.indexOf(newFlow.name) > -1
+        ? setErrorMessageOptions({
+          isVisible: true,
+          message: (
+            <p>
+                Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.
+            </p>
+          ),
+        })
+        : setErrorMessageOptions({
+          isVisible: true,
+          message,
+        });
     }
   };
 
@@ -130,7 +136,7 @@ const Run = (props) => {
       let updatedFlow = {
         name: name,
         steps: steps,
-        description: description
+        description: description,
       };
       let response = await axios.put(`/api/flows/` + name, updatedFlow);
       if (response.status === 200) {
@@ -147,7 +153,7 @@ const Run = (props) => {
   const addStepToFlow = async (artifactName, flowName, stepDefinitionType) => {
     let step = {
       "stepName": artifactName,
-      "stepDefinitionType": stepDefinitionType
+      "stepDefinitionType": stepDefinitionType,
     };
     try {
       setIsLoading(true);
@@ -164,12 +170,12 @@ const Run = (props) => {
       setIsLoading(false);
       setErrorMessageOptions({
         isVisible: true,
-        message: `Error adding step "${artifactName}" to flow "${flowName}".`
+        message: `Error adding step "${artifactName}" to flow "${flowName}".`,
       });
     }
   };
 
-  const deleteFlow = async (name) => {
+  const deleteFlow = async name => {
     try {
       setIsLoading(true);
       let response = await axios.delete(`/api/flows/${name}`);
@@ -193,40 +199,47 @@ const Run = (props) => {
     let tries = 0;
     let checkStatus = (resolve, reject) => {
       let promise = fn();
-      promise.then(function (response) {
-
-        if (!response.data) {
-          throw new Error("Empty response body received");
-        }
-        let status = response.data.jobStatus;
-        if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
-          status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {
-          // Non-running status, resolve promise
-          resolve(response.data);
-        } else {
-          // Still running, poll again
-          setTimeout(checkStatus, interval, resolve, reject);
-        }
-      }).catch(function (error) {
-        if (tries++ > pollConfig.retryLimit) {
-          // Retry limit reached, reject promise
-          reject(new Error("Over limit, error for " + fn + ": " + arguments));
-        } else {
-          // Poll again
-          setTimeout(checkStatus, interval, resolve, reject);
-        }
-      });
+      promise
+        .then(function (response) {
+          if (!response.data) {
+            throw new Error("Empty response body received");
+          }
+          let status = response.data.jobStatus;
+          if (
+            status === Statuses.FINISHED ||
+            status === Statuses.CANCELED ||
+            status === Statuses.FAILED ||
+            status === Statuses.FINISHED_WITH_ERRORS
+          ) {
+            // Non-running status, resolve promise
+            resolve(response.data);
+          } else {
+            // Still running, poll again
+            setTimeout(checkStatus, interval, resolve, reject);
+          }
+        })
+        .catch(function (error) {
+          if (tries++ > pollConfig.retryLimit) {
+            // Retry limit reached, reject promise
+            reject(new Error("Over limit, error for " + fn + ": " + arguments));
+          } else {
+            // Poll again
+            setTimeout(checkStatus, interval, resolve, reject);
+          }
+        });
     };
     return new Promise(checkStatus);
   }
 
   const getFlowRunning = (flowName: string, stepNumbers: string[]) => {
     const flow = flows.find(flow => flow.name === flowName);
-    const _stepsRunning = flow?.steps?.filter(step => { return stepNumbers.includes(step.stepNumber); });
-    (flow && _stepsRunning) ? setFlowRunning({...flow, steps: _stepsRunning}) : setFlowRunning(InitialFlow);
+    const _stepsRunning = flow?.steps?.filter(step => {
+      return stepNumbers.includes(step.stepNumber);
+    });
+    flow && _stepsRunning ? setFlowRunning({...flow, steps: _stepsRunning}) : setFlowRunning(InitialFlow);
   };
 
-  const finishRun = (flowName:string) => {
+  const finishRun = (flowName: string) => {
     setIsLoading(false);
     let InitialFlowAux = {...InitialFlow};
     InitialFlowAux.description = flowName;
@@ -235,10 +248,10 @@ const Run = (props) => {
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
     setIsStepRunning(true);
-    const stepNames: string[] = steps.map((step) => {
+    const stepNames: string[] = steps.map(step => {
       return step.stepName;
     });
-    const stepNumbers = steps.map((step) => {
+    const stepNumbers = steps.map(step => {
       return step.stepNumber;
     });
     getFlowRunning(flowName, stepNumbers);
@@ -248,8 +261,9 @@ const Run = (props) => {
       if (formData) {
         response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`, formData, {
           headers: {
-            "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
-          }
+            "Content-Type": "multipart/form-data; boundary=${formData._boundary}",
+            crossorigin: true,
+          },
         });
       } else {
         response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`);
@@ -270,9 +284,9 @@ const Run = (props) => {
               }
               for (let i = 0; i < steps.length; i++) {
                 setRunEnded({flowId: flowName, stepId: steps[i].stepNumber});
-
               }
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               console.error("Flow timeout", error);
               for (let i = 0; i < steps.length; i++) {
                 setRunEnded({flowId: flowName, stepId: steps[i]});
@@ -284,10 +298,14 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error running step", error);
       setRunEnded({flowId: flowName, stepId: steps});
-      if (error.response &&
+      if (
+        error.response &&
         error.response.data &&
-        (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") ||
-        error.response.data.message.includes("Uploading files to server failed"))) {
+        (error.response.data.message.includes(
+          "The total size of all files in a single upload must be 100MB or less.",
+        ) ||
+          error.response.data.message.includes("Uploading files to server failed"))
+      ) {
         setUploadError(error.response.data.message);
       } else {
         handleError(error);
@@ -297,7 +315,6 @@ const Run = (props) => {
 
   // POST /flows​/{flowId}​/steps​/{stepId}
   const runStep = async (flowName, step: Step, formData) => {
-
     getFlowRunning(flowName, [step.stepNumber]);
     setIsStepRunning(true);
     let response;
@@ -306,8 +323,9 @@ const Run = (props) => {
       if (formData) {
         response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName, formData, {
           headers: {
-            "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
-          }
+            "Content-Type": "multipart/form-data; boundary=${formData._boundary}",
+            crossorigin: true,
+          },
         });
       } else {
         response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName);
@@ -322,7 +340,8 @@ const Run = (props) => {
           }, pollConfig.interval)
             .then(function (response: any) {
               setRunEnded({flowId: flowName, stepId: step.stepNumber});
-            }).catch(function (error) {
+            })
+            .catch(function (error) {
               console.error("Flow timeout", error);
               setRunEnded({flowId: flowName, stepId: step.stepNumber});
             });
@@ -333,10 +352,14 @@ const Run = (props) => {
       console.error("Error running step", error);
       setRunEnded({flowId: flowName, stepId: step.stepNumber});
       setIsStepRunning(false);
-      if (error.response &&
+      if (
+        error.response &&
         error.response.data &&
-        (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") ||
-        error.response.data.message.includes("Uploading files to server failed"))) {
+        (error.response.data.message.includes(
+          "The total size of all files in a single upload must be 100MB or less.",
+        ) ||
+          error.response.data.message.includes("Uploading files to server failed"))
+      ) {
         setUploadError(error.response.data.message);
       } else {
         handleError(error);
@@ -375,57 +398,58 @@ const Run = (props) => {
   return (
     <div>
       <div className={styles.runContainer}>
-        {
-          canAccessRun ?
-            <>
-              <div className={styles.intro} key={"run-intro"}>
-                <p>{tiles.run.intro}</p>
-                {/* ---------------------------------------------------------------------------------------- */}
-                {/* <div className={styles.running} style={{display: isStepRunning ? "block" : "none"}}>
+        {canAccessRun ? (
+          <>
+            <div className={styles.intro} key={"run-intro"}>
+              <p>{tiles.run.intro}</p>
+              {/* ---------------------------------------------------------------------------------------- */}
+              {/* <div className={styles.running} style={{display: isStepRunning ? "block" : "none"}}>
                   <div><Spinner data-testid="spinner" animation="border" variant="primary" /></div>
                   <div className={styles.runningLabel}>Running...</div>
                 </div> */}
-                {/* ---------------------------------------------------------------------------------------- */}
-              </div>
-              <Flows
-                key={"run-flows-list"}
-                flows={flows}
-                steps={steps}
-                deleteFlow={deleteFlow}
-                createFlow={createFlow}
-                updateFlow={updateFlow}
-                runStep={runStep}
-                stopRun={stopRun}
-                runFlowSteps={runFlowSteps}
-                deleteStep={deleteStep}
-                canReadFlow={canReadFlow}
-                canWriteFlow={canWriteFlow}
-                hasOperatorRole={hasOperatorRole}
-                flowRunning={flowRunning}
-                uploadError={uploadError}
-                newStepToFlowOptions={props.newStepToFlowOptions}
-                addStepToFlow={addStepToFlow}
-                flowsDefaultActiveKey={flowsDefaultActiveKey}
-                runEnded={runEnded}
-                setJobId={setJobId}
-                setOpenJobResponse={setOpenJobResponse}
-                isStepRunning={isStepRunning}
-                canUserStopFlow={userCanStopFlow}
-                isLoading={fetchLoad}
-              />
-            </>
-            :
-            <p>{MissingPagePermission}</p>
-        }
+              {/* ---------------------------------------------------------------------------------------- */}
+            </div>
+            <Flows
+              key={"run-flows-list"}
+              flows={flows}
+              steps={steps}
+              deleteFlow={deleteFlow}
+              createFlow={createFlow}
+              updateFlow={updateFlow}
+              runStep={runStep}
+              stopRun={stopRun}
+              runFlowSteps={runFlowSteps}
+              deleteStep={deleteStep}
+              canReadFlow={canReadFlow}
+              canWriteFlow={canWriteFlow}
+              hasOperatorRole={hasOperatorRole}
+              flowRunning={flowRunning}
+              uploadError={uploadError}
+              newStepToFlowOptions={props.newStepToFlowOptions}
+              addStepToFlow={addStepToFlow}
+              flowsDefaultActiveKey={flowsDefaultActiveKey}
+              runEnded={runEnded}
+              setJobId={setJobId}
+              setOpenJobResponse={setOpenJobResponse}
+              isStepRunning={isStepRunning}
+              canUserStopFlow={userCanStopFlow}
+              isLoading={fetchLoad}
+            />
+          </>
+        ) : (
+          <p>{MissingPagePermission}</p>
+        )}
       </div>
-      {openJobResponse &&
-      <JobResponse
-        setUserCanStopFlow={setUserCanStopFlow}
-        setIsStepRunning={setIsStepRunning}
-        stopRun={stopRun}
-        jobId={jobId}
-        setOpenJobResponse={setOpenJobResponse}
-        runningFlow={flowRunning} />}
+      {openJobResponse && (
+        <JobResponse
+          setUserCanStopFlow={setUserCanStopFlow}
+          setIsStepRunning={setIsStepRunning}
+          stopRun={stopRun}
+          jobId={jobId}
+          setOpenJobResponse={setOpenJobResponse}
+          runningFlow={flowRunning}
+        />
+      )}
     </div>
   );
 };

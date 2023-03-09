@@ -1,4 +1,3 @@
-
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
@@ -52,7 +51,7 @@ const DEFAULT_MAPPING_STEP: MappingStep = {
   batchSize: 100,
   interceptors: [],
   customHook: {},
-  uriExpression: ""
+  uriExpression: "",
 };
 
 const MappingStepDetail: React.FC = () => {
@@ -62,12 +61,8 @@ const MappingStepDetail: React.FC = () => {
   clearSessionStorageOnRefresh();
 
   const history = useHistory<any>();
-  const {curationOptions,
-    mappingOptions,
-    updateActiveStepArtifact,
-    setOpenStepSettings,
-    setStepOpenOptions} = useContext(CurationContext);
-
+  const {curationOptions, mappingOptions, updateActiveStepArtifact, setOpenStepSettings, setStepOpenOptions} =
+    useContext(CurationContext);
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -161,7 +156,6 @@ const MappingStepDetail: React.FC = () => {
   const [interceptorExecutionError, setInterceptorExecutionError] = useState("");
 
   const getStoredStepArtifactName = (origin?) => {
-
     let storageAux = storage?.curateMappingSourceSide;
     let jsonStorageAux = storageAux?.jsonTable;
     let xmlStorageAux = storageAux?.xmlTable;
@@ -169,25 +163,32 @@ const MappingStepDetail: React.FC = () => {
     if (origin === "json") {
       if (jsonStorageAux?.stepArtifactName) {
         return jsonStorageAux.stepArtifactName;
-      } else { return ""; }
+      } else {
+        return "";
+      }
     }
     if (origin === "xml") {
       if (xmlStorageAux?.stepArtifactName) {
         return xmlStorageAux.stepArtifactName;
-      } else { return ""; }
+      } else {
+        return "";
+      }
     }
   };
 
   const getPageAndSizeSourceTable = () => {
-
     let storageAux = storage?.curateMappingSourceSide;
     let xmlStorageAux = storageAux?.xmlTable;
     let jsonStorageAux = storageAux?.jsonTable;
-    let pageNumberTable = 1, pageSizeTable = 20;
+    let pageNumberTable = 1,
+      pageSizeTable = 20;
     let arraySourceTable: number[] = [1, 20, 1, 20];
 
     if (jsonStorageAux?.optionsPagesTable) {
-      if (getStoredStepArtifactName("json") === (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)) {
+      if (
+        getStoredStepArtifactName("json") ===
+        (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)
+      ) {
         pageNumberTable = jsonStorageAux?.optionsPagesTable?.current;
       }
       pageSizeTable = jsonStorageAux?.optionsPagesTable?.pageSize;
@@ -197,7 +198,10 @@ const MappingStepDetail: React.FC = () => {
     }
 
     if (xmlStorageAux?.optionsPagesTable) {
-      if (getStoredStepArtifactName("xml") === (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)) {
+      if (
+        getStoredStepArtifactName("xml") ===
+        (curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name)
+      ) {
         pageNumberTable = xmlStorageAux?.optionsPagesTable?.current;
       }
       pageSizeTable = xmlStorageAux?.optionsPagesTable?.pageSize;
@@ -212,7 +216,7 @@ const MappingStepDetail: React.FC = () => {
   const [pageSizeTableSourceSideXml, setPageSizeTableSourceSideXml] = useState(getPageAndSizeSourceTable()[1]);
   const [pageSizeTableSourceSideJson, setPageSizeTableSourceSideJson] = useState(getPageAndSizeSourceTable()[3]);
 
-  const executeScroll = (refId) => {
+  const executeScroll = refId => {
     const scrollToRef: any = getRef(refId);
     if (scrollToRef && scrollToRef.current) {
       scrollToRef.current.scrollIntoView();
@@ -230,12 +234,16 @@ const MappingStepDetail: React.FC = () => {
 
   // For Column Option dropdown checkboxes
   const [checkedEntityColumnsFlag, setCheckedEntityColumnsFlag] = useState("");
-  const [checkedEntityColumns, setCheckedEntityColumns] = useState(getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() :  {
-    "name": true,
-    "type": true,
-    "key": true,
-    "value": true
-  });
+  const [checkedEntityColumns, setCheckedEntityColumns] = useState(
+    getColumnOptionsPopover() !== ""
+      ? getColumnOptionsPopover()
+      : {
+        "name": true,
+        "type": true,
+        "key": true,
+        "value": true,
+      },
+  );
 
   const [colOptMenuVisible, setColOptMenuVisible] = useState(false);
 
@@ -243,7 +251,7 @@ const MappingStepDetail: React.FC = () => {
     name: "Name",
     type: "Type",
     key: "XPath Expression",
-    value: "Value"
+    value: "Value",
   };
 
   function usePrevious(value) {
@@ -271,12 +279,11 @@ const MappingStepDetail: React.FC = () => {
     setEditingUri(true);
   };
 
-  const handleURIEditing = (e) => {
+  const handleURIEditing = e => {
     setSourceURI(e.target.value);
-
   };
 
-  const handleMouseOver = (e) => {
+  const handleMouseOver = e => {
     setShowEditURIOption(true);
   };
 
@@ -285,7 +292,7 @@ const MappingStepDetail: React.FC = () => {
     setEditingUri(false);
   };
 
-  const getSourceData = async (stepName) => {
+  const getSourceData = async stepName => {
     try {
       setIsLoading(true);
       let response = await getUris(stepName, 20);
@@ -309,7 +316,10 @@ const MappingStepDetail: React.FC = () => {
 
   const fetchSrcDocFromUri = async (stepName, uri) => {
     try {
-      const mappingStep = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
+      const mappingStep = await getMappingArtifactByMapName(
+        curationOptions.activeStep.stepArtifact.targetEntityType,
+        stepName,
+      );
       if (mappingStep.interceptors) {
         for (let i = 0; i < mappingStep.interceptors.length; i++) {
           const interceptor = mappingStep.interceptors[i];
@@ -337,7 +347,10 @@ const MappingStepDetail: React.FC = () => {
           setNamespaces({...namespaces, ...nmspaces});
         }
         let nestedDoc: any = [];
-        let docRoot = mappingStep.sourceRecordScope === "entireRecord" || !(parsedDoc.envelope && parsedDoc.envelope.instance) ? parsedDoc : parsedDoc.envelope.instance;
+        let docRoot =
+          mappingStep.sourceRecordScope === "entireRecord" || !(parsedDoc.envelope && parsedDoc.envelope.instance)
+            ? parsedDoc
+            : parsedDoc.envelope.instance;
         let sDta = generateNestedDataSource(docRoot, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
@@ -359,7 +372,7 @@ const MappingStepDetail: React.FC = () => {
       if (error.response && error.response.data.message.includes("Interceptor execution failed")) {
         setInterceptorExecutionError(error.response.data.message);
       } else {
-        let message = error;//.response.data.message;
+        let message = error; //.response.data.message;
         console.error("Error While loading the Doc from URI!", message);
       }
     }
@@ -372,20 +385,20 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const setMappingRefs = async (stepName) => {
+  const setMappingRefs = async stepName => {
     let mappingRefsResponse = await getMappingRefs(stepName);
     if (mappingRefsResponse) {
       setMapRefs(mappingRefsResponse.data);
     }
   };
 
-  const updateMappingWithNamespaces = async (mapDataLocal) => {
+  const updateMappingWithNamespaces = async mapDataLocal => {
     let {lastUpdated, ...dataPayload} = mapDataLocal;
     dataPayload["namespaces"] = Object.assign({}, mapDataLocal.namespaces, nmspaces);
     setMapData({...dataPayload});
   };
 
-  const getNamespaceKey = (namespace) => {
+  const getNamespaceKey = namespace => {
     let indCheck = namespace.lastIndexOf("/");
     let ind = indCheck !== -1 ? indCheck + 1 : 0;
     return namespace.slice(ind);
@@ -398,8 +411,8 @@ const MappingStepDetail: React.FC = () => {
     let currentPrefix = keyParts.length > 1 ? keyParts[0] : "";
     // set context namespaces first
     if (val && val.constructor && val.constructor.name === "Object") {
-      let valObject = Object.keys(val).filter((el) => /^@xmlns/.test(el));
-      defaultNamespace = valObject.filter((ns) => val === "@xmlns")[0] || defaultNamespace;
+      let valObject = Object.keys(val).filter(el => /^@xmlns/.test(el));
+      defaultNamespace = valObject.filter(ns => val === "@xmlns")[0] || defaultNamespace;
       let count = valObject.length;
       if (count === 1) {
         valObject.forEach(el => {
@@ -430,7 +443,8 @@ const MappingStepDetail: React.FC = () => {
         objWithNmspace = getNamespaceKey(nmspaces[keyParts[0]]) + ":" + keyParts[1];
       }
     }
-    currentPrefix = defaultNamespace !== "" && objWithNmspace === "" ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
+    currentPrefix =
+      defaultNamespace !== "" && objWithNmspace === "" ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
     return objWithNmspace === "" ? (currentPrefix !== "" ? currentPrefix + ":" + key : key) : objWithNmspace;
   };
 
@@ -452,7 +466,7 @@ const MappingStepDetail: React.FC = () => {
     }
     return {
       nmspace: nmspace,
-      obj: obj
+      obj: obj,
     };
   };
 
@@ -460,13 +474,13 @@ const MappingStepDetail: React.FC = () => {
   const getPropertyObject = (key, obj) => {
     let propty: any;
     if (obj.hasOwnProperty("#text")) {
-      if (Object.keys(obj).filter((el) => /^@xmlns/.test(el) || el === "#text").length === Object.keys(obj).length) {
+      if (Object.keys(obj).filter(el => /^@xmlns/.test(el) || el === "#text").length === Object.keys(obj).length) {
         sourceTableKeyIndex = sourceTableKeyIndex + 1;
         propty = {
           rowKey: sourceTableKeyIndex,
           key: key,
           val: String(obj["#text"]),
-          datatype: getValDatatype(obj["#text"])
+          datatype: getValDatatype(obj["#text"]),
         };
       } else {
         sourceTableKeyIndex = sourceTableKeyIndex + 1;
@@ -475,7 +489,7 @@ const MappingStepDetail: React.FC = () => {
           key: key,
           val: String(obj["#text"]),
           "children": [],
-          datatype: getValDatatype(obj["#text"])
+          datatype: getValDatatype(obj["#text"]),
         };
       }
     } else {
@@ -483,25 +497,29 @@ const MappingStepDetail: React.FC = () => {
       propty = {
         rowKey: sourceTableKeyIndex,
         key: key,
-        "children": []
+        "children": [],
       };
     }
     return propty;
   };
 
-  const getValDatatype = (val) => {
+  const getValDatatype = val => {
     let result: any = typeof val;
     result = val === null ? "null" : result; // null returns typeof 'object', handle that
     return result;
   };
 
   // construct infinitely nested source Data
-  const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString, defaultNamespace = "") => {
+  const generateNestedDataSource = (
+    respData,
+    nestedDoc: Array<any>,
+    parentNamespace = namespaceString,
+    defaultNamespace = "",
+  ) => {
     Object.keys(respData).forEach(key => {
       let val = respData[key];
       let currentDefaultNamespace = defaultNamespace;
       if (val !== null && val !== "") {
-
         if (val && val.constructor && val.constructor.name === "Object") {
           let tempNS = parentNamespace;
           if (val.hasOwnProperty("@xmlns")) {
@@ -527,7 +545,7 @@ const MappingStepDetail: React.FC = () => {
               key: finalKey,
               val: "[ ]",
               array: true,
-              datatype: getValDatatype(val)
+              datatype: getValDatatype(val),
             };
             nestedDoc.push(propty);
           } else if (val[0].constructor.name !== "Object") {
@@ -539,7 +557,7 @@ const MappingStepDetail: React.FC = () => {
               key: finalKey,
               val: joinValues,
               array: true,
-              datatype: val[0].constructor.name.toLowerCase()
+              datatype: val[0].constructor.name.toLowerCase(),
             };
             nestedDoc.push(propty);
           } else {
@@ -560,9 +578,7 @@ const MappingStepDetail: React.FC = () => {
               }
             });
           }
-
         } else {
-
           if (key !== "#text" && !/^@xmlns/.test(key)) {
             let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
             let propty: any;
@@ -571,12 +587,13 @@ const MappingStepDetail: React.FC = () => {
               rowKey: sourceTableKeyIndex,
               key: finalKey,
               val: String(val),
-              datatype: getValDatatype(val)
+              datatype: getValDatatype(val),
             };
             nestedDoc.push(propty);
           }
         }
-      } else {      // val is null or ""
+      } else {
+        // val is null or ""
         if (!/^@xmlns/.test(key)) {
           let finalKey = getNamespace(key, val, parentNamespace, currentDefaultNamespace);
 
@@ -585,7 +602,7 @@ const MappingStepDetail: React.FC = () => {
             rowKey: sourceTableKeyIndex,
             key: finalKey,
             val: String(val),
-            datatype: getValDatatype(val)
+            datatype: getValDatatype(val),
           };
           nestedDoc.push(propty);
         }
@@ -594,7 +611,7 @@ const MappingStepDetail: React.FC = () => {
     return nestedDoc;
   };
 
-  const updateParentNamespace = (val) => {
+  const updateParentNamespace = val => {
     let nmspcURI = val["@xmlns"];
     let indCheck = nmspcURI.lastIndexOf("/");
     let ind = indCheck !== -1 ? indCheck + 1 : 0;
@@ -606,28 +623,64 @@ const MappingStepDetail: React.FC = () => {
     let resp = await getNestedEntities(curationOptions.activeStep.entityName);
     if (resp && resp.status === 200) {
       let rootEntityName = curationOptions.activeStep.entityName;
-      let entProps = resp.data && resp.data[0]["entityModel"].definitions ? resp.data[0]["entityModel"].definitions[rootEntityName].properties : {};
+      let entProps =
+        resp.data && resp.data[0]["entityModel"].definitions
+          ? resp.data[0]["entityModel"].definitions[rootEntityName].properties
+          : {};
       let entEntityTempData: any = [];
       let uriKey = EntityTableKeyIndex + 1;
       EntityTableKeyIndex++;
       let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData, rootEntityName);
-      nestedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
+      nestedEntityProps.unshift({
+        key: uriKey,
+        name: "URI",
+        type: "",
+        isProperty: false,
+        filterName: "URI",
+        filterMatch: false,
+      }); //add URI field to front of properties
       setEntityTypeProperties([...nestedEntityProps]);
       setTargetRelatedMappings(resp.data[0]["relatedEntityMappings"]);
       let relatedEntities = new Array();
       if (resp.data[0]["relatedEntityMappings"] && resp.data[0]["relatedEntityMappings"].length > 0) {
         resp.data.forEach(entityObject => {
           let relatedEntityName = entityObject["entityType"];
-          if (relatedEntityName !== curationOptions.activeStep.entityName && entityObject["entityModel"].definitions && entityObject.mappingTitle && entityObject["entityMappingId"]) {
+          if (
+            relatedEntityName !== curationOptions.activeStep.entityName &&
+            entityObject["entityModel"].definitions &&
+            entityObject.mappingTitle &&
+            entityObject["entityMappingId"]
+          ) {
             let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
             let relatedEntityTempData: any = [];
             let contextKey = EntityTableKeyIndex + 1;
             uriKey = contextKey + 1;
             EntityTableKeyIndex += 2;
             let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData, relatedEntityName);
-            relatedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
-            relatedEntityProps.unshift({key: contextKey, name: "Context", type: "", isProperty: false, filterName: "Context", filterMatch: false}); //add Context field to front of properties
-            relatedEntities.push({entityType: entityObject.entityType, entityModel: entityObject.entityModel, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps});
+            relatedEntityProps.unshift({
+              key: uriKey,
+              name: "URI",
+              type: "",
+              isProperty: false,
+              filterName: "URI",
+              filterMatch: false,
+            }); //add URI field to front of properties
+            relatedEntityProps.unshift({
+              key: contextKey,
+              name: "Context",
+              type: "",
+              isProperty: false,
+              filterName: "Context",
+              filterMatch: false,
+            }); //add Context field to front of properties
+            relatedEntities.push({
+              entityType: entityObject.entityType,
+              entityModel: entityObject.entityModel,
+              entityLabel: entityObject.mappingTitle,
+              entityMappingId: entityObject.entityMappingId,
+              relatedEntityMappings: entityObject.relatedEntityMappings,
+              entityProps: relatedEntityProps,
+            });
           }
         });
       }
@@ -636,7 +689,11 @@ const MappingStepDetail: React.FC = () => {
       let defaultEntitiesToDisplay: any = [];
       if (existingRelatedMappings) {
         relatedEntities.map(entity => {
-          if (existingRelatedMappings.findIndex(existingEntity => existingEntity.relatedEntityMappingId === entity.entityMappingId) !== -1) {
+          if (
+            existingRelatedMappings.findIndex(
+              existingEntity => existingEntity.relatedEntityMappingId === entity.entityMappingId,
+            ) !== -1
+          ) {
             defaultEntitiesToDisplay.push(entity);
           }
         });
@@ -647,7 +704,6 @@ const MappingStepDetail: React.FC = () => {
       setTgtEntityReferences({...tgtRefs});
     }
   };
-
 
   const extractNestedEntityData = (entProps, nestedEntityData: Array<any>, entityTitle: string, parentKey = "") => {
     Object.keys(entProps).forEach(key => {
@@ -669,12 +725,11 @@ const MappingStepDetail: React.FC = () => {
           filterMatch: false,
           isProperty: true,
           type: dataTp,
-          children: []
+          children: [],
         };
         nestedEntityData.push(propty);
         extractNestedEntityData(val.subProperties, propty.children, entityTitle, parentKey);
-        parentKey = (parentKey.indexOf("/") !== -1) ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
-
+        parentKey = parentKey.indexOf("/") !== -1 ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
       } else {
         let dataTp = getDatatype(val);
         if (val.hasOwnProperty("relatedEntityType") && val.hasOwnProperty("joinPropertyName")) {
@@ -689,9 +744,13 @@ const MappingStepDetail: React.FC = () => {
             isProperty: true,
             type: dataTp,
             relatedEntityType: relatedEntType,
-            joinPropertyName: joinPropName
+            joinPropertyName: joinPropName,
           };
-        } else if (val.hasOwnProperty("items") && val.items.hasOwnProperty("relatedEntityType") && val.items.hasOwnProperty("joinPropertyName")) {
+        } else if (
+          val.hasOwnProperty("items") &&
+          val.items.hasOwnProperty("relatedEntityType") &&
+          val.items.hasOwnProperty("joinPropertyName")
+        ) {
           let relatedEntType = val.items["relatedEntityType"];
           let joinPropName = val.items["joinPropertyName"];
           EntityTableKeyIndex = EntityTableKeyIndex + 1;
@@ -703,7 +762,7 @@ const MappingStepDetail: React.FC = () => {
             isProperty: true,
             type: dataTp,
             relatedEntityType: relatedEntType,
-            joinPropertyName: joinPropName
+            joinPropertyName: joinPropName,
           };
         } else {
           EntityTableKeyIndex = EntityTableKeyIndex + 1;
@@ -723,7 +782,7 @@ const MappingStepDetail: React.FC = () => {
     return nestedEntityData;
   };
 
-  const getDatatype = (prop) => {
+  const getDatatype = prop => {
     if (prop.datatype === "array") {
       if (prop.items && prop.items.$ref) {
         let s = prop.items.$ref.split("/");
@@ -740,12 +799,12 @@ const MappingStepDetail: React.FC = () => {
     return null;
   };
 
-  const setMappingStepDetailPageData = async (mappingStepArtifact) => {
+  const setMappingStepDetailPageData = async mappingStepArtifact => {
     await getSourceData(mappingStepArtifact.name);
     extractEntityInfoForTable();
   };
 
-  const handleSubmitUri = async (uri) => {
+  const handleSubmitUri = async uri => {
     setSourceURIPrev(sourceURI);
     await fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
@@ -767,36 +826,129 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
-    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {mapData["sourceQuery"]}</div>}
-    {!editingURI ?
-      <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri} tabIndex={0} onFocus={(e) => { handleMouseOver(e); }} onBlur={(e) => setShowEditURIOption(false)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "editUri"); }}>
-        {!showEditURIOption ?
-          (docNotFound ? <div>
-            <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.invalidURIText}>{sourceURI}</span></span>
-            <span className={styles.sourceValidationError}>{MappingStepMessages.invalidURIMessage}</span>
+  const srcDetails =
+    mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? (
+      <div className={styles.xpathDoc}>
+        {mapData["selectedSource"] === "collection" ? (
+          <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div>
+        ) : (
+          <div className={styles.sourceQuery}>Source Query: {mapData["sourceQuery"]}</div>
+        )}
+        {!editingURI ? (
+          <div
+            onMouseOver={e => handleMouseOver(e)}
+            onMouseLeave={e => setShowEditURIOption(false)}
+            className={styles.uri}
+            tabIndex={0}
+            onFocus={e => {
+              handleMouseOver(e);
+            }}
+            onBlur={e => setShowEditURIOption(false)}
+            onKeyDown={e => {
+              serviceNameKeyDownHandler(e, "editUri");
+            }}
+          >
+            {!showEditURIOption ? (
+              docNotFound ? (
+                <div>
+                  <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>
+                    URI: <span className={styles.invalidURIText}>{sourceURI}</span>
+                  </span>
+                  <span className={styles.sourceValidationError}>{MappingStepMessages.invalidURIMessage}</span>
+                </div>
+              ) : (
+                <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>
+                  URI: <span className={styles.URItext}>{sourceURI}</span>
+                </span>
+              )
+            ) : docNotFound ? (
+              <div>
+                <div className={styles.uriHoverContainer}>
+                  <span data-testid={"uri-edit"} className={styles.showingEditContainer}>
+                    URI:
+                    <span className={styles.showingEditIconInvalid}>{sourceURI}</span>
+                    <span>
+                      <HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top">
+                        <i>
+                          <FontAwesomeIcon
+                            icon={faPencilAlt}
+                            size="lg"
+                            onClick={handleEditIconClick}
+                            className={styles.editIcon}
+                            data-testid={"pencil-icon"}
+                          />
+                        </i>
+                      </HCTooltip>
+                    </span>
+                    <span className={styles.sourceValidationErrorEdit}>{MappingStepMessages.invalidURIMessage}</span>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.uriHoverContainer}>
+                <span data-testid={"uri-edit"} className={styles.showingEditContainer}>
+                  URI:{" "}
+                  <span className={styles.showingEditIcon}>
+                    {sourceURI}
+                    <HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top">
+                      <i>
+                        <FontAwesomeIcon
+                          icon={faPencilAlt}
+                          size="lg"
+                          onClick={handleEditIconClick}
+                          className={styles.editIcon}
+                          data-testid={"pencil-icon"}
+                        />
+                      </i>
+                    </HCTooltip>
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
-            :
-            <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>)
-          : (docNotFound ? <div>
-            <div className={styles.uriHoverContainer}>
-              <span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI:
-                <span className={styles.showingEditIconInvalid}>{sourceURI}</span><span><HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top"><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></HCTooltip></span>
-                <span className={styles.sourceValidationErrorEdit}>{MappingStepMessages.invalidURIMessage}</span>
-              </span>
-            </div>
+        ) : (
+          <div className={styles.inputURIContainer}>
+            URI:
+            <span>
+              <HCInput
+                data-testid={"uri-input"}
+                value={sourceURI}
+                ref={ref => ref && ref.focus()}
+                onChange={handleURIEditing}
+                style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}}
+                className={styles.uriEditing}
+                onFocus={e =>
+                  e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)
+                }
+                onKeyDown={e => {
+                  serviceNameKeyDownHandler(e, "uriInput");
+                }}
+              />
+              &nbsp;
+              <XLg
+                aria-label="icon: close"
+                className={styles.closeIcon}
+                onClick={() => handleCloseEditOption()}
+                tabIndex={0}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "closeEditUri")}
+              />
+              &nbsp;
+              <CheckSquare
+                aria-label="icon: check"
+                className={styles.checkIcon}
+                onClick={() => handleSubmitUri(sourceURI)}
+                tabIndex={0}
+                onKeyDown={e => {
+                  serviceNameKeyDownHandler(e, "submitEditUri");
+                }}
+              />
+            </span>
           </div>
-            :
-            <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<HCTooltip id={"edit-uri-tooltip"} text={MappingStepMessages.editURITooltip} placement="top"><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></HCTooltip></span></span></div>)}
+        )}
       </div>
-      :
-      <div className={styles.inputURIContainer}>URI:
-        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriInput"); }} />&nbsp;
-          <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "closeEditUri")}/>&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "submitEditUri"); }}/>
-        </span>
-      </div>
-    }
-  </div> : "";
+    ) : (
+      ""
+    );
 
   // Run when mapping details is opened or returned to
   useEffect(() => {
@@ -816,7 +968,7 @@ const MappingStepDetail: React.FC = () => {
     } else {
       history.push("/tiles/curate");
     }
-    return (() => {
+    return () => {
       setSourceExpandedKeys([]);
       setEntityExpandedKeys([]);
       setExpandedSourceFlag(false);
@@ -827,27 +979,27 @@ const MappingStepDetail: React.FC = () => {
       setUriIndex(0);
       setSourceData([]);
       setEntityTypeProperties([]);
-    });
+    };
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   useEffect(() => {
     onClear();
     initializeEntityExpandKeys();
-    return (() => {
+    return () => {
       setSearchSourceText("");
       setSearchedSourceColumn("");
       // setSearchEntityText("");
       // setSearchedEntityColumn("");
-    });
+    };
   }, [entityTypeProperties, mapData]);
 
   useEffect(() => {
     initializeSourceExpandKeys();
     setFlatArray(flattenSourceDoc([...sourceData], [], ""));
-    return (() => {
+    return () => {
       setSearchSourceText("");
       setSearchedSourceColumn("");
-    });
+    };
   }, [sourceData]);
 
   useEffect(() => {
@@ -885,21 +1037,28 @@ const MappingStepDetail: React.FC = () => {
   };
 
   //To handle navigation buttons
-  const onNavigateURIList = (index) => {
+  const onNavigateURIList = index => {
     onUpdateURINavButtons(docUris[index]).then(() => {
       setUriIndex(index);
       setSourceURI(docUris[index]);
       setSourceURIPrev(docUris[index]);
     });
   };
-  const onUpdateURINavButtons = async (uri) => {
+  const onUpdateURINavButtons = async uri => {
     await fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
       getMapValidationResp(uri);
     }
   };
 
-  const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={docUris && docUris.length - 1} handleSelection={onNavigateURIList} />;
+  const navigationButtons = (
+    <SourceNavigation
+      currentIndex={uriIndex}
+      startIndex={0}
+      endIndex={docUris && docUris.length - 1}
+      handleSelection={onNavigateURIList}
+    />
+  );
 
   const onBack = () => {
     history.push("/tiles/curate");
@@ -913,9 +1072,10 @@ const MappingStepDetail: React.FC = () => {
     const propPath = path.replace(/\//g, "/properties/");
     const keys = propPath.split("/");
     const lastKey = keys.pop();
-    const lastObj = keys.reduce((obj, key) =>
-      obj[key] = key !== "properties" ? (obj[key] || {"sourcedFrom": ""}) : obj[key] || {},
-    obj);
+    const lastObj = keys.reduce(
+      (obj, key) => (obj[key] = key !== "properties" ? obj[key] || {"sourcedFrom": ""} : obj[key] || {}),
+      obj,
+    );
     lastObj[lastKey] = val;
 
     return obj;
@@ -948,7 +1108,6 @@ const MappingStepDetail: React.FC = () => {
       } else {
         setSourceExpandedKeys([...getKeysToExpandForFilter(srcData, "rowKey", searchTxt)]);
       }
-
     }
   };
 
@@ -964,9 +1123,15 @@ const MappingStepDetail: React.FC = () => {
     let newStorage;
     if (sourceFormat) {
       if (sourceFormat === "xml") {
-        newStorage = {...storage, curateMappingSourceSide: {...storage.curateMappingSourceSide, xmlTable: {filterTable: ""}}};
+        newStorage = {
+          ...storage,
+          curateMappingSourceSide: {...storage.curateMappingSourceSide, xmlTable: {filterTable: ""}},
+        };
       } else {
-        newStorage = {...storage, curateMappingSourceSide: {...storage.curateMappingSourceSide, jsonTable: {filterTable: ""}}};
+        newStorage = {
+          ...storage,
+          curateMappingSourceSide: {...storage.curateMappingSourceSide, jsonTable: {filterTable: ""}},
+        };
       }
       setViewSettings(newStorage);
     }
@@ -975,22 +1140,26 @@ const MappingStepDetail: React.FC = () => {
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, rowNum) => {
     if (searchedSourceColumn === columnName && rowNum !== 0 && filterActive) {
       if (sourceFormat === "xml" && rowNum === 1) {
-        return <div className={styles.filteredXMLHeader}>
-          {/* <span className={styles.tableExpandIcon}>{expandTableIcon}</span> */}
+        return (
+          <div className={styles.filteredXMLHeader}>
+            {/* <span className={styles.tableExpandIcon}>{expandTableIcon}</span> */}
+            <Highlighter
+              highlightClassName={styles.highlightStyle}
+              searchWords={[searchSourceText]}
+              autoEscape
+              textToHighlight={textToSearchInto}
+            />
+          </div>
+        );
+      } else {
+        return (
           <Highlighter
             highlightClassName={styles.highlightStyle}
             searchWords={[searchSourceText]}
             autoEscape
             textToHighlight={textToSearchInto}
           />
-        </div>;
-      } else {
-        return <Highlighter
-          highlightClassName={styles.highlightStyle}
-          searchWords={[searchSourceText]}
-          autoEscape
-          textToHighlight={textToSearchInto}
-        />;
+        );
       }
     } else {
       return valueToDisplay;
@@ -1001,14 +1170,17 @@ const MappingStepDetail: React.FC = () => {
   const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand: any = [], parentRowKey = 0) => {
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
-        if (((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
+        if (
+          ((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"]))
+            .toLowerCase()
+            .indexOf(searchText.toLowerCase()) !== -1
+        ) {
           if (!allKeysToExpand.includes(obj[rowKey])) {
             allKeysToExpand.push(obj[rowKey]);
           }
         }
         parentRowKey = obj[rowKey];
         getKeysToExpandForFilter(obj["children"], rowKey, searchText, allKeysToExpand, parentRowKey);
-
       } else {
         if ((rowKey === "rowKey" ? obj.key : obj.name).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
           if (!allKeysToExpand.includes(parentRowKey)) {
@@ -1021,7 +1193,6 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const getStoredFilterSourceTable = (origin?) => {
-
     let storageAux = storage?.curateMappingSourceSide;
     let jsonStorageAux = storageAux?.jsonTable;
     let xmlStorageAux = storageAux?.xmlTable;
@@ -1038,8 +1209,7 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const filterByName = (value) => {
-
+  const filterByName = value => {
     if (!value) if (getStoredFilterSourceTable()) value = getStoredFilterSourceTable();
 
     setSearchedKey(value);
@@ -1075,22 +1245,22 @@ const MappingStepDetail: React.FC = () => {
   const headerColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div className={"d-flex justify-content-between align-items-center"}>
-        <span data-testid="sourceTableKey">
-          Name
-        </span>
-        <HCPopoverSearch
-          popoverId={"popover-filter"}
-          searchIconId={`filterIcon-srcName`}
-          inputId={`searchInput-source`}
-          inputPlaceholder={`Search name`}
-          inputValue={searchedKey}
-          resetButtonId={`resetSearch-source`}
-          onReset={() => handleSourceSearchReset()}
-          searchButtonId={`submitSearch-source`}
-          onSearch={(value) => filterByName(value)}
-        />
-      </div>,
+      headerFormatter: () => (
+        <div className={"d-flex justify-content-between align-items-center"}>
+          <span data-testid="sourceTableKey">Name</span>
+          <HCPopoverSearch
+            popoverId={"popover-filter"}
+            searchIconId={`filterIcon-srcName`}
+            inputId={`searchInput-source`}
+            inputPlaceholder={`Search name`}
+            inputValue={searchedKey}
+            resetButtonId={`resetSearch-source`}
+            onReset={() => handleSourceSearchReset()}
+            searchButtonId={`submitSearch-source`}
+            onSearch={value => filterByName(value)}
+          />
+        </div>
+      ),
       dataField: "key",
       key: "rowKey",
       // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
@@ -1112,55 +1282,93 @@ const MappingStepDetail: React.FC = () => {
         } else {
           textToSearchInto = text;
         }
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ?
-          <div>
-            <span className={styles.sourceName}>
-              {textHaveDotsSeparator ?
-                <span>
-                  <HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace} data-testid={`${text?.split(":")[0] + ":"}-namespace-prefix`}>{text?.split(":")[0] + ": "}</span>
-                  </HCTooltip>
-                  <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
-                    {text?.split(":")[1]}
-                  </span>
-                </span>
-                :
-                textHaveMultDotsSeparator ?
+        let valueToDisplay =
+          sourceFormat === "xml" && row.rowKey === 1 ? (
+            <div>
+              <span className={styles.sourceName}>
+                {textHaveDotsSeparator ? (
                   <span>
-                    <HCTooltip text={prefix + " = \"" + namespaces[prefix] + "\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace} data-testid={`${prefix + ":"}-namespace-prefix`}>{prefix + ": "}</span>
+                    <HCTooltip
+                      text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
+                      id="xml-source-name-tooltip"
+                      placement="top"
+                    >
+                      <span className={styles.namespace} data-testid={`${text?.split(":")[0] + ":"}-namespace-prefix`}>
+                        {text?.split(":")[0] + ": "}
+                      </span>
                     </HCTooltip>
-                    <span data-testid={`${suffix}-namespaced-value`}>
-                      {suffix}
-                    </span>
+                    <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>{text?.split(":")[1]}</span>
                   </span>
-                  :
-                  text}
+                ) : textHaveMultDotsSeparator ? (
+                  <span>
+                    <HCTooltip
+                      text={prefix + " = \"" + namespaces[prefix] + "\""}
+                      id="xml-source-name-tooltip"
+                      placement="top"
+                    >
+                      <span className={styles.namespace} data-testid={`${prefix + ":"}-namespace-prefix`}>
+                        {prefix + ": "}
+                      </span>
+                    </HCTooltip>
+                    <span data-testid={`${suffix}-namespaced-value`}>{suffix}</span>
+                  </span>
+                ) : (
+                  text
+                )}
+              </span>
+            </div>
+          ) : (
+            <span className={styles.sourceName}>
+              {text?.split(":").length > 1 ? (
+                <span>
+                  <HCTooltip
+                    text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
+                    id="source-name-tooltip"
+                    placement="top"
+                  >
+                    <span className={styles.namespace}>{text?.split(":")[0] + ": "}</span>
+                  </HCTooltip>
+                  <span>{text?.split(":")[1]}</span>
+                </span>
+              ) : (
+                text
+              )}
             </span>
-          </div>
-          : <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+          );
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", row.rowKey);
       },
-      formatExtraData: {filterActive}
+      formatExtraData: {filterActive},
     },
     {
       text: "Value",
-      headerFormatter: () => <div className={styles.valueHeader}><span data-testid="sourceTableValue">Value</span></div>,
+      headerFormatter: () => (
+        <div className={styles.valueHeader}>
+          <span data-testid="sourceTableValue">Value</span>
+        </div>
+      ),
       dataField: "val",
       key: "val",
       // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
       width: "45%",
-      formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
-    }
+      formatter: (text, row) => (
+        <div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>
+          {text || text === "" ? getTextforSourceValue(text, row) : ""}
+        </div>
+      ),
+    },
   ];
 
   const lowerXMLColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div className={"d-flex justify-content-between align-items-center"}>
-        <span data-testid="sourceTableKey" className={styles.nameHeaderText}>
-          Name
-        </span>
-      </div>,
+      headerFormatter: () => (
+        <div className={"d-flex justify-content-between align-items-center"}>
+          <span data-testid="sourceTableKey" className={styles.nameHeaderText}>
+            Name
+          </span>
+        </div>
+      ),
       dataField: "key",
       key: "rowKey",
       width: "55%",
@@ -1173,59 +1381,90 @@ const MappingStepDetail: React.FC = () => {
           suffix = partArray.pop();
           prefix = partArray.join(":");
         }
-        let renderText = (textToSearchInto, textToHighlight) => getRenderOutput(textToSearchInto, textToHighlight, "key", row.rowKey);
-        return <div>
-          {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ?
-            row.children ?
-              <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>
-                {!extraData.sourceExpandedKeys?.includes(row.rowKey) ?
-                  <span><ChevronRight /></span>
-                  : <span><ChevronDown /></span>
-                }
-              </span>
-              : <span className={styles.noTableExpandIcon}>{null}</span>
-            : null
-          }
-          <span className={styles.sourceName}>
-            {textHaveDotsSeparator ?
-              <span>
-                <HCTooltip text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
-                  <span className={styles.namespace} data-testid={`${text?.split(":")[0] + ": "}-namespace-prefix`}>
-                    {renderText(text?.split(":")[0] + ": ", text?.split(":")[0] + ": ")}
-                  </span>
-                </HCTooltip>
-                <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
-                  {renderText(text?.split(":")[1], text?.split(":")[1])}
+        let renderText = (textToSearchInto, textToHighlight) =>
+          getRenderOutput(textToSearchInto, textToHighlight, "key", row.rowKey);
+        return (
+          <div>
+            {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ? (
+              row.children ? (
+                <span
+                  onClick={() => toggleSourceRowExpanded(row, "", "rowKey")}
+                  className={styles.tableExpandIcon}
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    serviceRowDownHandler(e, row);
+                  }}
+                >
+                  {!extraData.sourceExpandedKeys?.includes(row.rowKey) ? (
+                    <span>
+                      <ChevronRight />
+                    </span>
+                  ) : (
+                    <span>
+                      <ChevronDown />
+                    </span>
+                  )}
                 </span>
-              </span>
-              : textHaveMultDotsSeparator ?
+              ) : (
+                <span className={styles.noTableExpandIcon}>{null}</span>
+              )
+            ) : null}
+            <span className={styles.sourceName}>
+              {textHaveDotsSeparator ? (
                 <span>
-                  <HCTooltip text={prefix + " = \"" + namespaces[prefix] + "\""} id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"} placement="top">
+                  <HCTooltip
+                    text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
+                    id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"}
+                    placement="top"
+                  >
+                    <span className={styles.namespace} data-testid={`${text?.split(":")[0] + ": "}-namespace-prefix`}>
+                      {renderText(text?.split(":")[0] + ": ", text?.split(":")[0] + ": ")}
+                    </span>
+                  </HCTooltip>
+                  <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
+                    {renderText(text?.split(":")[1], text?.split(":")[1])}
+                  </span>
+                </span>
+              ) : textHaveMultDotsSeparator ? (
+                <span>
+                  <HCTooltip
+                    text={prefix + " = \"" + namespaces[prefix] + "\""}
+                    id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"}
+                    placement="top"
+                  >
                     <span className={styles.namespace} data-testid={`${prefix + ":"}-namespace-prefix`}>
                       {renderText(prefix + ": ", prefix + ": ")}
                     </span>
                   </HCTooltip>
-                  <span data-testid={`${suffix}-namespaced-value`}>
-                    {renderText(suffix, suffix)}
-                  </span>
+                  <span data-testid={`${suffix}-namespaced-value`}>{renderText(suffix, suffix)}</span>
                 </span>
-                : renderText(text, text)
-            }
-          </span>
-        </div>;
+              ) : (
+                renderText(text, text)
+              )}
+            </span>
+          </div>
+        );
       },
-      formatExtraData: {sourceExpandedKeys, filterActive}
+      formatExtraData: {sourceExpandedKeys, filterActive},
     },
     {
       text: "Value",
-      headerFormatter: () => <div className={styles.valueHeader}><span data-testid="sourceTableValue">Value</span></div>,
+      headerFormatter: () => (
+        <div className={styles.valueHeader}>
+          <span data-testid="sourceTableValue">Value</span>
+        </div>
+      ),
       dataField: "val",
       key: "val",
       // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
       width: "45%",
-      formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
-    }
+      formatter: (text, row) => (
+        <div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>
+          {text || text === "" ? getTextforSourceValue(text, row) : ""}
+        </div>
+      ),
+    },
   ];
 
   const getClassNames = (format, datatype) => {
@@ -1236,33 +1475,68 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const getTextforSourceValue = (text, row) => {
-    let arr = typeof (text) === "string" ? text.split(", ") : text;
+    let arr = typeof text === "string" ? text.split(", ") : text;
     let stringLenWithoutEllipsis = 14;
     let requiresToolTip = false;
     let response;
     if (Array.isArray(arr)) {
-      requiresToolTip = (arr[0] ? arr[0].length > stringLenWithoutEllipsis : false) || (arr[1] ? arr[1].length > stringLenWithoutEllipsis : false);
+      requiresToolTip =
+        (arr[0] ? arr[0].length > stringLenWithoutEllipsis : false) ||
+        (arr[1] ? arr[1].length > stringLenWithoutEllipsis : false);
       if (arr.length >= 2) {
         let xMore = <span className="moreVal">{"(" + (arr.length - 2) + " more)"}</span>;
-        let itemOne = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
-        let itemTwo = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}</span>;
-        let fullItem = <span>{itemOne}{"\n"}{itemTwo}</span>;
+        let itemOne = (
+          <span className={getClassNames(sourceFormat, row.datatype)}>
+            {getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}
+          </span>
+        );
+        let itemTwo = (
+          <span className={getClassNames(sourceFormat, row.datatype)}>
+            {getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}
+          </span>
+        );
+        let fullItem = (
+          <span>
+            {itemOne}
+            {"\n"}
+            {itemTwo}
+          </span>
+        );
         if (arr.length === 2) {
           response = <p>{fullItem}</p>;
         } else {
           //If there are more than 2 elements in array, tooltip is required.
           requiresToolTip = true;
-          response = <p>{fullItem}{"\n"}{xMore}</p>;
+          response = (
+            <p>
+              {fullItem}
+              {"\n"}
+              {xMore}
+            </p>
+          );
         }
       } else {
-        response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
+        response = (
+          <span className={getClassNames(sourceFormat, row.datatype)}>
+            {getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}
+          </span>
+        );
       }
-
     } else {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
-      response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
+      response = (
+        <span className={getClassNames(sourceFormat, row.datatype)}>
+          {getInitialChars(text, stringLenWithoutEllipsis, "...")}
+        </span>
+      );
     }
-    return requiresToolTip ? <HCTooltip text={text} id="source-value-tooltip" placement="bottom">{response}</HCTooltip> : response;
+    return requiresToolTip ? (
+      <HCTooltip text={text} id="source-value-tooltip" placement="bottom">
+        {response}
+      </HCTooltip>
+    ) : (
+      response
+    );
   };
 
   // CSS properties for the alert message after saving the mapping
@@ -1270,30 +1544,46 @@ const MappingStepDetail: React.FC = () => {
     border: errorInSaving === "noError" ? "1px solid #008000" : "1px solid #ff0000",
     marginLeft: "38vw",
     top: "2vh",
-    marginBottom: 0
+    marginBottom: 0,
   };
 
   const success = () => {
     let mesg = `All changes are saved on ${convertDateFromISO(new Date())}`;
     let errorMesg = `An error occured while saving the changes.`;
 
-    let msg = <span data-testid="successMessage" id="successMessage"><HCAlert variant="success" style={saveMessageCSS} showIcon>{mesg}</HCAlert></span>;
-    let errorMsg = <span id="errorMessage"><HCAlert variant="danger" style={saveMessageCSS} showIcon>{errorMesg}</HCAlert></span>;
+    let msg = (
+      <span data-testid="successMessage" id="successMessage">
+        <HCAlert variant="success" style={saveMessageCSS} showIcon>
+          {mesg}
+        </HCAlert>
+      </span>
+    );
+    let errorMsg = (
+      <span id="errorMessage">
+        <HCAlert variant="danger" style={saveMessageCSS} showIcon>
+          {errorMesg}
+        </HCAlert>
+      </span>
+    );
     setTimeout(() => {
       setErrorInSaving("");
     }, 2000);
     return errorInSaving === "noError" ? msg : errorMsg;
-
   };
 
-  const emptyData = (JSON.stringify(sourceData) === JSON.stringify([]) && !docNotFound);
+  const emptyData = JSON.stringify(sourceData) === JSON.stringify([]) && !docNotFound;
 
   //Logic for Test and Clear buttons
-  const getMapValidationResp = async (uri) => {
+  const getMapValidationResp = async uri => {
     setToggleLoading(true);
     setIsTestClicked(true);
     try {
-      let resp = await getMappingValidationResp(curationOptions.activeStep.stepArtifact.name, savedMappingArt, uri, curationOptions.activeStep.stepArtifact.sourceDatabase);
+      let resp = await getMappingValidationResp(
+        curationOptions.activeStep.stepArtifact.name,
+        savedMappingArt,
+        uri,
+        curationOptions.activeStep.stepArtifact.sourceDatabase,
+      );
       if (resp && resp.status === 200) {
         setMapResp({...resp.data});
       }
@@ -1338,7 +1628,7 @@ const MappingStepDetail: React.FC = () => {
       }
       if (element.children) {
         flattenSourceDoc(element.children, flatArray, flatArrayKey);
-        flatArrayKey = (flatArrayKey.indexOf("/") === -1) ? "" : flatArrayKey.substring(0, flatArrayKey.lastIndexOf("/"));
+        flatArrayKey = flatArrayKey.indexOf("/") === -1 ? "" : flatArrayKey.substring(0, flatArrayKey.lastIndexOf("/"));
       }
     });
     return flatArray;
@@ -1349,25 +1639,47 @@ const MappingStepDetail: React.FC = () => {
     if (savedMappingArt.relatedEntityMappings?.length) {
       relatedEntities = [...savedMappingArt.relatedEntityMappings];
     }
-    relatedEntityTypeProperties?.length && relatedEntityTypeProperties.forEach(entity => {
-      if (relatedEntities.length === 0 || relatedEntities.findIndex(el => el.relatedEntityMappingId === entity.entityMappingId) === -1) {
-        if (relatedEntitiesSelected.includes(entity)) {
-          let tgtEntityType = entity.entityModel.info.baseUri + entity.entityModel.info.title + "-" + entity.entityModel.info.version + "/" + entity.entityModel.info.title;
-          let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, entity.entityModel.info.title];
-          let relatedEntity = {relatedEntityMappingId: entity.entityMappingId, expressionContext: "", properties: {}, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
-          relatedEntities.push(relatedEntity);
+    relatedEntityTypeProperties?.length &&
+      relatedEntityTypeProperties.forEach(entity => {
+        if (
+          relatedEntities.length === 0 ||
+          relatedEntities.findIndex(el => el.relatedEntityMappingId === entity.entityMappingId) === -1
+        ) {
+          if (relatedEntitiesSelected.includes(entity)) {
+            let tgtEntityType =
+              entity.entityModel.info.baseUri +
+              entity.entityModel.info.title +
+              "-" +
+              entity.entityModel.info.version +
+              "/" +
+              entity.entityModel.info.title;
+            let relatedEntityCollections = [
+              curationOptions.activeStep.stepArtifact.name,
+              entity.entityModel.info.title,
+            ];
+            let relatedEntity = {
+              relatedEntityMappingId: entity.entityMappingId,
+              expressionContext: "",
+              properties: {},
+              targetEntityType: tgtEntityType,
+              collections: relatedEntityCollections,
+              permissions: curationOptions.activeStep.stepArtifact.permissions,
+            };
+            relatedEntities.push(relatedEntity);
+          }
         }
-      }
-    });
+      });
     let {...dataPayload} = savedMappingArt;
     dataPayload.relatedEntityMappings = relatedEntities;
     setSavedMappingArt(dataPayload);
   };
 
-  const deleteRelatedEntity = async (entityToDelete) => {
+  const deleteRelatedEntity = async entityToDelete => {
     let dataPayload = savedMappingArt;
     let updateRelatedMappings: any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings));
-    let indexToRemove = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityToDelete.entityMappingId);
+    let indexToRemove = updateRelatedMappings.findIndex(
+      entity => entity["relatedEntityMappingId"] === entityToDelete.entityMappingId,
+    );
 
     if (indexToRemove > -1) {
       updateRelatedMappings.splice(indexToRemove, 1);
@@ -1380,7 +1692,10 @@ const MappingStepDetail: React.FC = () => {
     } else {
       setErrorInSaving("error");
     }
-    let mapArt = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
+    let mapArt = await getMappingArtifactByMapName(
+      dataPayload.targetEntityType,
+      curationOptions.activeStep.stepArtifact.name,
+    );
     if (mapArt) {
       await setSavedMappingArt({...mapArt});
     }
@@ -1402,7 +1717,9 @@ const MappingStepDetail: React.FC = () => {
       }
       //when saveMapping is called by related entities, parse payload to make update inside the proper index of the relatedEntityMappings array
       let updateRelatedMappings: any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings)); //make deep copy of related mappings to update without triggering useEffects
-      let indexToUpdate = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityMappingId);
+      let indexToUpdate = updateRelatedMappings.findIndex(
+        entity => entity["relatedEntityMappingId"] === entityMappingId,
+      );
       if (indexToUpdate !== -1) {
         if (updatedContext && updatedContext.trim() === "") {
           updatedContext = "/";
@@ -1413,9 +1730,22 @@ const MappingStepDetail: React.FC = () => {
         dataPayload = {...dataPayload, relatedEntityMappings: updateRelatedMappings};
       } else {
         //add object to relatedEntityMappings in payload array
-        let tgtEntityType = relatedEntityModel.info.baseUri + relatedEntityModel.info.title + "-" + relatedEntityModel.info.version + "/" + relatedEntityModel.info.title;
+        let tgtEntityType =
+          relatedEntityModel.info.baseUri +
+          relatedEntityModel.info.title +
+          "-" +
+          relatedEntityModel.info.version +
+          "/" +
+          relatedEntityModel.info.title;
         let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, relatedEntityModel.info.title];
-        let relatedEntity = {relatedEntityMappingId: entityMappingId, expressionContext: updatedContext, properties: obj, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
+        let relatedEntity = {
+          relatedEntityMappingId: entityMappingId,
+          expressionContext: updatedContext,
+          properties: obj,
+          targetEntityType: tgtEntityType,
+          collections: relatedEntityCollections,
+          permissions: curationOptions.activeStep.stepArtifact.permissions,
+        };
         dataPayload.relatedEntityMappings.push(relatedEntity);
       }
     } else {
@@ -1428,7 +1758,10 @@ const MappingStepDetail: React.FC = () => {
     } else {
       setErrorInSaving("error");
     }
-    let mapArt: MappingStep = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
+    let mapArt: MappingStep = await getMappingArtifactByMapName(
+      dataPayload.targetEntityType,
+      curationOptions.activeStep.stepArtifact.name,
+    );
     if (mapArt) {
       await setSavedMappingArt({...mapArt});
       // On success and if session storage mapping data exists, update it
@@ -1438,14 +1771,13 @@ const MappingStepDetail: React.FC = () => {
           curate: {
             stepArtifact: mapArt,
             modelDefinition: {...storage.curate?.modelDefinition},
-            entityType: storage.curate?.entityType
-          }
+            entityType: storage.curate?.entityType,
+          },
         });
       }
     }
     setMapSaved(mapSavedResult);
   };
-
 
   const splitPaneStyles = {
     pane1: {minWidth: "150px"},
@@ -1475,67 +1807,84 @@ const MappingStepDetail: React.FC = () => {
     setColOptMenuVisible(flag);
   };
 
-  const handleColOptionsChecked = async (e) => {
+  const handleColOptionsChecked = async e => {
     let obj = getColumnOptionsPopover() !== "" ? getColumnOptionsPopover() : checkedEntityColumns;
     obj[e.target.value] = e.target.checked;
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
         //columnOptions: { ...storage?.curateEntityTable?.columnOptions, [curationOptions?.activeStep?.stepArtifact?.name] :obj},
         columnOptions: obj,
-      }
+      },
     };
     setViewSettings(newEntityStorage);
     await setCheckedEntityColumns({...obj});
-    checkedEntityColumnsFlag ? checkedEntityColumnsFlag === "false" ? setCheckedEntityColumnsFlag("true") : setCheckedEntityColumnsFlag("false") : setCheckedEntityColumnsFlag("true");
+    checkedEntityColumnsFlag
+      ? checkedEntityColumnsFlag === "false"
+        ? setCheckedEntityColumnsFlag("true")
+        : setCheckedEntityColumnsFlag("false")
+      : setCheckedEntityColumnsFlag("true");
   };
 
   const columnOptionsDropdown = (
     <Dropdown.Menu variant="secondary">
       {Object.keys(checkedEntityColumns).map((entLabel, i) => (
-        <Dropdown.Item
-          as="span"
-          key={entLabel}
-          eventKey={entLabel}
-          className={styles.DropdownMenuItem}>
+        <Dropdown.Item as="span" key={entLabel} eventKey={entLabel} className={styles.DropdownMenuItem}>
           <HCCheckbox
             id={entLabel + "-checkbox-id"}
             handleClick={handleColOptionsChecked}
             value={entLabel}
             label={columnOptionsLabel[entLabel]}
-            checked={getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel] : checkedEntityColumns[entLabel]}
+            checked={
+              getColumnOptionsPopover() !== "" ? getColumnOptionsPopover()[entLabel] : checkedEntityColumns[entLabel]
+            }
             dataTestId={`columnOptionsCheckBox-${entLabel}`}
-            handleKeyDown={(e) => { serviceCheckKeyDownHandler(e, i); }}
+            handleKeyDown={e => {
+              serviceCheckKeyDownHandler(e, i);
+            }}
           />
         </Dropdown.Item>
       ))}
     </Dropdown.Menu>
   );
 
-  const columnOptionsSelector =
-    <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
-      <Dropdown.Toggle id="columnOptionsSelectorButton" aria-label={"columnOptionsSelectorButton"} className={styles.columnOptionsSelector} variant="link">
+  const columnOptionsSelector = (
+    <Dropdown
+      autoClose="outside"
+      onToggle={handleColOptMenuVisibleChange}
+      show={colOptMenuVisible}
+      onSelect={handleColOptMenuClick}
+    >
+      <Dropdown.Toggle
+        id="columnOptionsSelectorButton"
+        aria-label={"columnOptionsSelectorButton"}
+        className={styles.columnOptionsSelector}
+        variant="link"
+      >
         <>
           <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
             <span>
-              <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector"/>
+              <FontAwesomeIcon className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector" />
             </span>
           </HCTooltip>
         </>
       </Dropdown.Toggle>
       {columnOptionsDropdown}
-    </Dropdown>;
-
+    </Dropdown>
+  );
 
   //Collapse all-Expand All button
 
   const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
-
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj[rowKey]);
-        if ((rowKey === "key" && (!expandedEntityFlag || expanded)) || (rowKey === "rowKey" && (!expandedSourceFlag || expanded))) {
+        if (
+          (rowKey === "key" && (!expandedEntityFlag || expanded)) ||
+          (rowKey === "rowKey" && (!expandedSourceFlag || expanded))
+        ) {
           getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
         }
       }
@@ -1543,7 +1892,7 @@ const MappingStepDetail: React.FC = () => {
     return allKeysToExpand;
   };
 
-  const handleSourceExpandCollapse = (option) => {
+  const handleSourceExpandCollapse = option => {
     let keys = getKeysToExpandFromTable(sourceData, "rowKey", [], true);
     if (option === "collapse") {
       setSourceExpandedKeys([]);
@@ -1554,7 +1903,7 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const handleEntityExpandCollapse = (option) => {
+  const handleEntityExpandCollapse = option => {
     let keys = getKeysToExpandFromTable(entityTypeProperties, "key", [], true);
     keys.unshift(0);
     setKeysExpandCollapseAux(keys);
@@ -1578,7 +1927,6 @@ const MappingStepDetail: React.FC = () => {
         }
         return finalKeys;
       });
-
     } else {
       setSourceExpandedKeys(prevState => {
         let finalKeys = prevState.filter(item => item !== record["rowKey"]);
@@ -1594,7 +1942,7 @@ const MappingStepDetail: React.FC = () => {
     OpenStepSettings();
   };
 
-  const UpdateMappingArtifact = async (payload) => {
+  const UpdateMappingArtifact = async payload => {
     // Update local form state
     setEntityLoaded(false);
     let mapSavedResult = await updateMappingArtifact(payload);
@@ -1607,8 +1955,8 @@ const MappingStepDetail: React.FC = () => {
             curate: {
               stepArtifact: mapArt,
               modelDefinition: {...storage.curate?.modelDefinition},
-              entityType: storage.curate?.entityType
-            }
+              entityType: storage.curate?.entityType,
+            },
           });
         }
         updateActiveStepArtifact({...mapArt});
@@ -1619,12 +1967,12 @@ const MappingStepDetail: React.FC = () => {
   const OpenStepSettings = () => {
     let stepOpenOptions = {
       isEditing: true,
-      openStepSettings: true
+      openStepSettings: true,
     };
     setStepOpenOptions(stepOpenOptions);
   };
 
-  const openStepDetails = (name) => {
+  const openStepDetails = name => {
     setOpenStepSettings(false);
   };
 
@@ -1657,36 +2005,47 @@ const MappingStepDetail: React.FC = () => {
       curateMappingSourceSide: {
         ...storage.curateMappingSourceSide,
         xmlTable: {
-          stepArtifactName: sourceFormat === "xml" ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name : getStoredStepArtifactName("xml"),
+          stepArtifactName:
+            sourceFormat === "xml"
+              ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name
+              : getStoredStepArtifactName("xml"),
           optionsPagesTable: handlePaginationObject("xml"),
-          filterTable: sourceFormat === "xml" ? searchedKey ? searchedKey : xmlFilter : xmlFilter, expandedTableKeys: sourceExpandedKeys
+          filterTable: sourceFormat === "xml" ? (searchedKey ? searchedKey : xmlFilter) : xmlFilter,
+          expandedTableKeys: sourceExpandedKeys,
         },
         jsonTable: {
-          stepArtifactName: sourceFormat === "json" ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name : getStoredStepArtifactName("json"),
+          stepArtifactName:
+            sourceFormat === "json"
+              ? curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name
+              : getStoredStepArtifactName("json"),
           optionsPagesTable: handlePaginationObject("json"),
-          filterTable: sourceFormat === "json" ? searchedKey ? searchedKey : jsonFilter : jsonFilter, expandedTableKeys: sourceExpandedKeys
-        }
-      }
+          filterTable: sourceFormat === "json" ? (searchedKey ? searchedKey : jsonFilter) : jsonFilter,
+          expandedTableKeys: sourceExpandedKeys,
+        },
+      },
     };
     setViewSettings(newStorage);
   };
 
   const serviceCheckKeyDownHandler = async (event, index) => {
     let numOptions = Object.keys(checkedEntityColumns).length;
-    if ((index === numOptions - 1 && event.keyCode === 9 && !event.shiftKey) || (index === 0 && event.keyCode === 9 && event.shiftKey)) {
+    if (
+      (index === numOptions - 1 && event.keyCode === 9 && !event.shiftKey) ||
+      (index === 0 && event.keyCode === 9 && event.shiftKey)
+    ) {
       setColOptMenuVisible(false);
     }
   };
 
   const serviceRowDownHandler = async (event, row) => {
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       event.preventDefault();
       toggleSourceRowExpanded(row, "", "rowKey");
     }
   };
 
   const serviceNameKeyDownHandler = async (event, component) => {
-    if ((event.keyCode === 9)) {
+    if (event.keyCode === 9) {
       if (!event.shiftKey) {
         if (component === "submitEditUri") {
           handleSubmitUri(sourceURI);
@@ -1700,7 +2059,7 @@ const MappingStepDetail: React.FC = () => {
       }
     }
     //Make selection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "stepSettings") {
         handleStepSettings();
       }
@@ -1726,10 +2085,16 @@ const MappingStepDetail: React.FC = () => {
 
   useEffect(() => {
     saveCurateMappingSourceSide();
-  }, [searchedKey, pageNumberTableSourceSideXml, pageNumberTableSourceSideJson, pageSizeTableSourceSideXml, pageSizeTableSourceSideJson, sourceExpandedKeys]);
+  }, [
+    searchedKey,
+    pageNumberTableSourceSideXml,
+    pageNumberTableSourceSideJson,
+    pageSizeTableSourceSideXml,
+    pageSizeTableSourceSideJson,
+    sourceExpandedKeys,
+  ]);
 
-  const handlePaginationObject = (origin) => {
-
+  const handlePaginationObject = origin => {
     const controlOriginPage = (origin: string) => {
       if (origin === "xml") {
         return pageNumberTableSourceSideXml;
@@ -1754,8 +2119,12 @@ const MappingStepDetail: React.FC = () => {
       defaultCurrent: paginationMapping.start,
       current: controlOriginPage(origin),
       pageSize: controlOriginSize(origin),
-      onChange: (page) => { origin === "xml" ? setPageNumberTableSourceSideXml(page) : setPageNumberTableSourceSideJson(page); },
-      onShowSizeChange: (size) => { origin === "xml" ? setPageSizeTableSourceSideXml(size) : setPageSizeTableSourceSideJson(size); }
+      onChange: page => {
+        origin === "xml" ? setPageNumberTableSourceSideXml(page) : setPageNumberTableSourceSideJson(page);
+      },
+      onShowSizeChange: size => {
+        origin === "xml" ? setPageSizeTableSourceSideXml(size) : setPageSizeTableSourceSideJson(size);
+      },
     };
 
     return paginationObject;
@@ -1764,28 +2133,59 @@ const MappingStepDetail: React.FC = () => {
   return (
     <>
       <CustomPageHeader
-        title={<span aria-label={`${curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}-details-header`}>{curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}</span>}
+        title={
+          <span
+            aria-label={`${
+              curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name
+            }-details-header`}
+          >
+            {curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}
+          </span>
+        }
         handleOnBack={onBack}
       />
 
       <div className={styles.srcDetails}>{srcDetails}</div>
       <div className={styles.mapContainer}>
-        <div className={styles.stepSettingsLink} aria-label={"stepSettingsContainer"} onClick={() => handleStepSettings()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "stepSettings")}>
-          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"}/>
+        <div
+          className={styles.stepSettingsLink}
+          aria-label={"stepSettingsContainer"}
+          onClick={() => handleStepSettings()}
+          tabIndex={0}
+          onKeyDown={e => serviceNameKeyDownHandler(e, "stepSettings")}
+        >
+          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
         <span className={styles.clearTestIcons} id="ClearTestButtons">
-          <HCButton id="Clear-btn" data-testid={"clearMappingBtn"} mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()} className={"me-2"}>
+          <HCButton
+            id="Clear-btn"
+            data-testid={"clearMappingBtn"}
+            mat-raised-button="true"
+            variant="outline-light"
+            disabled={emptyData}
+            onClick={() => onClear()}
+            className={"me-2"}
+          >
             Clear
           </HCButton>
-          <HCButton className={styles.btn_test} id="Test-btn" data-testid={"testMappingBtn"} mat-raised-button="true" variant="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)} loading={loading}>
+          <HCButton
+            className={styles.btn_test}
+            id="Test-btn"
+            data-testid={"testMappingBtn"}
+            mat-raised-button="true"
+            variant="primary"
+            disabled={emptyData || mapExpTouched}
+            onClick={() => getMapValidationResp(sourceURI)}
+            loading={loading}
+          >
             Test
           </HCButton>
         </span>
-        <div className={styles.legendContainer}><ModelingLegend /></div>
-        <div className={styles.header}>
-          {errorInSaving ? success() : <span className={styles.noMessage} />}
+        <div className={styles.legendContainer}>
+          <ModelingLegend />
         </div>
+        <div className={styles.header}>{errorInSaving ? success() : <span className={styles.noMessage} />}</div>
         <br />
         <br />
         <hr />
@@ -1802,152 +2202,174 @@ const MappingStepDetail: React.FC = () => {
             primary="second"
             defaultSize="70%"
           >
-            <div
-              id="srcContainer"
-              data-testid="srcContainer"
-              className={styles.sourceContainer}>
+            <div id="srcContainer" data-testid="srcContainer" className={styles.sourceContainer}>
               <div id="srcDetails" data-testid="srcDetails" className={styles.srcDetailsContainer}>
                 <div className={styles.sourceTitle}>
-                  <span className={styles.sourceDataIcon}/>
+                  <span className={styles.sourceDataIcon} />
                   <strong>Source Data</strong>
                 </div>
                 {navigationButtons}
               </div>
-              {isLoading === true ? <div className={styles.spinRunning}>
-                <Spinner animation="border" data-testid="spinTest" variant="primary" />
-              </div> :
-                emptyData ?
-                  <div id="noData" data-testid="noData" style={{paddingTop: "80px"}}>
-                    <HCAlert
-                      className={styles.interceptorFailureAlert}
-                      showIcon={true}
-                      variant="info"
+              {isLoading === true ? (
+                <div className={styles.spinRunning}>
+                  <Spinner animation="border" data-testid="spinTest" variant="primary" />
+                </div>
+              ) : emptyData ? (
+                <div id="noData" data-testid="noData" style={{paddingTop: "80px"}}>
+                  <HCAlert className={styles.interceptorFailureAlert} showIcon={true} variant="info">
+                    <span aria-label="emptyTextMessage" id="emptyTextMessage" data-testid="emptyTextMessage">
+                      <p>Unable to find source records using the specified collection or query.</p>
+                      <p>
+                        Load some data that mapping can use as reference and/or edit the step settings to use a source
+                        collection or query that will return some results.
+                      </p>
+                    </span>
+                  </HCAlert>
+                </div>
+              ) : interceptorExecuted && interceptorExecutionError !== "" ? (
+                <div id="failedInterceptor">
+                  <br />
+                  <br />
+                  <br />
+
+                  <div className={styles.sourceButtons}>
+                    <span
+                      className={
+                        interceptorExecuted && interceptorExecutionError !== ""
+                          ? styles.navigationButtonsError
+                          : styles.navigationButtons
+                      }
                     >
-                      <span aria-label="emptyTextMessage" id="emptyTextMessage" data-testid="emptyTextMessage"><p>Unable to find source records using the specified collection or query.</p>
-                        <p>Load some data that mapping can use as reference and/or edit the step
-                          settings to use a source collection or query that will return some results.</p>
-                      </span>
-                    </HCAlert>
+                      {navigationButtons}
+                    </span>
+                    <span className={styles.sourceCollapseButtons}>
+                      {interceptorExecuted && interceptorExecutionError !== "" ? (
+                        ""
+                      ) : (
+                        <ExpandCollapse handleSelection={id => handleSourceExpandCollapse(id)} currentSelection={""} />
+                      )}
+                    </span>
                   </div>
-                  :
-                  (interceptorExecuted && interceptorExecutionError !== "") ?
-                    <div id="failedInterceptor">
-                      <br /><br /><br />
+                  <br />
+                  <br />
+                  <br />
+                  <HCAlert className={styles.interceptorFailureAlert} showIcon={true} variant="info">
+                    <span aria-label="interceptorError">
+                      {MappingStepMessages.interceptorError}
+                      <br />
+                      <br /> <b>Error Details:</b> <br /> {interceptorExecutionError}
+                    </span>
+                  </HCAlert>
+                </div>
+              ) : (
+                <div id="dataPresent" data-testid="dataPresent">
+                  {!isLoading && !emptyData && interceptorExecuted && interceptorExecutionError === "" ? (
+                    <HCAlert className={styles.interceptorSuccessAlert} showIcon={true} variant="info">
+                      <span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>
+                    </HCAlert>
+                  ) : null}
+                  <div className={styles.sourceButtons}>
+                    <span className={styles.sourceCollapseButtons}>
+                      <ExpandCollapse handleSelection={id => handleSourceExpandCollapse(id)} currentSelection={""} />
+                    </span>
+                  </div>
 
-                      <div className={styles.sourceButtons}>
-
-                        <span className={interceptorExecuted && interceptorExecutionError !== "" ? styles.navigationButtonsError : styles.navigationButtons}>{navigationButtons}</span>
-                        <span className={styles.sourceCollapseButtons}>{interceptorExecuted && interceptorExecutionError !== "" ? "" : <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />}</span>
+                  {sourceFormat === "xml" ? (
+                    <div>
+                      <div id="upperTableXML">
+                        <HCTable
+                          rowKey={"rowKey"}
+                          columns={headerColumns}
+                          data={[{rowKey: 1, key: sourceData[0]?.key}]}
+                          subTableHeader={false}
+                          pagination={false}
+                          onExpand={toggleSourceTable}
+                          showExpandIndicator={true}
+                          expandedRowKeys={upperSrcExpandedKeys}
+                          className={styles.sourceTable}
+                          showHeader={true}
+                          component={"mapping-step-detail"}
+                          keyUtil={"rowKey"}
+                          baseIndent={0}
+                          expandedRowRender={row => {
+                            const expandedRows = (
+                              <div key={1} style={{display: "table", width: "100%"}} className="hc-table_row">
+                                <div key={`indicator_${1}`} style={{display: "table-cell"}} />
+                              </div>
+                            );
+                            return expandedRows;
+                          }}
+                        />
                       </div>
-                      <br /><br /><br />
-                      <HCAlert
-                        className={styles.interceptorFailureAlert}
-                        showIcon={true}
-                        variant="info"
-                      >
-                        <span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br /><br /> <b>Error Details:</b> <br /> {interceptorExecutionError}</span>
-                      </HCAlert>
+                      <div id="lowerTableXML">
+                        {srcPropertiesXML.length > 0 ? (
+                          <HCTable
+                            rowKey={"rowKey"}
+                            columns={lowerXMLColumns}
+                            data={filterActive ? filteredSrcProperties : srcPropertiesXML}
+                            pagination={handlePaginationObject("xml")}
+                            onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                            expandedRowKeys={[0, ...sourceExpandedKeys]}
+                            className={styles.sourceTable}
+                            showExpandIndicator={true}
+                            showHeader={false}
+                            component={"mapping-step-detail"}
+                            childrenIndent={true}
+                            subTableHeader={true}
+                            nestedParams={{
+                              headerColumns: lowerXMLColumns,
+                              iconCellList: ["Name", "Value"],
+                              state: [sourceExpandedKeys, setSourceExpandedKeys],
+                            }}
+                            keyUtil={"rowKey"}
+                            baseIndent={40}
+                          />
+                        ) : null}
+                      </div>
                     </div>
-                    :
-                    <div id="dataPresent"  data-testid="dataPresent">
-                      {!isLoading && !emptyData && interceptorExecuted && interceptorExecutionError === "" ?
-                        <HCAlert
-                          className={styles.interceptorSuccessAlert}
-                          showIcon={true}
-                          variant="info"
-                        >
-                          <span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>
-                        </HCAlert> : null
-                      }
-                      <div className={styles.sourceButtons}>
-                        <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
-                      </div>
-
-                      {
-                        sourceFormat === "xml" ?
-                          <div>
-                            <div id="upperTableXML">
-                              <HCTable
-                                rowKey={"rowKey"}
-                                columns={headerColumns}
-                                data={[{rowKey: 1, key: sourceData[0]?.key}]}
-                                subTableHeader={false}
-                                pagination={false}
-                                onExpand={toggleSourceTable}
-                                showExpandIndicator={true}
-                                expandedRowKeys={upperSrcExpandedKeys}
-                                className={styles.sourceTable}
-                                showHeader={true}
-                                component={"mapping-step-detail"}
-                                keyUtil={"rowKey"}
-                                baseIndent={0}
-                                expandedRowRender={(row) => {
-                                  const expandedRows = <div key={1} style={{display: "table", width: "100%"}} className="hc-table_row">
-                                    <div key={`indicator_${1}`} style={{display: "table-cell"}} />
-                                  </div>;
-                                  return expandedRows;
-                                }}
-                              />
-                            </div>
-                            <div id="lowerTableXML">
-                              {srcPropertiesXML.length > 0 ? (
-                                <HCTable
-                                  rowKey={"rowKey"}
-                                  columns={lowerXMLColumns}
-                                  data={filterActive ? filteredSrcProperties : srcPropertiesXML}
-                                  pagination={handlePaginationObject("xml")}
-                                  onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                                  expandedRowKeys={[0, ...sourceExpandedKeys]}
-                                  className={styles.sourceTable}
-                                  showExpandIndicator={true}
-                                  showHeader={false}
-                                  component={"mapping-step-detail"}
-                                  childrenIndent={true}
-                                  subTableHeader={true}
-                                  nestedParams={{headerColumns: lowerXMLColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
-                                  keyUtil={"rowKey"}
-                                  baseIndent={40}
-                                />)
-                                : null
-                              }
-                            </div>
-                          </div>
-                          :
-                          <div id="jsonTable">
-                            <HCTable
-                              rowKey={"rowKey"}
-                              columns={headerColumns}
-                              data={filterActive ? filteredSrcProperties : sourceData}
-                              pagination={handlePaginationObject("json")}
-                              onExpand={(record, expanded) => toggleSourceRowExpanded(record, expanded, "key")}
-                              expandedRowKeys={sourceExpandedKeys}
-                              className={styles.sourceTable}
-                              showHeader={true}
-                              component={"mapping-step-detail"}
-                              keyUtil={"rowKey"}
-                              showExpandIndicator={true}
-                              childrenIndent={true}
-                              subTableHeader={true}
-                              nestedParams={{headerColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
-                              baseIndent={30}
-                            />
-                          </div>
-                      }
-
-                    </div>}
+                  ) : (
+                    <div id="jsonTable">
+                      <HCTable
+                        rowKey={"rowKey"}
+                        columns={headerColumns}
+                        data={filterActive ? filteredSrcProperties : sourceData}
+                        pagination={handlePaginationObject("json")}
+                        onExpand={(record, expanded) => toggleSourceRowExpanded(record, expanded, "key")}
+                        expandedRowKeys={sourceExpandedKeys}
+                        className={styles.sourceTable}
+                        showHeader={true}
+                        component={"mapping-step-detail"}
+                        keyUtil={"rowKey"}
+                        showExpandIndicator={true}
+                        childrenIndent={true}
+                        subTableHeader={true}
+                        nestedParams={{
+                          headerColumns,
+                          iconCellList: ["Name", "Value"],
+                          state: [sourceExpandedKeys, setSourceExpandedKeys],
+                        }}
+                        baseIndent={30}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-            <div
-              id="entityContainer"
-              data-testid="entityContainer"
-              className={styles.entityContainer}>
+            <div id="entityContainer" data-testid="entityContainer" className={styles.entityContainer}>
               <div className={styles.entityDetails}>
-                <span className={styles.entityTypeTitle}><p className={styles.entityTypeText}><span className={styles.entityIcon} /><strong>Entity Type: {curationOptions.activeStep.entityName}</strong></p></span>
-
+                <span className={styles.entityTypeTitle}>
+                  <p className={styles.entityTypeText}>
+                    <span className={styles.entityIcon} />
+                    <strong>Entity Type: {curationOptions.activeStep.entityName}</strong>
+                  </p>
+                </span>
               </div>
               <div ref={dummyNode} />
               <div className={styles.columnOptionsSelectorContainer}>
                 <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
-                <span className={styles.entityCollapseButtons}><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
+                <span className={styles.entityCollapseButtons}>
+                  <ExpandCollapse handleSelection={id => handleEntityExpandCollapse(id)} currentSelection={""} />
+                </span>
               </div>
               <EntityMapTable
                 setScrollRef={setRef}
@@ -1994,51 +2416,58 @@ const MappingStepDetail: React.FC = () => {
                 labelRemoved={labelRemoved}
                 entityLoaded={entityLoaded}
               />
-              {relatedEntityTypeProperties.map((entity, i) => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
-                <EntityMapTable
-                  key={`relatedEntity-${i}`}
-                  setScrollRef={setRef}
-                  executeScroll={executeScroll}
-                  mapResp={mapResp}
-                  mapData={mapData}
-                  setMapResp={setMapResp}
-                  mapExpTouched={mapExpTouched}
-                  setMapExpTouched={setMapExpTouched}
-                  flatArray={flatArray}
-                  saveMapping={saveMapping}
-                  dummyNode={dummyNode}
-                  getInitialChars={getInitialChars}
-                  canReadWrite={canReadWrite}
-                  entityTypeTitle={entity["entityLabel"]}
-                  entityModel={entity["entityModel"]}
-                  checkedEntityColumns={checkedEntityColumns}
-                  entityTypeProperties={entity["entityProps"]}
-                  entityMappingId={entity["entityMappingId"]}
-                  relatedMappings={entity["relatedEntityMappings"]}
-                  entityExpandedKeys={entityExpandedKeys}
-                  setEntityExpandedKeys={setEntityExpandedKeys}
-                  allEntityKeys={allEntityKeys}
-                  setExpandedEntityFlag={setExpandedEntityFlag}
-                  initialEntityKeys={initialEntityKeys}
-                  tooltipsData={AdvMapTooltips}
-                  updateStep={UpdateMappingArtifact}
-                  relatedEntityTypeProperties={relatedEntityTypeProperties}
-                  relatedEntitiesSelected={relatedEntitiesSelected}
-                  setRelatedEntitiesSelected={setRelatedEntitiesSelected}
-                  isRelatedEntity={true}
-                  tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
-                  firstRowTableKeyIndex={firstRowTableKeyIndex++}
-                  filterStr={filterStr}
-                  setFilterStr={setFilterStr}
-                  allRelatedEntitiesKeys={allRelatedEntitiesKeys}
-                  setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
-                  mapFunctions={mapFunctions}
-                  mapRefs={mapRefs}
-                  savedMappingArt={savedMappingArt}
-                  deleteRelatedEntity={deleteRelatedEntity}
-                  labelRemoved={labelRemoved}
-                  entityLoaded={entityLoaded}
-                /> : "")}
+              {relatedEntityTypeProperties.map((entity, i) =>
+                relatedEntitiesSelected
+                  .map(selectedEntity => selectedEntity.entityMappingId)
+                  .includes(entity.entityMappingId) ? (
+                    <EntityMapTable
+                      key={`relatedEntity-${i}`}
+                      setScrollRef={setRef}
+                      executeScroll={executeScroll}
+                      mapResp={mapResp}
+                      mapData={mapData}
+                      setMapResp={setMapResp}
+                      mapExpTouched={mapExpTouched}
+                      setMapExpTouched={setMapExpTouched}
+                      flatArray={flatArray}
+                      saveMapping={saveMapping}
+                      dummyNode={dummyNode}
+                      getInitialChars={getInitialChars}
+                      canReadWrite={canReadWrite}
+                      entityTypeTitle={entity["entityLabel"]}
+                      entityModel={entity["entityModel"]}
+                      checkedEntityColumns={checkedEntityColumns}
+                      entityTypeProperties={entity["entityProps"]}
+                      entityMappingId={entity["entityMappingId"]}
+                      relatedMappings={entity["relatedEntityMappings"]}
+                      entityExpandedKeys={entityExpandedKeys}
+                      setEntityExpandedKeys={setEntityExpandedKeys}
+                      allEntityKeys={allEntityKeys}
+                      setExpandedEntityFlag={setExpandedEntityFlag}
+                      initialEntityKeys={initialEntityKeys}
+                      tooltipsData={AdvMapTooltips}
+                      updateStep={UpdateMappingArtifact}
+                      relatedEntityTypeProperties={relatedEntityTypeProperties}
+                      relatedEntitiesSelected={relatedEntitiesSelected}
+                      setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                      isRelatedEntity={true}
+                      tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
+                      firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                      filterStr={filterStr}
+                      setFilterStr={setFilterStr}
+                      allRelatedEntitiesKeys={allRelatedEntitiesKeys}
+                      setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
+                      mapFunctions={mapFunctions}
+                      mapRefs={mapRefs}
+                      savedMappingArt={savedMappingArt}
+                      deleteRelatedEntity={deleteRelatedEntity}
+                      labelRemoved={labelRemoved}
+                      entityLoaded={entityLoaded}
+                    />
+                  ) : (
+                    ""
+                  ),
+              )}
             </div>
           </SplitPane>
         </div>
@@ -2061,7 +2490,6 @@ const MappingStepDetail: React.FC = () => {
         openStepDetails={openStepDetails}
       />
     </>
-
   );
 };
 

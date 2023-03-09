@@ -32,39 +32,36 @@ import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
 export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
 interface TileItem {
-    title: string;
-    iconType: IconType;
-    icon: any;
-    color: string;
-    bgColor: string;
-    border: string;
+  title: string;
+  iconType: IconType;
+  icon: any;
+  color: string;
+  bgColor: string;
+  border: string;
 }
 
 const INITIAL_SELECTION = ""; // '' for no tile initially
 
-const TilesView = (props) => {
+const TilesView = props => {
   const {handleError} = useContext(UserContext);
-  const {
-    hubCentralConfig,
-    getHubCentralConfigFromServer,
-    updateHubCentralConfigOnServer
-  } = useContext(HubCentralConfigContext);
+  const {hubCentralConfig, getHubCentralConfigFromServer, updateHubCentralConfigOnServer} =
+    useContext(HubCentralConfigContext);
   const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
   const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
-  const [options, setOptions] = useState<TileItem|null>(null);
+  const [options, setOptions] = useState<TileItem | null>(null);
 
   const history: any = useHistory();
   const location: any = useLocation();
 
   const setCurateView = () => {
     if (location.pathname.startsWith("/tiles/curate/match")) {
-      return <MatchingDetailStep/>;
+      return <MatchingDetailStep />;
     } else if (location.pathname.startsWith("/tiles/curate/merge")) {
-      return <MergingStepDetail/>;
+      return <MergingStepDetail />;
     } else if (location.pathname.startsWith("/tiles/curate/map")) {
-      return <MappingStepDetail/>;
+      return <MappingStepDetail />;
     } else {
-      return <Curate/>;
+      return <Curate />;
     }
   };
 
@@ -73,15 +70,12 @@ const TilesView = (props) => {
     model: <Modeling />,
     curate: setCurateView(),
     run: <Run />,
-    explore: <Browse/>,
+    explore: <Browse />,
     detail: <Detail />,
-    monitor: <Monitor />
+    monitor: <Monitor />,
   };
 
-  const {
-    setView,
-    searchOptions
-  } = useContext(SearchContext);
+  const {setView, searchOptions} = useContext(SearchContext);
   const {errorMessageOptions, setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const onMenuClick = () => {
@@ -101,15 +95,16 @@ const TilesView = (props) => {
   const enabledViews: Record<TileId, boolean> = {
     load: auth.canReadLoad() || auth.canWriteLoad(),
     model: auth.canReadEntityModel() || auth.canWriteEntityModel(),
-    curate: auth.canReadMapping() ||
-            auth.canWriteMapping() ||
-            auth.canReadMatchMerge() ||
-            auth.canWriteMatchMerge() ||
-            auth.canReadCustom(),
+    curate:
+      auth.canReadMapping() ||
+      auth.canWriteMapping() ||
+      auth.canReadMatchMerge() ||
+      auth.canWriteMatchMerge() ||
+      auth.canReadCustom(),
     run: auth.canReadFlow() || auth.canWriteFlow(),
     explore: true,
     detail: true,
-    monitor: auth.canAccessMonitor()
+    monitor: auth.canAccessMonitor(),
     // TODO - Needs to be updated if there are any changes in authorities for Explorer
     // explore: auth.canReadFlow() || auth.canWriteFlow(),
   };
@@ -122,12 +117,12 @@ const TilesView = (props) => {
       setOptions(tiles[props.id]);
       setView(props.id, views[props.id]);
     }
-    return (() => {
+    return () => {
       setSelection(INITIAL_SELECTION);
       setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
       setOptions(null);
       setView("", null);
-    });
+    };
   }, []);
 
   useEffect(() => {
@@ -164,15 +159,15 @@ const TilesView = (props) => {
       sortOrderInfo: location.state?.sortOrderInfo,
       targetEntityType: location.state?.targetEntityType,
       existingFlow: location.state?.existingFlow || false,
-      flowsDefaultKey: location.state?.flowsDefaultKey || ["-1"]
+      flowsDefaultKey: location.state?.flowsDefaultKey || ["-1"],
     };
   };
 
   return (
     <>
-      { (searchOptions.view !== null) ?  (
+      {searchOptions.view !== null ? (
         <div className={styles.tilesViewContainer}>
-          { (selection !== "") ?  (
+          {selection !== "" ? (
             <Tiles
               id={selection}
               view={searchOptions.view}
@@ -182,10 +177,11 @@ const TilesView = (props) => {
               onTileClose={onTileClose}
               newStepToFlowOptions={getNewStepToFlowOptions()}
             />
-          ) : null }
-        </div>) :
-        <Overview enabled={enabled} environment={getEnvironment()}/>
-      }
+          ) : null}
+        </div>
+      ) : (
+        <Overview enabled={enabled} environment={getEnvironment()} />
+      )}
       <Toolbar tiles={tiles} enabled={enabled} />
       <HCModal
         show={errorMessageOptions.isVisible}
@@ -193,10 +189,16 @@ const TilesView = (props) => {
       >
         <Modal.Body className={"pt-5 pb-4"}>
           <div className={"d-flex align-items-start justify-content-center"}>
-            <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />{errorMessageOptions.message}
+            <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />
+            {errorMessageOptions.message}
           </div>
           <div className={"d-flex justify-content-end pt-4 pb-2"}>
-            <HCButton aria-label={"Ok"} variant="primary" type="submit" onClick={() => setErrorMessageOptions({isVisible: false, message: ""})}>
+            <HCButton
+              aria-label={"Ok"}
+              variant="primary"
+              type="submit"
+              onClick={() => setErrorMessageOptions({isVisible: false, message: ""})}
+            >
               Ok
             </HCButton>
           </div>

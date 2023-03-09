@@ -15,7 +15,6 @@ import {getViewSettings} from "@util/user-context";
 import {HCSider} from "@components/common";
 
 const Monitor: React.FC = () => {
-
   const [, setIsLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
   const [totalDocuments, setTotalDocuments] = useState(0);
@@ -29,12 +28,8 @@ const Monitor: React.FC = () => {
   const [applyClicked, toggleApplyClicked] = useState(false);
   const storage = getViewSettings();
 
-  const {
-    handleError
-  } = useContext(UserContext);
-  const {
-    monitorOptions
-  } = useContext(MonitorContext);
+  const {handleError} = useContext(UserContext);
+  const {monitorOptions} = useContext(MonitorContext);
   const mountedRef = useRef(true);
 
   const getJobResults = async () => {
@@ -47,8 +42,8 @@ const Monitor: React.FC = () => {
           start: monitorOptions.start,
           pageLength: monitorOptions.pageLength,
           sortOrder: monitorOptions.sortOrder,
-          facets: monitorOptions.selectedFacets
-        }
+          facets: monitorOptions.selectedFacets,
+        },
       });
       if (response.data && mountedRef.current) {
         setData(response.data.results);
@@ -75,11 +70,11 @@ const Monitor: React.FC = () => {
     };
   }, [monitorOptions]);
 
-  const updateSelectedFacets = (facets) => {
+  const updateSelectedFacets = facets => {
     setSelectedFacets(facets);
   };
 
-  const updateCheckedFacets = (facets) => {
+  const updateCheckedFacets = facets => {
     setGreyFacets(facets);
   };
 
@@ -102,31 +97,27 @@ const Monitor: React.FC = () => {
   return (
     <div className={styles.layout}>
       <HCSider placement="left" show={true} footer={<SidebarFooter />}>
-        <MonitorSidebar
-          facets={facets}
-          facetRender={updateSelectedFacets}
-          checkFacetRender={updateCheckedFacets}
-        />
+        <MonitorSidebar facets={facets} facetRender={updateSelectedFacets} checkFacetRender={updateCheckedFacets} />
       </HCSider>
       <div className={styles.content} id="monitorContent">
         <div className={styles.mainContainer}>
-          {canAccessMonitor ?
+          {canAccessMonitor ? (
             <div className={styles.monitorContainer}>
               <p className={styles.intro}>{tiles.monitor.intro}</p>
             </div>
-            :
+          ) : (
             <div className={styles.monitorContainer}>
               <p>{MissingPagePermission}</p>
             </div>
-          }
+          )}
           <div className={styles.selectedFacets}>
             <MonitorSelectedFacets
               selectedFacets={selectedFacets}
               greyFacets={greyFacets}
               applyClicked={applyClicked}
               showApply={showApply}
-              toggleApply={(clicked) => toggleApply(clicked)}
-              toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+              toggleApply={clicked => toggleApply(clicked)}
+              toggleApplyClicked={clicked => toggleApplyClicked(clicked)}
             />
           </div>
           <div id="top-search-pagination-bar" className={styles.monitorPagination}>
@@ -152,7 +143,6 @@ const Monitor: React.FC = () => {
       </div>
     </div>
   );
-
 };
 
 export default Monitor;

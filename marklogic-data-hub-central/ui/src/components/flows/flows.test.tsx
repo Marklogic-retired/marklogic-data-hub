@@ -15,7 +15,6 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 jest.mock("axios");
 
 describe("Flows component", () => {
-
   let flowsProps: Props = {
     flows: data.flows.data as Flow[],
     steps: data.steps.data,
@@ -55,29 +54,38 @@ describe("Flows component", () => {
   });
 
   it("Verifies input format names and type circles", () => {
-    const allKindsOfIngestInAFlow = [{name: "allInputFormats", steps: [{
-      "stepDefinitionType": "ingestion",
-      "sourceFormat": "csv"
-    }, {
-      "stepDefinitionType": "ingestion",
-      "sourceFormat": "binary"
-    }, {
-      "stepDefinitionType": "ingestion",
-      "sourceFormat": "text"
-    }, {
-      "stepDefinitionType": "ingestion",
-      "sourceFormat": "json"
-    }, {
-      "stepDefinitionType": "ingestion",
-      "sourceFormat": "xml"}
-    ]
-    }];
+    const allKindsOfIngestInAFlow = [
+      {
+        name: "allInputFormats",
+        steps: [
+          {
+            "stepDefinitionType": "ingestion",
+            "sourceFormat": "csv",
+          },
+          {
+            "stepDefinitionType": "ingestion",
+            "sourceFormat": "binary",
+          },
+          {
+            "stepDefinitionType": "ingestion",
+            "sourceFormat": "text",
+          },
+          {
+            "stepDefinitionType": "ingestion",
+            "sourceFormat": "json",
+          },
+          {
+            "stepDefinitionType": "ingestion",
+            "sourceFormat": "xml",
+          },
+        ],
+      },
+    ];
     const {getByText} = render(
       <Router history={history}>
-        <Flows {...flowsProps}
-          flows={allKindsOfIngestInAFlow as Flow[]}
-        />
-      </Router>);
+        <Flows {...flowsProps} flows={allKindsOfIngestInAFlow as Flow[]} />
+      </Router>,
+    );
     let flowButton = document.querySelector(".accordion-button")!;
     userEvent.click(flowButton);
     ["CSV", "BIN", "TXT", "JSON", "XML"].forEach(format => {
@@ -88,9 +96,9 @@ describe("Flows component", () => {
 
   it("user with flow read, write, and operator privileges can view, edit, and run", async () => {
     const {getByText, getByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} />
+      </Router>,
     );
 
     expect(getByText(flowName)).toBeInTheDocument();
@@ -99,10 +107,9 @@ describe("Flows component", () => {
 
   it("user without flow write privileges cannot edit", async () => {
     const {getByText, getByLabelText, queryByLabelText, getAllByText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-        canWriteFlow={false}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} canWriteFlow={false} />
+      </Router>,
     );
 
     let flowButton = document.querySelector(".accordion-button")!;
@@ -129,17 +136,13 @@ describe("Flows component", () => {
     let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(queryByLabelText(addStepName)).not.toBeInTheDocument();
-
   });
 
   it("user without flow write or operator privileges cannot edit or run", () => {
     const {getByText, getByLabelText, queryByLabelText, getAllByText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-        canReadFlow={true}
-        canWriteFlow={false}
-        hasOperatorRole={false}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} canReadFlow={true} canWriteFlow={false} hasOperatorRole={false} />
+      </Router>,
     );
 
     let flowButton = document.querySelector(".accordion-button")!;
@@ -157,30 +160,25 @@ describe("Flows component", () => {
     let addStep = getAllByText("Add Step")[0];
     fireEvent.click(addStep);
     expect(queryByLabelText(addStepName)).not.toBeInTheDocument();
-
   });
 
   it("user without flow read, write, or operator privileges cannot view, edit, or run", () => {
     const {queryByText, queryByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-        canReadFlow={false}
-        canWriteFlow={false}
-        hasOperatorRole={false}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} canReadFlow={false} canWriteFlow={false} hasOperatorRole={false} />
+      </Router>,
     );
 
     // Nothing shown, including Create button
     expect(queryByLabelText("(\"icon: right")).not.toBeInTheDocument();
     expect(queryByText(flowName)).not.toBeInTheDocument();
-
   });
 
   it("create flow button can be focused and pressed by keyboard", async () => {
     const {getByText, getByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} />
+      </Router>,
     );
 
     let flowButton = getByLabelText("create-flow");
@@ -198,14 +196,13 @@ describe("Flows component", () => {
     // pressing enter on button should bring up New Flow dialogue box
     fireEvent.keyDown(flowButton, {key: "Enter", code: "Enter"});
     expect(getByText("New Flow")).toBeInTheDocument();
-
   });
 
   it("user with write privileges can reorder a flow", () => {
     const {getByText, getByLabelText, queryByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} />
+      </Router>,
     );
 
     let flowButton = document.querySelector(".accordion-button")!;
@@ -227,15 +224,13 @@ describe("Flows component", () => {
     const lastFlowStep = data.flows.data[0].steps[data.flows.data[0].steps.length - 1].stepName;
     expect(getByLabelText("leftArrow-" + lastFlowStep)).toBeInTheDocument();
     expect(queryByLabelText("rightArrow-" + lastFlowStep)).not.toBeInTheDocument();
-
   });
 
   it("user without write privileges can't reorder a flow", () => {
     const {getByText, queryByLabelText} = render(
-      <Router history={history}><Flows
-        {...flowsProps}
-        canWriteFlow={false}
-      /></Router>
+      <Router history={history}>
+        <Flows {...flowsProps} canWriteFlow={false} />
+      </Router>,
     );
 
     let flowButton = document.querySelector(".accordion-button")!;

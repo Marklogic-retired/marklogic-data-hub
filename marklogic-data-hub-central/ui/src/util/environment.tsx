@@ -1,12 +1,10 @@
 const defaultEnv = {
   serviceName: "",
   dataHubVersion: "",
-  markLogicVersion: ""
+  markLogicVersion: "",
 };
 
-
-
-export function getEnvironment():any {
+export function getEnvironment(): any {
   let env: any;
   env = localStorage.getItem("environment");
   if (env) {
@@ -16,7 +14,7 @@ export function getEnvironment():any {
   }
 }
 
-export function parseVersion(value):any {
+export function parseVersion(value): any {
   if (value === "") {
     return "";
   } else {

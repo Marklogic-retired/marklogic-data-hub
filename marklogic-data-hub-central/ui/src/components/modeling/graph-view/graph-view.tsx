@@ -44,7 +44,7 @@ type Props = {
   deleteConceptClass: (conceptClassName: string) => void;
 };
 
-const GraphView: React.FC<Props> = (props) => {
+const GraphView: React.FC<Props> = props => {
   const settings = getViewSettings();
 
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
@@ -65,7 +65,7 @@ const GraphView: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.dataModel) {
-      props.dataModel.map((element) => {
+      props.dataModel.map(element => {
         element.label = element.hasOwnProperty("conceptName") ? element.conceptName : element.entityName;
       });
     }
@@ -81,19 +81,19 @@ const GraphView: React.FC<Props> = (props) => {
 
   const publishIconStyle: CSSProperties = {
     width: "1rem",
-    fill: "currentColor"
+    fill: "currentColor",
   };
 
   const handleTypeaheadChange = (values: any) => {
     setEntityFiltered("");
     setIsEntityFiltered(false);
-    let value = values ? values[0]?.label ? values[0].label : "" : "";
+    let value = values ? (values[0]?.label ? values[0].label : "") : "";
     const newFilter = {
       ...settings,
       model: {
         ...settings.model,
         filter: value,
-      }
+      },
     };
     setViewSettings(newFilter);
     setEntityFiltered(value);
@@ -105,21 +105,23 @@ const GraphView: React.FC<Props> = (props) => {
     setSelectedEntity(value);
   };
 
-  const filter = <Typeahead
-    className={styles.filterInput}
-    id="toggle-example"
-    options={filterMenuSuggestions}
-    placeholder={"Filter"}
-    onChange={handleTypeaheadChange}
-    minLength={3}
-    defaultInputValue={entityFiltered}
-  >
-    <div className="rbt-aux">
-      <Search />
-    </div>
-  </Typeahead>;
+  const filter = (
+    <Typeahead
+      className={styles.filterInput}
+      id="toggle-example"
+      options={filterMenuSuggestions}
+      placeholder={"Filter"}
+      onChange={handleTypeaheadChange}
+      minLength={3}
+      defaultInputValue={entityFiltered}
+    >
+      <div className="rbt-aux">
+        <Search />
+      </div>
+    </Typeahead>
+  );
 
-  const handleAddMenu = (key) => {
+  const handleAddMenu = key => {
     if (key === "addNewEntityType") {
       props.toggleShowEntityModal(true);
       props.toggleIsEditModal(false);
@@ -135,9 +137,15 @@ const GraphView: React.FC<Props> = (props) => {
       align="end"
       size="sm"
       className="me-2"
-      title={<span>Add<ChevronDown className="ms-2" /></span>}
+      title={
+        <span>
+          Add
+          <ChevronDown className="ms-2" />
+        </span>
+      }
       onSelect={handleAddMenu}
-      disabled={!props.canWriteEntityModel}>
+      disabled={!props.canWriteEntityModel}
+    >
       <Dropdown.Item eventKey="addNewEntityType">
         <span aria-label={"add-entity-type"}>Add new entity type</span>
       </Dropdown.Item>
@@ -150,74 +158,110 @@ const GraphView: React.FC<Props> = (props) => {
     </DropdownButton>
   );
 
-  const publishButton = <HCButton
-    className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
-    disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
-    aria-label="publish-to-database"
-    data-testid="publish-changes"
-    size="sm"
-    variant="outline-light"
-    onClick={() => {
-      props.setConfirmType(ConfirmationType.PublishAll);
-      props.toggleConfirmModal(true);
-    }}>
-    <span className={styles.publishButtonContainer}>
-      <PublishToDatabaseIcon style={publishIconStyle} />
-      <span className={styles.publishButtonText}>Publish</span>
-    </span>
-  </HCButton>;
-
-  const revertButton = <HCButton
-    className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
-    disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
-    aria-label="revert-changes-graph-view"
-    data-testid="revert-changes"
-    size="sm"
-    variant="outline-light"
-    onClick={() => {
-      props.toggleRevertConfirmModal(true);
-      props.setConfirmType(ConfirmationType.RevertChanges);
-    }}>
-    <span className={styles.publishButtonContainer}>
-      <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton}/>
-      <span className={styles.publishButtonText}>Revert</span>
-    </span>
-  </HCButton>;
-
-  const headerButtons = <span className={styles.buttons}>
-    {graphEditMode ?
-      <div className={styles.editModeInfoContainer}>
-        <HCAlert
-          variant="info" aria-label="graph-edit-mode-info" showIcon
-        >{ModelingTooltips.editModeInfo}</HCAlert>
-      </div> : ""
-    }
-    <span>
-      {props.canWriteEntityModel ?
-        <span>
-          {addButton}
-        </span>
-        :
-        <HCTooltip text={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess} id="add-button-tooltip" placement="top">
-          <span className={styles.disabledCursor}>{addButton}</span>
-        </HCTooltip>
+  const publishButton = (
+    <HCButton
+      className={
+        props.canWriteEntityModel
+          ? !modelingOptions.isModified
+            ? styles.disabledPointerEvents
+            : ""
+          : styles.disabledPointerEvents
       }
-    </span>
-
-    <HCTooltip id="revert-tooltip" text={ModelingTooltips.revertChanges} placement="top">
-      <span className={styles.revertDisabledCursor}>{revertButton}</span>
-    </HCTooltip>
-
-    <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} placement="top">
-      <span className={styles.disabledCursor}>{publishButton}</span>
-    </HCTooltip>
-    <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
-      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" tabIndex={0} onClick={() => { setExportPngButtonClicked(true); }} onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {  setExportPngButtonClicked(true); }
+      disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
+      aria-label="publish-to-database"
+      data-testid="publish-changes"
+      size="sm"
+      variant="outline-light"
+      onClick={() => {
+        props.setConfirmType(ConfirmationType.PublishAll);
+        props.toggleConfirmModal(true);
       }}
-      /></i>
-    </HCTooltip>
-  </span>;
+    >
+      <span className={styles.publishButtonContainer}>
+        <PublishToDatabaseIcon style={publishIconStyle} />
+        <span className={styles.publishButtonText}>Publish</span>
+      </span>
+    </HCButton>
+  );
+
+  const revertButton = (
+    <HCButton
+      className={
+        props.canWriteEntityModel
+          ? !modelingOptions.isModified
+            ? styles.disabledPointerEvents
+            : ""
+          : styles.disabledPointerEvents
+      }
+      disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
+      aria-label="revert-changes-graph-view"
+      data-testid="revert-changes"
+      size="sm"
+      variant="outline-light"
+      onClick={() => {
+        props.toggleRevertConfirmModal(true);
+        props.setConfirmType(ConfirmationType.RevertChanges);
+      }}
+    >
+      <span className={styles.publishButtonContainer}>
+        <FontAwesomeIcon icon={faUndoAlt} className={styles.revertButton} />
+        <span className={styles.publishButtonText}>Revert</span>
+      </span>
+    </HCButton>
+  );
+
+  const headerButtons = (
+    <span className={styles.buttons}>
+      {graphEditMode ? (
+        <div className={styles.editModeInfoContainer}>
+          <HCAlert variant="info" aria-label="graph-edit-mode-info" showIcon>
+            {ModelingTooltips.editModeInfo}
+          </HCAlert>
+        </div>
+      ) : (
+        ""
+      )}
+      <span>
+        {props.canWriteEntityModel ? (
+          <span>{addButton}</span>
+        ) : (
+          <HCTooltip
+            text={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess}
+            id="add-button-tooltip"
+            placement="top"
+          >
+            <span className={styles.disabledCursor}>{addButton}</span>
+          </HCTooltip>
+        )}
+      </span>
+
+      <HCTooltip id="revert-tooltip" text={ModelingTooltips.revertChanges} placement="top">
+        <span className={styles.revertDisabledCursor}>{revertButton}</span>
+      </HCTooltip>
+
+      <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} placement="top">
+        <span className={styles.disabledCursor}>{publishButton}</span>
+      </HCTooltip>
+      <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
+        <i>
+          <FontAwesomeIcon
+            className={styles.graphExportIcon}
+            icon={faFileExport}
+            aria-label="graph-export"
+            tabIndex={0}
+            onClick={() => {
+              setExportPngButtonClicked(true);
+            }}
+            onKeyDown={event => {
+              if (event.key === "Enter" || event.key === " ") {
+                setExportPngButtonClicked(true);
+              }
+            }}
+          />
+        </i>
+      </HCTooltip>
+    </span>
+  );
 
   const splitPaneStyles = {
     pane1: {minWidth: "150px", maxWidth: "99.9%"},
@@ -230,7 +274,7 @@ const GraphView: React.FC<Props> = (props) => {
     height: "none",
   };
 
-  const handleEntitySelection = (entityName) => {
+  const handleEntitySelection = entityName => {
     setSelectedEntity(entityName);
     setEntityFiltered("");
     setIsEntityFiltered(false);
@@ -241,7 +285,7 @@ const GraphView: React.FC<Props> = (props) => {
     setSelectedEntity(undefined);
   };
 
-  const deleteEntityClicked = (selectedEntity) => {
+  const deleteEntityClicked = selectedEntity => {
     props.deleteEntityType(selectedEntity);
   };
 
@@ -250,7 +294,10 @@ const GraphView: React.FC<Props> = (props) => {
     let modelCategory = getCategoryWithinModel(isConcept);
     let colorExistsOnServer = colorExistsForNode(nodeName, isConcept, props.hubCentralConfig);
     if (colorExistsOnServer && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
-      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj[!isConcept ? "entityName" : "conceptName"] === nodeName; }).length > 0;
+      let entityDisplayed =
+        filterMenuSuggestions.filter(function (obj) {
+          return obj[!isConcept ? "entityName" : "conceptName"] === nodeName;
+        }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
         color = colorOfNode(nodeName, modelCategory, props.hubCentralConfig);
       } else {
@@ -270,7 +317,10 @@ const GraphView: React.FC<Props> = (props) => {
     let modelCategory = getCategoryWithinModel(isConcept);
     let iconExistsOnServer = iconExistsForNode(nodeName, isConcept, props.hubCentralConfig);
     if (iconExistsOnServer && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
-      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj[!isConcept ? "entityName" : "conceptName"] === nodeName; }).length > 0;
+      let entityDisplayed =
+        filterMenuSuggestions.filter(function (obj) {
+          return obj[!isConcept ? "entityName" : "conceptName"] === nodeName;
+        }).length > 0;
       if (filterMenuSuggestions && entityDisplayed) {
         icon = props.hubCentralConfig.modeling[modelCategory][nodeName]["icon"];
       } else {
@@ -284,7 +334,7 @@ const GraphView: React.FC<Props> = (props) => {
     return icon;
   };
 
-  const graphViewMainPanel =
+  const graphViewMainPanel = (
     <div className={styles.graphViewContainer}>
       <div className={styles.graphHeader}>
         {filter}
@@ -308,48 +358,50 @@ const GraphView: React.FC<Props> = (props) => {
           hubCentralConfig={props.hubCentralConfig}
           updateHubCentralConfig={props.updateHubCentralConfig}
           getColor={getColor}
-          exportPngButtonClicked = {exportPngButtonClicked}
-          setExportPngButtonClicked = {setExportPngButtonClicked}
+          exportPngButtonClicked={exportPngButtonClicked}
+          setExportPngButtonClicked={setExportPngButtonClicked}
           nodeNeedRedraw={nodeNeedRedraw}
           setNodeNeedRedraw={setNodeNeedRedraw}
         />
       </div>
-    </div>;
+    </div>
+  );
 
-  return (
-    !modelingOptions.selectedEntity ? graphViewMainPanel :
-      <SplitPane
-        style={splitStyle}
-        paneStyle={splitPaneStyles.pane}
-        allowResize={true}
-        resizerClassName={styles.resizerStyle}
-        pane1Style={splitPaneStyles.pane1}
-        pane2Style={splitPaneStyles.pane2}
-        split="vertical"
-        primary="first"
-        defaultSize="66%"
-      >
-        {graphViewMainPanel}
-        <div>
-          <GraphViewSidePanel
-            dataModel={props.dataModel}
-            onCloseSidePanel={onCloseSidePanel}
-            deleteEntityClicked={deleteEntityClicked}
-            canReadEntityModel={props.canReadEntityModel}
-            canWriteEntityModel={props.canWriteEntityModel}
-            updateEntities={props.updateEntities}
-            updateSavedEntity={props.updateSavedEntity}
-            hubCentralConfig={props.hubCentralConfig}
-            updateHubCentralConfig={props.updateHubCentralConfig}
-            relationshipModalVisible={props.relationshipModalVisible}
-            toggleRelationshipModal={props.toggleRelationshipModal}
-            getColor={getColor}
-            getIcon={getIcon}
-            setNodeNeedRedraw={setNodeNeedRedraw}
-            deleteConceptClass={props.deleteConceptClass}
-          />
-        </div>
-      </SplitPane>
+  return !modelingOptions.selectedEntity ? (
+    graphViewMainPanel
+  ) : (
+    <SplitPane
+      style={splitStyle}
+      paneStyle={splitPaneStyles.pane}
+      allowResize={true}
+      resizerClassName={styles.resizerStyle}
+      pane1Style={splitPaneStyles.pane1}
+      pane2Style={splitPaneStyles.pane2}
+      split="vertical"
+      primary="first"
+      defaultSize="66%"
+    >
+      {graphViewMainPanel}
+      <div>
+        <GraphViewSidePanel
+          dataModel={props.dataModel}
+          onCloseSidePanel={onCloseSidePanel}
+          deleteEntityClicked={deleteEntityClicked}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
+          updateEntities={props.updateEntities}
+          updateSavedEntity={props.updateSavedEntity}
+          hubCentralConfig={props.hubCentralConfig}
+          updateHubCentralConfig={props.updateHubCentralConfig}
+          relationshipModalVisible={props.relationshipModalVisible}
+          toggleRelationshipModal={props.toggleRelationshipModal}
+          getColor={getColor}
+          getIcon={getIcon}
+          setNodeNeedRedraw={setNodeNeedRedraw}
+          deleteConceptClass={props.deleteConceptClass}
+        />
+      </div>
+    </SplitPane>
   );
 };
 

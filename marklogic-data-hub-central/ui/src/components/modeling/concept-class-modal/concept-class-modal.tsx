@@ -25,7 +25,7 @@ type Props = {
   dataModel: Array<any>;
 };
 
-const ConceptClassModal: React.FC<Props> = (props) => {
+const ConceptClassModal: React.FC<Props> = props => {
   const {
     isVisible,
     isEditModal,
@@ -37,7 +37,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     updateConceptClassAndHideModal,
     updateHubCentralConfig,
     hubCentralConfig,
-    dataModel
+    dataModel,
   } = props;
   const {handleError} = useContext(UserContext);
   const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
@@ -75,7 +75,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     }
   }, [isVisible]);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "concept-class-name") {
       if (event.target.value === "") {
         toggleIsNameDisabled(true);
@@ -129,7 +129,10 @@ const ConceptClassModal: React.FC<Props> = (props) => {
 
   const setHubCentralConfig = async (conceptClassName, color, icon) => {
     let updatedPayload = hubCentralConfig || defaultHubCentralConfig;
-    if (Object.keys(updatedPayload.modeling.concepts).length > 0 && updatedPayload.modeling.concepts.hasOwnProperty(conceptClassName)) {
+    if (
+      Object.keys(updatedPayload.modeling.concepts).length > 0 &&
+      updatedPayload.modeling.concepts.hasOwnProperty(conceptClassName)
+    ) {
       updatedPayload.modeling.concepts[conceptClassName]["color"] = color;
       updatedPayload.modeling.concepts[conceptClassName]["icon"] = icon;
     } else {
@@ -142,7 +145,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     try {
       const payload = {
         name: name,
-        description: description
+        description: description,
       };
       const response = await createConceptClass(payload);
       if (response["status"] === 201) {
@@ -151,7 +154,10 @@ const ConceptClassModal: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (error.response["status"] === 400) {
-        if (error.response.data.hasOwnProperty("message") && error.response.data["message"] === ErrorTooltips.conceptClassErrorServerResp(name)) {
+        if (
+          error.response.data.hasOwnProperty("message") &&
+          error.response.data["message"] === ErrorTooltips.conceptClassErrorServerResp(name)
+        ) {
           setErrorMessage("name-error");
         } else {
           setErrorMessage(error["response"]["data"]["message"]);
@@ -192,7 +198,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     setConceptName("");
   };
 
-  const onOk = (event) => {
+  const onOk = event => {
     setErrorName("");
     setErrorMessage("");
     event.preventDefault();
@@ -201,7 +207,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
       handleSubmit();
     } else {
       let existEntityName = false;
-      dataModel.map((entity) => {
+      dataModel.map(entity => {
         if (entity["entityName"] === conceptName || entity["conceptName"] === conceptName) {
           existEntityName = true;
         }
@@ -231,7 +237,7 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     setColorSelected(color.hex);
   };
 
-  const handleIconChange = async (iconSelected) => {
+  const handleIconChange = async iconSelected => {
     setIconSelected(iconSelected);
     if (iconSelected !== icon) {
       setIsIconTouched(true);
@@ -240,101 +246,170 @@ const ConceptClassModal: React.FC<Props> = (props) => {
     }
   };
 
-  return (<HCModal
-    show={isVisible}
-    size={"lg"}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"pe-4"}>
-      <span className={"fs-3"}>{isEditModal ? "Edit Concept Class" : "Add Concept Class"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"py-4"}>
-      <Form
-        id="concept-class-form"
-        onSubmit={onOk}
-        className={"container-fluid"}
-        style={{padding: "0px"}}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}{isEditModal ? null : <span className={styles.asterisk}>*</span>}</FormLabel>
-          <Col>
-            <Row>
-              <Col className={(errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex")}>
-                {isEditModal ? <span>{conceptName}</span> : <HCInput
-                  id="concept-class-name"
-                  placeholder="Enter name"
-                  value={conceptName}
-                  onChange={handleChange}
-                  onBlur={handleChange}
-                />}
-                <div className={"p-2 d-flex"}>
-                  {isEditModal ? null : <HCTooltip text={ModelingTooltips.nameConceptClass} id="concept-class-name-tooltip" placement="top">
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
-                  </HCTooltip>}
-                </div>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {errorName || (errorMessage === "name-error" && (<p aria-label="concept-class-name-error" className={styles.errorServer}>Concept class is already using the name <strong>{conceptName}</strong>. Concept class cannot use the same name as an existing concept class.</p>))}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="description"
-              placeholder="Enter description"
-              value={conceptDescription}
-              onChange={handleChange}
-              onBlur={handleChange}
-            />
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top">
-                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
+  return (
+    <HCModal show={isVisible} size={"lg"} onHide={onCancel}>
+      <Modal.Header className={"pe-4"}>
+        <span className={"fs-3"}>{isEditModal ? "Edit Concept Class" : "Add Concept Class"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"py-4"}>
+        <Form id="concept-class-form" onSubmit={onOk} className={"container-fluid"} style={{padding: "0px"}}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              {isEditModal ? null : <span className={styles.asterisk}>*</span>}
+            </FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
+                  {isEditModal ? (
+                    <span>{conceptName}</span>
+                  ) : (
+                    <HCInput
+                      id="concept-class-name"
+                      placeholder="Enter name"
+                      value={conceptName}
+                      onChange={handleChange}
+                      onBlur={handleChange}
+                    />
+                  )}
+                  <div className={"p-2 d-flex"}>
+                    {isEditModal ? null : (
+                      <HCTooltip
+                        text={ModelingTooltips.nameConceptClass}
+                        id="concept-class-name-tooltip"
+                        placement="top"
+                      >
+                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
+                      </HCTooltip>
+                    )}
+                  </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorName ||
+                    (errorMessage === "name-error" && (
+                      <p aria-label="concept-class-name-error" className={styles.errorServer}>
+                        Concept class is already using the name <strong>{conceptName}</strong>. Concept class cannot use
+                        the same name as an existing concept class.
+                      </p>
+                    ))}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Description:"}
+            </FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="description"
+                placeholder="Enter description"
+                value={conceptDescription}
+                onChange={handleChange}
+                onBlur={handleChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={ModelingTooltips.conceptClassDescription} id="description-tooltip" placement="top">
+                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <div className={styles.colorContainer}>
-              <EntityTypeColorPicker color={colorSelected} entityType={conceptName} handleColorChange={handleColorChange} />
-            </div>
-            <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="select-color-tooltip" text={isEditModal ? <span>The selected color will be associated with the <b>{conceptName}</b> concept class throughout your project</span> : <span>The selected color will be associated with this concept class throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill  tabIndex={0} className={styles.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.iconContainer} data-testid={`${conceptName}-icon-selector`} aria-label={`${conceptName}-${iconSelected}-icon`}>
-              <HCIconPicker identifier={conceptName} value={iconSelected} onChange={(value) => handleIconChange(value)} />
-            </div>
-            <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{conceptName}</b> concept class throughout your project.</span>} placement="right">
-                <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-      </Form>
-    </Modal.Body>
-    <Modal.Footer className={"d-flex justify-content-end py-2"}>
-      <HCButton className={"me-2"} variant="outline-light" id={"concept-class-modal-cancel"} aria-label={"Cancel"} onClick={onCancel}>
-        {"Cancel"}
-      </HCButton>
-      <HCButton aria-label={"Yes"} variant="primary" id={"concept-class-modal-add"} type="submit" onClick={onOk} loading={loading}>
-        {isEditModal ? "OK" : "Add"}
-      </HCButton>
-    </Modal.Footer>
-  </HCModal>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "10px"}}>
+              {"Color:"}
+            </FormLabel>
+            <Col className={"d-flex"}>
+              <div className={styles.colorContainer}>
+                <EntityTypeColorPicker
+                  color={colorSelected}
+                  entityType={conceptName}
+                  handleColorChange={handleColorChange}
+                />
+              </div>
+              <div className={"p-2 ps-3 d-flex align-items-center"}>
+                <HCTooltip
+                  id="select-color-tooltip"
+                  text={
+                    isEditModal ? (
+                      <span>
+                        The selected color will be associated with the <b>{conceptName}</b> concept class throughout
+                        your project
+                      </span>
+                    ) : (
+                      <span>The selected color will be associated with this concept class throughout your project</span>
+                    )
+                  }
+                  placement={"right"}
+                >
+                  <QuestionCircleFill tabIndex={0} className={styles.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "11px"}}>
+              {"Icon:"}
+            </FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <div
+                className={styles.iconContainer}
+                data-testid={`${conceptName}-icon-selector`}
+                aria-label={`${conceptName}-${iconSelected}-icon`}
+              >
+                <HCIconPicker
+                  identifier={conceptName}
+                  value={iconSelected}
+                  onChange={value => handleIconChange(value)}
+                />
+              </div>
+              <div className={"p-2 ps-3 d-flex align-items-center"}>
+                <HCTooltip
+                  id="icon-selector"
+                  text={
+                    <span>
+                      Select an icon to associate it with the <b>{conceptName}</b> concept class throughout your
+                      project.
+                    </span>
+                  }
+                  placement="right"
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer className={"d-flex justify-content-end py-2"}>
+        <HCButton
+          className={"me-2"}
+          variant="outline-light"
+          id={"concept-class-modal-cancel"}
+          aria-label={"Cancel"}
+          onClick={onCancel}
+        >
+          {"Cancel"}
+        </HCButton>
+        <HCButton
+          aria-label={"Yes"}
+          variant="primary"
+          id={"concept-class-modal-add"}
+          type="submit"
+          onClick={onOk}
+          loading={loading}
+        >
+          {isEditModal ? "OK" : "Add"}
+        </HCButton>
+      </Modal.Footer>
+    </HCModal>
   );
 };
 

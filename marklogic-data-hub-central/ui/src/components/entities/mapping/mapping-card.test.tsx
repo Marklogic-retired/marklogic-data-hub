@@ -22,9 +22,7 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
-
 describe("Mapping Card component", () => {
-
   const mapping = data.mappings.data[0].artifacts;
   const entityModel = data.primaryEntityTypes.data[0];
   const mappingProps = {
@@ -57,11 +55,9 @@ describe("Mapping Card component", () => {
     let queryAllByText, getByText, getByRole, queryAllByRole, getByTestId, getByLabelText;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard
-          {...mappingProps}
-          canReadOnly={true}
-          deleteMappingArtifact={deleteMappingArtifact}
-        /></Router>
+        <Router>
+          <MappingCard {...mappingProps} canReadOnly={true} deleteMappingArtifact={deleteMappingArtifact} />
+        </Router>,
       );
       getByText = renderResults.getByText;
       getByRole = renderResults.getByRole;
@@ -92,7 +88,6 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole("disabled-delete-mapping"));
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMappingArtifact).not.toBeCalled();
-
   });
 
   test("Mapping card does allow edit with writeMapping authority", async () => {
@@ -100,12 +95,14 @@ describe("Mapping Card component", () => {
     let getByText, getByRole, queryAllByRole, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard
-          {...mappingProps}
-          canReadOnly={true}
-          canReadWrite={true}
-          deleteMappingArtifact={deleteMappingArtifact}
-        /></Router>
+        <Router>
+          <MappingCard
+            {...mappingProps}
+            canReadOnly={true}
+            canReadWrite={true}
+            deleteMappingArtifact={deleteMappingArtifact}
+          />
+        </Router>,
       );
       getByText = renderResults.getByText;
       getByRole = renderResults.getByRole;
@@ -122,9 +119,13 @@ describe("Mapping Card component", () => {
     fireEvent.mouseOver(getByRole("delete-mapping"));
     await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     await fireEvent.click(getByRole("delete-mapping"));
-    expect(await(waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you want to delete the Mapping1 step?");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "Are you sure you want to delete the Mapping1 step?");
+        }),
+      ),
+    ).toBeInTheDocument();
     await fireEvent.click(getByText("Yes"));
     expect(deleteMappingArtifact).toBeCalled();
   });
@@ -133,11 +134,10 @@ describe("Mapping Card component", () => {
     let getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard
-          {...mappingProps}
-          canReadOnly={true}
-          canReadWrite={true}
-        /></Router>);
+        <Router>
+          <MappingCard {...mappingProps} canReadOnly={true} canReadWrite={true} />
+        </Router>,
+      );
       getByTestId = renderResults.getByTestId;
     });
 
@@ -157,12 +157,11 @@ describe("Mapping Card component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["writeMapping", "readMapping"]);
     const {getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
-      <Router><AuthoritiesContext.Provider value={authorityService}>
-        <MappingCard
-          {...mappingProps}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></Router>
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <MappingCard {...mappingProps} canReadWrite={true} canWriteFlow={true} />
+        </AuthoritiesContext.Provider>
+      </Router>,
     );
 
     // Open default Basic settings
@@ -180,11 +179,13 @@ describe("Mapping Card component", () => {
       expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
 
       expect(getByLabelText("Collection")).toBeChecked();
-      const collInput = document.querySelector(("#collList .ant-input"));
+      const collInput = document.querySelector("#collList .ant-input");
       expect(collInput).toHaveValue("default-ingestion");
 
       fireEvent.click(getByLabelText("Query"));
-      expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['default-ingestion'])");
+      expect(getByPlaceholderText("Enter source query")).toHaveTextContent(
+        "cts.collectionQuery(['default-ingestion'])",
+      );
 
       // Switch to Advanced settings
       await wait(() => {
@@ -201,7 +202,9 @@ describe("Mapping Card component", () => {
       expect(getByText("Batch Size")).toBeInTheDocument();
       expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
       expect(getByText("Target Permissions")).toBeInTheDocument();
-      expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
+      expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(
+        "data-hub-common,read,data-hub-common,update",
+      );
       expect(getByText("Entity Validation")).toBeInTheDocument();
       expect(getByText("Please select Entity Validation")).toBeInTheDocument();
       expect(getByText("Attach Source Document")).toBeInTheDocument();
@@ -225,12 +228,11 @@ describe("Mapping Card component", () => {
     let getByText, getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-          {...mappingProps}
-          data={mapping}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></MemoryRouter>
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard {...mappingProps} data={mapping} canReadWrite={true} canWriteFlow={true} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -262,9 +264,10 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping2-to-testFlow-Confirm"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
     // TODO- E2E test to check if the Run tile is loaded or not.
-
 
     //Verify run step in an existing flow where step does not exist yet
 
@@ -278,8 +281,9 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("testFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Adding the step to an existing flow and running the step in an existing flow where step DOES exist", async () => {
@@ -288,11 +292,11 @@ describe("Mapping Card component", () => {
     let getByText, getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-          {...mappingProps}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></MemoryRouter>
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard {...mappingProps} canReadWrite={true} canWriteFlow={true} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -309,7 +313,9 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping1-to-testFlow-Exists-Confirm"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
     //Verify run step in an existing flow where step does exist
@@ -324,26 +330,27 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+    });
   });
-
 
   test("Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping", "writeMapping", "writeFlow"]);
     const mapping = data.mappings.data[2].artifacts;
-    const flows = [{name: "testStepInMultFlow", steps: [{stepName: "Mapping3"}]}, {name: "mappingFlow", steps: [{stepName: "Mapping3"}]}];
+    const flows = [
+      {name: "testStepInMultFlow", steps: [{stepName: "Mapping3"}]},
+      {name: "mappingFlow", steps: [{stepName: "Mapping3"}]},
+    ];
     let getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-          {...mappingProps}
-          data={mapping}
-          flows={flows}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></MemoryRouter>
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard {...mappingProps} data={mapping} flows={flows} canReadWrite={true} canWriteFlow={true} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
       );
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId;
@@ -361,7 +368,9 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("testStepInMultFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Adding the step to a new flow", async () => {
@@ -371,12 +380,11 @@ describe("Mapping Card component", () => {
     let getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-          {...mappingProps}
-          data={mapping}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></MemoryRouter>
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard {...mappingProps} data={mapping} canReadWrite={true} canWriteFlow={true} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
       );
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
@@ -401,7 +409,6 @@ describe("Mapping Card component", () => {
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
-
   });
 
   test("Running the step in a new flow", async () => {
@@ -411,12 +418,11 @@ describe("Mapping Card component", () => {
     let getByTestId, getByLabelText;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-          {...mappingProps}
-          data={mapping}
-          canReadWrite={true}
-          canWriteFlow={true}
-        /></AuthoritiesContext.Provider></MemoryRouter>
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <MappingCard {...mappingProps} data={mapping} canReadWrite={true} canWriteFlow={true} />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
       );
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
@@ -434,8 +440,9 @@ describe("Mapping Card component", () => {
     fireEvent.click(getByTestId("Mapping2-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
-
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   test("Verify Mapping card allows step to be added to flow with writeFlow authority", async () => {
@@ -444,14 +451,17 @@ describe("Mapping Card component", () => {
     const mappingStepName = mapping[0].name;
     const mockAddStepToFlow = jest.fn();
     const {getByText, getAllByText, getByTestId, getByLabelText} = render(
-      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-        {...mappingProps}
-        canReadOnly={authorityService.canReadMapping()}
-        canReadWrite={authorityService.canWriteMapping()}
-        canWriteFlow={authorityService.canWriteFlow()}
-        addStepToFlow={mockAddStepToFlow}
-      />
-      </AuthoritiesContext.Provider></MemoryRouter>
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <MappingCard
+            {...mappingProps}
+            canReadOnly={authorityService.canReadMapping()}
+            canReadWrite={authorityService.canWriteMapping()}
+            canWriteFlow={authorityService.canWriteFlow()}
+            addStepToFlow={mockAddStepToFlow}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
     );
 
     fireEvent.mouseOver(getByText(mappingStepName));
@@ -468,7 +478,6 @@ describe("Mapping Card component", () => {
     fireEvent.mouseOver(mappingStep[0]);
     expect(getByTestId(`${mappingStepName}-toNewFlow`)).toBeInTheDocument();
     // TODO calling addStepToNew not implemented yet
-
   });
 
   test("Verify Mapping card does not allow a step to be added to flow or run in a flow with readFlow authority only", async () => {
@@ -477,13 +486,17 @@ describe("Mapping Card component", () => {
     const mappingStepName = mapping[0].name;
     const mockAddStepToFlow = jest.fn();
     const {getByText, queryByText, queryByTestId, getByRole, getByLabelText} = render(
-      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-        {...mappingProps}
-        canReadOnly={authorityService.canReadMapping()}
-        canReadWrite={authorityService.canWriteMapping()}
-        canWriteFlow={authorityService.canWriteFlow()}
-        addStepToFlow={mockAddStepToFlow}
-      /></AuthoritiesContext.Provider></MemoryRouter>
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <MappingCard
+            {...mappingProps}
+            canReadOnly={authorityService.canReadMapping()}
+            canReadWrite={authorityService.canWriteMapping()}
+            canWriteFlow={authorityService.canWriteFlow()}
+            addStepToFlow={mockAddStepToFlow}
+          />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
     );
 
     fireEvent.mouseOver(getByText(mappingStepName));
@@ -503,6 +516,5 @@ describe("Mapping Card component", () => {
 
     await fireEvent.click(getByRole("disabled-run-mapping"));
     expect(queryByTestId("Mapping1-run-flowsList")).not.toBeInTheDocument();
-
   });
 });

@@ -4,7 +4,13 @@ import Tree from "rc-tree";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
-import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey} from "@util/data-conversion";
+import {
+  treeConverter,
+  getCheckedKeys,
+  getSelectedTableProperties,
+  setTreeVisibility,
+  getParentKey,
+} from "@util/data-conversion";
 import {SearchContext} from "@util/search-context";
 import {HCSearch, HCButton, HCDivider, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
@@ -20,14 +26,11 @@ interface Props {
   primaryKey: string;
 }
 
-const ColumnSelector: React.FC<Props> = (props) => {
+const ColumnSelector: React.FC<Props> = props => {
   const {TreeNode} = Tree;
-  const {
-    setSelectedTableProperties,
-  } = useContext(SearchContext);
+  const {setSelectedTableProperties} = useContext(SearchContext);
   const target = React.useRef(null);
   const container = React.useRef(null);
-
 
   let allProperties = treeConverter(props.entityPropertyDefinitions);
   let selectedPropertyKeys = getCheckedKeys(allProperties, props.selectedPropertyDefinitions);
@@ -38,7 +41,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [treeColumns, setTreeColumns] = useState<any[]>(allProperties);
   const [checkedKeys, setCheckedKeys] = useState<any[]>(selectedPropertyKeys);
 
-  let primaryKey = treeColumns.find((prop => { return prop.title === props.primaryKey; }));
+  let primaryKey = treeColumns.find(prop => {
+    return prop.title === props.primaryKey;
+  });
   const dataList: any[] = [];
 
   useEffect(() => {
@@ -85,14 +90,13 @@ const ColumnSelector: React.FC<Props> = (props) => {
       if (item.children) {
         if (item.visible === false) {
           return (
-            <TreeNode style={{display: "none"}} key={item.key} title={title} aria-label="column-option" >
+            <TreeNode style={{display: "none"}} key={item.key} title={title} aria-label="column-option">
               {treeRenderer(item.children)}
             </TreeNode>
           );
-
         } else {
           return (
-            <TreeNode key={item.key} title={title} aria-label="column-option" >
+            <TreeNode key={item.key} title={title} aria-label="column-option">
               {treeRenderer(item.children)}
             </TreeNode>
           );
@@ -102,12 +106,29 @@ const ColumnSelector: React.FC<Props> = (props) => {
         return <TreeNode style={{display: "none"}} title={title} key={item.key} aria-label="column-option" />;
       } else {
         if (item && primaryKey && item.key === primaryKey.key) {
-          let pkTitle = <HCTooltip text="The column identified as the unique identifier must always be displayed." id="column-identifier-tooltip" placement="top">
-            <div data-testid="pk-tooltip">{title}</div>
-          </HCTooltip>;
-          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />;
+          let pkTitle = (
+            <HCTooltip
+              text="The column identified as the unique identifier must always be displayed."
+              id="column-identifier-tooltip"
+              placement="top"
+            >
+              <div data-testid="pk-tooltip">{title}</div>
+            </HCTooltip>
+          );
+          return (
+            <TreeNode
+              title={pkTitle}
+              disabled={true}
+              disableCheckbox={true}
+              key={item.key}
+              data-testid={`node-${item.title}`}
+              aria-label="column-option"
+            />
+          );
         } else {
-          return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />;
+          return (
+            <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`} aria-label="column-option" />
+          );
         }
       }
     });
@@ -168,8 +189,17 @@ const ColumnSelector: React.FC<Props> = (props) => {
           <footer>
             <HCDivider className={styles.divider} />
             <div className={styles.footer}>
-              <HCButton size="sm" variant="outline-light" onClick={onClose} data-testid={"cancel-column-selector"} >Cancel</HCButton>
-              <HCButton size="sm" onClick={onApply} disabled={!checkedKeys.length} data-testid={"apply-column-selector"} >Apply</HCButton>
+              <HCButton size="sm" variant="outline-light" onClick={onClose} data-testid={"cancel-column-selector"}>
+                Cancel
+              </HCButton>
+              <HCButton
+                size="sm"
+                onClick={onApply}
+                disabled={!checkedKeys.length}
+                data-testid={"apply-column-selector"}
+              >
+                Apply
+              </HCButton>
             </div>
           </footer>
         </div>
@@ -196,11 +226,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
           />
         </i>
       </HCTooltip>
-      <Overlay
-        container={container}
-        target={target.current}
-        placement="left-start"
-        show={props.popoverVisibility}>
+      <Overlay container={container} target={target.current} placement="left-start" show={props.popoverVisibility}>
         {content}
       </Overlay>
     </div>
@@ -208,5 +234,3 @@ const ColumnSelector: React.FC<Props> = (props) => {
 };
 
 export default ColumnSelector;
-
-

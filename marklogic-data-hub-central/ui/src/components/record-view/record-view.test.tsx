@@ -14,7 +14,6 @@ import {SecurityTooltips} from "@config/tooltips.config";
 jest.mock("axios");
 
 describe("Raw data card view component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -22,10 +21,8 @@ describe("Raw data card view component", () => {
   test("Raw data card with data renders", async () => {
     const {getByTestId, getByText, getAllByText} = render(
       <Router>
-        <RecordCardView
-          data={entitySearch.results}
-        />
-      </Router>
+        <RecordCardView data={entitySearch.results} />
+      </Router>,
     );
     // Check raw data cards are rendered
     expect(getByTestId("/Customer/Cust1.json-URI")).toBeInTheDocument();
@@ -54,9 +51,15 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByText("View details"));
 
     //verify snippet content for json/xml/text docs
-    expect(getByTestId("/Customer/Cust1.json-snippet").textContent).toContain(entitySearch.results[0].matches[0]["match-text"][0]);
-    expect(getByTestId("/Customer.xml-snippet").textContent).toContain(entitySearch.results[6].matches[0]["match-text"][0]);
-    expect(getByTestId("/Customer.txt-snippet").textContent).toContain(entitySearch.results[7].matches[0]["match-text"][0]);
+    expect(getByTestId("/Customer/Cust1.json-snippet").textContent).toContain(
+      entitySearch.results[0].matches[0]["match-text"][0],
+    );
+    expect(getByTestId("/Customer.xml-snippet").textContent).toContain(
+      entitySearch.results[6].matches[0]["match-text"][0],
+    );
+    expect(getByTestId("/Customer.txt-snippet").textContent).toContain(
+      entitySearch.results[7].matches[0]["match-text"][0],
+    );
 
     //verify snippet content for binary doc
     expect(getByTestId("/Customer/Customer.pdf-noPreview").textContent).toContain("No preview available");
@@ -78,19 +81,19 @@ describe("Raw data card view component", () => {
     authorityService.setAuthorities(["writeMatching", "writeMerging"]);
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
-    const {getByLabelText, getByTestId, getByText} = render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
-          <RecordCardView
-            entityDefArray={[{name: "Customer", properties: []}]}
-            data={entitySearch.results}
-          />
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByLabelText, getByTestId, getByText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
+            <RecordCardView entityDefArray={[{name: "Customer", properties: []}]} data={entitySearch.results} />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     //verify merge icon tooltip
     fireEvent.mouseOver(getByTestId("merge-icon"));
-    await (waitForElement(() => (getByText("Merge Documents"))));
+    await waitForElement(() => getByText("Merge Documents"));
 
     //verify download icon
     expect(getByTestId("/Customer/Cust1.json-download-icon")).toBeInTheDocument();
@@ -99,14 +102,24 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByText("Download (815 B)"));
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
-    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final"});
+    expect(axiosMock).toHaveBeenCalledWith({
+      "method": "GET",
+      "responseType": "blob",
+      "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final",
+    });
 
     jest.clearAllMocks();
-    axiosMock.get["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: {data: {envelope: {instance: {}}}, value: {envelope: {instance: {}}}}})));
+    axiosMock.get["mockImplementation"](
+      jest.fn(() =>
+        Promise.resolve({status: 200, data: {data: {envelope: {instance: {}}}, value: {envelope: {instance: {}}}}}),
+      ),
+    );
     axiosMock.put["mockImplementation"](jest.fn(() => Promise.resolve({status: 200})));
-    axiosMock.delete["mockImplementation"](jest.fn(() => {
-      return Promise.resolve({status: 204});
-    }));
+    axiosMock.delete["mockImplementation"](
+      jest.fn(() => {
+        return Promise.resolve({status: 204});
+      }),
+    );
     //click on merge icon and verify api call.
     fireEvent.click(getByTestId("merge-icon"));
     await waitForElement(() => getByLabelText("confirm-merge-unmerge"));
@@ -114,27 +127,28 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByLabelText("Yes"));
     fireEvent.click(getByLabelText("Yes"));
     await waitForElementToBeRemoved(() => getByLabelText("Yes"));
-    expect(axiosMock.delete).toHaveBeenCalledWith("/api/steps/merging/notifications?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml");
+    expect(axiosMock.delete).toHaveBeenCalledWith(
+      "/api/steps/merging/notifications?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml",
+    );
   });
-
 
   test("Merge Icon not available, missing permission", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMerging", "readMatching"]);
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
-    const {getByTestId, getByText} = render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
-          <RecordCardView
-            entityDefArray={[{name: "Customer", properties: []}]}
-            data={entitySearch.results}
-          />
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByTestId, getByText} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
+            <RecordCardView entityDefArray={[{name: "Customer", properties: []}]} data={entitySearch.results} />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     //verify merge icon tooltip
     fireEvent.mouseOver(getByTestId("merge-icon"));
-    await (waitForElement(() => (getByText(SecurityTooltips.missingPermissionMerge))));
+    await waitForElement(() => getByText(SecurityTooltips.missingPermissionMerge));
   });
 });

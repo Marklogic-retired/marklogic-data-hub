@@ -4,33 +4,26 @@ import React, {useContext} from "react";
 import {SearchContext} from "@util/search-context";
 
 interface Props {
-    savedQueryList: any[];
-    currentQueryName: string;
+  savedQueryList: any[];
+  currentQueryName: string;
 }
 
 const PLACEHOLDER: string = "Select a saved query";
 
-const QueriesDropdown: React.FC<Props> = (props) => {
+const QueriesDropdown: React.FC<Props> = props => {
+  const {savedQueryList, currentQueryName} = props;
 
-  const {
-    savedQueryList,
-    currentQueryName
-  } = props;
+  const {setSidebarQuery} = useContext(SearchContext);
 
-  const {
-    setSidebarQuery,
-  } = useContext(SearchContext);
-
-
-  const savedQueryOptions = savedQueryList.map((key) => key.name);
+  const savedQueryOptions = savedQueryList.map(key => key.name);
 
   const options = savedQueryOptions.map(query => ({value: query, label: query}));
 
-  const onItemSelect = (selectedItem) => {
+  const onItemSelect = selectedItem => {
     setSidebarQuery(selectedItem.value);
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -53,7 +46,8 @@ const QueriesDropdown: React.FC<Props> = (props) => {
           </span>
         );
       }}
-      styles={{...reactSelectThemeConfig,
+      styles={{
+        ...reactSelectThemeConfig,
         container: (provided, state) => ({
           ...provided,
           height: "32px",
@@ -74,8 +68,8 @@ const QueriesDropdown: React.FC<Props> = (props) => {
           ":focus": {
             border: "none",
             boxShadow: "none",
-            webkitBoxShadow: "none"
-          }
+            webkitBoxShadow: "none",
+          },
         }),
       }}
     />

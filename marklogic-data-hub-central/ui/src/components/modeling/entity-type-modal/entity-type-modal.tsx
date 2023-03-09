@@ -27,7 +27,7 @@ type Props = {
   dataModel: Array<any>;
 };
 
-const EntityTypeModal: React.FC<Props> = (props) => {
+const EntityTypeModal: React.FC<Props> = props => {
   const {handleError} = useContext(UserContext);
   const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
@@ -72,7 +72,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   }, [props.isVisible]);
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "entity-name") {
       if (event.target.value === "") {
         toggleIsNameDisabled(true);
@@ -114,7 +114,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const getErrorMessage = () => {
     if (errorMessage) {
       if (errorMessage.includes("valid absolute URI")) {
-        return <span data-testid="namespace-error">Invalid syntax: Namespace property must be a valid absolute URI. Example: http://example.org/es/gs</span>;
+        return (
+          <span data-testid="namespace-error">
+            Invalid syntax: Namespace property must be a valid absolute URI. Example: http://example.org/es/gs
+          </span>
+        );
       } else if (errorMessage.includes("prefix without specifying")) {
         return <span data-testid="namespace-error">You must define a namespace URI because you defined a prefix.</span>;
       } else if (errorMessage.includes("reserved pattern")) {
@@ -161,7 +165,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const updateHubCentralConfig = async (entityName, color, icon) => {
     let updatedPayload = props.hubCentralConfig || defaultHubCentralConfig;
-    if (Object.keys(updatedPayload.modeling.entities).length > 0 && updatedPayload.modeling.entities.hasOwnProperty(entityName)) {
+    if (
+      Object.keys(updatedPayload.modeling.entities).length > 0 &&
+      updatedPayload.modeling.entities.hasOwnProperty(entityName)
+    ) {
       updatedPayload.modeling.entities[entityName]["color"] = color;
       updatedPayload.modeling.entities[entityName]["icon"] = icon;
     } else {
@@ -176,7 +183,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         name: name,
         description: description,
         namespace: namespace,
-        namespacePrefix: prefix
+        namespacePrefix: prefix,
       };
       const response = await createEntityType(payload);
       if (response["status"] === 201) {
@@ -185,7 +192,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty("message") && error.response.data["message"] === ErrorTooltips.entityErrorServerResp(name)) {
+        if (
+          error.response.data.hasOwnProperty("message") &&
+          error.response.data["message"] === ErrorTooltips.entityErrorServerResp(name)
+        ) {
           setErrorMessage("name-error");
         } else {
           setErrorMessage(error["response"]["data"]["message"]);
@@ -198,7 +208,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const entityPropertiesEdited = () => {
-    return (descriptionTouched || namespaceTouched || prefixTouched);
+    return descriptionTouched || namespaceTouched || prefixTouched;
   };
 
   const handleSubmit = async () => {
@@ -226,7 +236,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     setName("");
   };
 
-  const onOk = (event) => {
+  const onOk = event => {
     setErrorName("");
     setErrorMessage("");
     event.preventDefault();
@@ -235,7 +245,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       handleSubmit();
     } else {
       let existEntityName = false;
-      props.dataModel.map((entity) => {
+      props.dataModel.map(entity => {
         if (entity?.entityName === name || entity?.conceptName === name) {
           existEntityName = true;
         }
@@ -265,7 +275,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     setColorSelected(color.hex);
   };
 
-  const handleIconChange = async (iconSelected) => {
+  const handleIconChange = async iconSelected => {
     setIconSelected(iconSelected);
     if (iconSelected !== props.icon) {
       setIsIconTouched(true);
@@ -274,135 +284,199 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
-  return (<HCModal
-    show={props.isVisible}
-    size={"lg"}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"pe-4"}>
-      <span className={"fs-3"}>{props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"py-4"}>
-      <Form
-        id="entity-type-form"
-        onSubmit={onOk}
-        className={"container-fluid"}
-        style={{padding: "0px"}}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}</FormLabel>
-          <Col>
-            <Row>
-              <Col className={(errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex")}>
-                {props.isEditModal ? <span>{name}</span> : <HCInput
-                  id="entity-name"
-                  placeholder="Enter name"
-                  value={name}
-                  onChange={handleChange}
-                  onBlur={handleChange}
-                />}
-                <div className={"p-2 d-flex"} >
-                  {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
-                    <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
-                  </HCTooltip>}
-                </div>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {errorName || (errorMessage === "name-error" && (<p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>))}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="description"
-              placeholder="Enter description"
-              value={description}
-              onChange={handleChange}
-              onBlur={handleChange}
-            />
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
-                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
-          <Col>
-            <Row>
-              <Col className={"d-flex"}>
-                <HCInput
-                  id="namespace"
-                  placeholder="Example: http://example.org/es/gs"
-                  value={namespace}
-                  onChange={handleChange}
-                  onBlur={handleChange}
-                  style={{width: "90%"}}
-                />
-                <FormLabel className={"ps-2 pe-2 m-0 d-flex align-items-center"}>{"Prefix:"}</FormLabel>
-                <HCInput
-                  id="prefix"
-                  placeholder="Example: esgs"
-                  className={styles.input}
-                  value={prefix}
-                  onChange={handleChange}
-                  onBlur={handleChange}
-                />
-                <div className={"p-2 d-flex align-items-center"}>
-                  <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle}/>
-                  </HCTooltip>
-                </div>
-              </Col>
-              <Col  xs={12} className={styles.validationError}>
-                {errorName || ((errorMessage !== "name-error") && (errorMessage !== "")) ? (<p className={styles.errorServer}>{getErrorMessage()}</p>) : null}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+  return (
+    <HCModal show={props.isVisible} size={"lg"} onHide={onCancel}>
+      <Modal.Header className={"pe-4"}>
+        <span className={"fs-3"}>{props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"py-4"}>
+        <Form id="entity-type-form" onSubmit={onOk} className={"container-fluid"} style={{padding: "0px"}}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              {props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
+            </FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
+                  {props.isEditModal ? (
+                    <span>{name}</span>
+                  ) : (
+                    <HCInput
+                      id="entity-name"
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={handleChange}
+                      onBlur={handleChange}
+                    />
+                  )}
+                  <div className={"p-2 d-flex"}>
+                    {props.isEditModal ? null : (
+                      <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
+                        <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
+                      </HCTooltip>
+                    )}
+                  </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorName ||
+                    (errorMessage === "name-error" && (
+                      <p aria-label="entity-name-error" className={styles.errorServer}>
+                        An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the
+                        same name as an existing entity type.
+                      </p>
+                    ))}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Description:"}
+            </FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="description"
+                placeholder="Enter description"
+                value={description}
+                onChange={handleChange}
+                onBlur={handleChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
+                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Namespace URI:"}
+            </FormLabel>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <HCInput
+                    id="namespace"
+                    placeholder="Example: http://example.org/es/gs"
+                    value={namespace}
+                    onChange={handleChange}
+                    onBlur={handleChange}
+                    style={{width: "90%"}}
+                  />
+                  <FormLabel className={"ps-2 pe-2 m-0 d-flex align-items-center"}>{"Prefix:"}</FormLabel>
+                  <HCInput
+                    id="prefix"
+                    placeholder="Example: esgs"
+                    className={styles.input}
+                    value={prefix}
+                    onChange={handleChange}
+                    onBlur={handleChange}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        size={13}
+                        className={styles.questionCircle}
+                      />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorName || (errorMessage !== "name-error" && errorMessage !== "") ? (
+                    <p className={styles.errorServer}>{getErrorMessage()}</p>
+                  ) : null}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <div className={styles.colorContainer}>
-              <EntityTypeColorPicker color={colorSelected} entityType={name} handleColorChange={handleColorChange}/>
-            </div>
-            <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity throughout your project</span> : <span>The selected color will be associated with this entity throughout your project</span>} placement={"right"}>
-                <QuestionCircleFill tabIndex={0} className={styles.questionCircle} size={13}/>
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <div className={styles.iconContainer} data-testid={`${name}-icon-selector`} aria-label={`${name}-${iconSelected}-icon`}>
-              <HCIconPicker identifier={name} value={iconSelected} onChange={(value) => handleIconChange(value)} />
-            </div>
-            <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity throughout your project.</span>} placement="right">
-                <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" size={13} className={styles.questionCircle} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-      </Form>
-    </Modal.Body>
-    <Modal.Footer className={"d-flex justify-content-end py-2"}>
-      <HCButton className={"me-2"} variant="outline-light" id={"entity-modal-cancel"} aria-label={"Cancel"} onClick={onCancel}>
-        {"Cancel"}
-      </HCButton>
-      <HCButton aria-label={"Yes"} variant="primary" id={"entity-modal-add"} type="submit" onClick={onOk} loading={loading}>
-        {props.isEditModal ? "OK" : "Add"}
-      </HCButton>
-    </Modal.Footer>
-  </HCModal>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "10px"}}>
+              {"Color:"}
+            </FormLabel>
+            <Col className={"d-flex"}>
+              <div className={styles.colorContainer}>
+                <EntityTypeColorPicker color={colorSelected} entityType={name} handleColorChange={handleColorChange} />
+              </div>
+              <div className={"p-2 ps-3 d-flex align-items-center"}>
+                <HCTooltip
+                  id="select-color-tooltip"
+                  text={
+                    props.isEditModal ? (
+                      <span>
+                        The selected color will be associated with the <b>{name}</b> entity throughout your project
+                      </span>
+                    ) : (
+                      <span>The selected color will be associated with this entity throughout your project</span>
+                    )
+                  }
+                  placement={"right"}
+                >
+                  <QuestionCircleFill tabIndex={0} className={styles.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} style={{marginTop: "11px"}}>
+              {"Icon:"}
+            </FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <div
+                className={styles.iconContainer}
+                data-testid={`${name}-icon-selector`}
+                aria-label={`${name}-${iconSelected}-icon`}
+              >
+                <HCIconPicker identifier={name} value={iconSelected} onChange={value => handleIconChange(value)} />
+              </div>
+              <div className={"p-2 ps-3 d-flex align-items-center"}>
+                <HCTooltip
+                  id="icon-selector"
+                  text={
+                    <span>
+                      Select an icon to associate it with the <b>{name}</b> entity throughout your project.
+                    </span>
+                  }
+                  placement="right"
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer className={"d-flex justify-content-end py-2"}>
+        <HCButton
+          className={"me-2"}
+          variant="outline-light"
+          id={"entity-modal-cancel"}
+          aria-label={"Cancel"}
+          onClick={onCancel}
+        >
+          {"Cancel"}
+        </HCButton>
+        <HCButton
+          aria-label={"Yes"}
+          variant="primary"
+          id={"entity-modal-add"}
+          type="submit"
+          onClick={onOk}
+          loading={loading}
+        >
+          {props.isEditModal ? "OK" : "Add"}
+        </HCButton>
+      </Modal.Footer>
+    </HCModal>
   );
 };
 

@@ -10,7 +10,6 @@ import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
 describe("Create Edit Step Dialog component", () => {
-
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
@@ -23,8 +22,8 @@ describe("Create Edit Step Dialog component", () => {
     expect(getByPlaceholderText("Enter description")).toHaveValue("merge customer description");
 
     expect(getByLabelText("Collection")).toBeChecked();
-    const collInput = document.querySelector((".rbt-input-main"));
-    await(() => expect(collInput).toHaveValue("matchCustomers"));
+    const collInput = document.querySelector(".rbt-input-main");
+    await (() => expect(collInput).toHaveValue("matchCustomers"));
 
     fireEvent.click(getByLabelText("Query"));
     expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['matchCustomers'])");
@@ -37,22 +36,25 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(getByLabelText("Collection"));
 
     fireEvent.click(getByText("Save"));
-    expect(data.editMerging.updateStepArtifact).toBeCalledWith({
-      name: "mergeCustomers",
-      description: "merge customer description",
-      collection: "matchCustomers",
-      selectedSource: "collection",
-      sourceQuery: "cts.collectionQuery(['matchCustomers'])",
-      targetEntityType: "Customer",
-      lastUpdatedLocation: {
-        documentXPath: "/es:envelope/es:headers/timestamp"
+    expect(data.editMerging.updateStepArtifact).toBeCalledWith(
+      {
+        name: "mergeCustomers",
+        description: "merge customer description",
+        collection: "matchCustomers",
+        selectedSource: "collection",
+        sourceQuery: "cts.collectionQuery(['matchCustomers'])",
+        targetEntityType: "Customer",
+        lastUpdatedLocation: {
+          documentXPath: "/es:envelope/es:headers/timestamp",
+        },
       },
-    }, "merging");
+      "merging",
+    );
   });
 
   test("Verify Edit Merging dialog renders correctly for a read only user", async () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
-      <CreateEditStep {...data.editMerging} canReadWrite={false} />
+      <CreateEditStep {...data.editMerging} canReadWrite={false} />,
     );
 
     const stepName = getByPlaceholderText("Enter name");
@@ -67,7 +69,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(collection).toBeChecked();
     expect(collection).toBeDisabled();
     expect(getByLabelText("Query")).toBeDisabled();
-    const collInput = document.querySelector((".rbt-input-main"));
+    const collInput = document.querySelector(".rbt-input-main");
     expect(collInput).toBeDisabled();
     expect(timestamp).toHaveValue("/es:envelope/es:headers/timestamp");
     expect(timestamp).toBeDisabled();
@@ -81,7 +83,8 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify New Merging Dialog renders ", async () => {
     const {getByText, getByLabelText, getByPlaceholderText} = render(
-      <CreateEditStep {...data.newMerging}
+      <CreateEditStep
+        {...data.newMerging}
         tabKey={""}
         openStepSettings={false}
         setOpenStepSettings={false}
@@ -98,68 +101,76 @@ describe("Create Edit Step Dialog component", () => {
         resetTabs={jest.fn()}
         setHasChanged={jest.fn()}
         setPayload={jest.fn()}
-        onCancel={jest.fn()}/>
+        onCancel={jest.fn()}
+      />,
     );
 
     expect(getByPlaceholderText("Enter name")).toBeInTheDocument();
     expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
     expect(getByLabelText("Collection")).toBeInTheDocument();
     expect(getByLabelText("Query")).toBeInTheDocument();
-    expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
+    expect(document.querySelector(".rbt-input-main")).toBeInTheDocument();
 
-    await(() => expect(getByPlaceholderText("Enter path to the timestamp")).toBeInTheDocument());
-    await(() => expect(getByText("Save")).toBeEnabled());
-    await(() => expect(getByText("Cancel")).toBeEnabled());
+    await (() => expect(getByPlaceholderText("Enter path to the timestamp")).toBeInTheDocument());
+    await (() => expect(getByText("Save")).toBeEnabled());
+    await (() => expect(getByText("Cancel")).toBeEnabled());
     //Collection radio button should be selected by default
     expect(getByLabelText("Collection")).toBeChecked();
   });
 
   test("Verify save button is always enabled and error messaging appears as needed", async () => {
-    const {getByText, getByPlaceholderText, queryByText} = render(<CreateEditStep {...data.newMerging}
-      tabKey={""}
-      openStepSettings={false}
-      setOpenStepSettings={false}
-      isEditing={false}
-      stepType={StepType.Custom}
-      editStepArtifactObject={{}}
-      targetEntityType={""}
-      canReadWrite={false}
-      canReadOnly={false}
-      createStepArtifact={jest.fn()}
-      updateStepArtifact={jest.fn()}
-      currentTab={""}
-      setIsValid={jest.fn()}
-      resetTabs={jest.fn()}
-      setHasChanged={jest.fn()}
-      setPayload={jest.fn()}
-      onCancel={jest.fn()}
-    />);
+    const {getByText, getByPlaceholderText, queryByText} = render(
+      <CreateEditStep
+        {...data.newMerging}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={false}
+        isEditing={false}
+        stepType={StepType.Custom}
+        editStepArtifactObject={{}}
+        targetEntityType={""}
+        canReadWrite={false}
+        canReadOnly={false}
+        createStepArtifact={jest.fn()}
+        updateStepArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
     const nameInput = getByPlaceholderText("Enter name");
     const saveButton = getByText("Save");
 
-    await(() => expect(saveButton).toBeEnabled()); // button should be enabled without any input
+    await (() => expect(saveButton).toBeEnabled()); // button should be enabled without any input
 
     fireEvent.change(nameInput, {target: {value: "testCreateMerging"}});
     expect(nameInput).toHaveValue("testCreateMerging");
-    await(() => expect(saveButton).toBeEnabled());
+    await (() => expect(saveButton).toBeEnabled());
 
     //verify validation on name field
 
     //proper error message shows when field is empty
     fireEvent.change(nameInput, {target: {value: ""}});
-    await(() => expect(getByText("Name is required")).toBeInTheDocument());
+    await (() => expect(getByText("Name is required")).toBeInTheDocument());
 
     //proper error message shows when field does not lead with a letter
     fireEvent.change(nameInput, {target: {value: "123testCreateStep"}});
-    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
+    expect(
+      getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."),
+    ).toBeInTheDocument();
 
     //reset name field
     fireEvent.change(nameInput, {target: {value: ""}});
-    await(() => expect(getByText("Name is required")).toBeInTheDocument());
+    await (() => expect(getByText("Name is required")).toBeInTheDocument());
 
     //proper error message shows when field contains special characters
     fireEvent.change(nameInput, {target: {value: "test Create Step"}});
-    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
+    expect(
+      getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."),
+    ).toBeInTheDocument();
 
     //reset name field
     fireEvent.change(nameInput, {target: {value: ""}});
@@ -170,40 +181,46 @@ describe("Create Edit Step Dialog component", () => {
 
     await wait(() => {
       expect(queryByText("Name is required")).toBeNull();
-      expect(queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeNull();
+      expect(
+        queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."),
+      ).toBeNull();
     });
 
-    await(() => expect(saveButton).toBeEnabled());
+    await (() => expect(saveButton).toBeEnabled());
   });
 
   test("Verify Save button requires all mandatory fields", async () => {
-    const {getByText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging}
-      tabKey={""}
-      openStepSettings={false}
-      setOpenStepSettings={false}
-      isEditing={false}
-      stepType={StepType.Custom}
-      editStepArtifactObject={{}}
-      targetEntityType={""}
-      canReadWrite={false}
-      canReadOnly={false}
-      createStepArtifact={jest.fn()}
-      updateStepArtifact={jest.fn()}
-      currentTab={""}
-      setIsValid={jest.fn()}
-      resetTabs={jest.fn()}
-      setHasChanged={jest.fn()}
-      setPayload={jest.fn()}
-      onCancel={jest.fn()}/>);
+    const {getByText, getByPlaceholderText} = render(
+      <CreateEditStep
+        {...data.newMerging}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={false}
+        isEditing={false}
+        stepType={StepType.Custom}
+        editStepArtifactObject={{}}
+        targetEntityType={""}
+        canReadWrite={false}
+        canReadOnly={false}
+        createStepArtifact={jest.fn()}
+        updateStepArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
     const nameInput = getByPlaceholderText("Enter name");
-    const collInput = document.querySelector(("#collList .ant-input"));
+    const collInput = document.querySelector("#collList .ant-input");
 
     // click save without any input
     fireEvent.click(getByText("Save"));
 
     // both messages should show when both boxes are empty
-    await(() => expect(getByText("Name is required")).toBeInTheDocument());
-    await(() => expect(getByText("Collection or Query is required")).toBeInTheDocument());
+    await (() => expect(getByText("Name is required")).toBeInTheDocument());
+    await (() => expect(getByText("Collection or Query is required")).toBeInTheDocument());
 
     // enter name only
     fireEvent.change(nameInput, {target: {value: "testCreateMap"}});
@@ -212,7 +229,7 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(getByText("Save"));
 
     // error message for name should not appear
-    await(() => expect(getByText("Collection or Query is required")).toBeInTheDocument());
+    await (() => expect(getByText("Collection or Query is required")).toBeInTheDocument());
 
     // clear name and enter collection only
     fireEvent.change(nameInput, {target: {value: ""}});
@@ -221,7 +238,7 @@ describe("Create Edit Step Dialog component", () => {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    await(() => expect(collInput).toHaveValue("testCollection"));
+    await (() => expect(collInput).toHaveValue("testCollection"));
 
     fireEvent.click(getByText("Save"));
 
@@ -231,27 +248,31 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging}
-      tabKey={""}
-      openStepSettings={false}
-      setOpenStepSettings={false}
-      isEditing={false}
-      stepType={StepType.Custom}
-      editStepArtifactObject={{}}
-      targetEntityType={""}
-      canReadWrite={false}
-      canReadOnly={false}
-      createStepArtifact={jest.fn()}
-      updateStepArtifact={jest.fn()}
-      currentTab={""}
-      setIsValid={jest.fn()}
-      resetTabs={jest.fn()}
-      setHasChanged={jest.fn()}
-      setPayload={jest.fn()}
-      onCancel={jest.fn()}/>);
+    const {getByText, getByLabelText, getByPlaceholderText} = render(
+      <CreateEditStep
+        {...data.newMerging}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={false}
+        isEditing={false}
+        stepType={StepType.Custom}
+        editStepArtifactObject={{}}
+        targetEntityType={""}
+        canReadWrite={false}
+        canReadOnly={false}
+        createStepArtifact={jest.fn()}
+        updateStepArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
 
     const descInput = getByPlaceholderText("Enter description");
-    const collInput = document.querySelector(("#collList .ant-input"));
+    const collInput = document.querySelector("#collList .ant-input");
     const saveButton = getByText("Save");
     saveButton.onclick = jest.fn();
 
@@ -269,18 +290,18 @@ describe("Create Edit Step Dialog component", () => {
       "propertyPath": " ",
       "limit": 10,
       "dataType": "string",
-      "pattern": "ada"
+      "pattern": "ada",
     };
-    await(() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
-    await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
-    await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
+    await (() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
+    await (() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await (() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    await(() => expect(collInput).toHaveValue("testCollection"));
+    await (() => expect(collInput).toHaveValue("testCollection"));
     fireEvent.click(getByLabelText("Query"));
     const queryInput = getByPlaceholderText("Enter source query");
     fireEvent.change(queryInput, {target: {value: "cts.collectionQuery([\"testCollection\"])"}});
@@ -291,28 +312,32 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const {getByText, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging}
-      tabKey={""}
-      openStepSettings={false}
-      setOpenStepSettings={false}
-      isEditing={false}
-      stepType={StepType.Custom}
-      editStepArtifactObject={{}}
-      targetEntityType={""}
-      canReadWrite={false}
-      canReadOnly={false}
-      createStepArtifact={jest.fn()}
-      updateStepArtifact={jest.fn()}
-      currentTab={""}
-      setIsValid={jest.fn()}
-      resetTabs={jest.fn()}
-      setHasChanged={jest.fn()}
-      setPayload={jest.fn()}
-      onCancel={jest.fn()}/>);
+    const {getByText, getByLabelText, getByPlaceholderText} = render(
+      <CreateEditStep
+        {...data.newMerging}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={false}
+        isEditing={false}
+        stepType={StepType.Custom}
+        editStepArtifactObject={{}}
+        targetEntityType={""}
+        canReadWrite={false}
+        canReadOnly={false}
+        createStepArtifact={jest.fn()}
+        updateStepArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
 
     const descInput = getByPlaceholderText("Enter description");
-    const collInput = document.querySelector(("#collList .ant-input"));
-    const timestampInput:any = await(() => getByPlaceholderText("Enter path to the timestamp"));
+    const collInput = document.querySelector("#collList .ant-input");
+    const timestampInput: any = await (() => getByPlaceholderText("Enter path to the timestamp"));
     const saveButton = getByText("Save");
     saveButton.onclick = jest.fn();
 
@@ -330,25 +355,25 @@ describe("Create Edit Step Dialog component", () => {
       "propertyPath": " ",
       "limit": 10,
       "dataType": "string",
-      "pattern": "ada"
+      "pattern": "ada",
     };
-    await(() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
-    await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
-    await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
+    await (() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
+    await (() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await (() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    await(() => expect(collInput).toHaveValue("testCollection"));
+    await (() => expect(collInput).toHaveValue("testCollection"));
     fireEvent.click(getByLabelText("Query"));
     const queryInput = getByPlaceholderText("Enter source query");
     fireEvent.change(queryInput, {target: {value: "cts.collectionQuery([\"testCollection\"])"}});
     expect(queryInput).toHaveTextContent("cts.collectionQuery([\"testCollection\"])");
 
-    await(() => fireEvent.change(timestampInput, {target: {value: "/test/path/to/timestamp"}}));
-    await(() => expect(timestampInput).toHaveValue("/test/path/to/timestamp"));
+    await (() => fireEvent.change(timestampInput, {target: {value: "/test/path/to/timestamp"}}));
+    await (() => expect(timestampInput).toHaveValue("/test/path/to/timestamp"));
 
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
@@ -356,27 +381,31 @@ describe("Create Edit Step Dialog component", () => {
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const {getByText, queryByText, getByPlaceholderText} = render(<CreateEditStep {...data.newMerging}
-      tabKey={""}
-      openStepSettings={false}
-      setOpenStepSettings={false}
-      isEditing={false}
-      stepType={StepType.Custom}
-      editStepArtifactObject={{}}
-      targetEntityType={""}
-      canReadWrite={false}
-      canReadOnly={false}
-      createStepArtifact={jest.fn()}
-      updateStepArtifact={jest.fn()}
-      currentTab={""}
-      setIsValid={jest.fn()}
-      resetTabs={jest.fn()}
-      setHasChanged={jest.fn()}
-      setPayload={jest.fn()}
-      onCancel={jest.fn()}/>);
+    const {getByText, queryByText, getByPlaceholderText} = render(
+      <CreateEditStep
+        {...data.newMerging}
+        tabKey={""}
+        openStepSettings={false}
+        setOpenStepSettings={false}
+        isEditing={false}
+        stepType={StepType.Custom}
+        editStepArtifactObject={{}}
+        targetEntityType={""}
+        canReadWrite={false}
+        canReadOnly={false}
+        createStepArtifact={jest.fn()}
+        updateStepArtifact={jest.fn()}
+        currentTab={""}
+        setIsValid={jest.fn()}
+        resetTabs={jest.fn()}
+        setHasChanged={jest.fn()}
+        setPayload={jest.fn()}
+        onCancel={jest.fn()}
+      />,
+    );
 
     const descInput = getByPlaceholderText("Enter description");
-    const collInput = document.querySelector(("#collList .ant-input"));
+    const collInput = document.querySelector("#collList .ant-input");
     const saveButton = getByText("Save");
     saveButton.onclick = jest.fn();
 
@@ -388,7 +417,7 @@ describe("Create Edit Step Dialog component", () => {
         fireEvent.change(collInput, {target: {value: "testRandomCollection"}});
       }
     });
-    await(() => expect(collInput).toHaveValue("testRandomCollection"));
+    await (() => expect(collInput).toHaveValue("testRandomCollection"));
 
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
@@ -408,7 +437,9 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify collection and query tooltips appear when hovered", async () => {
-    const {getAllByTestId, getByTestId, getByLabelText, getByPlaceholderText} = render(<CreateEditStep {...data.editMerging} />);
+    const {getAllByTestId, getByTestId, getByLabelText, getByPlaceholderText} = render(
+      <CreateEditStep {...data.editMerging} />,
+    );
     userEvent.tab();
     expect(getByTestId("NameTooltip")).toHaveFocus();
     userEvent.tab();

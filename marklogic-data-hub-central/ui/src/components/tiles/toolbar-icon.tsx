@@ -17,9 +17,11 @@ interface Props {
 }
 
 const ToolbarIcon: FC<Props> = ({tile, tileRef, tileId, i, isActive, enabled, onClick, onKeyDown}) => {
-  let tooltipText = enabled ? tile["title"] : `${tile["title"]}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
+  let tooltipText = enabled
+    ? tile["title"]
+    : `${tile["title"]}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
 
-  const linkOnClickHandler = (event) => {
+  const linkOnClickHandler = event => {
     if (!enabled) event.preventDefault();
   };
 
@@ -28,30 +30,30 @@ const ToolbarIcon: FC<Props> = ({tile, tileRef, tileId, i, isActive, enabled, on
   };
 
   return (
-
     <HCTooltip text={tooltipText} id={tooltipText + "-tooltip"} placement="left-start" key={i}>
       <div
-        className={`${styles.toolbarIcon} ${styles[tile["icon"]]} ${isActive && styles.selected} ${!enabled && styles.disabled}`}
+        className={`${styles.toolbarIcon} ${styles[tile["icon"]]} ${isActive && styles.selected} ${
+          !enabled && styles.disabled
+        }`}
         aria-label={"tool-" + tileId}
         tabIndex={-1}
         onClick={handleClick}
       >
-        <Link to={
-          {
+        <Link
+          to={{
             pathname: `/tiles/${tileId}`,
             state: {
-              tileIconClicked: true
-            }
+              tileIconClicked: true,
+            },
           }}
-        aria-label={"tool-" + tileId + "-link"}
-        tabIndex={0}
-        ref={tileRef}
-        onClick={linkOnClickHandler}
-        onKeyDown={(e) => onKeyDown(e, i)}
+          aria-label={"tool-" + tileId + "-link"}
+          tabIndex={0}
+          ref={tileRef}
+          onClick={linkOnClickHandler}
+          onKeyDown={e => onKeyDown(e, i)}
         />
       </div>
     </HCTooltip>
-
   );
 };
 

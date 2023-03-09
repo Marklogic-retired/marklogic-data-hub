@@ -1,7 +1,7 @@
 import React from "react";
 import {Modal, ModalProps} from "react-bootstrap";
 
-const HCModal: React.FC<ModalProps> = (props) => {
+const HCModal: React.FC<ModalProps> = props => {
   return (
     <>
       <Modal

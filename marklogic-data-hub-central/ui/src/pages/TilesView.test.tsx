@@ -14,7 +14,7 @@ import {SearchContext} from "../util/search-context";
 import {
   setViewCurateFunction,
   setViewLoadFunction,
-  setViewRunFunction
+  setViewRunFunction,
 } from "../assets/mock-data/explore/search-context-mock";
 
 jest.mock("axios");
@@ -23,9 +23,7 @@ jest.setTimeout(30000);
 const mockDevRolesService = authorities.DeveloperRolesService;
 const testWithOperator = authorities.OperatorRolesService;
 
-
 describe("Tiles View component tests for Developer user", () => {
-
   beforeEach(() => {
     mocks.curateAPI(axiosMock);
   });
@@ -36,11 +34,13 @@ describe("Tiles View component tests for Developer user", () => {
   });
 
   test("Verify TilesView renders with the toolbar", () => {
-    const {getByLabelText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <TilesView/>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <TilesView />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
@@ -51,17 +51,18 @@ describe("Tiles View component tests for Developer user", () => {
     expect(getByLabelText("tool-explore")).toBeInTheDocument();
 
     expect(getByLabelText("overview")).toBeInTheDocument();
-
   });
 
   test("Verify tiles can be closed", () => {
     // Only check tiles with toolbar buttons
     const tools: String[] = Object.keys(tiles).filter(key => tiles[key].toolbar);
-    const {getByLabelText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <TilesView/>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <TilesView />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByLabelText("overview")).toBeInTheDocument();
 
@@ -79,13 +80,15 @@ describe("Tiles View component tests for Developer user", () => {
   });
 
   test("Verify Curate tile displays from toolbar", async () => {
-    const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <SearchContext.Provider value={setViewCurateFunction}>
-          <TilesView id="curate"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, getByText, queryByText, getByTestId} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <SearchContext.Provider value={setViewCurateFunction}>
+            <TilesView id="curate" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-curate")).not.toBeInTheDocument();
@@ -110,13 +113,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify Load tile displays from toolbar with readIngestion authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion"]);
-    const {getByLabelText, getByText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewLoadFunction}>
-          <TilesView id="load"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, getByText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewLoadFunction}>
+            <TilesView id="load" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-load")).not.toBeInTheDocument();
@@ -133,13 +138,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify Load tile does not load from toolbar without readIngestion authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities([]);
-    const {getByLabelText, queryByLabelText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewLoadFunction}>
-          <TilesView/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByLabelText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewLoadFunction}>
+            <TilesView />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-load")).not.toBeInTheDocument();
@@ -155,13 +162,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify readIngestion authority cannot access other tiles", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion"]);
-    const {getByLabelText, queryByLabelText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <TilesView/>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByLabelText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <TilesView />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
-    ["model", "curate", "run"].forEach((tileId) => {
+    ["model", "curate", "run"].forEach(tileId => {
       // Curate tile not shown initially
       expect(queryByText("icon-" + tileId)).not.toBeInTheDocument();
       expect(queryByText("title-" + tileId)).not.toBeInTheDocument();
@@ -171,19 +180,20 @@ describe("Tiles View component tests for Developer user", () => {
       // Other tile not shown after click
       expect(queryByLabelText("title-" + tileId)).not.toBeInTheDocument();
     });
-
   });
 
   test("Verify Curate tile with customRead authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom"]);
-    const {getByLabelText, queryByText, getByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewCurateFunction}>
-          <TilesView id="curate"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByText, getByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewCurateFunction}>
+            <TilesView id="curate" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-curate")).not.toBeInTheDocument();
@@ -205,13 +215,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify Run tile displays from toolbar", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow", "runStep"]);
-    const {getByLabelText, getByText, queryByText, getByTestId, getAllByText} = await render(<Router history={history}>
-      <AuthoritiesContext.Provider value={ authorityService}>
-        <SearchContext.Provider value={setViewRunFunction}>
-          <TilesView id="run"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, getByText, queryByText, getByTestId, getAllByText} = await render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewRunFunction}>
+            <TilesView id="run" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Run tile not shown initially
     expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -244,13 +256,15 @@ describe("Tiles View component tests for Developer user", () => {
   test.skip("Verify Run tile cannot edit or run with only readFlow authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow"]);
-    const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewRunFunction}>
-          <TilesView id="run"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, getByText, queryByText, getByTestId} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewRunFunction}>
+            <TilesView id="run" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Run tile not shown initially
     expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -284,14 +298,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify Run tile can read/run with readFlow and runStep authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "runStep"]);
-    const {getByLabelText, queryByText, getByTestId} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewRunFunction}>
-          <TilesView id="run"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
-
+    const {getByLabelText, queryByText, getByTestId} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewRunFunction}>
+            <TilesView id="run" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Run tile not shown initially
     expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -313,13 +328,15 @@ describe("Tiles View component tests for Developer user", () => {
   test("Verify Run tile does not load from toolbar without readFlow authority", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities([]);
-    const {getByLabelText, queryByLabelText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <SearchContext.Provider value={setViewRunFunction}>
-          <TilesView/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByLabelText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <SearchContext.Provider value={setViewRunFunction}>
+            <TilesView />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-run")).not.toBeInTheDocument();
@@ -333,13 +350,15 @@ describe("Tiles View component tests for Developer user", () => {
   });
 
   test("Verify Load tile displays from toolbar", async () => {
-    const {getByLabelText, queryByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <SearchContext.Provider value={setViewLoadFunction}>
-          <TilesView id="load"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <SearchContext.Provider value={setViewLoadFunction}>
+            <TilesView id="load" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Load tile not shown initially
     expect(queryByText("icon-load")).not.toBeInTheDocument();
@@ -356,12 +375,9 @@ describe("Tiles View component tests for Developer user", () => {
     expect(getByLabelText("switch-view-list")).toBeInTheDocument();
     expect(getByLabelText("add-new-card")).toBeInTheDocument();
   });
-
 });
 
-
 describe("Tiles View component tests for Operator user", () => {
-
   beforeEach(() => {
     mocks.curateAPI(axiosMock);
   });
@@ -372,13 +388,15 @@ describe("Tiles View component tests for Operator user", () => {
   });
 
   test("Verify Curate tile", async () => {
-    const {getByLabelText, queryByText, getByText} = render(<Router history={history}>
-      <AuthoritiesContext.Provider value={testWithOperator}>
-        <SearchContext.Provider value={setViewCurateFunction}>
-          <TilesView id="curate"/>
-        </SearchContext.Provider>
-      </AuthoritiesContext.Provider>
-    </Router>);
+    const {getByLabelText, queryByText, getByText} = render(
+      <Router history={history}>
+        <AuthoritiesContext.Provider value={testWithOperator}>
+          <SearchContext.Provider value={setViewCurateFunction}>
+            <TilesView id="curate" />
+          </SearchContext.Provider>
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     // Curate tile not shown initially
     expect(queryByText("icon-curate")).not.toBeInTheDocument();
@@ -392,7 +410,5 @@ describe("Tiles View component tests for Operator user", () => {
 
     fireEvent.click(getByText("Customer"));
     fireEvent.mouseOver(getByText("Mapping1"));
-
   });
 });
-

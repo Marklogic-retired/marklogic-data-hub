@@ -16,13 +16,13 @@ import {themeColors} from "@config/themes.config";
 type Props = {
   canReadWrite: any;
   tooltipsData: any;
-  updateStep: any
-  stepData: any
+  updateStep: any;
+  stepData: any;
   entityMappingId: any;
   entityTitle: any;
-}
+};
 
-const EntitySettings: React.FC<Props> = (props) => {
+const EntitySettings: React.FC<Props> = props => {
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const canReadWrite = props.canReadWrite;
   const validCapabilities = StepsConfig.validCapabilities;
@@ -89,7 +89,7 @@ const EntitySettings: React.FC<Props> = (props) => {
       let permissionArray = targetPermissions.split(",");
       for (let i = 0; i < permissionArray.length; i += 2) {
         let role = permissionArray[i];
-        if (i + 1 >= permissionArray.length || (!role || !role.trim())) {
+        if (i + 1 >= permissionArray.length || !role || !role.trim()) {
           setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
           return false;
         }
@@ -104,24 +104,31 @@ const EntitySettings: React.FC<Props> = (props) => {
     return true;
   };
 
-  const handleAddColl = (value) => {
+  const handleAddColl = value => {
     if (value !== " ") {
-      setAdditionalCollections(value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value));
+      setAdditionalCollections(
+        value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value),
+      );
     }
   };
 
-  const handleCreateAdditionalColl = (value) => {
+  const handleCreateAdditionalColl = value => {
     if (typeof value === "string") {
       setAdditionalCollections([...additionalCollections, value]);
     }
   };
 
-  const updateStep = async (payload) => {
+  const updateStep = async payload => {
     let stepPayload;
     if (props.stepData?.relatedEntityMappings && props.entityMappingId?.length) {
-      let relatedEntityIndex = props.stepData.relatedEntityMappings.findIndex(entity => { return entity.relatedEntityMappingId === props.entityMappingId; });
+      let relatedEntityIndex = props.stepData.relatedEntityMappings.findIndex(entity => {
+        return entity.relatedEntityMappingId === props.entityMappingId;
+      });
       if (relatedEntityIndex !== -1) {
-        props.stepData.relatedEntityMappings[relatedEntityIndex] = Object.assign(props.stepData.relatedEntityMappings[relatedEntityIndex], payload);
+        props.stepData.relatedEntityMappings[relatedEntityIndex] = Object.assign(
+          props.stepData.relatedEntityMappings[relatedEntityIndex],
+          payload,
+        );
         stepPayload = props.stepData;
       }
     } else {
@@ -130,7 +137,7 @@ const EntitySettings: React.FC<Props> = (props) => {
     await props.updateStep(stepPayload);
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "targetPermissions") {
       setTargetPermissions(event.target.value);
       if (!targetPermissionsValid && isPermissionsValid()) {
@@ -139,13 +146,13 @@ const EntitySettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleBlur = (event) => {
+  const handleBlur = event => {
     if (event.target.id === "targetPermissions") {
       setTargetPermissionsValid(isPermissionsValid());
     }
   };
 
-  const handleSubmit = async (event: {preventDefault: () => void;}) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
     setPopoverVisibilty(false);
     updateStep(getPayload());
@@ -158,14 +165,14 @@ const EntitySettings: React.FC<Props> = (props) => {
     getSettings();
   };
 
-  const handleOnClick = (event) => {
+  const handleOnClick = event => {
     setTarget(event.target);
     togglePopover();
   };
 
   const serviceNameKeyDownHandler = async (event, component) => {
     //Make selection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "settingsIcon") {
         event.preventDefault();
         setTarget(event.target);
@@ -184,22 +191,32 @@ const EntitySettings: React.FC<Props> = (props) => {
   const additionalCollectionsOptions = additionalCollections.map(d => ({value: d, label: d}));
 
   const content = (
-
-    <Popover id={`popover-overview`} className={styles.popoverEntitySettings} onKeyDown={(event) => {
-      if (event.key === "Escape" && popoverVisibility) {
-        onCancel();
-      }
-    }}>
+    <Popover
+      id={`popover-overview`}
+      className={styles.popoverEntitySettings}
+      onKeyDown={event => {
+        if (event.key === "Escape" && popoverVisibility) {
+          onCancel();
+        }
+      }}
+    >
       <Popover.Body>
         <div id="entity-settings-popover" data-testid="entity-settings-popover" className={styles.entitySettings}>
-          <h2 data-testid={`${props.entityTitle}-settings-title`} className={styles.title}>Advanced Settings: {props.entityTitle}</h2>
+          <h2 data-testid={`${props.entityTitle}-settings-title`} className={styles.title}>
+            Advanced Settings: {props.entityTitle}
+          </h2>
           <div className={styles.text}>
-            <p>Specify additional collections and modify the default permissions for entity instances associated with this entity.</p>
+            <p>
+              Specify additional collections and modify the default permissions for entity instances associated with
+              this entity.
+            </p>
           </div>
           <div className={styles.entitySettingsForm}>
-            <Form onSubmit={handleSubmit} >
+            <Form onSubmit={handleSubmit}>
               <Row className={"mb-3"}>
-                <FormLabel column lg={4}>{"Target Collections:"}</FormLabel>
+                <FormLabel column lg={4}>
+                  {"Target Collections:"}
+                </FormLabel>
                 <Col className={"d-flex"}>
                   <CreatableSelect
                     id="additionalColl-select-wrapper"
@@ -216,20 +233,41 @@ const EntitySettings: React.FC<Props> = (props) => {
                     styles={reactSelectThemeConfig}
                   />
                   <div className={"p-2 d-flex align-items-center"}>
-                    <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
-                      <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                    <HCTooltip
+                      text={tooltips.additionalCollections}
+                      id="additional-collection-tooltip"
+                      placement="left"
+                    >
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        color={themeColors.defaults.questionCircle}
+                        className={styles.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </Col>
               </Row>
               <Row className={"mb-3"}>
-                <FormLabel column lg={4}>{"Default Collections:"}</FormLabel>
+                <FormLabel column lg={4}>
+                  {"Default Collections:"}
+                </FormLabel>
                 <Col className={"d-flex"}>
-                  <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
+                  <div className={styles.defaultCollections}>
+                    {defaultCollections.map((collection, i) => {
+                      return (
+                        <div data-testid={`defaultCollections-${collection}`} key={i}>
+                          {collection}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </Col>
               </Row>
               <Row className={"mb-3"}>
-                <FormLabel column lg={4}>{"Target Permissions:"}</FormLabel>
+                <FormLabel column lg={4}>
+                  {"Target Permissions:"}
+                </FormLabel>
                 <Col>
                   <Row>
                     <Col className={"d-flex"}>
@@ -241,16 +279,25 @@ const EntitySettings: React.FC<Props> = (props) => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         disabled={!canReadWrite}
-                        onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
+                        onPressEnter={e => e.key === "Enter" && e.preventDefault()}
                       />
                       <div className={"p-2 d-flex align-items-center"}>
                         <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
-                          <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} />
+                          <QuestionCircleFill
+                            tabIndex={0}
+                            color={themeColors.defaults.questionCircle}
+                            className={styles.questionCircle}
+                            size={13}
+                          />
                         </HCTooltip>
                       </div>
                     </Col>
                     <Col xs={12}>
-                      <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
+                      <div
+                        className={styles.validationError}
+                        aria-label={`${props.entityTitle}-validationError`}
+                        data-testid="validationError"
+                      >
                         {permissionValidationError}
                       </div>
                     </Col>
@@ -260,12 +307,44 @@ const EntitySettings: React.FC<Props> = (props) => {
               <Row className={"mb-3"}>
                 <Col className={styles.submitButtonsForm}>
                   <div className={styles.submitButtons}>
-                    <HCButton variant="outline-light" data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-                    {!canReadWrite || !targetPermissionsValid ? <HCTooltip text={tooltips.missingPermission} id="missing-permissions-tooltip" placement="bottom-end">
-                      <span className={styles.disabledCursor}>
-                        <HCButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
-                      </span>
-                    </HCTooltip> : <HCButton id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false}>Save</HCButton>}
+                    <HCButton variant="outline-light" data-testid={`cancel-settings`} onClick={() => onCancel()}>
+                      Cancel
+                    </HCButton>
+                    &nbsp;&nbsp;
+                    {!canReadWrite || !targetPermissionsValid ? (
+                      <HCTooltip
+                        text={tooltips.missingPermission}
+                        id="missing-permissions-tooltip"
+                        placement="bottom-end"
+                      >
+                        <span className={styles.disabledCursor}>
+                          <HCButton
+                            id={"saveButton"}
+                            className={styles.saveButton}
+                            data-testid={`save-settings`}
+                            aria-label={`${props.entityTitle}-save-settings`}
+                            variant="primary"
+                            type="submit"
+                            onClick={handleSubmit}
+                            disabled={true}
+                          >
+                            Save
+                          </HCButton>
+                        </span>
+                      </HCTooltip>
+                    ) : (
+                      <HCButton
+                        id={"saveButton"}
+                        data-testid={`save-settings`}
+                        aria-label={`${props.entityTitle}-save-settings`}
+                        variant="primary"
+                        type="submit"
+                        onClick={handleSubmit}
+                        disabled={false}
+                      >
+                        Save
+                      </HCButton>
+                    )}
                   </div>
                 </Col>
               </Row>
@@ -288,8 +367,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               role="entity-settings button"
               aria-label={"entitySettings"}
               tabIndex={0}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "settingsIcon")}
-              onClick={handleOnClick} />
+              onKeyDown={e => serviceNameKeyDownHandler(e, "settingsIcon")}
+              onClick={handleOnClick}
+            />
           </div>
         </div>
       </div>

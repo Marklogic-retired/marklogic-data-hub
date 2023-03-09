@@ -7,16 +7,16 @@ export const rangeFacet = async (props, database) => {
     data: {
       "referenceType": props.referenceType,
       "entityTypeId": props.entityTypeId,
-      "propertyPath": props.propertyPath
-    }
+      "propertyPath": props.propertyPath,
+    },
   });
 };
 
-export const stringSearch = async (data) => {
+export const stringSearch = async data => {
   return await axios({
     method: "POST",
     url: `/api/entitySearch/facet-values`,
-    data: data
+    data: data,
   });
 };
 

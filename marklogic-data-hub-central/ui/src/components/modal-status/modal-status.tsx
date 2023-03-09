@@ -9,27 +9,20 @@ import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "@config/application.c
 import {getSystemInfo} from "@api/environment";
 import {HCButton, HCModal} from "@components/common";
 
-interface Props extends RouteComponentProps<any>{
-}
+interface Props extends RouteComponentProps<any> {}
 
 const SESSION_BTN_TEXT = {
   ok: "Continue Session",
-  cancel: "Log Out"
+  cancel: "Log Out",
 };
 
 const ERROR_BTN_TEXT = {
   ok: "OK",
-  cancel: "Cancel"
+  cancel: "Cancel",
 };
 
-const ModalStatus: React.FC<Props> = (props) => {
-  const {
-    user,
-    userNotAuthenticated,
-    handleError,
-    clearErrorMessage,
-    getSessionTime,
-  } = useContext(UserContext);
+const ModalStatus: React.FC<Props> = props => {
+  const {user, userNotAuthenticated, handleError, clearErrorMessage, getSessionTime} = useContext(UserContext);
   const [showModal, toggleModal] = useState(false);
   const [sessionTime, setSessionTime] = useState(SESSION_WARNING_COUNTDOWN);
   const [title, setTitle] = useState("Session Timeout");
@@ -41,7 +34,8 @@ const ModalStatus: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (user.error.type === "MODAL") {
-      axios.get("/api/environment/systemInfo")
+      axios
+        .get("/api/environment/systemInfo")
         .then(res => {
           setTitle(user.error.title);
           setButtonText(ERROR_BTN_TEXT);
@@ -55,9 +49,11 @@ const ModalStatus: React.FC<Props> = (props) => {
             history.push("/noresponse");
           }
         });
-    } else if (sessionWarning &&
-               // Ignore session warning if in no-response state
-               location.pathname !== "/noresponse") {
+    } else if (
+      sessionWarning &&
+      // Ignore session warning if in no-response state
+      location.pathname !== "/noresponse"
+    ) {
       setTitle("Session Timeout");
       setButtonText(SESSION_BTN_TEXT);
       toggleModal(true);
@@ -65,8 +61,6 @@ const ModalStatus: React.FC<Props> = (props) => {
       toggleModal(false);
     }
   }, [sessionWarning, user.error.type]);
-
-
 
   useInterval(async () => {
     if (user.authenticated) {
@@ -113,7 +107,6 @@ const ModalStatus: React.FC<Props> = (props) => {
   const onCancel = async () => {
     if (user.error.type === "MODAL") {
       props.history.push("/error");
-
     } else if (sessionWarning) {
       try {
         let response = await axios.get(`/api/logout`);
@@ -135,17 +128,17 @@ const ModalStatus: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={showModal}
-      style={{zIndex: "5000"}}
-      onHide={onCancel}
-    >
+    <HCModal show={showModal} style={{zIndex: "5000"}} onHide={onCancel}>
       <Modal.Header className={"pe-4"}>
         <span className={"fs-4"}>{title}</span>
-        {sessionWarning ? null : <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} /> }
+        {sessionWarning ? null : <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />}
       </Modal.Header>
       <Modal.Body className={"py-4"}>
-        {sessionWarning && user.error.type !== "MODAL" && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
+        {sessionWarning && user.error.type !== "MODAL" && (
+          <p>
+            Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b>
+          </p>
+        )}
         {user.error.type === "MODAL" && <p>{user.error.message}</p>}
       </Modal.Body>
       <Modal.Footer className={"d-flex justify-content-end py-2"}>
@@ -161,5 +154,3 @@ const ModalStatus: React.FC<Props> = (props) => {
 };
 
 export default withRouter(ModalStatus);
-
-

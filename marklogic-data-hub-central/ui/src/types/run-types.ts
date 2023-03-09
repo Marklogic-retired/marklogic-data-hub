@@ -1,21 +1,21 @@
 export interface Flow {
-    name: string,
-    steps: Step[],
-    description?: string
+  name: string;
+  steps: Step[];
+  description?: string;
 }
 
 export const InitialFlow: Flow = {
   name: "",
   steps: [],
-  description: ""
+  description: "",
 };
 
 export interface Step {
-    sourceFormat?: any,
-    stepDefinitionType: string,
-    stepId: string,
-    stepName: string,
-    stepNumber: string,
-    targetEntityType?: string,
-    targetFormat?: string
+  sourceFormat?: any;
+  stepDefinitionType: string;
+  stepId: string;
+  stepName: string;
+  stepNumber: string;
+  targetEntityType?: string;
+  targetFormat?: string;
 }

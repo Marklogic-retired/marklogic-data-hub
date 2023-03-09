@@ -4,7 +4,10 @@ const validateMappingTableRow = (dataTable, {...rowValue}, colName, srcData, tab
     let att: any = item.getAttribute("data-row-key") ? item.getAttribute("data-row-key") : "{}";
     let row: any = {};
     if (srcData[0].hasOwnProperty("name") && srcData[0].hasOwnProperty("type")) {
-      row = tableType === "source" ? srcData.find(obj => obj.key.toString() === att) : srcData.find(obj => (obj.key + 100).toString() === att);
+      row =
+        tableType === "source"
+          ? srcData.find(obj => obj.key.toString() === att)
+          : srcData.find(obj => (obj.key + 100).toString() === att);
     } else {
       row = srcData.find(obj => obj.rowKey.toString() === att);
     }
@@ -18,7 +21,6 @@ const validateMappingTableRow = (dataTable, {...rowValue}, colName, srcData, tab
       }
     } else {
       if (row.hasOwnProperty("name") && row.hasOwnProperty("type")) {
-
         keyCol = row.type.startsWith("parent-") ? row.type.slice(row.type.indexOf("-") + 1) : row.type;
       } else {
         keyCol = row.val;
@@ -29,10 +31,10 @@ const validateMappingTableRow = (dataTable, {...rowValue}, colName, srcData, tab
   });
 };
 
-const onClosestTableRow:any = command => command.closest("tr");
-const onClosestTableBody:any = command => command.closest("tbody");
-const onClosestTable:any = command => command.closest("table");
-const onClosestDiv:any = command => command.closest("div");
+const onClosestTableRow: any = command => command.closest("tr");
+const onClosestTableBody: any = command => command.closest("tbody");
+const onClosestTable: any = command => command.closest("table");
+const onClosestDiv: any = command => command.closest("div");
 
 const validateTableRow = (dataTable, uris) => {
   let rowKey = 0;
@@ -47,9 +49,7 @@ const validateTableRow = (dataTable, uris) => {
 export const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
+  const childrenDontHaveText = Array.from(node.children).every(child => !hasText(child));
   return nodeHasText && childrenDontHaveText;
 };
 

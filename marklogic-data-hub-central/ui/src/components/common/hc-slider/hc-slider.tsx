@@ -14,8 +14,7 @@ interface Props {
   onChange?: (value: number[]) => void;
 }
 
-const HCSlider: React.FC<Props> = (props) => {
-
+const HCSlider: React.FC<Props> = props => {
   const {minLimit, maxLimit, min, max, onChange} = props;
 
   return (
@@ -31,7 +30,8 @@ const HCSlider: React.FC<Props> = (props) => {
         trackStyle={[{height: "4.5px", backgroundColor: "#a9b1c9"}]}
         handleStyle={[{border: "solid 2px #c9cdd6"}]}
         onChange={onChange}
-        className={styles.rcSliderTrack}/>
+        className={styles.rcSliderTrack}
+      />
     </div>
   );
 };

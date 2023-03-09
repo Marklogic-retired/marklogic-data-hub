@@ -2,12 +2,9 @@ import {cleanup, render} from "@testing-library/react";
 import React from "react";
 import HCCard from "./hc-card";
 
-
 describe("Hub Central Card component", () => {
-
   afterEach(() => {
     cleanup();
-
   });
 
   test("should render a HCCard component ", () => {
@@ -16,11 +13,9 @@ describe("Hub Central Card component", () => {
   });
 
   test("should render a HCCard component with actions", () => {
-    const {getByText} = render(<HCCard
-      actions={[
-        <div>Action 1</div>, <div>Action 2</div>, <div>Action 3</div>
-      ]}
-    >This is a card</HCCard>);
+    const {getByText} = render(
+      <HCCard actions={[<div>Action 1</div>, <div>Action 2</div>, <div>Action 3</div>]}>This is a card</HCCard>,
+    );
     expect(getByText("This is a card")).toBeInTheDocument();
     expect(getByText("Action 1")).toBeInTheDocument();
     expect(getByText("Action 2")).toBeInTheDocument();
@@ -29,10 +24,11 @@ describe("Hub Central Card component", () => {
 
   test("should render a HCCard component with title extras", () => {
     let child: any = [<div key="extra">Extras here.</div>];
-    const {getByText} = render(<HCCard
-      title={"This is the title"}
-      titleExtra={child}
-    >This is a card</HCCard>);
+    const {getByText} = render(
+      <HCCard title={"This is the title"} titleExtra={child}>
+        This is a card
+      </HCCard>,
+    );
     expect(getByText("This is a card")).toBeInTheDocument();
     expect(getByText("Extras here.")).toBeInTheDocument();
   });

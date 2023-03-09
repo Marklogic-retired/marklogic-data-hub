@@ -25,7 +25,6 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {MappingStepDetailsMessages} from "@config/messages.config";
 import {delayTooltip} from "@util/common-utils";
 
-
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -47,7 +46,7 @@ interface Props {
   entityMappingId: any;
   relatedMappings: any;
   entityExpandedKeys: any;
-  keysExpandCollapse?: any,
+  keysExpandCollapse?: any;
   setEntityExpandedKeys: any;
   allEntityKeys: any;
   setExpandedEntityFlag: any;
@@ -72,7 +71,7 @@ interface Props {
   entityLoaded: any;
 }
 
-const EntityMapTable: React.FC<Props> = (props) => {
+const EntityMapTable: React.FC<Props> = props => {
   const storage = getViewSettings();
   const [mapExp, setMapExp] = useState({});
   //Dummy ref node to simulate a click event
@@ -80,47 +79,66 @@ const EntityMapTable: React.FC<Props> = (props) => {
   let tempMapExp: any = {};
   let mapExpUI: any = {};
   let tempSourceContext: any = {};
-  let relatedEntityMapData = props.isRelatedEntity ? props.mapData.relatedEntityMappings?.find(entity => entity.relatedEntityMappingId === props.entityMappingId) : {};
+  let relatedEntityMapData = props.isRelatedEntity
+    ? props.mapData.relatedEntityMappings?.find(entity => entity.relatedEntityMappingId === props.entityMappingId)
+    : {};
 
   //Text for Context Icon
-  const contextHelp = <Popover id={`popover-emt-related-help`} className={styles.popoverEntityMapTableHelp}><Popover.Body>
-    <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>
-  </Popover.Body></Popover>;
+  const contextHelp = (
+    <Popover id={`popover-emt-related-help`} className={styles.popoverEntityMapTableHelp}>
+      <Popover.Body>
+        <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>
+      </Popover.Body>
+    </Popover>
+  );
   //Text for URI Icon
-  const uriHelp = <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp} style={{minWidth: 300}}><Popover.Body>
-    <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>
-  </Popover.Body></Popover>;
+  const uriHelp = (
+    <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp} style={{minWidth: 300}}>
+      <Popover.Body>
+        <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>
+      </Popover.Body>
+    </Popover>
+  );
 
   //Text for related entities help icon
   const [showDocPopover, setShowDocPopover] = useState(false);
   const [targetDocPopover, setTargetDocPopover] = useState(null);
-  const relatedInfo = <Overlay
-    show={showDocPopover}
-    target={targetDocPopover}
-    placement="right"
-  >
-    <Popover id={`popover-emt-related-info`} className={styles.popoverEntityMapTableRelated}
-      style={{paddingLeft: "10px"}}
-      onMouseEnter={() => setShowDocPopover(true)}
-      onMouseLeave={() => setShowDocPopover(false)}
-      onKeyDown={(event) => {
-        if (event.key === "Escape" && showDocPopover) {
-          onCancel();
-        }
-      }}
-    >
-      <Popover.Body>
-        <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>
-      </Popover.Body>
-    </Popover>
-  </Overlay>;
+  const relatedInfo = (
+    <Overlay show={showDocPopover} target={targetDocPopover} placement="right">
+      <Popover
+        id={`popover-emt-related-info`}
+        className={styles.popoverEntityMapTableRelated}
+        style={{paddingLeft: "10px"}}
+        onMouseEnter={() => setShowDocPopover(true)}
+        onMouseLeave={() => setShowDocPopover(false)}
+        onKeyDown={event => {
+          if (event.key === "Escape" && showDocPopover) {
+            onCancel();
+          }
+        }}
+      >
+        <Popover.Body>
+          <div data-testid="relatedInfoContent">
+            Map related entities by selecting them from the dropdown below. <br />
+            Refer to the{" "}
+            <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">
+              documentation
+            </a>{" "}
+            for more details.
+          </div>
+        </Popover.Body>
+      </Popover>
+    </Overlay>
+  );
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
   const [searchedEntityColumn, setSearchedEntityColumn] = useState("");
   const [sourceContext, setSourceContext] = useState({});
   const [updateContextFlag, setUpdateContextFlag] = useState(false);
-  const [expressionContext, setExpressionContext] = useState(relatedEntityMapData?.expressionContext ? relatedEntityMapData.expressionContext : "/");
+  const [expressionContext, setExpressionContext] = useState(
+    relatedEntityMapData?.expressionContext ? relatedEntityMapData.expressionContext : "/",
+  );
   const [uriExpression, setUriExpression] = useState("");
   const [tableCollapsed, setTableCollapsed] = useState(false);
   const [tableToggled, setTableToggled] = useState(false);
@@ -171,20 +189,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [showUriPopover, setShowUriPopover] = useState(false);
 
   let time: any;
-  const handleShowDocPopover = (event) => {
+  const handleShowDocPopover = event => {
     event.persist();
     time = delayTooltip(() => {
       setShowDocPopover(!showDocPopover);
       setTargetDocPopover(event.target);
     });
-
   };
 
   const handleMouseLeaveTooltipDoc = () => {
     setShowDocPopover(false);
     clearTimeout(time);
   };
-  const handleShowDocLinksPopover = (event) => {
+  const handleShowDocLinksPopover = event => {
     event.persist();
     time = delayTooltip(() => {
       setShowDocLinksPopover(!showDocLinksPopover);
@@ -196,38 +213,67 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setShowDocLinksPopover(false);
     clearTimeout(time);
   };
-  let directRelation = props.isRelatedEntity ? ("(" + props.entityMappingId.split(".")[0]) === props.entityTypeTitle.split(" ")[1] ? true : false : null;
+  let directRelation = props.isRelatedEntity
+    ? "(" + props.entityMappingId.split(".")[0] === props.entityTypeTitle.split(" ")[1]
+      ? true
+      : false
+    : null;
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
-  const xPathDocLinks = (container) =>
-    (<Overlay
+  const xPathDocLinks = container => (
+    <Overlay
       show={showDocLinksPopover}
       target={targetDocLinksPopover}
       placement="bottom"
       container={container}
       rootClose={true}
     >
-      <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks} onMouseEnter={() => setShowDocLinksPopover(true)} onMouseLeave={() => setShowDocLinksPopover(false)}>
+      <Popover
+        id={`popover-emt-xpathdoclinks`}
+        className={styles.xPathDocLinks}
+        onMouseEnter={() => setShowDocLinksPopover(true)}
+        onMouseLeave={() => setShowDocLinksPopover(false)}
+      >
         <Popover.Body>
-          <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-            <div><ul className={styles.docLinksUl}>
-              <li>
-                <a href="https://docs.marklogic.com/guide/xquery/xpath" tabIndex={showDocLinksPopover ? 0 : -1} target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a>
-              </li>
-              <li>
-                <a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" tabIndex={showDocLinksPopover ? 0 : -1} target="_blank" rel="noopener noreferrer" className={styles.docLink}
-                  onKeyDown={(e) => {
-                    if (e.key === "Tab" && !e.shiftKey) {
-                      setShowDocLinksPopover(false);
-                    }
-                  }}
-                >Mapping Functions</a>
-              </li>
-            </ul></div>
+          <div className={styles.xpathDoc}>
+            <span id="doc">Documentation:</span>
+            <div>
+              <ul className={styles.docLinksUl}>
+                <li>
+                  <a
+                    href="https://docs.marklogic.com/guide/xquery/xpath"
+                    tabIndex={showDocLinksPopover ? 0 : -1}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docLink}
+                  >
+                    XPath Expressions
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html"
+                    tabIndex={showDocLinksPopover ? 0 : -1}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docLink}
+                    onKeyDown={e => {
+                      if (e.key === "Tab" && !e.shiftKey) {
+                        setShowDocLinksPopover(false);
+                      }
+                    }}
+                  >
+                    Mapping Functions
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
-        </Popover.Body></Popover>
-    </Overlay>);
+        </Popover.Body>
+      </Popover>
+    </Overlay>
+  );
 
   const getColumnOptions = () => {
     let storageAux = storage?.curateEntityTable;
@@ -239,19 +285,28 @@ const EntityMapTable: React.FC<Props> = (props) => {
   useEffect(() => {
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
         lowerEntityColumns: lowerEntityColumns,
         entityColumns: entityColumns,
-      }
+      },
     };
     setViewSettings(newEntityStorage);
-
   }, [props.checkedEntityColumnsFlag]);
 
   const getColumnsForEntityTable: any = (type: string) => {
-    return type === "upper" ? entityColumns.map(el => (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "").filter(item => item) :
-      lowerEntityColumns.map(el => (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "").filter(item => item);
+    return type === "upper"
+      ? entityColumns
+        .map(el =>
+          (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "",
+        )
+        .filter(item => item)
+      : lowerEntityColumns
+        .map(el =>
+          (getColumnOptions() !== "" ? getColumnOptions()[el.key] : props.checkedEntityColumns[el.key]) ? el : "",
+        )
+        .filter(item => item);
   };
 
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
@@ -261,8 +316,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
     let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
     props.relatedEntitiesSelected.map(entity => {
       let entityIdSections = entity["entityMappingId"].split(":");
-      let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
-      if (entityId && entityId === entityTitle) { defaultSelected.push(entity.entityLabel); }
+      let entityId =
+        entityIdSections.length > 2
+          ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1]
+          : /([^.]+)/.exec(entityIdSections[0])![1];
+      if (entityId && entityId === entityTitle) {
+        defaultSelected.push(entity.entityLabel);
+      }
     });
     return defaultSelected;
   };
@@ -274,11 +334,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
     } else if (props.entityMappingId || !props.isRelatedEntity) {
       initializeMapExpressions();
     }
-    return (() => {
+    return () => {
       setMapExp({});
       setSearchEntityText("");
       setSearchedEntityColumn("");
-    });
+    };
   }, [entityProperties]);
 
   useEffect(() => {
@@ -296,7 +356,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
       setEntityProperties([]);
       setTableCollapsed(true);
     }
-
   }, [props.entityTypeProperties]);
 
   useEffect(() => {
@@ -346,10 +405,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const saveFilterMainTable = (value?) => {
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
-        filterMainTable: {...storage.curateEntityTable?.filterMainTable, [props?.savedMappingArt?.name]: value ? "" : searchedKey},
-      }
+        filterMainTable: {
+          ...storage.curateEntityTable?.filterMainTable,
+          [props?.savedMappingArt?.name]: value ? "" : searchedKey,
+        },
+      },
     };
     setViewSettings(newEntityStorage);
   };
@@ -373,7 +436,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       width: "100%",
       verticalAlign: "top",
       justifyContent: "top",
-      borderColor: checkFieldInErrors(propName, isProperty) ? "red" : ""
+      borderColor: checkFieldInErrors(propName, isProperty) ? "red" : "",
     };
     return mapStyle;
   };
@@ -382,7 +445,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
      json and updates the sourceContext for every entity property */
 
   const updateSourceContext = (mapExp, entityTable) => {
-
     let queue: any[] = [];
     entityTable.forEach(element => {
       element["parentVal"] = "";
@@ -445,10 +507,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
     } else {
       // For related entity
       let entName = props.entityModel?.info.title ? props.entityModel?.info.title : "";
-      uriExpr = relatedEntityMapData?.uriExpression ? relatedEntityMapData.uriExpression : StepsConfig.defaultRelatedUri(entName);
+      uriExpr = relatedEntityMapData?.uriExpression
+        ? relatedEntityMapData.uriExpression
+        : StepsConfig.defaultRelatedUri(entName);
     }
     setUriExpression(uriExpr);
-
   };
 
   //Refresh the UI mapExp from the the one saved in the database
@@ -462,7 +525,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         parentKey = parentKey ? parentKey + "/" + key : key;
         mapExpUI[parentKey] = mapExp[key]["sourcedFrom"];
         initializeMapExpForUI(val.properties, parentKey);
-        parentKey = (parentKey.indexOf("/") !== -1) ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
+        parentKey = parentKey.indexOf("/") !== -1 ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
       } else {
         let tempKey = parentKey ? parentKey + "/" + key : key;
         mapExpUI[tempKey] = mapExp[key]["sourcedFrom"];
@@ -470,8 +533,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     });
   };
 
-
-  const handleClickInTextArea = async (e) => {
+  const handleClickInTextArea = async e => {
     e.stopPropagation();
     e.preventDefault();
     await setCaretPosition(e.target.selectionStart);
@@ -500,11 +562,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
     let newEntityStorage;
     let propertyArray = props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
         pageNumberTable: {...storage.curateEntityTable?.pageNumberTable, [propertyArray]: page},
         pageSizeTable: {...storage.curateEntityTable?.pageSizeTable, [propertyArray]: size},
-      }
+      },
     };
     setViewSettings(newEntityStorage);
   };
@@ -512,10 +575,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
   useEffect(() => {
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
-        mainTableCollapsed: {...storage?.curateEntityTable?.mainTableCollapsed, [props?.entityTypeTitle + "_" + props?.savedMappingArt?.name]: tableCollapsed},
-      }
+        mainTableCollapsed: {
+          ...storage?.curateEntityTable?.mainTableCollapsed,
+          [props?.entityTypeTitle + "_" + props?.savedMappingArt?.name]: tableCollapsed,
+        },
+      },
     };
     setViewSettings(newEntityStorage);
   }, [tableCollapsed]);
@@ -533,10 +600,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const saveSessionEntityNestedTable = () => {
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
-        expandedTableKeys: {...storage.curateEntityTable?.expandedTableKeys, [props?.savedMappingArt?.name]: props.entityExpandedKeys},
-      }
+        expandedTableKeys: {
+          ...storage.curateEntityTable?.expandedTableKeys,
+          [props?.savedMappingArt?.name]: props.entityExpandedKeys,
+        },
+      },
     };
     setViewSettings(newEntityStorage);
   };
@@ -603,7 +674,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     saveFilterMainTable(true);
   };
 
-  const filterByName = (value) => {
+  const filterByName = value => {
     if (!value) if (getStoredFilterMainTable()) value = getStoredFilterMainTable();
 
     setSearchedKey(value);
@@ -636,30 +707,46 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   };
 
-
   /** Return filtered data source array by the value string.
-    * @param value
-    * @example 'city'
-    * Set the filterMatch parameter of the matched element to true.
-    * Add the more link objects at the end of the array where the match is found.
-    * The more link object contains the parent key of the matched element if exist and searchKey which is the reference to the matched element.
-    **/
+   * @param value
+   * @example 'city'
+   * Set the filterMatch parameter of the matched element to true.
+   * Add the more link objects at the end of the array where the match is found.
+   * The more link object contains the parent key of the matched element if exist and searchKey which is the reference to the matched element.
+   **/
   const getFilteredData = (value, sourceData) => {
     let filteredArray = deepCopy(sourceData);
-    const parser = (data) => {
+    const parser = data => {
       let moreRowObj;
       let searchStr = value.toLowerCase();
       for (let i = 0; i < data.length; i++) {
         let name = data[i].filterName.toLowerCase();
-        if (!name.includes(searchStr) && (!data[i].hasOwnProperty("children") || (data[i].hasOwnProperty("children") && data[i].children.length === 0))) {
+        if (
+          !name.includes(searchStr) &&
+          (!data[i].hasOwnProperty("children") || (data[i].hasOwnProperty("children") && data[i].children.length === 0))
+        ) {
           data.splice(i, 1);
           i--;
         } else if (!name.includes(searchStr) && data[i].hasOwnProperty("children") && data[i].children.length > 0) {
           parser(data[i].children);
-        } else if (name.includes(searchStr) && data[i].hasOwnProperty("parentVal") && data[i].name !== data[i].filterName) {
+        } else if (
+          name.includes(searchStr) &&
+          data[i].hasOwnProperty("parentVal") &&
+          data[i].name !== data[i].filterName
+        ) {
           data[i].filterMatch = true;
           let parentKey = getParentKey(data[i].key, props.entityTypeProperties);
-          moreRowObj = {key: parentKey * 10, name: "more", filterName: "more", filterMatch: false, isProperty: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+          moreRowObj = {
+            key: parentKey * 10,
+            name: "more",
+            filterName: "more",
+            filterMatch: false,
+            isProperty: false,
+            parentVal: "",
+            type: "",
+            parentKey: parentKey,
+            searchKey: data[i].key,
+          };
         }
 
         if (data[i] && data[i].hasOwnProperty("children") && data[i].children.length === 0) {
@@ -677,12 +764,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   /** Return children array of the provided parent key object.
-    * @param parentKey
-    **/
-  const getRowSiblings = (parentKey) => {
+   * @param parentKey
+   **/
+  const getRowSiblings = parentKey => {
     let originArray = deepCopy(props.entityTypeProperties);
     let filteredArray = new Array();
-    const parser = (data) => {
+    const parser = data => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
           filteredArray = [...data[i].children];
@@ -696,24 +783,38 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   /** Return array with siblings as a children array of the provided parent key object.
-    * @param parentKey
-    * @param siblings
-    * Set the filterMatch parameter of the matched element to true.
-    * Add the less link objects at the end of the array where the match is found.
-    * The less link object contains the parent key of the matched element and searchKey which is the reference to the matched element.
-    **/
+   * @param parentKey
+   * @param siblings
+   * Set the filterMatch parameter of the matched element to true.
+   * Add the less link objects at the end of the array where the match is found.
+   * The less link object contains the parent key of the matched element and searchKey which is the reference to the matched element.
+   **/
   const insertRowSiblings = (parentKey, siblings) => {
     let filteredArray = deepCopy(filteredEntityProperties);
-    const parser = (data) => {
+    const parser = data => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
-          let oldMatch = data[i].children.filter(el => { return el.filterMatch === true; })[0];
+          let oldMatch = data[i].children.filter(el => {
+            return el.filterMatch === true;
+          })[0];
           data[i].children = [];
           siblings.forEach(el => {
-            if (el.filterName === oldMatch.filterName) { el.filterMatch = true; }
+            if (el.filterName === oldMatch.filterName) {
+              el.filterMatch = true;
+            }
           });
           data[i].children = [...siblings];
-          let lessRowObj = {key: parentKey * 10, name: "less", filterName: "less", filterMatch: false, isProperty: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+          let lessRowObj = {
+            key: parentKey * 10,
+            name: "less",
+            filterName: "less",
+            filterMatch: false,
+            isProperty: false,
+            parentVal: "",
+            type: "",
+            parentKey: parentKey,
+            searchKey: data[i].key,
+          };
           data[i].children.push(lessRowObj);
         } else if (data[i].hasOwnProperty("children")) {
           parser(data[i].children);
@@ -725,21 +826,21 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   /** Return array with added peer level elements.
-    * @param parentKey
-    **/
-  const addRowSiblings = (parentKey) => {
+   * @param parentKey
+   **/
+  const addRowSiblings = parentKey => {
     let siblings = getRowSiblings(parentKey);
     let insertedSibligs = insertRowSiblings(parentKey, siblings);
     return insertedSibligs;
   };
 
   /** Return array with removed peer level elements that don't match 'props.filterStr' string and are children of the provided key object.
-    * @param parentKey
-    * @param sourceData
-    **/
+   * @param parentKey
+   * @param sourceData
+   **/
   const removeRowSiblings = (parentKey, sourceData) => {
     let filteredArray = deepCopy(sourceData);
-    const parser = (data) => {
+    const parser = data => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
           let subTree = getFilteredData(props.filterStr, data[i].children);
@@ -753,14 +854,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
     return parser(filteredArray);
   };
 
-  const handleMoreClick = (row) => {
+  const handleMoreClick = row => {
     if (row.parentKey) {
       let siblings = addRowSiblings(row.parentKey);
       setFilteredEntityProperties(siblings);
     }
   };
 
-  const handleLessClick = (row) => {
+  const handleLessClick = row => {
     if (row.parentKey) {
       let onlyChild = removeRowSiblings(row.parentKey, filteredEntityProperties);
       setFilteredEntityProperties(onlyChild);
@@ -769,20 +870,21 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
     if (rowNum > 100) {
-      return <Highlighter
-        highlightClassName={styles.highlightStyle}
-        searchWords={[props.filterStr]}
-        autoEscape
-        textToHighlight={textToSearchInto}
-      />;
+      return (
+        <Highlighter
+          highlightClassName={styles.highlightStyle}
+          searchWords={[props.filterStr]}
+          autoEscape
+          textToHighlight={textToSearchInto}
+        />
+      );
     } else {
       return <div data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{valueToDisplay}</div>;
     }
   };
 
-
   /* Insert Function signature in map expressions */
-  const handleFunctionsList = async (name) => {
+  const handleFunctionsList = async name => {
     let funcArr: any[] = [];
     props.mapFunctions.forEach(element => {
       funcArr.push({"key": element.functionName, "value": element.functionName});
@@ -803,7 +905,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   /* Insert reference in map expressions */
-  const handleRefList = async (name) => {
+  const handleRefList = async name => {
     if (props.canReadWrite) {
       let refArr: any[] = [];
       props.mapRefs.forEach(element => {
@@ -825,7 +927,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   };
 
-  const functionsDef = (functionName) => {
+  const functionsDef = functionName => {
     return props.mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
@@ -847,12 +949,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
       mapExp[propName] = "";
     }
     if (propName === "URI" && !selectedRow.isProperty) {
-      insertedUri = uriExpression.substr(0, caretPosition) + content +
-        uriExpression.substr(caretPosition, uriExpression.length);
+      insertedUri =
+        uriExpression.substr(0, caretPosition) + content + uriExpression.substr(caretPosition, uriExpression.length);
       setUriExpression(insertedUri);
       tempMapExp = mapExp;
     } else {
-      let newExp = mapExp[propName].substr(0, caretPosition) + content +
+      let newExp =
+        mapExp[propName].substr(0, caretPosition) +
+        content +
         mapExp[propName].substr(caretPosition, mapExp[propName].length);
       let newMapExp = {...mapExp, [propName]: newExp};
       setMapExp(newMapExp);
@@ -877,19 +981,23 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (!mapExp[propName] && selectedRow.isProperty) {
       mapExp[propName] = "";
     }
-    let field = content;//.replace(/[^\/]+\:/g, '');
+    let field = content; //.replace(/[^\/]+\:/g, '');
     if (/(&|>|<|'|"|}|{|\s)/g.test(String(field))) {
       field = "*[local-name(.)='" + escapeXML(field) + "']";
     }
 
     if (propName === "Context" && !selectedRow.isProperty) {
-      insertedContext = expressionContext.substr(0, caretPosition) + field + expressionContext.substr(caretPosition, expressionContext.length);
+      insertedContext =
+        expressionContext.substr(0, caretPosition) +
+        field +
+        expressionContext.substr(caretPosition, expressionContext.length);
       setExpressionContext(insertedContext);
       await setMapExp({...mapExp});
       tempMapExp = Object.assign({}, mapExp);
     } else if (propName === "URI" && !selectedRow.isProperty) {
       if (uriExpression) {
-        insertedUri = uriExpression.substr(0, caretPosition) + field + uriExpression.substr(caretPosition, uriExpression.length);
+        insertedUri =
+          uriExpression.substr(0, caretPosition) + field + uriExpression.substr(caretPosition, uriExpression.length);
       } else {
         insertedUri = field;
       }
@@ -912,7 +1020,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
         }
       }
 
-      let newExp = mapExp[propName].substr(0, caretPosition) + field +
+      let newExp =
+        mapExp[propName].substr(0, caretPosition) +
+        field +
         mapExp[propName].substr(caretPosition, mapExp[propName].length);
       await setMapExp({...mapExp, [propName]: newExp});
       tempMapExp = Object.assign({}, mapExp);
@@ -938,7 +1048,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       .replace(/}/g, "&#125;");
   }
 
-  const handleSourceList = async (row) => {
+  const handleSourceList = async row => {
     if (props.canReadWrite) {
       setSelectedRow(row);
       let name = row.name;
@@ -999,15 +1109,29 @@ const EntityMapTable: React.FC<Props> = (props) => {
         return false;
       }
     } else {
-      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(entity => entity["relatedEntityMappingId"] === props.entityMappingId);
-      if (props.mapResp && props.mapResp.relatedEntityMappings && field === "URI" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].uriExpression) {
+      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(
+        entity => entity["relatedEntityMappingId"] === props.entityMappingId,
+      );
+      if (
+        props.mapResp &&
+        props.mapResp.relatedEntityMappings &&
+        field === "URI" &&
+        !isProperty &&
+        props.mapResp.relatedEntityMappings[index] &&
+        props.mapResp.relatedEntityMappings[index].uriExpression
+      ) {
         let prop = props.mapResp.relatedEntityMappings[index].uriExpression;
         if (prop && prop["errorMessage"]) {
           return true;
         } else if (prop && prop["output"]) {
           return false;
         }
-      } else if (index > -1 && props.mapResp && props.mapResp.relatedEntityMappings && props.mapResp.relatedEntityMappings[index].properties) {
+      } else if (
+        index > -1 &&
+        props.mapResp &&
+        props.mapResp.relatedEntityMappings &&
+        props.mapResp.relatedEntityMappings[index].properties
+      ) {
         let field = props.mapResp.relatedEntityMappings[index].properties;
         let prop = getValue(field, finalProp);
         if (prop && prop["errorMessage"]) {
@@ -1022,11 +1146,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const displayResp = (propName, isProperty) => {
     const finalProp = propName.replace(/\//g, ".properties.");
     if (!props.isRelatedEntity) {
-      if (props.mapResp && props.mapResp["uriExpression"] && propName === "URI" && !isProperty) { //if value is from the URI and not an actual property
+      if (props.mapResp && props.mapResp["uriExpression"] && propName === "URI" && !isProperty) {
+        //if value is from the URI and not an actual property
         let prop = props.mapResp["uriExpression"];
         if (prop && prop["errorMessage"]) {
           return MappingStepDetailsMessages.uriError;
-
         } else if (prop["output"]) {
           return prop["output"];
         }
@@ -1040,20 +1164,41 @@ const EntityMapTable: React.FC<Props> = (props) => {
         }
       }
     } else {
-      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(entity => entity["relatedEntityMappingId"] === props.entityMappingId);
-      if (props.mapResp && props.mapResp.relatedEntityMappings && propName === "URI" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].uriExpression) {
+      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(
+        entity => entity["relatedEntityMappingId"] === props.entityMappingId,
+      );
+      if (
+        props.mapResp &&
+        props.mapResp.relatedEntityMappings &&
+        propName === "URI" &&
+        !isProperty &&
+        props.mapResp.relatedEntityMappings[index] &&
+        props.mapResp.relatedEntityMappings[index].uriExpression
+      ) {
         let prop = props.mapResp.relatedEntityMappings[index].uriExpression;
         if (prop && prop["errorMessage"]) {
           return prop["errorMessage"];
         } else if (prop && prop["output"]) {
           return prop["output"];
         }
-      } else if (props.mapResp && props.mapResp.relatedEntityMappings && propName === "Context" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].expressionContext) {
+      } else if (
+        props.mapResp &&
+        props.mapResp.relatedEntityMappings &&
+        propName === "Context" &&
+        !isProperty &&
+        props.mapResp.relatedEntityMappings[index] &&
+        props.mapResp.relatedEntityMappings[index].expressionContext
+      ) {
         let prop = props.mapResp.relatedEntityMappings[index].expressionContext;
         if (prop && prop["output"]) {
           return <b>{prop["output"]}</b>;
         }
-      } else if (index > -1 && props.mapResp && props.mapResp.relatedEntityMappings && props.mapResp.relatedEntityMappings[index].properties) {
+      } else if (
+        index > -1 &&
+        props.mapResp &&
+        props.mapResp.relatedEntityMappings &&
+        props.mapResp.relatedEntityMappings[index].properties
+      ) {
         let field = props.mapResp.relatedEntityMappings[index].properties;
         let prop = getValue(field, finalProp);
         if (prop && prop["errorMessage"]) {
@@ -1087,13 +1232,24 @@ const EntityMapTable: React.FC<Props> = (props) => {
     //if array of values and more than 2 values
     if (respFromServer && Array.isArray(respFromServer) && respFromServer.length >= 2) {
       let xMore = <span className="moreVal">{"(" + (respFromServer.length - 2) + " more)"}</span>;
-      let itemOne = respFromServer[0].length > 23 ? props.getInitialChars(respFromServer[0], 23, "...\n") : respFromServer[0] + "\n";
-      let itemTwo = respFromServer[1].length > 23 ? props.getInitialChars(respFromServer[1], 23, "...\n") : respFromServer[1] + "\n";
+      let itemOne =
+        respFromServer[0].length > 23
+          ? props.getInitialChars(respFromServer[0], 23, "...\n")
+          : respFromServer[0] + "\n";
+      let itemTwo =
+        respFromServer[1].length > 23
+          ? props.getInitialChars(respFromServer[1], 23, "...\n")
+          : respFromServer[1] + "\n";
       let fullItem = itemOne.concat(itemTwo);
       if (respFromServer.length === 2) {
         return <p>{fullItem}</p>;
       } else {
-        return <p>{fullItem}{xMore}</p>;
+        return (
+          <p>
+            {fullItem}
+            {xMore}
+          </p>
+        );
       }
     } else {
       return props.getInitialChars(respFromServer, 23, "...");
@@ -1101,7 +1257,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   //simulate a click event to destroy both dropdown and select on option select
-  const simulateMouseClick = (element) => {
+  const simulateMouseClick = element => {
     if (element) {
       let mouseClickEvents = ["mousedown", "click", "mouseup"];
       mouseClickEvents.forEach(mouseEventType =>
@@ -1110,9 +1266,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
             view: window,
             bubbles: true,
             cancelable: true,
-            buttons: 1
-          })
-        )
+            buttons: 1,
+          }),
+        ),
       );
     }
   };
@@ -1125,18 +1281,22 @@ const EntityMapTable: React.FC<Props> = (props) => {
       onItemSelect={onSourceSelect}
       srcData={sourcePropListForDropDown}
       indentList={sourceIndentForDropDown}
-      modelling={false} />
+      modelling={false}
+    />
   );
 
-  const sourceDropdown = (row) => {
+  const sourceDropdown = row => {
     if (!row.isProperty) {
       // Context and URI version
       return (
-
-        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
-          disabled={!props.canReadWrite}>
-          <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
-            size="sm">
+        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside" disabled={!props.canReadWrite}>
+          <Dropdown.Toggle
+            id="functionIcon"
+            variant="outline-light"
+            className={styles.sourceDrop}
+            disabled={!props.canReadWrite}
+            size="sm"
+          >
             <HCTooltip id="source-field-tooltip" text={props.canReadWrite && "Source Field"} placement="bottom">
               <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
                 <FontAwesomeIcon
@@ -1144,15 +1304,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   size="lg"
                   data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
                   className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
-                  onClick={(e) => handleSourceList(row)}
+                  onClick={e => handleSourceList(row)}
                 />
               </i>
             </HCTooltip>
           </Dropdown.Toggle>
           <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-            <Dropdown.Item className={styles.dropdownMenuItem}>
-              {sourceMenu}
-            </Dropdown.Item>
+            <Dropdown.Item className={styles.dropdownMenuItem}>{sourceMenu}</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       );
@@ -1160,10 +1318,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
       // Property version (different testid)
       // TODO refactor tests to allow consistent testid values across source menus
       return (
-        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
-          disabled={!props.canReadWrite}>
-          <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
-            size="sm">
+        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside" disabled={!props.canReadWrite}>
+          <Dropdown.Toggle
+            id="functionIcon"
+            variant="outline-light"
+            className={styles.sourceDrop}
+            disabled={!props.canReadWrite}
+            size="sm"
+          >
             <HCTooltip id="source-field-tooltip" text={props.canReadWrite && "Source Field"} placement="bottom">
               <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
                 <FontAwesomeIcon
@@ -1171,15 +1333,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   size="lg"
                   data-testid={`${row.name.split("/").pop()}-listIcon`}
                   className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
-                  onClick={(e) => handleSourceList(row)}
+                  onClick={e => handleSourceList(row)}
                 />
               </i>
             </HCTooltip>
           </Dropdown.Toggle>
           <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-            <Dropdown.Item className={styles.dropdownMenuItem}>
-              {sourceMenu}
-            </Dropdown.Item>
+            <Dropdown.Item className={styles.dropdownMenuItem}>{sourceMenu}</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       );
@@ -1196,33 +1356,33 @@ const EntityMapTable: React.FC<Props> = (props) => {
     />
   );
 
-  const functionDropdown = (row) => {
+  const functionDropdown = row => {
     return (
-      <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
-        onToggle={(show) => {
+      <Dropdown
+        className="ms-2"
+        as={ButtonGroup}
+        autoClose="outside"
+        onToggle={show => {
           show && handleFunctionsList(row.name);
         }}
-        disabled={!props.canReadWrite}>
-
-        <Dropdown.Toggle id="functionIcon"
+        disabled={!props.canReadWrite}
+      >
+        <Dropdown.Toggle
+          id="functionIcon"
           data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
           className={styles.functionIcon}
           disabled={!props.canReadWrite}
           size="sm"
-          variant="outline-light">
+          variant="outline-light"
+        >
           <HCTooltip id="function-tooltip" text={props.canReadWrite && "Function"} placement="bottom">
-            <span>
-              fx
-            </span>
+            <span>fx</span>
           </HCTooltip>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-          <Dropdown.Item className={styles.dropdownMenuItem}>
-            {functionMenu}
-          </Dropdown.Item>
+          <Dropdown.Item className={styles.dropdownMenuItem}>{functionMenu}</Dropdown.Item>
         </Dropdown.Menu>
-
       </Dropdown>
     );
   };
@@ -1236,13 +1396,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
     />
   );
 
-  const refDropdown = (row) => {
+  const refDropdown = row => {
     return (
-      <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
-        disabled={true}>
-
-        <Dropdown.Toggle id="functionIcon" className={styles.refDrop} disabled={!props.canReadWrite}
-          size="sm" variant="outline-light">
+      <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside" disabled={true}>
+        <Dropdown.Toggle
+          id="functionIcon"
+          className={styles.refDrop}
+          disabled={!props.canReadWrite}
+          size="sm"
+          variant="outline-light"
+        >
           <HCTooltip id="reference-tooltip" text={props.canReadWrite && "Reference"} placement="bottom">
             <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
               <FontAwesomeIcon
@@ -1250,43 +1413,54 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 size="lg"
                 data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
                 className={props.canReadWrite ? styles.refIcon : styles.disabledRefIcon}
-                onClick={(e) => handleRefList(row.name)}
+                onClick={e => handleRefList(row.name)}
               />
             </i>
           </HCTooltip>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-          <Dropdown.Item className={styles.dropdownMenuItem}>
-            {refMenu}
-          </Dropdown.Item>
+          <Dropdown.Item className={styles.dropdownMenuItem}>{refMenu}</Dropdown.Item>
         </Dropdown.Menu>
-
       </Dropdown>
     );
   };
 
-  const relatedEntitiesFilterOptions = props.relatedEntityTypeProperties?.filter(entity => {
-    let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
-    let entityIdSections = entity["entityMappingId"].split(":");
-    let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
-    return (entityId && entityId === entityTitle);
-  }).map((entity, i) => ({value: entity.entityLabel, label: entity.entityLabel}));
+  const relatedEntitiesFilterOptions = props.relatedEntityTypeProperties
+    ?.filter(entity => {
+      let entityTitle = props.isRelatedEntity
+        ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" "))
+        : props.entityTypeTitle;
+      let entityIdSections = entity["entityMappingId"].split(":");
+      let entityId =
+        entityIdSections.length > 2
+          ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1]
+          : /([^.]+)/.exec(entityIdSections[0])![1];
+      return entityId && entityId === entityTitle;
+    })
+    .map((entity, i) => ({value: entity.entityLabel, label: entity.entityLabel}));
 
   const getSelectedOptionsDrp = (deleteKey?) => {
     let storageAux = storage?.curateEntityTable;
-    let propertyArray = deleteKey ? deleteKey + "_" + props?.savedMappingArt?.name : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
+    let propertyArray = deleteKey
+      ? deleteKey + "_" + props?.savedMappingArt?.name
+      : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
 
     if (deleteKey && storageAux?.selectedValues && storageAux.selectedValues[propertyArray]) {
       return storageAux.selectedValues[propertyArray];
-    } else if (storageAux?.selectedValues && props?.savedMappingArt?.name && props?.entityTypeTitle &&
-      storageAux.selectedValues[propertyArray] && storageAux.selectedValues[propertyArray].length > 0) {
+    } else if (
+      storageAux?.selectedValues &&
+      props?.savedMappingArt?.name &&
+      props?.entityTypeTitle &&
+      storageAux.selectedValues[propertyArray] &&
+      storageAux.selectedValues[propertyArray].length > 0
+    ) {
       return storageAux.selectedValues[propertyArray];
     } else return "";
   };
 
   const saveSelectedOptionsDrp = (newlySelectedValues, removedEntity?, updateSelectedEntities?) => {
-    let countRelations = (removedEntity?.entityMappingId?.split(".").length - 1);
+    let countRelations = removedEntity?.entityMappingId?.split(".").length - 1;
     let mainObjectLabel;
     let filteredArray;
 
@@ -1304,23 +1478,28 @@ const EntityMapTable: React.FC<Props> = (props) => {
       let arrayToFilter = getSelectedOptionsDrp(mainObjectLabel);
       filteredArray = arrayToFilter && arrayToFilter?.filter(item => item !== removedEntity?.entityLabel);
     }
-    let keyArray = deleteFromTable ? mainObjectLabel + "_" + props?.savedMappingArt?.name : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
+    let keyArray = deleteFromTable
+      ? mainObjectLabel + "_" + props?.savedMappingArt?.name
+      : props?.entityTypeTitle + "_" + props?.savedMappingArt?.name;
     let valueToSave = deleteFromTable ? filteredArray : newlySelectedValues;
 
     let newEntityStorage;
     newEntityStorage = {
-      ...storage, curateEntityTable: {
+      ...storage,
+      curateEntityTable: {
         ...storage.curateEntityTable,
         selectedValues: {...storage?.curateEntityTable?.selectedValues, [keyArray]: valueToSave},
-      }
+      },
     };
     setViewSettings(newEntityStorage);
     setDeleteFromTable(false);
   };
 
-  const handleOptionSelect = (selected) => {
-    const newlySelectedValues = selected === "" && getSelectedOptionsDrp() !== "" ?
-      getSelectedOptionsDrp() : selected.map(option => option.value);
+  const handleOptionSelect = selected => {
+    const newlySelectedValues =
+      selected === "" && getSelectedOptionsDrp() !== ""
+        ? getSelectedOptionsDrp()
+        : selected.map(option => option.value);
     let selectedArray: any = [];
     let entityArray = props.relatedEntityTypeProperties;
 
@@ -1339,12 +1518,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
       //in the properties array, push the object that has the key which matches the value of the entity name selected
       newlySelectedValues.forEach(val => {
         let index = entityArray.findIndex(object => object.entityLabel === val);
-        if (!props.relatedEntitiesSelected.includes((entityArray[index]))) {
+        if (!props.relatedEntitiesSelected.includes(entityArray[index])) {
           selectedArray.push(entityArray[index]);
         }
       });
 
-      props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
+      props.setRelatedEntitiesSelected(prevState => [...prevState, ...selectedArray]);
       setSelectedOptions(newlySelectedValues);
       setFilterValues(newlySelectedValues);
     }
@@ -1360,7 +1539,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     return (
       <SelectComponents.MultiValueRemove {...props}>
         <span aria-label="icon: close">
-          <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z" /></svg>
+          <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z" />
+          </svg>
         </span>
       </SelectComponents.MultiValueRemove>
     );
@@ -1381,17 +1562,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const toggleUriPopover = () => {
     showUriPopover ? setShowUriPopover(false) : setShowUriPopover(true);
   };
-  const handlePopoverOnClick = (event) => {
+  const handlePopoverOnClick = event => {
     setTarget(event.target);
     toggleContextPopover();
   };
 
-  const handleUriPopoverOnClick = (event) => {
+  const handleUriPopoverOnClick = event => {
     setTarget(event.target);
     toggleUriPopover();
   };
 
-  const handleShowRelationshipTooltip = (name) => {
+  const handleShowRelationshipTooltip = name => {
     time = delayTooltip(() => {
       setShowRelationshipTooltip(name);
     });
@@ -1401,7 +1582,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setShowRelationshipTooltip("");
   };
 
-  const handleShowForeignTooltip = (name) => {
+  const handleShowForeignTooltip = name => {
     time = delayTooltip(() => {
       setShowKeyTooltip(name);
     });
@@ -1411,7 +1592,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setShowKeyTooltip("");
   };
 
-  const handleShowStructuredTooltip = (name) => {
+  const handleShowStructuredTooltip = name => {
     time = delayTooltip(() => {
       setShowStructuredTooltip(name);
     });
@@ -1421,7 +1602,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setShowStructuredTooltip("");
   };
 
-  const handleShowMultipleTooltip = (name) => {
+  const handleShowMultipleTooltip = name => {
     time = delayTooltip(() => {
       setShowMultipleTooltip(name);
     });
@@ -1433,7 +1614,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const serviceNameKeyDownHandler = async (event, component) => {
     //Make selection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "expandIcon") {
         toggleEntityTable();
       }
@@ -1442,7 +1623,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         setTarget(event.target);
         toggleContextPopover();
 
-        if ((event.keyCode === 9)) {
+        if (event.keyCode === 9) {
           setShowContextPopover(false);
         }
       }
@@ -1459,7 +1640,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         toggleUriPopover();
       }
     }
-    if ((event.keyCode === 9)) {
+    if (event.keyCode === 9) {
       if (component === "uriIcon") {
         setShowUriPopover(false);
       }
@@ -1473,7 +1654,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const serviceRowDownHandler = async (event, row) => {
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       event.preventDefault();
       toggleRowExpanded(row, "", "key");
     }
@@ -1481,7 +1662,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const serviceIconDownHandler = async (event, type, name) => {
     if (type === "multiple") {
-      if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
         event.preventDefault();
         if (showMultipleTooltip !== name) {
           setShowMultipleTooltip(name);
@@ -1489,11 +1670,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
           setShowMultipleTooltip("");
         }
       }
-      if ((event.keyCode === 9)) {
+      if (event.keyCode === 9) {
         setShowMultipleTooltip("");
       }
     } else if (type === "structured") {
-      if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
         event.preventDefault();
         if (showStructuredTooltip !== name) {
           setShowStructuredTooltip(name);
@@ -1501,11 +1682,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
           setShowStructuredTooltip("");
         }
       }
-      if ((event.keyCode === 9)) {
+      if (event.keyCode === 9) {
         setShowStructuredTooltip("");
       }
     } else if (type === "key") {
-      if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
         event.preventDefault();
         if (showKeyTooltip !== name) {
           setShowKeyTooltip(name);
@@ -1513,11 +1694,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
           setShowKeyTooltip("");
         }
       }
-      if ((event.keyCode === 9)) {
+      if (event.keyCode === 9) {
         setShowKeyTooltip("");
       }
     } else if (type === "relationship") {
-      if ((event.keyCode === 13) || (event.keyCode === 32)) {
+      if (event.keyCode === 13 || event.keyCode === 32) {
         event.preventDefault();
         if (showRelationshipTooltip !== name) {
           setShowRelationshipTooltip(name);
@@ -1525,7 +1706,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           setShowRelationshipTooltip("");
         }
       }
-      if ((event.keyCode === 9)) {
+      if (event.keyCode === 9) {
         setShowRelationshipTooltip("");
       }
     }
@@ -1535,7 +1716,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
     <Select
       id={`${props.entityTypeTitle}-entities-filter-select-wrapper`}
       inputId={`${props.entityTypeTitle}-entities-filter-select`}
-      components={{MultiValueContainer, MultiValueRemove, MenuList: internProps => MenuList(`${props.entityTypeTitle}-entities-filter`, internProps)}}
+      components={{
+        MultiValueContainer,
+        MultiValueRemove,
+        MenuList: internProps => MenuList(`${props.entityTypeTitle}-entities-filter`, internProps),
+      }}
       placeholder="Select"
       aria-label={"entities-filter-select"}
       isMulti
@@ -1551,14 +1736,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
         ...reactSelectThemeConfig,
         container: (provided, state) => ({
           ...provided,
-          lineHeight: "21px"
+          lineHeight: "21px",
         }),
         control: (provided, state) => ({
           ...provided,
-          cursor: "default"
+          cursor: "default",
         }),
       }}
-      formatOptionLabel={(option: {value, label}) => {
+      formatOptionLabel={(option: {value; label}) => {
         return (
           <span aria-label={`${option.label}-option`} role={"option"}>
             {option.label}
@@ -1569,41 +1754,79 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.expandTableIcon} onClick={() => toggleEntityTable()} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "expandIcon")}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}</a>
+    <a
+      className={styles.expandTableIcon}
+      onClick={() => toggleEntityTable()}
+      tabIndex={0}
+      onKeyDown={e => serviceNameKeyDownHandler(e, "expandIcon")}
+    >
+      {tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}
+    </a>
   );
 
   const topRowDetails = (
     <div>
       <div className={styles.entityTopRow}>
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
-          {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
-          {props.relatedMappings &&
-            <span tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "relatedInfoIcon"); }}>
-              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" onMouseEnter={handleShowDocPopover} onMouseLeave={() => handleMouseLeaveTooltipDoc()} />
+          {expandTableIcon}
+          <strong>{props.entityTypeTitle}</strong>
+          {props.relatedMappings && (
+            <span
+              tabIndex={0}
+              onKeyDown={e => {
+                serviceNameKeyDownHandler(e, "relatedInfoIcon");
+              }}
+            >
+              <img
+                className={styles.arrayImage}
+                src={DocIcon}
+                alt={""}
+                data-testid="relatedInfoIcon"
+                onMouseEnter={handleShowDocPopover}
+                onMouseLeave={() => handleMouseLeaveTooltipDoc()}
+              />
               {relatedInfo}
             </span>
-          }
+          )}
         </div>
         <div className={styles.entitySettingsLink}>
-          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle} />
+          <EntitySettings
+            canReadWrite={props.canReadWrite}
+            tooltipsData={props.tooltipsData}
+            stepData={props.savedMappingArt}
+            updateStep={props.updateStep}
+            entityMappingId={props.entityMappingId}
+            entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle}
+          />
         </div>
-        {props.isRelatedEntity ?
+        {props.isRelatedEntity ? (
           <div className={styles.deleteEntityLink}>
-            <XLg className={styles.deleteTableIcon} data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])} />
-          </div> : ""
-        }
+            <XLg
+              className={styles.deleteTableIcon}
+              data-testid={props.entityTypeTitle + "-delete"}
+              onClick={e =>
+                onDelete(
+                  props.relatedEntityTypeProperties[
+                    props.relatedEntityTypeProperties.findIndex(
+                      object => object["entityMappingId"] === props.entityMappingId,
+                    )
+                  ],
+                )
+              }
+            />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
-      {props.relatedMappings && props.relatedMappings.length > 0 ?
+      {props.relatedMappings && props.relatedMappings.length > 0 ? (
         <div className={styles.entityFilterContainer}>
           <div className={styles.mapRelatedEntitiesText}>Map related entities: </div>
           <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
         </div>
-        :
-        null
-      }
+      ) : null}
     </div>
   );
-
 
   const toggleEntityTable = () => {
     setTableToggled(false);
@@ -1621,7 +1844,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     //saveSessionEntityNestedTable();
   };
 
-  const findReferringEntities = (relatedMappings) => {
+  const findReferringEntities = relatedMappings => {
     let referringEntities: any = [];
     if (relatedMappings) {
       //find any related mappings to the removed entity that are currently also being mapped/displayed
@@ -1642,7 +1865,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const onOk = () => {
     props.deleteRelatedEntity(removedEntity);
-    let updateSelectedEntities: any = props.relatedEntitiesSelected.filter(entity => entity["entityMappingId"] !== removedEntity["entityMappingId"]);
+    let updateSelectedEntities: any = props.relatedEntitiesSelected.filter(
+      entity => entity["entityMappingId"] !== removedEntity["entityMappingId"],
+    );
     props.setRelatedEntitiesSelected(updateSelectedEntities);
     setFilterValues(pendingOptions);
     setSelectedOptions(pendingOptions);
@@ -1655,56 +1880,73 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setDeleteFromTable(false);
   };
 
-  const onDelete = (deletedEntity) => {
+  const onDelete = deletedEntity => {
     setRemovedEntity(deletedEntity);
     findReferringEntities(deletedEntity.relatedEntityMappings);
     setDeleteDialogVisible(true);
     setDeleteFromTable(true);
   };
 
-  const deleteConfirmation = <HCModal
-    show={deleteDialogVisible}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"pt-0 pb-4"}>
-      {entitiesReferencing.length > 0 ?
-        <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.</span>
-        :
-        <span aria-label={"confirm-deletion-msg"} style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
-      }
-      <div className={"d-flex justify-content-center pt-4 pb-2"}>
-        {entitiesReferencing.length > 0 ? null : <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
-          {"No"}
-        </HCButton>}
-        <HCButton aria-label={entitiesReferencing.length > 0 ? "OK" : "Yes"} variant="primary" type="submit" onClick={() => { entitiesReferencing.length > 0 ? onCancel() : onOk(); }}>
-          {entitiesReferencing.length > 0 ? "OK" : "Yes"}
-        </HCButton>
-      </div>
-    </Modal.Body>
-  </HCModal>;
+  const deleteConfirmation = (
+    <HCModal show={deleteDialogVisible} onHide={onCancel}>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"pt-0 pb-4"}>
+        {entitiesReferencing.length > 0 ? (
+          <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>
+            The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the{" "}
+            <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the{" "}
+            <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.
+          </span>
+        ) : (
+          <span aria-label={"confirm-deletion-msg"} style={{fontSize: "16px"}}>
+            Are you sure you want to delete any mapping expressions associated with the{" "}
+            <strong>{removedEntity?.entityLabel}</strong> entity?
+          </span>
+        )}
+        <div className={"d-flex justify-content-center pt-4 pb-2"}>
+          {entitiesReferencing.length > 0 ? null : (
+            <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+              {"No"}
+            </HCButton>
+          )}
+          <HCButton
+            aria-label={entitiesReferencing.length > 0 ? "OK" : "Yes"}
+            variant="primary"
+            type="submit"
+            onClick={() => {
+              entitiesReferencing.length > 0 ? onCancel() : onOk();
+            }}
+          >
+            {entitiesReferencing.length > 0 ? "OK" : "Yes"}
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </HCModal>
+  );
 
   const entityColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div>
-        <span data-testid="entityTableName" className={styles.nameHeaderText}>
-          Name
-        </span>
-        <HCPopoverSearch
-          popoverId={"popover-filter"}
-          searchIconId={`filterIcon-${props.entityTypeTitle}-entity`}
-          inputId={`searchInput-entity`}
-          inputPlaceholder={`Search name`}
-          inputValue={searchedKey}
-          resetButtonId={`resetSearch-entity`}
-          onReset={() => handleSearchReset()}
-          searchButtonId={`submitSearch-entity`}
-          onSearch={(value) => filterByName(value)}
-        />
-      </div>,
+      headerFormatter: () => (
+        <div>
+          <span data-testid="entityTableName" className={styles.nameHeaderText}>
+            Name
+          </span>
+          <HCPopoverSearch
+            popoverId={"popover-filter"}
+            searchIconId={`filterIcon-${props.entityTypeTitle}-entity`}
+            inputId={`searchInput-entity`}
+            inputPlaceholder={`Search name`}
+            inputValue={searchedKey}
+            resetButtonId={`resetSearch-entity`}
+            onReset={() => handleSearchReset()}
+            searchButtonId={`submitSearch-entity`}
+            onSearch={value => filterByName(value)}
+          />
+        </div>
+      ),
       dataField: "name",
       key: "name",
       width: "25%",
@@ -1733,63 +1975,133 @@ const EntityMapTable: React.FC<Props> = (props) => {
             </a>
           );
         } else {
-          let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
-          renderText =
+          let renderOutput = getRenderOutput(
+            textToSearchInto,
+            valueToDisplay,
+            "name",
+            searchedEntityColumn,
+            searchEntityText,
+            row.key,
+          );
+          renderText = (
             <span>
-              {props.initialEntityKeys.includes(row.key) || extraData ?
-                row.children ?
-                  <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>
-                    {!extraData.rowExpandedKeys?.includes(row.key) ?
-                      <span><ChevronRight /></span>
-                      : <span><ChevronDown /></span>
-                    }
+              {props.initialEntityKeys.includes(row.key) || extraData ? (
+                row.children ? (
+                  <span
+                    onClick={() => toggleRowExpanded(row, "", "key")}
+                    className={styles.tableExpandIcon}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceRowDownHandler(e, row);
+                    }}
+                  >
+                    {!extraData.rowExpandedKeys?.includes(row.key) ? (
+                      <span>
+                        <ChevronRight />
+                      </span>
+                    ) : (
+                      <span>
+                        <ChevronDown />
+                      </span>
+                    )}
                   </span>
-                  : <span className={styles.noTableExpandIcon}>
-                    {null}
-                  </span>
-                : null
-              }
+                ) : (
+                  <span className={styles.noTableExpandIcon}>{null}</span>
+                )
+              ) : null}
               <span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>
-                {row.relatedEntityType ?
-                  <i>{renderOutput}</i>
-                  : renderOutput
-                }
+                {row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
               </span>
-              {row.key > 100 && row.type.includes("[ ]") &&
-                <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "multiple", text); }} onMouseEnter={() => { handleShowMultipleTooltip(text); }} onMouseLeave={() => handleLeaveMultipleTooltip()}>
-                  <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top" show={showMultipleTooltip === text}>
-                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text}/>
+              {row.key > 100 && row.type.includes("[ ]") && (
+                <span
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    serviceIconDownHandler(e, "multiple", text);
+                  }}
+                  onMouseEnter={() => {
+                    handleShowMultipleTooltip(text);
+                  }}
+                  onMouseLeave={() => handleLeaveMultipleTooltip()}
+                >
+                  <HCTooltip
+                    text="Multiple"
+                    id="multiple-source-tooltip"
+                    placement="top"
+                    show={showMultipleTooltip === text}
+                  >
+                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
                   </HCTooltip>
                 </span>
-              }
-              {row.key > 100 && row.children &&
-                <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "structured", text); }} onMouseEnter={() => { handleShowStructuredTooltip(text); }} onMouseLeave={() => handleLeaveStructuredTooltip()}>
-                  <HCTooltip text="Structured Type" id="structure-type-tooltip" placement="top" show={showStructuredTooltip === text}>
-                    <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
+              )}
+              {row.key > 100 && row.children && (
+                <span
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    serviceIconDownHandler(e, "structured", text);
+                  }}
+                  onMouseEnter={() => {
+                    handleShowStructuredTooltip(text);
+                  }}
+                  onMouseLeave={() => handleLeaveStructuredTooltip()}
+                >
+                  <HCTooltip
+                    text="Structured Type"
+                    id="structure-type-tooltip"
+                    placement="top"
+                    show={showStructuredTooltip === text}
+                  >
+                    <i>
+                      <FontAwesomeIcon
+                        className={styles.structuredIcon}
+                        icon={faLayerGroup}
+                        data-testid={"structured-" + text}
+                      />
+                    </i>
                   </HCTooltip>
                 </span>
-              }
-              {row.key > 100 && row.name === "Context" && !row.isProperty &&
+              )}
+              {row.key > 100 && row.name === "Context" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "contextIcon");
+                    }}
+                    onClick={handlePopoverOnClick}
+                  />
                   <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
                     {contextHelp}
                   </Overlay>
                 </span>
-              }
-              {row.key > 100 && row.name === "URI" && !row.isProperty &&
+              )}
+              {row.key > 100 && row.name === "URI" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriIcon"); }} onClick={handleUriPopoverOnClick}/>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "uriIcon");
+                    }}
+                    onClick={handleUriPopoverOnClick}
+                  />
                   <Overlay target={target} placement="right" show={showUriPopover} container={containerRef}>
                     {uriHelp}
                   </Overlay>
                 </span>
-              }
-            </span>;
+              )}
+            </span>
+          );
           return renderText;
         }
       },
-      formatExtraData: {rowExpandedKeys, filterApplied}
+      formatExtraData: {rowExpandedKeys, filterApplied},
     },
     {
       text: "Type",
@@ -1808,19 +2120,36 @@ const EntityMapTable: React.FC<Props> = (props) => {
         let renderText = text;
         const expanded = text.startsWith("parent-");
         const dType = expanded ? text.slice(text.indexOf("-") + 1) : text;
-        if (row.relatedEntityType) { //if property is a relationship
+        if (row.relatedEntityType) {
+          //if property is a relationship
           let relatedEntityName = row.relatedEntityType.split("/").pop();
-          let completeRelationshipTooltip = ModelingTooltips.completeRelationship(relatedEntityName, props.entityTypeTitle);
-          let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(relatedEntityName, props.entityTypeTitle);
-          renderText =
+          let completeRelationshipTooltip = ModelingTooltips.completeRelationship(
+            relatedEntityName,
+            props.entityTypeTitle,
+          );
+          let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(
+            relatedEntityName,
+            props.entityTypeTitle,
+          );
+          renderText = (
             <div className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
-              {expanded && row.joinPropertyName !== "" ?
+              {expanded && row.joinPropertyName !== "" ? (
                 //if multiple and has foreign key, show context help
-                <div className={styles.typeContainer} >
+                <div className={styles.typeContainer}>
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <span ref={containerRef} className={styles.contextPopover}>
-                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
+                      <QuestionCircleFill
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.questionCircle}
+                        tabIndex={0}
+                        onKeyDown={e => {
+                          serviceNameKeyDownHandler(e, "contextIcon");
+                        }}
+                        onClick={handlePopoverOnClick}
+                      />
                       <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
                         {contextHelp}
                       </Overlay>
@@ -1828,72 +2157,147 @@ const EntityMapTable: React.FC<Props> = (props) => {
                     <p className={styles.typeText}>{dType}</p>
                   </div>
                 </div>
-                :
+              ) : (
                 <span className={styles.textTypeContainer}>
-                  {row.joinPropertyName !== "" ?
-                    renderText //show data type if not multiple but has foreign key
-                    :
-                    renderText = relatedEntityName //if no foreign key
+                  {
+                    row.joinPropertyName !== ""
+                      ? renderText //show data type if not multiple but has foreign key
+                      : (renderText = relatedEntityName) //if no foreign key
                   }
                 </span>
-              }
-              {row.joinPropertyName !== "" ?
+              )}
+              {row.joinPropertyName !== "" ? (
                 //icons if relationship is complete with a foreign key
                 <div className={styles.dualIconsContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom" show={showRelationshipTooltip === row.name}>
-                    <div className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "relationship", row.name); }} onMouseEnter={() => { handleShowRelationshipTooltip(row.name); }} onMouseLeave={() => handleLeaveRelationshipTooltip()}/>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={completeRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + row.name}
+                    placement="bottom"
+                    show={showRelationshipTooltip === row.name}
+                  >
+                    <div
+                      className={styles.modeledRelationshipIcon}
+                      data-testid={"relationship-" + row.name}
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        serviceIconDownHandler(e, "relationship", row.name);
+                      }}
+                      onMouseEnter={() => {
+                        handleShowRelationshipTooltip(row.name);
+                      }}
+                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
+                    />
                   </HCTooltip>
-                  <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "key", row.name); }} onMouseEnter={() => { handleShowForeignTooltip(row.name); }} onMouseLeave={() => handleLeaveForeignTooltip()}>
-                    <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom" show={showKeyTooltip === row.name}>
+                  <span
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceIconDownHandler(e, "key", row.name);
+                    }}
+                    onMouseEnter={() => {
+                      handleShowForeignTooltip(row.name);
+                    }}
+                    onMouseLeave={() => handleLeaveForeignTooltip()}
+                  >
+                    <HCTooltip
+                      text={ModelingTooltips.foreignKeyModeling(
+                        relatedEntityName,
+                        row.joinPropertyName,
+                        props.entityTypeTitle,
+                      )}
+                      id={"tooltip-" + row.name}
+                      placement="bottom"
+                      show={showKeyTooltip === row.name}
+                    >
                       <i>
-                        <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+                        <FontAwesomeIcon
+                          className={styles.foreignKeyIcon}
+                          icon={faKey}
+                          data-testid={"foreign-" + row.name}
+                        />
                       </i>
                     </HCTooltip>
                   </span>
                 </div>
-                :
+              ) : (
                 //icon if relationship but no foreign key
                 <div className={styles.singleIconContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom" show={showRelationshipTooltip === row.name}>
-                    <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name} onMouseEnter={() => { handleShowRelationshipTooltip(row.name); }} onMouseLeave={() => handleLeaveRelationshipTooltip()}/>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={incompleteRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + row.name}
+                    placement="bottom"
+                    show={showRelationshipTooltip === row.name}
+                  >
+                    <span
+                      className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle}
+                      data-testid={"relationship-" + row.name}
+                      onMouseEnter={() => {
+                        handleShowRelationshipTooltip(row.name);
+                      }}
+                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
+                    />
                   </HCTooltip>
                 </div>
-              }
-            </div>;
+              )}
+            </div>
+          );
         }
-        return <div className={styles.typeContainer}>
-          {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
-            <span ref={containerRef} className={styles.contextPopover}>
-              <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
-              <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                {contextHelp}
-              </Overlay>
-            </span>
-            <p className={styles.typeText}>{dType}</p></div>
-            : renderText}
-        </div>;
-      }
+        return (
+          <div className={styles.typeContainer}>
+            {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? (
+              <div className={styles.typeContextContainer}>
+                <span className={styles.typeContext}>Context</span>&nbsp;
+                <span ref={containerRef} className={styles.contextPopover}>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "contextIcon");
+                    }}
+                    onClick={handlePopoverOnClick}
+                  />
+                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
+                    {contextHelp}
+                  </Overlay>
+                </span>
+                <p className={styles.typeText}>{dType}</p>
+              </div>
+            ) : (
+              renderText
+            )}
+          </div>
+        );
+      },
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span ref={xPathExpressionContainerFirstRef}>XPath Expression
-        <img
-          className={styles.arrayImage}
-          src={DocIcon}
-          alt={""}
-          data-testid="XPathInfoIcon"
-          onMouseEnter={handleShowDocLinksPopover}
-          onMouseLeave={() => handleMouseLeaveDocLinksPopover()}
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleShowDocLinksPopover(e);
-            }
-          }}
-        />
-        {xPathDocLinks(xPathExpressionContainerFirstRef.current)}
-      </span>,
+      headerFormatter: () => (
+        <span ref={xPathExpressionContainerFirstRef}>
+          XPath Expression
+          <img
+            className={styles.arrayImage}
+            src={DocIcon}
+            alt={""}
+            data-testid="XPathInfoIcon"
+            onMouseEnter={handleShowDocLinksPopover}
+            onMouseLeave={() => handleMouseLeaveDocLinksPopover()}
+            tabIndex={0}
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleShowDocLinksPopover(e);
+              }
+            }}
+          />
+          {xPathDocLinks(xPathExpressionContainerFirstRef.current)}
+        </span>
+      ),
       dataField: "key",
       key: "key",
       width: "40%",
@@ -1911,62 +2315,116 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           if (row.key > 100 && row.name !== "more" && row.name !== "less") {
             if (row.name === "Context" && !row.isProperty) {
-              return <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={(e) => handleClickInTextArea(e)}
-                  value={expressionContext}
-                  onChange={(e) => handleExpressionContext(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea}
-                />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
+              return (
+                <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}>
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                      style={mapExpressionStyle(row.name, false)}
+                      onClick={e => handleClickInTextArea(e)}
+                      value={expressionContext}
+                      onChange={e => handleExpressionContext(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, false) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, false)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             } else if (row.name === "URI" && !row.isProperty) {
-              return <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={handleClickInTextArea}
-                  value={uriExpression}
-                  onChange={(e) => handleUri(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea} />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
+              return (
+                <div
+                  className={
+                    props.isRelatedEntity && !directRelation
+                      ? styles.relatedMapExpParentContainer
+                      : styles.mapExpParentContainer
+                  }
+                >
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                      style={mapExpressionStyle(row.name, false)}
+                      onClick={handleClickInTextArea}
+                      value={uriExpression}
+                      onChange={e => handleUri(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {functionDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {refDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, false) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, false)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             } else {
-              return <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={row.name.split("/").pop() + "-mapexpression"}
-                  style={mapExpressionStyle(row.name, true)}
-                  onClick={handleClickInTextArea}
-                  value={mapExp[row.name]}
-                  onChange={(e) => handleMapExp(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea}
-                />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>;
+              return (
+                <div className={styles.mapExpParentContainer}>
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={row.name.split("/").pop() + "-mapexpression"}
+                      style={mapExpressionStyle(row.name, true)}
+                      onClick={handleClickInTextArea}
+                      value={mapExp[row.name]}
+                      onChange={e => handleMapExp(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {functionDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {refDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, true) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, true)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             }
           } else if (row.name !== "more" && row.name !== "less") {
             return null;
           }
         }
-      }
+      },
     },
     {
       text: "Value",
@@ -1982,20 +2440,35 @@ const EntityMapTable: React.FC<Props> = (props) => {
       },
       formatter: (text, row, index, extraData) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
-          return <div data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"} className={styles.mapValue}>
-            <HCTooltip id={`${props.entityTypeTitle}-${row.name.split("/").pop()}-value-tooltip`} placement="top" text={getTextForTooltip(row.name, row.isProperty)}><span>{getTextForValueField(row, row.isProperty)}</span></HCTooltip>
-          </div>;
+          return (
+            <div
+              data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"}
+              className={styles.mapValue}
+            >
+              <HCTooltip
+                id={`${props.entityTypeTitle}-${row.name.split("/").pop()}-value-tooltip`}
+                placement="top"
+                text={getTextForTooltip(row.name, row.isProperty)}
+              >
+                <span>{getTextForValueField(row, row.isProperty)}</span>
+              </HCTooltip>
+            </div>
+          );
         } else if (row.name !== "more" && row.name !== "less") {
           return null;
         }
-      }
-    }
+      },
+    },
   ];
 
   const lowerEntityColumns = [
     {
       text: "Name",
-      headerFormatter: () => <span data-testid="entityTableName" className={styles.nameHeaderText}>Name</span>,
+      headerFormatter: () => (
+        <span data-testid="entityTableName" className={styles.nameHeaderText}>
+          Name
+        </span>
+      ),
       dataField: "name",
       key: "name",
       width: "25%",
@@ -2024,44 +2497,133 @@ const EntityMapTable: React.FC<Props> = (props) => {
             </a>
           );
         } else {
-          let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
-          renderText =
-            <span>{props.initialEntityKeys.includes(row.key) || extraData ? row.children ? <span onClick={() => toggleRowExpanded(row, "", "key")} className={styles.tableExpandIcon} tabIndex={0} onKeyDown={(e) => { serviceRowDownHandler(e, row); }}>{!extraData.rowExpandedKeys?.includes(row.key) ? <span><ChevronRight /></span> : <span><ChevronDown /></span>} </span> : <span className={styles.noTableExpandIcon}>{null}</span> : null}<span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
-              {row.key > 100 && row.type.includes("[ ]") &&
-                <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "multiple", text); }} onMouseEnter={() => { handleShowMultipleTooltip(text); }} onMouseLeave={() => handleLeaveMultipleTooltip()}>
-                  <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top" show={showMultipleTooltip === text}>
+          let renderOutput = getRenderOutput(
+            textToSearchInto,
+            valueToDisplay,
+            "name",
+            searchedEntityColumn,
+            searchEntityText,
+            row.key,
+          );
+          renderText = (
+            <span>
+              {props.initialEntityKeys.includes(row.key) || extraData ? (
+                row.children ? (
+                  <span
+                    onClick={() => toggleRowExpanded(row, "", "key")}
+                    className={styles.tableExpandIcon}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceRowDownHandler(e, row);
+                    }}
+                  >
+                    {!extraData.rowExpandedKeys?.includes(row.key) ? (
+                      <span>
+                        <ChevronRight />
+                      </span>
+                    ) : (
+                      <span>
+                        <ChevronDown />
+                      </span>
+                    )}{" "}
+                  </span>
+                ) : (
+                  <span className={styles.noTableExpandIcon}>{null}</span>
+                )
+              ) : null}
+              <span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>
+                {row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
+              </span>
+              {row.key > 100 && row.type.includes("[ ]") && (
+                <span
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    serviceIconDownHandler(e, "multiple", text);
+                  }}
+                  onMouseEnter={() => {
+                    handleShowMultipleTooltip(text);
+                  }}
+                  onMouseLeave={() => handleLeaveMultipleTooltip()}
+                >
+                  <HCTooltip
+                    text="Multiple"
+                    id="multiple-source-tooltip"
+                    placement="top"
+                    show={showMultipleTooltip === text}
+                  >
                     <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
                   </HCTooltip>
                 </span>
-              }
-              {row.key > 100 && row.children &&
-                <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "structured", text); }} onMouseEnter={() => { handleShowStructuredTooltip(text); }} onMouseLeave={() => handleLeaveStructuredTooltip()}>
-                  <HCTooltip text="Structured Type" id="structure-type-tooltip" placement="top" show={showStructuredTooltip === text}>
-                    <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
+              )}
+              {row.key > 100 && row.children && (
+                <span
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    serviceIconDownHandler(e, "structured", text);
+                  }}
+                  onMouseEnter={() => {
+                    handleShowStructuredTooltip(text);
+                  }}
+                  onMouseLeave={() => handleLeaveStructuredTooltip()}
+                >
+                  <HCTooltip
+                    text="Structured Type"
+                    id="structure-type-tooltip"
+                    placement="top"
+                    show={showStructuredTooltip === text}
+                  >
+                    <i>
+                      <FontAwesomeIcon
+                        className={styles.structuredIcon}
+                        icon={faLayerGroup}
+                        data-testid={"structured-" + text}
+                      />
+                    </i>
                   </HCTooltip>
                 </span>
-              }
-              {row.key > 100 && row.name === "Context" && !row.isProperty &&
+              )}
+              {row.key > 100 && row.name === "Context" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "contextIcon");
+                    }}
+                    onClick={handlePopoverOnClick}
+                  />
                   <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
                     {contextHelp}
                   </Overlay>
                 </span>
-              }
-              {row.key > 100 && row.name === "URI" && !row.isProperty &&
+              )}
+              {row.key > 100 && row.name === "URI" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "uriIcon"); }} onClick={handleUriPopoverOnClick}/>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "uriIcon");
+                    }}
+                    onClick={handleUriPopoverOnClick}
+                  />
                   <Overlay target={target} placement="right" show={showUriPopover} container={containerRef}>
                     {uriHelp}
                   </Overlay>
                 </span>
-              }
-            </span>;
-          return renderText;
+              )}
+            </span>
+          );
         }
+        return renderText;
       },
-      formatExtraData: {rowExpandedKeys, filterApplied}
+      formatExtraData: {rowExpandedKeys, filterApplied},
     },
     {
       text: "Type",
@@ -2080,19 +2642,36 @@ const EntityMapTable: React.FC<Props> = (props) => {
         let renderText = text;
         const expanded = text.startsWith("parent-");
         const dType = expanded ? text.slice(text.indexOf("-") + 1) : text;
-        if (row.relatedEntityType) { //if property is a relationship
+        if (row.relatedEntityType) {
+          //if property is a relationship
           let relatedEntityName = row.relatedEntityType.split("/").pop();
-          let completeRelationshipTooltip = ModelingTooltips.completeRelationship(relatedEntityName, props.entityTypeTitle);
-          let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(relatedEntityName, props.entityTypeTitle);
-          renderText =
+          let completeRelationshipTooltip = ModelingTooltips.completeRelationship(
+            relatedEntityName,
+            props.entityTypeTitle,
+          );
+          let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(
+            relatedEntityName,
+            props.entityTypeTitle,
+          );
+          renderText = (
             <div className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
-              {expanded && row.joinPropertyName !== "" ?
+              {expanded && row.joinPropertyName !== "" ? (
                 //if multiple and has foreign key, show context help
-                <div className={styles.typeContainer} >
+                <div className={styles.typeContainer}>
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <span ref={containerRef} className={styles.contextPopover}>
-                      <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
+                      <QuestionCircleFill
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.questionCircle}
+                        tabIndex={0}
+                        onKeyDown={e => {
+                          serviceNameKeyDownHandler(e, "contextIcon");
+                        }}
+                        onClick={handlePopoverOnClick}
+                      />
                       <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
                         {contextHelp}
                       </Overlay>
@@ -2100,58 +2679,144 @@ const EntityMapTable: React.FC<Props> = (props) => {
                     <p className={styles.typeText}>{dType}</p>
                   </div>
                 </div>
-                :
+              ) : (
                 <span className={styles.textTypeContainer}>
-                  {row.joinPropertyName !== "" ?
-                    renderText //show data type if not multiple but has foreign key
-                    :
-                    renderText = relatedEntityName //if no foreign key
+                  {
+                    row.joinPropertyName !== ""
+                      ? renderText //show data type if not multiple but has foreign key
+                      : (renderText = relatedEntityName) //if no foreign key
                   }
                 </span>
-              }
-              {row.joinPropertyName !== "" ?
+              )}
+              {row.joinPropertyName !== "" ? (
                 //icons if relationship is complete with a foreign key
                 <div className={styles.dualIconsContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom" show={showRelationshipTooltip === row.name}>
-                    <div className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "relationship", row.name); }} onMouseEnter={() => { handleShowRelationshipTooltip(row.name); }} onMouseLeave={() => handleLeaveRelationshipTooltip()}/>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={completeRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + row.name}
+                    placement="bottom"
+                    show={showRelationshipTooltip === row.name}
+                  >
+                    <div
+                      className={styles.modeledRelationshipIcon}
+                      data-testid={"relationship-" + row.name}
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        serviceIconDownHandler(e, "relationship", row.name);
+                      }}
+                      onMouseEnter={() => {
+                        handleShowRelationshipTooltip(row.name);
+                      }}
+                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
+                    />
                   </HCTooltip>
-                  <span tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "key", row.name); }} onMouseEnter={() => { handleShowForeignTooltip(row.name); }} onMouseLeave={() => handleLeaveForeignTooltip()}>
-                    <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom" show={showKeyTooltip === row.name}>
+                  <span
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceIconDownHandler(e, "key", row.name);
+                    }}
+                    onMouseEnter={() => {
+                      handleShowForeignTooltip(row.name);
+                    }}
+                    onMouseLeave={() => handleLeaveForeignTooltip()}
+                  >
+                    <HCTooltip
+                      text={ModelingTooltips.foreignKeyModeling(
+                        relatedEntityName,
+                        row.joinPropertyName,
+                        props.entityTypeTitle,
+                      )}
+                      id={"tooltip-" + row.name}
+                      placement="bottom"
+                      show={showKeyTooltip === row.name}
+                    >
                       <i>
-                        <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+                        <FontAwesomeIcon
+                          className={styles.foreignKeyIcon}
+                          icon={faKey}
+                          data-testid={"foreign-" + row.name}
+                        />
                       </i>
                     </HCTooltip>
                   </span>
                 </div>
-                :
+              ) : (
                 //icon if relationship but no foreign key
                 <div className={styles.singleIconContainer}>
-                  <HCTooltip className={styles.relationshipTooltip} text={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom" show={showRelationshipTooltip === row.name}>
-                    <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name} tabIndex={0} onKeyDown={(e) => { serviceIconDownHandler(e, "relationship", row.name); }} onMouseEnter={() => { handleShowRelationshipTooltip(row.name); }} onMouseLeave={() => handleLeaveRelationshipTooltip()}/>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={incompleteRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + row.name}
+                    placement="bottom"
+                    show={showRelationshipTooltip === row.name}
+                  >
+                    <span
+                      className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle}
+                      data-testid={"relationship-" + row.name}
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        serviceIconDownHandler(e, "relationship", row.name);
+                      }}
+                      onMouseEnter={() => {
+                        handleShowRelationshipTooltip(row.name);
+                      }}
+                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
+                    />
                   </HCTooltip>
                 </div>
-              }
-            </div>;
+              )}
+            </div>
+          );
         }
-        return <div className={styles.typeContainer}>
-          {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
-            <span ref={containerRef} className={styles.contextPopover}>
-              <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} tabIndex={0} onKeyDown={(e) => { serviceNameKeyDownHandler(e, "contextIcon"); }} onClick={handlePopoverOnClick}/>
-              <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                {contextHelp}
-              </Overlay>
-            </span>
-            <p className={styles.typeText}>{dType}</p></div>
-            : renderText}
-        </div>;
-      }
+        return (
+          <div className={styles.typeContainer}>
+            {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? (
+              <div className={styles.typeContextContainer}>
+                <span className={styles.typeContext}>Context</span>&nbsp;
+                <span ref={containerRef} className={styles.contextPopover}>
+                  <QuestionCircleFill
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      serviceNameKeyDownHandler(e, "contextIcon");
+                    }}
+                    onClick={handlePopoverOnClick}
+                  />
+                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
+                    {contextHelp}
+                  </Overlay>
+                </span>
+                <p className={styles.typeText}>{dType}</p>
+              </div>
+            ) : (
+              renderText
+            )}
+          </div>
+        );
+      },
     },
     {
       text: "XPath Expression",
-      headerFormatter: () => <span ref={xPathExpressionContainerSecondRef}>XPath Expression
-        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" onMouseEnter={handleShowDocLinksPopover} onMouseLeave={() => handleMouseLeaveDocLinksPopover()} />
-        {xPathDocLinks}
-      </span>,
+      headerFormatter: () => (
+        <span ref={xPathExpressionContainerSecondRef}>
+          XPath Expression
+          <img
+            className={styles.arrayImage}
+            src={DocIcon}
+            alt={""}
+            data-testid="XPathInfoIcon"
+            onMouseEnter={handleShowDocLinksPopover}
+            onMouseLeave={() => handleMouseLeaveDocLinksPopover()}
+          />
+          {xPathDocLinks}
+        </span>
+      ),
       dataField: "key",
       key: "key",
       width: "40%",
@@ -2169,62 +2834,116 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           if (row.key > 100 && row.name !== "more" && row.name !== "less") {
             if (row.name === "Context" && !row.isProperty) {
-              return <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={handleClickInTextArea}
-                  value={expressionContext}
-                  onChange={(e) => handleExpressionContext(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea}
-                />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
+              return (
+                <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}>
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                      style={mapExpressionStyle(row.name, false)}
+                      onClick={handleClickInTextArea}
+                      value={expressionContext}
+                      onChange={e => handleExpressionContext(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, false) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, false)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             } else if (row.name === "URI" && !row.isProperty) {
-              return <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={handleClickInTextArea}
-                  value={uriExpression}
-                  onChange={(e) => handleUri(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea} />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
+              return (
+                <div
+                  className={
+                    props.isRelatedEntity && !directRelation
+                      ? styles.relatedMapExpParentContainer
+                      : styles.mapExpParentContainer
+                  }
+                >
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                      style={mapExpressionStyle(row.name, false)}
+                      onClick={handleClickInTextArea}
+                      value={uriExpression}
+                      onChange={e => handleUri(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {functionDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {refDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, false) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, false)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             } else {
-              return <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <FormControl as="textarea"
-                  id={"mapexpression" + row.name.split("/").pop()}
-                  data-testid={row.name.split("/").pop() + "-mapexpression"}
-                  style={mapExpressionStyle(row.name, true)}
-                  onClick={handleClickInTextArea}
-                  value={mapExp[row.name]}
-                  onChange={(e) => handleMapExp(row, e)}
-                  onBlur={handleExpSubmit}
-                  disabled={!props.canReadWrite}
-                  className={styles.genericTextArea}
-                />
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
-                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>;
+              return (
+                <div className={styles.mapExpParentContainer}>
+                  <div className={styles.mapExpressionContainer}>
+                    <FormControl
+                      as="textarea"
+                      id={"mapexpression" + row.name.split("/").pop()}
+                      data-testid={row.name.split("/").pop() + "-mapexpression"}
+                      style={mapExpressionStyle(row.name, true)}
+                      onClick={handleClickInTextArea}
+                      value={mapExp[row.name]}
+                      onChange={e => handleMapExp(row, e)}
+                      onBlur={handleExpSubmit}
+                      disabled={!props.canReadWrite}
+                      className={styles.genericTextArea}
+                    />
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {sourceDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {functionDropdown(row)}
+                    </span>
+                    <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>
+                      {refDropdown(row)}
+                    </span>
+                  </div>
+                  {checkFieldInErrors(row.name, true) ? (
+                    <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>
+                      {displayResp(row.name, true)}
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
             }
           } else if (row.name !== "more" && row.name !== "less") {
             return null;
           }
         }
-      }
+      },
     },
     {
       text: "Value",
@@ -2240,14 +2959,25 @@ const EntityMapTable: React.FC<Props> = (props) => {
       },
       formatter: (text, row, index, extraData) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
-          return <div data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"} className={styles.mapValue}>
-            <HCTooltip id={`${props.entityTypeTitle}-${row.name.split("/").pop()}-value-tooltip`} placement="top" text={getTextForTooltip(row.name, row.isProperty)}><span>{getTextForValueField(row, row.isProperty)}</span></HCTooltip>
-          </div>;
+          return (
+            <div
+              data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"}
+              className={styles.mapValue}
+            >
+              <HCTooltip
+                id={`${props.entityTypeTitle}-${row.name.split("/").pop()}-value-tooltip`}
+                placement="top"
+                text={getTextForTooltip(row.name, row.isProperty)}
+              >
+                <span>{getTextForValueField(row, row.isProperty)}</span>
+              </HCTooltip>
+            </div>
+          );
         } else if (row.name !== "more" && row.name !== "less") {
           return null;
         }
-      }
-    }
+      },
+    },
   ];
 
   const tableCSS = css({
@@ -2256,79 +2986,120 @@ const EntityMapTable: React.FC<Props> = (props) => {
       backgroundColor: props.tableColor,
       paddingTop: "12px",
       paddingBottom: "12px",
-      borderColor: themeColors.light
+      borderColor: themeColors.light,
     },
     "& tbody > tr > td": {
       backgroundColor: props.tableColor,
       verticalAlign: "top",
       borderColor: themeColors.light,
-      lineHeight: "2px"
+      lineHeight: "2px",
     },
     "& tbody > tr > .ant-table-column-has-actions": {
       backgroundColor: props.tableColor,
       verticalAlign: "top",
-      lineHeight: "2px"
+      lineHeight: "2px",
     },
     ".hc-table_row": {
-      backgroundColor: props.tableColor
+      backgroundColor: props.tableColor,
     },
     ".hc-table_header": {
-      backgroundColor: props.tableColor
-    }
+      backgroundColor: props.tableColor,
+    },
   });
 
-  return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
-    <div className={styles.tableContainer} id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
-      <HCTable
-        pagination={false}
-        className={tableCSS}
-        rowClassName={"mappingSettingRow"}
-        onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
-        expandedRowKeys={props.entityExpandedKeys}
-        columns={getColumnsForEntityTable("upper")}
-        data={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
-        rowKey={"key"}
-        keyUtil={"key"}
-        showHeader={!props.isRelatedEntity}
-      />
-    </div>
-    {entityProperties.length ?
-      <div className={styles.tableContainer} id="lowerTable">
-        <HCTable
-          pagination={{
-            size: "small",
-            hideOnSinglePage: entityProperties.length <= 20,
-            showSizeChanger: true,
-            pageSizeOptions: paginationMapping.pageSizeOptions,
-            defaultCurrent: paginationMapping.start,
-            current: getCurrentPageMainTable() ? getCurrentPageMainTable() : paginationMapping.pageNumber,
-            pageSize: getCurrentSizeMainTable() ? getCurrentSizeMainTable() : paginationMapping.pageSize,
-            onChange: (e, a) => { props.executeScroll(`${props.entityMappingId}-ref`); saveSessionPageSizeMainTable(e, a); },
-            onShowSizeChange: (e, a) => { props.executeScroll(`${props.entityMappingId}-ref`); saveSessionPageSizeMainTable(a, e); },
-          }}
-          className={tableCSS}
-          onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
-          expandedRowKeys={props.entityExpandedKeys}
-          childrenIndent={true}
-          subTableHeader={true}
-          baseIndent={70}
-          columns={getColumnsForEntityTable("lower")}
-          data={filterApplied ? filteredEntityProperties : props.isRelatedEntity ? entityProperties.slice(2, entityProperties.length) : entityProperties.slice(1, entityProperties.length)}
-          rowKey={"key"}
-          keyUtil={"key"}
-          showHeader={false}
-          nestedParams={{headerColumns: entityColumns, iconCellList: ["Name", "Type", "XPath Expression", "Value"], state: [props.entityExpandedKeys, props.setEntityExpandedKeys]}}
-          component={"entity-map-table"}
-        />
+  return props.entityLoaded ? (
+    props.entityMappingId || !props.isRelatedEntity ? (
+      <div
+        id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"}
+        data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}
+      >
+        <div
+          className={styles.tableContainer}
+          id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"}
+          ref={props.setScrollRef(`${props.entityMappingId}-ref`)}
+        >
+          <HCTable
+            pagination={false}
+            className={tableCSS}
+            rowClassName={"mappingSettingRow"}
+            onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
+            expandedRowKeys={props.entityExpandedKeys}
+            columns={getColumnsForEntityTable("upper")}
+            data={
+              filterApplied
+                ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]
+                : entityProperties.length > 1
+                  ? props.isRelatedEntity
+                    ? [
+                      {key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""},
+                      entityProperties[0],
+                      entityProperties[1],
+                    ]
+                    : [
+                      {key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""},
+                      entityProperties[0],
+                    ]
+                  : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]
+            }
+            rowKey={"key"}
+            keyUtil={"key"}
+            showHeader={!props.isRelatedEntity}
+          />
+        </div>
+        {entityProperties.length ? (
+          <div className={styles.tableContainer} id="lowerTable">
+            <HCTable
+              pagination={{
+                size: "small",
+                hideOnSinglePage: entityProperties.length <= 20,
+                showSizeChanger: true,
+                pageSizeOptions: paginationMapping.pageSizeOptions,
+                defaultCurrent: paginationMapping.start,
+                current: getCurrentPageMainTable() ? getCurrentPageMainTable() : paginationMapping.pageNumber,
+                pageSize: getCurrentSizeMainTable() ? getCurrentSizeMainTable() : paginationMapping.pageSize,
+                onChange: (e, a) => {
+                  props.executeScroll(`${props.entityMappingId}-ref`);
+                  saveSessionPageSizeMainTable(e, a);
+                },
+                onShowSizeChange: (e, a) => {
+                  props.executeScroll(`${props.entityMappingId}-ref`);
+                  saveSessionPageSizeMainTable(a, e);
+                },
+              }}
+              className={tableCSS}
+              onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
+              expandedRowKeys={props.entityExpandedKeys}
+              childrenIndent={true}
+              subTableHeader={true}
+              baseIndent={70}
+              columns={getColumnsForEntityTable("lower")}
+              data={
+                filterApplied
+                  ? filteredEntityProperties
+                  : props.isRelatedEntity
+                    ? entityProperties.slice(2, entityProperties.length)
+                    : entityProperties.slice(1, entityProperties.length)
+              }
+              rowKey={"key"}
+              keyUtil={"key"}
+              showHeader={false}
+              nestedParams={{
+                headerColumns: entityColumns,
+                iconCellList: ["Name", "Type", "XPath Expression", "Value"],
+                state: [props.entityExpandedKeys, props.setEntityExpandedKeys],
+              }}
+              component={"entity-map-table"}
+            />
+          </div>
+        ) : null}
+        {deleteConfirmation}
       </div>
-      : null
-    }
-    {deleteConfirmation}
-  </div>) : null : !props.isRelatedEntity
-    ? <div className={styles.spinnerContainer}>
+    ) : null
+  ) : !props.isRelatedEntity ? (
+    <div className={styles.spinnerContainer}>
       <Spinner animation="border" variant="primary" data-testid="spinner" />
     </div>
-    : null);
+  ) : null;
 };
 
 export default EntityMapTable;

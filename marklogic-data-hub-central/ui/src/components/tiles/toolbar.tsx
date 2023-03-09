@@ -14,8 +14,7 @@ interface Props {
   enabled: any;
 }
 
-const Toolbar: React.FC<Props> = (props) => {
-
+const Toolbar: React.FC<Props> = props => {
   const allTiles = props.tiles; // config/tiles.config.ts
   const tiles: any = {};
   // Filter out tiles that should not be displayed in the toolbar.
@@ -37,7 +36,7 @@ const Toolbar: React.FC<Props> = (props) => {
 
   const linkKeyDownHandler = (event: React.KeyboardEvent<any>, index: number) => {
     if (event.key === "ArrowUp" && index > 0) tileRefs[index - 1].current.focus();
-    if (event.key === "ArrowDown" && index < (Object.keys(tiles).length - 1)) tileRefs[index + 1].current.focus();
+    if (event.key === "ArrowDown" && index < Object.keys(tiles).length - 1) tileRefs[index + 1].current.focus();
   };
 
   const tileOnClickHandler = (id: TileId, index: number) => {
@@ -73,7 +72,6 @@ const Toolbar: React.FC<Props> = (props) => {
             navigated to using arrow keys.
     */
 
-
   const confirmTileClick = () => {
     toggleConfirmModal(false);
     if (tileInfo) {
@@ -86,25 +84,24 @@ const Toolbar: React.FC<Props> = (props) => {
         tileId={id as TileId}
         tile={tiles[id]}
         tileRef={tileRefs[i]}
-        enabled={(props.enabled && props.enabled.includes(id))}
+        enabled={props.enabled && props.enabled.includes(id)}
         i={i}
-        isActive={(activeTile === id)}
+        isActive={activeTile === id}
         onClick={tileOnClickHandler}
         onKeyDown={linkKeyDownHandler}
       />
     );
-  }
-  );
+  });
 
   return (
     <div id={styles.toolbarContainer} aria-label={"toolbar"}>
       {tilesIcons[0]}
       {tilesIcons[1]}
       {tilesIcons[2]}
-      <HCDivider/>
+      <HCDivider />
       {tilesIcons[3]}
       {tilesIcons[4]}
-      <HCDivider/>
+      <HCDivider />
       {tilesIcons[5]}
       <ConfirmationModal
         isVisible={showConfirmModal}
