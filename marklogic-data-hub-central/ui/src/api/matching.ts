@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const updateMatchingArtifact = async (matching) => {
+export const updateMatchingArtifact = async matching => {
   try {
     let response = await axios.put(`/api/steps/matching/${matching.name}`, matching);
     if (response.status === 200) {
@@ -15,7 +15,7 @@ export const updateMatchingArtifact = async (matching) => {
   }
 };
 
-export const calculateMatchingActivity = async (matchStepName) => {
+export const calculateMatchingActivity = async matchStepName => {
   try {
     let response = await axios.get(`/api/steps/matching/${matchStepName}/calculateMatchingActivity`);
     if (response.status === 200) {
@@ -27,9 +27,15 @@ export const calculateMatchingActivity = async (matchStepName) => {
   }
 };
 
-export const previewMatchingActivity = async (testMatchData) => {
+export const previewMatchingActivity = async testMatchData => {
   try {
-    let response = await axios.post(`/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${testMatchData.sampleSize}&uris=${testMatchData.uris}&restrictToUris=${testMatchData.restrictToUris}&nonMatches=${!!testMatchData.nonMatches}`);
+    let response = await axios.post(
+      `/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${
+        testMatchData.sampleSize
+      }&uris=${testMatchData.uris}&restrictToUris=${
+        testMatchData.restrictToUris
+      }&nonMatches=${!!testMatchData.nonMatches}`,
+    );
     if (response.status === 200) {
       return response.data;
     }
@@ -39,10 +45,9 @@ export const previewMatchingActivity = async (testMatchData) => {
   }
 };
 
-export const getDocFromURI = async (uri) => {
+export const getDocFromURI = async uri => {
   return await axios.get(`/api/entitySearch?docUri=${uri}`);
 };
-
 
 export const getPreviewFromURIs = async (flowName, uris = []) => {
   // return await axios.get(`/api/entitySearch?docUri=${uri}`);
@@ -51,17 +56,17 @@ export const getPreviewFromURIs = async (flowName, uris = []) => {
   return await axios.get(`/api/steps/merging/preview?flowName=${flowName}&${parameters}`);
 };
 
-export const getAllExcludeValuesList = async() => {
+export const getAllExcludeValuesList = async () => {
   return await axios.get(`/api/steps/matching/exclusionList`);
 };
 
-export const createEditExcludeValuesList = async(listName, listValues, oldName = "") => {
+export const createEditExcludeValuesList = async (listName, listValues, oldName = "") => {
   const body = {
     name: listName,
-    values: listValues
+    values: listValues,
   };
   try {
-    let response =  await axios.put(`/api/steps/matching/exclusionList/${oldName !== "" ? oldName : listName}`, body);
+    let response = await axios.put(`/api/steps/matching/exclusionList/${oldName !== "" ? oldName : listName}`, body);
     if (response.status === 200) {
       return true;
     } else {
@@ -74,10 +79,9 @@ export const createEditExcludeValuesList = async(listName, listValues, oldName =
   }
 };
 
-export const deleteExcludeValuesList = async(listName) => {
-
+export const deleteExcludeValuesList = async listName => {
   try {
-    let response =  await axios.delete(`/api/steps/matching/exclusionList/${listName}`);
+    let response = await axios.delete(`/api/steps/matching/exclusionList/${listName}`);
     if (response.status === 200 && response.data.success) {
       return true;
     } else {

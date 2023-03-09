@@ -278,7 +278,8 @@ describe("Concept classes in Modeling screen", () => {
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let testShoeStyleCoordinates: any = nodePositions["test_Shoe-Style"];
       cy.wait(150);
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(
+        testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
     });
     cy.wait(1500);
 
@@ -324,7 +325,8 @@ describe("Concept classes in Modeling screen", () => {
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let testShoeStyleCoordinates: any = nodePositions["test_Shoe-Style"];
       cy.wait(150);
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(
+        testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {force: true}));
     });
     cy.wait(1500);
 

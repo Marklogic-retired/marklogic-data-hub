@@ -19,8 +19,7 @@ import Row from "react-bootstrap/Row";
 
 // TODO Test view for React Bootstrap components, Bootstrap.tsx TO BE REMOVED
 
-const Bootstrap = (props) => {
-
+const Bootstrap = props => {
   let num = 2;
 
   let tooltips: Array<string> = ["top", "right", "bottom", "left"];
@@ -50,8 +49,7 @@ const Bootstrap = (props) => {
     <Popover id="popover-basic">
       <Popover.Header as="h4">Popover right</Popover.Header>
       <Popover.Body>
-            And here's some <strong>amazing</strong> content. It's very engaging.
-            right?
+        And here's some <strong>amazing</strong> content. It's very engaging. right?
       </Popover.Body>
     </Popover>
   );
@@ -68,7 +66,7 @@ const Bootstrap = (props) => {
 
       <h3>Alert</h3>
       <Alert variant="danger" className="alert">
-            This is an alert—check it out!
+        This is an alert—check it out!
       </Alert>
 
       <h3>Accordion</h3>
@@ -76,25 +74,21 @@ const Bootstrap = (props) => {
         <Accordion.Item eventKey="0">
           <Accordion.Header>Accordion Item #1</Accordion.Header>
           <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="1">
           <Accordion.Header>Accordion Item #2</Accordion.Header>
           <Accordion.Body>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                est laborum.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
@@ -105,7 +99,7 @@ const Bootstrap = (props) => {
       <h3>Dropdown</h3>
       <Dropdown>
         <Dropdown.Toggle variant="success" id="dropdown-basic">
-                Dropdown Button
+          Dropdown Button
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
@@ -118,13 +112,13 @@ const Bootstrap = (props) => {
       <h3>Form</h3>
       <Form className="form">
         <Form.Group as={Row} controlId="formBasicEmail">
-          <Form.Label column sm="3">Email address</Form.Label>
+          <Form.Label column sm="3">
+            Email address
+          </Form.Label>
           <Col sm="9">
             <Form.Control type="email" placeholder="Enter email" />
           </Col>
-          <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-          </Form.Text>
+          <Form.Text className="text-muted">We'll never share your email with anyone else.</Form.Text>
         </Form.Group>
         <Form.Select aria-label="Default select example">
           <option>Open this select menu</option>
@@ -141,7 +135,7 @@ const Bootstrap = (props) => {
           <Form.Check type="radio" label="Turn on the radio" />
         </Form.Group>
         <Button variant="primary" type="submit">
-                Submit
+          Submit
         </Button>
       </Form>
 
@@ -153,10 +147,7 @@ const Bootstrap = (props) => {
       <Alarm color="orange" size={96} />
 
       <h3>Nav</h3>
-      <Nav
-        activeKey="/home"
-        onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
-      >
+      <Nav activeKey="/home" onSelect={selectedKey => alert(`selected ${selectedKey}`)}>
         <Nav.Item>
           <Nav.Link href="/home">Active</Nav.Link>
         </Nav.Item>
@@ -168,14 +159,14 @@ const Bootstrap = (props) => {
         </Nav.Item>
         <Nav.Item>
           <Nav.Link eventKey="disabled" disabled>
-                Disabled
+            Disabled
           </Nav.Link>
         </Nav.Item>
       </Nav>
 
       <h3>Modal</h3>
       <Button variant="primary" onClick={handleShow}>
-            Launch demo modal
+        Launch demo modal
       </Button>
       <Modal show={show} onHide={handleClose}>
         <Modal.Dialog className="modalClass">
@@ -184,8 +175,12 @@ const Bootstrap = (props) => {
           </Modal.Header>
           <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
           <Modal.Footer>
-            <Button key={1} variant="secondary" onClick={handleClose}>Close</Button>
-            <Button key={2} variant="primary" onClick={handleClose}>Save Changes</Button>
+            <Button key={1} variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button key={2} variant="primary" onClick={handleClose}>
+              Save Changes
+            </Button>
           </Modal.Footer>
         </Modal.Dialog>
       </Modal>
@@ -237,14 +232,15 @@ const Bootstrap = (props) => {
           placement={placement}
           overlay={
             <Tooltip id={`tooltip-${placement}`}>
-                Tooltip on <strong>{placement}</strong>.
+              Tooltip on <strong>{placement}</strong>.
             </Tooltip>
           }
         >
-          <Button variant="secondary" className="tooltipButton">Tooltip on {placement}</Button>
+          <Button variant="secondary" className="tooltipButton">
+            Tooltip on {placement}
+          </Button>
         </OverlayTrigger>
       ))}
-
     </>
   );
 };

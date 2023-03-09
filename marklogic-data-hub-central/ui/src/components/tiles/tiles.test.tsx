@@ -19,7 +19,7 @@ const options = {
   color: color,
   bgColor: color,
   border: color,
-  controls: []
+  controls: [],
 };
 
 describe("Tiles component", () => {
@@ -33,7 +33,7 @@ describe("Tiles component", () => {
         onMenuClick={jest.fn()}
         onTileClose={jest.fn()}
         newStepToFlowOptions={jest.fn()}
-      />
+      />,
     );
     expect(getByLabelText("icon-" + text)).toBeInTheDocument();
     expect(getByLabelText("title-" + text)).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe("Tiles component", () => {
         onMenuClick={jest.fn()}
         onTileClose={jest.fn()}
         newStepToFlowOptions={jest.fn()}
-      />
+      />,
     );
     expect(getByLabelText("icon-" + text)).toBeInTheDocument();
     expect(getByLabelText("title-" + text)).toBeInTheDocument();
@@ -74,7 +74,7 @@ describe("Tiles component", () => {
         onMenuClick={jest.fn()}
         onTileClose={jest.fn()}
         newStepToFlowOptions={jest.fn()}
-      />
+      />,
     );
     expect(queryByLabelText("modelingInfo")).toBeNull();
     fireEvent.click(getByLabelText(`${title}InfoIcon`));
@@ -97,7 +97,7 @@ describe("Tiles component", () => {
         onMenuClick={jest.fn()}
         onTileClose={jest.fn()}
         newStepToFlowOptions={jest.fn()}
-      />
+      />,
     );
     expect(queryByLabelText(`${title}Info`)).toBeNull();
     fireEvent.click(getByLabelText(`${title}InfoIcon`));
@@ -110,7 +110,7 @@ describe("Tiles component", () => {
       title,
       iconType: "custom",
       icon: "exploreIcon",
-      controls: ["menu"]
+      controls: ["menu"],
     };
     const {getByLabelText} = render(
       <Tiles
@@ -121,7 +121,7 @@ describe("Tiles component", () => {
         onMenuClick={jest.fn()}
         onTileClose={jest.fn()}
         newStepToFlowOptions={jest.fn()}
-      />
+      />,
     );
     expect(getByLabelText("explore-settings-menu")).toBeInTheDocument();
     fireEvent.click(getByLabelText("explore-settingsIcon-menu"));
@@ -137,14 +137,16 @@ describe("Tiles component", () => {
       title,
       iconType: "custom",
       icon: "exploreIcon",
-      controls: ["menu"]
+      controls: ["menu"],
     };
     const {getByLabelText, debug} = render(
-      <SearchContext.Provider value={{
-        ...searchContextInterfaceByDefault,
-        savedQueries: getQueriesResponse,
-        entityDefinitionsArray
-      }}>
+      <SearchContext.Provider
+        value={{
+          ...searchContextInterfaceByDefault,
+          savedQueries: getQueriesResponse,
+          entityDefinitionsArray,
+        }}
+      >
         <Tiles
           id={title}
           view={<TestComponent />}
@@ -154,7 +156,7 @@ describe("Tiles component", () => {
           onTileClose={jest.fn()}
           newStepToFlowOptions={jest.fn()}
         />
-      </SearchContext.Provider>
+      </SearchContext.Provider>,
     );
     expect(getByLabelText("explore-settings-menu")).toBeInTheDocument();
     fireEvent.click(getByLabelText("explore-settingsIcon-menu"));

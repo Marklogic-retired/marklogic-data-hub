@@ -17,10 +17,10 @@ const defaultUserData = {
   error: {
     title: "",
     message: "",
-    type: ""
+    type: "",
   },
   pageRoute: "/tiles",
-  maxSessionTime: MAX_SESSION_TIME
+  maxSessionTime: MAX_SESSION_TIME,
 };
 
 let CryptoJS = require("crypto-js");
@@ -47,18 +47,20 @@ export function clearSessionStorageOnRefresh() {
 
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
-  loginAuthenticated: () => { },
-  sessionAuthenticated: () => { },
-  userNotAuthenticated: () => { },
-  handleError: () => { },
-  clearErrorMessage: () => { },
-  setPageRoute: () => { },
-  setAlertMessage: () => { },
-  resetSessionTime: () => { },
-  getSessionTime: () => { return defaultUserData.maxSessionTime; }
+  loginAuthenticated: () => {},
+  sessionAuthenticated: () => {},
+  userNotAuthenticated: () => {},
+  handleError: () => {},
+  clearErrorMessage: () => {},
+  setPageRoute: () => {},
+  setAlertMessage: () => {},
+  resetSessionTime: () => {},
+  getSessionTime: () => {
+    return defaultUserData.maxSessionTime;
+  },
 });
 
-const UserProvider: React.FC<{ children: any }> = ({children}) => {
+const UserProvider: React.FC<{children: any}> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const [encounteredErrors, setEncounteredErrors] = useState<string[]>([]);
   const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription | null>(null);
@@ -77,7 +79,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     }
   }, [user.error]);
 
-  const getConfigHash = (config) => {
+  const getConfigHash = config => {
     return CryptoJS.SHA256(`${config.method}:${config.url}:${config.data}`).toString();
   };
 
@@ -93,22 +95,20 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     },
     error => {
       if (error instanceof axios.Cancel && encounteredErrors.includes(error.message)) {
-        return new Promise(r => setTimeout(r, 5000)).then(
-          (r) => {
-            // forget the error after 5 seconds.
-            if (encounteredErrors.includes(error.message)) {
-              encounteredErrors.splice(encounteredErrors.indexOf(error.message), 1);
-              setEncounteredErrors(encounteredErrors);
-            }
-            return r;
+        return new Promise(r => setTimeout(r, 5000)).then(r => {
+          // forget the error after 5 seconds.
+          if (encounteredErrors.includes(error.message)) {
+            encounteredErrors.splice(encounteredErrors.indexOf(error.message), 1);
+            setEncounteredErrors(encounteredErrors);
           }
-        );
+          return r;
+        });
       }
       return Promise.reject(error);
-    }
+    },
   );
 
-  const setSessionTimeoutDate = (timeInSeconds) => {
+  const setSessionTimeoutDate = timeInSeconds => {
     const timeoutDate = new Date();
     timeoutDate.setSeconds(timeoutDate.getSeconds() + timeInSeconds);
     sessionTimeoutDate.current = timeoutDate;
@@ -129,7 +129,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       if (stompService.isClosed() || stompService.isTrying()) {
         resolve(stompService.state.getValue());
       } else {
-        stompService.state.asObservable().subscribe((value) => {
+        stompService.state.asObservable().subscribe(value => {
           if (value.valueOf() === STOMPState.CLOSED) {
             resolve(value);
           }
@@ -144,9 +144,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     const hubCentralSessionToken = localStorage.getItem("hubCentralSessionToken");
     if (hubCentralSessionToken) {
       if (!stompMessageSubscription) {
-        setStompMessageSubscription(stompService.messages.subscribe((message) => {
-          setSessionTimeoutDate(parseInt(JSON.parse(message.body).sessionTimeout));
-        }));
+        setStompMessageSubscription(
+          stompService.messages.subscribe(message => {
+            setSessionTimeoutDate(parseInt(JSON.parse(message.body).sessionTimeout));
+          }),
+        );
       }
       if (!unsubscribeId) {
         stompService.subscribe(`/topic/sessionStatus/${hubCentralSessionToken}`, (msgId: string) => {
@@ -167,7 +169,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
 
     localStorage.setItem("serviceName", session.data.serviceName);
-    localStorage.setItem("environment", JSON.stringify(session.data)) ;
+    localStorage.setItem("environment", JSON.stringify(session.data));
     localStorage.setItem("dataHubUser", username);
     localStorage.setItem("serviceName", session.data.serviceName);
     localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
@@ -176,21 +178,23 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
     if (session.data.pendoKey) {
       window.usePendo && window.usePendo(session.data.pendoKey);
-      window.pendo && window.pendo.initialize({
-        excludeAllText: true,
-        excludeTitle: true
-      });
-      window.pendo && window.pendo.identify({
-        visitor: {
-          id: CryptoJS.SHA256(session.data.serviceName + username).toString(CryptoJS.enc.Hex),
-          authorities: authResponse.authorities || []
-        },
-        account: {
-          id: session.data.serviceName,
-          dataHubVersion: session.data.dataHubVersion,
-          marklogicVersion: session.data.marklogicVersion
-        }
-      });
+      window.pendo &&
+        window.pendo.initialize({
+          excludeAllText: true,
+          excludeTitle: true,
+        });
+      window.pendo &&
+        window.pendo.identify({
+          visitor: {
+            id: CryptoJS.SHA256(session.data.serviceName + username).toString(CryptoJS.enc.Hex),
+            authorities: authResponse.authorities || [],
+          },
+          account: {
+            id: session.data.serviceName,
+            dataHubVersion: session.data.dataHubVersion,
+            marklogicVersion: session.data.marklogicVersion,
+          },
+        });
     }
 
     const authorities: string[] = authResponse.authorities || [];
@@ -203,7 +207,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: MAX_SESSION_TIME
+        maxSessionTime: MAX_SESSION_TIME,
       });
     } else {
       createUserPreferences(username);
@@ -212,7 +216,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: MAX_SESSION_TIME
+        maxSessionTime: MAX_SESSION_TIME,
       });
     }
   };
@@ -227,7 +231,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: MAX_SESSION_TIME
+        maxSessionTime: MAX_SESSION_TIME,
       });
     } else {
       createUserPreferences(username);
@@ -236,11 +240,17 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
-    setUser({...user, name: "", authenticated: false, pageRoute: defaultUserData.pageRoute,  error: {
-      title: "",
-      message: "",
-      type: ""
-    }});
+    setUser({
+      ...user,
+      name: "",
+      authenticated: false,
+      pageRoute: defaultUserData.pageRoute,
+      error: {
+        title: "",
+        message: "",
+        type: "",
+      },
+    });
     resetSessionMonitor().then(() => {
       localStorage.setItem("dataHubUser", "");
       localStorage.setItem("serviceName", "");
@@ -253,9 +263,9 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   /*
-  * handleError - A consistent way to handle and present errors.
-  * @param error - The error response which we will decide to handle an error
-  * */
+   * handleError - A consistent way to handle and present errors.
+   * @param error - The error response which we will decide to handle an error
+   * */
   const handleError = (error: any) => {
     const DEFAULT_MESSAGE = "Internal Server Error";
     let errorHash = "";
@@ -300,8 +310,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
               title: title,
               message: message,
               type: "ALERT",
-              encounteredErrors
-            }
+              encounteredErrors,
+            },
           });
           break;
         }
@@ -313,8 +323,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
               title: error.response.data.error,
               message: error.response.data.message || DEFAULT_MESSAGE,
               type: "ALERT",
-              encounteredErrors
-            }
+              encounteredErrors,
+            },
           });
           break;
         }
@@ -338,8 +348,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
               title,
               message,
               type: "MODAL",
-              encounteredErrors
-            }
+              encounteredErrors,
+            },
           });
           break;
         }
@@ -351,8 +361,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
               title: DEFAULT_MESSAGE,
               message: "Please check the console for more information",
               type: "MODAL",
-              encounteredErrors
-            }
+              encounteredErrors,
+            },
           });
           break;
         }
@@ -365,8 +375,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
             title: DEFAULT_MESSAGE,
             message: "Please check the console for more information",
             type: "MODAL",
-            encounteredErrors
-          }
+            encounteredErrors,
+          },
         });
       }
     }
@@ -387,8 +397,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       error: {
         title,
         message,
-        type: "ALERT"
-      }
+        type: "ALERT",
+      },
     });
   };
 
@@ -415,18 +425,20 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{
-      user,
-      loginAuthenticated,
-      sessionAuthenticated,
-      userNotAuthenticated,
-      handleError,
-      clearErrorMessage,
-      setPageRoute,
-      setAlertMessage,
-      getSessionTime,
-      resetSessionTime
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        loginAuthenticated,
+        sessionAuthenticated,
+        userNotAuthenticated,
+        handleError,
+        clearErrorMessage,
+        setPageRoute,
+        setAlertMessage,
+        getSessionTime,
+        resetSessionTime,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

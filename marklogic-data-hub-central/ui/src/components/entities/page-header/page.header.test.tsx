@@ -15,5 +15,4 @@ describe("Page Header component tests", () => {
     fireEvent.click(getByLabelText("Back"));
     expect(handleOnBackMock).toHaveBeenCalledTimes(1);
   });
-
 });

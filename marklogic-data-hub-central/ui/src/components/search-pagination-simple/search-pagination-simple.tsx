@@ -7,11 +7,10 @@ interface Props {
   pageNumber: number;
   pageSize: number;
   maxRowsPerPage: number;
-  updatePage?: any,
+  updatePage?: any;
 }
 
-const SearchPaginationSimple: React.FC<Props> = (props) => {
-
+const SearchPaginationSimple: React.FC<Props> = props => {
   const totalPage = Math.ceil(props.total / props.pageSize);
 
   const setPerPageSelector = (maxRowsPerPage: number) => {
@@ -32,7 +31,7 @@ const SearchPaginationSimple: React.FC<Props> = (props) => {
     setPerPageSelector(props.maxRowsPerPage);
   }, [props.maxRowsPerPage]);
 
-  const onPageChange = (pageNumber) => {
+  const onPageChange = pageNumber => {
     if (pageNumber !== props.pageNumber) {
       props.updatePage(pageNumber);
     }
@@ -57,8 +56,8 @@ const SearchPaginationSimple: React.FC<Props> = (props) => {
     const isFirstPageActive = currentPage === 1;
     const isSecondPageActive = currentPage === 2;
     const isLastPageActive = currentPage === totalPage;
-    const isSecondLastPageActive = currentPage === (totalPage - 1);
-    const rangeLimit = isFirstPageActive || isLastPageActive ? 4 : (isSecondPageActive || isSecondLastPageActive ? 3 : 2);
+    const isSecondLastPageActive = currentPage === totalPage - 1;
+    const rangeLimit = isFirstPageActive || isLastPageActive ? 4 : isSecondPageActive || isSecondLastPageActive ? 3 : 2;
     const isCurrentPageWithinRangeLimit = Math.abs(pageNumber - currentPage) <= rangeLimit;
 
     if (isCurrentPageWithinRangeLimit) {
@@ -68,7 +67,8 @@ const SearchPaginationSimple: React.FC<Props> = (props) => {
           data-testid={`pagination-item-${pageNumber}`}
           id={`pagination-item-${pageNumber}`}
           active={props.pageNumber === pageNumber}
-          onClick={() => onPageChange(pageNumber)}>
+          onClick={() => onPageChange(pageNumber)}
+        >
           {pageNumber}
         </Pagination.Item>
       );
@@ -79,18 +79,22 @@ const SearchPaginationSimple: React.FC<Props> = (props) => {
   const renderPagination = (
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
-        <Pagination.Prev onClick={handlePrev} disabled={props.pageNumber === 1} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
+        <Pagination.Prev
+          onClick={handlePrev}
+          disabled={props.pageNumber === 1}
+          className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`}
+        />
         {renderPages}
-        <Pagination.Next onClick={handleNext} disabled={props.pageNumber === totalPage} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
+        <Pagination.Next
+          onClick={handleNext}
+          disabled={props.pageNumber === totalPage}
+          className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`}
+        />
       </Pagination>
     </div>
   );
 
-  return (
-    <div className={styles.searchPaginationContainer}>
-      {props.total > props.pageSize && renderPagination}
-    </div>
-  );
+  return <div className={styles.searchPaginationContainer}>{props.total > props.pageSize && renderPagination}</div>;
 };
 
 export default SearchPaginationSimple;

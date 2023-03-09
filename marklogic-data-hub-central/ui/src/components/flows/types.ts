@@ -1,8 +1,8 @@
 import {Step} from "../../types/run-types";
 
 export enum ReorderFlowOrderDirection {
-    LEFT = "left",
-    RIGHT = "right"
+  LEFT = "left",
+  RIGHT = "right",
 }
 
 export const StepDefinitionTypeTitles = {
@@ -17,8 +17,7 @@ export const StepDefinitionTypeTitles = {
   "MERGING": "Merging",
   "merging": "Merging",
   "CUSTOM": "Custom",
-  "custom": "Custom"
+  "custom": "Custom",
 };
 
-
-export type SelectedSteps = Record<string, Step[]>
+export type SelectedSteps = Record<string, Step[]>;

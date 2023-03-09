@@ -1,26 +1,26 @@
 interface UserPreferences {
   query: {
-    searchText: string,
-    entityTypeIds: string[],
-    selectedFacets: any
-  },
-  pageLength: number,
-  tableView: boolean,
+    searchText: string;
+    entityTypeIds: string[];
+    selectedFacets: any;
+  };
+  pageLength: number;
+  tableView: boolean;
   // pageRoute: string,
-  resultTableColumns: any[],
-  selectedQuery: string,
-  sidebarQuery: string,
+  resultTableColumns: any[];
+  selectedQuery: string;
+  sidebarQuery: string;
 
-  loadSelectedStepsUser: boolean,
-  selectedStepsDataUser: any,
-  alertStabilizeGraphVisible:boolean
+  loadSelectedStepsUser: boolean;
+  selectedStepsDataUser: any;
+  alertStabilizeGraphVisible: boolean;
 }
 
 export const defaultUserPreferences = {
   query: {
     searchText: "",
     entityTypeIds: [],
-    selectedFacets: {}
+    selectedFacets: {},
   },
   pageLength: 20,
   tableView: false,
@@ -35,13 +35,12 @@ export const defaultUserPreferences = {
   selectedStepsDataUser: {
     selectedStepOptions: {},
     arrayLoadChecksSteps: [{flowName: "", stepNumber: -1}],
-    selectedStepDetails: [{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]
+    selectedStepDetails: [{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}],
   },
-  alertStabilizeGraphVisible: true
+  alertStabilizeGraphVisible: true,
 };
 
 export const createUserPreferences = (username: string) => {
-
   const newUserPreference: UserPreferences = defaultUserPreferences;
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(newUserPreference));
   return;
@@ -82,7 +81,7 @@ export const updateTablePreferences = (username: string, entity: string, tableCo
     let index = parsedPreferences["resultTableColumns"].findIndex(item => item.name === entity);
     let tableObject = {
       name: entity,
-      columns: tableColumns
+      columns: tableColumns,
     };
     if (index >= 0) {
       parsedPreferences.resultTableColumns[index] = tableObject;

@@ -16,7 +16,7 @@ import {
   EditPropertyOptions,
   PropertyOptions,
   PropertyType,
-  EntityModified
+  EntityModified,
 } from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 
@@ -34,11 +34,12 @@ let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
 let iv = CryptoJS.lib.WordArray.random(16);
 
-const encrypt = (text) => (CryptoJS.AES.encrypt(text, key, {
-  mode: CryptoJS.mode.CTR,
-  iv: iv,
-  padding: CryptoJS.pad.NoPadding
-})).ciphertext.toString();
+const encrypt = text =>
+  CryptoJS.AES.encrypt(text, key, {
+    mode: CryptoJS.mode.CTR,
+    iv: iv,
+    padding: CryptoJS.pad.NoPadding,
+  }).ciphertext.toString();
 
 type Props = {
   canReadEntityModel: boolean;
@@ -48,17 +49,17 @@ type Props = {
   sidePanelView: boolean;
   updateSavedEntity: any;
   dataModel: any[];
-}
+};
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
-  properties: []
+  properties: [],
 };
 
 const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
   name: "",
-  propertyName: ""
+  propertyName: "",
 };
 
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
@@ -71,16 +72,16 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   pii: "no",
   facetable: false,
   sortable: false,
-  wildcard: false
+  wildcard: false,
 };
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
   name: "",
   isEdit: false,
-  propertyOptions: DEFAULT_SELECTED_PROPERTY_OPTIONS
+  propertyOptions: DEFAULT_SELECTED_PROPERTY_OPTIONS,
 };
 
-const PropertyTable: React.FC<Props> = (props) => {
+const PropertyTable: React.FC<Props> = props => {
   const storage = getViewSettings();
   const expandedRowStorage = storage?.model?.propertyExpandedRows;
 
@@ -91,7 +92,9 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [editPropertyOptions, setEditPropertyOptions] = useState<EditPropertyOptions>(DEFAULT_EDIT_PROPERTY_OPTIONS);
   const [deletePropertyOptions, setDeletePropertyOptions] = useState({definitionName: "", propertyName: ""});
 
-  const [structuredTypeOptions, setStructuredTypeOptions] = useState<StructuredTypeOptions>(DEFAULT_STRUCTURED_TYPE_OPTIONS);
+  const [structuredTypeOptions, setStructuredTypeOptions] = useState<StructuredTypeOptions>(
+    DEFAULT_STRUCTURED_TYPE_OPTIONS,
+  );
   const [definitions, setDefinitions] = useState<any>({});
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<Definition[]>([]);
 
@@ -143,7 +146,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   }, [newRowKey]);
 
-  const textTooltip = (name) => (
+  const textTooltip = name => (
     <div>
       {ModelingTooltips.entityPropertyName} <br />
       {name.length > 20 ? name : null}
@@ -163,43 +166,74 @@ const PropertyTable: React.FC<Props> = (props) => {
           recordKey = recordArray[0] + "-";
         }
         if (canWriteEntityModel && canReadEntityModel) {
-          renderText = <span
-            data-testid={`${recordKey}` + text + "-span"}
-            aria-label="property-name-header"
-            className={styles.link}
-            onClick={() => {
-              editPropertyShowModal(record.propertyName, record);
-            }}>
-            <HCTooltip text={textTooltip(record.propertyName)} id={`property-${text}-tooltip`} placement="top">
-              <span tabIndex={0} onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") { editPropertyShowModal(record.propertyName, record); }
-              }} data-testid={`${recordKey}` + text + "-tooltip-trigger"} className={`p-2 inline-block cursor-pointer ${record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""}`}>{record.propertyName}</span>
-            </HCTooltip>
-            {record.multiple === record.propertyName &&
-              <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
-              </HCTooltip>}
-            {record.structured === record.type &&
-              <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
+          renderText = (
+            <span
+              data-testid={`${recordKey}` + text + "-span"}
+              aria-label="property-name-header"
+              className={styles.link}
+              onClick={() => {
+                editPropertyShowModal(record.propertyName, record);
+              }}
+            >
+              <HCTooltip text={textTooltip(record.propertyName)} id={`property-${text}-tooltip`} placement="top">
+                <span
+                  tabIndex={0}
+                  onKeyDown={event => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      editPropertyShowModal(record.propertyName, record);
+                    }
+                  }}
+                  data-testid={`${recordKey}` + text + "-tooltip-trigger"}
+                  className={`p-2 inline-block cursor-pointer ${
+                    record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""
+                  }`}
+                >
+                  {record.propertyName}
+                </span>
               </HCTooltip>
-            }
-          </span>;
+              {record.multiple === record.propertyName && (
+                <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                  <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
+                </HCTooltip>
+              )}
+              {record.structured === record.type && (
+                <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                  <i>
+                    <FontAwesomeIcon
+                      className={styles.structuredIcon}
+                      icon={faLayerGroup}
+                      data-testid={"structured-" + text}
+                    />
+                  </i>
+                </HCTooltip>
+              )}
+            </span>
+          );
         } else {
-          renderText = <span data-testid={text + "-span"} aria-label={"Property-name"}>{record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
-            {record.multiple === record.propertyName &&
-              <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
-              </HCTooltip>}
-            {record.structured === record.type &&
-              <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
-              </HCTooltip>
-            }
-          </span>;
+          renderText = (
+            <span data-testid={text + "-span"} aria-label={"Property-name"}>
+              {record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
+              {record.multiple === record.propertyName && (
+                <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                  <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
+                </HCTooltip>
+              )}
+              {record.structured === record.type && (
+                <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                  <i>
+                    <FontAwesomeIcon
+                      className={styles.structuredIcon}
+                      icon={faLayerGroup}
+                      data-testid={"structured-" + text}
+                    />
+                  </i>
+                </HCTooltip>
+              )}
+            </span>
+          );
         }
         return renderText;
-      }
+      },
     },
     {
       text: "Type",
@@ -209,40 +243,76 @@ const PropertyTable: React.FC<Props> = (props) => {
       formatter: (type, record) => {
         let renderText = type;
         if (record.joinPropertyType) {
-
           if (record.joinPropertyName) {
             //relationship complete with foreign key populated
-            let foreignKeyTooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, record.delete);
-            let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
-            renderText = <div>
-              {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-              <div className={styles.dualIconsContainer}>
-                <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
-                  <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName} />
-                </HCTooltip>
-                <HCTooltip text={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} placement="bottom" >
-                  <span>
-                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName} />
-                  </span>
-                </HCTooltip>
+            let foreignKeyTooltip = ModelingTooltips.foreignKeyModeling(
+              record.joinPropertyType,
+              record.joinPropertyName,
+              record.delete,
+            );
+            let completeRelationshipTooltip = ModelingTooltips.completeRelationship(
+              record.joinPropertyType,
+              record.delete,
+            );
+            renderText = (
+              <div>
+                {(renderText = renderText.concat(" (" + record.joinPropertyType + ")"))}
+                <div className={styles.dualIconsContainer}>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={completeRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + record.propertyName}
+                    placement="bottom"
+                  >
+                    <span
+                      className={styles.modeledRelationshipIcon}
+                      data-testid={"relationship-" + record.propertyName}
+                    />
+                  </HCTooltip>
+                  <HCTooltip
+                    text={foreignKeyTooltip}
+                    id={"foreignKeyTooltip-" + record.propertyName}
+                    placement="bottom"
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={styles.foreignKeyRelationshipIcon}
+                        icon={faKey}
+                        data-testid={"foreign-" + record.propertyName}
+                      />
+                    </span>
+                  </HCTooltip>
+                </div>
               </div>
-            </div>;
+            );
           } else {
             //relationship complete with no foreign key populated
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
 
-            renderText = <span>
-              {sidePanelView ? " (" + record.joinPropertyType + ")" : renderText}
-              <div className={styles.relationshipIconContainer}>
-                <HCTooltip className={styles.relationshipTooltip} text={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
-                  <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName} />
-                </HCTooltip>
-              </div>
-            </span>;
+            renderText = (
+              <span>
+                {sidePanelView ? " (" + record.joinPropertyType + ")" : renderText}
+                <div className={styles.relationshipIconContainer}>
+                  <HCTooltip
+                    className={styles.relationshipTooltip}
+                    text={tooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + record.propertyName}
+                    placement="bottom"
+                  >
+                    <span
+                      className={styles.modeledRelationshipIconNoKey}
+                      data-testid={"relationship-" + record.propertyName}
+                    />
+                  </HCTooltip>
+                </div>
+              </span>
+            );
           }
         }
         return renderText;
-      }
+      },
     },
     {
       /*title: (
@@ -259,8 +329,12 @@ const PropertyTable: React.FC<Props> = (props) => {
         </HCTooltip>
       ),
       formatter: text => {
-        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={"identifier-" + text} />;
-      }
+        return (
+          text && (
+            <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={"identifier-" + text} />
+          )
+        );
+      },
     },
     {
       /*title: (
@@ -277,8 +351,10 @@ const PropertyTable: React.FC<Props> = (props) => {
         </HCTooltip>
       ),
       formatter: text => {
-        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={"multiple-" + text} />;
-      }
+        return (
+          text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={"multiple-" + text} />
+        );
+      },
     },
     {
       /*title: (
@@ -296,7 +372,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),
       formatter: text => {
         return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={"sort-" + text} />;
-      }
+      },
     },
     {
       /*title: (
@@ -314,7 +390,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),
       formatter: text => {
         return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={"facet-" + text} />;
-      }
+      },
     },
     // {
     //   title: (
@@ -344,14 +420,14 @@ const PropertyTable: React.FC<Props> = (props) => {
       ),
       formatter: text => {
         return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={"pii-" + text} />;
-      }
+      },
     },
     {
       text: "Delete",
       dataField: "delete",
       width: "10%",
       headerAttrs: {
-        "aria-label": "delete-header"
+        "aria-label": "delete-header",
       },
       formatter: (text, record) => {
         let definitionName = record.delete;
@@ -370,33 +446,47 @@ const PropertyTable: React.FC<Props> = (props) => {
         }
         let recordArray = record.key.split(",");
         let recordKey = recordArray[0];
-        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
+        let id =
+          definitionName === text
+            ? `delete-${text}-${record.propertyName}`
+            : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
 
-        return <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
-          <span className="p-2 inline-block cursor-pointer">
-            <FontAwesomeIcon tabIndex={0} className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
+        return (
+          <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
+            <span className="p-2 inline-block cursor-pointer">
+              <FontAwesomeIcon
+                tabIndex={0}
+                className={
+                  !canWriteEntityModel && canReadEntityModel
+                    ? styles.iconTrashReadOnly
+                    : sidePanelView
+                      ? styles.iconTrashSidePanel
+                      : styles.iconTrash
+                }
+                onKeyDown={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    if (!canWriteEntityModel && canReadEntityModel) {
+                      return event.preventDefault();
+                    } else {
+                      deletePropertyShowModal(text, record, definitionName);
+                    }
+                  }
+                }}
+                icon={faTrashAlt}
+                size="2x"
+                data-testid={id}
+                onClick={event => {
                   if (!canWriteEntityModel && canReadEntityModel) {
                     return event.preventDefault();
                   } else {
                     deletePropertyShowModal(text, record, definitionName);
                   }
-                }
-              }}
-              icon={faTrashAlt}
-              size="2x"
-              data-testid={id}
-              onClick={(event) => {
-                if (!canWriteEntityModel && canReadEntityModel) {
-                  return event.preventDefault();
-                } else {
-                  deletePropertyShowModal(text, record, definitionName);
-                }
-              }} />
-          </span>
-        </HCTooltip>;
-      }
+                }}
+              />
+            </span>
+          </HCTooltip>
+        );
+      },
     },
     {
       text: "Add",
@@ -409,7 +499,11 @@ const PropertyTable: React.FC<Props> = (props) => {
         const propertyName = record.propertyName;
 
         const addIcon = props.canWriteEntityModel ? (
-          <HCTooltip text={ModelingTooltips.addStructuredProperty} id={`add-struct-${propertyName}-tooltip`} placement="top-end">
+          <HCTooltip
+            text={ModelingTooltips.addStructuredProperty}
+            id={`add-struct-${propertyName}-tooltip`}
+            placement="top-end"
+          >
             <span className="p-2 inline-block cursor-pointer">
               <FontAwesomeIcon
                 data-testid={"add-struct-" + propertyName}
@@ -433,10 +527,15 @@ const PropertyTable: React.FC<Props> = (props) => {
             </span>
           </HCTooltip>
         ) : (
-          <HCTooltip text={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} id="disabled-add-struct-tooltip" placement="top-end">
+          <HCTooltip
+            text={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess}
+            id="disabled-add-struct-tooltip"
+            placement="top-end"
+          >
             <i>
               <FontAwesomeIcon
-                data-testid={"add-struct-" + propertyName} className={styles.addIconReadOnly}
+                data-testid={"add-struct-" + propertyName}
+                className={styles.addIconReadOnly}
                 icon={faPlusSquare}
               />
             </i>
@@ -444,12 +543,11 @@ const PropertyTable: React.FC<Props> = (props) => {
         );
 
         return text && addIcon;
-      }
-    }
+      },
+    },
   ];
 
   const addPropertyButtonClicked = () => {
-
     toggleShowPropertyModal(true);
     setEditPropertyOptions({...editPropertyOptions, isEdit: false});
     setStructuredTypeOptions({...structuredTypeOptions, isStructured: false});
@@ -476,7 +574,8 @@ const PropertyTable: React.FC<Props> = (props) => {
         let findPredicate = row => row.type === structuredPropertyType && row.propertyName === structuredPropertyName;
 
         if (parentTopProperty) {
-          findPredicate = row => row.type === structuredPropertyType && row.propertyName === parentTopProperty.split(",")[0];
+          findPredicate = row =>
+            row.type === structuredPropertyType && row.propertyName === parentTopProperty.split(",")[0];
         }
         row = renderTableData.find(findPredicate);
 
@@ -499,7 +598,6 @@ const PropertyTable: React.FC<Props> = (props) => {
             }
           }
         }
-
       } else {
         if (sidePanelView) {
           setSourceExpandedKeys([row.key]);
@@ -514,7 +612,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     setTableData(renderTableData);
   };
 
-  const saveAndUpdateModifiedEntity = async (entityModified: EntityModified, relatedModified: EntityModified[], errorHandler: Function | undefined) => {
+  const saveAndUpdateModifiedEntity = async (
+    entityModified: EntityModified,
+    relatedModified: EntityModified[],
+    errorHandler: Function | undefined,
+  ) => {
     try {
       //Check relationships related to entity
       if (props.updateSavedEntity) {
@@ -530,18 +632,23 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const addStructuredTypeToDefinition = async (structuredTypeName: string, namespace: string | undefined, namespacePrefix: string | undefined, errorHandler: Function | undefined) => {
+  const addStructuredTypeToDefinition = async (
+    structuredTypeName: string,
+    namespace: string | undefined,
+    namespacePrefix: string | undefined,
+    errorHandler: Function | undefined,
+  ) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName]: {
         namespace,
         namespacePrefix,
-        properties: {}
-      }
+        properties: {},
+      },
     };
     let newDefinitions = {...definitions, ...newStructuredType};
     let entityModified: EntityModified = {
       entityName: entityName,
-      modelDefinition: newDefinitions
+      modelDefinition: newDefinitions,
     };
 
     await saveAndUpdateModifiedEntity(entityModified, [], errorHandler);
@@ -560,7 +667,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         joinPropertyName: propertyOptions.joinPropertyName,
         //joinPropertyType: propertyOptions.joinPropertyType
       };
-
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
       return {
@@ -572,14 +678,12 @@ const PropertyTable: React.FC<Props> = (props) => {
           relatedEntityType: externalEntity.entityTypeId,
           joinPropertyName: propertyOptions.joinPropertyName,
           //joinPropertyType: propertyOptions.joinPropertyType
-        }
+        },
       };
-
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
         $ref: "#/definitions/" + propertyOptions.type,
       };
-
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
       return {
         datatype: "array",
@@ -587,9 +691,8 @@ const PropertyTable: React.FC<Props> = (props) => {
         sortable: sortable,
         items: {
           $ref: "#/definitions/" + propertyOptions.type,
-        }
+        },
       };
-
     } else if (propertyOptions.propertyType === PropertyType.Basic && multiple) {
       return {
         datatype: "array",
@@ -598,19 +701,23 @@ const PropertyTable: React.FC<Props> = (props) => {
         items: {
           datatype: propertyOptions.type,
           collation: "http://marklogic.com/collation/codepoint",
-        }
+        },
       };
     } else if (propertyOptions.propertyType === PropertyType.Basic && !multiple) {
       return {
         datatype: propertyOptions.type,
         facetable: facetable,
         sortable: sortable,
-        collation: "http://marklogic.com/collation/codepoint"
+        collation: "http://marklogic.com/collation/codepoint",
       };
     }
   };
   // Covers both Entity Type and Structured Type
-  const addPropertyToDefinition = async (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
+  const addPropertyToDefinition = async (
+    definitionName: string,
+    propertyName: string,
+    propertyOptions: PropertyOptions,
+  ) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
@@ -641,7 +748,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     // }
 
     if (structuredTypeOptions.isStructured) {
-      let structuredString = structuredTypeOptions.name.split(",").map(item => encrypt(item)).join("-");
+      let structuredString = structuredTypeOptions.name
+        .split(",")
+        .map(item => encrypt(item))
+        .join("-");
       newRowKey = "scroll-" + encrypt(entityName) + "-" + structuredString;
     }
 
@@ -650,7 +760,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     let entityModified: EntityModified = {
       entityName: entityName,
-      modelDefinition: updatedDefinitions
+      modelDefinition: updatedDefinitions,
     };
 
     await saveAndUpdateModifiedEntity(entityModified, [], undefined);
@@ -672,7 +782,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         newStructuredTypes.isStructured = true;
         newStructuredTypes.name = parseAddRecord[0];
         newStructuredTypes.propertyName = record.propertyName;
-
       } else if (record.type === record.structured) {
         propertyType = PropertyType.Structured;
         newStructuredTypes.isStructured = true;
@@ -689,7 +798,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         newStructuredTypes.name = record.structured;
         newStructuredTypes.propertyName = parseKey[0];
       }
-
     } else if (relationshipType) {
       propertyType = PropertyType.RelatedEntity;
       newStructuredTypes.isStructured = false;
@@ -711,20 +819,24 @@ const PropertyTable: React.FC<Props> = (props) => {
       pii: record.pii ? "yes" : "no",
       facetable: record.facetable ? true : false,
       sortable: record.sortable ? true : false,
-      wildcard: record.wildcard ? true : false
+      wildcard: record.wildcard ? true : false,
     };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: text,
       isEdit: true,
-      propertyOptions
+      propertyOptions,
     };
     setStructuredTypeOptions(newStructuredTypes);
     setEditPropertyOptions(editPropertyOptions);
     toggleShowPropertyModal(true);
   };
 
-  const editPropertyUpdateDefinition = async (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => {
+  const editPropertyUpdateDefinition = async (
+    definitionName: string,
+    propertyName: string,
+    editPropertyOptions: EditPropertyOptions,
+  ) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
@@ -738,8 +850,10 @@ const PropertyTable: React.FC<Props> = (props) => {
         if (response["status"] === 200) {
           const entityNamesWithForeignKeyReferences = response["data"]["entityNamesWithForeignKeyReferences"];
           if (entityNamesWithForeignKeyReferences.length > 0) {
-            const dataModelFiltered = dataModel.filter(entity => entityNamesWithForeignKeyReferences.includes(entity.entityName));
-            entitiesRelated = dataModelFiltered.map((entity) => {
+            const dataModelFiltered = dataModel.filter(entity =>
+              entityNamesWithForeignKeyReferences.includes(entity.entityName),
+            );
+            entitiesRelated = dataModelFiltered.map(entity => {
               let properties: any = Object.keys(entity.model.definitions[entity.entityName].properties);
               properties.forEach((p, i) => {
                 let pObj = entity.model.definitions[entity.entityName].properties[p];
@@ -751,7 +865,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               });
               return {
                 entityName: entity.entityName,
-                modelDefinition: entity.model.definitions
+                modelDefinition: entity.model.definitions,
               };
             });
           }
@@ -804,30 +918,45 @@ const PropertyTable: React.FC<Props> = (props) => {
     // }
 
     if (propertyName !== editPropertyOptions.name) {
-      let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map((key) => {
+      let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map(key => {
         const newKey = key === propertyName ? editPropertyOptions.name : key;
         const value = key === propertyName ? newProperty : entityTypeDefinition["properties"][key];
         return {[newKey]: value};
       });
       entityTypeDefinition["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
 
-      if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
+      if (
+        entityTypeDefinition.hasOwnProperty("required") &&
+        entityTypeDefinition.required.some(value => value === propertyName)
+      ) {
         let index = entityTypeDefinition.required.indexOf(propertyName);
         entityTypeDefinition.required[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
+      if (
+        entityTypeDefinition.hasOwnProperty("rangeIndex") &&
+        entityTypeDefinition.rangeIndex.some(value => value === propertyName)
+      ) {
         let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
         entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
+      if (
+        entityTypeDefinition.hasOwnProperty("pathRangeIndex") &&
+        entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)
+      ) {
         let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
         entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
+      if (
+        entityTypeDefinition.hasOwnProperty("elementRangeIndex") &&
+        entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)
+      ) {
         let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
         entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
+      if (
+        entityTypeDefinition.hasOwnProperty("wordLexicon") &&
+        entityTypeDefinition.wordLexicon.some(value => value === propertyName)
+      ) {
         let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
         entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
       }
@@ -837,7 +966,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     let entityModified: EntityModified = {
       entityName: entityName,
-      modelDefinition: updatedDefinitions
+      modelDefinition: updatedDefinitions,
     };
     await saveAndUpdateModifiedEntity(entityModified, entitiesRelated, undefined);
   };
@@ -879,7 +1008,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (entityTypeDefinition.hasOwnProperty("primaryKey") && entityTypeDefinition.primaryKey === propertyName) {
       delete entityTypeDefinition.primaryKey;
     }
-    if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
+    if (
+      entityTypeDefinition.hasOwnProperty("wordLexicon") &&
+      entityTypeDefinition.wordLexicon.some(value => value === propertyName)
+    ) {
       let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
       entityTypeDefinition.wordLexicon.splice(index, 1);
     }
@@ -887,19 +1019,31 @@ const PropertyTable: React.FC<Props> = (props) => {
       let index = entityTypeDefinition.pii.indexOf(propertyName);
       entityTypeDefinition.pii.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
+    if (
+      entityTypeDefinition.hasOwnProperty("required") &&
+      entityTypeDefinition.required.some(value => value === propertyName)
+    ) {
       let index = entityTypeDefinition.required.indexOf(propertyName);
       entityTypeDefinition.required.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
+    if (
+      entityTypeDefinition.hasOwnProperty("rangeIndex") &&
+      entityTypeDefinition.rangeIndex.some(value => value === propertyName)
+    ) {
       let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
       entityTypeDefinition.rangeIndex.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
+    if (
+      entityTypeDefinition.hasOwnProperty("pathRangeIndex") &&
+      entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)
+    ) {
       let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
       entityTypeDefinition.pathRangeIndex.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
+    if (
+      entityTypeDefinition.hasOwnProperty("elementRangeIndex") &&
+      entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)
+    ) {
       let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
       entityTypeDefinition.elementRangeIndex.splice(index, 1);
     }
@@ -909,7 +1053,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     let entityModified: EntityModified = {
       entityName: entityName,
-      modelDefinition: updatedDefinitions
+      modelDefinition: updatedDefinitions,
     };
 
     if (props.updateSavedEntity) {
@@ -918,11 +1062,11 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
-
   };
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
-    let entityTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === entityName) || DEFAULT_ENTITY_DEFINITION;
+    let entityTypeDefinition: Definition =
+      entityDefinitionsArray.find(definition => definition.name === entityName) || DEFAULT_ENTITY_DEFINITION;
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
@@ -943,7 +1087,10 @@ const PropertyTable: React.FC<Props> = (props) => {
                   key: property.name + "," + index + structIndex + counter,
                   structured: structuredType.name,
                   propertyName: structProperty.name,
-                  type: structProperty.datatype === "structured" ? structProperty.ref.split("/").pop() : structProperty.datatype,
+                  type:
+                    structProperty.datatype === "structured"
+                      ? structProperty.ref.split("/").pop()
+                      : structProperty.datatype,
                   joinPropertyName: structProperty.joinPropertyName,
                   joinPropertyType: structProperty.joinPropertyType,
                   identifier: entityTypeDefinition?.primaryKey === structProperty.name ? structProperty.name : "",
@@ -952,7 +1099,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   sortable: structProperty.sortable ? structProperty.name : "",
                   //wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   pii: structuredType?.pii?.some(value => value === structProperty.name) ? structProperty.name : "",
-                  delete: entityTypeDefinition.name
+                  delete: entityTypeDefinition.name,
                 };
               }
             });
@@ -961,7 +1108,9 @@ const PropertyTable: React.FC<Props> = (props) => {
             let addValue = property.name + "," + structuredType?.name;
 
             if (parentDefinitionName) {
-              let parentTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
+              let parentTypeDefinition: Definition =
+                entityDefinitionsArray.find(definition => definition.name === parentDefinitionName) ||
+                DEFAULT_ENTITY_DEFINITION;
               piiValue = parentTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "";
               addValue = property?.name + "," + parentDefinitionName + "," + structuredType?.name;
             }
@@ -978,7 +1127,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               pii: piiValue,
               children: structuredTypeProperties,
               add: addValue,
-              delete: entityTypeDefinition.name
+              delete: entityTypeDefinition.name,
             };
           }
         };
@@ -998,7 +1147,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           //wildcard: entityTypeDefinition?.wordLexicon.some( value => value === property.name) ? property.name : '',
           pii: entityTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "",
           add: "",
-          delete: entityTypeDefinition.name
+          delete: entityTypeDefinition.name,
         };
       }
       return propertyRow;
@@ -1022,7 +1171,10 @@ const PropertyTable: React.FC<Props> = (props) => {
   };
 
   const confirmAction = async () => {
-    if (confirmType === ConfirmationType.DeletePropertyWarn || confirmType === ConfirmationType.DeletePropertyStepWarn) {
+    if (
+      confirmType === ConfirmationType.DeletePropertyWarn ||
+      confirmType === ConfirmationType.DeletePropertyStepWarn
+    ) {
       deletePropertyFromDefinition(deletePropertyOptions.definitionName, deletePropertyOptions.propertyName);
       toggleConfirmModal(false);
       setDeletePropertyOptions({definitionName: "", propertyName: ""});
@@ -1044,7 +1196,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         setExpandedSourceFlag(true);
         return finalKeys;
       });
-
     } else {
       setParentTopProperty(null);
       setSourceExpandedKeys(prevState => {
@@ -1056,7 +1207,6 @@ const PropertyTable: React.FC<Props> = (props) => {
   };
 
   const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
-
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj[rowKey]);
@@ -1068,7 +1218,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     return allKeysToExpand;
   };
 
-  const handleSourceExpandCollapse = (option) => {
+  const handleSourceExpandCollapse = option => {
     let keys = getKeysToExpandFromTable(tableData, "key", [], true);
     if (option === "collapse") {
       setSourceExpandedKeys([]);
@@ -1079,15 +1229,14 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const handlePropertyNames = (data) => {
+  const handlePropertyNames = data => {
     if (data.length !== 0) {
-      return data.map((item) => {
+      return data.map(item => {
         item.propertyNameUI = trimText(item.propertyName);
         return item;
       });
     }
     return [];
-
   };
 
   // Check if entity name has no matching definition
@@ -1095,43 +1244,57 @@ const PropertyTable: React.FC<Props> = (props) => {
     return props.definitions ? !props.definitions.hasOwnProperty(entityName) : false;
   };
 
-  const addPropertyButton = <HCButton
-    variant="primary"
-    aria-label={entityName + "-add-property"}
-    disabled={!props.canWriteEntityModel || titleNoDefinition()}
-    size="sm"
-    className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : styles.addPropertyButton}
-    onClick={() => addPropertyButtonClicked()}
-  >Add Entity Property</HCButton>;
+  const addPropertyButton = (
+    <HCButton
+      variant="primary"
+      aria-label={entityName + "-add-property"}
+      disabled={!props.canWriteEntityModel || titleNoDefinition()}
+      size="sm"
+      className={!props.canWriteEntityModel || titleNoDefinition() ? styles.disabledButton : styles.addPropertyButton}
+      onClick={() => addPropertyButtonClicked()}
+    >
+      Add Entity Property
+    </HCButton>
+  );
 
   return (
     <div className="ms-5 mt-3 me-2">
       <div className={styles.extraButtonContainer} id="extraButtonsContainer">
-        {sidePanelView && !titleNoDefinition() ?
-          <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
-        }
-        {props.canWriteEntityModel ?
-          <HCTooltip placement="top" text={ModelingTooltips.addProperty} id="add-property-tooltip" >
+        {sidePanelView && !titleNoDefinition() ? (
+          <span className={styles.expandCollapseBtns}>
+            <ExpandCollapse handleSelection={id => handleSourceExpandCollapse(id)} currentSelection={""} />
+          </span>
+        ) : (
+          ""
+        )}
+        {props.canWriteEntityModel ? (
+          <HCTooltip placement="top" text={ModelingTooltips.addProperty} id="add-property-tooltip">
             <span>{addPropertyButton}</span>
           </HCTooltip>
-          :
-          <HCTooltip placement="top" text={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess} id="add-property-disabled">
+        ) : (
+          <HCTooltip
+            placement="top"
+            text={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess}
+            id="add-property-disabled"
+          >
             <span>{addPropertyButton}</span>
           </HCTooltip>
-        }
+        )}
       </div>
-      {showPropertyModal && <PropertyModal
-        entityName={entityName}
-        entityDefinitionsArray={entityDefinitionsArray}
-        isVisible={showPropertyModal}
-        editPropertyOptions={editPropertyOptions}
-        structuredTypeOptions={structuredTypeOptions}
-        toggleModal={toggleShowPropertyModal}
-        addPropertyToDefinition={addPropertyToDefinition}
-        addStructuredTypeToDefinition={addStructuredTypeToDefinition}
-        editPropertyUpdateDefinition={editPropertyUpdateDefinition}
-        deletePropertyFromDefinition={deletePropertyFromDefinition}
-      />}
+      {showPropertyModal && (
+        <PropertyModal
+          entityName={entityName}
+          entityDefinitionsArray={entityDefinitionsArray}
+          isVisible={showPropertyModal}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={structuredTypeOptions}
+          toggleModal={toggleShowPropertyModal}
+          addPropertyToDefinition={addPropertyToDefinition}
+          addStructuredTypeToDefinition={addStructuredTypeToDefinition}
+          editPropertyUpdateDefinition={editPropertyUpdateDefinition}
+          deletePropertyFromDefinition={deletePropertyFromDefinition}
+        />
+      )}
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={confirmType}
@@ -1140,19 +1303,30 @@ const PropertyTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      {titleNoDefinition() ?
-        <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
+      {titleNoDefinition() ? (
+        <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>
+          {ModelingMessages.titleNoDefinition}
+        </div>
+      ) : (
         <>
-          {headerColumns.length ?
+          {headerColumns.length ? (
             <HCTable
               rowKey={sidePanelView ? "key" : "propertyName"}
-              rowClassName={(record) => {
-                let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
+              rowClassName={record => {
+                let propertyName =
+                  record.hasOwnProperty("add") && record.add !== ""
+                    ? record.add
+                      .split(",")
+                      .map(item => encrypt(item))
+                      .join("-")
+                    : encrypt(record.propertyName);
                 return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
               }}
               columns={headerColumns}
               data={handlePropertyNames(tableData)}
-              onExpand={sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand}
+              onExpand={
+                sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand
+              }
               expandedRowKeys={sidePanelView ? sourceExpandedKeys : expandedRows}
               keyUtil={"key"}
               baseIndent={20}
@@ -1161,11 +1335,18 @@ const PropertyTable: React.FC<Props> = (props) => {
               showExpandIndicator={{bordered: true}}
               childrenIndent={true}
               subTableHeader={!sidePanelView}
-              nestedParams={{headerColumns, iconCellList: ["identifier", "multiple", "sortable", "delete", "add"], state: sidePanelView ? [sourceExpandedKeys, setSourceExpandedKeys] : [expandedNestedRows, setExpandedNestedRows]}}
+              nestedParams={{
+                headerColumns,
+                iconCellList: ["identifier", "multiple", "sortable", "delete", "add"],
+                state: sidePanelView
+                  ? [sourceExpandedKeys, setSourceExpandedKeys]
+                  : [expandedNestedRows, setExpandedNestedRows],
+              }}
               className={sidePanelView ? "side-panel" : ""}
-            /> : null}
+            />
+          ) : null}
         </>
-      }
+      )}
     </div>
   );
 };

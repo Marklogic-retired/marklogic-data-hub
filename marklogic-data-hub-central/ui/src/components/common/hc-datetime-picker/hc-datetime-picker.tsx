@@ -7,23 +7,25 @@ import {Calendar4, XLg} from "react-bootstrap-icons";
 import styles from "./hc-datetime-picker.module.scss";
 
 interface HCDateTimePickerProps extends Options {
-    name: string;
-    time?: boolean;
-    placeholder?: string | Array<string>;
-    className?: string;
-    value?: any;
-    format?: string;
-    onChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
-    bindChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
-    onOk?: (picker, element) => void;
-    parentEl?: string;
+  name: string;
+  time?: boolean;
+  placeholder?: string | Array<string>;
+  className?: string;
+  value?: any;
+  format?: string;
+  onChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
+  bindChange?: (startDate?: DateOrString, endDate?: DateOrString) => void;
+  onOk?: (picker, element) => void;
+  parentEl?: string;
 }
 
 function formatPlaceHolder(input) {
-  return Array.isArray(input) && input.length > 1 ? input.map(text => text.length > 15 ? text.slice(0, 15) + "..." : text).join(" ~ ") : input;
+  return Array.isArray(input) && input.length > 1
+    ? input.map(text => (text.length > 15 ? text.slice(0, 15) + "..." : text)).join(" ~ ")
+    : input;
 }
 
-function formatValue(input, {format, time}: { format?: string, time?: boolean}) {
+function formatValue(input, {format, time}: {format?: string; time?: boolean}) {
   if (!Array.isArray(input) || input.length !== 2) {
     return "";
   }
@@ -37,7 +39,18 @@ function formatValue(input, {format, time}: { format?: string, time?: boolean}) 
   return input.map(dateValue => dayjs(dateValue).format(dateFormat)).join(" ~ ");
 }
 
-function HCDateTimePicker({time, name, className, value, format, placeholder = ["Start date", "End date"], onChange, onOk, bindChange,  ...props}: HCDateTimePickerProps) {
+function HCDateTimePicker({
+  time,
+  name,
+  className,
+  value,
+  format,
+  placeholder = ["Start date", "End date"],
+  onChange,
+  onOk,
+  bindChange,
+  ...props
+}: HCDateTimePickerProps) {
   const initialSettings: Options = {
     ...props,
     autoApply: true,
@@ -90,12 +103,27 @@ function HCDateTimePicker({time, name, className, value, format, placeholder = [
     initialSettings.timePicker = true;
   }
 
-  return  (
+  return (
     <DateRangePicker initialSettings={initialSettings} {...{onShow, ref}} onCallback={onChange} onApply={onOk}>
-      <div className={`${className || ""} ${styles.pickerContainer}`} id="date-picker-container" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-        <input data-testid={name} readOnly id={name} placeholder={formatPlaceHolder(placeholder)} className={styles.input} value={formatValue(value, {format, time})} />
-        {!showClear ? <Calendar4 className={`${styles.calendarIcon}`} /> :
-          <XLg className={`${styles.clearIcon}`} onClick={resetValue} data-testid="datetime-picker-reset"/>}
+      <div
+        className={`${className || ""} ${styles.pickerContainer}`}
+        id="date-picker-container"
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+      >
+        <input
+          data-testid={name}
+          readOnly
+          id={name}
+          placeholder={formatPlaceHolder(placeholder)}
+          className={styles.input}
+          value={formatValue(value, {format, time})}
+        />
+        {!showClear ? (
+          <Calendar4 className={`${styles.calendarIcon}`} />
+        ) : (
+          <XLg className={`${styles.clearIcon}`} onClick={resetValue} data-testid="datetime-picker-reset" />
+        )}
       </div>
     </DateRangePicker>
   );

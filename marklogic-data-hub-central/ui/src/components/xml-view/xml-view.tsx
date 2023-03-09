@@ -5,8 +5,7 @@ interface Props {
   document: any;
 }
 
-const XmlView: React.FC<Props> = (props) => {
-
+const XmlView: React.FC<Props> = props => {
   return (
     <div data-cy="xml-document" data-testid="xml-document">
       <XMLViewer xml={props.document} />

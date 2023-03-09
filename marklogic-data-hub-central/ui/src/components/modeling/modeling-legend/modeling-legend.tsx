@@ -5,19 +5,20 @@ import arrayIcon from "../../../assets/icon_array.png";
 import styles from "./modeling-legend.module.scss";
 
 const ModelingLegend: React.FC = () => {
-
   return (
     <div className={styles.legend}>
-      <span className={styles.modeledRelationshipIcon}/>
-      <div data-testid="relationshipIconLegend" className={styles.relationshipLegendText}>Modeled Relationship</div>
+      <span className={styles.modeledRelationshipIcon} />
+      <div data-testid="relationshipIconLegend" className={styles.relationshipLegendText}>
+        Modeled Relationship
+      </div>
       <div data-testid="foreignKeyIconLegend" className={styles.foreignKeyLegendText}>
-        <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key
+        <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> Foreign Key
       </div>
       <div data-testid="multipleIconLegend" className={styles.multipleLegendText}>
-        <img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values
+        <img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple Values
       </div>
       <div data-testid="structuredIconLegend" className={styles.structuredLegendText}>
-        <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type
+        <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type
       </div>
     </div>
   );

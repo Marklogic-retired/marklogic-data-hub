@@ -39,14 +39,14 @@ const getScrollPosition = () => {
   if (!isBrowser) return {x: 0, y: 0};
 
   let scrollEnd = false;
-  if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 15) {
+  if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 15) {
     scrollEnd = true;
   }
 
   return {
     x: window.scrollX,
     y: window.scrollY,
-    endOfScroll: scrollEnd
+    endOfScroll: scrollEnd,
   };
 };
 

@@ -8,9 +8,7 @@ import "@testing-library/jest-dom/extend-expect";
 import Toolbar from "./toolbar";
 import tiles from "../../config/tiles.config";
 
-
 describe("Toolbar component", () => {
-
   it("renders with clickable tools", () => {
     let tools: string[] = [];
 
@@ -21,7 +19,11 @@ describe("Toolbar component", () => {
       }
     }
 
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={tools}/></Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <Toolbar tiles={tiles} enabled={tools} />
+      </Router>,
+    );
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
     tools.forEach((tool, i) => {
@@ -29,13 +31,16 @@ describe("Toolbar component", () => {
       fireEvent.click(getByLabelText("tool-" + tool));
       expect(history.location.pathname).toEqual(`/tiles/${tool}`);
     });
-
   });
 
   it("verify tile icon selection using tab", () => {
     let i: number;
     let enabledTiles = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <Toolbar tiles={tiles} enabled={enabledTiles} />
+      </Router>,
+    );
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
     // focus on load tool
@@ -55,11 +60,14 @@ describe("Toolbar component", () => {
     }
   });
 
-
   it("verify tile icon selection using arrow keys", () => {
     let i: number;
     let enabledTiles = ["load", "model", "curate", "run", "explore", "monitor"];
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
+    const {getByLabelText} = render(
+      <Router history={history}>
+        <Toolbar tiles={tiles} enabled={enabledTiles} />
+      </Router>,
+    );
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
     // focus on load tool
@@ -86,5 +94,4 @@ describe("Toolbar component", () => {
       expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();
     }
   });
-
 });

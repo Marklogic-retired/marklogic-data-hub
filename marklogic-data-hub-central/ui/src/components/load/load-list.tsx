@@ -31,15 +31,11 @@ interface Props {
   flowsLoading: boolean;
 }
 
-const LoadList: React.FC<Props> = (props) => {
+const LoadList: React.FC<Props> = props => {
   const storage = getViewSettings();
   const storedSortOrder = storage?.load?.sortOrder;
 
-  const {
-    loadingOptions,
-    setPage,
-    setPageSize
-  } = useContext(LoadingContext);
+  const {loadingOptions, setPage, setPageSize} = useContext(LoadingContext);
 
   const activityType = "ingestion";
   const location = useLocation<any>();
@@ -58,11 +54,12 @@ const LoadList: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
 
-  const pageSizeOptions = props.data.length > 40 ? ["10", "20", "30", "40", props.data.length] : ["10", "20", "30", "40"];
+  const pageSizeOptions =
+    props.data.length > 40 ? ["10", "20", "30", "40", props.data.length] : ["10", "20", "30", "40"];
 
   useEffect(() => {
     if (location.state && location.state.stepToView) {
-      const stepIndex = props.data.findIndex((step) => step.stepId === location.state.stepToView);
+      const stepIndex = props.data.findIndex(step => step.stepId === location.state.stepToView);
       setPage(Math.floor(stepIndex / loadingOptions.pageSize) + 1);
     } else {
       setSortedInfo(storedSortOrder ? storedSortOrder : {});
@@ -74,7 +71,13 @@ const LoadList: React.FC<Props> = (props) => {
       return;
     }
     const sortStorage = getViewSettings();
-    const newStorage = {...sortStorage, load: {...sortStorage.load, sortOrder: {...sortStorage.load?.sortOrder, columnKey: sortedInfo.columnKey, order: sortedInfo.order}}};
+    const newStorage = {
+      ...sortStorage,
+      load: {
+        ...sortStorage.load,
+        sortOrder: {...sortStorage.load?.sortOrder, columnKey: sortedInfo.columnKey, order: sortedInfo.order},
+      },
+    };
     setViewSettings(newStorage);
   }, [sortedInfo]);
 
@@ -85,30 +88,30 @@ const LoadList: React.FC<Props> = (props) => {
     setOpenStepSettings(true);
   };
 
-  const OpenStepSettings = (record) => {
+  const OpenStepSettings = record => {
     setIsEditing(true);
     setStepData(prevState => ({...prevState, ...record}));
     setOpenStepSettings(true);
   };
 
-  const createLoadArtifact = (payload) => {
+  const createLoadArtifact = payload => {
     // Update local form state, then save to db
     setStepData(prevState => ({...prevState, ...payload}));
     props.createLoadArtifact(payload);
   };
 
-  const updateLoadArtifact = (payload) => {
+  const updateLoadArtifact = payload => {
     // Update local form state
     setStepData(prevState => ({...prevState, ...payload}));
     props.updateLoadArtifact(payload);
   };
 
-  const showDeleteConfirm = (name) => {
+  const showDeleteConfirm = name => {
     setDialogVisible(true);
     setLoadArtifactName(name);
   };
 
-  const onOk = (name) => {
+  const onOk = name => {
     props.deleteLoadArtifact(name);
     setDialogVisible(false);
   };
@@ -130,10 +133,9 @@ const LoadList: React.FC<Props> = (props) => {
     handleStepAdd(obj.loadName, obj.flowName);
   }
 
-  const handleTableChange = (type, sorter: { columnKey: string; order: string }) => {
+  const handleTableChange = (type, sorter: {columnKey: string; order: string}) => {
     setSortedInfo({columnKey: sorter.columnKey, order: sorter.order});
   };
-
 
   const isStepInFlow = (loadName, flowName) => {
     let result = false;
@@ -143,9 +145,11 @@ const LoadList: React.FC<Props> = (props) => {
     return result;
   };
 
-  const countStepInFlow = (loadName) => {
+  const countStepInFlow = loadName => {
     let result: string[] = [];
-    if (props.flows) props.flows.forEach(f => f["steps"].findIndex(s => s.stepName === loadName) > -1 ? result.push(f.name) : "");
+    if (props.flows) {
+      props.flows.forEach(f => (f["steps"].findIndex(s => s.stepName === loadName) > -1 ? result.push(f.name) : ""));
+    }
     return result;
   };
 
@@ -159,7 +163,7 @@ const LoadList: React.FC<Props> = (props) => {
     }
   };
 
-  const handleStepRun = (loadName) => {
+  const handleStepRun = loadName => {
     setLoadArtifactName(loadName);
     let stepInFlows = countStepInFlow(loadName);
     setFlowsWithStep(stepInFlows);
@@ -172,7 +176,7 @@ const LoadList: React.FC<Props> = (props) => {
     }
   };
 
-  const handleAddRun = async (flowName) => {
+  const handleAddRun = async flowName => {
     await props.addStepToFlow(loadArtifactName, flowName, "ingestion");
     setRunNoFlowsDialogVisible(false);
 
@@ -184,8 +188,8 @@ const LoadList: React.FC<Props> = (props) => {
         existingFlow: true,
         addFlowDirty: true,
         stepToAdd: loadArtifactName,
-        stepDefinitionType: "ingestion"
-      }
+        stepDefinitionType: "ingestion",
+      },
     });
   };
 
@@ -198,7 +202,7 @@ const LoadList: React.FC<Props> = (props) => {
         stepDefinitionType: "ingestion",
         existingFlow: false,
         flowsDefaultKey: [props.flows.findIndex(el => el.name === flowsWithStep[0])],
-      }
+      },
     });
   };
 
@@ -211,8 +215,8 @@ const LoadList: React.FC<Props> = (props) => {
         flowName: fName,
         addFlowDirty: true,
         flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-        existingFlow: true
-      }
+        existingFlow: true,
+      },
     });
   };
 
@@ -221,22 +225,28 @@ const LoadList: React.FC<Props> = (props) => {
   };
 
   const addConfirmation = (
-    <HCModal
-      onHide={onCancel}
-      show={addDialogVisible}
-    >
+    <HCModal onHide={onCancel} show={addDialogVisible}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4 text-center"}>
         <div aria-label="add-step-confirmation" className={"mb-4"} style={{fontSize: "16px"}}>
-          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+          <p aria-label="step-not-in-flow">
+            Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow{" "}
+            <strong>{flowName}</strong>?
+          </p>
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
             No
           </HCButton>
-          <HCButton aria-label={"Yes"} data-testid={`${loadArtifactName}-to-${flowName}-Confirm`} variant="primary" type="submit" onClick={() => onAddOk(loadArtifactName, flowName)}>
+          <HCButton
+            aria-label={"Yes"}
+            data-testid={`${loadArtifactName}-to-${flowName}-Confirm`}
+            variant="primary"
+            type="submit"
+            onClick={() => onAddOk(loadArtifactName, flowName)}
+          >
             Yes
           </HCButton>
         </div>
@@ -245,17 +255,16 @@ const LoadList: React.FC<Props> = (props) => {
   );
 
   const addExistingStepConfirmation = (
-    <HCModal
-      show={addExistingStepDialogVisible}
-      onHide={onCancel}
-    >
+    <HCModal show={addExistingStepDialogVisible} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4`} style={{fontSize: "16px"}}>
           {
-            <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}.</strong></p>
+            <p aria-label="step-in-flow">
+              The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}.</strong>
+            </p>
           }
         </div>
         <div>
@@ -268,34 +277,50 @@ const LoadList: React.FC<Props> = (props) => {
   );
 
   const runNoFlowsConfirmation = (
-    <HCModal
-      show={runNoFlowsDialogVisible}
-      size={"lg"}
-      onHide={onCancel}
-    >
+    <HCModal show={runNoFlowsDialogVisible} size={"lg"} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
-        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div><button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>
+          Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.
+        </div>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pb-2"}>
         <Row>
           <Col>
-            <div>{props.flows?.map((flow, i) => (
-              <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
-            ))}</div>
+            <div>
+              {props.flows?.map((flow, i) => (
+                <p
+                  className={styles.stepLink}
+                  data-testid={`${flow.name}-run-step`}
+                  key={i}
+                  onClick={() => handleAddRun(flow.name)}
+                >
+                  {flow.name}
+                </p>
+              ))}
+            </div>
           </Col>
           <Col xs={"auto"}>
             <HCDivider type="vertical" className={styles.verticalDiv} />
           </Col>
           <Col>
-            <Link data-testid="link" id="tiles-add-run-new-flow" to={
-              {
+            <Link
+              data-testid="link"
+              id="tiles-add-run-new-flow"
+              to={{
                 pathname: "/tiles/run/add-run",
                 state: {
                   stepToAdd: loadArtifactName,
                   stepDefinitionType: "ingestion",
-                  existingFlow: false
-                }
-              }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow} />New flow</div></Link>
+                  existingFlow: false,
+                },
+              }}
+            >
+              <div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}>
+                <PlusCircleFill className={styles.plusIconNewFlow} />
+                New flow
+              </div>
+            </Link>
           </Col>
         </Row>
       </Modal.Body>
@@ -308,17 +333,16 @@ const LoadList: React.FC<Props> = (props) => {
   );
 
   const runOneFlowConfirmation = (
-    <HCModal
-      show={runOneFlowDialogVisible}
-      onHide={onCancel}
-    >
+    <HCModal show={runOneFlowDialogVisible} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px"}}>
           <div>
-            <div aria-label="step-in-one-flow">Running the step <strong>{loadArtifactName}</strong> in the flow <strong>{flowsWithStep}</strong></div>
+            <div aria-label="step-in-one-flow">
+              Running the step <strong>{loadArtifactName}</strong> in the flow <strong>{flowsWithStep}</strong>
+            </div>
           </div>
         </div>
       </Modal.Body>
@@ -334,29 +358,37 @@ const LoadList: React.FC<Props> = (props) => {
   );
 
   const runMultFlowsConfirmation = (
-    <HCModal
-      show={runMultFlowsDialogVisible}
-      onHide={onCancel}
-    >
+    <HCModal show={runMultFlowsDialogVisible} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body className={"pt-0"}>
         <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px"}}>
-          <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{loadArtifactName}</strong>.</div>
-          <div className={styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
-            <Link data-testid="link" id="tiles-run-step" key={i} to={
-              {
-                pathname: "/tiles/run/run-step",
-                state: {
-                  flowName: flowName,
-                  stepToAdd: loadArtifactName,
-                  stepDefinitionType: "ingestion",
-                  existingFlow: false,
-                  flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
-                }
-              }}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
-          ))}
+          <div aria-label="step-in-mult-flows">
+            Choose the flow in which to run the step <strong>{loadArtifactName}</strong>.
+          </div>
+          <div className={styles.flowSelectGrid}>
+            {flowsWithStep.map((flowName, i) => (
+              <Link
+                data-testid="link"
+                id="tiles-run-step"
+                key={i}
+                to={{
+                  pathname: "/tiles/run/run-step",
+                  state: {
+                    flowName: flowName,
+                    stepToAdd: loadArtifactName,
+                    stepDefinitionType: "ingestion",
+                    existingFlow: false,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
+                  },
+                }}
+              >
+                <p className={styles.stepLink} data-testid={`${flowName}-run-step`}>
+                  {flowName}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
       </Modal.Body>
@@ -376,48 +408,70 @@ const LoadList: React.FC<Props> = (props) => {
     </div>
   );
 
-  const addToFlow = (name) => (
+  const addToFlow = name => (
     <Dropdown align="end" className="d-inline" autoClose="outside">
-      <Dropdown.Toggle
-        className="addToFlowBtn"
-        tabIndex={-1}
-        aria-label="user-dropdown"
-      >
-        {props.canWriteFlow ?
+      <Dropdown.Toggle className="addToFlowBtn" tabIndex={-1} aria-label="user-dropdown">
+        {props.canWriteFlow ? (
           <HCTooltip id="add-to-flow-tooltip" text={"Add to Flow"} placement="bottom">
             <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"} tabIndex={0} />
           </HCTooltip>
-          :
-          <HCTooltip id="missing-permission-tooltip" text={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltip}>
+        ) : (
+          <HCTooltip
+            id="missing-permission-tooltip"
+            text={"Add to Flow: " + SecurityTooltips.missingPermission}
+            placement="bottom"
+            className={styles.tooltip}
+          >
             <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"} />
-          </HCTooltip>}
+          </HCTooltip>
+        )}
       </Dropdown.Toggle>
-      <Dropdown.Menu className={styles.dropdownMenu} >
+      <Dropdown.Menu className={styles.dropdownMenu}>
         <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0" as="div" tabIndex={-1}>
-          {<Link data-testid="link" id="tiles-run-add" to={
-            {
-              pathname: "/tiles/run/add",
-              state: {
-                stepToAdd: name,
-                stepDefinitionType: "ingestion",
-                viewMode: "list",
-                pageSize: loadingOptions.pageSize,
-                page: loadingOptions.pageNumber,
-                sortOrderInfo: sortedInfo,
-                existingFlow: false
-              }
-            }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`} tabIndex={-1}>Add step to a new flow</div></Link>}
+          {
+            <Link
+              data-testid="link"
+              id="tiles-run-add"
+              to={{
+                pathname: "/tiles/run/add",
+                state: {
+                  stepToAdd: name,
+                  stepDefinitionType: "ingestion",
+                  viewMode: "list",
+                  pageSize: loadingOptions.pageSize,
+                  page: loadingOptions.pageNumber,
+                  sortOrderInfo: sortedInfo,
+                  existingFlow: false,
+                },
+              }}
+            >
+              <div className={styles.stepLink} data-testid={`${name}-toNewFlow`} tabIndex={-1}>
+                Add step to a new flow
+              </div>
+            </Link>
+          }
         </Dropdown.Item>
         <Dropdown.Item className={styles.DropdownMenuItem} eventKey="1" key="1" tabIndex={-1}>
-          <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
-            <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+          <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>
+            Add step to an existing flow
+            <div
+              className={styles.stepLinkSelect}
+              onClick={event => {
+                event.stopPropagation();
+                event.preventDefault();
+              }}
+            >
               <Select
                 id={`${name}-flowsList-select-wrapper`}
                 inputId={`${name}-flowsList`}
                 components={{MenuList: props => MenuList(`${name}-flowsList`, props)}}
                 placeholder="Select Flow"
-                value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[name]) : undefined}
-                onChange={(option) => handleSelect({flowName: option.value, loadName: name})}
+                value={
+                  Object.keys(flowOptions).length > 0
+                    ? flowOptions.find(oItem => oItem.value === selected[name])
+                    : undefined
+                }
+                onChange={option => handleSelect({flowName: option.value, loadName: name})}
                 isSearchable={false}
                 isDisabled={!props.canWriteFlow}
                 aria-label={`${name}-flowsList`}
@@ -425,11 +479,7 @@ const LoadList: React.FC<Props> = (props) => {
                 styles={reactSelectThemeConfig}
                 openMenuOnFocus
                 formatOptionLabel={({value, label}) => {
-                  return (
-                    <span aria-label={value}>
-                      {label}
-                    </span>
-                  );
+                  return <span aria-label={value}>{label}</span>;
                 }}
               />
             </div>
@@ -439,30 +489,28 @@ const LoadList: React.FC<Props> = (props) => {
     </Dropdown>
   );
 
+  const deleteConfirmation = (
+    <HCModal show={dialogVisible} onHide={onCancel}>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div style={{fontSize: "16px"}} className={"mb-4"}>
+          Are you sure you want to delete the <strong>{loadArtifactName}</strong> step?
+        </div>
+        <div>
+          <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
+            No
+          </HCButton>
+          <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(loadArtifactName)}>
+            Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </HCModal>
+  );
 
-  const deleteConfirmation = <HCModal
-    show={dialogVisible}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"text-center pt-0 pb-4"}>
-      <div style={{fontSize: "16px"}} className={"mb-4"}>
-        Are you sure you want to delete the <strong>{loadArtifactName}</strong> step?
-      </div>
-      <div>
-        <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
-          No
-        </HCButton>
-        <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(loadArtifactName)}>
-          Yes
-        </HCButton>
-      </div>
-    </Modal.Body>
-  </HCModal>;
-
-  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+  const columnSorter = (a: any, b: any, order: string) => (order === "asc" ? a.localeCompare(b) : b.localeCompare(a));
 
   const columns: any = [
     {
@@ -471,11 +519,26 @@ const LoadList: React.FC<Props> = (props) => {
       key: "name",
       sort: true,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="loadTableName">Name</span>{sortElement}</>
+        <>
+          <span data-testid="loadTableName">Name</span>
+          {sortElement}
+        </>
       ),
       formatter: (text: any, record: any) => (
-        <span><span tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { OpenStepSettings(record); } }}
-          onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
+        <span>
+          <span
+            tabIndex={0}
+            onKeyDown={event => {
+              if (event.key === "Enter" || event.key === " ") {
+                OpenStepSettings(record);
+              }
+            }}
+            onClick={() => OpenStepSettings(record)}
+            className={styles.editLoadConfig}
+          >
+            {text}
+          </span>{" "}
+        </span>
       ),
       sortFunc: columnSorter,
     },
@@ -485,7 +548,10 @@ const LoadList: React.FC<Props> = (props) => {
       key: "description",
       sort: true,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="loadTableDescription">Description</span>{sortElement}</>
+        <>
+          <span data-testid="loadTableDescription">Description</span>
+          {sortElement}
+        </>
       ),
       sortFunc: columnSorter,
     },
@@ -495,12 +561,19 @@ const LoadList: React.FC<Props> = (props) => {
       key: "sourceFormat",
       sort: true,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="loadTableSourceFormat">Source Format</span>{sortElement}</>
+        <>
+          <span data-testid="loadTableSourceFormat">Source Format</span>
+          {sortElement}
+        </>
       ),
       formatter: (text, row) => (
         <div>
           <div>{text === "csv" ? "Delimited Text" : text}</div>
-          {row.sourceFormat === "csv" ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ""}
+          {row.sourceFormat === "csv" ? (
+            <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div>
+          ) : (
+            ""
+          )}
         </div>
       ),
       sortFunc: columnSorter,
@@ -511,7 +584,10 @@ const LoadList: React.FC<Props> = (props) => {
       key: "targetFormat",
       sort: true,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="loadTableTargetFormat">Target Format</span>{sortElement}</>
+        <>
+          <span data-testid="loadTableTargetFormat">Target Format</span>
+          {sortElement}
+        </>
       ),
       sortFunc: columnSorter,
     },
@@ -522,53 +598,100 @@ const LoadList: React.FC<Props> = (props) => {
       sort: true,
       defaultSortOrder: "desc",
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="loadTableDate">Last Updated</span>{sortElement}</>
+        <>
+          <span data-testid="loadTableDate">Last Updated</span>
+          {sortElement}
+        </>
       ),
-      formatter: (text) => (
-        <div>{convertDateFromISO(text)}</div>
-      ),
-      sortFunc: (a: any, b: any, order: string) => order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
+      formatter: text => <div>{convertDateFromISO(text)}</div>,
+      sortFunc: (a: any, b: any, order: string) =>
+        order === "asc" ? dayjs(a).unix() - dayjs(b).unix() : dayjs(b).unix() - dayjs(a).unix(),
     },
     {
       text: "Action",
       dataField: "actions",
       key: "actions",
       formatter: (text, row) => {
-        return <span className={styles.actionButtonsContainer}>
-          {props.canReadWrite ?
-            <HCTooltip text="Run" id="run-action-tooltip" placement="bottom">
-              <i aria-label="icon: run">
-                <PlayCircleFill size={27} tabIndex={0} className={styles.runIcon} data-testid={row.name + "-run"} onClick={() => handleStepRun(row.name)} onKeyDown={(event) => { handleIconsEvent(event, "R", row); }} />
-              </i>
-            </HCTooltip> :
-            <HCTooltip text={"Run: " + SecurityTooltips.missingPermission} id="disabled-run-action-tooltip" placement="bottom">
-              <i role="disabled-run-load-list button" data-testid={row.name + "-disabled-run"}>
-                <PlayCircleFill tabIndex={0} size={27} onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon} />
-              </i>
-            </HCTooltip>
-          }
-          {addToFlow(row.name)}
-          {/* <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip> */}
-          &nbsp;
-          {props.canReadWrite ?
-            <HCTooltip text="Delete" id="delete-action-tooltip" placement="bottom">
-              <i aria-label="icon: delete">
-                <FontAwesomeIcon tabIndex={0} icon={faTrashAlt} data-testid={row.name + "-delete"} onClick={() => { showDeleteConfirm(row.name); }} onKeyDown={(event) => { handleIconsEvent(event, "D", row); }} className={styles.deleteIcon} size="lg" />
-              </i>
-            </HCTooltip> :
-            <HCTooltip text={"Delete: " + SecurityTooltips.missingPermission} id="disabled-delete-action-tooltip" placement="bottom">
-              <i aria-label="icon: delete">
-                <FontAwesomeIcon tabIndex={0} icon={faTrashAlt} data-testid={row.name + "-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg" />
-              </i>
-            </HCTooltip>
-          }
-        </span>;
+        return (
+          <span className={styles.actionButtonsContainer}>
+            {props.canReadWrite ? (
+              <HCTooltip text="Run" id="run-action-tooltip" placement="bottom">
+                <i aria-label="icon: run">
+                  <PlayCircleFill
+                    size={27}
+                    tabIndex={0}
+                    className={styles.runIcon}
+                    data-testid={row.name + "-run"}
+                    onClick={() => handleStepRun(row.name)}
+                    onKeyDown={event => {
+                      handleIconsEvent(event, "R", row);
+                    }}
+                  />
+                </i>
+              </HCTooltip>
+            ) : (
+              <HCTooltip
+                text={"Run: " + SecurityTooltips.missingPermission}
+                id="disabled-run-action-tooltip"
+                placement="bottom"
+              >
+                <i role="disabled-run-load-list button" data-testid={row.name + "-disabled-run"}>
+                  <PlayCircleFill
+                    tabIndex={0}
+                    size={27}
+                    onClick={event => event.preventDefault()}
+                    className={styles.disabledRunIcon}
+                  />
+                </i>
+              </HCTooltip>
+            )}
+            {addToFlow(row.name)}
+            {/* <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip> */}
+            &nbsp;
+            {props.canReadWrite ? (
+              <HCTooltip text="Delete" id="delete-action-tooltip" placement="bottom">
+                <i aria-label="icon: delete">
+                  <FontAwesomeIcon
+                    tabIndex={0}
+                    icon={faTrashAlt}
+                    data-testid={row.name + "-delete"}
+                    onClick={() => {
+                      showDeleteConfirm(row.name);
+                    }}
+                    onKeyDown={event => {
+                      handleIconsEvent(event, "D", row);
+                    }}
+                    className={styles.deleteIcon}
+                    size="lg"
+                  />
+                </i>
+              </HCTooltip>
+            ) : (
+              <HCTooltip
+                text={"Delete: " + SecurityTooltips.missingPermission}
+                id="disabled-delete-action-tooltip"
+                placement="bottom"
+              >
+                <i aria-label="icon: delete">
+                  <FontAwesomeIcon
+                    tabIndex={0}
+                    icon={faTrashAlt}
+                    data-testid={row.name + "-disabled-delete"}
+                    onClick={event => event.preventDefault()}
+                    className={styles.disabledDeleteIcon}
+                    size="lg"
+                  />
+                </i>
+              </HCTooltip>
+            )}
+          </span>
+        );
       },
-    }
+    },
   ];
 
   // need special handlePagination for direct links to load steps that can be on another page
-  const handlePagination = (page) => {
+  const handlePagination = page => {
     setPage(page);
   };
 
@@ -578,22 +701,43 @@ const LoadList: React.FC<Props> = (props) => {
 
   const handleIconsEvent = (event, action, row?) => {
     if (action === "R") {
-      if (event.key === "Enter" || event.key === " ") { handleStepRun(row.name); }
+      if (event.key === "Enter" || event.key === " ") {
+        handleStepRun(row.name);
+      }
     } else {
-      if (event.key === "Enter" || event.key === " ") { showDeleteConfirm(row.name); }
+      if (event.key === "Enter" || event.key === " ") {
+        showDeleteConfirm(row.name);
+      }
     }
   };
 
   return (
     <div id="load-list" aria-label="load-list" className={styles.loadList}>
       <div className={styles.addNewContainer}>
-        {props.canReadWrite ? <div>
-          <HCButton aria-label="add-new-list" variant="primary" onClick={OpenAddNew}>Add New</HCButton>
-        </div> : ""}
+        {props.canReadWrite ? (
+          <div>
+            <HCButton aria-label="add-new-list" variant="primary" onClick={OpenAddNew}>
+              Add New
+            </HCButton>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
-      {props.flowsLoading ? "" :
+      {props.flowsLoading ? (
+        ""
+      ) : (
         <HCTable
-          pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
+          pagination={{
+            hideOnSinglePage: props.data.length <= 10,
+            showSizeChanger: true,
+            pageSizeOptions: pageSizeOptions,
+            onChange: handlePagination,
+            onShowSizeChange: handlePageSizeChange,
+            defaultCurrent: loadingOptions.start,
+            current: loadingOptions.pageNumber,
+            pageSize: loadingOptions.pageSize,
+          }}
           className={styles.loadTable}
           columns={columns}
           keyUtil={"key"}
@@ -601,7 +745,8 @@ const LoadList: React.FC<Props> = (props) => {
           data={props.data}
           rowKey="name"
           onTableChange={handleTableChange}
-        />}
+        />
+      )}
       {deleteConfirmation}
       {addConfirmation}
       {addExistingStepConfirmation}

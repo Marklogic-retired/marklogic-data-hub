@@ -37,7 +37,14 @@ test("should render a HCInput component with addon before and prefix", () => {
 });
 
 test("should render a HCInput component with addon before, prefix and suffix", () => {
-  render(<HCInput addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} placeholder={"Search"} />);
+  render(
+    <HCInput
+      addonBefore={"Addon Before"}
+      prefix={<FilePerson />}
+      suffix={<ArrowLeftCircleFill />}
+      placeholder={"Search"}
+    />,
+  );
   const inputElement = screen.getByTestId("hc-input-component");
   const inputAddonElement = screen.getByTestId("hc-input-addonBefore");
   const inputSuffixElement = screen.getByTestId("hc-input-suffix");
@@ -47,7 +54,15 @@ test("should render a HCInput component with addon before, prefix and suffix", (
 });
 
 test("should render a HCInput component with addon before, prefix, suffix and allow clear", () => {
-  render(<HCInput addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} allowClear placeholder={"Search"} />);
+  render(
+    <HCInput
+      addonBefore={"Addon Before"}
+      prefix={<FilePerson />}
+      suffix={<ArrowLeftCircleFill />}
+      allowClear
+      placeholder={"Search"}
+    />,
+  );
   const inputElement = screen.getByTestId("hc-input-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");
@@ -72,7 +87,9 @@ test("should click a HCInput component after click clean icon", () => {
 });
 
 test("should click a HCInput component with error and label", () => {
-  render(<HCInput allowClear placeholder={"Search"} error errorMessage={"You have an error, please check the content"} />);
+  render(
+    <HCInput allowClear placeholder={"Search"} error errorMessage={"You have an error, please check the content"} />,
+  );
   const inputElement = screen.getByTestId("hc-input-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");

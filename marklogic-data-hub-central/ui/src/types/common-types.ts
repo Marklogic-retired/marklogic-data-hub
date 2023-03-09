@@ -24,14 +24,14 @@ export enum ConfirmationType {
   PropertyName = "propertyName",
   DeleteConceptClass = "deleteConceptClass",
   DeleteConceptClassWithRelatedEntityTypes = "deleteConceptClassWithRelatedEntityTypes",
-  DeleteNotificationRow = "deleteNotificationRow"
+  DeleteNotificationRow = "deleteNotificationRow",
 }
 
 declare global {
   interface Window {
-    pendo: any,
-    usePendo: any,
-    graphVisApi: any,
-    graphVisExploreApi: any
+    pendo: any;
+    usePendo: any;
+    graphVisApi: any;
+    graphVisExploreApi: any;
   }
 }

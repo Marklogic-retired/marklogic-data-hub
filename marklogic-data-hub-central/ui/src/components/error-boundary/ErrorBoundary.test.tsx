@@ -11,12 +11,11 @@ describe("Error Boundary", () => {
     };
     const {getByTestId} = render(
       <MemoryRouter>
-        <ErrorBoundary >
+        <ErrorBoundary>
           <ThrowError />
         </ErrorBoundary>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     expect(getByTestId("errorScreen")).toBeVisible();
-
   });
 });

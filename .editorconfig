@@ -9,6 +9,10 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+[*.{jsx,ts,tsx}]
+indent_size = 2
+max_line_length = 120
+
 [*.sjs]
 indent_size = 2
 

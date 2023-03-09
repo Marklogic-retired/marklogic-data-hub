@@ -35,11 +35,10 @@ type Props = {
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
-  properties: []
+  properties: [],
 };
 
-const MergeRuleDialog: React.FC<Props> = (props) => {
-
+const MergeRuleDialog: React.FC<Props> = props => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
   const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
   const [mergeStrategyNames, setMergeStrategyNames] = useState<string[]>([]);
@@ -76,16 +75,21 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [deleteModalVisibility, toggleDeleteModalVisibility] = useState(false);
   const [priorityOrderTouched, setPriorityOrderTouched] = useState(false);
 
-  const titleLegend = <div className={styles.titleLegend}>
-    <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple</div>
-    <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured</div>
-  </div>;
+  const titleLegend = (
+    <div className={styles.titleLegend}>
+      <div data-testid="multipleIconLegend" className={styles.legendText}>
+        <img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple
+      </div>
+      <div data-testid="structuredIconLegend" className={styles.legendText}>
+        <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured
+      </div>
+    </div>
+  );
 
   const mergeTypes = ["Custom", "Strategy", "Property-specific"];
   const mergeTypeOptions = mergeTypes.map(elem => ({value: elem, label: elem}));
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => ({value: elem, label: elem}));
-
 
   useEffect(() => {
     if (props.createEditMergeRuleDialog) {
@@ -97,14 +101,20 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   }, [props.createEditMergeRuleDialog]);
 
-
   useEffect(() => {
-    if (!props.isEditRule && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
-      let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
+    if (
+      !props.isEditRule &&
+      curationOptions.entityDefinitionsArray.length > 0 &&
+      curationOptions.activeStep.entityName !== ""
+    ) {
+      let entityTypeDefinition: Definition =
+        curationOptions.entityDefinitionsArray.find(
+          entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName,
+        ) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
       let mergeStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
       let mergeStrategies: any[] = mergeStepArtifact.mergeStrategies || [];
-      setMergeStrategyNames(mergeStrategies.map((mergeStrategy) => mergeStrategy.strategyName));
+      setMergeStrategyNames(mergeStrategies.map(mergeStrategy => mergeStrategy.strategyName));
       resetModal();
     }
     if (props.isEditRule && props.propertyName.length) {
@@ -119,8 +129,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   }, [validationWarnings]);
 
-
-  const setFormDetails = (data) => {
+  const setFormDetails = data => {
     let mergeRulesData: any[] = data.mergeRules;
     for (let mergeRule of mergeRulesData) {
       if (props.propertyName === mergeRule.entityPropertyPath) {
@@ -185,7 +194,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
+  const updateMergeRuleItems = async (id, newValue, priorityOrderOptions: any[]) => {
     let editPriorityName = id.split(":")[1];
     for (let priorityOption of priorityOrderOptions) {
       let value = priorityOption.value;
@@ -202,11 +211,24 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const renderPriorityOrderTimeline = () => {
-    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} borderMargin="14px"/></div>;
+    return (
+      <div data-testid={"active-priorityOrder-timeline"}>
+        <TimelineVis
+          items={priorityOrderOptions}
+          options={strategyOptions}
+          clickHandler={onPriorityOrderTimelineItemClicked}
+          borderMargin="14px"
+        />
+      </div>
+    );
   };
 
   const renderDefaultPriorityOrderTimeline = () => {
-    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px"/></div>;
+    return (
+      <div data-testid={"default-priorityOrder-timeline"}>
+        <TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px" />
+      </div>
+    );
   };
 
   const timelineOrder = (a, b) => {
@@ -220,11 +242,11 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
       let bUpper = b.value.toUpperCase();
-      return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+      return aUpper < bUpper ? 1 : aUpper > bUpper ? -1 : 0;
     }
   };
 
-  const strategyOptions:any = {
+  const strategyOptions: any = {
     max: 120,
     min: -20,
     start: -20,
@@ -232,19 +254,19 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     width: "100%",
     itemsAlwaysDraggable: {
       item: displayPriorityOrderTimeline,
-      range: displayPriorityOrderTimeline
+      range: displayPriorityOrderTimeline,
     },
     selectable: false,
     editable: {
       remove: true,
-      updateTime: true
+      updateTime: true,
     },
     moveable: false,
     timeAxis: {
       scale: "millisecond",
-      step: 5
+      step: 5,
     },
-    onMove: function(item, callback) {
+    onMove: function (item, callback) {
       if (item.start >= 0 && item.start <= 100) {
         setPriorityOrderTouched(true);
         item.value = getStrategyName(item);
@@ -274,20 +296,30 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         }
       },
     },
-    template: function(item) {
+    template: function (item) {
       if (item && item.hasOwnProperty("value")) {
-        return "<div data-testid=\"strategy" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+        return (
+          "<div data-testid=\"strategy" +
+          " " +
+          item.value.split(":")[0] +
+          "\">" +
+          item.value.split(":")[0] +
+          "<div class=\"itemValue\">" +
+          item.value.split(":")[1] +
+          "</div></div>"
+        );
       }
     },
     maxMinorChars: 4,
-    order: timelineOrder
+    order: timelineOrder,
   };
 
-  const onPriorityOrderTimelineItemClicked = (event) => {
+  const onPriorityOrderTimelineItemClicked = event => {
     if (event.item && event.item.split(":")[0] !== "Timestamp") {
       toggleDeleteModalVisibility(true);
-      if (event.item.split(":")[0] === "Length" || event.item.split(":")[1] === "Length") setDeletePriorityName("Length");
-      else {
+      if (event.item.split(":")[0] === "Length" || event.item.split(":")[1] === "Length") {
+        setDeletePriorityName("Length");
+      } else {
         if (event.item.split(" - ")[0] === "Source") setDeletePriorityName(event.item.split(" - ")[1].split(":")[0]);
         else setDeletePriorityName(event.item.split(":")[1].split(" - ")[1]);
       }
@@ -295,7 +327,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const getStrategyName = (item) => {
+  const getStrategyName = item => {
     let strategyName = item.value.split(":")[0];
     let startTime;
     if (item.start === 100 || item.start === 1) {
@@ -303,7 +335,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     } else {
       startTime = item.start.getMilliseconds().toString();
     }
-    if ((strategyName !== "Length" && strategyName !== "Timestamp") && item.value.indexOf("Source - ") === -1) {
+    if (strategyName !== "Length" && strategyName !== "Timestamp" && item.value.indexOf("Source - ") === -1) {
       item.value = "Source - " + strategyName + ":" + startTime;
     } else {
       item.value = item.value.split(":")[0] + ":" + startTime;
@@ -405,10 +437,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const hasCustomFormValuesChanged = () => {
-    if (!uriTouched
-      && !functionValueTouched
-      && !namespaceTouched
-    ) {
+    if (!uriTouched && !functionValueTouched && !namespaceTouched) {
       return false;
     } else {
       return true;
@@ -424,17 +453,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const hasPropertySpecificFormValuesChanged = () => {
-    if (!dropdownOptionTouched
-      && !maxSourcesRuleInputTouched
-      && !maxValueRuleInputTouched
-    ) {
+    if (!dropdownOptionTouched && !maxSourcesRuleInputTouched && !maxValueRuleInputTouched) {
       return false;
     } else {
       return true;
     }
   };
 
-  const handleProperty = (value) => {
+  const handleProperty = value => {
     if (value === " ") {
       setPropertyTouched(false);
     } else {
@@ -443,7 +469,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleMergeType = (selectedItem) => {
+  const handleMergeType = selectedItem => {
     if (selectedItem.value === " ") {
       setMergeTypeTouched(false);
     } else {
@@ -452,7 +478,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleDropDownOptions = (selectedItem) => {
+  const handleDropDownOptions = selectedItem => {
     if (selectedItem.value === " ") {
       setDropdownOptionTouched(false);
     } else {
@@ -461,7 +487,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleStrategyNameOptions = (selectedItem) => {
+  const handleStrategyNameOptions = selectedItem => {
     if (!selectedItem.value || selectedItem.value === " ") {
       setStrategyValueTouched(false);
     } else {
@@ -470,7 +496,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "uri") {
       if (event.target.value === " ") {
         setUriTouched(false);
@@ -528,7 +554,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let mergeTypeErrorMessage = "";
@@ -548,14 +574,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       if (mergeType === "Custom") {
         if (uri && functionValue && property && mergeType) {
           setHandleSave(true);
-          newMergeRules =
-          {
+          newMergeRules = {
             "entityPropertyPath": selectedProperty,
             "mergeType": "custom",
             "mergeModulePath": uri,
             "mergeModuleNamespace": namespace,
             "mergeModuleFunction": functionValue,
-            "options": {}
+            "options": {},
           };
           onSave(newMergeRules);
         } else {
@@ -567,7 +592,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
           newMergeRules = {
             "entityPropertyPath": selectedProperty,
             "mergeType": "strategy",
-            "mergeStrategyName": strategyValue
+            "mergeStrategyName": strategyValue,
           };
           onSave(newMergeRules);
           setHandleSave(true);
@@ -581,7 +606,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             "mergeType": "property-specific",
             "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : "All",
             "maxValues": maxValueRuleInput ? maxValueRuleInput : "All",
-            "priorityOrder": parsePriorityOrder(priorityOrderOptions)
+            "priorityOrder": parsePriorityOrder(priorityOrderOptions),
           };
           onSave(newMergeRules);
           setHandleSave(true);
@@ -597,7 +622,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const onAddOptions = () => {
-    priorityOrderOptions.map((option) => {
+    priorityOrderOptions.map(option => {
       if (option.id.split(":")[0] === "Length" && dropdownOption === "Length") {
         setPriorityOrderTouched(false);
       } else setPriorityOrderTouched(true);
@@ -605,10 +630,10 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     setPriorityOrderOptions(addSliderOptions(priorityOrderOptions, dropdownOption));
   };
 
-  const onSave = async (newMergeRules) => {
+  const onSave = async newMergeRules => {
     let newStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
     let index = 0;
-    while (index < (newStepArtifact.mergeRules.length)) {
+    while (index < newStepArtifact.mergeRules.length) {
       let key = newStepArtifact.mergeRules[index];
       if (key.entityPropertyPath === props.propertyName && props.isEditRule) {
         break;
@@ -627,7 +652,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
       let warnings = await getMergingRulesWarnings(newStepArtifact, newMergeRules);
-      if (warnings !== undefined) { setValidationWarnings(warnings.data); }
+      if (warnings !== undefined) {
+        setValidationWarnings(warnings.data);
+      }
     }
   };
 
@@ -640,22 +667,24 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     resetTouched();
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-    labelNo="DiscardChangesNoButton"
-    labelYes="DiscardChangesYesButton"
-  />;
+  const discardChanges = (
+    <ConfirmYesNo
+      visible={discardChangesVisible}
+      type="discardChanges"
+      onYes={discardOk}
+      onNo={discardCancel}
+      labelNo="DiscardChangesNoButton"
+      labelYes="DiscardChangesYesButton"
+    />
+  );
 
-  const MenuList  = (props) => (
+  const MenuList = props => (
     <div id="mergeType-select-MenuList">
       <SelectComponents.MenuList {...props} />
     </div>
   );
 
-  const handleToggleCheck = (event) => {
+  const handleToggleCheck = event => {
     const {target, type, key} = event;
     if (type === "keydown") {
       if (key === "Enter") {
@@ -670,20 +699,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const mergeStrategyOptions = mergeStrategyNames.map(strategyName => ({value: strategyName, label: strategyName}));
 
   return (
-    <HCModal
-      show={props.createEditMergeRuleDialog}
-      size={"xl"}
-      onHide={onCancel}
-    >
+    <HCModal show={props.createEditMergeRuleDialog} size={"xl"} onHide={onCancel}>
       <Modal.Header>
-        <span className={"fs-5"}>
-          {props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
-        </span>
+        <span className={"fs-5"}>{props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
-        {validationWarnings && validationWarnings.length > 0 ? (
-          validationWarnings.map((warning, index) => {
+        {validationWarnings && validationWarnings.length > 0
+          ? validationWarnings.map((warning, index) => {
             let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
             return (
               <HCAlert
@@ -697,15 +720,22 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               </HCAlert>
             );
           })
-        ) : null}
-        <p>Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.</p>
+          : null}
+        <p>
+          Select the property and the merge type for this merge rule. When you select a structured type property, the
+          merge rule is applied to all the properties within that structured type property as well.
+        </p>
         {titleLegend}
         <br />
         <div className={styles.addMergeRuleForm}>
           <Form onSubmit={handleSubmit} className={"container-fluid"}>
             <Row className={"mb-3"}>
               <FormLabel column lg={3} htmlFor={"propertyName"}>
-                {<span aria-label="formItem-Property">Property:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                {
+                  <span aria-label="formItem-Property">
+                    Property:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                  </span>
+                }
               </FormLabel>
               <Col>
                 <Row>
@@ -737,12 +767,16 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             </Row>
             <Row className={"mb-3"}>
               <FormLabel column lg={3}>
-                {<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                {
+                  <span aria-label="formItem-MergeType">
+                    Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                  </span>
+                }
               </FormLabel>
               <Col>
                 <Row>
                   <Col className={mergeTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                    <div  className={styles.input}>
+                    <div className={styles.input}>
                       <Select
                         id="mergeType-select-wrapper"
                         inputId="mergeType"
@@ -756,11 +790,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         options={mergeTypeOptions}
                         styles={reactSelectThemeConfig}
                         formatOptionLabel={({value, label}) => {
-                          return (
-                            <span data-testid={`mergeTypeOptions-${value}`}>
-                              {label}
-                            </span>
-                          );
+                          return <span data-testid={`mergeTypeOptions-${value}`}>{label}</span>;
                         }}
                       />
                     </div>
@@ -771,15 +801,19 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 </Row>
               </Col>
             </Row>
-            {mergeType === "Custom" ?
+            {mergeType === "Custom" ? (
               <>
                 <Row className={"mb-3"}>
                   <FormLabel column lg={3}>
-                    {<span aria-label="formItem-URI">URI:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                    {
+                      <span aria-label="formItem-URI">
+                        URI:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                      </span>
+                    }
                   </FormLabel>
                   <Col>
                     <Row>
-                      <Col className={(uri || !uriTouched) ? "d-flex" : "d-flex has-error"}>
+                      <Col className={uri || !uriTouched ? "d-flex" : "d-flex has-error"}>
                         <HCInput
                           id="uri"
                           placeholder="Enter URI"
@@ -792,23 +826,33 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
-                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                            <QuestionCircleFill
+                              color={themeColors.defaults.questionCircle}
+                              className={styles.questionCircle}
+                              size={13}
+                              aria-label="icon: question-circle"
+                              tabIndex={0}
+                            />
                           </HCTooltip>
                         </div>
                       </Col>
                       <Col xs={12} className={styles.validationError}>
-                        {(uri || !uriTouched) ? "" : "URI is required"}
+                        {uri || !uriTouched ? "" : "URI is required"}
                       </Col>
                     </Row>
                   </Col>
                 </Row>
                 <Row className={"mb-3"}>
                   <FormLabel column lg={3}>
-                    {<span aria-label="formItem-function">Function:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                    {
+                      <span aria-label="formItem-function">
+                        Function:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                      </span>
+                    }
                   </FormLabel>
                   <Col>
                     <Row>
-                      <Col className={(functionValue || !functionValueTouched) ? "d-flex" : "d-flex has-error"}>
+                      <Col className={functionValue || !functionValueTouched ? "d-flex" : "d-flex has-error"}>
                         <HCInput
                           id="function"
                           placeholder="Enter function"
@@ -821,12 +865,18 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         />
                         <div className={"p-2 d-flex align-items-center"}>
                           <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
-                            <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                            <QuestionCircleFill
+                              color={themeColors.defaults.questionCircle}
+                              className={styles.questionCircle}
+                              size={13}
+                              aria-label="icon: question-circle"
+                              tabIndex={0}
+                            />
                           </HCTooltip>
                         </div>
                       </Col>
                       <Col xs={12} className={styles.validationError}>
-                        {(functionValue || !functionValueTouched) ? "" : "Function is required"}
+                        {functionValue || !functionValueTouched ? "" : "Function is required"}
                       </Col>
                     </Row>
                   </Col>
@@ -848,17 +898,29 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     />
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
                       </HCTooltip>
                     </div>
                   </Col>
                 </Row>
-              </> : ""
-            }
-            {mergeType === "Strategy" ?
+              </>
+            ) : (
+              ""
+            )}
+            {mergeType === "Strategy" ? (
               <Row className={"mb-3"}>
                 <FormLabel column lg={3}>
-                  {<span aria-label="formItem-strategyName">Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                  {
+                    <span aria-label="formItem-strategyName">
+                      Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+                    </span>
+                  }
                 </FormLabel>
                 <Col>
                   <Row>
@@ -876,11 +938,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                           options={mergeStrategyOptions}
                           styles={reactSelectThemeConfig}
                           formatOptionLabel={({value, label}) => {
-                            return (
-                              <span data-testid={`strategyNameOptions-${value}`}>
-                                {label}
-                              </span>
-                            );
+                            return <span data-testid={`strategyNameOptions-${value}`}>{label}</span>;
                           }}
                         />
                       </div>
@@ -891,12 +949,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   </Row>
                 </Col>
               </Row>
-              : ""
-            }
-            {mergeType === "Property-specific" ?
+            ) : (
+              ""
+            )}
+            {mergeType === "Property-specific" ? (
               <>
                 <Row className={"mb-3"}>
-                  <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
+                  <FormLabel column lg={3}>
+                    {"Max Values:"}
+                  </FormLabel>
                   <Col className={"d-flex align-items-center"}>
                     <Form.Check
                       inline
@@ -911,18 +972,40 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                       className={"mb-0 flex-shrink-0"}
                     />
                     <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"}>
-                      <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} aria-label="maxValuesOtherRadio"/>
-                      <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
+                      <Form.Check.Input
+                        type={"radio"}
+                        name={"maxValues"}
+                        onChange={handleChange}
+                        value={2}
+                        checked={radioValuesOptionClicked === 2}
+                        className={"me-2 flex-shrink-0"}
+                        aria-label="maxValuesOtherRadio"
+                      />
+                      <HCInput
+                        id="maxValuesRuleInput"
+                        value={maxValueRuleInput}
+                        placeholder={"Enter max values"}
+                        onChange={handleChange}
+                        className={styles.maxInput}
+                      />
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
                       </HCTooltip>
                     </div>
                   </Col>
                 </Row>
                 <Row className={"mb-3"}>
-                  <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
+                  <FormLabel column lg={3}>
+                    {"Max Sources:"}
+                  </FormLabel>
                   <Col className={"d-flex align-items-center"}>
                     <Form.Check
                       inline
@@ -937,21 +1020,48 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                       className={"mb-0 flex-shrink-0"}
                     />
                     <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"}>
-                      <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
-                      <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
+                      <Form.Check.Input
+                        type={"radio"}
+                        name={"maxSources"}
+                        onChange={handleChange}
+                        value={2}
+                        checked={radioSourcesOptionClicked === 2}
+                        className={"me-2 flex-shrink-0"}
+                        aria-label="maxSourcesOtherRadio"
+                      />
+                      <HCInput
+                        id="maxSourcesRuleInput"
+                        value={maxSourcesRuleInput}
+                        onChange={handleChange}
+                        placeholder={"Enter max sources"}
+                        className={styles.maxInput}
+                      />
                     </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
                       </HCTooltip>
                     </div>
                   </Col>
                 </Row>
                 <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
                   <div>
-                    <p className={styles.priorityText}>Priority Order
+                    <p className={styles.priorityText}>
+                      Priority Order
                       <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                        <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
                       </HCTooltip>
                     </p>
                   </div>
@@ -969,15 +1079,18 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         options={dropdownTypeOptions}
                         styles={reactSelectThemeConfig}
                         formatOptionLabel={({value, label}) => {
-                          return (
-                            <span data-testid={`dropdownTypeOptions-${value}`}>
-                              {label}
-                            </span>
-                          );
+                          return <span data-testid={`dropdownTypeOptions-${value}`}>{label}</span>;
                         }}
                       />
                     </div>
-                    <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
+                    <HCButton
+                      aria-label="add-slider-button"
+                      variant="primary"
+                      className={styles.addSliderButton}
+                      onClick={onAddOptions}
+                    >
+                      Add
+                    </HCButton>
                   </div>
                   <div>
                     <div className="d-flex pe-2 align-items-center">
@@ -989,24 +1102,48 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                         aria-label="mergeStrategy-scale-switch"
                         defaultChecked={false}
                         onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
-                        onKeyDown={(e) => { handleToggleCheck(e); }}
-                        className={styles.switchToggleMergeStrategy} />
+                        onKeyDown={e => {
+                          handleToggleCheck(e);
+                        }}
+                        className={styles.switchToggleMergeStrategy}
+                      />
                       <span>
                         <HCTooltip text={MergeRuleTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                          <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                          <QuestionCircleFill
+                            color={themeColors.defaults.questionCircle}
+                            className={styles.questionCircle}
+                            size={13}
+                            aria-label="icon: question-circle"
+                            tabIndex={0}
+                          />
                         </HCTooltip>
-                      </span></div>
-                    {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}
+                      </span>
+                    </div>
+                    {displayPriorityOrderTimeline
+                      ? renderPriorityOrderTimeline()
+                      : renderDefaultPriorityOrderTimeline()}
                   </div>
                 </div>
                 {deletePriorityModal}
-              </> : ""
-            }
+              </>
+            ) : (
+              ""
+            )}
             <Row className={`my-3 ${styles.submitButtonsForm}`}>
               <Col className={"d-flex"}>
                 <div className={styles.submitButtons}>
-                  <HCButton aria-label={"cancel-merge-rule"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-                  <HCButton aria-label={"confirm-merge-rule"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
+                  <HCButton aria-label={"cancel-merge-rule"} variant="outline-light" onClick={() => onCancel()}>
+                    Cancel
+                  </HCButton>
+                  &nbsp;&nbsp;
+                  <HCButton
+                    aria-label={"confirm-merge-rule"}
+                    id={"saveButton"}
+                    variant="primary"
+                    onClick={handleSubmit}
+                  >
+                    Save
+                  </HCButton>
                 </div>
               </Col>
             </Row>

@@ -6,10 +6,12 @@ class GraphExplore {
   getPositionsOfNodes(nodeIds?: any) {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
       let nodesList: any = !nodeIds ? null : nodeIds.split(",");
-      let nodePositionInCanvas = win.graphVisExploreApi.getNodePositions(nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
+      let nodePositionInCanvas = win.graphVisExploreApi.getNodePositions(
+        nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
       let nodePositionsInDOM: any = {};
       for (let nodeId in nodePositionInCanvas) {
-        nodePositionsInDOM[nodeId] = win.graphVisExploreApi.canvasToDOM(nodePositionInCanvas[nodeId].x, nodePositionInCanvas[nodeId].y);
+        nodePositionsInDOM[nodeId] = win.graphVisExploreApi.canvasToDOM(
+          nodePositionInCanvas[nodeId].x, nodePositionInCanvas[nodeId].y);
       }
       return nodePositionsInDOM;
     })));
@@ -18,7 +20,8 @@ class GraphExplore {
   nodeInCanvas(nodeIds?: any) {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
       let nodesList: any = !nodeIds ? null : nodeIds.split(",");
-      let nodePositionInCanvas: any = win.graphVisExploreApi.getNodePositions(nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
+      let nodePositionInCanvas: any = win.graphVisExploreApi.getNodePositions(
+        nodesList && nodesList.length === 1 ? nodesList[0] : nodesList);
       return nodePositionInCanvas;
     })));
   }

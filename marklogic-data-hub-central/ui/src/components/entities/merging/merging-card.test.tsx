@@ -20,7 +20,10 @@ jest.mock("react-router-dom", () => ({
 const entityModel = {model: customerEntityDef[0]["entityModel"].definitions};
 const defaultProps = {
   mergingStepsArray: mergingStepsArray,
-  flows: [{name: "customerJSONFlow", steps: [{stepName: "mergeCustomers"}, {stepName: "mergeCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "mergeCustomers123"}]}],
+  flows: [
+    {name: "customerJSONFlow", steps: [{stepName: "mergeCustomers"}, {stepName: "mergeCustomers123"}]},
+    {name: "customerXMLFlow", steps: [{stepName: "mergeCustomers123"}]},
+  ],
   entityName: customerEntityDef[0]["entityModel"].info.title,
   deleteMergingArtifact: jest.fn(),
   createMergingArtifact: jest.fn(),
@@ -29,18 +32,17 @@ const defaultProps = {
   entityModel: entityModel,
   canWriteFlow: true,
   addStepToFlow: jest.fn(),
-  addStepToNew: jest.fn()
+  addStepToNew: jest.fn(),
 };
 
 describe("Merging cards view component", () => {
-
   afterEach(() => {
     cleanup();
     jest.clearAllMocks();
   });
 
   it("can render merging steps with writeMatchMerge authority", async () => {
-    const deleteMergingArtifact = jest.fn(() => { });
+    const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByLabelText, getByTestId, queryAllByRole} = render(
       <Router>
         <MergingCard
@@ -58,7 +60,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByLabelText("icon: plus-circle")).toBeInTheDocument();
@@ -82,7 +84,7 @@ describe("Merging cards view component", () => {
   });
 
   it("cannot delete merging step without writeMatchMerge authority", async () => {
-    const deleteMergingArtifact = jest.fn(() => { });
+    const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} = render(
       <Router>
         <MergingCard
@@ -100,7 +102,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
@@ -126,7 +128,6 @@ describe("Merging cards view component", () => {
     userEvent.click(disabledDeleteIcon);
     expect(queryAllByText("Yes")).toHaveLength(0);
     expect(deleteMergingArtifact).not.toBeCalled();
-
   });
 
   it("can render/edit merge steps with writeMatchMerge authority", async () => {
@@ -148,7 +149,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByLabelText("icon: plus-circle")).toBeInTheDocument();
@@ -170,7 +171,8 @@ describe("Merging cards view component", () => {
   it("can add a step to a new flow", async () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -183,23 +185,28 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("mergeCustomers-step-label"));
 
-    await wait(() => { expect(getByTestId("mergeCustomers-toNewFlow")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByTestId("mergeCustomers-toNewFlow")).toBeInTheDocument();
+    });
     fireEvent.click(getByTestId("mergeCustomers-toNewFlow"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 
   it("can add/run a step in a new flow from run button", () => {
     const {getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -212,7 +219,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     fireEvent.click(getByTestId("mergeCustomersEmpty-run"));
@@ -220,13 +227,16 @@ describe("Merging cards view component", () => {
     userEvent.click(getByTestId("mergeCustomersEmpty-run-toNewFlow"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 
   it("can add a step to an existing flow", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -239,7 +249,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
@@ -254,13 +264,16 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByTestId("mergeCustomersEmpty-to-customerJSONFlow-Confirm"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 
   it("can run a step in an existing flow where step DOES NOT exist", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -273,7 +286,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
@@ -287,13 +300,16 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByTestId("customerJSONFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   it("can run a step in an existing flow where step DOES exist", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -306,7 +322,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("mergeCustomers")).toBeInTheDocument();
@@ -320,13 +336,16 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+    });
   });
 
   it("can run a step in an existing flow where step exists in MORE THAN ONE flow", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MergingCard {...defaultProps}
+        <MergingCard
+          {...defaultProps}
           mergingStepsArray={mergingStepsArray}
           flows={defaultProps.flows}
           entityName={defaultProps.entityName}
@@ -339,7 +358,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("mergeCustomers123")).toBeInTheDocument();
@@ -353,7 +372,9 @@ describe("Merging cards view component", () => {
     fireEvent.click(getByTestId("customerXMLFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   it("cannot edit merging step with ReadMatchMerge authority but the modal is enabled for view", async () => {
@@ -373,7 +394,7 @@ describe("Merging cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={jest.fn()}
         />
-      </Router>
+      </Router>,
     );
 
     // check if save button in edit modal is disabled
@@ -387,6 +408,8 @@ describe("Merging cards view component", () => {
     //open step details
     userEvent.click(getByTestId("mergeCustomers-stepDetails"));
 
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge");
+    });
   });
 });

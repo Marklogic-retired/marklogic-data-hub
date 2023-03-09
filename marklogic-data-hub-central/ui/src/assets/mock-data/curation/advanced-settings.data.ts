@@ -25,7 +25,7 @@ const advancedLoad = {
   isEditing: true,
   stepData: steps.stepLoad,
   activityType: "ingestion",
-  defaultCollections: [steps.stepLoad.name]
+  defaultCollections: [steps.stepLoad.name],
 };
 
 const advancedMapping = {
@@ -34,7 +34,7 @@ const advancedMapping = {
   stepData: steps.stepMapping,
   activityType: "mapping",
   defaultCollections: [steps.stepMapping.name, "EntityName"],
-  openStepDetails: jest.fn()
+  openStepDetails: jest.fn(),
 };
 
 const advancedMatching = {
@@ -44,7 +44,7 @@ const advancedMatching = {
   openAdvancedSettings: true,
   setOpenAdvancedSettings: jest.fn(),
   activityType: "matching",
-  defaultCollections: [steps.stepMatching.name]
+  defaultCollections: [steps.stepMatching.name],
 };
 
 const advancedMerging = {
@@ -54,7 +54,7 @@ const advancedMerging = {
   openAdvancedSettings: true,
   setOpenAdvancedSettings: jest.fn(),
   activityType: "merging",
-  defaultCollections: [steps.stepMerging.name]
+  defaultCollections: [steps.stepMerging.name],
 };
 
 const data = {
@@ -62,15 +62,16 @@ const data = {
   advancedMapping: advancedMapping,
   advancedMatching: advancedMatching,
   advancedMerging: advancedMerging,
-  advancedCustomLoad: {...advancedLoad,
+  advancedCustomLoad: {
+    ...advancedLoad,
     stepData: {
       ...steps.stepLoad,
       name: "CustomLoad",
       stepDefinitionType: "custom",
       stepDefinitionName: "custom-step",
       stepId: "CustomLoad-ingestion",
-    }
-  }
+    },
+  },
 };
 
 export default data;

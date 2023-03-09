@@ -7,10 +7,10 @@ const defaultUserData: UserContextInterface = {
   error: {
     title: "",
     message: "",
-    type: ""
+    type: "",
   },
   pageRoute: "/",
-  maxSessionTime: MAX_SESSION_TIME
+  maxSessionTime: MAX_SESSION_TIME,
 };
 
 const defaultUserContext: IUserContextInterface = {
@@ -23,7 +23,7 @@ const defaultUserContext: IUserContextInterface = {
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   resetSessionTime: jest.fn(),
-  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME)
+  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME),
 };
 
 export const userNotAuthenticated: IUserContextInterface = defaultUserContext;
@@ -33,11 +33,11 @@ export const userAuthenticated: IUserContextInterface = Object.assign(defaultUse
     name: "",
     authenticated: true,
     error: {
-      type: ""
+      type: "",
     },
     pageRoute: "/tiles",
-    maxSessionTime: MAX_SESSION_TIME
-  }
+    maxSessionTime: MAX_SESSION_TIME,
+  },
 });
 
 export const userSessionWarning: IUserContextInterface = {
@@ -47,10 +47,10 @@ export const userSessionWarning: IUserContextInterface = {
     error: {
       title: "",
       message: "",
-      type: ""
+      type: "",
     },
     pageRoute: "/",
-    maxSessionTime: MAX_SESSION_TIME
+    maxSessionTime: MAX_SESSION_TIME,
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
@@ -60,7 +60,7 @@ export const userSessionWarning: IUserContextInterface = {
   handleError: jest.fn(),
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
-  getSessionTime: jest.fn().mockReturnValue(29)
+  getSessionTime: jest.fn().mockReturnValue(29),
 };
 
 export const userModalError: IUserContextInterface = {
@@ -70,10 +70,10 @@ export const userModalError: IUserContextInterface = {
     error: {
       title: "500 Internal Server Error",
       message: "java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011",
-      type: "MODAL"
+      type: "MODAL",
     },
     pageRoute: "/",
-    maxSessionTime: MAX_SESSION_TIME
+    maxSessionTime: MAX_SESSION_TIME,
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
@@ -83,7 +83,7 @@ export const userModalError: IUserContextInterface = {
   handleError: jest.fn(),
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
-  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME)
+  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME),
 };
 
 export const userNoErrorNoSessionWarning: IUserContextInterface = {
@@ -93,10 +93,10 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
     error: {
       title: "",
       message: "",
-      type: ""
+      type: "",
     },
     pageRoute: "/",
-    maxSessionTime: MAX_SESSION_TIME
+    maxSessionTime: MAX_SESSION_TIME,
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
@@ -106,7 +106,7 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
   handleError: jest.fn(),
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
-  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME)
+  getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME),
 };
 
 export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
@@ -116,10 +116,10 @@ export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
     error: {
       title: "500 Internal Server Error",
       message: "java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011",
-      type: "MODAL"
+      type: "MODAL",
     },
     pageRoute: "/",
-    maxSessionTime: MAX_SESSION_TIME
+    maxSessionTime: MAX_SESSION_TIME,
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
@@ -129,5 +129,5 @@ export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   handleError: jest.fn(),
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
-  getSessionTime: jest.fn().mockReturnValue(29)
+  getSessionTime: jest.fn().mockReturnValue(29),
 };

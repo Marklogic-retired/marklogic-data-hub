@@ -1,7 +1,7 @@
 import React from "react";
 import {HCTooltip} from "@components/common";
 
-export const getExportPreview = (response) => {
+export const getExportPreview = response => {
   const tableColumns: Object[] = [];
   const tableData: Object[] = [];
   if (response) {
@@ -10,27 +10,30 @@ export const getExportPreview = (response) => {
         let header = response.split("\n")[0].split(",");
         header.forEach(e => {
           let prop = e.split(".")[e.split(".").length - 1];
-          tableColumns.push(
-            {
-              title: prop,
-              dataIndex: prop,
-              key: prop,
-              width: 180,
-              onCell: () => {
-                return {
-                  style: {
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"}
-                };
-              },
-              render: (text) => <HCTooltip text={text} id="export-preview-prop-tooltip" placement="top"><span>{text}</span></HCTooltip>
-            }
-          );
+          tableColumns.push({
+            title: prop,
+            dataIndex: prop,
+            key: prop,
+            width: 180,
+            onCell: () => {
+              return {
+                style: {
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
+              };
+            },
+            render: text => (
+              <HCTooltip text={text} id="export-preview-prop-tooltip" placement="top">
+                <span>{text}</span>
+              </HCTooltip>
+            ),
+          });
         });
       } else {
         let i = 0;
-        let rowObject: { [c: string]: any } = {key: index};
+        let rowObject: {[c: string]: any} = {key: index};
         let splittedRow = row.split(",");
         tableColumns.forEach(col => {
           rowObject[col["dataIndex"]] = splittedRow[i++];

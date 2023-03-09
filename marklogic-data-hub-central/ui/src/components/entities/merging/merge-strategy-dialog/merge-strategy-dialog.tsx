@@ -25,8 +25,7 @@ type Props = {
   toggleIsEditStrategy: (isEditStrategy: boolean) => void;
 };
 
-const MergeStrategyDialog: React.FC<Props> = (props) => {
-
+const MergeStrategyDialog: React.FC<Props> = props => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
   const [strategyName, setStrategyName] = useState("");
   const [strategyNameTouched, setStrategyNameTouched] = useState(false);
@@ -54,7 +53,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => ({value: elem, label: elem}));
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "strategy-name") {
       if (event.target.value === " ") {
         setStrategyNameTouched(false);
@@ -100,8 +99,13 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const displayErrorMessage = (strategy) => {
-    const defaultStrategyErrorMsg = <span aria-label="default-strategy-error">The default strategy is already set to <strong>{strategy}</strong>. You must first go to that strategy and unselect it as a default.</span>;
+  const displayErrorMessage = strategy => {
+    const defaultStrategyErrorMsg = (
+      <span aria-label="default-strategy-error">
+        The default strategy is already set to <strong>{strategy}</strong>. You must first go to that strategy and
+        unselect it as a default.
+      </span>
+    );
     setDefaultStrategyErrorMessage(defaultStrategyErrorMsg);
   };
 
@@ -109,8 +113,12 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     let strategies = curationOptions.activeStep.stepArtifact.mergeStrategies;
     let existingDefault;
     if (strategies) {
-      strategies.map((obj) => {
-        if (obj.hasOwnProperty("default") && obj.default === true && !(props.isEditStrategy && obj.strategyName === strategyName)) {
+      strategies.map(obj => {
+        if (
+          obj.hasOwnProperty("default") &&
+          obj.default === true &&
+          !(props.isEditStrategy && obj.strategyName === strategyName)
+        ) {
           existingDefault = obj.strategyName;
         }
       });
@@ -120,16 +128,16 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleDropDownOptions = (selectedItem) => {
+  const handleDropDownOptions = selectedItem => {
     setDropdownOption(selectedItem.value);
     setDropdownOptionTouched(true);
   };
 
-  const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
+  const updateMergeRuleItems = async (id, newValue, priorityOrderOptions: any[]) => {
     let editPriorityName = id.split(":")[0];
     for (let priority of priorityOrderOptions) {
       let id2 = priority.id;
-      let priorityName  = id2.split(":")[0];
+      let priorityName = id2.split(":")[0];
       if (priorityName === editPriorityName) {
         let name = priorityName + ":" + parseInt(newValue);
         priority.start = parseInt(newValue);
@@ -140,11 +148,24 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const renderPriorityOrderTimeline = () => {
-    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} borderMargin="14px"/></div>;
+    return (
+      <div data-testid={"active-priorityOrder-timeline"}>
+        <TimelineVis
+          items={priorityOrderOptions}
+          options={strategyOptions}
+          clickHandler={onPriorityOrderTimelineItemClicked}
+          borderMargin="14px"
+        />
+      </div>
+    );
   };
 
   const renderDefaultPriorityOrderTimeline = () => {
-    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px"/></div>;
+    return (
+      <div data-testid={"default-priorityOrder-timeline"}>
+        <TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px" />
+      </div>
+    );
   };
 
   const timelineOrder = (a, b) => {
@@ -158,11 +179,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
       let bUpper = b.value.toUpperCase();
-      return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+      return aUpper < bUpper ? 1 : aUpper > bUpper ? -1 : 0;
     }
   };
 
-  const strategyOptions:any = {
+  const strategyOptions: any = {
     max: 120,
     min: -20,
     start: -20,
@@ -170,19 +191,19 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     width: "100%",
     itemsAlwaysDraggable: {
       item: displayPriorityOrderTimeline,
-      range: displayPriorityOrderTimeline
+      range: displayPriorityOrderTimeline,
     },
     selectable: false,
     editable: {
       remove: true,
-      updateTime: true
+      updateTime: true,
     },
     moveable: false,
     timeAxis: {
       scale: "millisecond",
-      step: 5
+      step: 5,
     },
-    onMove: function(item, callback) {
+    onMove: function (item, callback) {
       setPriorityOrderTouched(true);
       if (item.start >= 0 && item.start <= 100) {
         item.value = getStrategyName(item);
@@ -212,13 +233,22 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         }
       },
     },
-    template: function(item) {
+    template: function (item) {
       if (item && item.hasOwnProperty("value")) {
-        return "<div data-testid=\"strategy" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+        return (
+          "<div data-testid=\"strategy" +
+          " " +
+          item.value.split(":")[0] +
+          "\">" +
+          item.value.split(":")[0] +
+          "<div class=\"itemValue\">" +
+          item.value.split(":")[1] +
+          "</div></div>"
+        );
       }
     },
     maxMinorChars: 4,
-    order: timelineOrder
+    order: timelineOrder,
   };
 
   const confirmAction = () => {
@@ -236,8 +266,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     />
   );
 
-
-  const onPriorityOrderTimelineItemClicked = (event) => {
+  const onPriorityOrderTimelineItemClicked = event => {
     if (event.item && event.item.split(":")[0] !== "Timestamp") {
       toggleDeleteModalVisibility(true);
       if (event.item.split(":")[0] === "Length") setDeletePriorityName("Length");
@@ -246,7 +275,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     let strategyNameErrorMessage = "";
     if (strategyName === "" || strategyName === undefined) {
@@ -259,7 +288,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         "maxSources": maxSources ? maxSources : "All",
         "maxValues": maxValues ? maxValues : "All",
         "priorityOrder": parsePriorityOrder(priorityOrderOptions),
-        "default": radioDefaultOptionClicked === 1 ? true : false
+        "default": radioDefaultOptionClicked === 1 ? true : false,
       };
       onSave(newMergeStrategies);
       props.setOpenEditMergeStrategyDialog(false);
@@ -268,8 +297,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const onAddOptions = () => {
-    const data = (addSliderOptions(priorityOrderOptions, dropdownOption));
-    priorityOrderOptions.map((option) => {
+    const data = addSliderOptions(priorityOrderOptions, dropdownOption);
+    priorityOrderOptions.map(option => {
       if (option.id.split(":")[0] === "Length" && dropdownOption === "Length") {
         setPriorityOrderTouched(false);
       } else setPriorityOrderTouched(true);
@@ -277,7 +306,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     setPriorityOrderOptions(data);
   };
 
-  const getStrategyName = (item) => {
+  const getStrategyName = item => {
     let strategyName = item.value.split(":")[0];
     let startTime;
     if (item.start === 100 || item.start === 1) {
@@ -285,7 +314,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     } else {
       startTime = item.start.getMilliseconds().toString();
     }
-    if ((strategyName !== "Length" && strategyName !== "Timestamp") && item.value.indexOf("Source - ") === -1) {
+    if (strategyName !== "Length" && strategyName !== "Timestamp" && item.value.indexOf("Source - ") === -1) {
       item.value = "Source - " + strategyName + ":" + startTime;
     } else {
       item.value = item.value.split(":")[0] + ":" + startTime;
@@ -293,10 +322,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     return item.value;
   };
 
-  const onSave = async (newMergeStrategies) => {
+  const onSave = async newMergeStrategies => {
     let newStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
     let index = 0;
-    while (index < (newStepArtifact.mergeStrategies.length)) {
+    while (index < newStepArtifact.mergeStrategies.length) {
       let key = newStepArtifact.mergeStrategies[index];
       if (key.strategyName === props.strategyName && props.isEditStrategy) {
         break;
@@ -329,12 +358,13 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    if (!dropdownOptionTouched
-      && !strategyNameTouched
-      && !defaultStrategyTouched
-      && !priorityOrderTouched
-      && !maxValuesTouched
-      && !maxSourcesTouched
+    if (
+      !dropdownOptionTouched &&
+      !strategyNameTouched &&
+      !defaultStrategyTouched &&
+      !priorityOrderTouched &&
+      !maxValuesTouched &&
+      !maxSourcesTouched
     ) {
       return false;
     } else {
@@ -376,14 +406,16 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     resetTouched();
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-    labelNo="DiscardChangesNoButton"
-    labelYes="DiscardChangesYesButton"
-  />;
+  const discardChanges = (
+    <ConfirmYesNo
+      visible={discardChangesVisible}
+      type="discardChanges"
+      onYes={discardOk}
+      onNo={discardCancel}
+      labelNo="DiscardChangesNoButton"
+      labelYes="DiscardChangesYesButton"
+    />
+  );
 
   useEffect(() => {
     if (props.strategyName.length === 0) {
@@ -401,7 +433,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   }, [props.strategyName, curationOptions, props.isEditStrategy, props.sourceNames]);
 
   let priorityOrderStrategyOptions: any[] = [defaultPriorityOption];
-  const parsedEditedFormDetails = (data) => {
+  const parsedEditedFormDetails = data => {
     let mergeStrategiesData: any[] = data.mergeStrategies;
     for (let key of mergeStrategiesData) {
       if (props.strategyName === key.strategyName) {
@@ -409,7 +441,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           if (key.priorityOrder.hasOwnProperty("timeWeight")) {
             const priorityOrderTimeObject = {
               id: "Timestamp:" + key.priorityOrder.timeWeight.toString(),
-              value: "Timestamp:" +  key.priorityOrder.timeWeight.toString(),
+              value: "Timestamp:" + key.priorityOrder.timeWeight.toString(),
               start: key.priorityOrder.timeWeight,
             };
             priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
@@ -419,7 +451,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               const priorityOrderSourceObject = {
                 id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
                 start: key1.weight,
-                value: "Source - "  + key1.sourceName + ":" + key1.weight.toString(),
+                value: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
               };
               priorityOrderStrategyOptions.push(priorityOrderSourceObject);
             }
@@ -427,7 +459,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           if (key.priorityOrder.hasOwnProperty("lengthWeight")) {
             const priorityOrderLengthObject = {
               id: "Length:" + key.priorityOrder.lengthWeight.toString(),
-              value: "Length:" +  key.priorityOrder.lengthWeight.toString(),
+              value: "Length:" + key.priorityOrder.lengthWeight.toString(),
               start: key.priorityOrder.lengthWeight,
             };
             priorityOrderStrategyOptions.push(priorityOrderLengthObject);
@@ -466,7 +498,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleToggleCheck = (event) => {
+  const handleToggleCheck = event => {
     const {target, type, key} = event;
     if (type === "keydown") {
       if (key === "Enter") {
@@ -479,24 +511,18 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={props.createEditMergeStrategyDialog}
-      size={"xl"}
-      onHide={onCancel}
-    >
+    <HCModal show={props.createEditMergeStrategyDialog} size={"xl"} onHide={onCancel}>
       <Modal.Header>
-        <span className={"fs-5"}>
-          {props.isEditStrategy ? "Edit Strategy" : "Add Strategy"}
-        </span>
+        <span className={"fs-5"}>{props.isEditStrategy ? "Edit Strategy" : "Add Strategy"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
-        <Form
-          name="basic"
-          className={"container-fluid"}
-        >
+        <Form name="basic" className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Strategy Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Strategy Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={strategyNameErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -514,7 +540,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3 justify-content-center"}>
-            <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Max Values:"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <Form.Check
                 inline
@@ -529,16 +557,37 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 className={"mb-0 flex-shrink-0"}
               />
               <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"}>
-                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
-                <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
+                <Form.Check.Input
+                  type={"radio"}
+                  name={"maxValues"}
+                  onChange={handleChange}
+                  value={2}
+                  aria-label="maxValuesOtherRadio"
+                  checked={radioValuesOptionClicked === 2}
+                  className={"me-2 flex-shrink-0"}
+                />
+                <HCInput
+                  id="maxValuesStrategyInput"
+                  value={maxValues}
+                  placeholder={"Enter max values"}
+                  onChange={handleChange}
+                />
                 <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle" tabIndex={0} />
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={`flex-shrink-0 ${styles.questionCircle}`}
+                    size={13}
+                    aria-label="icon: question-circle"
+                    tabIndex={0}
+                  />
                 </HCTooltip>
               </Form.Check>
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Max Sources:"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <Form.Check
                 inline
@@ -553,16 +602,37 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 className={"mb-0 flex-shrink-0"}
               />
               <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"}>
-                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
-                <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
+                <Form.Check.Input
+                  type={"radio"}
+                  name={"maxSources"}
+                  onChange={handleChange}
+                  value={2}
+                  checked={radioSourcesOptionClicked === 2}
+                  className={"me-2 flex-shrink-0"}
+                  aria-label="maxSourcesOtherRadio"
+                />
+                <HCInput
+                  id="maxSourcesStrategyInput"
+                  value={maxSources}
+                  onChange={handleChange}
+                  placeholder={"Enter max sources"}
+                />
                 <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    className={`flex-shrink-0 ${styles.questionCircle}`}
+                    size={13}
+                    aria-label="icon: question-circle"
+                    tabIndex={0}
+                  />
                 </HCTooltip>
               </Form.Check>
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Default Strategy?"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Default Strategy?"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <Row>
                 <Col className={defaultStrategyErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -591,7 +661,13 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     className={"mb-0 flex-shrink-0"}
                   />
                   <HCTooltip text={MergingStepTooltips.defaultStrategy} id="default-strategy-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" className={`flex-shrink-1 ${styles.questionCircleDefault}`} size={13} aria-label="icon: question-circle" tabIndex={0}/>
+                    <QuestionCircleFill
+                      color="#7F86B5"
+                      className={`flex-shrink-1 ${styles.questionCircleDefault}`}
+                      size={13}
+                      aria-label="icon: question-circle"
+                      tabIndex={0}
+                    />
                   </HCTooltip>
                 </Col>
                 <Col xs={12} className={styles.validationError}>
@@ -600,65 +676,96 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               </Row>
             </Col>
           </Row>
-          {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
-            <div>
-              <p className={`d-flex align-items-center ${styles.priorityText}`}>
-                Priority Order
-                <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} aria-label="icon: question-circle" tabIndex={0}/>
-                </HCTooltip>
-              </p>
-            </div>
-            <div className={styles.addButtonContainer}>
-              <div style={{width: "150px"}}>
-                <Select
-                  id="dropdownOptions-select-wrapper"
-                  inputId="dropdownOptions"
-                  placeholder=""
-                  value={dropdownTypeOptions.find(oItem => oItem.value === dropdownOption)}
-                  onChange={handleDropDownOptions}
-                  openMenuOnFocus={true}
-                  // isDisabled={!canWriteMatchMerge} //this was commented in previous version changed property but keep commented
-                  aria-label="dropdownOptions-select"
-                  options={dropdownTypeOptions}
-                  styles={reactSelectThemeConfig}
-                  formatOptionLabel={({value, label}) => {
-                    return (
-                      <span aria-label={`option-${value}`}>
-                        {label}
-                      </span>
-                    );
-                  }}
-                />
-              </div>
-              <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
-            </div>
-            <div>
-              <div className="d-flex align-items-center">
-                <span className={styles.enableStrategySwitch}>
-                  <b>Enable Priority Order Scale </b>
-                </span>
-                <FormCheck
-                  type="switch"
-                  aria-label="mergeStrategy-scale-switch"
-                  defaultChecked={false}
-                  onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
-                  onKeyDown={(e) => { handleToggleCheck(e); }}
-                  className={styles.switchToggleMergeStrategy} />
-                <span>
-                  <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                    <QuestionCircleFill color={themeColors.defaults.questionCircle} className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle" tabIndex={0} />
+          {!isCustomStrategy && (
+            <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
+              <div>
+                <p className={`d-flex align-items-center ${styles.priorityText}`}>
+                  Priority Order
+                  <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
+                    <QuestionCircleFill
+                      color={themeColors.defaults.questionCircle}
+                      className={styles.questionCircle}
+                      size={13}
+                      aria-label="icon: question-circle"
+                      tabIndex={0}
+                    />
                   </HCTooltip>
-                </span></div>
-              {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}
+                </p>
+              </div>
+              <div className={styles.addButtonContainer}>
+                <div style={{width: "150px"}}>
+                  <Select
+                    id="dropdownOptions-select-wrapper"
+                    inputId="dropdownOptions"
+                    placeholder=""
+                    value={dropdownTypeOptions.find(oItem => oItem.value === dropdownOption)}
+                    onChange={handleDropDownOptions}
+                    openMenuOnFocus={true}
+                    // isDisabled={!canWriteMatchMerge} //this was commented in previous version changed property but keep commented
+                    aria-label="dropdownOptions-select"
+                    options={dropdownTypeOptions}
+                    styles={reactSelectThemeConfig}
+                    formatOptionLabel={({value, label}) => {
+                      return <span aria-label={`option-${value}`}>{label}</span>;
+                    }}
+                  />
+                </div>
+                <HCButton
+                  aria-label="add-slider-button"
+                  variant="primary"
+                  className={styles.addSliderButton}
+                  onClick={onAddOptions}
+                >
+                  Add
+                </HCButton>
+              </div>
+              <div>
+                <div className="d-flex align-items-center">
+                  <span className={styles.enableStrategySwitch}>
+                    <b>Enable Priority Order Scale </b>
+                  </span>
+                  <FormCheck
+                    type="switch"
+                    aria-label="mergeStrategy-scale-switch"
+                    defaultChecked={false}
+                    onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
+                    onKeyDown={e => {
+                      handleToggleCheck(e);
+                    }}
+                    className={styles.switchToggleMergeStrategy}
+                  />
+                  <span>
+                    <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
+                      <QuestionCircleFill
+                        color={themeColors.defaults.questionCircle}
+                        className={`${styles.questionCircle} ms-0`}
+                        size={13}
+                        aria-label="icon: question-circle"
+                        tabIndex={0}
+                      />
+                    </HCTooltip>
+                  </span>
+                </div>
+                {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}
+              </div>
             </div>
-          </div>}
+          )}
           {deletePriorityModal}
           <Row className={`my-3 ${styles.submitButtonsForm}`}>
             <Col className={"d-flex"}>
               <div className={styles.submitButtons}>
-                <HCButton aria-label={"cancel-merge-strategy"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-                <HCButton aria-label={"confirm-merge-strategy"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
+                <HCButton aria-label={"cancel-merge-strategy"} variant="outline-light" onClick={() => onCancel()}>
+                  Cancel
+                </HCButton>
+                &nbsp;&nbsp;
+                <HCButton
+                  aria-label={"confirm-merge-strategy"}
+                  id={"saveButton"}
+                  variant="primary"
+                  onClick={handleSubmit}
+                >
+                  Save
+                </HCButton>
               </div>
             </Col>
           </Row>

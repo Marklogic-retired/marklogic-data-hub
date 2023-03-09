@@ -14,14 +14,13 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
   const [isEventValid, setIsEventValid] = useState(false);
   const colorRef: any = useRef();
 
-  const handleOuterClick = useCallback(
-    e => {
-      if (colorRef.current && !colorRef.current.contains(e.target)) {
-        // Clicked outside the color picker menu
-        setIsVisible(prev => false);
-        setIsEventValid(prev => false);
-      }
-    }, []);
+  const handleOuterClick = useCallback(e => {
+    if (colorRef.current && !colorRef.current.contains(e.target)) {
+      // Clicked outside the color picker menu
+      setIsVisible(prev => false);
+      setIsEventValid(prev => false);
+    }
+  }, []);
 
   useEffect(() => {
     if (isEventValid) {
@@ -32,7 +31,7 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
     };
   });
 
-  const handleEditColorMenu = (e) => {
+  const handleEditColorMenu = e => {
     if (e?.target?.tagName.toLowerCase() === "input") {
       setIsVisible(prev => true);
     } else {
@@ -46,24 +45,42 @@ const EntityTypeColorPicker: React.FC<Props> = ({entityType, color, handleColorC
     handleColorChange(row, event, column);
   };
 
-  return <div className={"m-auto d-inline-block"}>
-    <div tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") { handleEditColorMenu(e); } else if (e.key === "Escape") { handleEditColorMenu(e); e.preventDefault(); }
-      }}
-      className={`${styles.colorPickerBorder} cursor-pointer`}
-      onClick={handleEditColorMenu} id={`${entityType}-color-button`}
-      data-testid={`${entityType}-color-button`} aria-label={`${entityType}-color-button`}
-      data-color={color}>
-      <div data-testid={`${entityType}-color`} style={{width: "32px", height: "30px", background: color, margin: "8px"}} />
-      {isVisible ?
-        <div ref={colorRef} id={`${entityType}-color-picker-menu`}
-          aria-label={`${entityType}-color-picker-menu`} className={styles.colorPickerContainer}>
-          <TwitterPicker colors={graphConfig.colorOptionsArray} color={color} onChangeComplete={handleChange} />
-        </div> : null
-      }
+  return (
+    <div className={"m-auto d-inline-block"}>
+      <div
+        tabIndex={0}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleEditColorMenu(e);
+          } else if (e.key === "Escape") {
+            handleEditColorMenu(e);
+            e.preventDefault();
+          }
+        }}
+        className={`${styles.colorPickerBorder} cursor-pointer`}
+        onClick={handleEditColorMenu}
+        id={`${entityType}-color-button`}
+        data-testid={`${entityType}-color-button`}
+        aria-label={`${entityType}-color-button`}
+        data-color={color}
+      >
+        <div
+          data-testid={`${entityType}-color`}
+          style={{width: "32px", height: "30px", background: color, margin: "8px"}}
+        />
+        {isVisible ? (
+          <div
+            ref={colorRef}
+            id={`${entityType}-color-picker-menu`}
+            aria-label={`${entityType}-color-picker-menu`}
+            className={styles.colorPickerContainer}
+          >
+            <TwitterPicker colors={graphConfig.colorOptionsArray} color={color} onChangeComplete={handleChange} />
+          </div>
+        ) : null}
+      </div>
     </div>
-  </div>;
+  );
 };
 
 export default EntityTypeColorPicker;

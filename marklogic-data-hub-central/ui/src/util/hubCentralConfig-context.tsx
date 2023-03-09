@@ -8,9 +8,9 @@ import {getRelatedConcepts} from "@api/facets";
 
 const defaultContextOptions = {
   hubCentralConfig: {},
-  setHubCentralConfig: () => { },
-  getHubCentralConfigFromServer: () => { },
-  updateHubCentralConfigOnServer: () => { },
+  setHubCentralConfig: () => {},
+  getHubCentralConfigFromServer: () => {},
+  updateHubCentralConfigOnServer: () => {},
 };
 
 interface HubCentralConfigContextInterface {
@@ -20,9 +20,9 @@ interface HubCentralConfigContextInterface {
   updateHubCentralConfigOnServer: (config: any) => void;
 }
 
-export const HubCentralConfigContext = React.createContext<HubCentralConfigContextInterface>(
-  {...defaultContextOptions}
-);
+export const HubCentralConfigContext = React.createContext<HubCentralConfigContextInterface>({
+  ...defaultContextOptions,
+});
 
 const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
   const {handleError} = useContext(UserContext);
@@ -40,34 +40,43 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
           const updatedHubCentralConfig: any = defaultHubCentralConfig;
           const defaultNodesData = {
             color: themeColors.defaults.entityColor,
-            icon: defaultIcon
+            icon: defaultIcon,
           };
           responsePrimaryEntityTypes.data.forEach(model => {
             let isConcept = model.hasOwnProperty("conceptName");
             let nodeName = !isConcept ? model.entityName : model.conceptName;
-            updatedHubCentralConfig["modeling"][!isConcept ? "entities" : "concepts"][nodeName] = Object.assign({}, defaultNodesData);
+            updatedHubCentralConfig["modeling"][!isConcept ? "entities" : "concepts"][nodeName] = Object.assign(
+              {},
+              defaultNodesData,
+            );
           });
 
           const defaultConceptsData = {
             color: themeColors.defaults.conceptColor,
-            icon: defaultConceptIcon
+            icon: defaultConceptIcon,
           };
 
-          mockConcepts.data.entitites.forEach(
-            ({relatedConcepts}) => relatedConcepts.forEach(({conceptClass, conceptIRI}
-            ) => {
+          mockConcepts.data.entitites.forEach(({relatedConcepts}) =>
+            relatedConcepts.forEach(({conceptClass, conceptIRI}) => {
               const semanticConcept = conceptIRI.split("/").pop();
               if (!updatedHubCentralConfig["modeling"]["concepts"][conceptClass]) {
-                updatedHubCentralConfig["modeling"]["concepts"][conceptClass] = Object.assign({semanticConcepts: {}}, defaultConceptsData);
+                updatedHubCentralConfig["modeling"]["concepts"][conceptClass] = Object.assign(
+                  {semanticConcepts: {}},
+                  defaultConceptsData,
+                );
               }
               if (semanticConcept) {
                 if (updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts) {
-                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass]["semanticConcepts"][semanticConcept] = Object.assign({}, defaultConceptsData);
+                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass]["semanticConcepts"][semanticConcept] =
+                    Object.assign({}, defaultConceptsData);
                 } else {
-                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts = {[semanticConcept]: {...defaultConceptsData}};
+                  updatedHubCentralConfig["modeling"]["concepts"][conceptClass].semanticConcepts = {
+                    [semanticConcept]: {...defaultConceptsData},
+                  };
                 }
               }
-            }));
+            }),
+          );
           setConfig(updatedHubCentralConfig);
         }
       }
@@ -77,7 +86,7 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
     }
   };
 
-  const updateHubCentralConfigOnServer = async (payload) => {
+  const updateHubCentralConfigOnServer = async payload => {
     try {
       const response = await updateHubCentralConfig(payload);
       if (response["status"] === 200) {
@@ -89,17 +98,19 @@ const HubCentralConfigProvider: React.FC<{children: any}> = ({children}) => {
     }
   };
 
-  const setHubCentralConfig = (config) => {
+  const setHubCentralConfig = config => {
     setConfig(config);
   };
 
   return (
-    <HubCentralConfigContext.Provider value={{
-      hubCentralConfig,
-      setHubCentralConfig,
-      getHubCentralConfigFromServer,
-      updateHubCentralConfigOnServer
-    }}>
+    <HubCentralConfigContext.Provider
+      value={{
+        hubCentralConfig,
+        setHubCentralConfig,
+        getHubCentralConfigFromServer,
+        updateHubCentralConfigOnServer,
+      }}
+    >
       {children}
     </HubCentralConfigContext.Provider>
   );

@@ -20,7 +20,14 @@ interface Props {
   entityTypeId: any;
   propertyPath: any;
   maxQuantityOnFacets?: number;
-  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?: boolean, toDeleteAll?: boolean) => void;
+  updateSelectedFacets: (
+    constraint: string,
+    vals: string[],
+    datatype: string,
+    isNested: boolean,
+    toDelete?: boolean,
+    toDeleteAll?: boolean,
+  ) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
   isTooltipVisible?: {
     baseEntities?: boolean;
@@ -41,24 +48,23 @@ interface Props {
   isEntitySpecific?: boolean;
 }
 
-const Facet: React.FC<Props> = (
-  {
-    name,
-    facetType,
-    facetCategory,
-    facetValues,
-    constraint,
-    tooltip,
-    referenceType,
-    entityTypeId,
-    updateSelectedFacets,
-    addFacetValues,
-    propertyPath,
-    maxQuantityOnFacets,
-    isTooltipVisible = {},
-    onFocusHandlerTooltip = (e, name) => {},
-    onLostFocusEventHandlerTooltip = (e, name) => {},
-  }) => {
+const Facet: React.FC<Props> = ({
+  name,
+  facetType,
+  facetCategory,
+  facetValues,
+  constraint,
+  tooltip,
+  referenceType,
+  entityTypeId,
+  updateSelectedFacets,
+  addFacetValues,
+  propertyPath,
+  maxQuantityOnFacets,
+  isTooltipVisible = {},
+  onFocusHandlerTooltip = (e, name) => {},
+  onLostFocusEventHandlerTooltip = (e, name) => {},
+}) => {
   const SHOW_MINIMUM = 3;
   const SEARCH_MINIMUM = 20;
 
@@ -70,7 +76,7 @@ const Facet: React.FC<Props> = (
 
   let checkedFacets: any[] = [];
 
-  const setCheckedOptions = (selectedOptions) => {
+  const setCheckedOptions = selectedOptions => {
     let facetName: string = "";
     if (selectedOptions.selectedFacets.hasOwnProperty(constraint)) {
       facetName = constraint;
@@ -78,7 +84,9 @@ const Facet: React.FC<Props> = (
       facetName = propertyPath;
     }
     if (facetName) {
-      if (searchOptions.selectedFacets.length === 0) { setChecked([]); }
+      if (searchOptions.selectedFacets.length === 0) {
+        setChecked([]);
+      }
       for (let facet in selectedOptions.selectedFacets) {
         if (facet === facetName) {
           let valueType = "";
@@ -101,30 +109,42 @@ const Facet: React.FC<Props> = (
   };
 
   useEffect(() => {
-    if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (
+      Object.entries(searchOptions.selectedFacets).length !== 0 &&
+      searchOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
       setCheckedOptions(searchOptions);
-    } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(constraint)))) {
+    } else if (
+      Object.entries(greyedOptions.selectedFacets).length === 0 ||
+      !greyedOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
       setChecked([]);
     }
   }, [searchOptions]);
 
   useEffect(() => {
-    if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (
+      Object.entries(greyedOptions.selectedFacets).length !== 0 &&
+      greyedOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
       setCheckedOptions(greyedOptions);
-    } else { setCheckedOptions(searchOptions); }
+    } else {
+      setCheckedOptions(searchOptions);
+    }
   }, [greyedOptions]);
 
-  const checkFacetValues = (checkedValues) => {
+  const checkFacetValues = checkedValues => {
     let updatedChecked = [...checked];
     for (let value of checkedValues) {
-      if (updatedChecked.indexOf(value) === -1) { updatedChecked.push(value); }
+      if (updatedChecked.indexOf(value) === -1) {
+        updatedChecked.push(value);
+      }
     }
     setChecked(updatedChecked);
     addFacetValues(constraint, updatedChecked, facetType, facetCategory);
   };
 
   const handleClick = (e, _constraint?, value?, _facetType?) => {
-
     if (e?.target) {
       if (e.type === "keydown") {
         if (e.keyCode === 13) {
@@ -134,7 +154,8 @@ const Facet: React.FC<Props> = (
           if (index === -1) {
             setChecked([...checked, e.target.value]);
             updateSelectedFacets(constraint, [...checked, e.target.value], facetType, isNested);
-          } else if (index !== -1) {     // Deselection
+          } else if (index !== -1) {
+            // Deselection
             let remChecked = [e.target.value];
             updateSelectedFacets(constraint, remChecked, facetType, isNested, true, false);
           }
@@ -146,12 +167,12 @@ const Facet: React.FC<Props> = (
         if (e.target.checked && index === -1) {
           setChecked([...checked, e.target.value]);
           updateSelectedFacets(constraint, [...checked, e.target.value], facetType, isNested);
-        } else if (index !== -1) {     // Deselection
+        } else if (index !== -1) {
+          // Deselection
           let remChecked = [e.target.value];
           updateSelectedFacets(constraint, remChecked, facetType, isNested, true, false);
         }
       }
-
     } else {
       let isNested = constraint === propertyPath ? false : true;
       setChecked([...checked, value]);
@@ -185,7 +206,15 @@ const Facet: React.FC<Props> = (
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
     facet.max = maxQuantityOnFacets;
     return (
-      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={name} checked={checked} category={facetCategory} />
+      <FacetName
+        facet={facet}
+        index={index}
+        key={index}
+        handleClick={handleClick}
+        name={name}
+        checked={checked}
+        category={facetCategory}
+      />
     );
   });
 
@@ -195,11 +224,19 @@ const Facet: React.FC<Props> = (
       let first = objects[0];
       let last = objects.slice(-1);
       // returns an array for rendering that looks like "first > ... > last"
-      return <p>{first} &gt; ... &gt; <b>{last}</b></p>;
+      return (
+        <p>
+          {first} &gt; ... &gt; <b>{last}</b>
+        </p>
+      );
     } else if (objects.length === 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return <p>{first} &gt; <b>{last}</b></p>;
+      return (
+        <p>
+          {first} &gt; <b>{last}</b>
+        </p>
+      );
     }
     return <b>{name}</b>;
   };
@@ -210,70 +247,119 @@ const Facet: React.FC<Props> = (
 
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(name) + "-facet-block"}>
-      {facetCategory !== "concept" && <div className={styles.header}>
-        <div
-          className={styles.name}
-          data-cy={stringConverter(name) + "-facet"}
-          data-testid={stringConverter(name) + "-facet"}
-        >
-          {formatedTitle}
-          {tooltip && (
-            <span tabIndex={0} onFocus={(e) => onFocusHandlerTooltip(e, name)} onBlur={(e) => onLostFocusEventHandlerTooltip(e, name)} data-testid={`${name.trim()}-facet-tooltip`}>
-              <HCTooltip
-                text={tooltip}
-                id="props-tooltip"
-                placement="top-start"
-                show={
-                  name === "Source Name" ? sourceName ? sourceName : undefined :
-                    name === "Source Type" ? sourceType ? sourceType : undefined :
-                      name === "Collection" ? collection ? collection : undefined :
-                        name === "Step" ? step ? step : undefined :
-                          name === "Flow" ? flow ? flow : undefined : undefined
-                }
-              >
-                <span>{tooltip ?
-                  <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${name}`} /></i> : ""}
-                </span>
-              </HCTooltip>
-            </span>
-          )}
-
-        </div>
-        <div className={styles.summary}>
-          {checked.length > 0 ? <div className={styles.selected}
-            data-cy={stringConverter(name) + "-selected-count"}>{checked.length} selected</div> : ""}
+      {facetCategory !== "concept" && (
+        <div className={styles.header}>
           <div
-            className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)}
-            onClick={() => handleClear()}
-            data-cy={stringConverter(name) + "-clear"}
-            data-testid={stringConverter(name) + "-clear"}
-            onKeyDown={(e) => e.keyCode === 13 ? handleClear() : ""}
-            tabIndex={0}
-          >Clear
+            className={styles.name}
+            data-cy={stringConverter(name) + "-facet"}
+            data-testid={stringConverter(name) + "-facet"}
+          >
+            {formatedTitle}
+            {tooltip && (
+              <span
+                tabIndex={0}
+                onFocus={e => onFocusHandlerTooltip(e, name)}
+                onBlur={e => onLostFocusEventHandlerTooltip(e, name)}
+                data-testid={`${name.trim()}-facet-tooltip`}
+              >
+                <HCTooltip
+                  text={tooltip}
+                  id="props-tooltip"
+                  placement="top-start"
+                  show={
+                    name === "Source Name"
+                      ? sourceName
+                        ? sourceName
+                        : undefined
+                      : name === "Source Type"
+                        ? sourceType
+                          ? sourceType
+                          : undefined
+                        : name === "Collection"
+                          ? collection
+                            ? collection
+                            : undefined
+                          : name === "Step"
+                            ? step
+                              ? step
+                              : undefined
+                            : name === "Flow"
+                              ? flow
+                                ? flow
+                                : undefined
+                              : undefined
+                  }
+                >
+                  <span>
+                    {tooltip ? (
+                      <i>
+                        <FontAwesomeIcon
+                          className={styles.infoIcon}
+                          icon={faInfoCircle}
+                          size="sm"
+                          data-testid={`info-tooltip-${name}`}
+                        />
+                      </i>
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                </HCTooltip>
+              </span>
+            )}
           </div>
-          <div tabIndex={0} className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(name) + "-toggle"} onKeyDown={(e) => e.keyCode === 13 ? toggleShow(!show) : ""}>
-            {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down" /> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right" />}
+          <div className={styles.summary}>
+            {checked.length > 0 ? (
+              <div className={styles.selected} data-cy={stringConverter(name) + "-selected-count"}>
+                {checked.length} selected
+              </div>
+            ) : (
+              ""
+            )}
+            <div
+              className={checked.length > 0 ? styles.clearActive : styles.clearInactive}
+              onClick={() => handleClear()}
+              data-cy={stringConverter(name) + "-clear"}
+              data-testid={stringConverter(name) + "-clear"}
+              onKeyDown={e => (e.keyCode === 13 ? handleClear() : "")}
+              tabIndex={0}
+            >
+              Clear
+            </div>
+            <div
+              tabIndex={0}
+              className={styles.toggle}
+              onClick={() => toggleShow(!show)}
+              data-testid={stringConverter(name) + "-toggle"}
+              onKeyDown={e => (e.keyCode === 13 ? toggleShow(!show) : "")}
+            >
+              {show ? (
+                <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down" />
+              ) : (
+                <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right" />
+              )}
+            </div>
           </div>
         </div>
-      </div>}
-      <div style={{display: (show) ? "block" : "none", marginLeft: "5px"}}>
+      )}
+      <div style={{display: show ? "block" : "none", marginLeft: "5px"}}>
         {renderValues}
         <div
           className={styles.more}
-          style={{display: (facetValues?.length > SHOW_MINIMUM) ? "block" : "none"}}
+          style={{display: facetValues?.length > SHOW_MINIMUM ? "block" : "none"}}
           onClick={() => showMore()}
           data-cy="show-more"
           data-testid={`show-more-${stringConverter(name)}`}
         >
           <span
             tabIndex={0}
-            onKeyDown={(e) => e.keyCode === 13 ? showMore() : ""}
+            onKeyDown={e => (e.keyCode === 13 ? showMore() : "")}
             data-testid={`span-show-more-${stringConverter(name)}`}
           >
-            {(more) ? "<< less" : "more >>"}
+            {more ? "<< less" : "more >>"}
           </span>
         </div>
-        {(facetType === "xs:string" || "collection") && (checkedFacets.length >= SEARCH_MINIMUM) &&
+        {(facetType === "xs:string" || "collection") && checkedFacets.length >= SEARCH_MINIMUM && (
           <div className={styles.searchValues}>
             <PopOverSearch
               referenceType={referenceType}
@@ -284,7 +370,8 @@ const Facet: React.FC<Props> = (
               facetValues={checkedFacets}
               facetName={name}
             />
-          </div>}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ const response = {"data": {"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "st
 
 let stepFailedWithError = [
   "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}",
-  "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}"
+  "{\"stack\":\"Error: The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \\n    at main (/data-hub/5/builtins/steps/mapping/entity-services/main.sjs:72:11)\\n    at Flow.runMain (/data-hub/5/impl/flow.sjs:485:12)\\n    at Flow.runStep (/data-hub/5/impl/flow.sjs:343:58)\\n    at Flow.runFlow (/data-hub/5/impl/flow.sjs:211:12)\\n    at post (/marklogic.rest.resource/mlRunFlow/assets/resource.sjs:60:25)\\n    at callExtension (/MarkLogic/rest-api/lib/extensions-util.sjs:93:30)\\n    at applyOnce (/MarkLogic/rest-api/lib/extensions-util.sjs:111:10)\",\"message\":\"The given date pattern (null) is not supported.: /*:stylesheet/*:template[4] <xsl:for-each select=\\\"/\\\"> <xsl:call-template name=\\\"Purchase\\\"/></xsl:for-each> -- \",\"name\":\"Error\",\"uri\":\"/test/data/nestedPerson1.json\"}",
 ];
 
 const jobRespFailedWithError = {
@@ -34,7 +34,7 @@ const jobRespFailedWithError = {
         "failedBatches": 2,
         "success": false,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "2": {
         "flowName": "testFlow",
@@ -53,7 +53,7 @@ const jobRespFailedWithError = {
         "failedBatches": 2,
         "success": false,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "4": {
         "flowName": "testFlow",
@@ -70,7 +70,7 @@ const jobRespFailedWithError = {
         "failedBatches": 2,
         "success": false,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "5": {
         "flowName": "testFlow",
@@ -87,7 +87,7 @@ const jobRespFailedWithError = {
         "failedBatches": 2,
         "success": false,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "6": {
         "flowName": "testFlow",
@@ -104,18 +104,18 @@ const jobRespFailedWithError = {
         "failedBatches": 2,
         "success": false,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
-      }
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
+      },
     },
-    "jobStatus": "finished_with_errors"
+    "jobStatus": "finished_with_errors",
   },
-  "status": 200
+  "status": 200,
 };
 
 let stepFailed = [
   "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"85edd62b-0e89-4373-80ed-64a144bdb9ba\", binary{\"2d2d38356564643632622d306538392d343337332d383065642d363461313434...\"}) -- Document is not JSON",
   "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"9fed61d9-76ed-45e6-8639-66d8631b61d2\", binary{\"2d2d39666564363164392d373665642d343565362d383633392d363664383633...\"}) -- Document is not JSON",
-  "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"8d14ada9-d143-429f-b029-4e254828312f\", binary{\"2d2d38643134616461392d643134332d343239662d623032392d346532353438...\"}) -- Document is not JSON"
+  "Local message: failed to apply resource at documents: Bad Request. Server Message: XDMP-JSONDOC: xdmp:multipart-decode(\"8d14ada9-d143-429f-b029-4e254828312f\", binary{\"2d2d38643134616461392d643134332d343239662d623032392d346532353438...\"}) -- Document is not JSON",
 ];
 
 const jobRespFailed = {
@@ -143,7 +143,7 @@ const jobRespFailed = {
         "stepDefinitionType": "ingestion",
         "stepOutput": stepFailed,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "2": {
         "flowName": "testFlow",
@@ -160,7 +160,7 @@ const jobRespFailed = {
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "stepOutput": stepFailed,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "4": {
         "flowName": "testFlow",
@@ -176,7 +176,7 @@ const jobRespFailed = {
         "successfulEvents": 0,
         "stepOutput": stepFailed,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "5": {
         "flowName": "testFlow",
@@ -192,7 +192,7 @@ const jobRespFailed = {
         "successfulEvents": 0,
         "stepOutput": stepFailed,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
       },
       "6": {
         "flowName": "testFlow",
@@ -208,26 +208,27 @@ const jobRespFailed = {
         "successfulEvents": 0,
         "stepOutput": stepFailed,
         "stepStartTime": "2020-04-04T01:17:44.936121-07:00",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
-      }
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
+      },
     },
-    "jobStatus": "failed"
+    "jobStatus": "failed",
   },
-  "status": 200
+  "status": 200,
 };
 
 const loads = {
-  "data":
-    [{
+  "data": [
+    {
       "name": "failedIngest",
       "description": "",
       "sourceFormat": "json",
       "targetFormat": "json",
       "outputURIReplacement": "",
       "inputFilePath": "/xml-test/data-sets/failedIngest",
-      "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
-    }],
-  "status": 200
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
+    },
+  ],
+  "status": 200,
 };
 
 const primaryEntityTypes = {
@@ -240,38 +241,36 @@ const primaryEntityTypes = {
         "info": {
           "title": "Customer",
           "version": "0.0.1",
-          "baseUri": "http://example.org/"
+          "baseUri": "http://example.org/",
         },
         "definitions": {
           "Customer": {
-            "required": [
-              "name"
-            ],
+            "required": ["name"],
             "primaryKey": "customerId",
             "properties": {
               "customerId": {
-                "datatype": "integer"
+                "datatype": "integer",
               },
               "name": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "shipping": {
-                "$ref": "#/definitions/Address"
+                "$ref": "#/definitions/Address",
               },
               "billing": {
-                "$ref": "#/definitions/Address"
+                "$ref": "#/definitions/Address",
               },
               "customerSince": {
-                "datatype": "date"
+                "datatype": "date",
               },
               "orders": {
                 "datatype": "array",
                 "items": {
-                  "$ref": "http://example.org/Order-0.0.1/Order"
-                }
-              }
-            }
+                  "$ref": "http://example.org/Order-0.0.1/Order",
+                },
+              },
+            },
           },
           "Address": {
             "required": [],
@@ -282,44 +281,44 @@ const primaryEntityTypes = {
             "properties": {
               "street": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "city": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "state": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "zip": {
-                "$ref": "#/definitions/Zip"
-              }
-            }
+                "$ref": "#/definitions/Zip",
+              },
+            },
           },
           "Zip": {
             "required": [],
             "properties": {
               "fiveDigit": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "plusFour": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
-              }
-            }
-          }
-        }
-      }
-    }
+                "collation": "http://marklogic.com/collation/codepoint",
+              },
+            },
+          },
+        },
+      },
+    },
   ],
-  "status": 200
+  "status": 200,
 };
 
 const mappings = {
-  "data":
-    [{
+  "data": [
+    {
       "entityType": "Customer",
       "entityTypeId": "Customer",
       "artifacts": [
@@ -331,8 +330,8 @@ const mappings = {
           "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
           "properties": {
             "customerId": {
-              "sourcedFrom": "PIN"
-            }
+              "sourcedFrom": "PIN",
+            },
           },
           "provenanceGranularityLevel": "coarse",
           "batchSize": 50,
@@ -342,9 +341,9 @@ const mappings = {
           "collections": ["Mapping1", "Customer"],
           "additionalCollections": ["customerCollection"],
           "validateEntity": false,
-          "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
-        }
-      ]
+          "lastUpdated": "2020-04-24T13:21:00.169198-07:00",
+        },
+      ],
     },
     {
       "entityType": "Customer",
@@ -358,8 +357,8 @@ const mappings = {
           "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
           "properties": {
             "customerId": {
-              "sourcedFrom": "PIN"
-            }
+              "sourcedFrom": "PIN",
+            },
           },
           "provenanceGranularityLevel": "coarse",
           "batchSize": 50,
@@ -369,9 +368,9 @@ const mappings = {
           "collections": ["Mapping2", "Customer"],
           "additionalCollections": ["customerCollection"],
           "validateEntity": false,
-          "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
-        }
-      ]
+          "lastUpdated": "2020-10-01T02:38:00.169198-07:00",
+        },
+      ],
     },
     {
       "entityType": "Customer",
@@ -385,8 +384,8 @@ const mappings = {
           "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
           "properties": {
             "customerId": {
-              "sourcedFrom": "PIN"
-            }
+              "sourcedFrom": "PIN",
+            },
           },
           "provenanceGranularityLevel": "coarse",
           "batchSize": 50,
@@ -396,9 +395,9 @@ const mappings = {
           "collections": ["Mapping3", "Customer"],
           "additionalCollections": ["customerCollection"],
           "validateEntity": false,
-          "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
-        }
-      ]
+          "lastUpdated": "2020-01-12T13:21:00.169198-07:00",
+        },
+      ],
     },
     {
       "entityType": "Person",
@@ -412,8 +411,8 @@ const mappings = {
           "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
           "properties": {
             "customerId": {
-              "sourcedFrom": "PIN"
-            }
+              "sourcedFrom": "PIN",
+            },
           },
           "provenanceGranularityLevel": "coarse",
           "batchSize": 50,
@@ -423,17 +422,16 @@ const mappings = {
           "collections": ["Mapping4", "Person"],
           "additionalCollections": ["personCollection"],
           "validateEntity": false,
-          "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
-        }
-      ]
-    }
-    ],
-  "status": 200
+          "lastUpdated": "2020-01-12T13:21:00.169198-07:00",
+        },
+      ],
+    },
+  ],
+  "status": 200,
 };
 
 const mappingSettings = {
-  "data":
-  {
+  "data": {
     "provenanceGranularityLevel": "coarse",
     "batchSize": 50,
     "permissions": "data-hub-common,read,data-hub-common,update",
@@ -442,14 +440,14 @@ const mappingSettings = {
     "collections": ["Mapping1", "Customer"],
     "additionalCollections": ["customerCollection"],
     "validateEntity": false,
-    "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+    "lastUpdated": "2020-05-27T12:19:02.446622-07:00",
   },
-  "status": 200
+  "status": 200,
 };
 
 const matchings = {
-  "data":
-    [{
+  "data": [
+    {
       "entityType": "Customer",
       "entityTypeId": "Customer",
       "artifacts": [
@@ -459,11 +457,12 @@ const matchings = {
           "description": "",
           "selectedSource": "collection",
           "sourceQuery": "cts.collectionQuery(['default-mapping'])",
-          "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
-        }
-      ]
-    }],
-  "status": 200
+          "lastUpdated": "2020-04-24T13:21:00.169198-07:00",
+        },
+      ],
+    },
+  ],
+  "status": 200,
 };
 
 const entityTypes = [
@@ -476,118 +475,120 @@ const entityTypes = [
         "title": "Customer",
         "version": "0.0.1",
         "baseUri": "http://example.com/",
-        "description": "An Customer entity"
+        "description": "An Customer entity",
       },
       "definitions": {
         "Customer": {
           "properties": {
             "FirstName": {
               "datatype": "string",
-              "collation": "http://marklogic.com/collation/codepoint"
-            }
-          }
-        }
-      }
-    }
-  }
+              "collation": "http://marklogic.com/collation/codepoint",
+            },
+          },
+        },
+      },
+    },
+  },
 ];
 
-const flows: {data: Flow[], status: number} = {
-  "data": [{
-    "name": "testFlow",
-    "description": "",
-    "steps": [
-      {
-        "stepId": "failedIngest-ingestion",
-        "stepName": "failedIngest",
-        "stepDefinitionType": "ingestion",
-        "stepNumber": "1",
-        "sourceFormat": "json"
-      },
-      {
-        "stepId": "Mapping1-mapping",
-        "stepName": "Mapping1",
-        "stepDefinitionType": "mapping",
-        "stepNumber": "2",
-        "targetFormat": "json",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepId": "custom1-custom",
-        "stepName": "custom1",
-        "stepDefinitionType": "custom",
-        "stepNumber": "3",
-      },
-      {
-        "stepNumber": "4",
-        "stepId": "match-customer-matching",
-        "stepName": "match-customer",
-        "stepDefinitionType": "matching",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepNumber": "5",
-        "stepId": "merge-customer-merging",
-        "stepName": "merge-customer",
-        "stepDefinitionType": "merging",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepNumber": "6",
-        "stepId": "master-customer-mastering",
-        "stepName": "master-customer",
-        "stepDefinitionType": "mastering",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepId": "Ingestion",
-        "stepName": "Ingestion1",
-        "stepDefinitionType": "ingestion",
-        "stepNumber": "7",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-    ]
-  },
-  {
-    "name": "testFlow2",
-    "description": "",
-    "steps": [
-      {
-        "stepId": "Mapping3-mapping",
-        "stepName": "Mapping3",
-        "stepDefinitionType": "mapping",
-        "stepNumber": "1",
-        "targetFormat": "json",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepId": "custom2-custom",
-        "stepName": "custom2",
-        "stepDefinitionType": "custom",
-        "stepNumber": "2",
-      },
-      {
-        "stepNumber": "4",
-        "stepId": "match-person-matching",
-        "stepName": "match-person",
-        "stepDefinitionType": "matching",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-      {
-        "stepNumber": "5",
-        "stepId": "merge-person-merging",
-        "stepName": "merge-person",
-        "stepDefinitionType": "merging",
-        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-      },
-    ]
-  },
-  {
-    "name": "emptyFlow",
-    "description": "",
-    "steps": []
-  }],
-  "status": 200
+const flows: {data: Flow[]; status: number} = {
+  "data": [
+    {
+      "name": "testFlow",
+      "description": "",
+      "steps": [
+        {
+          "stepId": "failedIngest-ingestion",
+          "stepName": "failedIngest",
+          "stepDefinitionType": "ingestion",
+          "stepNumber": "1",
+          "sourceFormat": "json",
+        },
+        {
+          "stepId": "Mapping1-mapping",
+          "stepName": "Mapping1",
+          "stepDefinitionType": "mapping",
+          "stepNumber": "2",
+          "targetFormat": "json",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepId": "custom1-custom",
+          "stepName": "custom1",
+          "stepDefinitionType": "custom",
+          "stepNumber": "3",
+        },
+        {
+          "stepNumber": "4",
+          "stepId": "match-customer-matching",
+          "stepName": "match-customer",
+          "stepDefinitionType": "matching",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepNumber": "5",
+          "stepId": "merge-customer-merging",
+          "stepName": "merge-customer",
+          "stepDefinitionType": "merging",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepNumber": "6",
+          "stepId": "master-customer-mastering",
+          "stepName": "master-customer",
+          "stepDefinitionType": "mastering",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepId": "Ingestion",
+          "stepName": "Ingestion1",
+          "stepDefinitionType": "ingestion",
+          "stepNumber": "7",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+      ],
+    },
+    {
+      "name": "testFlow2",
+      "description": "",
+      "steps": [
+        {
+          "stepId": "Mapping3-mapping",
+          "stepName": "Mapping3",
+          "stepDefinitionType": "mapping",
+          "stepNumber": "1",
+          "targetFormat": "json",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepId": "custom2-custom",
+          "stepName": "custom2",
+          "stepDefinitionType": "custom",
+          "stepNumber": "2",
+        },
+        {
+          "stepNumber": "4",
+          "stepId": "match-person-matching",
+          "stepName": "match-person",
+          "stepDefinitionType": "matching",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+        {
+          "stepNumber": "5",
+          "stepId": "merge-person-merging",
+          "stepName": "merge-person",
+          "stepDefinitionType": "merging",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        },
+      ],
+    },
+    {
+      "name": "emptyFlow",
+      "description": "",
+      "steps": [],
+    },
+  ],
+  "status": 200,
 };
 
 const steps = {
@@ -595,26 +596,25 @@ const steps = {
     "ingestionSteps": [
       {
         "stepId": "step1-ingestion",
-        "name": "Step 1"
+        "name": "Step 1",
       },
       {
         "stepId": "step2-ingestion",
-        "name": "Step 2"
-      }
+        "name": "Step 2",
+      },
     ],
     "mappingSteps": [
       {
         "stepId": "step3-mapping",
-        "name": "Step 3"
+        "name": "Step 3",
       },
       {
         "stepId": "step4-mapping",
-        "name": "Step 4"
-      }
-    ]
-  }
-  ,
-  "status": 200
+        "name": "Step 4",
+      },
+    ],
+  },
+  "status": 200,
 };
 
 const jobRespSuccess = {
@@ -681,11 +681,11 @@ const jobRespSuccess = {
         "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "targetDatabase": "staging",
         "stepEndTime": "2020-04-24T14:05:01.019819-07:00",
-      }
+      },
     },
-    "jobStatus": "finished"
+    "jobStatus": "finished",
   },
-  "status": 200
+  "status": 200,
 };
 
 const jobRespRunning = {
@@ -729,7 +729,7 @@ const jobRespRunning = {
         "failedBatches": "0",
         "success": "true",
         "stepStartTime": "2022-04-22T15:48:16.522496-03:00",
-        "stepEndTime": "2022-04-22T15:48:18.2212434-03:00"
+        "stepEndTime": "2022-04-22T15:48:18.2212434-03:00",
       },
       "3": {
         "flowName": "personJSON",
@@ -746,16 +746,16 @@ const jobRespRunning = {
         "failedBatches": "0",
         "success": "true",
         "stepStartTime": "2022-04-22T15:48:18.7746736-03:00",
-        "stepEndTime": "2022-04-22T15:48:18.9670222-03:00"
+        "stepEndTime": "2022-04-22T15:48:18.9670222-03:00",
       },
       "4": {
         "stepStartTime": "2022-04-22T15:48:18.9964507-03:00",
-        "status": "running step 4"
-      }
+        "status": "running step 4",
+      },
     },
-    "flowOrStepsUpdatedSinceRun": "false"
+    "flowOrStepsUpdatedSinceRun": "false",
   },
-  "status": 200
+  "status": 200,
 };
 
 const jobRespCanceled = {
@@ -781,34 +781,36 @@ const jobRespCanceled = {
         "stepStartTime": "2022-04-28T17:03:40.0006799-03:00",
         "status": "canaceled step 3",
         "stepName": "merge-person",
-        "stepDefinitionType": "merging"
-      }
+        "stepDefinitionType": "merging",
+      },
     },
     "flowOrStepsUpdatedSinceRun": "false",
-    "duration": "PT8.342949S"
-  }, status: 200,
+    "duration": "PT8.342949S",
+  },
+  status: 200,
 };
 
 const flowsXML = {
-  "data": [{
-    "name": "testFlow",
-    "description": "",
-    "steps": [
-      {
-        "stepName": "loadXML",
-        "stepDefinitionType": "INGESTION",
-        "stepNumber": "1",
-        "sourceFormat": "xml"
-      },
-      {
-        "stepName": "Mapping1",
-        "stepDefinitionType": "MAPPING",
-        "stepNumber": "2"
-      }
-    ]
-  }]
-  ,
-  "status": 200
+  "data": [
+    {
+      "name": "testFlow",
+      "description": "",
+      "steps": [
+        {
+          "stepName": "loadXML",
+          "stepDefinitionType": "INGESTION",
+          "stepNumber": "1",
+          "sourceFormat": "xml",
+        },
+        {
+          "stepName": "Mapping1",
+          "stepDefinitionType": "MAPPING",
+          "stepNumber": "2",
+        },
+      ],
+    },
+  ],
+  "status": 200,
 };
 const flowsXMLLatestJob = {
   "data": {
@@ -821,7 +823,7 @@ const flowsXMLLatestJob = {
         "stepNumber": "1",
         "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
         "lastRunStatus": "completed step 1",
-        "stepEndTime": "2020-07-13T23:54:06.30257-07:00"
+        "stepEndTime": "2020-07-13T23:54:06.30257-07:00",
       },
       {
         "stepName": "Mapping1",
@@ -829,54 +831,53 @@ const flowsXMLLatestJob = {
         "stepNumber": "2",
         "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
         "lastRunStatus": "completed with errors step 2",
-        "stepEndTime": "2020-04-04T01:17:45.012137-07:00"
-      }
-    ]
-  }
-  ,
-  "status": 200
+        "stepEndTime": "2020-04-04T01:17:45.012137-07:00",
+      },
+    ],
+  },
+  "status": 200,
 };
 
 const loadsXML = {
-  "data":
-    [{
+  "data": [
+    {
       "name": "loadXML",
       "description": "",
       "sourceFormat": "xml",
       "targetFormat": "xml",
       "outputURIReplacement": "",
       "inputFilePath": "/xml-test/data-sets/failedIngest",
-      "lastUpdated": "2020-04-02T23:08:28.287065-07:00"
-    }],
-  "status": 200
+      "lastUpdated": "2020-04-02T23:08:28.287065-07:00",
+    },
+  ],
+  "status": 200,
 };
 
 const loadSettings = {
-  "data":
-  {
+  "data": {
     "provenanceGranularityLevel": "coarse",
     "permissions": "data-hub-operator,read,data-hub-operator,update",
     "targetFormat": "json",
     "targetDatabase": "data-hub-STAGING",
-    "collections": [
-      "testLoad"
-    ],
+    "collections": ["testLoad"],
     "additionalCollections": [],
-    "lastUpdated": "2020-05-27T12:19:02.446622-07:00"
+    "lastUpdated": "2020-05-27T12:19:02.446622-07:00",
   },
-  "status": 200
+  "status": 200,
 };
 
 const customSteps = {
   "data": {
-    "stepsWithEntity": [{
-      "entityType": "Customer",
-      "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
-      "artifacts": [{...commonData.customData[0]}]
-    }],
-    "stepsWithoutEntity": [{...commonData.customData[1]}]
+    "stepsWithEntity": [
+      {
+        "entityType": "Customer",
+        "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
+        "artifacts": [{...commonData.customData[0]}],
+      },
+    ],
+    "stepsWithoutEntity": [{...commonData.customData[1]}],
   },
-  "status": 200
+  "status": 200,
 };
 
 const newStepToFlowOptions = {
@@ -892,7 +893,7 @@ const newStepToFlowOptions = {
   sortOrderInfo: null,
   targetEntityType: "Person",
   existingFlow: false, // Opens New Flow dialog
-  flowsDefaultKey: ["-1"]
+  flowsDefaultKey: ["-1"],
 };
 
 const flowProps = {

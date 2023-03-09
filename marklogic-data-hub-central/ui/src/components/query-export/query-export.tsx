@@ -9,21 +9,17 @@ import {getExportPreview} from "../query-export/export-preview/export-preview";
 import {getExportQueryPreview} from "@api/queries";
 import {HCTooltip} from "@components/common";
 
-const QueryExport = (props) => {
+const QueryExport = props => {
   const [tableColumns, setTableColumns] = useState<Object[]>([]);
   const [tableData, setTableData] = useState<Object[]>();
   const [exportModalVisibility, setExportModalVisibility] = useState(false);
   const [hasStructured, setStructured] = useState<boolean>();
-  const {
-    handleError
-  } = useContext(UserContext);
+  const {handleError} = useContext(UserContext);
 
-  const {
-    searchOptions
-  } = useContext(SearchContext);
+  const {searchOptions} = useContext(SearchContext);
 
   const displayModal = () => {
-    if (props.selectedPropertyDefinitions.some(prop => (prop.hasOwnProperty("properties") || prop.multiple === true))) {
+    if (props.selectedPropertyDefinitions.some(prop => prop.hasOwnProperty("properties") || prop.multiple === true)) {
       getPreview();
       setStructured(true);
     } else {
@@ -44,7 +40,7 @@ const QueryExport = (props) => {
           selectedFacets: searchOptions.selectedFacets,
         },
         propertiesToDisplay: props.columns,
-      }
+      },
     };
 
     try {
@@ -73,8 +69,13 @@ const QueryExport = (props) => {
         tableData={tableData}
         exportModalVisibility={exportModalVisibility}
         setExportModalVisibility={setExportModalVisibility}
-        columns={props.columns} />
-      <HCTooltip text="Export results with the displayed columns to CSV." id="export-results-tooltip" placement="top-end">
+        columns={props.columns}
+      />
+      <HCTooltip
+        text="Export results with the displayed columns to CSV."
+        id="export-results-tooltip"
+        placement="top-end"
+      >
         <span>
           <FontAwesomeIcon
             className={styles.fileExportIcon}
@@ -83,7 +84,7 @@ const QueryExport = (props) => {
             onClick={displayModal}
             data-testid="query-export"
             tabIndex={0}
-            onKeyDown={(e) => {
+            onKeyDown={e => {
               if (e.key === "Enter" || e.key === " ") {
                 displayModal();
               }

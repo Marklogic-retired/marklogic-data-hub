@@ -21,13 +21,8 @@ import styles from "./manage-query.module.scss";
 import {themeColors} from "@config/themes.config";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 
-const QueryModal = (props) => {
-  const {
-    applySaveQuery,
-    searchOptions,
-    clearAllGreyFacets,
-    setSavedQueries
-  } = useContext(SearchContext);
+const QueryModal = props => {
+  const {applySaveQuery, searchOptions, clearAllGreyFacets, setSavedQueries} = useContext(SearchContext);
 
   const {handleError} = useContext(UserContext);
   const [editModalVisibility, setEditModalVisibility] = useState(false);
@@ -65,7 +60,7 @@ const QueryModal = (props) => {
     }
   };
 
-  const editQuery = async (query) => {
+  const editQuery = async query => {
     const response = await axios.put(`/api/entitySearch/savedQueries`, query);
     if (response.data) {
       getQueries();
@@ -73,7 +68,7 @@ const QueryModal = (props) => {
     }
   };
 
-  const deleteQuery = async (query) => {
+  const deleteQuery = async query => {
     try {
       await removeQuery(query);
     } catch (error) {
@@ -86,7 +81,7 @@ const QueryModal = (props) => {
     setEditModalVisibility(true);
   };
 
-  const onDelete = (row) => {
+  const onDelete = row => {
     setCurrentQueryName(row.name);
     setCurrentQueryDescription(row.description);
     setDeleteModalVisibility(true);
@@ -96,7 +91,7 @@ const QueryModal = (props) => {
     props.setManageQueryModal(false);
   };
 
-  const onOk = (query) => {
+  const onOk = query => {
     deleteQuery(query);
     setDeleteModalVisibility(false);
     clearAllGreyFacets();
@@ -117,61 +112,71 @@ const QueryModal = (props) => {
     setDeleteModalVisibility(false);
   };
 
-  const onApply = (e) => {
+  const onApply = e => {
     if (location && location.hasOwnProperty("pathname") && location.pathname === "/tiles/explore/detail") {
-      queries && queries.length > 0 && queries.forEach(query => {
-        if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
-          history.push({
-            pathname: "/tiles/explore",
-            state: {
-              savedQuery: query["savedQuery"]
-            }
-          });
-        }
-      });
+      queries &&
+        queries.length > 0 &&
+        queries.forEach(query => {
+          if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
+            history.push({
+              pathname: "/tiles/explore",
+              state: {
+                savedQuery: query["savedQuery"],
+              },
+            });
+          }
+        });
     } else {
-      queries && queries.length > 0 && queries.forEach(query => {
-        if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
-          let options: QueryOptions = {
-            searchText: query["savedQuery"]["query"]["searchText"],
-            entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
-            selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
-            selectedQuery: query["savedQuery"]["name"],
-            propertiesToDisplay: query.savedQuery.propertiesToDisplay,
-            sortOrder: query.savedQuery.sortOrder,
-            database: searchOptions.database,
-          };
-          applySaveQuery(options);
-          setCurrentQueryDescription(query["savedQuery"]["description"]);
-        }
-      });
+      queries &&
+        queries.length > 0 &&
+        queries.forEach(query => {
+          if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
+            let options: QueryOptions = {
+              searchText: query["savedQuery"]["query"]["searchText"],
+              entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
+              selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
+              selectedQuery: query["savedQuery"]["name"],
+              propertiesToDisplay: query.savedQuery.propertiesToDisplay,
+              sortOrder: query.savedQuery.sortOrder,
+              database: searchOptions.database,
+            };
+            applySaveQuery(options);
+            setCurrentQueryDescription(query["savedQuery"]["description"]);
+          }
+        });
     }
     props.setManageQueryModal(false);
   };
 
-  const displayExportModal = (id) => {
+  const displayExportModal = id => {
     setRecordID(id);
     let query;
-    queries.forEach((selectedQuery) => {
+    queries.forEach(selectedQuery => {
       if (selectedQuery["savedQuery"]["id"] === id) {
         query = selectedQuery;
       }
     });
     let arrayProperties: any[] = [];
-    props.entityDefArray && props.entityDefArray.forEach(entity => {
-      if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
-        entity.properties && entity.properties.forEach(prop => {
-          if (prop.ref.length === 0 && prop.datatype === "array") {
-            arrayProperties.push(prop.name);
-          }
-        });
-      }
-    });
+    props.entityDefArray &&
+      props.entityDefArray.forEach(entity => {
+        if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
+          entity.properties &&
+            entity.properties.forEach(prop => {
+              if (prop.ref.length === 0 && prop.datatype === "array") {
+                arrayProperties.push(prop.name);
+              }
+            });
+        }
+      });
 
-    let hasArray = query.savedQuery.propertiesToDisplay.length > 0 &&
-    arrayProperties.length > 0 &&
-    query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)));
-    let isStructured = query && query.savedQuery.propertiesToDisplay && query.savedQuery.propertiesToDisplay.some(column => column.includes("."));
+    let hasArray =
+      query.savedQuery.propertiesToDisplay.length > 0 &&
+      arrayProperties.length > 0 &&
+      query.savedQuery.propertiesToDisplay.some(prop => arrayProperties.includes(prop));
+    let isStructured =
+      query &&
+      query.savedQuery.propertiesToDisplay &&
+      query.savedQuery.propertiesToDisplay.some(column => column.includes("."));
     setStructured(hasArray || isStructured);
     (hasArray || isStructured) && getPreview(id);
     setExportModalVisibility(true);
@@ -185,7 +190,9 @@ const QueryModal = (props) => {
       sort: true,
       formatter: (text, key) => (
         <span className={styles.tableRow}>
-          <a data-id={text} data-testid={text} className={styles.name} onClick={onApply}>{text}</a>
+          <a data-id={text} data-testid={text} className={styles.name} onClick={onApply}>
+            {text}
+          </a>
         </span>
       ),
     },
@@ -206,8 +213,17 @@ const QueryModal = (props) => {
       dataField: "edit",
       key: "edit",
       formatter: (text, key) => (
-        <span className={styles.tableRow}>{text}<i aria-label="editIcon">
-          <FontAwesomeIcon icon={faPencilAlt} color={themeColors.info} className={styles.manageQueryIconsHover} onClick={onEdit} size="lg" /></i>
+        <span className={styles.tableRow}>
+          {text}
+          <i aria-label="editIcon">
+            <FontAwesomeIcon
+              icon={faPencilAlt}
+              color={themeColors.info}
+              className={styles.manageQueryIconsHover}
+              onClick={onEdit}
+              size="lg"
+            />
+          </i>
         </span>
       ),
     },
@@ -220,14 +236,30 @@ const QueryModal = (props) => {
         <span className={styles.tableRow}>
           {text}
           <span aria-label="exportIcon">
-            {row.canExport
-              ? <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} />
-              : <HCTooltip text={tooltipsConfig.manageQueries.disabledExport} id={"export-query-disabled-tooltip"} placement="top">
+            {row.canExport ? (
+              <FontAwesomeIcon
+                icon={faFileExport}
+                color={themeColors.info}
+                size="lg"
+                className={styles.manageQueryIconsHover}
+                onClick={() => displayExportModal(row.key)}
+              />
+            ) : (
+              <HCTooltip
+                text={tooltipsConfig.manageQueries.disabledExport}
+                id={"export-query-disabled-tooltip"}
+                placement="top"
+              >
                 <span>
-                  <FontAwesomeIcon icon={faFileExport} color={themeColors.light} className={"cursor-not-allowed"} size="lg" />
+                  <FontAwesomeIcon
+                    icon={faFileExport}
+                    color={themeColors.light}
+                    className={"cursor-not-allowed"}
+                    size="lg"
+                  />
                 </span>
               </HCTooltip>
-            }
+            )}
           </span>
         </span>
       ),
@@ -237,11 +269,20 @@ const QueryModal = (props) => {
       dataField: "delete",
       key: "delete",
       formatter: (text, row) => (
-        <span className={styles.tableRow}>{text}<i aria-label="deleteIcon">
-          <FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} onClick={() => onDelete(row)} /></i>
+        <span className={styles.tableRow}>
+          {text}
+          <i aria-label="deleteIcon">
+            <FontAwesomeIcon
+              icon={faTrashAlt}
+              color={themeColors.info}
+              size="lg"
+              className={styles.manageQueryIconsHover}
+              onClick={() => onDelete(row)}
+            />
+          </i>
         </span>
       ),
-    }
+    },
   ];
 
   const editObj = {
@@ -249,8 +290,12 @@ const QueryModal = (props) => {
     dataIndex: "edit",
     key: "edit",
     align: "center" as "center",
-    render: text => <a data-testid={"edit"} onClick={onEdit}>{text}</a>,
-    width: 75
+    render: text => (
+      <a data-testid={"edit"} onClick={onEdit}>
+        {text}
+      </a>
+    ),
+    width: 75,
   };
 
   // TODO: Uncomment once link for query is implemented
@@ -268,8 +313,12 @@ const QueryModal = (props) => {
     dataIndex: "delete",
     key: "delete",
     align: "center" as "center",
-    render: (text, row) => <a data-testid={"delete"} onClick={() => onDelete(row)}>{text}</a>,
-    width: 75
+    render: (text, row) => (
+      <a data-testid={"delete"} onClick={() => onDelete(row)}>
+        {text}
+      </a>
+    ),
+    width: 75,
   };
 
   const exportObj = {
@@ -277,15 +326,15 @@ const QueryModal = (props) => {
     dataIndex: "export",
     key: "export",
     align: "center" as "center",
-    render: text => <a data-testid={"export"} >{text}</a>,
+    render: text => <a data-testid={"export"}>{text}</a>,
     onCell: record => {
       return {
         onClick: () => {
           displayExportModal(record.key);
-        }
+        },
       };
     },
-    width: 75
+    width: 75,
   };
 
   if (props.isSavedQueryUser) {
@@ -304,48 +353,47 @@ const QueryModal = (props) => {
 
   const updateTableData = () => {
     let data: any[] = [];
-    queries && queries.length > 0 && queries.forEach(query => {
-      data.push(
-        {
+    queries &&
+      queries.length > 0 &&
+      queries.forEach(query => {
+        data.push({
           key: query["savedQuery"]["id"],
           name: query["savedQuery"]["name"],
           description: query["savedQuery"]["description"],
           edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
-          canExport: query["savedQuery"]["propertiesToDisplay"]?.length !== 0
+          canExport: query["savedQuery"]["propertiesToDisplay"]?.length !== 0,
           //edit: <FontAwesomeIcon icon={faPencilAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
           //export: <FontAwesomeIcon icon={faFileExport} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />,
           // TODO: Uncomment once link for query is implemented
           // link: <FontAwesomeIcon icon={faLink} color={themeColors.info} size='lg' />,
           //delete: <FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} size="lg" className={styles.manageQueryIconsHover} />
-        }
-      );
-    });
+        });
+      });
     setData(data);
   };
 
-  const deleteConfirmation = <HCModal
-    show={deleteModalVisibility}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"pt-0 px-4"}>
-      <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
-        Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
-      </span>
-      <div className={"d-flex justify-content-center pt-4 pb-2"}>
-        <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
-          {"No"}
-        </HCButton>
-        <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(query)}>
-          {"Yes"}
-        </HCButton>
-      </div>
-    </Modal.Body>
-  </HCModal>;
+  const deleteConfirmation = (
+    <HCModal show={deleteModalVisibility} onHide={onCancel}>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"pt-0 px-4"}>
+        <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
+          Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
+        </span>
+        <div className={"d-flex justify-content-center pt-4 pb-2"}>
+          <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+            {"No"}
+          </HCButton>
+          <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(query)}>
+            {"Yes"}
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </HCModal>
+  );
 
-  const getPreview = async (id) => {
+  const getPreview = async id => {
     try {
       const response = await getSavedQueryPreview(id, searchOptions.database);
       if (response.data) {
@@ -365,7 +413,7 @@ const QueryModal = (props) => {
 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      queries.forEach((query) => {
+      queries.forEach(query => {
         if (query["savedQuery"]["id"] === row.key) {
           setQuery(query);
           setCurrentQueryName(row.name);
@@ -383,25 +431,15 @@ const QueryModal = (props) => {
         tableData={tableData}
         recordID={recordID}
         exportModalVisibility={exportModalVisibility}
-        setExportModalVisibility={setExportModalVisibility} />
-      <HCModal
-        show={props.modalVisibility}
-        size={"lg"}
-        dialogClassName={styles.modal1000w}
-        onHide={onClose}
-      >
+        setExportModalVisibility={setExportModalVisibility}
+      />
+      <HCModal show={props.modalVisibility} size={"lg"} dialogClassName={styles.modal1000w} onHide={onClose}>
         <Modal.Header className={"bb-none"} data-testid="manage-queries-modal">
           <span className={styles.title}>{"Manage Queries"}</span>
           <button type="button" className="btn-close manage-modal-close-icon" aria-label="Close" onClick={onClose} />
         </Modal.Header>
         <Modal.Body>
-          <HCTable
-            columns={columns}
-            data={data}
-            rowEvents={rowEvents}
-            pagination={true}
-            rowKey="QueryManageKey"
-          />
+          <HCTable columns={columns} data={data} rowEvents={rowEvents} pagination={true} rowKey="QueryManageKey" />
         </Modal.Body>
       </HCModal>
       <EditQueryDialog

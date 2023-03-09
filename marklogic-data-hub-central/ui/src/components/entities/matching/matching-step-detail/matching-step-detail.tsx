@@ -12,7 +12,13 @@ import ThresholdModal from "../threshold-modal/threshold-modal";
 import {CurationContext} from "@util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText, MatchingStepTooltips} from "@config/tooltips.config";
-import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
+import {
+  updateMatchingArtifact,
+  calculateMatchingActivity,
+  previewMatchingActivity,
+  getDocFromURI,
+  getPreviewFromURIs,
+} from "@api/matching";
 import {ChevronDown} from "react-bootstrap-icons";
 import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "@util/user-context";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
@@ -51,7 +57,7 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
   matchRulesets: [],
   thresholds: [],
   interceptors: {},
-  customHook: {}
+  customHook: {},
 };
 
 const MatchingStepDetail: React.FC = () => {
@@ -62,16 +68,26 @@ const MatchingStepDetail: React.FC = () => {
   const rulesetTextStorage = storage.match?.rulesetTextExpanded ? storage.match.rulesetTextExpanded : false;
   const thresholdTextStorage = storage.match?.thresholdTextExpanded ? storage.match.thresholdTextExpanded : false;
   const testRadioStorage = storage.match?.testRadioSelection ? storage.match.testRadioSelection : 1;
-  const rulesetDataStorage = storage.match?.rulesetData ? storage.match.rulesetData : [{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}];
-  const previewDataStorage = storage.match?.previewMatchedDataActivity ? storage.match.previewMatchedDataActivity : {sampleSize: 100, uris: [], actionPreview: []};
-  const previewDataValueStorage = storage.match?.previewMatchedDataValue == 0 ? storage.match.previewMatchedDataValue : -1;  // eslint-disable-line
-  const previewNonMatchDataStorage = storage.match?.previewNonMatchedDataActivity ? storage.match.previewNonMatchedDataActivity : {sampleSize: 100, uris: [], actionPreview: []};
-  const previewNonMatchDataValueStorage = storage.match?.previewNonMatchedDataValue == 0 ? storage.match.previewNonMatchedDataValue : -1;  // eslint-disable-line
+  const rulesetDataStorage = storage.match?.rulesetData
+    ? storage.match.rulesetData
+    : [{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}];
+  const previewDataStorage = storage.match?.previewMatchedDataActivity
+    ? storage.match.previewMatchedDataActivity
+    : {sampleSize: 100, uris: [], actionPreview: []};
+  const previewDataValueStorage =
+    storage.match?.previewMatchedDataValue == 0 ? storage.match.previewMatchedDataValue : -1; // eslint-disable-line
+  const previewNonMatchDataStorage = storage.match?.previewNonMatchedDataActivity
+    ? storage.match.previewNonMatchedDataActivity
+    : {sampleSize: 100, uris: [], actionPreview: []};
+  const previewNonMatchDataValueStorage =
+    storage.match?.previewNonMatchedDataValue == 0 ? storage.match.previewNonMatchedDataValue : -1; // eslint-disable-line
   const uriTestStorage = storage.match?.uriTestClicked ? storage.match.uriTestClicked : false;
   const uriData1Storage = storage.match?.uriTableData1 ? storage.match.uriTableData1 : [];
   const uriData2Storage = storage.match?.uriTableData2 ? storage.match.uriTableData2 : [];
   const inputUriDisabledStorage = storage.match?.hasOwnProperty("inputUriState") ? storage.match?.inputUriState : false;
-  const inputUriDisabled2Storage = storage.match?.hasOwnProperty("inputUri2State") ? storage.match?.inputUri2State : true;
+  const inputUriDisabled2Storage = storage.match?.hasOwnProperty("inputUri2State")
+    ? storage.match?.inputUri2State
+    : true;
 
   // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
   clearSessionStorageOnRefresh();
@@ -141,10 +157,12 @@ const MatchingStepDetail: React.FC = () => {
           id: id,
           start: item.weight,
           reduce: item.reduce ? item.reduce : false,
-          value: item.name + ":" + item.weight.toString()
+          value: item.name + ":" + item.weight.toString(),
         }));
         setRulesetItems(rulesetItems);
-        if (matchingStepArtifact.matchRulesets.length === 0) { toggleMoreRulesetText(true); }
+        if (matchingStepArtifact.matchRulesets.length === 0) {
+          toggleMoreRulesetText(true);
+        }
       }
       if (matchingStepArtifact.thresholds) {
         let thresholdItems = matchingStepArtifact.thresholds.map((item, id) => ({
@@ -153,11 +171,12 @@ const MatchingStepDetail: React.FC = () => {
           value: item.thresholdName + " - " + item.action + ":" + item.score.toString(),
         }));
         setThresholdItems(thresholdItems);
-        if (matchingStepArtifact.thresholds.length === 0) { toggleMoreThresholdText(true); }
+        if (matchingStepArtifact.thresholds.length === 0) {
+          toggleMoreThresholdText(true);
+        }
       }
       setMatchingStep(matchingStepArtifact);
       handleMatchingActivity(matchingStepArtifact.name);
-
     } else {
       history.push("/tiles/curate");
     }
@@ -170,12 +189,17 @@ const MatchingStepDetail: React.FC = () => {
     refMatchingRuleset.current! = matchingStep.matchRulesets;
   }, [matchingStep]);
 
-  useEffect(() => { setColourElementAdded(false); }, [uriContent]);
-  useEffect(() => { setColourElementAdded2(false); }, [uriContent2]);
+  useEffect(() => {
+    setColourElementAdded(false);
+  }, [uriContent]);
+  useEffect(() => {
+    setColourElementAdded2(false);
+  }, [uriContent2]);
 
   useEffect(() => {
     setViewSettings({
-      ...storage, match: {
+      ...storage,
+      match: {
         ...storage.match,
         rulesetExpanded: expandRuleset,
         editRulesetTimeline: displayRulesetTimeline,
@@ -193,18 +217,40 @@ const MatchingStepDetail: React.FC = () => {
         inputUriState: inputUriDisabled,
         inputUri2State: inputUriDisabled2,
         uriTableData1: UriTableData,
-        uriTableData2: UriTableData2
-      }
+        uriTableData2: UriTableData2,
+      },
     });
-  }, [expandRuleset, displayRulesetTimeline, displayThresholdTimeline, moreRulesetText, moreThresholdText, value, previewMatchedActivity, previewNonMatchedActivity, uriTestMatchClicked, rulesetDataList, inputUriDisabled, inputUriDisabled2, previewMatchedData, UriTableData, UriTableData2]);
+  }, [
+    expandRuleset,
+    displayRulesetTimeline,
+    displayThresholdTimeline,
+    moreRulesetText,
+    moreThresholdText,
+    value,
+    previewMatchedActivity,
+    previewNonMatchedActivity,
+    uriTestMatchClicked,
+    rulesetDataList,
+    inputUriDisabled,
+    inputUriDisabled2,
+    previewMatchedData,
+    UriTableData,
+    UriTableData2,
+  ]);
 
-
-  const handleMatchingActivity = async (matchStepName) => {
+  const handleMatchingActivity = async matchStepName => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
     setMatchingActivity(matchActivity);
   };
 
-  const handlePreviewMatchingActivity = async (testMatchData, previewActivity = previewMatchedActivity, thresholds = curationOptions.activeStep.stepArtifact.thresholds, setDataFunction = setPreviewMatchedData, setActivityFunction = setPreviewMatchedActivity, setDataList = setRulesetDataList) => {
+  const handlePreviewMatchingActivity = async (
+    testMatchData,
+    previewActivity = previewMatchedActivity,
+    thresholds = curationOptions.activeStep.stepArtifact.thresholds,
+    setDataFunction = setPreviewMatchedData,
+    setActivityFunction = setPreviewMatchedActivity,
+    setDataList = setRulesetDataList,
+  ) => {
     const test = () => {
       let localRulesetDataList: any = [];
       for (let i = 0; i < thresholds.length; i++) {
@@ -213,7 +259,10 @@ const MatchingStepDetail: React.FC = () => {
         let actionPreviewList = [{}];
         if (previewActivity === undefined) previewActivity = {actionPreview: []};
         for (let j = 0; j < previewActivity.actionPreview.length; j++) {
-          if (thresholds[i].thresholdName === previewActivity.actionPreview[j].name && thresholds[i].action === previewActivity.actionPreview[j].action) {
+          if (
+            thresholds[i].thresholdName === previewActivity.actionPreview[j].name &&
+            thresholds[i].action === previewActivity.actionPreview[j].action
+          ) {
             actionPreviewList.push(previewActivity.actionPreview[j]);
           }
         }
@@ -237,16 +286,22 @@ const MatchingStepDetail: React.FC = () => {
       setActivityFunction(previewActivity);
       setDataList(updatedRulesetList);
     }
-
   };
 
-  const handlePreviewNonMatchingActivity = async (testMatchData) => {
-    await handlePreviewMatchingActivity(Object.assign({nonMatches: true}, testMatchedData), previewNonMatchedActivity, notMatchedThreshold, setPreviewNonMatchedData, setPreviewNonMatchedActivity, setRulesetNonMatchedDataList);
+  const handlePreviewNonMatchingActivity = async testMatchData => {
+    await handlePreviewMatchingActivity(
+      Object.assign({nonMatches: true}, testMatchedData),
+      previewNonMatchedActivity,
+      notMatchedThreshold,
+      setPreviewNonMatchedData,
+      setPreviewNonMatchedActivity,
+      setRulesetNonMatchedDataList,
+    );
   };
 
   const getKeysToExpandFromTable = async () => {
     let allKeys = [""];
-    rulesetDataList.forEach((ruleset) => {
+    rulesetDataList.forEach(ruleset => {
       for (let i in ruleset.actionPreviewData) {
         let key = ruleset.rulesetName.concat("/") + i;
         allKeys.push(key);
@@ -254,7 +309,6 @@ const MatchingStepDetail: React.FC = () => {
     });
     return allKeys;
   };
-
 
   const addNewSingleRuleset = () => {
     setEditRuleset({});
@@ -266,7 +320,7 @@ const MatchingStepDetail: React.FC = () => {
     toggleShowRulesetMultipleModal(true);
   };
 
-  const getRulesetName = (rulesetComb) => {
+  const getRulesetName = rulesetComb => {
     let matchRules = rulesetComb.matchRules;
     let rulesetName = rulesetComb.rulesetName.split(".").join(" > ");
     if (!rulesetComb.rulesetName && Array.isArray(matchRules) && matchRules.length) {
@@ -280,17 +334,20 @@ const MatchingStepDetail: React.FC = () => {
     setPreviewMatchedData(-1);
   };
 
-  const handleUriInputChange = (event) => {
+  const handleUriInputChange = event => {
     setUriContent(event.target.value);
   };
 
-  const handleUriInputChange2 = (event) => {
+  const handleUriInputChange2 = event => {
     setUriContent2(event.target.value);
   };
 
-  const handleClickAddUri = (event) => {
+  const handleClickAddUri = event => {
     let flag = false;
-    let setDuplicateWarning = () => { setDuplicateUriWarning(true); setSingleUriWarning(false); };
+    let setDuplicateWarning = () => {
+      setDuplicateUriWarning(true);
+      setSingleUriWarning(false);
+    };
     if (UriTableData.length > 0) {
       for (let i = 0; i < UriTableData.length; i++) {
         if (UriTableData[i].uriContent === uriContent) {
@@ -310,9 +367,12 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const handleClickAddUri2 = (event) => {
+  const handleClickAddUri2 = event => {
     let flag = false;
-    let setDuplicateWarning = () => { setDuplicateUriWarning2(true); setSingleUriWarning2(false); };
+    let setDuplicateWarning = () => {
+      setDuplicateUriWarning2(true);
+      setSingleUriWarning2(false);
+    };
     if (UriTableData2.length > 0) {
       for (let i = 0; i < UriTableData2.length; i++) {
         if (UriTableData2[i].uriContent2 === uriContent2) {
@@ -332,70 +392,79 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const renderUriTableData = UriTableData.map((uriData) => {
+  const renderUriTableData = UriTableData.map(uriData => {
     return {
       key: uriData.uriContent,
       uriValue: uriData.uriContent,
     };
   });
 
-  const renderUriTableData2 = UriTableData2.map((uriData) => {
+  const renderUriTableData2 = UriTableData2.map(uriData => {
     return {
       key: uriData.uriContent2,
       uriValue: uriData.uriContent2,
     };
   });
 
-  const UriColumns = [{
-    key: "uriValue",
-    text: "uriValues",
-    dataField: "uriValue",
-    formatter: (text, key) => (
-      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-        <FontAwesomeIcon
-          data-testid={`${text}-delete`}
-          icon={faTrashAlt}
-          className={styles.deleteIcon}
-          onClick={() => handleDeleteUri(key)} size="lg"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              handleDeleteUri(key);
-            }
-          }}
-        />
-      </i>
-      </span>
-    ),
-    formatExtraData: {UriTableData}
-  }];
+  const UriColumns = [
+    {
+      key: "uriValue",
+      text: "uriValues",
+      dataField: "uriValue",
+      formatter: (text, key) => (
+        <span className={styles.tableRow}>
+          {text}
+          <i className={styles.positionDeleteIcon} aria-label="deleteIcon">
+            <FontAwesomeIcon
+              data-testid={`${text}-delete`}
+              icon={faTrashAlt}
+              className={styles.deleteIcon}
+              onClick={() => handleDeleteUri(key)}
+              size="lg"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleDeleteUri(key);
+                }
+              }}
+            />
+          </i>
+        </span>
+      ),
+      formatExtraData: {UriTableData},
+    },
+  ];
 
-  const UriColumns2 = [{
-    key: "uriValue",
-    text: "uriValues",
-    dataField: "uriValue",
-    formatter: (text, key) => (
-      <span className={styles.tableRow}>{text}
-        <i className={styles.positionDeleteIcon} aria-label="deleteIcon">
-          <FontAwesomeIcon
-            data-testid={`${text}-delete`}
-            icon={faTrashAlt}
-            className={styles.deleteIcon}
-            onClick={() => handleDeleteUri2(key)} size="lg"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleDeleteUri2(key);
-              }
-            }}
-          />
-        </i>
-      </span>
-    ),
-    formatExtraData: {UriTableData2}
-  }];
+  const UriColumns2 = [
+    {
+      key: "uriValue",
+      text: "uriValues",
+      dataField: "uriValue",
+      formatter: (text, key) => (
+        <span className={styles.tableRow}>
+          {text}
+          <i className={styles.positionDeleteIcon} aria-label="deleteIcon">
+            <FontAwesomeIcon
+              data-testid={`${text}-delete`}
+              icon={faTrashAlt}
+              className={styles.deleteIcon}
+              onClick={() => handleDeleteUri2(key)}
+              size="lg"
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleDeleteUri2(key);
+                }
+              }}
+            />
+          </i>
+        </span>
+      ),
+      formatExtraData: {UriTableData2},
+    },
+  ];
 
-  const handleDeleteUri = (event) => {
+  const handleDeleteUri = event => {
     let uriValue = event.uriValue;
     let data = [...UriTableData];
     for (let i = 0; i < data.length; i++) {
@@ -410,7 +479,7 @@ const MatchingStepDetail: React.FC = () => {
     setUriTestMatchClicked(false);
   };
 
-  const handleDeleteUri2 = (event) => {
+  const handleDeleteUri2 = event => {
     let uriValue = event.uriValue;
     let data = [...UriTableData2];
     for (let i = 0; i < data.length; i++) {
@@ -426,7 +495,7 @@ const MatchingStepDetail: React.FC = () => {
     setUriTestMatchClicked(false);
   };
 
-  const handleAllDataRadioClick = (event) => {
+  const handleAllDataRadioClick = event => {
     testMatchedData.uris = [];
     setAllDataSelected(true);
     setUriTableData([]);
@@ -440,14 +509,22 @@ const MatchingStepDetail: React.FC = () => {
     setSingleUriWarning(false);
     setSingleUriWarning2(false);
     setUriTestMatchClicked(false);
-    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
-    setRulesetNonMatchedDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
+    setRulesetDataList([
+      {rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0},
+    ]);
+    setRulesetNonMatchedDataList([
+      {rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0},
+    ]);
   };
 
   const handleTestButtonClick = async () => {
     testMatchedData.uris = [];
-    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
-    setRulesetNonMatchedDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0}]);
+    setRulesetDataList([
+      {rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0},
+    ]);
+    setRulesetNonMatchedDataList([
+      {rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0},
+    ]);
     setActiveMatchedUri([]);
     setActiveMatchedRuleset([]);
     if (UriTableData.length < 2 && !allDataSelected && !testUrisAllDataSelected) {
@@ -493,7 +570,7 @@ const MatchingStepDetail: React.FC = () => {
   //   setTestMatchTab(event.key);
   // };
 
-  const handleUriInputSelected = (event) => {
+  const handleUriInputSelected = event => {
     setInputUriDisabled(false);
     setTestUrisOnlySelected(true);
     setTestUrisAllDataSelected(false);
@@ -507,7 +584,7 @@ const MatchingStepDetail: React.FC = () => {
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
   };
 
-  const handleUriInputSelected2 = (event) => {
+  const handleUriInputSelected2 = event => {
     setInputUriDisabled2(false);
     setInputUriDisabled(true);
     setTestUrisOnlySelected(false);
@@ -521,7 +598,7 @@ const MatchingStepDetail: React.FC = () => {
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
   };
 
-  const handleExpandCollapse = async (option) => {
+  const handleExpandCollapse = async option => {
     if (option === "collapse") {
       setActiveMatchedRuleset([]);
       setActiveMatchedUri([]);
@@ -532,7 +609,7 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const handleExpandCollapseRulesIcon = async (option) => {
+  const handleExpandCollapseRulesIcon = async option => {
     if (option === "collapse") {
       setExpandRuleset(false);
     } else {
@@ -540,7 +617,7 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const handleRulesetAccordionChange = async (key) => {
+  const handleRulesetAccordionChange = async key => {
     const tmpActiveMatchedRuleset = [...activeMatchedRuleset];
     const index = tmpActiveMatchedRuleset.indexOf(key);
     index !== -1 ? tmpActiveMatchedRuleset.splice(index, 1) : tmpActiveMatchedRuleset.push(key);
@@ -555,7 +632,7 @@ const MatchingStepDetail: React.FC = () => {
     setActiveMatchedUri(arr);
   };
 
-  const handleUrisAccordionChange = (key) => {
+  const handleUrisAccordionChange = key => {
     const tmpActiveMatchedUri = [...activeMatchedUri];
     const index = tmpActiveMatchedUri.indexOf(key);
     index !== -1 ? tmpActiveMatchedUri.splice(index, 1) : tmpActiveMatchedUri.push(key);
@@ -571,7 +648,7 @@ const MatchingStepDetail: React.FC = () => {
     setUris(uris);
 
     const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
-    const preview = (flowName) ? await getPreviewFromURIs(flowName, arr) : null;
+    const preview = flowName ? await getPreviewFromURIs(flowName, arr) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let result1Instance = result1.data.data.envelope.instance;
@@ -583,7 +660,6 @@ const MatchingStepDetail: React.FC = () => {
     setCompareModalVisible(true);
     setUrisCompared(uris);
   };
-
 
   const updateRulesetItems = async (id, newvalue) => {
     let stepArtifact = curationOptions.activeStep.stepArtifact;
@@ -607,7 +683,7 @@ const MatchingStepDetail: React.FC = () => {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
       let bUpper = b.value.toUpperCase();
-      return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+      return aUpper < bUpper ? 1 : aUpper > bUpper ? -1 : 0;
     }
   };
 
@@ -619,17 +695,17 @@ const MatchingStepDetail: React.FC = () => {
     width: "100%",
     itemsAlwaysDraggable: {
       item: displayRulesetTimeline,
-      range: displayRulesetTimeline
+      range: displayRulesetTimeline,
     },
     selectable: false,
     editable: {
       remove: true,
-      updateTime: true
+      updateTime: true,
     },
     moveable: false,
     timeAxis: {
       scale: "millisecond",
-      step: 5
+      step: 5,
     },
     onMove: function (item, callback) {
       if (item.start >= 0 && item.start <= 100) {
@@ -647,7 +723,6 @@ const MatchingStepDetail: React.FC = () => {
         callback(item);
         updateRulesetItems(item.id, item.value);
       }
-
     },
     format: {
       minorLabels: function (date, scale, step) {
@@ -663,14 +738,32 @@ const MatchingStepDetail: React.FC = () => {
     template: function (item) {
       if (item && item.hasOwnProperty("value")) {
         if (item.reduce === false) {
-          return "<div data-testid=\"ruleset" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+          return (
+            "<div data-testid=\"ruleset" +
+            " " +
+            item.value.split(":")[0] +
+            "\">" +
+            item.value.split(":")[0] +
+            "<div class=\"itemValue\">" +
+            item.value.split(":")[1] +
+            "</div></div>"
+          );
         } else {
-          return "<div data-testid=\"ruleset-reduce" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemReduceValue\">" + - item.value.split(":")[1] + "</div></div>";
+          return (
+            "<div data-testid=\"ruleset-reduce" +
+            " " +
+            item.value.split(":")[0] +
+            "\">" +
+            item.value.split(":")[0] +
+            "<div class=\"itemReduceValue\">" +
+            -item.value.split(":")[1] +
+            "</div></div>"
+          );
         }
       }
     },
     maxMinorChars: 4,
-    order: timelineOrder
+    order: timelineOrder,
   };
 
   const thresholdOptions: any = {
@@ -681,17 +774,17 @@ const MatchingStepDetail: React.FC = () => {
     width: "100%",
     itemsAlwaysDraggable: {
       item: displayThresholdTimeline,
-      range: displayThresholdTimeline
+      range: displayThresholdTimeline,
     },
     selectable: false,
     editable: {
       remove: true,
-      updateTime: true
+      updateTime: true,
     },
     moveable: false,
     timeAxis: {
       scale: "millisecond",
-      step: 5
+      step: 5,
     },
     onMove: function (item, callback) {
       if (item.start >= 0 && item.start <= 100) {
@@ -709,7 +802,6 @@ const MatchingStepDetail: React.FC = () => {
         callback(item);
         updateThresholdItems(item.id, item.value);
       }
-
     },
     format: {
       minorLabels: function (date, scale, step) {
@@ -724,27 +816,62 @@ const MatchingStepDetail: React.FC = () => {
     },
     template: function (item) {
       if (item && item.hasOwnProperty("value")) {
-        return "<div data-testid=\"threshold" + " " + item.value.split(":")[0] + "\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+        return (
+          "<div data-testid=\"threshold" +
+          " " +
+          item.value.split(":")[0] +
+          "\">" +
+          item.value.split(":")[0] +
+          "<div class=\"itemValue\">" +
+          item.value.split(":")[1] +
+          "</div></div>"
+        );
       }
     },
     maxMinorChars: 4,
-    order: timelineOrder
+    order: timelineOrder,
   };
 
   const renderRulesetTimeline = () => {
-    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} borderMargin="0px" /></div>;
+    return (
+      <div data-testid={"active-ruleset-timeline"}>
+        <TimelineVis
+          items={rulesetItems}
+          options={rulesetOptions}
+          clickHandler={onRuleSetTimelineItemClicked}
+          borderMargin="0px"
+        />
+      </div>
+    );
   };
 
   const renderDefaultRulesetTimeline = () => {
-    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} borderMargin="0px" /></div>;
+    return (
+      <div data-testid={"default-ruleset-timeline"}>
+        <TimelineVisDefault items={rulesetItems} options={rulesetOptions} borderMargin="0px" />
+      </div>
+    );
   };
 
   const renderDefaultThresholdTimeline = () => {
-    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} borderMargin="0px" /></div>;
+    return (
+      <div data-testid={"default-threshold-timeline"}>
+        <TimelineVisDefault items={thresholdItems} options={thresholdOptions} borderMargin="0px" />
+      </div>
+    );
   };
 
   const renderThresholdTimeline = () => {
-    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} borderMargin="0px" /></div>;
+    return (
+      <div data-testid={"active-threshold-timeline"}>
+        <TimelineVis
+          items={thresholdItems}
+          options={thresholdOptions}
+          clickHandler={onThresholdTimelineItemClicked}
+          borderMargin="0px"
+        />
+      </div>
+    );
   };
 
   const updateThresholdItems = async (id, newvalue) => {
@@ -758,7 +885,7 @@ const MatchingStepDetail: React.FC = () => {
     await updateMatchingArtifact(stepArtifact);
   };
 
-  const onRuleSetTimelineItemClicked = (event) => {
+  const onRuleSetTimelineItemClicked = event => {
     let index = event.item;
     let currentRuleset = refMatchingRuleset.current!;
     let editMatchRuleset = currentRuleset[index];
@@ -772,7 +899,7 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const onThresholdTimelineItemClicked = (event) => {
+  const onThresholdTimelineItemClicked = event => {
     let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
     let index = event.item;
     let editThreshold = updateStepArtifactThresholds[index];
@@ -782,7 +909,7 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const handleAddMenu = (key) => {
+  const handleAddMenu = key => {
     if (key === "singlePropertyRuleset") {
       addNewSingleRuleset();
       setEditRuleset({});
@@ -797,19 +924,32 @@ const MatchingStepDetail: React.FC = () => {
       aria-label="add-ruleset"
       id="add-ruleset"
       align="end"
-      title={<>Add<ChevronDown className="ms-2" /></>}
+      title={
+        <>
+          Add
+          <ChevronDown className="ms-2" />
+        </>
+      }
       onSelect={handleAddMenu}
     >
-      <Dropdown.Item eventKey="singlePropertyRuleset" onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") { handleAddMenu("singlePropertyRuleset"); }
-      }}>
+      <Dropdown.Item
+        eventKey="singlePropertyRuleset"
+        onKeyDown={event => {
+          if (event.key === "Enter" || event.key === " ") {
+            handleAddMenu("singlePropertyRuleset");
+          }
+        }}
+      >
         <span aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
       </Dropdown.Item>
-      <Dropdown.Item eventKey="multiPropertyRuleset" onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          handleAddMenu("multiPropertyRuleset");
-        }
-      }}>
+      <Dropdown.Item
+        eventKey="multiPropertyRuleset"
+        onKeyDown={event => {
+          if (event.key === "Enter" || event.key === " ") {
+            handleAddMenu("multiPropertyRuleset");
+          }
+        }}
+      >
         <span aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
       </Dropdown.Item>
     </DropdownButton>
@@ -817,10 +957,18 @@ const MatchingStepDetail: React.FC = () => {
 
   const testButton = (
     <div className={styles.testButton}>
-      <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton" loading={loading} disabled={thresholdItems.length === 0}>Test</HCButton>
+      <HCButton
+        variant="primary"
+        type="submit"
+        onClick={handleTestButtonClick}
+        aria-label="testMatchUriButton"
+        loading={loading}
+        disabled={thresholdItems.length === 0}
+      >
+        Test
+      </HCButton>
     </div>
   );
-
 
   return (
     <>
@@ -834,37 +982,76 @@ const MatchingStepDetail: React.FC = () => {
       <p className={styles.headerDescription}>{MatchingStepDetailText.description}</p>
 
       <div className={styles.matchingDetailContainer}>
-
-        <div className={expandRuleset ? styles.matchCombinationsExpandedContainer : styles.matchCombinationsCollapsedContainer}>
-          <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
-          <span className={styles.expandCollapseRulesIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapseRulesIcon(id)} currentSelection={expandRuleset ? "expand" : "collapse"} aria-label="expandCollapseRulesetIcon" /></span>
-          {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
+        <div
+          className={
+            expandRuleset ? styles.matchCombinationsExpandedContainer : styles.matchCombinationsCollapsedContainer
+          }
+        >
+          <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>
+            Possible Combinations of Matched Rulesets
+          </div>
+          <span className={styles.expandCollapseRulesIcon}>
+            <ExpandCollapse
+              handleSelection={id => handleExpandCollapseRulesIcon(id)}
+              currentSelection={expandRuleset ? "expand" : "collapse"}
+              aria-label="expandCollapseRulesetIcon"
+            />
+          </span>
+          {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ? (
             <Row>
               {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
-                return <Col xs={4} key={`${combinationsObject["name"]}-${i}`}>
-                  <div className={styles.matchCombinationsColsContainer}>
-                    <HCCard className={styles.matchCombinationsCardStyle}>
-                      <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
-                        <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
+                return (
+                  <Col xs={4} key={`${combinationsObject["name"]}-${i}`}>
+                    <div className={styles.matchCombinationsColsContainer}>
+                      <HCCard className={styles.matchCombinationsCardStyle}>
+                        <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
+                          <div
+                            className={styles.combinationlabel}
+                            aria-label={`combinationLabel-${combinationsObject.name}`}
+                          >
+                            Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:
+                          </div>
 
-                        {combinationsObject.minimumMatchContributions?.map((minMatchArray, index) => {
-                          return <div key={`${minMatchArray[0]["rulsetName"]}-${index}`}>{minMatchArray.map((obj, index, arr) => {
-                            if (arr.length - 1 === index) {
-                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
-                            } else {
-                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period} /> </span>;
-                            }
-                          })}</div>;
-
-                        })}
-                      </div>
-                    </HCCard>
-                  </div>
-                </Col>;
-              })
-              }
-            </Row> : <p aria-label="noMatchedCombinations">Add thresholds and rulesets to the following sliders to determine which combinations of qualifying rulesets would meet each threshold.</p>
-          }
+                          {combinationsObject.minimumMatchContributions?.map((minMatchArray, index) => {
+                            return (
+                              <div key={`${minMatchArray[0]["rulsetName"]}-${index}`}>
+                                {minMatchArray.map((obj, index, arr) => {
+                                  if (arr.length - 1 === index) {
+                                    return (
+                                      <span
+                                        key={`${combinationsObject.name}-${index}`}
+                                        aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}
+                                      >
+                                        {getRulesetName(obj)}
+                                      </span>
+                                    );
+                                  } else {
+                                    return (
+                                      <span
+                                        key={`${combinationsObject.name}-${index}`}
+                                        aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}
+                                      >
+                                        {getRulesetName(obj)} <span className={styles.period} />{" "}
+                                      </span>
+                                    );
+                                  }
+                                })}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </HCCard>
+                    </div>
+                  </Col>
+                );
+              })}
+            </Row>
+          ) : (
+            <p aria-label="noMatchedCombinations">
+              Add thresholds and rulesets to the following sliders to determine which combinations of qualifying
+              rulesets would meet each threshold.
+            </p>
+          )}
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -875,31 +1062,37 @@ const MatchingStepDetail: React.FC = () => {
         <div className={styles.greyContainer}>
           <div className={styles.topHeader}>
             <div className={styles.textContainer}>
-              <p aria-label="threshold-text" className={`${moreThresholdText ? styles.showText : styles.hideText}`}>A <span className={styles.italic}>threshold</span> specifies how closely entities have to match before a certain action is triggered.
-                The action could be the merging of those entities, the creation of a match notification, or a custom action that is defined programmatically.
-                Click the <span className={styles.bold}>Add</span> button to create a threshold. If most of the values in the entities should match to trigger the action associated with your threshold,
-                then move the threshold higher on the scale. If only some of the values in the entities must match, then move the threshold lower.
-              {moreThresholdText && <span
-                aria-label="threshold-less"
-                className={styles.link}
-                onClick={() => toggleMoreThresholdText(!moreThresholdText)}
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    toggleMoreThresholdText(!moreThresholdText);
-                  }
-                }}
-              >
-                  less
-              </span>}
+              <p aria-label="threshold-text" className={`${moreThresholdText ? styles.showText : styles.hideText}`}>
+                A <span className={styles.italic}>threshold</span> specifies how closely entities have to match before a
+                certain action is triggered. The action could be the merging of those entities, the creation of a match
+                notification, or a custom action that is defined programmatically. Click the{" "}
+                <span className={styles.bold}>Add</span> button to create a threshold. If most of the values in the
+                entities should match to trigger the action associated with your threshold, then move the threshold
+                higher on the scale. If only some of the values in the entities must match, then move the threshold
+                lower.
+                {moreThresholdText && (
+                  <span
+                    aria-label="threshold-less"
+                    className={styles.link}
+                    onClick={() => toggleMoreThresholdText(!moreThresholdText)}
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        toggleMoreThresholdText(!moreThresholdText);
+                      }
+                    }}
+                  >
+                    less
+                  </span>
+                )}
               </p>
-              {!moreThresholdText &&
+              {!moreThresholdText && (
                 <span
                   aria-label="threshold-more"
                   className={styles.link}
                   onClick={() => toggleMoreThresholdText(!moreThresholdText)}
                   tabIndex={0}
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === "Enter" || e.key === " ") {
                       toggleMoreThresholdText(!moreThresholdText);
                     }
@@ -907,7 +1100,7 @@ const MatchingStepDetail: React.FC = () => {
                 >
                   more
                 </span>
-              }
+              )}
             </div>
             <div className={styles.addButtonContainer}>
               <HCButton
@@ -918,7 +1111,9 @@ const MatchingStepDetail: React.FC = () => {
                   setEditThreshold({});
                   toggleShowThresholdModal(true);
                 }}
-              >Add</HCButton>
+              >
+                Add
+              </HCButton>
             </div>
           </div>
           <div className={styles.switchToggleContainer}>
@@ -931,23 +1126,25 @@ const MatchingStepDetail: React.FC = () => {
               onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)}
               defaultChecked={displayThresholdTimeline}
               className={styles.switchToggle}
-              onKeyDown={
-                (e: any) => {
-                  const {target, key, type} = e;
-                  if (target) {
-                    if (type === "keydown") {
-                      if (key === "Enter" || key === " ") {
-                        target.checked = !target.checked;
-                        toggleDisplayThresholdTimeline(target.checked);
-                      }
+              onKeyDown={(e: any) => {
+                const {target, key, type} = e;
+                if (target) {
+                  if (type === "keydown") {
+                    if (key === "Enter" || key === " ") {
+                      target.checked = !target.checked;
+                      toggleDisplayThresholdTimeline(target.checked);
                     }
                   }
-
                 }
-              }
+              }}
             />
             <span>
-              <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right" aria-label="threshold-scale-tooltip">
+              <HCTooltip
+                text={MatchingStepTooltips.thresholdScale}
+                id="threshold-scale-tooltip"
+                placement="right"
+                aria-label="threshold-scale-tooltip"
+              >
                 <QuestionCircleFill
                   aria-label="icon: question-circle"
                   color={themeColors.defaults.questionCircle}
@@ -971,17 +1168,20 @@ const MatchingStepDetail: React.FC = () => {
         <div className={styles.greyContainer}>
           <div className={styles.topHeader}>
             <div className={styles.textContainer}>
-              <p aria-label="ruleset-text" className={`${moreRulesetText ? styles.showText : styles.hideText}`}>A <span className={styles.italic}>ruleset</span> specifies the criteria for determining whether the values of your entities match.
-                The way you define your rulesets, and where you place them on the scale, influences whether the entities are considered a match.
-                Click the <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a major influence over whether entities are qualified as a "match",
-                move it higher on the scale. If you want it to have only some influence, then move the ruleset lower.
-              {moreRulesetText &&
+              <p aria-label="ruleset-text" className={`${moreRulesetText ? styles.showText : styles.hideText}`}>
+                A <span className={styles.italic}>ruleset</span> specifies the criteria for determining whether the
+                values of your entities match. The way you define your rulesets, and where you place them on the scale,
+                influences whether the entities are considered a match. Click the{" "}
+                <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a
+                major influence over whether entities are qualified as a "match", move it higher on the scale. If you
+                want it to have only some influence, then move the ruleset lower.
+                {moreRulesetText && (
                   <span
                     aria-label="ruleset-less"
                     className={styles.link}
                     onClick={() => toggleMoreRulesetText(!moreRulesetText)}
                     tabIndex={0}
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (e.key === "Enter" || e.key === " ") {
                         toggleMoreRulesetText(!moreRulesetText);
                       }
@@ -989,15 +1189,15 @@ const MatchingStepDetail: React.FC = () => {
                   >
                     less
                   </span>
-              }
+                )}
               </p>
-              {!moreRulesetText
-                && <span
+              {!moreRulesetText && (
+                <span
                   aria-label="ruleset-more"
                   className={styles.link}
                   onClick={() => toggleMoreRulesetText(!moreRulesetText)}
                   tabIndex={0}
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === "Enter" || e.key === " ") {
                       toggleMoreRulesetText(!moreRulesetText);
                     }
@@ -1005,7 +1205,7 @@ const MatchingStepDetail: React.FC = () => {
                 >
                   more
                 </span>
-              }
+              )}
             </div>
             <div
               id="panelActionsMatch"
@@ -1019,7 +1219,9 @@ const MatchingStepDetail: React.FC = () => {
             </div>
           </div>
           <div className={styles.switchToggleContainer}>
-            <span className={styles.editingLabel}><b>Edit Rulesets</b></span>
+            <span className={styles.editingLabel}>
+              <b>Edit Rulesets</b>
+            </span>
             <FormCheck
               type="switch"
               aria-label="ruleset-scale-switch"
@@ -1036,11 +1238,16 @@ const MatchingStepDetail: React.FC = () => {
                     }
                   }
                 }
-
               }}
-              className={styles.switchToggle}/>
+              className={styles.switchToggle}
+            />
             <span>
-              <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right" aria-label="ruleset-scale-tooltip">
+              <HCTooltip
+                text={MatchingStepTooltips.rulesetScale}
+                id="ruleset-scale-tooltip"
+                placement="right"
+                aria-label="ruleset-scale-tooltip"
+              >
                 <QuestionCircleFill
                   aria-label="icon: question-circle"
                   color={themeColors.defaults.questionCircle}
@@ -1051,7 +1258,8 @@ const MatchingStepDetail: React.FC = () => {
                 />
               </HCTooltip>
               <br />
-            </span></div>
+            </span>
+          </div>
           {displayRulesetTimeline ? renderRulesetTimeline() : renderDefaultRulesetTimeline()}
         </div>
 
@@ -1067,8 +1275,8 @@ const MatchingStepDetail: React.FC = () => {
                 id={"test-uris"}
                 name={"test-review-matched-entities"}
                 type={"radio"}
-                defaultChecked={value == 1 ? true : false}  // eslint-disable-line
-                onChange={(e) => {
+                defaultChecked={value == 1 ? true : false} // eslint-disable-line
+                onChange={e => {
                   handleUriInputSelected(e);
                   onTestMatchRadioChange(e);
                 }}
@@ -1078,9 +1286,20 @@ const MatchingStepDetail: React.FC = () => {
                 className={"mb-0"}
               />
               <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
-                <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right" aria-label="test-all-uris-tooltip">
-                  <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                </HCTooltip><br />
+                <HCTooltip
+                  text={MatchingStepTooltips.testUris}
+                  id="test-all-uris-tooltip"
+                  placement="right"
+                  aria-label="test-all-uris-tooltip"
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+                <br />
               </span>
               <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
                 <HCInput
@@ -1098,27 +1317,39 @@ const MatchingStepDetail: React.FC = () => {
                   onClick={handleClickAddUri}
                   aria-label="addUriOnlyIcon"
                   tabIndex={0}
-                  onKeyDown={(e) => {
+                  onKeyDown={e => {
                     if (e.key === "Enter" || e.key === " ") {
                       handleClickAddUri(e);
                     }
                   }}
                 />
               </div>
-              {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
-              {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
+              {duplicateUriWarning ? (
+                <div className={styles.duplicateUriWarning}>This URI has already been added.</div>
+              ) : (
+                ""
+              )}
+              {singleUriWarning ? (
+                <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div>
+              ) : (
+                ""
+              )}
               <div className={styles.UriTable}>
-                {UriTableData.length > 0 ? <HCTable
-                  columns={UriColumns}
-                  className={styles.tableContent}
-                  subTableHeader={true}
-                  data={renderUriTableData}
-                  keyUtil="key"
-                  baseIndent={0}
-                  rowKey="key"
-                  pagination={false}
-                  showHeader={false}
-                /> : ""}
+                {UriTableData.length > 0 ? (
+                  <HCTable
+                    columns={UriColumns}
+                    className={styles.tableContent}
+                    subTableHeader={true}
+                    data={renderUriTableData}
+                    keyUtil="key"
+                    baseIndent={0}
+                    rowKey="key"
+                    pagination={false}
+                    showHeader={false}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
             </label>
           </span>
@@ -1128,8 +1359,8 @@ const MatchingStepDetail: React.FC = () => {
               id={"test-uris-all-data"}
               name={"test-review-matched-entities"}
               type={"radio"}
-              defaultChecked={value == 2 ? true : false}  // eslint-disable-line
-              onChange={(e) => {
+              defaultChecked={value == 2 ? true : false} // eslint-disable-line
+              onChange={e => {
                 handleUriInputSelected2(e);
                 onTestMatchRadioChange(e);
               }}
@@ -1140,10 +1371,21 @@ const MatchingStepDetail: React.FC = () => {
               tabIndex={0}
             />
             <span aria-label="testUriTooltip">
-              <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right" aria-label="test-uris-all-data-tooltip">
-                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+              <HCTooltip
+                text={MatchingStepTooltips.testUrisAllData}
+                id="test-uris-all-data-tooltip"
+                placement="right"
+                aria-label="test-uris-all-data-tooltip"
+              >
+                <QuestionCircleFill
+                  tabIndex={0}
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={styles.questionCircle}
+                />
               </HCTooltip>
-            </span><br />
+            </span>
+            <br />
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
               <HCInput
                 placeholder="Enter URI or Paste URIs"
@@ -1160,27 +1402,35 @@ const MatchingStepDetail: React.FC = () => {
                 onClick={handleClickAddUri2}
                 aria-label="addUriIcon"
                 tabIndex={0}
-                onKeyDown={(e) => {
+                onKeyDown={e => {
                   if (e.key === "Enter" || e.key === " ") {
                     handleClickAddUri2(e);
                   }
                 }}
               />
             </div>
-            {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+            {duplicateUriWarning2 ? (
+              <div className={styles.duplicateUriWarning}>This URI has already been added.</div>
+            ) : (
+              ""
+            )}
             {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
             <div className={styles.UriTable}>
-              {UriTableData2.length > 0 ? <HCTable
-                columns={UriColumns2}
-                subTableHeader={true}
-                className={styles.tableContent}
-                data={renderUriTableData2}
-                keyUtil="key"
-                baseIndent={0}
-                rowKey="key"
-                pagination={false}
-                showHeader={false}
-              /> : ""}
+              {UriTableData2.length > 0 ? (
+                <HCTable
+                  columns={UriColumns2}
+                  subTableHeader={true}
+                  className={styles.tableContent}
+                  data={renderUriTableData2}
+                  keyUtil="key"
+                  baseIndent={0}
+                  rowKey="key"
+                  pagination={false}
+                  showHeader={false}
+                />
+              ) : (
+                ""
+              )}
             </div>
           </label>
           <label className={styles.allDataRadio} htmlFor={"all-data"}>
@@ -1189,8 +1439,8 @@ const MatchingStepDetail: React.FC = () => {
               id={"all-data"}
               name={"test-review-matched-entities"}
               type={"radio"}
-              defaultChecked={value == 3 ? true : false}  // eslint-disable-line
-              onChange={(e) => {
+              defaultChecked={value == 3 ? true : false} // eslint-disable-line
+              onChange={e => {
                 handleAllDataRadioClick(e);
                 onTestMatchRadioChange(e);
               }}
@@ -1201,145 +1451,306 @@ const MatchingStepDetail: React.FC = () => {
               tabIndex={0}
             />
             <span aria-label={"allDataTooltip"}>
-              <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right" aria-label="test-all-data-tooltip">
-                <QuestionCircleFill tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+              <HCTooltip
+                text={MatchingStepTooltips.testAllData}
+                id="test-all-data-tooltip"
+                placement="right"
+                aria-label="test-all-data-tooltip"
+              >
+                <QuestionCircleFill
+                  tabIndex={0}
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={styles.questionCircle}
+                />
               </HCTooltip>
             </span>
             <div aria-label="allDataContent" className={styles.allDataContent}>
-              Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
+              Select All Data in your source query in order to preview matching activity against all URIs up to 100
+              displayed pair matches. It is best practice to test with a smaller-sized source query.
             </div>
           </label>
-          {thresholdItems.length === 0 ?
+          {thresholdItems.length === 0 ? (
             <HCTooltip text={MatchingStepTooltips.testDisabled} id="threshold-scale-tooltip" placement="right">
               {testButton}
             </HCTooltip>
-            :
+          ) : (
             testButton
-          }
+          )}
         </div>
         <div className={styles.matchedTab}>
-          {uriTestMatchClicked ?
-            <Tabs defaultActiveKey={testMatchTab} onSelect={(eventKey) => setTestMatchTab(eventKey ? eventKey : "matched")} className={styles.previewTabs}>
+          {uriTestMatchClicked ? (
+            <Tabs
+              defaultActiveKey={testMatchTab}
+              onSelect={eventKey => setTestMatchTab(eventKey ? eventKey : "matched")}
+              className={styles.previewTabs}
+            >
               <Tab title="Matched Entities" eventKey="matched">
-                {(previewMatchedData === 0) && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br />
-                  <div className={styles.noMatchedDataContent}>
-                    <span> Selecting a different test case</span><br />
-                    <span> Changing or adding more URIs</span><br />
-                    <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                {previewMatchedData === 0 && (
+                  <div className={styles.noMatchedDataView} aria-label="noMatchedDataView">
+                    <span>No matches found. You can try: </span>
+                    <br />
+                    <div className={styles.noMatchedDataContent}>
+                      <span> Selecting a different test case</span>
+                      <br />
+                      <span> Changing or adding more URIs</span>
+                      <br />
+                      <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                    </div>
                   </div>
-                </div>}
-                {previewMatchedActivity?.actionPreview && testMatchTab === "matched" ?
+                )}
+                {previewMatchedActivity?.actionPreview && testMatchTab === "matched" ? (
                   <div className={styles.UriMatchedDataTable}>
                     <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-                      <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
+                      <div className={styles.expandCollapseIcon}>
+                        <ExpandCollapse
+                          handleSelection={id => handleExpandCollapse(id)}
+                          currentSelection={"collapse"}
+                          aria-label="expandCollapseIcon"
+                        />
+                      </div>
                     </div>
-                    {rulesetDataList.length > 0 && rulesetDataList.map((rulesetDataList, index) => (
-                      <Accordion id="testMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
-                        <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
-                          <Card>
-                            <div className={"p-0 d-flex"}>
-                              <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>
-                                <span>
-                                  <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
-                                  <span className={"text-dark fw-bold"}> (Threshold: {rulesetDataList.score})</span>
-                                  <span className={"d-block"}>{rulesetDataList.actionPreviewData.length} pair matches</span>
-                                </span>
-                              </Accordion.Button>
-                            </div>
-                            <Accordion.Body className={"pt-1"}>
-                              {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
-                                const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
-                                return (
-                                  <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
-                                    <Accordion.Item eventKey={itemKey}>
-                                      <div className={"d-flex"}>
-                                        <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
-                                          <span onClick={e => e.stopPropagation()} className={"text-info"}>
-                                            <span className={"d-block"}>{actionPreviewData.uris[0]}<span className={"text-dark"}>  (Score: {actionPreviewData.score})</span></span>
-                                            <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
-                                          </span>
-                                        </Accordion.Button>
-                                        <div className={"p-2"}>
-                                          <HCButton size="sm" variant="primary" id={idx} className={styles.compareTestButton} onClick={(e) => { handleCompareButton(e, rulesetDataList.rulesetName, [actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} loading={compareBtnLoading[0]?.toString() === idx.toString() && compareBtnLoading[1] === rulesetDataList.rulesetName ? true : false} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                    {rulesetDataList.length > 0 &&
+                      rulesetDataList.map((rulesetDataList, index) => (
+                        <Accordion
+                          id="testMatchedPanel"
+                          className={"w-100"}
+                          flush
+                          key={index}
+                          activeKey={
+                            activeMatchedRuleset.includes(rulesetDataList.rulesetName)
+                              ? rulesetDataList.rulesetName
+                              : ""
+                          }
+                          defaultActiveKey={
+                            activeMatchedRuleset.includes(rulesetDataList.rulesetName)
+                              ? rulesetDataList.rulesetName
+                              : ""
+                          }
+                        >
+                          <Accordion.Item
+                            eventKey={rulesetDataList.rulesetName}
+                            style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}
+                          >
+                            <Card>
+                              <div className={"p-0 d-flex"}>
+                                <Accordion.Button
+                                  onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}
+                                >
+                                  <span>
+                                    <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
+                                    <span className={"text-dark fw-bold"}> (Threshold: {rulesetDataList.score})</span>
+                                    <span className={"d-block"}>
+                                      {rulesetDataList.actionPreviewData.length} pair matches
+                                    </span>
+                                  </span>
+                                </Accordion.Button>
+                              </div>
+                              <Accordion.Body className={"pt-1"}>
+                                {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
+                                  const itemKey =
+                                    actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
+                                  return (
+                                    <Accordion
+                                      id="testMatchedUriDataPanel"
+                                      className={"w-100"}
+                                      flush
+                                      key={idx}
+                                      activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                      defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                    >
+                                      <Accordion.Item eventKey={itemKey}>
+                                        <div className={"d-flex"}>
+                                          <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
+                                            <span onClick={e => e.stopPropagation()} className={"text-info"}>
+                                              <span className={"d-block"}>
+                                                {actionPreviewData.uris[0]}
+                                                <span className={"text-dark"}> (Score: {actionPreviewData.score})</span>
+                                              </span>
+                                              <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
+                                            </span>
+                                          </Accordion.Button>
+                                          <div className={"p-2"}>
+                                            <HCButton
+                                              size="sm"
+                                              variant="primary"
+                                              id={idx}
+                                              className={styles.compareTestButton}
+                                              onClick={e => {
+                                                handleCompareButton(e, rulesetDataList.rulesetName, [
+                                                  actionPreviewData.uris[0],
+                                                  actionPreviewData.uris[1],
+                                                ]);
+                                              }}
+                                              loading={
+                                                compareBtnLoading[0]?.toString() === idx.toString() &&
+                                                compareBtnLoading[1] === rulesetDataList.rulesetName
+                                                  ? true
+                                                  : false
+                                              }
+                                              aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}
+                                            >
+                                              Compare
+                                            </HCButton>
+                                          </div>
                                         </div>
-                                      </div>
-                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets &&
-                                        <Accordion.Body>
-                                          <span aria-label="expandedTableView">
-                                            <ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets} entityData={curationOptions.activeStep} />
-                                          </span>
-                                        </Accordion.Body>
-                                      }
-                                    </Accordion.Item>
-                                  </Accordion>);
-                              })}
-                            </Accordion.Body>
-                          </Card>
-                        </Accordion.Item>
-                      </Accordion>
-                    ))}
-                  </div> : ""}
+                                        {curationOptions.activeStep?.stepArtifact?.matchRulesets && (
+                                          <Accordion.Body>
+                                            <span aria-label="expandedTableView">
+                                              <ExpandableTableView
+                                                rowData={actionPreviewData}
+                                                allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets}
+                                                entityData={curationOptions.activeStep}
+                                              />
+                                            </span>
+                                          </Accordion.Body>
+                                        )}
+                                      </Accordion.Item>
+                                    </Accordion>
+                                  );
+                                })}
+                              </Accordion.Body>
+                            </Card>
+                          </Accordion.Item>
+                        </Accordion>
+                      ))}
+                  </div>
+                ) : (
+                  ""
+                )}
               </Tab>
               <Tab title="Not Matched" eventKey="notMatched">
-                {(previewNonMatchedData === 0) && <div className={styles.noNotMatchedDataView} aria-label="noNotMatchedDataView"><span>No non-matches found. You can try: </span><br />
-                  <div className={styles.noMatchedDataContent}>
-                    <span> Selecting a different test case</span><br />
-                    <span> Changing or adding more URIs</span><br />
-                    <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                {previewNonMatchedData === 0 && (
+                  <div className={styles.noNotMatchedDataView} aria-label="noNotMatchedDataView">
+                    <span>No non-matches found. You can try: </span>
+                    <br />
+                    <div className={styles.noMatchedDataContent}>
+                      <span> Selecting a different test case</span>
+                      <br />
+                      <span> Changing or adding more URIs</span>
+                      <br />
+                      <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+                    </div>
                   </div>
-                </div>}
-                {previewNonMatchedActivity.actionPreview.length > 0 && testMatchTab === "notMatched" ?
+                )}
+                {previewNonMatchedActivity.actionPreview.length > 0 && testMatchTab === "notMatched" ? (
                   <div className={styles.UriMatchedDataTable}>
                     <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-                      <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon" /></div>
+                      <div className={styles.expandCollapseIcon}>
+                        <ExpandCollapse
+                          handleSelection={id => handleExpandCollapse(id)}
+                          currentSelection={"collapse"}
+                          aria-label="expandCollapseIcon"
+                        />
+                      </div>
                     </div>
                     {rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
-                      <Accordion id="testNotMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
-                        <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
+                      <Accordion
+                        id="testNotMatchedPanel"
+                        className={"w-100"}
+                        flush
+                        key={index}
+                        activeKey={
+                          activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""
+                        }
+                        defaultActiveKey={
+                          activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""
+                        }
+                      >
+                        <Accordion.Item
+                          eventKey={rulesetDataList.rulesetName}
+                          style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}
+                        >
                           <Card>
                             <div className={"p-0 d-flex"}>
-                              <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>
+                              <Accordion.Button
+                                onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}
+                              >
                                 <span>
                                   <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
-                                  <span className={"d-block"}>{rulesetDataList.actionPreviewData.length} pair matches</span>
+                                  <span className={"d-block"}>
+                                    {rulesetDataList.actionPreviewData.length} pair matches
+                                  </span>
                                 </span>
                               </Accordion.Button>
                             </div>
                             <Accordion.Body className={"pt-1"}>
                               {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
-                                const itemKey = actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
+                                const itemKey =
+                                  actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
                                 return (
-                                  <Accordion id="testMatchedUriDataPanel" className={"w-100"} flush key={idx} activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""} defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}>
+                                  <Accordion
+                                    id="testMatchedUriDataPanel"
+                                    className={"w-100"}
+                                    flush
+                                    key={idx}
+                                    activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                    defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                  >
                                     <Accordion.Item eventKey={itemKey}>
                                       <div className={"d-flex"}>
                                         <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
                                           <span onClick={e => e.stopPropagation()} className={"text-info"}>
-                                            <span className={"d-block"}>{actionPreviewData.uris[0]}<span className={"text-dark"}>  (Score: {actionPreviewData.score})</span></span>
+                                            <span className={"d-block"}>
+                                              {actionPreviewData.uris[0]}
+                                              <span className={"text-dark"}> (Score: {actionPreviewData.score})</span>
+                                            </span>
                                             <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
                                           </span>
                                         </Accordion.Button>
                                         <div className={"p-2"}>
-                                          <HCButton size="sm" className={styles.compareTestButton} id={idx} variant="primary" onClick={(e) => { handleCompareButton(e, rulesetDataList.rulesetName, [actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} loading={compareBtnLoading[0]?.toString() === idx.toString() && compareBtnLoading[1] === rulesetDataList.rulesetName ? true : false} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</HCButton>
+                                          <HCButton
+                                            size="sm"
+                                            className={styles.compareTestButton}
+                                            id={idx}
+                                            variant="primary"
+                                            onClick={e => {
+                                              handleCompareButton(e, rulesetDataList.rulesetName, [
+                                                actionPreviewData.uris[0],
+                                                actionPreviewData.uris[1],
+                                              ]);
+                                            }}
+                                            loading={
+                                              compareBtnLoading[0]?.toString() === idx.toString() &&
+                                              compareBtnLoading[1] === rulesetDataList.rulesetName
+                                                ? true
+                                                : false
+                                            }
+                                            aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}
+                                          >
+                                            Compare
+                                          </HCButton>
                                         </div>
                                       </div>
-                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets &&
+                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets && (
                                         <Accordion.Body>
                                           <span aria-label="expandedTableView">
-                                            <ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets} entityData={curationOptions.activeStep} />
+                                            <ExpandableTableView
+                                              rowData={actionPreviewData}
+                                              allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets}
+                                              entityData={curationOptions.activeStep}
+                                            />
                                           </span>
                                         </Accordion.Body>
-                                      }
+                                      )}
                                     </Accordion.Item>
-                                  </Accordion>);
+                                  </Accordion>
+                                );
                               })}
                             </Accordion.Body>
                           </Card>
                         </Accordion.Item>
                       </Accordion>
                     ))}
-                  </div> : ""}
+                  </div>
+                ) : (
+                  ""
+                )}
               </Tab>
-            </Tabs> : ""}
+            </Tabs>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <RulesetSingleModal

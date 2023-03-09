@@ -5,7 +5,7 @@ import {
   ModelingContextInterface,
   EntityModified,
   graphViewOptions,
-  ViewType
+  ViewType,
 } from "../types/modeling-types";
 
 const DEFAULT_MODELING_OPTIONS = {
@@ -15,7 +15,7 @@ const DEFAULT_MODELING_OPTIONS = {
   entityPropertiesNamesArray: [],
   view: defaultModelingView,
   selectedEntity: undefined,
-  openSidePanelInGraphView: false
+  openSidePanelInGraphView: false,
 };
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
@@ -29,11 +29,10 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   setView: () => {},
   setSelectedEntity: () => {},
   setGraphViewOptions: () => {},
-  closeSidePanelInGraphView: () => {}
+  closeSidePanelInGraphView: () => {},
 });
 
-const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
-
+const ModelingProvider: React.FC<{children: any}> = ({children}) => {
   const [modelingOptions, setModelingOptions] = useState<ModelingOptionsInterface>(DEFAULT_MODELING_OPTIONS);
 
   const setEntityTypeNamesArray = async (entityTypeNamesArray: any[], isModified: boolean) => {
@@ -47,8 +46,11 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const updateEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
-      let index = newModifiedEntitiesArray.map(
-        (entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      let index = newModifiedEntitiesArray
+        .map(entity => {
+          return entity.entityName;
+        })
+        .indexOf(entityModified.entityName);
       newModifiedEntitiesArray[index] = entityModified;
     } else {
       newModifiedEntitiesArray.push(entityModified);
@@ -59,15 +61,17 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const removeEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
-      let index = newModifiedEntitiesArray.map(
-        (entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      let index = newModifiedEntitiesArray
+        .map(entity => {
+          return entity.entityName;
+        })
+        .indexOf(entityModified.entityName);
       newModifiedEntitiesArray.splice(index, 1);
-      setModelingOptions(
-        {...modelingOptions,
-          modifiedEntitiesArray:
-          newModifiedEntitiesArray,
-          isModified: newModifiedEntitiesArray.length > 0
-        });
+      setModelingOptions({
+        ...modelingOptions,
+        modifiedEntitiesArray: newModifiedEntitiesArray,
+        isModified: newModifiedEntitiesArray.length > 0,
+      });
     }
   };
 
@@ -94,7 +98,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const setSelectedEntity = (selectedEntity: string | undefined, isDraft?: boolean) => {
     let options = {
       ...modelingOptions,
-      selectedEntity: selectedEntity
+      selectedEntity: selectedEntity,
     };
     if (isDraft) {
       options["isModified"] = isDraft;
@@ -120,19 +124,21 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   return (
-    <ModelingContext.Provider value={{
-      modelingOptions,
-      setEntityTypeNamesArray,
-      toggleIsModified,
-      updateEntityModified,
-      removeEntityModified,
-      clearEntityModified,
-      setEntityPropertiesNamesArray,
-      setView,
-      setSelectedEntity,
-      setGraphViewOptions,
-      closeSidePanelInGraphView
-    }}>
+    <ModelingContext.Provider
+      value={{
+        modelingOptions,
+        setEntityTypeNamesArray,
+        toggleIsModified,
+        updateEntityModified,
+        removeEntityModified,
+        clearEntityModified,
+        setEntityPropertiesNamesArray,
+        setView,
+        setSelectedEntity,
+        setGraphViewOptions,
+        closeSidePanelInGraphView,
+      }}
+    >
       {children}
     </ModelingContext.Provider>
   );

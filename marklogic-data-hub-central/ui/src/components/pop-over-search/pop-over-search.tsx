@@ -17,15 +17,14 @@ interface Props {
   facetName: string;
 }
 
-
-const PopOverSearch: React.FC<Props> = (props) => {
+const PopOverSearch: React.FC<Props> = props => {
   const {searchOptions} = useContext(SearchContext);
   const {handleError} = useContext(UserContext);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
   const [popOverVisibility, setPopOverVisibility] = useState(false);
 
-  const getFacetValues = async (e) => {
+  const getFacetValues = async e => {
     if (e.target.value.length >= 2 && e.target.value.toLowerCase()) {
       try {
         let data = {
@@ -34,7 +33,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
           "propertyPath": props.propertyPath,
           "limit": 10,
           "dataType": "string",
-          "pattern": e.target.value
+          "pattern": e.target.value,
         };
         const response = await axios.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data);
         setOptions(response.data);
@@ -47,12 +46,12 @@ const PopOverSearch: React.FC<Props> = (props) => {
     }
   };
 
-  const getMonitorFacetValues = async (e) => {
+  const getMonitorFacetValues = async e => {
     if (e.target.value.length >= 2 && e.target.value.toLowerCase()) {
       try {
         let data = {
           "facetName": props.facetName,
-          "searchTerm": e.target.value
+          "searchTerm": e.target.value,
         };
         const response = await axios.post(`/api/jobs/stepResponses/facetValues`, data);
         setOptions(response.data);
@@ -67,18 +66,18 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const serviceNameKeyDownHandler = (event, component) => {
     //Make seleection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "seeAllLink") setPopOverVisibility(!popOverVisibility);
     }
   };
 
-  const onSelectCheckboxes = (e) => {
+  const onSelectCheckboxes = e => {
     let index = checkedValues.indexOf(e.target.value);
     if (index === -1) {
       setCheckedValues([...checkedValues, e.target.value]);
     } else {
-      let newChecked = checkedValues.filter(function(el) {
-        return (el !== e.target.value);
+      let newChecked = checkedValues.filter(function (el) {
+        return el !== e.target.value;
       });
       setCheckedValues(newChecked);
     }
@@ -89,8 +88,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
     setPopOverVisibility(false);
   };
 
-
-  const handleChange = (visible) => {
+  const handleChange = visible => {
     setPopOverVisibility(visible);
   };
 
@@ -98,34 +96,36 @@ const PopOverSearch: React.FC<Props> = (props) => {
     setCheckedValues(props.popOvercheckedValues);
   }, [props.popOvercheckedValues]);
 
-
-
-  const renderCheckBoxGroup = options.map((value, index) =>
-    <div  key={index} >
+  const renderCheckBoxGroup = options.map((value, index) => (
+    <div key={index}>
       <HCCheckbox
         id={`${value}-popover-checkbox`}
         value={value}
-        handleClick={(e) => onSelectCheckboxes(e)}
+        handleClick={e => onSelectCheckboxes(e)}
         checked={checkedValues.includes(value)}
         data-testid={`${value}-popover-checkbox`}
         ariaLabel={`${value}-popover-checkbox`}
-      >{value}
+      >
+        {value}
       </HCCheckbox>
     </div>
-  );
-
+  ));
 
   const content = (
     <Popover id={`popover-over-search`} className={styles.popoverSearch}>
       <Popover.Body>
         <div className={styles.popover}>
-          <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} ariaLabel={(props.facetName) + "-popover-input-field"} data-testid={(props.facetName) + "-popover-input-field"}/>
-          <div className={styles.scrollOptions}>
-            {renderCheckBoxGroup}
-          </div>
-          <hr/>
+          <HCInput
+            placeholder="Search"
+            allowClear={true}
+            onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues}
+            ariaLabel={props.facetName + "-popover-input-field"}
+            data-testid={props.facetName + "-popover-input-field"}
+          />
+          <div className={styles.scrollOptions}>{renderCheckBoxGroup}</div>
+          <hr />
           <div className={styles.checkIcon} data-testid="check-icon">
-            <CheckSquare aria-label="icon: check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
+            <CheckSquare aria-label="icon: check-square-o" className={styles.popoverIcons} onClick={addFacetValues} />
           </div>
         </div>
       </Popover.Body>
@@ -139,8 +139,17 @@ const PopOverSearch: React.FC<Props> = (props) => {
       trigger="click"
       onToggle={handleChange}
       rootClose
-      show={popOverVisibility}>
-      <div className={styles.search} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "seeAllLink")} data-testid={(props.facetName) + "-search-input"} aria-label={(props.facetName) + "-popover-search-label"}>See all</div>
+      show={popOverVisibility}
+    >
+      <div
+        className={styles.search}
+        tabIndex={0}
+        onKeyDown={e => serviceNameKeyDownHandler(e, "seeAllLink")}
+        data-testid={props.facetName + "-search-input"}
+        aria-label={props.facetName + "-popover-search-label"}
+      >
+        See all
+      </div>
     </OverlayTrigger>
   );
 };

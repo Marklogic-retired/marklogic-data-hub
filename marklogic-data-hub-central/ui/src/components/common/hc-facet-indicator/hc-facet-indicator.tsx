@@ -10,14 +10,18 @@ interface Props {
 
 const HCFacetIndicator: React.FC<Props> = ({identifier, isActive, percentage}) => {
   return (
-    <span aria-label={`${identifier}-hc-facet-indicator`} className={`${styles.hcfiComponent}`} style={{minWidth: 20, width: Number.isNaN(percentage / 2) ? 0 : percentage / 2, height: 8, overflow: "hidden"}}>
+    <span
+      aria-label={`${identifier}-hc-facet-indicator`}
+      className={`${styles.hcfiComponent}`}
+      style={{minWidth: 20, width: Number.isNaN(percentage / 2) ? 0 : percentage / 2, height: 8, overflow: "hidden"}}
+    >
       <span aria-label={`${identifier}-bar-wrapper`} className={`${styles.hcfiBarWrapper}`}>
         <span
           aria-label={`${identifier}-bar`}
           className={styles.hcfiBar}
           style={{
             width: `${percentage}%`,
-            backgroundColor: isActive ? themeColors.facetIndicator.active : themeColors.facetIndicator.inactive
+            backgroundColor: isActive ? themeColors.facetIndicator.active : themeColors.facetIndicator.inactive,
           }}
         />
       </span>
@@ -27,7 +31,7 @@ const HCFacetIndicator: React.FC<Props> = ({identifier, isActive, percentage}) =
 
 HCFacetIndicator.defaultProps = {
   identifier: "default",
-  isActive: false
+  isActive: false,
 };
 
 export default HCFacetIndicator;

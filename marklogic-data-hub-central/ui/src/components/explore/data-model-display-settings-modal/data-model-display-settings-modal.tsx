@@ -21,10 +21,15 @@ type Props = {
 
 enum eVisibleSettings {
   EntityType,
-  Concept
+  Concept,
 }
 
-const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal, entityModels, entityDefinitionsArray}) => {
+const DataModelDisplaySettingsModal: React.FC<Props> = ({
+  isVisible,
+  toggleModal,
+  entityModels,
+  entityDefinitionsArray,
+}) => {
   const {handleError} = useContext(UserContext);
   const [entitiesData, setEntitiesData] = useState({});
   const [entitiesIndexes, setEntitiesIndexes] = useState({});
@@ -50,7 +55,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
             color: hubCentralConfig?.modeling?.entities[entityType]?.color || themeColors.defaults.entityColor,
             icon: hubCentralConfig?.modeling?.entities[entityType]?.icon || defaultIcon,
             label: hubCentralConfig?.modeling?.entities[entityType]?.label,
-            propertiesOnHover: hubCentralConfig?.modeling?.entities[entityType]?.propertiesOnHover
+            propertiesOnHover: hubCentralConfig?.modeling?.entities[entityType]?.propertiesOnHover,
           };
         });
         setEntitiesData(tmpEntitiesData);
@@ -67,18 +72,24 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
             rowKey: concept,
             color: hubCentralConfig?.modeling?.concepts[concept]?.color || themeColors.defaults.entityColor,
             icon: hubCentralConfig?.modeling?.concepts[concept]?.icon || defaultIcon,
-            children: Object.keys(hubCentralConfig?.modeling?.concepts[concept]?.semanticConcepts || {}).map((semanticConcept, subIndex) => {
-              tmpConceptIndexes[`${concept}-${semanticConcept}`] = {
-                parent: concept,
-                index: subIndex
-              };
-              return {
-                concept: semanticConcept,
-                rowKey: `${concept}-${semanticConcept}`,
-                color: hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.color || themeColors.defaults.entityColor,
-                icon: hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.icon || defaultIcon,
-              };
-            })
+            children: Object.keys(hubCentralConfig?.modeling?.concepts[concept]?.semanticConcepts || {}).map(
+              (semanticConcept, subIndex) => {
+                tmpConceptIndexes[`${concept}-${semanticConcept}`] = {
+                  parent: concept,
+                  index: subIndex,
+                };
+                return {
+                  concept: semanticConcept,
+                  rowKey: `${concept}-${semanticConcept}`,
+                  color:
+                    hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.color ||
+                    themeColors.defaults.entityColor,
+                  icon:
+                    hubCentralConfig?.modeling?.concepts[concept].semanticConcepts[semanticConcept]?.icon ||
+                    defaultIcon,
+                };
+              },
+            ),
           };
         });
         setConceptsData(tmpConceptData);
@@ -105,7 +116,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
   };
 
   const onEntityColumnValueChange = (row, e, column: EntityTableColumns) => {
-    const updateValue = (entityData) => {
+    const updateValue = entityData => {
       switch (column) {
       case EntityTableColumns.Color:
         entityData.color = e.color.hex;
@@ -144,7 +155,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
           setNotificationsObj([], 0, 0, false);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         if (err.response) {
           setNotificationsObj([], 0, 0, false);
         } else {
@@ -154,7 +165,7 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
   };
 
   const onConceptsColumnValueChange = (row, e, column: ConceptsTableColumns) => {
-    const updateValue = (concepts) => {
+    const updateValue = concepts => {
       switch (column) {
       case ConceptsTableColumns.Color:
         concepts.color = e.color.hex;
@@ -176,7 +187,9 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
     });
 
     setConceptDisplaySettingsData(conceptDisplaySettingsData => {
-      const tmpConceptDisplaySettingsData = conceptDisplaySettingsData.map(conceptData => Object.assign({}, conceptData));
+      const tmpConceptDisplaySettingsData = conceptDisplaySettingsData.map(conceptData =>
+        Object.assign({}, conceptData),
+      );
       const conceptIndex = conceptsIndexes[row.rowKey];
       if ((typeof conceptIndex).toString() === "object") {
         updateValue(tmpConceptDisplaySettingsData[conceptsIndexes[conceptIndex.parent]].children[conceptIndex.index]);
@@ -212,19 +225,18 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
     setVisibleSettings(eVisibleSettings[value as keyof typeof eVisibleSettings]);
   };
 
-
   const modalFooter = (
     <div className={styles.editFooter}>
-      <div
-        className={styles.footer}
-      >
+      <div className={styles.footer}>
         <HCButton
           size="sm"
           variant="outline-light"
           id={`cancel-entityType-settings-modal`}
           aria-label={`cancel-entityType-settings-modal`}
           onClick={() => closeModal()}
-        >Cancel</HCButton>
+        >
+          Cancel
+        </HCButton>
         <HCButton
           className={styles.saveButton}
           size="sm"
@@ -232,30 +244,31 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
           aria-label={`save-entityType-settings-modal`}
           variant="primary"
           onClick={handleSave}
-        >Save</HCButton>
+        >
+          Save
+        </HCButton>
       </div>
     </div>
   );
 
   return (
-    <HCModal
-      show={isVisible}
-      dialogClassName={styles.modal1400w}
-      onHide={() => closeModal()}
-      scrollable={true}
-    >
+    <HCModal show={isVisible} dialogClassName={styles.modal1400w} onHide={() => closeModal()} scrollable={true}>
       <Modal.Header className={"bb-none align-items-start"}>
-        <span className={"fs-4"}>
-          Data model display settings
-        </span>
-        <button type="button" className="btn-close" aria-label="Close" id={"close-settings-modal"} onClick={() => closeModal()} />
+        <span className={"fs-4"}>Data model display settings</span>
+        <button
+          type="button"
+          className="btn-close"
+          aria-label="Close"
+          id={"close-settings-modal"}
+          onClick={() => closeModal()}
+        />
       </Modal.Header>
       <Modal.Body>
-        {errorMessage &&
+        {errorMessage && (
           <Alert variant="danger" className="alert">
             {errorMessage}
           </Alert>
-        }
+        )}
         <div id="entityTypeDisplaySettingsContainer" data-testid="entityTypeDisplaySettingsContainer">
           <Row>
             <Col className={"d-flex mb-3 align-items-center"} id="srcType">
@@ -287,26 +300,23 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({isVisible, toggleModal,
           </Row>
 
           <HCDivider />
-          {visibleSettings === eVisibleSettings.EntityType &&
+          {visibleSettings === eVisibleSettings.EntityType && (
             <EntityDisplaySettings
               entityModels={entityModels}
               exploreSettingsData={entityTypeDisplaySettingsData}
               entityDefinitionsArray={entityDefinitionsArray}
               onEntityColumnValueChange={onEntityColumnValueChange}
             />
-          }
-          {visibleSettings === eVisibleSettings.Concept &&
+          )}
+          {visibleSettings === eVisibleSettings.Concept && (
             <ConceptsDisplaySettings
               conceptsSettingsData={conceptDisplaySettingsData}
               onConceptsColumnValueChange={onConceptsColumnValueChange}
             />
-          }
+          )}
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        {modalFooter}
-      </Modal.Footer>
-
+      <Modal.Footer>{modalFooter}</Modal.Footer>
     </HCModal>
   );
 };

@@ -27,7 +27,7 @@ const THRESHOLD_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const ThresholdModal: React.FC<Props> = (props) => {
+const ThresholdModal: React.FC<Props> = props => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
 
   const [nameValue, setNameValue] = useState("");
@@ -67,7 +67,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     }
   }, [props.isVisible]);
 
-  const handleInputChange = (event) => {
+  const handleInputChange = event => {
     switch (event.target.id) {
     case "name-input":
       if (event.target.value === "") {
@@ -143,7 +143,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     setIsNamespaceTouched(false);
   };
 
-  const onSubmit = async (event) => {
+  const onSubmit = async event => {
     event.preventDefault();
     let nameErrorMessage = "";
     let actionErrorMessage = "";
@@ -157,18 +157,18 @@ const ThresholdModal: React.FC<Props> = (props) => {
     }
     switch (actionType) {
     case "merge":
-    case "notify":
-    {
-
+    case "notify": {
       if (actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length === 0) {
         let newThreshold: Threshold = {
           thresholdName,
           action: actionType,
-          score: 0
+          score: 0,
         };
 
         let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-        let duplicateNames = newStepArtifact.thresholds && newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        let duplicateNames =
+            newStepArtifact.thresholds &&
+            newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
         if (duplicateNames && duplicateNames.length > 0) {
           nameErrorMessage = "A duplicate threshold name exists";
         } else {
@@ -180,21 +180,26 @@ const ThresholdModal: React.FC<Props> = (props) => {
           props.toggleModal(false);
           resetModal();
         }
-
       }
 
       if (actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length !== 0) {
         let editedThreshold: Threshold = {
           thresholdName,
           action: actionType,
-          score: props.editThreshold["score"]
+          score: props.editThreshold["score"],
         };
 
         let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
         let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold["index"]];
-        let duplicateNames = newStepArtifact.thresholds && newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        let duplicateNames =
+            newStepArtifact.thresholds &&
+            newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
 
-        if (duplicateNames && duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== editedThreshold.thresholdName) {
+        if (
+          duplicateNames &&
+            duplicateNames.length > 0 &&
+            stepArtifactThreshold.thresholdName !== editedThreshold.thresholdName
+        ) {
           nameErrorMessage = "A duplicate threshold name exists";
         } else {
           updateThreshold(editedThreshold);
@@ -203,8 +208,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
       break;
     }
 
-    case "custom":
-    {
+    case "custom": {
       let uriErrorMessage = "";
       if (uriValue === "") {
         uriErrorMessage = "A URI is required";
@@ -223,12 +227,20 @@ const ThresholdModal: React.FC<Props> = (props) => {
         score: 0,
         actionModulePath: uriValue,
         actionModuleFunction: functionValue,
-        actionModuleNamespace: namespaceValue
+        actionModuleNamespace: namespaceValue,
       };
 
-      if (uriErrorMessage === "" && functionErrorMessage === "" && nameErrorMessage === "" && actionErrorMessage === "" && Object.keys(props.editThreshold).length === 0) {
+      if (
+        uriErrorMessage === "" &&
+          functionErrorMessage === "" &&
+          nameErrorMessage === "" &&
+          actionErrorMessage === "" &&
+          Object.keys(props.editThreshold).length === 0
+      ) {
         let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        let duplicateNames = newStepArtifact.thresholds.filter(
+          threshold => threshold.thresholdName === thresholdName,
+        );
         if (duplicateNames.length > 0) {
           nameErrorMessage = "A duplicate threshold name exists";
         } else {
@@ -240,21 +252,32 @@ const ThresholdModal: React.FC<Props> = (props) => {
         }
       }
 
-      if (uriErrorMessage === "" && functionErrorMessage === "" && actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length !== 0) {
+      if (
+        uriErrorMessage === "" &&
+          functionErrorMessage === "" &&
+          actionErrorMessage === "" &&
+          nameErrorMessage === "" &&
+          Object.keys(props.editThreshold).length !== 0
+      ) {
         let customEditedThreshold: Threshold = {
           thresholdName,
           action: actionType,
           score: props.editThreshold["score"],
           actionModulePath: uriValue,
           actionModuleFunction: functionValue,
-          actionModuleNamespace: namespaceValue
+          actionModuleNamespace: namespaceValue,
         };
 
         let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
         let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold["index"]];
-        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        let duplicateNames = newStepArtifact.thresholds.filter(
+          threshold => threshold.thresholdName === thresholdName,
+        );
 
-        if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== customEditedThreshold.thresholdName) {
+        if (
+          duplicateNames.length > 0 &&
+            stepArtifactThreshold.thresholdName !== customEditedThreshold.thresholdName
+        ) {
           nameErrorMessage = "A duplicate threshold name exists";
         } else {
           updateThreshold(customEditedThreshold);
@@ -272,7 +295,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     setActionTypeErrorMessage(actionErrorMessage);
   };
 
-  const updateThreshold = async (threshold) => {
+  const updateThreshold = async threshold => {
     let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
 
     newStepArtifact.thresholds[props.editThreshold["index"]] = threshold;
@@ -291,10 +314,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     if (actionType === "custom") {
       let checkCustomValues = hasCustomFormValuesChanged();
-      if (!isNameTouched
-        && !isActionTypeTouched
-        && !checkCustomValues
-      ) {
+      if (!isNameTouched && !isActionTypeTouched && !checkCustomValues) {
         return false;
       } else {
         return true;
@@ -309,10 +329,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const hasCustomFormValuesChanged = () => {
-    if (!isUriTouched
-      && !isFunctionTouched
-      && !isNamespaceTouched
-    ) {
+    if (!isUriTouched && !isFunctionTouched && !isNamespaceTouched) {
       return false;
     } else {
       return true;
@@ -328,25 +345,28 @@ const ThresholdModal: React.FC<Props> = (props) => {
     resetTouched();
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
+  const discardChanges = (
+    <ConfirmYesNo visible={discardChangesVisible} type="discardChanges" onYes={discardOk} onNo={discardCancel} />
+  );
 
-  const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
+  const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => ({
+    value: matchType.value,
+    label: matchType.name,
+  }));
 
   const [isTooltipVisible, setIsTooltipVisible] = useState({
     uri: false,
     function: false,
-    namespace: false
+    namespace: false,
   });
 
   const renderCustomOptions = (
     <>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"URI:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row className={"me-3"}>
             <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -365,9 +385,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, uri: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, uri: false})}
               >
-                <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top" show={
-                  isTooltipVisible.uri ? isTooltipVisible.uri : undefined
-                }>
+                <HCTooltip
+                  text={NewMatchTooltips.uri}
+                  id="uri-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.uri ? isTooltipVisible.uri : undefined}
+                >
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -379,7 +402,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
         </Col>
       </Row>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Function:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <FormLabel column lg={3}>
+          {"Function:"}
+          <span className={styles.asterisk}>*</span>
+        </FormLabel>
         <Col>
           <Row className={"me-3"}>
             <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -398,9 +424,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, function: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, function: false})}
               >
-                <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top" show={
-                  isTooltipVisible.function ? isTooltipVisible.function : undefined
-                }>
+                <HCTooltip
+                  text={NewMatchTooltips.function}
+                  id="function-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.function ? isTooltipVisible.function : undefined}
+                >
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -412,7 +441,9 @@ const ThresholdModal: React.FC<Props> = (props) => {
         </Col>
       </Row>
       <Row className={"mb-3"}>
-        <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
+        <FormLabel column lg={3}>
+          {"Namespace:"}
+        </FormLabel>
         <Col>
           <Row className={"me-3"}>
             <Col className={"d-flex"}>
@@ -431,9 +462,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
                 onFocus={() => setIsTooltipVisible({...isTooltipVisible, namespace: true})}
                 onBlur={() => setIsTooltipVisible({...isTooltipVisible, namespace: false})}
               >
-                <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top" show={
-                  isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined
-                }>
+                <HCTooltip
+                  text={NewMatchTooltips.namespace}
+                  id="function-tooltip"
+                  placement="top"
+                  show={isTooltipVisible.namespace ? isTooltipVisible.namespace : undefined}
+                >
                   <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.icon} size={13} />
                 </HCTooltip>
               </div>
@@ -446,23 +480,31 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      { (Object.keys(props.editThreshold).length !== 0) && <HCButton aria-label="editThresholdDeleteIcon" size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
-      </HCButton>}
-      <div className={(Object.keys(props.editThreshold).length === 0) ? styles.footerNewRuleset : styles.footer}>
+      {Object.keys(props.editThreshold).length !== 0 && (
         <HCButton
-          variant="outline-light"
+          aria-label="editThresholdDeleteIcon"
           size="sm"
-          aria-label={`cancel-threshold-modal`}
-          onClick={closeModal}
-        >Cancel</HCButton>
+          variant="link"
+          onClick={() => {
+            toggleDeleteConfirmModal(true);
+          }}
+        >
+          <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
+        </HCButton>
+      )}
+      <div className={Object.keys(props.editThreshold).length === 0 ? styles.footerNewRuleset : styles.footer}>
+        <HCButton variant="outline-light" size="sm" aria-label={`cancel-threshold-modal`} onClick={closeModal}>
+          Cancel
+        </HCButton>
         <HCButton
           className={styles.saveButton}
           variant="primary"
           size="sm"
           aria-label={`confirm-threshold-modal`}
-          onClick={(e) => onSubmit(e)}
-        >Save</HCButton>
+          onClick={e => onSubmit(e)}
+        >
+          Save
+        </HCButton>
       </div>
     </div>
   );
@@ -473,24 +515,20 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={props.isVisible}
-      size={"lg"}
-      data-testid="match-threshold-modal"
-      onHide={closeModal}
-    >
+    <HCModal show={props.isVisible} size={"lg"} data-testid="match-threshold-modal" onHide={closeModal}>
       <Modal.Header>
-        <span className={"fs-5"}>{Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}</span>
+        <span className={"fs-5"}>
+          {Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}
+        </span>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
       <Modal.Body>
-        <Form
-          id="match-threshold"
-          onSubmit={onSubmit}
-          className={"container-fluid"}
-        >
+        <Form id="match-threshold" onSubmit={onSubmit} className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row className={"me-5"}>
                 <Col className={nameErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -511,7 +549,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Action:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Action:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row className={"me-5"}>
                 <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
@@ -525,11 +566,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
                     options={renderThresholdOptions}
                     styles={reactSelectThemeConfig}
                     formatOptionLabel={({value, label}) => {
-                      return (
-                        <span aria-label={`${label}-option`}>
-                          {label}
-                        </span>
-                      );
+                      return <span aria-label={`${label}-option`}>{label}</span>;
                     }}
                   />
                 </Col>

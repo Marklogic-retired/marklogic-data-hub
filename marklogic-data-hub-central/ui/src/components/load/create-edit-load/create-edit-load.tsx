@@ -29,7 +29,7 @@ interface Props {
   onCancel: any;
 }
 
-const CreateEditLoad: React.FC<Props> = (props) => {
+const CreateEditLoad: React.FC<Props> = props => {
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
   const [srcFormat, setSrcFormat] = useState(StepsConfig.defaultSourceFormat);
@@ -57,7 +57,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   //For keyboard navigations
   const nameInputRef = React.createRef<HTMLInputElement>();
-  const nameInputTooltipRef =  React.createRef<HTMLDivElement>();
+  const nameInputTooltipRef = React.createRef<HTMLDivElement>();
   const [nameTooltipVisible, setNameTooltipVisible] = useState(false);
 
   const descInputRef = React.useRef<HTMLInputElement>(null);
@@ -131,7 +131,8 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     // Edit step
     if (props.stepData && JSON.stringify(props.stepData) !== JSON.stringify({}) && props.isEditing) {
       initStep();
-    } else {    // New step
+    } else {
+      // New step
       setStepName("");
       setStepNameTouched(false);
       setDescription("");
@@ -154,7 +155,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       props.setIsValid(false);
     }
     // Reset
-    return (() => {
+    return () => {
       setStepName("");
       setStepNameTouched(false);
       setDescription("");
@@ -174,8 +175,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       setOutputUriPrefix("");
       setOutputUriPrefixTouched(false);
       setTobeDisabled(false);
-    });
-
+    };
   }, [props.stepData, props.isEditing]);
 
   //To handle closing tooltip when user clicks out anywhere in form
@@ -199,15 +199,16 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    if (!isStepNameTouched
-      && !isDescriptionTouched
-      && !isSrcFormatTouched
-      && !isTgtFormatTouched
-      && !isSourceNameTouched
-      && !isSourceTypeTouched
-      && !isOutputUriPrefixTouched
-      && !isFieldSeparatorTouched
-      && !isOtherSeparatorTouched
+    if (
+      !isStepNameTouched &&
+      !isDescriptionTouched &&
+      !isSrcFormatTouched &&
+      !isTgtFormatTouched &&
+      !isSourceNameTouched &&
+      !isSourceTypeTouched &&
+      !isOutputUriPrefixTouched &&
+      !isFieldSeparatorTouched &&
+      !isOtherSeparatorTouched
     ) {
       return false;
     } else {
@@ -236,7 +237,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         targetFormat: tgtFormat,
         sourceName: sourceName,
         sourceType: sourceType,
-        outputURIPrefix: outputUriPrefix
+        outputURIPrefix: outputUriPrefix,
       };
       if (props.stepData.separator) {
         result.separator = null;
@@ -245,7 +246,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     return result;
   };
 
-  const handleSubmit = (event: {preventDefault: () => void;}) => {
+  const handleSubmit = (event: {preventDefault: () => void}) => {
     if (!stepName || invalidChars) {
       // missing name
       setStepNameTouched(true);
@@ -268,7 +269,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     props.resetTabs();
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "name") {
       let isSpecialChars = false;
       if (event.target.value === " ") {
@@ -278,7 +279,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         setStepName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
+        if (event.target.value !== "" && !/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value)) {
           setInvalidChars(true);
           isSpecialChars = true;
         } else {
@@ -352,7 +353,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleOutputUriPrefix = (event) => {
+  const handleOutputUriPrefix = event => {
     if (event.target.id === "outputUriPrefix") {
       if (event.target.value === " ") {
         setOutputUriPrefixTouched(false);
@@ -373,7 +374,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSrcFormat = (selectedItem) => {
+  const handleSrcFormat = selectedItem => {
     if (selectedItem.value === " ") {
       setSrcFormatTouched(false);
     } else {
@@ -395,7 +396,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleFieldSeparator = (selectedItem) => {
+  const handleFieldSeparator = selectedItem => {
     if (selectedItem.value === " ") {
       setFieldSeparatorTouched(false);
     } else {
@@ -417,7 +418,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleOtherSeparator = (event) => {
+  const handleOtherSeparator = event => {
     if (event.target.value === " ") {
       setOtherSeparatorTouched(false);
     } else {
@@ -436,7 +437,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTgtFormat = (selectedItem) => {
+  const handleTgtFormat = selectedItem => {
     if (selectedItem.value === " ") {
       setTgtFormatTouched(false);
     } else {
@@ -481,7 +482,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   const serviceNameKeyDownHandler = (event, component) => {
     //Tooltip visible when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "nameTooltip") setNameTooltipVisible(true);
       if (component === "descTooltip") setDescToolTipVisible(true);
       if (component === "srcFormatTooltip") setSrcFormatTooltipVisible2(true);
@@ -498,7 +499,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
 
     //Tooltip not visible if user presses escape key
-    if ((event.keyCode === 27)) {
+    if (event.keyCode === 27) {
       closeAllTooltips();
       if (component === "fieldSepTooltip") setFieldSepTooltipVisible(false);
     }
@@ -527,12 +528,14 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       if (component === "fieldSepInput") fieldSepInputTooltipRef.current!.focus();
       if (component === "fieldSelect") {
         setFieldTooltipVisible(false);
-        if (srcFormat !== "csv") { fieldSepInputTooltipRef.current!.focus(); } else {
+        if (srcFormat !== "csv") {
+          fieldSepInputTooltipRef.current!.focus();
+        } else {
           if (fieldSeparator === "Other") {
-                fieldSepInputRef.current!.focus();
-                fieldSepInputRef.current!.click();
+            fieldSepInputRef.current!.focus();
+            fieldSepInputRef.current!.click();
           } else {
-                fieldSepInputTooltipRef2.current!.focus();
+            fieldSepInputTooltipRef2.current!.focus();
           }
         }
       }
@@ -597,8 +600,8 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       }
       if (component === "descTooltip") {
         if (descInputRef && descInputRef.current) {
-            descInputRef.current!.focus();
-            descInputRef.current!.select();
+          descInputRef.current!.focus();
+          descInputRef.current!.select();
         }
       }
       if (component === "srcFormatTooltip") {
@@ -606,15 +609,15 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       }
       if (component === "fieldSepTooltip") {
         if (srcFormat !== "csv") {
-              fieldSelectRef.current!.focus();
-              setFieldTooltipVisible(true);
+          fieldSelectRef.current!.focus();
+          setFieldTooltipVisible(true);
         } else {
           if (fieldSeparator !== "Other") {
-              fieldSelectRef.current!.focus();
-              setFieldTooltipVisible(true);
+            fieldSelectRef.current!.focus();
+            setFieldTooltipVisible(true);
           } else {
-              fieldSepInputRef.current!.focus();
-              fieldSepInputRef.current!.click();
+            fieldSepInputRef.current!.focus();
+            fieldSepInputRef.current!.click();
           }
         }
         setFieldSepTooltipVisible(false);
@@ -644,19 +647,31 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   };
 
   const sourceFormatSelectOptions = Object.keys(srcOptions).map(d => ({value: srcOptions[d], label: d}));
-  const fieldSeparatorSelectOptions = Object.keys(fieldSeparatorOptions).map(d => ({value: fieldSeparatorOptions[d], label: d}));
+  const fieldSeparatorSelectOptions = Object.keys(fieldSeparatorOptions).map(d => ({
+    value: fieldSeparatorOptions[d],
+    label: d,
+  }));
   const targetFormatSelectOptions = Object.keys(tgtOptions).map(d => ({value: tgtOptions[d], label: d}));
 
   return (
     <div className={styles.newDataLoadForm}>
-      <div className={styles.newLoadCardTitle} aria-label={"newLoadCardTitle"}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
+      <div className={styles.newLoadCardTitle} aria-label={"newLoadCardTitle"}>
+        Configure the new Loading step. Then, add the new step to a flow and run it to load your data.
+      </div>
       <Form onSubmit={handleSubmit} data-testid={"create-edit-load-form"} className={"container-fluid"}>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <FormLabel column lg={3}>
+            {"Name:"}
+            <span className={styles.asterisk}>*</span>
+          </FormLabel>
           <Col>
             <Row>
-              <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                {tobeDisabled ?
+              <Col
+                className={
+                  stepName || !isStepNameTouched ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"
+                }
+              >
+                {tobeDisabled ? (
                   <HCTooltip id="name-step-tooltip" text={NewLoadTooltips.nameField} placement={"bottom"}>
                     <span className={"w-100"}>
                       <HCInput
@@ -668,7 +683,8 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                         onBlur={sendPayload}
                       />
                     </span>
-                  </HCTooltip> :
+                  </HCTooltip>
+                ) : (
                   <HCInput
                     id="name"
                     tabIndex={0}
@@ -678,25 +694,46 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                     disabled={tobeDisabled}
                     onBlur={sendPayload}
                     ref={nameInputRef}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "nameInput")}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "nameInput")}
                   />
-                }
-                <span tabIndex={0} ref={nameInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "nameTooltip")} className={styles.tooltipRef}>
+                )}
+                <span
+                  tabIndex={0}
+                  ref={nameInputTooltipRef}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "nameTooltip")}
+                  className={styles.tooltipRef}
+                >
                   <div className={"p-2 d-flex"}>
-                    <HCTooltip text={NewLoadTooltips.name} id="name-tooltip" placement="left" show={nameTooltipVisible ? nameTooltipVisible : undefined}>
-                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                    <HCTooltip
+                      text={NewLoadTooltips.name}
+                      id="name-tooltip"
+                      placement="left"
+                      show={nameTooltipVisible ? nameTooltipVisible : undefined}
+                    >
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </span>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
+                {invalidChars
+                  ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."
+                  : stepName || !isStepNameTouched
+                    ? ""
+                    : "Name is required"}
               </Col>
             </Row>
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Description:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <HCInput
               id="description"
@@ -706,24 +743,51 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               value={description ? description : " "}
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "descInput")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "descInput")}
               className={styles.input}
               onBlur={sendPayload}
             />
-            <span tabIndex={0} ref={descInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "descTooltip")} className={styles.tooltipRef}>
+            <span
+              tabIndex={0}
+              ref={descInputTooltipRef}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "descTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
-                <HCTooltip text={NewLoadTooltips.description} id="description-tooltip" placement="left" show={descTooltipVisible ? descTooltipVisible : undefined}>
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip
+                  text={NewLoadTooltips.description}
+                  id="description-tooltip"
+                  placement="left"
+                  show={descTooltipVisible ? descTooltipVisible : undefined}
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </span>
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Source Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+          <FormLabel column lg={3}>
+            {"Source Format:"}&nbsp;<span className={styles.asterisk}>*</span>
+          </FormLabel>
           <Col className={"d-flex"}>
-            <OverlayTrigger overlay={<Tooltip id="button-tooltip12" >{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={srcFormatTooltipVisible}>
-              <span className={styles.editLoadTooltip} tabIndex={0} ref={srcFormatSelectRef} style={{width: "100%"}} onKeyDown={(e) => serviceNameKeyDownHandler(e, "sourceFormatSelect")}>
+            <OverlayTrigger
+              overlay={<Tooltip id="button-tooltip12">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>}
+              placement="left"
+              show={srcFormatTooltipVisible}
+            >
+              <span
+                className={styles.editLoadTooltip}
+                tabIndex={0}
+                ref={srcFormatSelectRef}
+                style={{width: "100%"}}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "sourceFormatSelect")}
+              >
                 <Select
                   id="sourceFormat-select-wrapper"
                   inputId="sourceFormat"
@@ -736,25 +800,52 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   onBlur={sendPayload}
                   options={sourceFormatSelectOptions}
                   styles={reactSelectThemeConfig}
-                  onKeyDown={(e) => serviceNameKeyDownHandler(e, "sourceFormatSelectInner")}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "sourceFormatSelectInner")}
                 />
               </span>
             </OverlayTrigger>
-            <span tabIndex={0} ref={srcFormatSelectTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcFormatTooltip")} className={styles.tooltipRef}>
+            <span
+              tabIndex={0}
+              ref={srcFormatSelectTooltipRef}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "srcFormatTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
-                <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left"  show={srcFormatTooltipVisible2 ? srcFormatTooltipVisible2 : undefined} >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip
+                  text={NewLoadTooltips.sourceFormat}
+                  id="source-format-tooltip"
+                  placement="left"
+                  show={srcFormatTooltipVisible2 ? srcFormatTooltipVisible2 : undefined}
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </span>
           </Col>
         </Row>
-        {srcFormat === "csv" ?
+        {srcFormat === "csv" ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Field Separator:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Field Separator:"}&nbsp;<span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col className={"d-flex"}>
-              <OverlayTrigger overlay={<Tooltip id="button-tooltip31">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={fieldTooltipVisible}>
-                <span className={styles.editLoadTooltip} ref={fieldSelectRef} style={{width: "100%"}} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSelect")}>
+              <OverlayTrigger
+                overlay={<Tooltip id="button-tooltip31">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>}
+                placement="left"
+                show={fieldTooltipVisible}
+              >
+                <span
+                  className={styles.editLoadTooltip}
+                  ref={fieldSelectRef}
+                  style={{width: "100%"}}
+                  tabIndex={0}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "fieldSelect")}
+                >
                   <Select
                     id="fieldSeparator-select-wrapper"
                     inputId="fieldSeparator"
@@ -767,18 +858,18 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                     onBlur={sendPayload}
                     options={fieldSeparatorSelectOptions}
                     styles={reactSelectThemeConfig}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSelectInner")}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "fieldSelectInner")}
                   />
                 </span>
               </OverlayTrigger>
-              {fieldSeparator === "Other" ?
+              {fieldSeparator === "Other" ? (
                 <>
                   <div className={"d-flex ms-2"}>
                     <HCInput
                       id="otherSeparator"
                       ref={fieldSepInputRef}
                       tabIndex={0}
-                      onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepInput")}
+                      onKeyDown={e => serviceNameKeyDownHandler(e, "fieldSepInput")}
                       value={otherSeparator ? otherSeparator : " "}
                       onChange={handleOtherSeparator}
                       style={{width: 75}}
@@ -786,31 +877,76 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                       onBlur={sendPayload}
                     />
                   </div>
-                  <span tabIndex={0} ref={fieldSepInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepTooltip")} className={styles.tooltipRef}>
+                  <span
+                    tabIndex={0}
+                    ref={fieldSepInputTooltipRef}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "fieldSepTooltip")}
+                    className={styles.tooltipRef}
+                  >
                     <div className={"p-2 d-flex"}>
-                      <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="top" show={fieldSepTooltipVisible ? fieldSepTooltipVisible : undefined}>
-                        <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <HCTooltip
+                        text={NewLoadTooltips.fieldSeparator}
+                        id="field-separator-tooltip"
+                        placement="top"
+                        show={fieldSepTooltipVisible ? fieldSepTooltipVisible : undefined}
+                      >
+                        <QuestionCircleFill
+                          tabIndex={0}
+                          aria-label="icon: question-circle"
+                          color={themeColors.defaults.questionCircle}
+                          size={13}
+                        />
                       </HCTooltip>
                     </div>
                   </span>
                 </>
-                :
-                <span tabIndex={0} ref={fieldSepInputTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "fieldSepTooltip")} className={styles.tooltipRef}>
+              ) : (
+                <span
+                  tabIndex={0}
+                  ref={fieldSepInputTooltipRef2}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "fieldSepTooltip")}
+                  className={styles.tooltipRef}
+                >
                   <div className={"p-2 d-flex"}>
-                    <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="right" show={fieldSepTooltipVisible2 ? fieldSepTooltipVisible2 : undefined}>
-                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                    <HCTooltip
+                      text={NewLoadTooltips.fieldSeparator}
+                      id="field-separator-tooltip"
+                      placement="right"
+                      show={fieldSepTooltipVisible2 ? fieldSepTooltipVisible2 : undefined}
+                    >
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </span>
-              }
+              )}
             </Col>
-          </Row> : ""
-        }
+          </Row>
+        ) : (
+          ""
+        )}
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Target Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+          <FormLabel column lg={3}>
+            {"Target Format:"}&nbsp;<span className={styles.asterisk}>*</span>
+          </FormLabel>
           <Col className={"d-flex"}>
-            <OverlayTrigger overlay={<Tooltip id="button-tooltip">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>} placement="left" show={tgtSelectTooltipVisible} rootClose>
-              <span className={styles.editLoadTooltip} ref={tgtFormatSelectRef} style={{width: "100%"}} tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "targetFormatSelect")}>
+            <OverlayTrigger
+              overlay={<Tooltip id="button-tooltip">{keyboardNavigationTooltips.dropdownUserInfo}</Tooltip>}
+              placement="left"
+              show={tgtSelectTooltipVisible}
+              rootClose
+            >
+              <span
+                className={styles.editLoadTooltip}
+                ref={tgtFormatSelectRef}
+                style={{width: "100%"}}
+                tabIndex={0}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "targetFormatSelect")}
+              >
                 <Select
                   id="targetFormat-select-wrapper"
                   inputId="targetFormat"
@@ -823,20 +959,39 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   tabIndex={0}
                   options={targetFormatSelectOptions}
                   styles={reactSelectThemeConfig}
-                  onKeyDown={(e) => serviceNameKeyDownHandler(e, "targetFormatSelectInner")}
-                /></span>
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "targetFormatSelectInner")}
+                />
+              </span>
             </OverlayTrigger>
-            <span tabIndex={0} ref={tgtFormatSelectTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtFormatTooltip")} className={styles.tooltipRef}>
+            <span
+              tabIndex={0}
+              ref={tgtFormatSelectTooltipRef}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "tgtFormatTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
-                <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left" show={tgtFormatTooltipVisible === true ? true : undefined}>
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip
+                  text={NewLoadTooltips.targetFormat}
+                  id="target-format-tooltip"
+                  placement="left"
+                  show={tgtFormatTooltipVisible === true ? true : undefined}
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
-              </div></span>
+              </div>
+            </span>
           </Col>
         </Row>
-        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) &&
-          <Row  className={"mb-3"}>
-            <FormLabel column lg={3}>{"Source Name:"}</FormLabel>
+        {tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml") && (
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>
+              {"Source Name:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="sourceName"
@@ -847,22 +1002,39 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
                 className={styles.input}
-                onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcNameInput")}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "srcNameInput")}
                 onBlur={sendPayload}
               />
-              <span tabIndex={0} ref={srcNameInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcNameTooltip")} className={styles.tooltipRef}>
+              <span
+                tabIndex={0}
+                ref={srcNameInputTooltipRef}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "srcNameTooltip")}
+                className={styles.tooltipRef}
+              >
                 <div className={"p-2 d-flex"}>
-                  <HCTooltip text={NewLoadTooltips.sourceName} id="source-name-tooltip" placement="left" show={srcNameTooltipVisible === true ? true : undefined}>
-                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <HCTooltip
+                    text={NewLoadTooltips.sourceName}
+                    id="source-name-tooltip"
+                    placement="left"
+                    show={srcNameTooltipVisible === true ? true : undefined}
+                  >
+                    <QuestionCircleFill
+                      tabIndex={0}
+                      aria-label="icon: question-circle"
+                      color={themeColors.defaults.questionCircle}
+                      size={13}
+                    />
                   </HCTooltip>
                 </div>
               </span>
             </Col>
           </Row>
-        }
-        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) &&
+        )}
+        {tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml") && (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Source Type:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Source Type:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="sourceType"
@@ -870,24 +1042,41 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 tabIndex={0}
                 placeholder="Enter Source Type"
                 value={sourceType ? sourceType : " "}
-                onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcTypeInput")}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "srcTypeInput")}
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
                 className={styles.input}
                 onBlur={sendPayload}
               />
-              <span tabIndex={0} ref={srcTypeInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "srcTypeTooltip")} className={styles.tooltipRef}>
+              <span
+                tabIndex={0}
+                ref={srcTypeInputTooltipRef}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "srcTypeTooltip")}
+                className={styles.tooltipRef}
+              >
                 <div className={"p-2 d-flex"}>
-                  <HCTooltip text={NewLoadTooltips.sourceType} id="source-type-tooltip" placement="left" show={srcTypeTooltipVisible === true ? true : undefined}>
-                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <HCTooltip
+                    text={NewLoadTooltips.sourceType}
+                    id="source-type-tooltip"
+                    placement="left"
+                    show={srcTypeTooltipVisible === true ? true : undefined}
+                  >
+                    <QuestionCircleFill
+                      tabIndex={0}
+                      aria-label="icon: question-circle"
+                      color={themeColors.defaults.questionCircle}
+                      size={13}
+                    />
                   </HCTooltip>
                 </div>
               </span>
             </Col>
           </Row>
-        }
+        )}
         <Row className={"mb-4"}>
-          <FormLabel column lg={3}>{"Target URI Prefix:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Target URI Prefix:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <HCInput
               id="outputUriPrefix"
@@ -895,16 +1084,31 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               tabIndex={0}
               placeholder="Enter URI Prefix"
               value={outputUriPrefix ? outputUriPrefix : " "}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPrefixInput")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "tgtPrefixInput")}
               onChange={handleOutputUriPrefix}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
               onBlur={sendPayload}
             />
-            <span tabIndex={0} ref={tgtPrefixInputTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPrefixTooltip")} className={styles.tooltipRef}>
+            <span
+              tabIndex={0}
+              ref={tgtPrefixInputTooltipRef}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "tgtPrefixTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
-                <HCTooltip text={NewLoadTooltips.outputURIPrefix} id="output-uri-refix-tooltip" placement="left"  show={tgtPrefixTooltipVisible === true ? true : undefined}>
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip
+                  text={NewLoadTooltips.outputURIPrefix}
+                  id="output-uri-refix-tooltip"
+                  placement="left"
+                  show={tgtPrefixTooltipVisible === true ? true : undefined}
+                >
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </span>
@@ -912,20 +1116,40 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         </Row>
         <Row>
           <Col className={"d-flex justify-content-end"}>
-            <span tabIndex={0} ref={cancelButtonRef} className={styles.editLoadTooltip} onKeyDown={(event) => serviceNameKeyDownHandler(event, "cancelButton")}>
-              <HCButton tabIndex={-1} aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
+            <span
+              tabIndex={0}
+              ref={cancelButtonRef}
+              className={styles.editLoadTooltip}
+              onKeyDown={event => serviceNameKeyDownHandler(event, "cancelButton")}
+            >
+              <HCButton tabIndex={-1} aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>
+                Cancel
+              </HCButton>
             </span>
             &nbsp;&nbsp;
-            {!props.canReadWrite ? <HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
-              className={styles.disabledSaveButton}
-              aria-label="Save"
-              size="sm"
-              variant="primary"
-              type="submit"
-              disabled={true}
-              onClick={handleSubmit}
-            >Save</HCButton></span></HCTooltip> :
-              <span tabIndex={0} ref={saveButtonRef} className={styles.editLoadTooltip} onKeyDown={(e) => serviceNameKeyDownHandler(e, "saveButton")}>
+            {!props.canReadWrite ? (
+              <HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}>
+                <span className={styles.disabledCursor}>
+                  <HCButton
+                    className={styles.disabledSaveButton}
+                    aria-label="Save"
+                    size="sm"
+                    variant="primary"
+                    type="submit"
+                    disabled={true}
+                    onClick={handleSubmit}
+                  >
+                    Save
+                  </HCButton>
+                </span>
+              </HCTooltip>
+            ) : (
+              <span
+                tabIndex={0}
+                ref={saveButtonRef}
+                className={styles.editLoadTooltip}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "saveButton")}
+              >
                 <HCButton
                   aria-label="Save"
                   size="sm"
@@ -933,9 +1157,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   type="submit"
                   disabled={false}
                   onClick={handleSubmit}
-                >Save</HCButton>
+                >
+                  Save
+                </HCButton>
               </span>
-            }
+            )}
           </Col>
         </Row>
       </Form>

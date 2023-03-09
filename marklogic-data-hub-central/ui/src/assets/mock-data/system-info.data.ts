@@ -4,11 +4,11 @@ const environment = {
   "marklogicVersion": "10.0",
   "sessionTimeout": "300",
   "sessionToken": "mySessionToken",
-  "pendoKey": "#TestKeyForPendoValidation"
+  "pendoKey": "#TestKeyForPendoValidation",
 };
 
 const data = {
-  environment: environment
+  environment: environment,
 };
 
 export default data;

@@ -1,6 +1,12 @@
 import React from "react";
 import {render, fireEvent, waitForElement} from "@testing-library/react";
-import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/explore/entity-search";
+import {
+  entitySearch,
+  entityPropertyDefinitions,
+  selectedPropertyDefinitions,
+  entityDefArray,
+  entitySearchAllEntities,
+} from "../../assets/mock-data/explore/entity-search";
 import ResultsTabularView from "./results-tabular-view";
 import {BrowserRouter as Router} from "react-router-dom";
 import {validateTableRow} from "../../util/test-utils";
@@ -11,7 +17,6 @@ import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 import {SecurityTooltips} from "@config/tooltips.config";
 
 describe("Results Table view component", () => {
-
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test.skip("Results table with data renders", async () => {
     const {getByText, getByTestId} = render(
@@ -25,7 +30,7 @@ describe("Results Table view component", () => {
           hasStructured={false}
           selectedEntities={["Customer"]}
         />
-      </Router>
+      </Router>,
     );
     // Check table column headers are rendered
     expect(getByText("customerId")).toBeInTheDocument();
@@ -49,18 +54,16 @@ describe("Results Table view component", () => {
 
     //Check if the tooltip on 'Detail on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-detailOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the processed data"))));
+    await waitForElement(() => getByText("Show the processed data"));
 
     //Check if the tooltip on 'source on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the complete JSON"))));
+    await waitForElement(() => getByText("Show the complete JSON"));
   });
 
   test("Result table with no data renders", async () => {
-
     const {getByText} = render(
-      <SearchContext.Provider value={{...searchContextInterfaceByDefault
-      }}>
+      <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
         <ResultsTabularView
           data={[]}
           entityPropertyDefinitions={[]}
@@ -70,7 +73,7 @@ describe("Results Table view component", () => {
           hasStructured={false}
           selectedEntities={[]}
         />
-      </SearchContext.Provider>
+      </SearchContext.Provider>,
     );
     // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
@@ -89,7 +92,7 @@ describe("Results Table view component", () => {
           selectedEntities={["Customer"]}
           entityDefArray={entityDefArray}
         />
-      </Router>
+      </Router>,
     );
 
     expect(queryByText("Carmdin")).toBeNull();
@@ -122,7 +125,7 @@ describe("Results Table view component", () => {
             />
           </AuthoritiesContext.Provider>
         </Router>
-      </SearchContext.Provider>
+      </SearchContext.Provider>,
     );
 
     // Check table column headers are rendered
@@ -144,15 +147,15 @@ describe("Results Table view component", () => {
 
     //Check if the tooltip on 'Detail on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-detailOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the processed data"))));
+    await waitForElement(() => getByText("Show the processed data"));
 
     //Check if the tooltip on 'source on separate page' icon works fine.
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
-    await(waitForElement(() => (getByText("Show the complete JSON"))));
+    await waitForElement(() => getByText("Show the complete JSON"));
 
     //Check if the tooltip on 'graph' icon works fine.
     fireEvent.mouseOver(getByTestId("101-graphOnSeparatePage"));
-    await(waitForElement(() => (getByText("View entity in graph view"))));
+    await waitForElement(() => getByText("View entity in graph view"));
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -168,7 +171,7 @@ describe("Results Table view component", () => {
           hasStructured={false}
           selectedEntities={["Customer"]}
         />
-      </Router>
+      </Router>,
     );
 
     // Check table column headers are rendered
@@ -184,13 +187,48 @@ describe("Results Table view component", () => {
     const nickNamesColumnSort = getByTestId("resultsTableColumn-nicknames"); // For nicknames column sorting
 
     //Sorted document uris based on name,customerId and nicknames columns to be used later
-    const urisDefault = ["/Customer/Cust1.json", "/Customer/Cust2.json", "/Customer/Cust3.json", "/Customer/Cust4.json", "/Customer/Cust5.json"];
-    const urisBasedOnDescendingCustomerId = ["/Customer/Cust5.json", "/Customer/Cust2.json", "/Customer/Cust3.json", "/Customer/Cust4.json", "/Customer/Cust5.json"];
-    const urisBasedOnAscendingName = ["/Customer/Cust2.json", "/Customer/Cust3.json", "/Customer/Cust1.json", "/Customer/Cust5.json", "/Customer/Cust4.json"];
-    const urisBasedOnDescendingName = ["/Customer/Cust4.json", "/Customer/Cust5.json", "/Customer/Cust1.json", "/Customer/Cust3.json", "/Customer/Cust2.json"];
-    const urisBasedOnAscendingNickNames = ["/Customer/Cust2.json", "/Customer/Cust3.json", "/Customer/Cust1.json", "/Customer/Cust5.json", "/Customer/Cust4.json"];
-    const urisBasedOnDescendingNickNames = ["/Customer/Cust4.json", "/Customer/Cust5.json", "/Customer/Cust1.json", "/Customer/Cust2.json", "/Customer/Cust3.json"];
-
+    const urisDefault = [
+      "/Customer/Cust1.json",
+      "/Customer/Cust2.json",
+      "/Customer/Cust3.json",
+      "/Customer/Cust4.json",
+      "/Customer/Cust5.json",
+    ];
+    const urisBasedOnDescendingCustomerId = [
+      "/Customer/Cust5.json",
+      "/Customer/Cust2.json",
+      "/Customer/Cust3.json",
+      "/Customer/Cust4.json",
+      "/Customer/Cust5.json",
+    ];
+    const urisBasedOnAscendingName = [
+      "/Customer/Cust2.json",
+      "/Customer/Cust3.json",
+      "/Customer/Cust1.json",
+      "/Customer/Cust5.json",
+      "/Customer/Cust4.json",
+    ];
+    const urisBasedOnDescendingName = [
+      "/Customer/Cust4.json",
+      "/Customer/Cust5.json",
+      "/Customer/Cust1.json",
+      "/Customer/Cust3.json",
+      "/Customer/Cust2.json",
+    ];
+    const urisBasedOnAscendingNickNames = [
+      "/Customer/Cust2.json",
+      "/Customer/Cust3.json",
+      "/Customer/Cust1.json",
+      "/Customer/Cust5.json",
+      "/Customer/Cust4.json",
+    ];
+    const urisBasedOnDescendingNickNames = [
+      "/Customer/Cust4.json",
+      "/Customer/Cust5.json",
+      "/Customer/Cust1.json",
+      "/Customer/Cust2.json",
+      "/Customer/Cust3.json",
+    ];
 
     /* Validate sorting on name column in results*/
     //Check the sort order of Name column rows before enforcing sort order
@@ -228,7 +266,6 @@ describe("Results Table view component", () => {
     fireEvent.click(nickNamesColumnSort);
     resultsTable = document.querySelectorAll(".ant-table-row ant-table-row-level-0");
     validateTableRow(resultsTable, urisBasedOnDescendingNickNames);
-
   });
 
   test("Results table with no data renders when All Entities option is selected but no entities are available", async () => {
@@ -243,7 +280,7 @@ describe("Results Table view component", () => {
           hasStructured={false}
           selectedEntities={[]}
         />
-      </Router>
+      </Router>,
     );
 
     // Check table column headers are rendered
@@ -273,10 +310,10 @@ describe("Results Table view component", () => {
             selectedEntities={["Customer"]}
           />
         </AuthoritiesContext.Provider>
-      </Router>
+      </Router>,
     );
     fireEvent.mouseOver(getByTestId("unmergeIcon"));
-    await (waitForElement(() => (getByText("Unmerge Documents"))));
+    await waitForElement(() => getByText("Unmerge Documents"));
   });
 
   test("UnmergeIcon not available, missing permission", async () => {
@@ -295,7 +332,7 @@ describe("Results Table view component", () => {
             selectedEntities={["Customer"]}
           />
         </AuthoritiesContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(queryByTestId("unmergeIcon")).toHaveClass("unMergeIconDisabled");
     fireEvent.click(getByTestId("unmergeIcon"));

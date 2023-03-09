@@ -15,22 +15,19 @@ import {MissingPagePermission} from "@config/messages.config";
 import {ErrorMessageContext} from "@util/error-message-context";
 import {ViewType} from "../types/modeling-types";
 
-
 const INITIAL_VIEW = ViewType.card;
 
 const Load: React.FC = () => {
-
   const storage = getViewSettings();
   const storedViewMode = storage?.load?.viewMode;
 
-  const {
-    loadingOptions,
-    setPage,
-  } = useContext(LoadingContext);
+  const {loadingOptions, setPage} = useContext(LoadingContext);
   const {setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const location = useLocation<any>();
-  let [view, setView] = useState<ViewType>(!storedViewMode ? INITIAL_VIEW : storedViewMode === "card" ? ViewType.card : ViewType.list);
+  let [view, setView] = useState<ViewType>(
+    !storedViewMode ? INITIAL_VIEW : storedViewMode === "card" ? ViewType.card : ViewType.list,
+  );
   const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
@@ -46,7 +43,7 @@ const Load: React.FC = () => {
   const canAccessLoad = authorityService.canAccessLoad();
 
   // Set context for switching views
-  const handleViewSelection = (view) => {
+  const handleViewSelection = view => {
     setView(view);
   };
 
@@ -55,7 +52,6 @@ const Load: React.FC = () => {
     setView(location.state?.viewMode ? location.state?.viewMode : view);
     setSortedInfo(location.state?.sortOrderInfo);
   }, [location]);
-
 
   useEffect(() => {
     if (view === null) {
@@ -69,14 +65,14 @@ const Load: React.FC = () => {
   useEffect(() => {
     getLoadArtifacts();
     getFlows();
-    return (() => {
+    return () => {
       setLoadArtifacts([]);
       setFlows([]);
-    });
+    };
   }, [loading]);
 
   // CREATE/POST load step
-  const createLoadArtifact = async (ingestionStep) => {
+  const createLoadArtifact = async ingestionStep => {
     try {
       setLoading(true);
       let response = await createStep(ingestionStep.name, "ingestion", ingestionStep);
@@ -88,19 +84,24 @@ const Load: React.FC = () => {
       let message = error.response.data.message;
       console.error("Error creating load step", message);
       setLoading(false);
-      message.indexOf(ingestionStep.name) > -1 ? setErrorMessageOptions({
-        isVisible: true,
-        message: <p className={"mb-0"} aria-label="duplicate-step-error">Unable to create load step. A load step with the name <b>{ingestionStep.name}</b> already exists.</p>
-      }) : setErrorMessageOptions({
-        isVisible: true,
-        message
-      });
+      message.indexOf(ingestionStep.name) > -1
+        ? setErrorMessageOptions({
+          isVisible: true,
+          message: (
+            <p className={"mb-0"} aria-label="duplicate-step-error">
+                Unable to create load step. A load step with the name <b>{ingestionStep.name}</b> already exists.
+            </p>
+          ),
+        })
+        : setErrorMessageOptions({
+          isVisible: true,
+          message,
+        });
     }
-
   };
 
   // UPDATE/PUT load step
-  const updateLoadArtifact = async (ingestionStep) => {
+  const updateLoadArtifact = async ingestionStep => {
     try {
       setLoading(true);
       let response = await updateStep(ingestionStep.name, "ingestion", ingestionStep);
@@ -114,7 +115,6 @@ const Load: React.FC = () => {
       setLoading(false);
       handleError(error);
     }
-
   };
 
   // GET all load steps
@@ -132,7 +132,7 @@ const Load: React.FC = () => {
   };
 
   // DELETE load step
-  const deleteLoadArtifact = async (loadName) => {
+  const deleteLoadArtifact = async loadName => {
     try {
       setLoading(true);
       let response = await deleteStep(loadName, "ingestion");
@@ -184,7 +184,7 @@ const Load: React.FC = () => {
   const addStepToFlow = async (loadArtifactName, flowName) => {
     let stepToAdd = {
       "stepName": loadArtifactName,
-      "stepDefinitionType": "ingestion"
+      "stepDefinitionType": "ingestion",
     };
     try {
       setLoading(true);
@@ -200,7 +200,7 @@ const Load: React.FC = () => {
       setLoading(false);
       setErrorMessageOptions({
         isVisible: true,
-        message: `Error adding step "${loadArtifactName}" to flow "${flowName}".`
+        message: `Error adding step "${loadArtifactName}" to flow "${flowName}".`,
       });
       handleError(error);
     }
@@ -210,24 +210,10 @@ const Load: React.FC = () => {
   let output;
 
   if (view === ViewType.card) {
-    output = <LoadCard
-      data={sortStepsByUpdated(loadArtifacts)}
-      flows={flows}
-      deleteLoadArtifact={deleteLoadArtifact}
-      createLoadArtifact={createLoadArtifact}
-      updateLoadArtifact={updateLoadArtifact}
-      canReadWrite={canReadWrite}
-      canReadOnly={canReadOnly}
-      canWriteFlow={canWriteFlow}
-      addStepToFlow={addStepToFlow}
-      addStepToNew={addStepToNew}
-    />;
-  } else {
-    output = <div className={styles.cardView}>
-      <LoadList
-        data={loadArtifacts}
+    output = (
+      <LoadCard
+        data={sortStepsByUpdated(loadArtifacts)}
         flows={flows}
-        flowsLoading={flowsLoading}
         deleteLoadArtifact={deleteLoadArtifact}
         createLoadArtifact={createLoadArtifact}
         updateLoadArtifact={updateLoadArtifact}
@@ -236,14 +222,32 @@ const Load: React.FC = () => {
         canWriteFlow={canWriteFlow}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
-        sortOrderInfo={sortedInfo}
       />
-    </div>;
+    );
+  } else {
+    output = (
+      <div className={styles.cardView}>
+        <LoadList
+          data={loadArtifacts}
+          flows={flows}
+          flowsLoading={flowsLoading}
+          deleteLoadArtifact={deleteLoadArtifact}
+          createLoadArtifact={createLoadArtifact}
+          updateLoadArtifact={updateLoadArtifact}
+          canReadWrite={canReadWrite}
+          canReadOnly={canReadOnly}
+          canWriteFlow={canWriteFlow}
+          addStepToFlow={addStepToFlow}
+          addStepToNew={addStepToNew}
+          sortOrderInfo={sortedInfo}
+        />
+      </div>
+    );
   }
 
   return (
     <div>
-      {canAccessLoad ?
+      {canAccessLoad ? (
         <div className={styles.loadContainer}>
           <div className={styles.intro}>
             <p>{tiles.load.intro}</p>
@@ -253,11 +257,11 @@ const Load: React.FC = () => {
           </div>
           {output}
         </div>
-        :
+      ) : (
         <div className={styles.loadContainer}>
           <p>{MissingPagePermission}</p>
         </div>
-      }
+      )}
     </div>
   );
 };

@@ -4,13 +4,22 @@ import {CheckCircleFill, InfoCircleFill, ExclamationCircleFill, XCircleFill} fro
 import styles from "./hc-alert.module.scss";
 
 export interface HCAlertProps extends AlertProps {
-  showIcon?: boolean
-  heading?: string | React.ReactNode
-  closeButton?:boolean
-  handleCloseAlert?:()=>void
+  showIcon?: boolean;
+  heading?: string | React.ReactNode;
+  closeButton?: boolean;
+  handleCloseAlert?: () => void;
 }
 
-function HCAlert({showIcon, children, variant, className, heading, closeButton = false, handleCloseAlert = () => {}, ...others}: HCAlertProps) {
+function HCAlert({
+  showIcon,
+  children,
+  variant,
+  className,
+  heading,
+  closeButton = false,
+  handleCloseAlert = () => {},
+  ...others
+}: HCAlertProps) {
   let icon;
   if (variant === "success") {
     icon = <CheckCircleFill data-testid="success-icon" />;
@@ -25,16 +34,24 @@ function HCAlert({showIcon, children, variant, className, heading, closeButton =
   }
 
   return (
-    <Alert variant={variant} data-testid="hc-alert-component" {...others} className={`${styles.alert} ${styles.hcAlert} ${className}`} >
-      {showIcon && <div className={`${styles.iconContainer} ${heading && styles.iconHeading} text-${variant}`}>{icon}</div>}
+    <Alert
+      variant={variant}
+      data-testid="hc-alert-component"
+      {...others}
+      className={`${styles.alert} ${styles.hcAlert} ${className}`}
+    >
+      {showIcon && (
+        <div className={`${styles.iconContainer} ${heading && styles.iconHeading} text-${variant}`}>{icon}</div>
+      )}
       <div className={styles.content} id="hc-alert-component-content">
         {heading && <Alert.Heading>{heading}</Alert.Heading>}
         {children}
-
       </div>
-      {closeButton ? <div className={styles.closeButton}>
-        <button type="button" className="btn-close" aria-label="Close-alert" onClick={() => handleCloseAlert()} />
-      </div> : null}
+      {closeButton ? (
+        <div className={styles.closeButton}>
+          <button type="button" className="btn-close" aria-label="Close-alert" onClick={() => handleCloseAlert()} />
+        </div>
+      ) : null}
     </Alert>
   );
 }

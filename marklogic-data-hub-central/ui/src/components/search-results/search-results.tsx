@@ -6,7 +6,6 @@ import {SearchContext} from "@util/search-context";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 import {EntityProps} from "types/entity-types";
 
-
 type Props = {
   data: any[];
   entityDefArray: EntityProps[];
@@ -15,15 +14,10 @@ type Props = {
   handleViewChange: (view: string) => void;
 };
 
-
-const SearchResults:React.FC<Props> = (props) => {
-
+const SearchResults: React.FC<Props> = props => {
   const {data, entityDefArray, tableView, handleViewChange, columns} = props;
 
-  const {
-    searchOptions,
-    setSelectedTableProperties,
-  } = useContext(SearchContext);
+  const {searchOptions, setSelectedTableProperties} = useContext(SearchContext);
 
   const [expandedItems, setExpandedItems] = React.useState<any[]>([]);
 
@@ -38,34 +32,36 @@ const SearchResults:React.FC<Props> = (props) => {
     setExpandedItems(items);
     const viewSettings = getViewSettings();
     const viewSettingsAux = {
-      ...viewSettings, explore: {
+      ...viewSettings,
+      explore: {
         ...viewSettings.explore,
         snippetView: {
           ...viewSettings.explore?.snippetView,
-          expandedItems: items
-        }
-      }
+          expandedItems: items,
+        },
+      },
     };
     setViewSettings(viewSettingsAux);
   }, [data]);
 
   const onExpand = (index: number) => {
     let newItems = [...expandedItems];
-    if (newItems.find((i) => i === `${index}-${searchOptions.pageNumber}`)) {
-      newItems = newItems.filter((i) => (i !== `${index}-${searchOptions.pageNumber}`));
+    if (newItems.find(i => i === `${index}-${searchOptions.pageNumber}`)) {
+      newItems = newItems.filter(i => i !== `${index}-${searchOptions.pageNumber}`);
     } else {
       newItems = [...expandedItems, `${index}-${searchOptions.pageNumber}`];
     }
     setExpandedItems(newItems);
     const viewSettings = getViewSettings();
     const viewSettingsAux = {
-      ...viewSettings, explore: {
+      ...viewSettings,
+      explore: {
         ...viewSettings.explore,
         snippetView: {
           ...viewSettings.explore?.snippetView,
-          expandedItems: newItems
-        }
-      }
+          expandedItems: newItems,
+        },
+      },
     };
     setViewSettings(viewSettingsAux);
   };
@@ -80,7 +76,7 @@ const SearchResults:React.FC<Props> = (props) => {
               entityDefArray={entityDefArray}
               tableView={tableView}
               handleViewChange={handleViewChange}
-              isExpanded={expandedItems.find((i) => i === `${index}-${searchOptions.pageNumber}`)}
+              isExpanded={expandedItems.find(i => i === `${index}-${searchOptions.pageNumber}`)}
               onExpand={() => onExpand(index)}
             />
           </ListGroup.Item>

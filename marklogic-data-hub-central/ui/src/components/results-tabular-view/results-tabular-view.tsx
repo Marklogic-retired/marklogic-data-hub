@@ -5,7 +5,14 @@ import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "@components/column-selector/column-selector";
 import {SearchContext} from "@util/search-context";
 import {Link} from "react-router-dom";
-import {faCode, faProjectDiagram, faThList, IconDefinition, faFileExport, faColumns} from "@fortawesome/free-solid-svg-icons";
+import {
+  faCode,
+  faProjectDiagram,
+  faThList,
+  IconDefinition,
+  faFileExport,
+  faColumns,
+} from "@fortawesome/free-solid-svg-icons";
 import {MdCallSplit} from "react-icons/md";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "@util/date-conversion";
@@ -43,7 +50,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     key: "0-i",
     visible: true,
     width: 150,
-    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+    headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
   },
   {
     text: "Entity Type",
@@ -51,7 +58,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     key: "0-1",
     visible: true,
     width: 150,
-    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+    headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
   },
   {
     text: "Record Type",
@@ -59,7 +66,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     dataField: "recordType",
     visible: true,
     width: 150,
-    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+    headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
   },
   {
     text: "Created",
@@ -67,7 +74,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     key: "0-c",
     visible: true,
     width: 150,
-    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+    headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
   },
   {
     text: "Detail View",
@@ -75,30 +82,29 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     key: "0-d",
     visible: true,
     width: 150,
-    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
-  }
+    headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
+  },
 ];
 
-const ResultsTabularView = (props) => {
+const ResultsTabularView = props => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [primaryKey, setPrimaryKey] = useState<string>("");
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
   const [expandedNestedTableColumn, setExpandedNestedTableColumn] = useState<string[]>([]);
   const [compareModalVisible, setCompareModalVisible] = useState(false);
-  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({
+    sampleSize: 100,
+    uris: [],
+    actionPreview: [],
+  });
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
   const [loading, setToggleLoading] = useState("");
   const [originalUri, setOriginalUri] = useState<string>("");
-  const {
-    searchOptions,
-    setSelectedTableProperties,
-    setSortOrder,
-    setGraphViewOptions,
-    setSavedNode
-  } = useContext(SearchContext);
+  const {searchOptions, setSelectedTableProperties, setSortOrder, setGraphViewOptions, setSavedNode} =
+    useContext(SearchContext);
 
   const authorityService = useContext(AuthoritiesContext);
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
@@ -131,8 +137,7 @@ const ResultsTabularView = (props) => {
 
   let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
 
-
-  const handleSubHeaderClick = (key) => {
+  const handleSubHeaderClick = key => {
     if (expandedNestedTableColumn.includes(key)) {
       const filterExpandedColumn = expandedNestedTableColumn.filter(e => e !== key);
       setExpandedNestedTableColumn([...filterExpandedColumn]);
@@ -160,76 +165,86 @@ const ResultsTabularView = (props) => {
         if (!property.hasOwnProperty("properties")) {
           return (
             <td key={index}>
-              <div className={styles.columData} key={`${index}`}>{item[propertyPath]}</div>
+              <div className={styles.columData} key={`${index}`}>
+                {item[propertyPath]}
+              </div>
             </td>
           );
         }
         if (expandedNestedTableColumn.includes(property.propertyPath)) {
           return (
             <td className={styles.innerTableContainer} key={`table${propertyPath}`}>
-              {
-                renderStructuredProperty(property.properties, item[propertyPath])
-              }
+              {renderStructuredProperty(property.properties, item[propertyPath])}
             </td>
           );
         }
-        return (<td key={`${property.propertyPath}-${index}`} className={styles.nestedColumn}>
-          {
-            property?.properties?.map((col, index) => <HCTooltip
-              key={col.propertyPath}
-              text={col.propertyLabel}
-              id={`title-tooltip-${indicator}-${index}`}
-              placement="top">
-              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
-            </HCTooltip>)
-          }
-        </td>);
+        return (
+          <td key={`${property.propertyPath}-${index}`} className={styles.nestedColumn}>
+            {property?.properties?.map((col, index) => (
+              <HCTooltip
+                key={col.propertyPath}
+                text={col.propertyLabel}
+                id={`title-tooltip-${indicator}-${index}`}
+                placement="top"
+              >
+                <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
+              </HCTooltip>
+            ))}
+          </td>
+        );
       });
-      return (
-        <tr key={indicator}>
-          {row}
-        </tr>
-      );
+      return <tr key={indicator}>{row}</tr>;
     });
 
     const render = (
       <table key={`table-${Math.random()}`} className={styles.innerColumnTable}>
         <thead>
           <tr>
-            {
-              properties?.map((col, index) => {
-                const canClick = col.hasOwnProperty("properties");
-                return (<th key={col.propertyPath}>
+            {properties?.map((col, index) => {
+              const canClick = col.hasOwnProperty("properties");
+              return (
+                <th key={col.propertyPath}>
                   {
-                    <HCTooltip
-                      text={col.propertyLabel}
-                      id={`title-tooltip-${index}`}
-                      placement="top">
-                      {canClick ? <div className={styles.columHeaderClicked} onClick={() => { handleSubHeaderClick(col.propertyPath); }}>{col.propertyLabel}</div> : <div className={styles.columHeader}>{col.propertyLabel}</div>}
+                    <HCTooltip text={col.propertyLabel} id={`title-tooltip-${index}`} placement="top">
+                      {canClick ? (
+                        <div
+                          className={styles.columHeaderClicked}
+                          onClick={() => {
+                            handleSubHeaderClick(col.propertyPath);
+                          }}
+                        >
+                          {col.propertyLabel}
+                        </div>
+                      ) : (
+                        <div className={styles.columHeader}>{col.propertyLabel}</div>
+                      )}
                     </HCTooltip>
                   }
-                </th>);
-              })
-            }
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
-          {
-            dataToRender.length !== 0 ? dataToRender : <tr>{
-              properties?.map((col, index) => <td key={`${col?.propertyPath}-${index}`} className={styles.noData} />)
-            }</tr>
-          }
+          {dataToRender.length !== 0 ? (
+            dataToRender
+          ) : (
+            <tr>
+              {properties?.map((col, index) => (
+                <td key={`${col?.propertyPath}-${index}`} className={styles.noData} />
+              ))}
+            </tr>
+          )}
         </tbody>
       </table>
     );
-
 
     return render;
   };
 
   let sortingOrder = false;
-  const tableHeaderRender = (selectedTableColumns) => {
-    const columns = selectedTableColumns.map((item) => {
+  const tableHeaderRender = selectedTableColumns => {
+    const columns = selectedTableColumns.map(item => {
       if (item.hasOwnProperty("properties")) {
         return {
           dataField: item.propertyPath,
@@ -239,23 +254,34 @@ const ResultsTabularView = (props) => {
             onClick: (_, column) => {
               const {key} = column;
               handleSubHeaderClick(key);
-            }
+            },
           },
           className: "nestedColumn",
           formatExtraData: {
             key: item.propertyPath,
-            properties: item.properties
+            properties: item.properties,
           },
           headerStyle: {
-            cursor: "pointer"
+            cursor: "pointer",
           },
-          headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
+          headerFormatter: (_, $, {sortElement}) => (
+            <>
+              <span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>
+                {item.propertyLabel}
+              </span>
+              {sortElement}
+            </>
+          ),
           formatter: (cell, row, colIndex, formatExtraData) => {
             const {key, properties} = formatExtraData;
             if (expandedNestedTableColumn.includes(key)) {
               return renderStructuredProperty(properties, cell);
             } else {
-              return (properties?.map((col, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>{col.propertyLabel}</div>));
+              return properties?.map((col, index) => (
+                <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>
+                  {col.propertyLabel}
+                </div>
+              ));
             }
           },
           onCell: () => {
@@ -263,7 +289,7 @@ const ResultsTabularView = (props) => {
               style: {
                 whiteSpace: "nowrap",
                 maxWidth: 150,
-              }
+              },
             };
           },
           ...setSortOptions(item),
@@ -273,12 +299,23 @@ const ResultsTabularView = (props) => {
           dataField: item.propertyPath,
           key: item.propertyPath,
           text: item.propertyLabel,
-          headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
+          headerFormatter: (_, $, {sortElement}) => (
+            <>
+              <span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>
+                {item.propertyLabel}
+              </span>
+              {sortElement}
+            </>
+          ),
           ...setSortOptions(item),
-          formatter: (value) => {
+          formatter: value => {
             if (!Array.isArray(value)) return renderField(value, 65);
-            return (value?.map((el, index) => <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>{el}</div>));
-          }
+            return value?.map((el, index) => (
+              <div style={{textOverflow: "ellipsis", overflow: "hidden"}} key={index}>
+                {el}
+              </div>
+            ));
+          },
         };
       }
     });
@@ -286,12 +323,14 @@ const ResultsTabularView = (props) => {
   };
 
   const handleChange = (type, sorter: {columnKey: string; order: string}) => {
-    if (searchOptions.sortOrder.length && searchOptions.sortOrder[0].sortDirection === "descending") { setSortOrder(searchOptions.sortOrder[0].propertyName, null); }
+    if (searchOptions.sortOrder.length && searchOptions.sortOrder[0].sortDirection === "descending") {
+      setSortOrder(searchOptions.sortOrder[0].propertyName, null);
+    }
   };
 
-  const setSortOptions = (item) => (
-    item.sortable ?
-      {
+  const setSortOptions = item =>
+    item.sortable
+      ? {
         sort: true,
         onSort: (field: any, sortOrder) => {
           if (!sortingOrder) {
@@ -299,9 +338,16 @@ const ResultsTabularView = (props) => {
             sortingOrder = true;
           }
         },
-        defaultSortOrder: (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
-          && searchOptions.sortOrder[0].hasOwnProperty("sortDirection")) ? (searchOptions.sortOrder[0].sortDirection === "ascending") ? "asc" : "desc" : null,
-      } : "");
+        defaultSortOrder:
+            searchOptions.sortOrder.length &&
+            searchOptions.sortOrder[0].propertyName === item.propertyLabel &&
+            searchOptions.sortOrder[0].hasOwnProperty("sortDirection")
+              ? searchOptions.sortOrder[0].sortDirection === "ascending"
+                ? "asc"
+                : "desc"
+              : null,
+      }
+      : "";
 
   const updatedTableHeader = () => {
     let header = tableHeaderRender(selectedTableColumns);
@@ -311,14 +357,14 @@ const ResultsTabularView = (props) => {
         text: "Detail View",
         dataField: "detailView",
         key: "0-d",
-        headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
+        headerFormatter: column => <span className="resultsTableHeaderColumn">{column.text}</span>,
       };
       header.length > 0 && header.push(detailView);
     }
     return header;
   };
 
-  const navigateToGraphView = (item) => {
+  const navigateToGraphView = item => {
     item["navigatingFromOtherView"] = true;
     setSavedNode(item);
     let primaryKeyValue = item.primaryKey?.propertyValue;
@@ -326,131 +372,182 @@ const ResultsTabularView = (props) => {
     props.handleViewChange("graph");
   };
 
-  const tableHeaders = searchOptions.entityTypeIds?.length !== 0 ? searchOptions.entityTypeIds?.length > 1 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader() : DEFAULT_ALL_ENTITIES_HEADER;
+  const tableHeaders =
+    searchOptions.entityTypeIds?.length !== 0
+      ? searchOptions.entityTypeIds?.length > 1
+        ? DEFAULT_ALL_ENTITIES_HEADER
+        : updatedTableHeader()
+      : DEFAULT_ALL_ENTITIES_HEADER;
 
-  const tableDataRender = (item) => {
+  const tableDataRender = item => {
     let dataObj = {};
     let primaryKeyValue = item.primaryKey?.propertyValue;
     let isUri = item.primaryKey?.propertyPath === "uri";
     let path = {
       pathname: "/tiles/explore/detail",
-      primaryKey: isUri ? "" : primaryKeyValue
+      primaryKey: isUri ? "" : primaryKeyValue,
     };
     let options = {};
-    let detailView =
-    !props.groupNodeTableView ?
+    let detailView = !props.groupNodeTableView ? (
       <div className={styles.redirectIcons}>
-        <Link to={{
-          pathname: `${path.pathname}`, state: {
-            selectedValue: "instance",
-            entity: searchOptions.entityTypeIds,
-            pageNumber: searchOptions.pageNumber,
-            start: searchOptions.start,
-            searchFacets: searchOptions.selectedFacets,
-            query: searchOptions.query,
-            tableView: props.tableView,
-            sortOrder: searchOptions.sortOrder,
-            sources: item.sources,
-            primaryKey: path.primaryKey,
-            uri: item.uri,
-            entityInstance: item.entityInstance,
-            targetDatabase: searchOptions.database
-          }
-        }} id={"instance"}
-        data-cy="instance">
+        <Link
+          to={{
+            pathname: `${path.pathname}`,
+            state: {
+              selectedValue: "instance",
+              entity: searchOptions.entityTypeIds,
+              pageNumber: searchOptions.pageNumber,
+              start: searchOptions.start,
+              searchFacets: searchOptions.selectedFacets,
+              query: searchOptions.query,
+              tableView: props.tableView,
+              sortOrder: searchOptions.sortOrder,
+              sources: item.sources,
+              primaryKey: path.primaryKey,
+              uri: item.uri,
+              entityInstance: item.entityInstance,
+              targetDatabase: searchOptions.database,
+            },
+          }}
+          id={"instance"}
+          data-cy="instance"
+        >
           <HCTooltip text="Show the processed data" id="processed-data-tooltip" placement="top-end">
-            <i><FontAwesomeIcon className={styles.iconHover} icon={faThList} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
+            <i>
+              <FontAwesomeIcon
+                className={styles.iconHover}
+                icon={faThList}
+                size="sm"
+                data-testid={`${primaryKeyValue}-detailOnSeparatePage`}
+              />
+            </i>
           </HCTooltip>
         </Link>
-        <Link to={{
-          pathname: `${path.pathname}`,
-          state: {
-            selectedValue: "source",
-            entity: searchOptions.entityTypeIds,
-            pageNumber: searchOptions.pageNumber,
-            start: searchOptions.start,
-            searchFacets: searchOptions.selectedFacets,
-            query: searchOptions.query,
-            tableView: props.tableView,
-            sortOrder: searchOptions.sortOrder,
-            sources: item.sources,
-            primaryKey: path.primaryKey,
-            uri: item.uri,
-            entityInstance: item.entityInstance,
-            targetDatabase: searchOptions.database
-          }
-        }} id={"source"}
-        data-cy="source">
+        <Link
+          to={{
+            pathname: `${path.pathname}`,
+            state: {
+              selectedValue: "source",
+              entity: searchOptions.entityTypeIds,
+              pageNumber: searchOptions.pageNumber,
+              start: searchOptions.start,
+              searchFacets: searchOptions.selectedFacets,
+              query: searchOptions.query,
+              tableView: props.tableView,
+              sortOrder: searchOptions.sortOrder,
+              sources: item.sources,
+              primaryKey: path.primaryKey,
+              uri: item.uri,
+              entityInstance: item.entityInstance,
+              targetDatabase: searchOptions.database,
+            },
+          }}
+          id={"source"}
+          data-cy="source"
+        >
           <HCTooltip text={"Show the complete " + item.format.toUpperCase()} id="show-json-tooltip" placement="top-end">
-            {item.format.toUpperCase() !== "JSON" ?
-              <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
-              :
+            {item.format.toUpperCase() !== "JSON" ? (
+              <i>
+                <FontAwesomeIcon
+                  className={styles.iconHover}
+                  icon={faCode}
+                  size="sm"
+                  data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}
+                />
+              </i>
+            ) : (
               <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
-            }
+            )}
           </HCTooltip>
         </Link>
-        <div className={styles.graphIcon}  tabIndex={0}
-          onKeyDown={(e) => {
+        <div
+          className={styles.graphIcon}
+          tabIndex={0}
+          onKeyDown={e => {
             if (e.key === "Enter") {
               navigateToGraphView(item);
             }
-          }}>
+          }}
+        >
           <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
-            <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
-              size="sm" data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)} /></i>
+            <i>
+              <FontAwesomeIcon
+                className={styles.iconHover}
+                icon={faProjectDiagram}
+                size="sm"
+                data-testid={`${primaryKeyValue}-graphOnSeparatePage`}
+                onClick={() => navigateToGraphView(item)}
+              />
+            </i>
           </HCTooltip>
         </div>
-        {
-          item.unmerge ?
-            <div className={styles.unmergeContainer}>
-              {canWriteMatchMerge ?
-                <div className={styles.unMergeIcon}>
-                  <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
-                    <i>
-                      <MdCallSplit
-                        className={styles.unMergeIcon}
-                        data-testid={`unmergeIcon`}
-                        aria-label={`unmerge-icon`}
-                        onClick={() => openUnmergeCompare(item)}
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            openUnmergeCompare(item);
-                          }
-                        }}
-                      />
-                    </i>
-                  </HCTooltip>
-                </div>
-                :
-                <div className={styles.unMergeIcon}>
-                  <HCTooltip text={SecurityTooltips.missingPermissionUnMerge} id="missing-permission-tooltip" placement="top-end">
-                    <i><MdCallSplit className={styles.unMergeIconDisabled} data-testid={`unmergeIcon`} aria-label={`unmerge-icon`}/></i>
-                  </HCTooltip>
-                </div>
-              }
-              {
-                loading === item.uri ?
-                  <Spinner
-                    data-testid="hc-button-component-spinner"
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    className={styles.spinner}
-                  /> : null
-              }
-            </div>
-            : null
-        }
-      </div> : "";
+        {item.unmerge ? (
+          <div className={styles.unmergeContainer}>
+            {canWriteMatchMerge ? (
+              <div className={styles.unMergeIcon}>
+                <HCTooltip text={"Unmerge Documents"} id="unmerge-icon-tooltip" placement="top-end">
+                  <i>
+                    <MdCallSplit
+                      className={styles.unMergeIcon}
+                      data-testid={`unmergeIcon`}
+                      aria-label={`unmerge-icon`}
+                      onClick={() => openUnmergeCompare(item)}
+                      tabIndex={0}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          openUnmergeCompare(item);
+                        }
+                      }}
+                    />
+                  </i>
+                </HCTooltip>
+              </div>
+            ) : (
+              <div className={styles.unMergeIcon}>
+                <HCTooltip
+                  text={SecurityTooltips.missingPermissionUnMerge}
+                  id="missing-permission-tooltip"
+                  placement="top-end"
+                >
+                  <i>
+                    <MdCallSplit
+                      className={styles.unMergeIconDisabled}
+                      data-testid={`unmergeIcon`}
+                      aria-label={`unmerge-icon`}
+                    />
+                  </i>
+                </HCTooltip>
+              </div>
+            )}
+            {loading === item.uri ? (
+              <Spinner
+                data-testid="hc-button-component-spinner"
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                className={styles.spinner}
+              />
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    ) : (
+      ""
+    );
     if (props.selectedEntities?.length > 1 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;
       let itemEntityName = item.entityName;
       let document = item.uri.split("/")[item.uri.split("/").length - 1];
       let createdOn = item.createdOn;
-      const identifierCell = isUri ? <HCTooltip text={item.uri} id={itemIdentifier + "-tooltip"} placement="top"><span>".../" + {document}</span></HCTooltip> : itemIdentifier;
+      const identifierCell = isUri ? (
+        <HCTooltip text={item.uri} id={itemIdentifier + "-tooltip"} placement="top">
+          <span>".../" + {document}</span>
+        </HCTooltip>
+      ) : (
+        itemIdentifier
+      );
       options = {
         primaryKey: primaryKeyValue,
         identifier: identifierCell,
@@ -461,7 +558,7 @@ const ResultsTabularView = (props) => {
         primaryKeyPath: path,
         sources: item.sources,
         entityInstance: item.entityInstance,
-        database: searchOptions.database
+        database: searchOptions.database,
       };
     } else {
       options = {
@@ -470,7 +567,7 @@ const ResultsTabularView = (props) => {
         primaryKeyPath: path,
         sources: item.sources,
         entityInstance: item.entityInstance,
-        database: searchOptions.database
+        database: searchOptions.database,
       };
     }
     if (!props.groupNodeTableView) {
@@ -487,14 +584,16 @@ const ResultsTabularView = (props) => {
     return dataObj;
   };
 
-  const openUnmergeCompare = async (item) => {
+  const openUnmergeCompare = async item => {
     let arrayUris;
-    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    let activeEntityIndex = props.entityDefArray.findIndex(entity => entity.name === item["entityName"]);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
     if (typeof item.unmergeUris[0] === "string") {
       arrayUris = item.unmergeUris;
     } else {
-      arrayUris = item.unmergeUris.map((obj) => { return obj["document-uri"]; });
+      arrayUris = item.unmergeUris.map(obj => {
+        return obj["document-uri"];
+      });
     }
     setActiveEntityUris(arrayUris);
     setOriginalUri(item.uri);
@@ -505,7 +604,7 @@ const ResultsTabularView = (props) => {
 
   const fetchCompareData = async (array, item) => {
     let uriRequests: Promise<AxiosResponse<any>>[] = [];
-    array.forEach((uri) => {
+    array.forEach(uri => {
       uriRequests.push(getDocFromURI(uri));
     });
     const results = await Promise.all(uriRequests);
@@ -513,7 +612,7 @@ const ResultsTabularView = (props) => {
     const result2 = results[1];
 
     const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
-    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+    const preview = flowName ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let urisInfo: any[] = [];
@@ -532,7 +631,7 @@ const ResultsTabularView = (props) => {
       restrictToUris: true,
       uris: array,
       sampleSize: 100,
-      stepName: item.matchStepName
+      stepName: item.matchStepName,
     };
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
@@ -540,10 +639,9 @@ const ResultsTabularView = (props) => {
       setToggleLoading("");
       setPreviewMatchedActivity(previewMatchActivity);
     }
-
   };
 
-  const submitUnmergeUri = async (payload) => {
+  const submitUnmergeUri = async payload => {
     await unmergeUri(payload);
   };
 
@@ -551,7 +649,11 @@ const ResultsTabularView = (props) => {
     if (item) {
       for (let subItem of item) {
         if (!Array.isArray(subItem)) {
-          if (!Array.isArray(subItem.propertyValue) || subItem.propertyValue[0] === null || typeof (subItem.propertyValue[0]) !== "object") {
+          if (
+            !Array.isArray(subItem.propertyValue) ||
+            subItem.propertyValue[0] === null ||
+            typeof subItem.propertyValue[0] !== "object"
+          ) {
             dataObj[subItem.propertyPath] = subItem.propertyValue.toString();
           } else {
             let dataObjArr: any[] = [];
@@ -570,11 +672,9 @@ const ResultsTabularView = (props) => {
     }
   };
 
-  const dataSource = props.data.map((item) => {
+  const dataSource = props.data.map(item => {
     return tableDataRender(item);
-  })
-    ;
-
+  });
   useEffect(() => {
     if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties?.length === 0) {
       setSelectedTableProperties(props.columns);
@@ -582,35 +682,45 @@ const ResultsTabularView = (props) => {
   }, [props.columns]);
 
   useEffect(() => {
-    props.selectedEntities && props.selectedEntities.length && props.entityDefArray && props.entityDefArray.forEach((entity => {
-      if (entity.name === props.selectedEntities[0]) {
-        entity.primaryKey && setPrimaryKey(entity.primaryKey);
-      }
-      setExpandedNestedTableRows([]);
-      setExpandedNestedTableColumn([]);
-    }));
+    props.selectedEntities &&
+      props.selectedEntities.length &&
+      props.entityDefArray &&
+      props.entityDefArray.forEach(entity => {
+        if (entity.name === props.selectedEntities[0]) {
+          entity.primaryKey && setPrimaryKey(entity.primaryKey);
+        }
+        setExpandedNestedTableRows([]);
+        setExpandedNestedTableColumn([]);
+      });
   }, [props.selectedEntities, searchOptions.selectedTableProperties]);
 
   const saveExpandedTableKeys = (isNested: boolean, expandedRowAux) => {
     const storage = getViewSettings();
     let newDataStorage;
     newDataStorage = {
-      ...storage, explore: {
+      ...storage,
+      explore: {
         ...storage.explore,
-        resultsTable: !isNested ? {
-          ...storage.explore?.resultsTable,
-          expandedTableKeys: expandedRowAux,
-        } : {
-          ...storage.explore?.resultsTable,
-          expandedNestedTableKeys: expandedRowAux,
-        }
-      }};
+        resultsTable: !isNested
+          ? {
+            ...storage.explore?.resultsTable,
+            expandedTableKeys: expandedRowAux,
+          }
+          : {
+            ...storage.explore?.resultsTable,
+            expandedNestedTableKeys: expandedRowAux,
+          },
+      },
+    };
     setViewSettings(newDataStorage);
   };
 
   const getExpandedTableKeys = (isNested: boolean) => {
     const storage = getViewSettings();
-    let storageAux = (!isNested ? storage?.explore?.resultsTable?.expandedTableKeys : storage?.explore?.resultsTable?.expandedNestedTableKeys) || [];
+    let storageAux =
+      (!isNested
+        ? storage?.explore?.resultsTable?.expandedTableKeys
+        : storage?.explore?.resultsTable?.expandedNestedTableKeys) || [];
     if (storageAux.length > 0) {
       let expandedTableKeys = storageAux;
       return expandedTableKeys;
@@ -626,7 +736,7 @@ const ResultsTabularView = (props) => {
     }
   }, []);
 
-  const expandedRowRender = (rowId) => {
+  const expandedRowRender = rowId => {
     const nestedColumns = [
       {
         text: "Property",
@@ -643,7 +753,7 @@ const ResultsTabularView = (props) => {
         formatter: (_, row) => {
           return renderField(row.value, 100);
         },
-      }
+      },
     ];
 
     if (!props.groupNodeTableView) {
@@ -662,40 +772,47 @@ const ResultsTabularView = (props) => {
     const parseJson = (obj: Object) => {
       let parsedData: any[] = [];
       for (let i in obj) {
-        if (obj[i] !== null && typeof (obj[i]) === "object") {
+        if (obj[i] !== null && typeof obj[i] === "object") {
           parsedData.push({
             key: counter++,
             property: i,
             children: parseJson(obj[i]),
-            view: <Link to={{
-              pathname: `${rowId.primaryKeyPath.pathname}`, state: {
-                id: obj[i],
-                entity: searchOptions.entityTypeIds,
-                pageNumber: searchOptions.pageNumber,
-                start: searchOptions.start,
-                searchFacets: searchOptions.selectedFacets,
-                query: searchOptions.query,
-                tableView: props.tableView,
-                sortOrder: searchOptions.sortOrder,
-                sources: rowId.sources,
-                primaryKey: rowId.primaryKeyPath.primaryKey,
-                uri: rowId.uri,
-                entityInstance: rowId.entityInstance,
-                targetDatabase: searchOptions.database
-              }
-            }}
-            data-cy="nested-instance">
-              <HCTooltip text="Show nested detail on a separate page" id="show-separate-page-tooltip" placement="top">
-                <i><FontAwesomeIcon icon={faThList} size="sm" /></i>
-              </HCTooltip>
-            </Link>
+            view: (
+              <Link
+                to={{
+                  pathname: `${rowId.primaryKeyPath.pathname}`,
+                  state: {
+                    id: obj[i],
+                    entity: searchOptions.entityTypeIds,
+                    pageNumber: searchOptions.pageNumber,
+                    start: searchOptions.start,
+                    searchFacets: searchOptions.selectedFacets,
+                    query: searchOptions.query,
+                    tableView: props.tableView,
+                    sortOrder: searchOptions.sortOrder,
+                    sources: rowId.sources,
+                    primaryKey: rowId.primaryKeyPath.primaryKey,
+                    uri: rowId.uri,
+                    entityInstance: rowId.entityInstance,
+                    targetDatabase: searchOptions.database,
+                  },
+                }}
+                data-cy="nested-instance"
+              >
+                <HCTooltip text="Show nested detail on a separate page" id="show-separate-page-tooltip" placement="top">
+                  <i>
+                    <FontAwesomeIcon icon={faThList} size="sm" />
+                  </i>
+                </HCTooltip>
+              </Link>
+            ),
           });
         } else {
           parsedData.push({
             key: counter++,
             property: i,
             value: typeof obj[i] === "boolean" ? obj[i].toString() : obj[i],
-            view: null
+            view: null,
           });
         }
       }
@@ -710,7 +827,6 @@ const ResultsTabularView = (props) => {
     }
 
     nestedData = parseJson(props.data[index]?.entityInstance);
-
 
     const onExpand = (record, expanded) => {
       let newExpandedNestedTableRows = [...expandedNestedTableRows];
@@ -735,7 +851,11 @@ const ResultsTabularView = (props) => {
         pagination={false}
         expandedRowKeys={expandedNestedTableRows}
         showExpandIndicator={{bordered: true}}
-        nestedParams={{headerColumns: nestedColumns, iconCellList: [], state: [expandedNestedTableRows, setExpandedNestedTableRows]}}
+        nestedParams={{
+          headerColumns: nestedColumns,
+          iconCellList: [],
+          state: [expandedNestedTableRows, setExpandedNestedTableRows],
+        }}
         onExpand={onExpand}
         childrenIndent={true}
         className={`exploreInternalTable`}
@@ -746,18 +866,25 @@ const ResultsTabularView = (props) => {
   };
 
   type TDisabledIcon = {
-    tooltipId: string,
-    tooltipText: string,
-    icon: IconDefinition,
-    iconTestId: string
+    tooltipId: string;
+    tooltipText: string;
+    icon: IconDefinition;
+    iconTestId: string;
   };
 
-  const DisabledIcon = ({tooltipId, tooltipText, icon, iconTestId}: TDisabledIcon) =>
+  const DisabledIcon = ({tooltipId, tooltipText, icon, iconTestId}: TDisabledIcon) => (
     <HCTooltip text={tooltipText} id={tooltipId} placement="top-end">
       <span>
-        <FontAwesomeIcon className={`cursor-not-allowed ${styles.iconDisabled}`} color={themeColors.light} icon={icon} size="lg" data-testid={iconTestId} />
+        <FontAwesomeIcon
+          className={`cursor-not-allowed ${styles.iconDisabled}`}
+          color={themeColors.light}
+          icon={icon}
+          size="lg"
+          data-testid={iconTestId}
+        />
       </span>
-    </HCTooltip>;
+    </HCTooltip>
+  );
 
   const onExpandMainTable = (record, expanded, rowIndex) => {
     let newExpandedTableRows = [...expandedRows];
@@ -776,40 +903,66 @@ const ResultsTabularView = (props) => {
 
   return (
     <>
-      {!props.groupNodeTableView &&
+      {!props.groupNodeTableView && (
         <div className={styles.icon}>
           <div className={styles.queryExport} data-cy="query-export">
-            {canExportQuery ?
+            {canExportQuery ? (
               <>
-                <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />
-              </> :
-              <DisabledIcon tooltipId="export-results-tooltip" tooltipText={tooltipsConfig.tabularView.queryExportUnautorized} icon={faFileExport} iconTestId="query-export-unautorized" />
-            }
+                <QueryExport
+                  hasStructured={props.hasStructured}
+                  columns={props.columns}
+                  selectedPropertyDefinitions={props.selectedPropertyDefinitions}
+                />
+              </>
+            ) : (
+              <DisabledIcon
+                tooltipId="export-results-tooltip"
+                tooltipText={tooltipsConfig.tabularView.queryExportUnautorized}
+                icon={faFileExport}
+                iconTestId="query-export-unautorized"
+              />
+            )}
           </div>
           <div className={styles.columnSelector} data-cy="column-selector">
-            {searchOptions.entityTypeIds?.length === 1 ?
-              <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} /> :
-              <DisabledIcon tooltipId="select-columns-tooltip" tooltipText={tooltipsConfig.tabularView.columnSelectorDisabled} icon={faColumns} iconTestId="column-selector-tooltip-disabled" />
-            }
+            {searchOptions.entityTypeIds?.length === 1 ? (
+              <ColumnSelector
+                popoverVisibility={popoverVisibility}
+                setPopoverVisibility={setPopoverVisibility}
+                entityPropertyDefinitions={props.entityPropertyDefinitions}
+                selectedPropertyDefinitions={props.selectedPropertyDefinitions}
+                setColumnSelectorTouched={props.setColumnSelectorTouched}
+                columns={props.columns}
+                primaryKey={primaryKey}
+              />
+            ) : (
+              <DisabledIcon
+                tooltipId="select-columns-tooltip"
+                tooltipText={tooltipsConfig.tabularView.columnSelectorDisabled}
+                icon={faColumns}
+                iconTestId="column-selector-tooltip-disabled"
+              />
+            )}
           </div>
         </div>
-      }
+      )}
       <div className={styles.tabular}>
-        {tableHeaders.length > 0 && <HCTable
-          data-testid="result-table"
-          rowKey="uri"
-          className={`resultTableMain`}
-          data={props.isLoading ? [] : dataSource}
-          columns={tableHeaders}
-          onTableChange={handleChange}
-          expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : undefined}
-          pagination={false}
-          showExpandIndicator={true}
-          bordered
-          expandedRowKeys={expandedRows}
-          dynamicSortColumns
-          onExpand={onExpandMainTable}
-        />}
+        {tableHeaders.length > 0 && (
+          <HCTable
+            data-testid="result-table"
+            rowKey="uri"
+            className={`resultTableMain`}
+            data={props.isLoading ? [] : dataSource}
+            columns={tableHeaders}
+            onTableChange={handleChange}
+            expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : undefined}
+            pagination={false}
+            showExpandIndicator={true}
+            bordered
+            expandedRowKeys={expandedRows}
+            dynamicSortColumns
+            onExpand={onExpandMainTable}
+          />
+        )}
       </div>
       <CompareValuesModal
         isVisible={compareModalVisible}

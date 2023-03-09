@@ -4,7 +4,10 @@ import axios from "axios";
 import TableViewGroupNodes from "./table-view-group-nodes";
 import {SearchContext} from "../../../util/search-context";
 import {groupNodeSearchPayload, groupNodeSearchResponse} from "../../../assets/mock-data/explore/entity-search";
-import {searchContextInterfaceByDefault, defaultSearchOptions as defaultSearchOptionAux} from "@util/uiTestCommonInterface";
+import {
+  searchContextInterfaceByDefault,
+  defaultSearchOptions as defaultSearchOptionAux,
+} from "@util/uiTestCommonInterface";
 
 jest.mock("axios");
 const axiosMock = axios as jest.Mocked<typeof axios>;
@@ -22,26 +25,25 @@ describe("Table view for group nodes modal component", () => {
   });
 
   it("can view the table view for group nodes modal and click close", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: groupNodeSearchResponse})));
+    axiosMock.post["mockImplementationOnce"](
+      jest.fn(() => Promise.resolve({status: 200, data: groupNodeSearchResponse})),
+    );
     let url = "/api/entitySearch?database=final";
     let relatedToData = {
       entityTypeId: "Product",
       predicateFilter: "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/includes",
-      parentNode: "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039"
+      parentNode: "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry/3039",
     };
     let updatedSearchOptions = {
       ...defaultSearchOptionAux,
       entityTypeIds: ["Product"],
-      selectedTableProperties: ["babyRegistryId", "arrivalDate", "ownedBy", "includes"]
+      selectedTableProperties: ["babyRegistryId", "arrivalDate", "ownedBy", "includes"],
     };
 
-    const {queryByText, getByLabelText, queryByLabelText, rerender} =  render(
+    const {queryByText, getByLabelText, queryByLabelText, rerender} = render(
       <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: updatedSearchOptions}}>
-        <TableViewGroupNodes
-          {...defaultProps}
-          isVisible={false}
-        />
-      </SearchContext.Provider>
+        <TableViewGroupNodes {...defaultProps} isVisible={false} />
+      </SearchContext.Provider>,
     );
 
     expect(queryByText("Group of Product records")).toBeNull();
@@ -50,22 +52,16 @@ describe("Table view for group nodes modal component", () => {
     let relatedData = {...relatedToData, exceededThreshold: true};
     rerender(
       <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: updatedSearchOptions}}>
-        <TableViewGroupNodes
-          {...defaultProps}
-          relatedToData={relatedData}
-        />
-      </SearchContext.Provider>
+        <TableViewGroupNodes {...defaultProps} relatedToData={relatedData} />
+      </SearchContext.Provider>,
     );
     expect(queryByLabelText("exceededThresholdWarning")).toBeInTheDocument();
 
     //Validate other fields now (No exceed threshold warning)
     rerender(
       <SearchContext.Provider value={{...searchContextInterfaceByDefault, searchOptions: updatedSearchOptions}}>
-        <TableViewGroupNodes
-          {...defaultProps}
-          relatedToData={relatedToData}
-        />
-      </SearchContext.Provider>
+        <TableViewGroupNodes {...defaultProps} relatedToData={relatedToData} />
+      </SearchContext.Provider>,
     );
 
     expect(queryByLabelText("exceededThresholdWarning")).toBeNull();

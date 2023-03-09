@@ -25,28 +25,31 @@ import ErrorMessageProvider from "@util/error-message-context";
 import HubCentralConfigProvider from "@util/hubCentralConfig-context";
 import ErrorBoundary from "@components/error-boundary/ErrorBoundary";
 
-interface Props extends RouteComponentProps<any> { }
+interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
-  const {
-    user,
-    handleError
-  } = useContext(UserContext);
+  const {user, handleError} = useContext(UserContext);
 
   const PrivateRoute = ({children, ...rest}) => (
-    <Route {...rest} render={props => (
-      user.authenticated === true ? (
-        children
-      ) : (
-        <Redirect push={true} to={{
-          pathname: "/",
-          state: {from: props.location}
-        }} />
-      )
-    )} />
+    <Route
+      {...rest}
+      render={props =>
+        user.authenticated === true ? (
+          children
+        ) : (
+          <Redirect
+            push={true}
+            to={{
+              pathname: "/",
+              state: {from: props.location},
+            }}
+          />
+        )
+      }
+    />
   );
 
-  const getPageRoute = (loc) => {
+  const getPageRoute = loc => {
     if (loc.search && loc.search.startsWith("?from=")) {
       return decodeURIComponent(loc.search.substring(6));
     } else if (loc.pathname !== "/" && loc.pathname !== "/noresponse") {
@@ -60,7 +63,11 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated) {
       if (location.pathname === "/") {
         history.push(user.pageRoute);
-      } else if (location.pathname === "/tiles/run/add" || location.pathname === "/tiles/run/add-run" || location.pathname === "/tiles/run/run-step") {
+      } else if (
+        location.pathname === "/tiles/run/add" ||
+        location.pathname === "/tiles/run/add-run" ||
+        location.pathname === "/tiles/run/run-step"
+      ) {
         history.push("/tiles/run");
       } else {
         history.push(location.pathname);
@@ -76,8 +83,9 @@ const App: React.FC<Props> = ({history, location}) => {
   useEffect(() => {
     // On route change...
     if (user.authenticated) {
-      axios.get("/api/environment/systemInfo")
-        .then(() => { })
+      axios
+        .get("/api/environment/systemInfo")
+        .then(() => {})
         // Timeouts throw 401s and are caught here
         .catch(err => {
           if (err.response) {
@@ -89,9 +97,8 @@ const App: React.FC<Props> = ({history, location}) => {
     }
   }, [location.pathname]);
 
-
   const path = location["pathname"];
-  const pageTheme = (themeMap[path]) ? themes[themeMap[path]] : themes["default"];
+  const pageTheme = themeMap[path] ? themes[themeMap[path]] : themes["default"];
   document.body.classList.add(pageTheme["bodyBg"]);
   document.title = Application.title;
 
@@ -105,7 +112,7 @@ const App: React.FC<Props> = ({history, location}) => {
                 <LoadingProvider>
                   <HubCentralConfigProvider>
                     <ErrorMessageProvider>
-                      <Header environment={getEnvironment()}/>
+                      <Header environment={getEnvironment()} />
                       <ModalStatus />
                       <NavigationPrompt />
                       <main>
@@ -174,7 +181,6 @@ const App: React.FC<Props> = ({history, location}) => {
         </MonitorProvider>
       </NotificationProvider>
     </div>
-
   );
 };
 

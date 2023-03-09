@@ -8,15 +8,11 @@ import overviewConfig from "../config/overview.config";
 import data from "../assets/mock-data/system-info.data";
 
 describe("Overview component", () => {
-
   it("Verify content display", async () => {
-
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByText,
-      getByLabelText,
-      getAllByText
-    } = render(<Overview enabled={enabled} environment={data.environment}/>);
+    const {getByText, getByLabelText, getAllByText} = render(
+      <Overview enabled={enabled} environment={data.environment} />,
+    );
 
     expect(getByLabelText("overview")).toBeInTheDocument();
 
@@ -32,22 +28,18 @@ describe("Overview component", () => {
     expect(getByLabelText("run-icon")).toBeInTheDocument();
     expect(getAllByText("Explore")[0]).toBeInTheDocument();
     expect(getByLabelText("explore-icon")).toBeInTheDocument();
-
   });
 
   it("Verify enabled cards are clickable and have appropriate styling/content", async () => {
-
     const history = createMemoryHistory();
     history.push("/tiles"); // initial state
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByLabelText,
-      queryAllByText
-    } = render(
+    const {getByLabelText, queryAllByText} = render(
       <Router history={history}>
-        <Overview enabled={enabled} environment={data.environment}/>
-      </Router>);
+        <Overview enabled={enabled} environment={data.environment} />
+      </Router>,
+    );
 
     enabled.forEach((card, i) => {
       expect(getByLabelText(card + "-card")).toHaveClass(`enabled`);
@@ -59,18 +51,14 @@ describe("Overview component", () => {
   });
 
   it("Verify disabled cards are not clickable and have appropriate styling/content", async () => {
-
     const history = createMemoryHistory();
     history.push("/tiles"); // initial state
 
     let disabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByLabelText,
-      getAllByText
-    } = render(
+    const {getByLabelText, getAllByText} = render(
       <Router history={history}>
-        <Overview enabled={[]} environment={data.environment}/>
-      </Router>
+        <Overview enabled={[]} environment={data.environment} />
+      </Router>,
     );
 
     disabled.forEach((card, i) => {
@@ -80,21 +68,17 @@ describe("Overview component", () => {
     });
     // ALL cards have permissions warning
     expect(getAllByText("*additional permissions required")).toHaveLength(disabled.length);
-
   });
 
   it("Verify enter key on each card goes to the appropriate link", async () => {
-
     const history = createMemoryHistory();
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByLabelText
-    } = render(
+    const {getByLabelText} = render(
       <Router history={history}>
-        <Overview enabled={enabled} environment={data.environment}/>
-      </Router>
+        <Overview enabled={enabled} environment={data.environment} />
+      </Router>,
     );
 
     enabled.forEach((id, i) => {
@@ -104,11 +88,9 @@ describe("Overview component", () => {
       fireEvent.keyDown(card, {key: "Enter", code: "Enter"});
       expect(history.location.pathname).toEqual(`/tiles/${id}`);
     });
-
   });
 
   it("Verify tab key navigation", async () => {
-
     let i: number;
 
     // todo
@@ -116,19 +98,17 @@ describe("Overview component", () => {
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByLabelText
-    } = render(
+    const {getByLabelText} = render(
       <Router history={history}>
-        <Overview enabled={enabled} environment={data.environment}/>
-      </Router>
+        <Overview enabled={enabled} environment={data.environment} />
+      </Router>,
     );
 
     getByLabelText("load-card").focus();
     expect(getByLabelText("load-card")).toHaveFocus();
 
     // pressing tab should consecutively highlight load -> model -> curate -> run -> explore
-    let counterTab = (i) => {
+    let counterTab = i => {
       return 1 + 3 * i;
     };
     for (i = 5; i <= 13; ++i) {
@@ -148,35 +128,31 @@ describe("Overview component", () => {
   });
 
   it("Verify arrow key navigation", async () => {
-
     // todo
     const history = createMemoryHistory();
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getByLabelText
-    } = render(
+    const {getByLabelText} = render(
       <Router history={history}>
-        <Overview enabled={enabled} environment={data.environment}/>
-      </Router>
+        <Overview enabled={enabled} environment={data.environment} />
+      </Router>,
     );
 
     // map of which card to go next if up/down/left/right arrow keys are pressed on a card
     const directionMap = {
-      "load": ["load",         "run",          "load",         "model"],
-      "model": ["model",        "run",          "load",         "curate"],
-      "curate": ["curate",       "run",          "model",        "explore"],
-      "run": ["load",         "run",          "run",          "explore"],
-      "explore": ["explore",      "explore",      "curate",       "explore"],
+      "load": ["load", "run", "load", "model"],
+      "model": ["model", "run", "load", "curate"],
+      "curate": ["curate", "run", "model", "explore"],
+      "run": ["load", "run", "run", "explore"],
+      "explore": ["explore", "explore", "curate", "explore"],
     };
 
     // directions in the same order as map above
-    const directions =  ["ArrowUp",      "ArrowDown",    "ArrowLeft",    "ArrowRight"];
+    const directions = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 
     enabled.forEach((id, i) => {
       directions.forEach((dir, j) => {
-
         let card = getByLabelText(id + "-card");
 
         card.focus();
@@ -184,24 +160,19 @@ describe("Overview component", () => {
 
         fireEvent.keyDown(card, {key: dir, code: dir});
         expect(getByLabelText(directionMap[id][j] + "-card")).toHaveFocus();
-
       });
     });
-
   });
 
   it("Verify Documentation and Video Tutorial links", async () => {
-
     const history = createMemoryHistory();
     history.push("/tiles"); // initial state
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {
-      getAllByText
-    } = render(
+    const {getAllByText} = render(
       <Router history={history}>
-        <Overview enabled={enabled} environment={data.environment}/>
-      </Router>
+        <Overview enabled={enabled} environment={data.environment} />
+      </Router>,
     );
 
     // Mock method for opening links
@@ -214,7 +185,10 @@ describe("Overview component", () => {
     expect(documentationLinks.length === enabled.length); // All cards should have Documentation links
     documentationLinks.forEach((docLink, i) => {
       fireEvent.click(docLink);
-      expect(mockedWindowOpen).toBeCalledWith(overviewConfig.documentationLinks.tileSpecificLink(5.3, enabled[i]), "_blank");
+      expect(mockedWindowOpen).toBeCalledWith(
+        overviewConfig.documentationLinks.tileSpecificLink(5.3, enabled[i]),
+        "_blank",
+      );
     });
 
     // Check Video Tutorial links
@@ -228,5 +202,4 @@ describe("Overview component", () => {
     // Reset mocked method
     window.open = originalOpen;
   });
-
 });

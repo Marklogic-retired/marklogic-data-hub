@@ -23,7 +23,10 @@ const matchingStepsArray: MatchingStep[] = matchingStep.artifacts;
 const entityModel = {model: customerEntityDef[0]["entityModel"].definitions};
 const defaultProps = {
   matchingStepsArray: matchingStepsArray,
-  flows: [{name: "customerJSONFlow", steps: [{stepName: "matchCustomers"}, {stepName: "matchCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "matchCustomers123"}]}],
+  flows: [
+    {name: "customerJSONFlow", steps: [{stepName: "matchCustomers"}, {stepName: "matchCustomers123"}]},
+    {name: "customerXMLFlow", steps: [{stepName: "matchCustomers123"}]},
+  ],
   entityName: customerEntityDef[0]["entityModel"].info.title,
   deleteMatchingArtifact: jest.fn(),
   createMatchingArtifact: jest.fn(),
@@ -32,7 +35,7 @@ const defaultProps = {
   entityModel: entityModel,
   canWriteFlow: true,
   addStepToFlow: jest.fn(),
-  addStepToNew: jest.fn()
+  addStepToNew: jest.fn(),
 };
 
 describe("Matching cards view component", () => {
@@ -43,7 +46,8 @@ describe("Matching cards view component", () => {
   it("can render matching steps", () => {
     const {getByText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={[]}
           entityName={""}
@@ -57,7 +61,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
@@ -83,7 +87,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByLabelText("icon: plus-circle")).toBeInTheDocument();
@@ -125,7 +129,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
@@ -173,7 +177,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByLabelText("icon: plus-circle")).toBeInTheDocument();
@@ -197,7 +201,8 @@ describe("Matching cards view component", () => {
   it("can add a step to a new flow", async () => {
     const {getByText, getByLabelText, getByTestId} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={[]}
           entityName={""}
@@ -211,14 +216,16 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
     fireEvent.mouseOver(getByLabelText("matchCustomers-step-label"));
 
-    await wait(() => { expect(getByTestId("matchCustomers-toNewFlow")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByTestId("matchCustomers-toNewFlow")).toBeInTheDocument();
+    });
     fireEvent.click(getByTestId("matchCustomers-toNewFlow"));
 
     wait(() => {
@@ -229,7 +236,8 @@ describe("Matching cards view component", () => {
   it("can add/run a step in a new flow from run button", async () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={[]}
           entityName={""}
@@ -243,7 +251,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
@@ -254,13 +262,16 @@ describe("Matching cards view component", () => {
     userEvent.click(getByTestId("matchCustomersEmpty-run-toNewFlow"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 
   it("can add a step to an existing flow", async () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={defaultProps.flows}
           entityName={""}
@@ -274,7 +285,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
@@ -289,13 +300,16 @@ describe("Matching cards view component", () => {
     fireEvent.click(getByTestId("matchCustomersEmpty-to-customerJSONFlow-Confirm"));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 
   it("can run a step in an existing flow where step DOES NOT exist", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={defaultProps.flows}
           entityName={""}
@@ -309,7 +323,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
@@ -323,13 +337,16 @@ describe("Matching cards view component", () => {
     fireEvent.click(getByTestId("customerJSONFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   it("can run a step in an existing flow where step DOES exist", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={defaultProps.flows}
           entityName={""}
@@ -343,7 +360,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
@@ -357,13 +374,16 @@ describe("Matching cards view component", () => {
     fireEvent.click(getByLabelText("continue-confirm"));
 
     //Check if the /tiles/run/run-step route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+    });
   });
 
   it("can run a step in an existing flow where step exists in MORE THAN ONE flow", () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={defaultProps.flows}
           entityName={""}
@@ -377,7 +397,7 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers123")).toBeInTheDocument();
@@ -391,13 +411,16 @@ describe("Matching cards view component", () => {
     fireEvent.click(getByTestId("customerXMLFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+    });
   });
 
   it("can open step settings and navigate to match step details", async () => {
     const {getByText, getByTestId, getByLabelText} = render(
       <Router>
-        <MatchingCard {...defaultProps}
+        <MatchingCard
+          {...defaultProps}
           matchingStepsArray={matchingStepsArray}
           flows={[]}
           entityName={""}
@@ -411,18 +434,22 @@ describe("Matching cards view component", () => {
           addStepToNew={jest.fn()}
           canWriteFlow={true}
         />
-      </Router>
+      </Router>,
     );
 
     expect(getByText("matchCustomers")).toBeInTheDocument();
     //open step settings
     userEvent.click(getByTestId("matchCustomers-edit"));
-    await wait(() => { expect(getByText("Matching Step Settings")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByText("Matching Step Settings")).toBeInTheDocument();
+    });
     userEvent.click(getByLabelText("Cancel"));
 
     //open step details
     userEvent.click(getByTestId("matchCustomers-stepDetails"));
 
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/match"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/match");
+    });
   });
 });

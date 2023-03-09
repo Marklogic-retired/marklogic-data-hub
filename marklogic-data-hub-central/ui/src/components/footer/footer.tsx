@@ -1,14 +1,13 @@
 import React from "react";
 import styles from "./footer.module.scss";
 
-const Footer = (props) => {
-
-  const footerStyle = (props.pageTheme && props.pageTheme["footer"]) ? props.pageTheme["footer"] : null;
-  const linkStyle = (props.pageTheme && props.pageTheme["footerLink"]) ? props.pageTheme["footerLink"] : null;
-  const currentYear = (new Date()).getFullYear();
+const Footer = props => {
+  const footerStyle = props.pageTheme && props.pageTheme["footer"] ? props.pageTheme["footer"] : null;
+  const linkStyle = props.pageTheme && props.pageTheme["footerLink"] ? props.pageTheme["footerLink"] : null;
+  const currentYear = new Date().getFullYear();
 
   let linkRef = React.createRef<HTMLAnchorElement>();
-  const linkWrapperKeyDown = (event) => {
+  const linkWrapperKeyDown = event => {
     if (event.key === "Enter") {
       linkRef.current!.click();
     }
@@ -17,10 +16,18 @@ const Footer = (props) => {
   return (
     <div className={styles.footerContainer} data-testid="footer-component">
       <div className={styles.content} style={footerStyle}>
-        <span>© {currentYear} MarkLogic Corporation</span>
-        |
+        <span>© {currentYear} MarkLogic Corporation</span>|
         <span tabIndex={0} onKeyDown={linkWrapperKeyDown} className={styles.link}>
-          <a className={styles.linkStyle} tabIndex={-1} ref={linkRef} href="https://www.marklogic.com/privacy/" style={linkStyle} id="privacy-link">Privacy</a>
+          <a
+            className={styles.linkStyle}
+            tabIndex={-1}
+            ref={linkRef}
+            href="https://www.marklogic.com/privacy/"
+            style={linkStyle}
+            id="privacy-link"
+          >
+            Privacy
+          </a>
         </span>
       </div>
     </div>

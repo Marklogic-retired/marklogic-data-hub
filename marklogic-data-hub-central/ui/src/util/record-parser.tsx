@@ -1,4 +1,4 @@
-export const xmlParser = (xmlData) => {
+export const xmlParser = xmlData => {
   let parser = require("fast-xml-parser");
   let options = {
     attributeNamePrefix: "",
@@ -13,13 +13,13 @@ export const xmlParser = (xmlData) => {
     cdataTagName: "__cdata", //default is 'false'
     cdataPositionChar: "\\c",
     localeRange: "", //To support non english character in tag/attribute values.
-    parseTrueNumberOnly: false
+    parseTrueNumberOnly: false,
   };
 
   return parser.parse(xmlData, options);
 };
 
-export const xmlParserForMapping = (xmlData) => {
+export const xmlParserForMapping = xmlData => {
   let parser = require("fast-xml-parser");
   let options = {
     attributeNamePrefix: "@",
@@ -34,29 +34,27 @@ export const xmlParserForMapping = (xmlData) => {
     cdataTagName: "__cdata", //default is 'false'
     cdataPositionChar: "\\c",
     localeRange: "", //To support non english character in tag/attribute values.
-    parseTrueNumberOnly: false
+    parseTrueNumberOnly: false,
   };
 
   return parser.parse(xmlData, options);
 };
 
-export const xmlDecoder = (xml) => {
+export const xmlDecoder = xml => {
   let he = require("he");
   return he.decode(xml);
 };
 
-export const xmlFormatter = (xml) => {
+export const xmlFormatter = xml => {
   let format = require("xml-formatter");
   return format(xml, {
     indentation: "  ",
-    filter: (node) => node.type !== "Comment",
+    filter: node => node.type !== "Comment",
     collapseContent: true,
-    lineSeparator: "\n"
+    lineSeparator: "\n",
   });
 };
 
-export const jsonFormatter = (json) => {
+export const jsonFormatter = json => {
   return JSON.stringify(json, undefined, 2);
 };
-
-

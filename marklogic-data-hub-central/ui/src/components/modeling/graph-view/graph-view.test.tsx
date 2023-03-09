@@ -17,44 +17,52 @@ describe("Graph View Component", () => {
   });
 
   const withEntityAs = (entityName: string, canReadEntityModel: boolean, canWriteEntityModel: boolean) => {
-    let entityTypeNamesArrayUpdated = [...isModified.modelingOptions.entityTypeNamesArray,
+    let entityTypeNamesArrayUpdated = [
+      ...isModified.modelingOptions.entityTypeNamesArray,
       {
         name: entityName,
-        entityTypeId: `http://marklogic.com/example/${entityName}-0.0.1/${entityName}`
-      }
+        entityTypeId: `http://marklogic.com/example/${entityName}-0.0.1/${entityName}`,
+      },
     ];
-    let isModifiedUpdated = {...isModified, modelingOptions: {...isModified.modelingOptions, selectedEntity: entityName, entityTypeNamesArray: entityTypeNamesArrayUpdated}};
-    return (<ModelingContext.Provider value={isModifiedUpdated}>
-      <GraphView
-        dataModel={getEntityTypes}
-        canReadEntityModel={canReadEntityModel}
-        canWriteEntityModel={canWriteEntityModel}
-        deleteEntityType={jest.fn()}
-        relationshipModalVisible={false}
-        toggleRelationshipModal={jest.fn()}
-        updateSavedEntity={jest.fn()}
-        setDataModelFromServer={jest.fn()}
-        hubCentralConfig={hubCentralConfig}
-        updateHubCentralConfig={jest.fn()}
-        setConfirmType={jest.fn()}
-        toggleConfirmModal={() => true}
-        toggleRevertConfirmModal={""}
-        revertUnpublishedChanges={false}
-        setRevertUnpublishedChanges={jest.fn()}
-        toggleShowConceptClassModal={""}
-        toggleIsEditConceptClassModal={""}
-        updateConceptClassAndHideModal={jest.fn()}
-        deleteConceptClass={jest.fn()}
-        updateEntities={""}
-        toggleShowEntityModal={""}
-        toggleIsEditModal={""}
-      />
-    </ModelingContext.Provider>
+    let isModifiedUpdated = {
+      ...isModified,
+      modelingOptions: {
+        ...isModified.modelingOptions,
+        selectedEntity: entityName,
+        entityTypeNamesArray: entityTypeNamesArrayUpdated,
+      },
+    };
+    return (
+      <ModelingContext.Provider value={isModifiedUpdated}>
+        <GraphView
+          dataModel={getEntityTypes}
+          canReadEntityModel={canReadEntityModel}
+          canWriteEntityModel={canWriteEntityModel}
+          deleteEntityType={jest.fn()}
+          relationshipModalVisible={false}
+          toggleRelationshipModal={jest.fn()}
+          updateSavedEntity={jest.fn()}
+          setDataModelFromServer={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          updateHubCentralConfig={jest.fn()}
+          setConfirmType={jest.fn()}
+          toggleConfirmModal={() => true}
+          toggleRevertConfirmModal={""}
+          revertUnpublishedChanges={false}
+          setRevertUnpublishedChanges={jest.fn()}
+          toggleShowConceptClassModal={""}
+          toggleIsEditConceptClassModal={""}
+          updateConceptClassAndHideModal={jest.fn()}
+          deleteConceptClass={jest.fn()}
+          updateEntities={""}
+          toggleShowEntityModal={""}
+          toggleIsEditModal={""}
+        />
+      </ModelingContext.Provider>
     );
   };
 
   test("can view and close side panel for a selected entity within graph view", async () => {
-
     const mockDeleteEntity = jest.fn();
 
     const {getByTestId, getByLabelText, queryByLabelText, rerender} = render(
@@ -83,7 +91,7 @@ describe("Graph View Component", () => {
           toggleShowEntityModal={""}
           toggleIsEditModal={""}
         />
-      </ModelingContext.Provider>
+      </ModelingContext.Provider>,
     );
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
@@ -104,7 +112,6 @@ describe("Graph View Component", () => {
   });
 
   test("can view, check properties as empty description and close side panel for selected entities within graph view", async () => {
-
     const mockDeleteEntity = jest.fn();
 
     const {getByTestId, getByLabelText, queryByLabelText, rerender, queryByPlaceholderText} = render(
@@ -133,7 +140,7 @@ describe("Graph View Component", () => {
           toggleShowEntityModal={""}
           toggleIsEditModal={""}
         />
-      </ModelingContext.Provider>
+      </ModelingContext.Provider>,
     );
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
@@ -162,7 +169,6 @@ describe("Graph View Component", () => {
   });
 
   test("Publish button should be disabled when user don't have permission to write entity model", async () => {
-
     const mockDeleteEntity = jest.fn();
 
     const {getByLabelText} = render(
@@ -191,14 +197,13 @@ describe("Graph View Component", () => {
           toggleShowEntityModal={""}
           toggleIsEditModal={""}
         />
-      </ModelingContext.Provider>
+      </ModelingContext.Provider>,
     );
 
     expect(getByLabelText("publish-to-database")).toBeDisabled();
   });
 
   test("Validates modeling Graph UI text ", async () => {
-
     const mockDeleteEntity = jest.fn();
 
     const {getByText, getByLabelText, queryByLabelText, rerender, getAllByLabelText} = render(
@@ -227,7 +232,7 @@ describe("Graph View Component", () => {
           toggleShowEntityModal={""}
           toggleIsEditModal={""}
         />
-      </ModelingContext.Provider>
+      </ModelingContext.Provider>,
     );
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
@@ -249,7 +254,9 @@ describe("Graph View Component", () => {
     fireEvent.mouseOver(tooltips[0]);
 
     const tooltip = await screen.findAllByLabelText("colorToolTip");
-    expect(tooltip[0].lastChild?.textContent).toBe("Select a color to associate it with the Product entity throughout your project.");
+    expect(tooltip[0].lastChild?.textContent).toBe(
+      "Select a color to associate it with the Product entity throughout your project.",
+    );
     // Clicks on Add dropdown
     const addDropdown = getByText("Add");
     expect(addDropdown).toBeInTheDocument();
@@ -258,8 +265,9 @@ describe("Graph View Component", () => {
     });
     // Clicks on Add new relationship
     userEvent.click(getByText("Add new relationship"));
-    expect(document.querySelector("#hc-alert-component-content")?.firstChild?.textContent)
-      .toEqual("To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press Esc to exit this mode.");
+    expect(document.querySelector("#hc-alert-component-content")?.firstChild?.textContent).toEqual(
+      "To add a relationship to the data model, drag the source entity type to the target entity type or a concept class. You can also click the source entity type to configure a relationship. Press Esc to exit this mode.",
+    );
   });
 
   test("Ready-only user should not be able to edit entity type description and namespace", async () => {

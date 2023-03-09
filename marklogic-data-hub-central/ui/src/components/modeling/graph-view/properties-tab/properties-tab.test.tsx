@@ -3,18 +3,15 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {render} from "@testing-library/react";
 import PropertiesTab from "./properties-tab";
 
-import {
-  getEntityTypes,
-} from "../../../../assets/mock-data/modeling/modeling";
+import {getEntityTypes} from "../../../../assets/mock-data/modeling/modeling";
 
 describe("Graph Modeling Properties Tab Component", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   test("Verify Show/Hide Legend functionality", () => {
-    const {getByTestId, queryByTestId} =  render(
+    const {getByTestId, queryByTestId} = render(
       <Router>
         <PropertiesTab
           entityTypeData={getEntityTypes[0]}
@@ -23,7 +20,8 @@ describe("Graph Modeling Properties Tab Component", () => {
           updateSavedEntity={""}
           dataModel={""}
         />
-      </Router>);
+      </Router>,
+    );
 
     //Legend should be visible
     expect(queryByTestId("relationshipIconLegend")).toBeInTheDocument();

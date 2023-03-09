@@ -1,35 +1,35 @@
 import axios from "axios";
 
-export const creatNewQuery = async (query) => {
+export const creatNewQuery = async query => {
   return await axios({
     method: "POST",
     url: `/api/entitySearch/savedQueries`,
-    data: query
+    data: query,
   });
 };
 
 export const fetchQueries = async () => {
   return await axios({
     method: "GET",
-    url: `/api/entitySearch/savedQueries`
+    url: `/api/entitySearch/savedQueries`,
   });
 };
 
-export const fetchQueryById = async (query) => {
+export const fetchQueryById = async query => {
   return await axios({
     method: "GET",
-    url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`
+    url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
   });
 };
 
-export const updateQuery = async (query) => {
+export const updateQuery = async query => {
   return await axios.put(`/api/entitySearch/savedQueries`, {query});
 };
 
-export const removeQuery = async (query) => {
+export const removeQuery = async query => {
   return await axios({
     method: "DELETE",
-    url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`
+    url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
   });
 };
 
@@ -90,39 +90,43 @@ export const getExportQueryPreview = async (query, database) => {
       } else {
         reject({
           status: this.status,
-          statusText: xhr.statusText
+          statusText: xhr.statusText,
         });
       }
     };
     xhr.onerror = function () {
       reject({
         status: this.status,
-        statusText: xhr.statusText
+        statusText: xhr.statusText,
       });
     };
 
     let formData = new FormData(mapForm);
     xhr.send(formData);
   });
-
 };
 
 export const exportSavedQuery = (id, limit, database) => {
-  window.open(`/api/entitySearch/export/query/${id}?fileType=csv&limit=${limit === Number.MAX_SAFE_INTEGER || limit < 1 ? "" : limit}&database=${database}`, "_self");
+  window.open(
+    `/api/entitySearch/export/query/${id}?fileType=csv&limit=${
+      limit === Number.MAX_SAFE_INTEGER || limit < 1 ? "" : limit
+    }&database=${database}`,
+    "_self",
+  );
 };
 
 export const getSavedQueryPreview = async (id, database) => {
   return await axios({
     method: "GET",
-    url: `/api/entitySearch/export/query/${id}?fileType=csv&limit=2&database=${database}`
+    url: `/api/entitySearch/export/query/${id}?fileType=csv&limit=2&database=${database}`,
   });
-
 };
 
 export const graphSearchQuery = async (graphSearchPayload: any) => {
-  return await axios.post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data)
+  return await axios
+    .post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data)
     // Catching 400 error that occurs when graph is called before payload is ready
-    .catch((error) => {
+    .catch(error => {
       if (error.response && error.response.status === 400) {
         return {status: 200, data: {total: 0, nodes: [], edges: []}};
       }
@@ -131,7 +135,9 @@ export const graphSearchQuery = async (graphSearchPayload: any) => {
 };
 
 export const expandGroupNode = async (payload: any, limit?: number) => {
-  let url = !limit ? `/api/entitySearch/nodeExpand?database=${payload.database}` : `/api/entitySearch/nodeExpand?database=${payload.database}&limit=${limit}`;
+  let url = !limit
+    ? `/api/entitySearch/nodeExpand?database=${payload.database}`
+    : `/api/entitySearch/nodeExpand?database=${payload.database}&limit=${limit}`;
   return await axios.post(url, payload.data);
 };
 
@@ -151,5 +157,7 @@ export const primaryEntityTypes = async () => {
 };
 
 export const fetchSemanticConceptInfo = async (semanticConceptIRI: string, database: string) => {
-  return await axios.get(`/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=${database}`);
+  return await axios.get(
+    `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=${database}`,
+  );
 };

@@ -1,11 +1,11 @@
-const convertDateFromISO = (InputDate) => {
+const convertDateFromISO = InputDate => {
   let date = new Date(InputDate);
   let year = date.getFullYear();
   let month: any = date.getMonth() + 1;
   let dt: any = date.getDate();
   let hr = date.getHours();
   let min: any = date.getMinutes();
-  let dayTime = (hr < 12 && hr >= 0) ? "AM" : "PM";
+  let dayTime = hr < 12 && hr >= 0 ? "AM" : "PM";
 
   if (dt < 10) {
     dt = "0" + dt;
@@ -23,9 +23,7 @@ const convertDateFromISO = (InputDate) => {
     min = "0" + min;
   }
 
-
-  return (month + "/" + dt + "/" + year + " " + hr + ":" + min + dayTime);
-
+  return month + "/" + dt + "/" + year + " " + hr + ":" + min + dayTime;
 };
 
 function dynamicSortDates(dateProperty) {
@@ -35,12 +33,12 @@ function dynamicSortDates(dateProperty) {
     dateProperty = dateProperty.substr(1);
   }
   return function (a, b) {
-    let result = (a[dateProperty] > b[dateProperty]) ? -1 : (a[dateProperty] < b[dateProperty]) ? 1 : 0;
+    let result = a[dateProperty] > b[dateProperty] ? -1 : a[dateProperty] < b[dateProperty] ? 1 : 0;
     return result * sortOrder;
   };
 }
 
-const sortStepsByUpdated = (stepData) => {
+const sortStepsByUpdated = stepData => {
   let sortedData = stepData.sort((step1, step2) => {
     if (step1.lastUpdated > step2.lastUpdated) {
       return -1;
@@ -62,18 +60,12 @@ const getInitialChars = (str, num, suffix) => {
   return result;
 };
 
-const extractCollectionFromSrcQuery = (query) => {
+const extractCollectionFromSrcQuery = query => {
   if (query.includes("[") && query.includes("]")) {
-    let srcCollection = query.substring(
-      query.lastIndexOf("[") + 2,
-      query.lastIndexOf("]") - 1
-    );
+    let srcCollection = query.substring(query.lastIndexOf("[") + 2, query.lastIndexOf("]") - 1);
     return getInitialChars(srcCollection, 30, "...");
   } else if (query.includes("(") && query.includes(")")) {
-    let srcCollection = query.substring(
-      query.lastIndexOf("(") + 2,
-      query.lastIndexOf(")") - 1
-    );
+    let srcCollection = query.substring(query.lastIndexOf("(") + 2, query.lastIndexOf(")") - 1);
     return getInitialChars(srcCollection, 30, "...");
   } else {
     return getInitialChars(query, 30, "...");
@@ -89,11 +81,14 @@ const getLastChars = (str, num, prefix) => {
   return result;
 };
 
-const formatCardUri = (str) => {
+const formatCardUri = str => {
   if (str.length <= 25) {
     return str;
   } else {
-    return str.substring(0, 5).concat("...").concat(str.substring(str.length - 20));
+    return str
+      .substring(0, 5)
+      .concat("...")
+      .concat(str.substring(str.length - 20));
   }
 };
 
@@ -104,5 +99,5 @@ export {
   getLastChars,
   formatCardUri,
   extractCollectionFromSrcQuery,
-  sortStepsByUpdated
+  sortStepsByUpdated,
 };

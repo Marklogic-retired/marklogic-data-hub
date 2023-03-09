@@ -37,10 +37,18 @@ type Props = {
   createStep: any;
   onCancel: any;
   defaultCollections?: any;
-}
+};
 
-const AdvancedSettings: React.FC<Props> = (props) => {
-  const {curationOptions, validateCalled, setValidateMatchCalled, setValidateMergeCalled, validateMerge, loadModalClicked, setLoadModalClickedCalled} = useContext(CurationContext);
+const AdvancedSettings: React.FC<Props> = props => {
+  const {
+    curationOptions,
+    validateCalled,
+    setValidateMatchCalled,
+    setValidateMergeCalled,
+    validateMerge,
+    loadModalClicked,
+    setLoadModalClickedCalled,
+  } = useContext(CurationContext);
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = StepsConfig.invalidJSONMessage;
@@ -83,12 +91,18 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const defaultprovGranularity = StepsConfig.defaultProvGran;
   const fineGrainProvAvailable = stepType === "matching" || stepType === "merging";
-  const provGranularityOptions = fineGrainProvAvailable ? {"Off": "off", "Coarse-grained": "coarse", "Fine-grained": "fine"} : {"Off": "off", "Coarse-grained": "coarse"};
+  const provGranularityOptions = fineGrainProvAvailable
+    ? {"Off": "off", "Coarse-grained": "coarse", "Fine-grained": "fine"}
+    : {"Off": "off", "Coarse-grained": "coarse"};
   const [provGranularity, setProvGranularity] = useState(defaultprovGranularity);
   const [provGranularityTouched, setProvGranularityTouched] = useState(false);
 
   const defaultValidateEntity = StepsConfig.defaultValidateEntity;
-  const validateEntityOptions = {"Do not validate": "doNotValidate", "Store validation errors in entity headers": "accept", "Skip documents with validation  errors": "reject"};
+  const validateEntityOptions = {
+    "Do not validate": "doNotValidate",
+    "Store validation errors in entity headers": "accept",
+    "Skip documents with validation  errors": "reject",
+  };
   const [validateEntity, setValidateEntity] = useState(defaultValidateEntity);
   const [validateEntityTouched, setValidateEntityTouched] = useState(false);
 
@@ -148,7 +162,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const provGranTooltipRef2 = React.createRef<HTMLDivElement>();
   const [provGranTooltipVisible2, setProvGranTooltipVisible2] = useState(false);
 
-
   const [parametersModuleValue, setParametersModuleValue] = useState("");
   const parametersModuleRef = React.useRef<HTMLInputElement>(null);
   const [parametersModuleTouched, setParametersModuleTouched] = useState(false);
@@ -191,16 +204,15 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setCustomHookTouched(false);
     setTargetPermissionsTouched(false);
     setAdditionalSettingsTouched(false);
-
   }, [props.openStepSettings]);
 
   useEffect(() => {
-    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === ("matching") && validateCalled) {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === "matching" && validateCalled) {
       setValidateMatchCalled(false);
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
-    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === ("merging") && validateMerge) {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === "merging" && validateMerge) {
       setValidateMergeCalled(false);
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -221,10 +233,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   // Convert JSON from JavaScript object to formatted string
-  const formatJSON = (json) => {
+  const formatJSON = json => {
     try {
       const result = JSON.stringify(json, null, 2);
-      return (result.trim() === "\"\"") ? null : result;
+      return result.trim() === "\"\"" ? null : result;
     } catch (error) {
       console.error(error);
       return json;
@@ -232,7 +244,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   // Convert JSON from string to JavaScript object
-  const parseJSON = (json) => {
+  const parseJSON = json => {
     try {
       const result = JSON.parse(json);
       return result;
@@ -299,7 +311,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (usesAdvancedTargetCollections) {
         const targetEntityType = String(props.stepData.targetEntityType || props.stepData.targetEntity);
         const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
-        const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURIComponent(targetEntityTitle)}`;
+        const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURIComponent(
+          targetEntityTitle,
+        )}`;
         const defaultCollectionsResp = await Axios.get(defaultCollectionsURL);
         if (defaultCollectionsResp.status === 200) {
           setDefaultTargetCollections(defaultCollectionsResp.data);
@@ -326,7 +340,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       props.setHasChanged(hasFormChanged());
     }
     props.setPayload(getPayload());
-  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections, attachSourceDocumentTouched, sourceRecordScopeTouched]);
+  }, [
+    targetCollections,
+    advancedTargetCollectionsTouched,
+    defaultTargetCollections,
+    defaultCollections,
+    attachSourceDocumentTouched,
+    sourceRecordScopeTouched,
+  ]);
 
   // On change of default collections in parent, update default collections if not empty
   useEffect(() => {
@@ -337,22 +358,23 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   //Check if Delete Confirmation dialog should be opened or not.
   const hasFormChanged = () => {
-    if (!sourceDatabaseTouched
-      && !targetDatabaseTouched
-      && !addCollTouched
-      && !advancedTargetCollectionsTouched
-      && !targetPermissionsTouched
-      && !headersTouched
-      && !targetFormatTouched
-      && !provGranularityTouched
-      && !validateEntityTouched
-      && !attachSourceDocumentTouched
-      && !sourceRecordScopeTouched
-      && !batchSizeTouched
-      && !parametersModuleTouched
-      && !interceptorsTouched
-      && !customHookTouched
-      && !additionalSettingsTouched
+    if (
+      !sourceDatabaseTouched &&
+      !targetDatabaseTouched &&
+      !addCollTouched &&
+      !advancedTargetCollectionsTouched &&
+      !targetPermissionsTouched &&
+      !headersTouched &&
+      !targetFormatTouched &&
+      !provGranularityTouched &&
+      !validateEntityTouched &&
+      !attachSourceDocumentTouched &&
+      !sourceRecordScopeTouched &&
+      !batchSizeTouched &&
+      !parametersModuleTouched &&
+      !interceptorsTouched &&
+      !customHookTouched &&
+      !additionalSettingsTouched
     ) {
       return false;
     } else {
@@ -361,8 +383,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const getPayload = () => {
-    let payload =
-    {
+    let payload = {
       collections: defaultCollections,
       additionalCollections: additionalCollections,
       targetDatabase: targetDatabase,
@@ -394,7 +415,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     return payload;
   };
 
-  const handleSubmit = async (event: {preventDefault: () => void;}) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
 
     // Parent handles saving of all tabs
@@ -403,7 +424,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     } else {
       props.updateStep(getPayload(), props.activityType);
     }
-    (stepType === "matching" || stepType === "merging" || stepType === "mapping") ? setIsSubmit(true) : setIsSubmit(false);
+    stepType === "matching" || stepType === "merging" || stepType === "mapping"
+      ? setIsSubmit(true)
+      : setIsSubmit(false);
     if (stepType !== "matching" && stepType !== "merging" && stepType !== "mapping") {
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -421,7 +444,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       let permissionArray = targetPermissions.split(",");
       for (let i = 0; i < permissionArray.length; i += 2) {
         let role = permissionArray[i];
-        if (i + 1 >= permissionArray.length || (!role || !role.trim())) {
+        if (i + 1 >= permissionArray.length || !role || !role.trim()) {
           setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
           props.setIsValid(false);
           return false;
@@ -439,7 +462,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     return true;
   };
 
-  const isValidJSON = (json) => {
+  const isValidJSON = json => {
     try {
       JSON.parse(json);
       return true;
@@ -448,15 +471,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const isEmptyString = (json) => {
+  const isEmptyString = json => {
     if (json !== undefined && json.trim().length === 0) {
       return true;
     }
     return false;
   };
 
-  const handleChange = (event) => {
-
+  const handleChange = event => {
     if (event.target.id.match("targetPermissions") !== null) {
       setTargetPermissions(event.target.value);
       setTargetPermissionsTouched(true);
@@ -513,7 +535,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleBlur = (event) => {
+  const handleBlur = event => {
     if (event.target.id === "headers") {
       setHeadersValid(isValidJSON(event.target.value));
       props.setIsValid(isValidJSON(event.target.value));
@@ -550,7 +572,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     sendPayload();
   };
 
-  const handleSourceDatabase = (selectedItem) => {
+  const handleSourceDatabase = selectedItem => {
     if (selectedItem.value === " ") {
       setSourceDatabaseTouched(false);
     } else {
@@ -559,7 +581,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTargetDatabase = (selectedItem) => {
+  const handleTargetDatabase = selectedItem => {
     if (selectedItem.value === " ") {
       setTargetDatabaseTouched(false);
     } else {
@@ -568,24 +590,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleAddColl = (value) => {
+  const handleAddColl = value => {
     if (value === []) {
       setAddCollTouched(false);
     } else {
       setAddCollTouched(true);
       // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
-      setAdditionalCollections(value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value));
+      setAdditionalCollections(
+        value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value),
+      );
     }
   };
 
-  const handleCreateAdditionalColl = (value) => {
+  const handleCreateAdditionalColl = value => {
     setAddCollTouched(true);
     if (typeof value === "string") {
       setAdditionalCollections([...additionalCollections, value]);
     }
   };
 
-  const handleAdvancedTargetCollections = (value) => {
+  const handleAdvancedTargetCollections = value => {
     if (!value) {
       setAdvancedTargetCollectionsTouched(false);
     } else {
@@ -594,7 +618,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTargetFormat = (selectedItem) => {
+  const handleTargetFormat = selectedItem => {
     if (selectedItem.value === " " || selectedItem.value === targetFormat) {
       setTargetFormatTouched(false);
     } else {
@@ -603,7 +627,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleProvGranularity = (selectedItem) => {
+  const handleProvGranularity = selectedItem => {
     if (selectedItem.value === " ") {
       setProvGranularityTouched(false);
     } else {
@@ -612,7 +636,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleValidateEntity = (selectedItem) => {
+  const handleValidateEntity = selectedItem => {
     if (selectedItem.value === " ") {
       setValidateEntityTouched(false);
     } else {
@@ -620,7 +644,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setValidateEntity(selectedItem.value);
     }
   };
-  const handleSourceRecordScope = (selectedItem) => {
+  const handleSourceRecordScope = selectedItem => {
     if (props.isEditing) {
       if (props.stepData.sourceRecordScope !== selectedItem.value) {
         setSourceRecordScopeToggled(true);
@@ -648,8 +672,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const additionalCollectionsOptions = additionalCollections.map(d => ({value: d, label: d}));
 
   const provGranOpts = Object.keys(provGranularityOptions).map(d => ({value: provGranularityOptions[d], label: d}));
-  const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => ({value: validateEntityOptions[d], label: d}));
-  const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => ({value: sourceRecordScopeOptions[d], label: d}));
+  const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => ({
+    value: validateEntityOptions[d],
+    label: d,
+  }));
+  const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => ({
+    value: sourceRecordScopeOptions[d],
+    label: d,
+  }));
 
   //Closing All Tooltips
   const closeAllTooltips = () => {
@@ -672,19 +702,21 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const serviceNameKeyDownHandler = async (event, component) => {
     //Tooltip visible when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "tgtDatabaseTooltip") setTgtDatabaseTooltipVisible2(!tgtDatabaseTooltipVisible2);
       if (component === "tgtCollectionTooltip") setTgtCollectionTooltipVisible2(!tgtCollectionTooltipVisible2);
       if (component === "tgtPermissionTooltip") setTgtPermissionToolTipVisible(!tgtPermissionTooltipVisible);
       if (component === "provGranularityTooltip") setProvGranTooltipVisible2(!provGranTooltipVisible2);
       if (component === "batchSizeTooltip") setBatchSizeToolTipVisible(!batchSizeTooltipVisible);
       if (component === "headerContentTooltip") setHeaderContentTooltipVisible(!headerContentTooltipVisible);
-      if (component === "interceptorTooltip") { handleShowInterceptorPopover(event); }
+      if (component === "interceptorTooltip") {
+        handleShowInterceptorPopover(event);
+      }
       if (component === "customHookTooltip") setCustomHookTooltipVisible(!customHookTooltipVisible);
     }
 
     //Tooltip not visible if user presses escape key
-    if ((event.keyCode === 27)) {
+    if (event.keyCode === 27) {
       closeAllTooltips();
     }
 
@@ -812,19 +844,19 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       placement="left"
       container={containerRef.current}
     >
-      <Popover id={`interceptors-tooltip`} className={styles.popoverInterceptor}
+      <Popover
+        id={`interceptors-tooltip`}
+        className={styles.popoverInterceptor}
         onMouseEnter={() => setShowInterceptorPopover(true)}
         onMouseLeave={() => setShowInterceptorPopover(false)}
       >
-        <Popover.Body>
-          {tooltips.interceptors}
-        </Popover.Body>
+        <Popover.Body>{tooltips.interceptors}</Popover.Body>
       </Popover>
     </Overlay>
   );
 
   let time: any;
-  const handleShowInterceptorPopover = (event) => {
+  const handleShowInterceptorPopover = event => {
     event.persist();
     time = delayTooltip(() => {
       setShowInterceptorPopover(!showInterceptorPopover);
@@ -835,7 +867,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const handleMouseLeaveInterceptorPopover = () => {
     setShowInterceptorPopover(false);
     clearTimeout(time);
-
   };
 
   const expandCollapseInterceptors = () => {
@@ -848,43 +879,47 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   return (
     <div>
-      {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
-        curationOptions.activeStep.hasWarnings.map((warning, index) => {
-          let description;
-          if (warning["message"].includes("target entity type")) {
-            description = "Please remove target entity type from target collections";
-          } else if (warning["message"].includes("source collection")) {
-            description = "Please remove source collection from target collections";
-          } else if (warning["message"].includes("temporal collection")) {
-            description = "Please remove temporal collection from target collections";
-          } else {
-            description = "";
-          }
-          return (
-            <HCAlert
-              className={styles.alert}
-              variant="warning"
-              showIcon
-              key={warning["level"] + index}
-              heading={warning["message"]}
-            >
-              {description}
-            </HCAlert>
-          );
-        })
-      ) : null : null}
+      {stepType === "matching" || stepType === "merging"
+        ? curationOptions.activeStep.hasWarnings.length > 0
+          ? curationOptions.activeStep.hasWarnings.map((warning, index) => {
+            let description;
+            if (warning["message"].includes("target entity type")) {
+              description = "Please remove target entity type from target collections";
+            } else if (warning["message"].includes("source collection")) {
+              description = "Please remove source collection from target collections";
+            } else if (warning["message"].includes("temporal collection")) {
+              description = "Please remove temporal collection from target collections";
+            } else {
+              description = "";
+            }
+            return (
+              <HCAlert
+                className={styles.alert}
+                variant="warning"
+                showIcon
+                key={warning["level"] + index}
+                heading={warning["message"]}
+              >
+                {description}
+              </HCAlert>
+            );
+          })
+          : null
+        : null}
       <Form onSubmit={handleSubmit} className={"container-fluid"}>
-        {isCustomIngestion ?
+        {isCustomIngestion ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Step Definition Name:"}</FormLabel>
-            <Col className={"d-flex align-items-center"}>
-              {stepDefinitionName}
-            </Col>
-          </Row> : null
-        }
-        {usesSourceDatabase ?
+            <FormLabel column lg={3}>
+              {"Step Definition Name:"}
+            </FormLabel>
+            <Col className={"d-flex align-items-center"}>{stepDefinitionName}</Col>
+          </Row>
+        ) : null}
+        {usesSourceDatabase ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Source Database:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Source Database:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <Select
                 id="sourceDatabase-select-wrapper"
@@ -902,27 +937,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 options={sourceDbOptions}
                 styles={reactSelectThemeConfig}
                 formatOptionLabel={({value, label}) => {
-                  return (
-                    <span data-testid={`sourceDbOptions-${value}`}>
-                      {label}
-                    </span>
-                  );
+                  return <span data-testid={`sourceDbOptions-${value}`}>{label}</span>;
                 }}
               />
               <div className={"p-2 d-flex"}>
-                <HCTooltip
-                  text={tooltips.sourceDatabase}
-                  id="source-database-tooltip"
-                  placement="left"
-                >
-                  <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip text={tooltips.sourceDatabase} id="source-database-tooltip" placement="left">
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : null
-        }
+          </Row>
+        ) : null}
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Target Database:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <Select
               id="targetDatabase-select-wrapper"
@@ -940,14 +974,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               options={targetDbOptions}
               styles={reactSelectThemeConfig}
               formatOptionLabel={({value, label}) => {
-                return (
-                  <span data-testid={`targetDbOptions-${value}`}>
-                    {label}
-                  </span>
-                );
+                return <span data-testid={`targetDbOptions-${value}`}>{label}</span>;
               }}
             />
-            <span  ref={tgtDatabaseTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtDatabaseTooltip")} className={styles.tooltipRef}>
+            <span
+              ref={tgtDatabaseTooltipRef2}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "tgtDatabaseTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.targetDatabase}
@@ -955,32 +989,45 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={tgtDatabaseTooltipVisible2 ? tgtDatabaseTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </span>
           </Col>
         </Row>
-        {usesAdvancedTargetCollections ?
+        {usesAdvancedTargetCollections ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Target Collections:"}
+            </FormLabel>
             <Col className={"d-flex"} data-testid={"target-collections"}>
               <AdvancedTargetCollections
                 defaultTargetCollections={defaultTargetCollections}
                 targetCollections={targetCollections}
                 setTargetCollections={handleAdvancedTargetCollections}
-                canWrite={canReadWrite} />
+                canWrite={canReadWrite}
+              />
             </Col>
-          </Row> :
+          </Row>
+        ) : (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Target Collections:"}
+            </FormLabel>
             <Col className={"d-flex"} data-testid={"target-collections"}>
               <CreatableSelect
                 id="additionalColl-select-wrapper"
                 inputId="additionalColl"
                 isMulti
                 tabIndex={0}
-                onKeyDown={(e) => { e.key === "Enter" ? handleAddColl : null; }}
+                onKeyDown={e => {
+                  e.key === "Enter" ? handleAddColl : null;
+                }}
                 isClearable={false}
                 openMenuOnFocus={true}
                 tabSelectsValue={false}
@@ -988,7 +1035,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 value={additionalCollections.map(d => ({value: d, label: d}))}
                 isDisabled={!canReadWrite}
                 onChange={handleAddColl}
-
                 onCreateOption={handleCreateAdditionalColl}
                 aria-label="additionalColl-select"
                 onBlur={sendPayload}
@@ -996,7 +1042,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 styles={reactSelectThemeConfig}
               />
 
-              <span  ref={tgtCollectionTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtCollectionTooltip")} className={styles.tooltipRef}>
+              <span
+                ref={tgtCollectionTooltipRef2}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "tgtCollectionTooltip")}
+                className={styles.tooltipRef}
+              >
                 <div className={"p-2 d-flex"}>
                   <HCTooltip
                     text={tooltips.additionalCollections}
@@ -1004,25 +1054,42 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     placement="left"
                     show={tgtCollectionTooltipVisible2 ? tgtCollectionTooltipVisible2 : undefined}
                   >
-                    <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                    <QuestionCircleFill
+                      tabIndex={0}
+                      aria-label="icon: question-circle"
+                      color={themeColors.defaults.questionCircle}
+                      size={13}
+                    />
                   </HCTooltip>
                 </div>
               </span>
             </Col>
           </Row>
-        }
-        {usesAdvancedTargetCollections ? null :
+        )}
+        {usesAdvancedTargetCollections ? null : (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={"text-left"}>{"Default Collections:"}</FormLabel>
+            <FormLabel column lg={3} className={"text-left"}>
+              {"Default Collections:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <div className={"p-2 d-flex"}>
-                <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
+                <div className={styles.defaultCollections}>
+                  {defaultCollections.map((collection, i) => {
+                    return (
+                      <div data-testid={`defaultCollections-${collection}`} key={i}>
+                        {collection}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </Col>
           </Row>
-        }
+        )}
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Target Permissions:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Target Permissions:"}
+          </FormLabel>
           <Col>
             <Row>
               <Col className={"d-flex"}>
@@ -1031,14 +1098,18 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   ref={tgtPermissionRef}
                   ariaLabel="Target-Permissions"
                   tabIndex={0}
-                  onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermission")}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "tgtPermission")}
                   placeholder="Please enter target permissions"
                   value={targetPermissions}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={!canReadWrite}
                 />
-                <span ref={tgtPermissionTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "tgtPermissionTooltip")} className={styles.tooltipRef}>
+                <span
+                  ref={tgtPermissionTooltipRef}
+                  onKeyDown={e => serviceNameKeyDownHandler(e, "tgtPermissionTooltip")}
+                  className={styles.tooltipRef}
+                >
                   <div className={"p-2 d-flex"}>
                     <HCTooltip
                       text={tooltips.targetPermissions}
@@ -1046,7 +1117,12 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       placement="left"
                       show={tgtPermissionTooltipVisible ? tgtPermissionTooltipVisible : undefined}
                     >
-                      <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </span>
@@ -1057,9 +1133,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             </Row>
           </Col>
         </Row>
-        {usesTargetFormat ?
+        {usesTargetFormat ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Target Format:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Target Format:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <Select
                 id="targetFormat-select-wrapper"
@@ -1077,27 +1155,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 tabSelectsValue={false}
                 styles={reactSelectThemeConfig}
                 formatOptionLabel={({value, label}) => {
-                  return (
-                    <span data-testid={`targetFormatOptions-${value}`}>
-                      {label}
-                    </span>
-                  );
+                  return <span data-testid={`targetFormatOptions-${value}`}>{label}</span>;
                 }}
               />
               <div className={"p-2 d-flex"}>
-                <HCTooltip
-                  text={tooltips.targetFormat}
-                  id="target-format-tooltip"
-                  placement="left"
-                >
-                  <QuestionCircleFill  tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip text={tooltips.targetFormat} id="target-format-tooltip" placement="left">
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : null
-        }
+          </Row>
+        ) : null}
         <Row className={"mb-3"}>
-          <FormLabel column lg={3} className={"pe-0"}>{"Provenance Granularity:"}</FormLabel>
+          <FormLabel column lg={3} className={"pe-0"}>
+            {"Provenance Granularity:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <Select
               id="provGranularity-select-wrapper"
@@ -1115,14 +1192,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               options={provGranOpts}
               styles={reactSelectThemeConfig}
               formatOptionLabel={({value, label}) => {
-                return (
-                  <span data-testid={`provOptions-${label}`}>
-                    {label}
-                  </span>
-                );
+                return <span data-testid={`provOptions-${label}`}>{label}</span>;
               }}
             />
-            <span  ref={provGranTooltipRef2} onKeyDown={(e) => serviceNameKeyDownHandler(e, "provGranularityTooltip")} className={styles.tooltipRef}>
+            <span
+              ref={provGranTooltipRef2}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "provGranularityTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.provGranularity}
@@ -1130,14 +1207,22 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={provGranTooltipVisible2 ? provGranTooltipVisible2 : undefined}
                 >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
-              </div></span>
+              </div>
+            </span>
           </Col>
         </Row>
-        {stepType === "mapping" ?
+        {stepType === "mapping" ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Entity Validation:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Entity Validation:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <Select
                 id="validateEntity-select-wrapper"
@@ -1155,35 +1240,36 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 options={valEntityOpts}
                 styles={reactSelectThemeConfig}
                 formatOptionLabel={({value, label}) => {
-                  return (
-                    <span data-testid={`entityValOpts-${value}`}>
-                      {label}
-                    </span>
-                  );
+                  return <span data-testid={`entityValOpts-${value}`}>{label}</span>;
                 }}
               />
               <div className={"p-2 d-flex"}>
-                <HCTooltip
-                  text={tooltips.validateEntity}
-                  id="validate-entity-tooltip"
-                  placement="left"
-                >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip text={tooltips.validateEntity} id="validate-entity-tooltip" placement="left">
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : ""
-        }
-        {stepType === "mapping" ?
+          </Row>
+        ) : (
+          ""
+        )}
+        {stepType === "mapping" ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Parameters Module Path: "}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Parameters Module Path: "}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="parametersModuleInput"
                 ref={parametersModuleRef}
                 tabIndex={0}
                 ariaLabel={"Parameters-Module-Path"}
-                onKeyDown={(e) => serviceNameKeyDownHandler(e, "parametersModule")}
+                onKeyDown={e => serviceNameKeyDownHandler(e, "parametersModule")}
                 placeholder="example: /custom-modules/mapping-params/example-mapping-params.sjs"
                 value={parametersModuleValue}
                 onChange={handleChange}
@@ -1192,20 +1278,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 onBlur={sendPayload}
               />
               <div className={"p-2 d-flex"}>
-                <HCTooltip
-                  text={tooltips.parametersModuleTooltip}
-                  id="parameters-module-tooltip"
-                  placement="left"
-                >
-                  <QuestionCircleFill tabIndex={0} data-testid="parameters-question-circle" aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip text={tooltips.parametersModuleTooltip} id="parameters-module-tooltip" placement="left">
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    data-testid="parameters-question-circle"
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : ""
-        }
-        {stepType === "mapping" ?
+          </Row>
+        ) : (
+          ""
+        )}
+        {stepType === "mapping" ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={"pe-0"}>{"Source Record Scope:"}</FormLabel>
+            <FormLabel column lg={3} className={"pe-0"}>
+              {"Source Record Scope:"}
+            </FormLabel>
             <Col>
               <Row>
                 <Col xs={12} className={"d-flex"}>
@@ -1224,31 +1316,36 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     options={sourceRecordScopeValue}
                     styles={reactSelectThemeConfig}
                     formatOptionLabel={({value, label}) => {
-                      return (
-                        <span data-testid={`sourceRecordScopeOptions-${value}`}>
-                          {label}
-                        </span>
-                      );
+                      return <span data-testid={`sourceRecordScopeOptions-${value}`}>{label}</span>;
                     }}
                   />
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
-                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </Col>
-                {sourceRecordScopeToggled ?
+                {sourceRecordScopeToggled ? (
                   <Col xs={12}>
                     <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div>
-                  </Col> : null
-                }
+                  </Col>
+                ) : null}
               </Row>
             </Col>
-          </Row> : ""
-        }
-        {stepType === "mapping" ?
+          </Row>
+        ) : (
+          ""
+        )}
+        {stepType === "mapping" ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3} className={"pe-0"}>{"Attach Source Document:"}</FormLabel>
+            <FormLabel column lg={3} className={"pe-0"}>
+              {"Attach Source Document:"}
+            </FormLabel>
             <Col className={"d-flex align-items-center"}>
               <FormCheck
                 inline
@@ -1277,26 +1374,31 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 className={"mb-0"}
               />
               <div className={"p-2 d-flex align-items-center"}>
-                <HCTooltip
-                  text={tooltips.attachSourceDocument}
-                  id="attach-source-document-tooltip"
-                  placement="left"
-                >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                <HCTooltip text={tooltips.attachSourceDocument} id="attach-source-document-tooltip" placement="left">
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : ""
-        }
+          </Row>
+        ) : (
+          ""
+        )}
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Batch Size:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Batch Size:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <HCInput
               id="batchSize"
               ariaLabel="Batch-Size"
               ref={batchSizeRef}
               tabIndex={0}
-              onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSize")}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "batchSize")}
               placeholder="Please enter batch size"
               value={batchSize}
               onChange={handleChange}
@@ -1304,7 +1406,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               className={styles.inputBatchSize}
               onBlur={sendPayload}
             />
-            <div  ref={batchSizeTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "batchSizeTooltip")} className={styles.tooltipRef}>
+            <div
+              ref={batchSizeTooltipRef}
+              onKeyDown={e => serviceNameKeyDownHandler(e, "batchSizeTooltip")}
+              className={styles.tooltipRef}
+            >
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip
                   text={tooltips.batchSize}
@@ -1312,25 +1418,33 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   placement="left"
                   show={batchSizeTooltipVisible ? batchSizeTooltipVisible : undefined}
                 >
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                  />
                 </HCTooltip>
               </div>
             </div>
           </Col>
         </Row>
-        {usesHeaders ?
+        {usesHeaders ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Header Content:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Header Content:"}
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <FormControl as="textarea"
+                  <FormControl
+                    as="textarea"
                     id="headers"
                     placeholder="Please enter header content"
                     value={headers}
                     tabIndex={0}
                     ref={headerContentRef}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "headerContent")}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "headerContent")}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     disabled={!canReadWrite}
@@ -1339,7 +1453,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     aria-label="headers-textarea"
                     style={!headersValid ? {border: "solid 1px #C00"} : {}}
                   />
-                  <span  ref={headerContentTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "headerContentTooltip")} className={styles.tooltipRef}>
+                  <span
+                    ref={headerContentTooltipRef}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "headerContentTooltip")}
+                    className={styles.tooltipRef}
+                  >
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip
                         text={tooltips.headers}
@@ -1347,46 +1465,65 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                         placement="left"
                         show={headerContentTooltipVisible ? headerContentTooltipVisible : undefined}
                       >
-                        <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                        <QuestionCircleFill
+                          tabIndex={0}
+                          aria-label="icon: question-circle"
+                          color={themeColors.defaults.questionCircle}
+                          size={13}
+                        />
                       </HCTooltip>
                     </div>
                   </span>
                 </Col>
-                {!headersValid ?
+                {!headersValid ? (
                   <Col xs={12}>
                     <div className={styles.invalid}>{invalidJSONMessage}</div>
-                  </Col> : null
-                }
+                  </Col>
+                ) : null}
               </Row>
             </Col>
-          </Row> : null
-        }
+          </Row>
+        ) : null}
         <Row className={"mb-3"}>
           <Col className={"d-flex"}>
             <span>
-              {interceptorsExpanded ?
-                <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} /> :
-                <ChevronRight className={styles.rightArrow} onClick={() => expandCollapseInterceptors()} />}
-              <span aria-label="interceptors-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseInterceptors()}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") { expandCollapseInterceptors(); }
+              {interceptorsExpanded ? (
+                <ChevronDown
+                  className={styles.rightArrow}
+                  onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}
+                />
+              ) : (
+                <ChevronRight className={styles.rightArrow} onClick={() => expandCollapseInterceptors()} />
+              )}
+              <span
+                aria-label="interceptors-expand"
+                className={styles.expandLabel}
+                tabIndex={0}
+                onClick={() => expandCollapseInterceptors()}
+                onKeyDown={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    expandCollapseInterceptors();
+                  }
                 }}
-              >Interceptors</span>
+              >
+                Interceptors
+              </span>
             </span>
           </Col>
         </Row>
-        {interceptorsExpanded ?
+        {interceptorsExpanded ? (
           <Row className={"mb-3"} ref={containerRef}>
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <FormControl as="textarea"
+                  <FormControl
+                    as="textarea"
                     id="interceptors"
                     placeholder="Please enter interceptor content"
                     value={interceptors}
                     tabIndex={0}
                     ref={interceptorRef}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptors")}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "interceptors")}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     disabled={!canReadWrite}
@@ -1400,9 +1537,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       }
                     }}
                   />
-                  <span
-                    ref={interceptorTooltipRef}
-                    className={styles.tooltipRef}>
+                  <span ref={interceptorTooltipRef} className={styles.tooltipRef}>
                     <div className={"p-2 d-flex align-items-center"}>
                       <div>
                         {content}
@@ -1412,7 +1547,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                           size={13}
                           tabIndex={0}
                           onFocus={handleShowInterceptorPopover}
-                          onKeyDown={(e) => serviceNameKeyDownHandler(e, "interceptorTooltip")}
+                          onKeyDown={e => serviceNameKeyDownHandler(e, "interceptorTooltip")}
                           onMouseEnter={handleShowInterceptorPopover}
                           onMouseLeave={() => handleMouseLeaveInterceptorPopover()}
                         />
@@ -1420,54 +1555,66 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     </div>
                   </span>
                 </Col>
-                {!interceptorsValid ?
+                {!interceptorsValid ? (
                   <Col xs={12}>
                     <div className={styles.invalidExpand}>{invalidJSONMessage}</div>
-                  </Col> : null
-                }
+                  </Col>
+                ) : null}
               </Row>
             </Col>
-          </Row> : ""
-        }
+          </Row>
+        ) : (
+          ""
+        )}
         <Row className={"mb-3"}>
           <Col className={"d-flex"}>
             <span>
-              {customHookExpanded ?
-                <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} /> :
-                <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />}
-              <span aria-label="custom-hook-expand" className={styles.expandLabel} tabIndex={0} onClick={() => expandCollapseCustomHook()}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") { expandCollapseCustomHook(); }
+              {customHookExpanded ? (
+                <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />
+              ) : (
+                <ChevronRight
+                  className={styles.rightArrow}
+                  onClick={() => setCustomHookExpanded(!customHookExpanded)}
+                />
+              )}
+              <span
+                aria-label="custom-hook-expand"
+                className={styles.expandLabel}
+                tabIndex={0}
+                onClick={() => expandCollapseCustomHook()}
+                onKeyDown={event => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    expandCollapseCustomHook();
+                  }
                 }}
                 onFocus={() => {
                   if (showInterceptorPopover) {
                     setShowInterceptorPopover(false);
                   }
                 }}
-              >Custom Hook</span>
-              <HCTooltip
-                text={tooltips.customHookDeprecated}
-                id="custom-hook-deprecated-tooltip"
-                placement="left"
               >
+                Custom Hook
+              </span>
+              <HCTooltip text={tooltips.customHookDeprecated} id="custom-hook-deprecated-tooltip" placement="left">
                 <span className={styles.deprecatedLabel}>DEPRECATED</span>
               </HCTooltip>
             </span>
           </Col>
         </Row>
-        {customHookExpanded ?
+        {customHookExpanded ? (
           <Row className={"mb-3"}>
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <FormControl as="textarea"
+                  <FormControl
+                    as="textarea"
                     id="customHook"
                     placeholder="Please enter custom hook content"
                     value={customHook}
                     onChange={handleChange}
                     tabIndex={0}
                     ref={customHookRef}
-                    onKeyDown={(e) => serviceNameKeyDownHandler(e, "customHook")}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "customHook")}
                     onBlur={handleBlur}
                     disabled={!canReadWrite}
                     className={styles.textareaExpand}
@@ -1475,7 +1622,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     aria-label="customHook-textarea"
                     style={!customHookValid ? {border: "solid 1px #C00"} : {}}
                   />
-                  <span  ref={customHookTooltipRef} onKeyDown={(e) => serviceNameKeyDownHandler(e, "customHookTooltip")} className={styles.tooltipRef}>
+                  <span
+                    ref={customHookTooltipRef}
+                    onKeyDown={e => serviceNameKeyDownHandler(e, "customHookTooltip")}
+                    className={styles.tooltipRef}
+                  >
                     <div className={"p-2 d-flex align-items-center"}>
                       <HCTooltip
                         text={tooltips.customHook}
@@ -1493,15 +1644,20 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 </Col>
               </Row>
             </Col>
-          </Row> : ""
-        }
-        {stepType === "custom" || isCustomIngestion ?
+          </Row>
+        ) : (
+          ""
+        )}
+        {stepType === "custom" || isCustomIngestion ? (
           <Row>
-            <FormLabel column lg={3}>{"Additional Settings:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Additional Settings:"}
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <FormControl as="textarea"
+                  <FormControl
+                    as="textarea"
                     id="additionalSettings"
                     placeholder="Please enter additional settings"
                     value={additionalSettings}
@@ -1518,37 +1674,96 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                       id="additional-settings-tooltip"
                       placement="left"
                     >
-                      <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} />
+                      <QuestionCircleFill
+                        tabIndex={0}
+                        aria-label="icon: question-circle"
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                      />
                     </HCTooltip>
                   </div>
                 </Col>
-                {!additionalSettingsValid ?
+                {!additionalSettingsValid ? (
                   <Col xs={12}>
                     <div className={styles.invalid}>{invalidJSONMessage}</div>
-                  </Col> : null
-                }
+                  </Col>
+                ) : null}
               </Row>
             </Col>
-          </Row> : null
-        }
+          </Row>
+        ) : null}
         <Row className={"mt-4"}>
           <Col className={"d-flex justify-content-end"}>
-            <span tabIndex={0} ref={cancelButtonRef} className={styles.buttonFocusHighlight} onKeyDown={(event) => serviceNameKeyDownHandler(event, "cancelButton")}>
-              <HCButton tabIndex={-1} aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton></span>&nbsp;&nbsp;
-            {!canReadWrite || !isFormValid() ? <HCTooltip id="missing-permission-tooltip" text={tooltips.missingPermission} placement={"top-end"}>
-              <span className={styles.disabledCursor}>
-                <span tabIndex={0} ref={saveButtonRef} className={styles.buttonFocusHighlight} onKeyDown={(event) => serviceNameKeyDownHandler(event, "saveButton")}>
-                  <HCButton tabIndex={-1} size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton></span>
+            <span
+              tabIndex={0}
+              ref={cancelButtonRef}
+              className={styles.buttonFocusHighlight}
+              onKeyDown={event => serviceNameKeyDownHandler(event, "cancelButton")}
+            >
+              <HCButton
+                tabIndex={-1}
+                aria-label="Cancel"
+                variant="outline-light"
+                size="sm"
+                data-testid={`${props.stepData.name}-cancel-settings`}
+                onClick={() => onCancel()}
+              >
+                Cancel
+              </HCButton>
+            </span>
+            &nbsp;&nbsp;
+            {!canReadWrite || !isFormValid() ? (
+              <HCTooltip id="missing-permission-tooltip" text={tooltips.missingPermission} placement={"top-end"}>
+                <span className={styles.disabledCursor}>
+                  <span
+                    tabIndex={0}
+                    ref={saveButtonRef}
+                    className={styles.buttonFocusHighlight}
+                    onKeyDown={event => serviceNameKeyDownHandler(event, "saveButton")}
+                  >
+                    <HCButton
+                      tabIndex={-1}
+                      size="sm"
+                      id={"saveButton"}
+                      className={styles.saveButton}
+                      data-testid={`${props.stepData.name}-save-settings`}
+                      variant="primary"
+                      type="submit"
+                      onClick={handleSubmit}
+                      disabled={true}
+                    >
+                      Save
+                    </HCButton>
+                  </span>
+                </span>
+              </HCTooltip>
+            ) : (
+              <span
+                tabIndex={0}
+                ref={saveButtonRef}
+                className={styles.buttonFocusHighlight}
+                onKeyDown={event => serviceNameKeyDownHandler(event, "saveButton")}
+              >
+                <HCButton
+                  tabIndex={-1}
+                  size="sm"
+                  id={"saveButton"}
+                  data-testid={`${props.stepData.name}-save-settings`}
+                  variant="primary"
+                  type="submit"
+                  onClick={handleSubmit}
+                  disabled={false}
+                  onFocus={sendPayload}
+                >
+                  Save
+                </HCButton>
               </span>
-            </HCTooltip> :
-              <span tabIndex={0} ref={saveButtonRef} className={styles.buttonFocusHighlight} onKeyDown={(event) => serviceNameKeyDownHandler(event, "saveButton")}>
-                <HCButton tabIndex={-1} size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton></span>}
+            )}
           </Col>
         </Row>
       </Form>
     </div>
   );
-
 };
 
 export default AdvancedSettings;

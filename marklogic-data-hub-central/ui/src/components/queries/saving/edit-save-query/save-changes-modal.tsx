@@ -15,7 +15,7 @@ interface Props {
   toggleApply: (clicked: boolean) => void;
   toggleApplyClicked: (clicked: boolean) => void;
   setSaveNewIconVisibility: (clicked: boolean) => void;
-  currentQuery: any,
+  currentQuery: any;
   currentQueryName: string;
   setCurrentQueryDescription: (description: string) => void;
   setCurrentQueryName: (name: string) => void;
@@ -24,26 +24,16 @@ interface Props {
   isSaveQueryChanged: () => boolean;
   entityQueryUpdate: boolean;
   toggleEntityQueryUpdate: () => void;
-  resetYesClicked: boolean
+  resetYesClicked: boolean;
   setColumnSelectorTouched: (state: boolean) => void;
   entityDefArray: any[];
 }
 
-const SaveChangesModal: React.FC<Props> = (props) => {
+const SaveChangesModal: React.FC<Props> = props => {
+  const {clearAllGreyFacets, greyedOptions, setAllSearchFacets, searchOptions, applySaveQuery, setAllGreyedOptions} =
+    useContext(SearchContext);
 
-  const {
-    clearAllGreyFacets,
-    greyedOptions,
-    setAllSearchFacets,
-    searchOptions,
-    applySaveQuery,
-    setAllGreyedOptions
-  } = useContext(SearchContext);
-
-  const {
-    handleError
-  } = useContext(UserContext);
-
+  const {handleError} = useContext(UserContext);
 
   const [queryName, setQueryName] = useState("");
   const [queryDescription, setQueryDescription] = useState("");
@@ -57,7 +47,12 @@ const SaveChangesModal: React.FC<Props> = (props) => {
 
   // TO EXTRACT NAME AND DESCRIPTION FROM CURRENT QUERY
   useEffect(() => {
-    if (props.currentQuery && JSON.stringify(props.currentQuery) !== JSON.stringify({}) && props.currentQuery.hasOwnProperty("savedQuery") && props.currentQuery.savedQuery.hasOwnProperty("name")) {
+    if (
+      props.currentQuery &&
+      JSON.stringify(props.currentQuery) !== JSON.stringify({}) &&
+      props.currentQuery.hasOwnProperty("savedQuery") &&
+      props.currentQuery.savedQuery.hasOwnProperty("name")
+    ) {
       setPreviousQueryName(props.currentQuery.savedQuery.name);
       setQueryName(props.currentQuery.savedQuery.name);
       if (props.currentQuery.savedQuery.hasOwnProperty("description")) {
@@ -66,7 +61,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     }
   }, [props.currentQuery, props.nextQueryName]);
 
-  const onOk = async (event: { preventDefault: () => void; }, queryName, queryDescription, currentQuery) => {
+  const onOk = async (event: {preventDefault: () => void}, queryName, queryDescription, currentQuery) => {
     if (event) event.preventDefault();
     let facets = {...searchOptions.selectedFacets};
     let selectedFacets = {...searchOptions.selectedFacets};
@@ -154,7 +149,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "save-changes-query-name") {
       setQueryName(event.target.value);
     }
@@ -163,15 +158,12 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     }
   };
 
-  const unAppliedFacets = (e) => {
+  const unAppliedFacets = e => {
     setRadioOptionClicked(e.target.value);
   };
 
   return (
-    <HCModal
-      show={true}
-      onHide={onCancel}
-    >
+    <HCModal show={true} onHide={onCancel}>
       <Modal.Header>
         <span className={"fs-5"}>{"Save Query"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
@@ -179,7 +171,10 @@ const SaveChangesModal: React.FC<Props> = (props) => {
       <Modal.Body>
         <Form name="basic" className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
@@ -198,7 +193,9 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Description:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="save-changes-query-description"
@@ -208,9 +205,11 @@ const SaveChangesModal: React.FC<Props> = (props) => {
               />
             </Col>
           </Row>
-          {props.greyFacets.length > 0 &&
+          {props.greyFacets.length > 0 && (
             <Row className={"mb-3"}>
-              <FormLabel column lg={3}>{"Unapplied Facets:"}</FormLabel>
+              <FormLabel column lg={3}>
+                {"Unapplied Facets:"}
+              </FormLabel>
               <Col>
                 <Form.Check
                   id={"unapplied-facets-1"}
@@ -244,16 +243,22 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 />
               </Col>
             </Row>
-          }
+          )}
           <Row className={"mb-3"}>
             <Col className={"d-flex justify-content-end"}>
               <div>
-                <HCButton variant="outline-light" id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+                <HCButton variant="outline-light" id="edit-save-changes-cancel-button" onClick={() => onCancel()}>
+                  Cancel
+                </HCButton>
                 &nbsp;&nbsp;
-                <HCButton variant="primary"
+                <HCButton
+                  variant="primary"
                   type="submit"
                   disabled={queryName.length === 0}
-                  onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)} id="edit-save-changes-button">Save
+                  onClick={event => onOk(event, queryName, queryDescription, props.currentQuery)}
+                  id="edit-save-changes-button"
+                >
+                  Save
                 </HCButton>
               </div>
             </Col>
@@ -265,5 +270,3 @@ const SaveChangesModal: React.FC<Props> = (props) => {
 };
 
 export default SaveChangesModal;
-
-

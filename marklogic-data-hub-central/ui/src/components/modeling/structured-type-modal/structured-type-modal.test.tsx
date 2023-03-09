@@ -20,7 +20,6 @@ afterEach(() => {
 });
 
 describe("Structured Type Modal Component", () => {
-
   test("Modal is not visible", () => {
     const {queryByText} = render(
       <StructuredTypeModal
@@ -28,7 +27,8 @@ describe("Structured Type Modal Component", () => {
         entityDefinitionsArray={[]}
         toggleModal={jest.fn()}
         updateStructuredTypesAndHideModal={jest.fn()}
-      />);
+      />,
+    );
 
     expect(queryByText("Add New Structured Property Type")).toBeNull();
   });
@@ -43,7 +43,8 @@ describe("Structured Type Modal Component", () => {
         entityDefinitionsArray={entityDefinitionsArray}
         toggleModal={toggleModal}
         updateStructuredTypesAndHideModal={updateStructuredTypesAndHideModal}
-      />);
+      />,
+    );
 
     expect(getByText("Add New Structured Property Type")).toBeInTheDocument();
     userEvent.type(getByPlaceholderText("Enter name"), "Product");
@@ -64,7 +65,7 @@ describe("Structured Type Modal Component", () => {
           toggleModal={toggleModal}
           updateStructuredTypesAndHideModal={updateStructuredTypesAndHideModal}
         />
-      </ModelingContext.Provider>
+      </ModelingContext.Provider>,
     );
 
     expect(getByText("Add New Structured Property Type")).toBeInTheDocument();

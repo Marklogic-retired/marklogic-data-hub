@@ -7,17 +7,12 @@ import {UserContext} from "@util/user-context";
 import {exportQuery, exportSavedQuery} from "@api/queries";
 import {HCInput, HCAlert, HCButton, HCModal} from "@components/common";
 
-const QueryExportModal = (props) => {
-
+const QueryExportModal = props => {
   const [value, setValue] = useState<number>(1);
   const [limit, setLimit] = useState<number>(Number.MAX_SAFE_INTEGER);
 
-  const {
-    searchOptions
-  } = useContext(SearchContext);
-  const {
-    handleError
-  } = useContext(UserContext);
+  const {searchOptions} = useContext(SearchContext);
+  const {handleError} = useContext(UserContext);
 
   const onClose = () => {
     setValue(1);
@@ -39,7 +34,7 @@ const QueryExportModal = (props) => {
             selectedFacets: searchOptions.selectedFacets,
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
-        }
+        },
       };
 
       try {
@@ -59,35 +54,30 @@ const QueryExportModal = (props) => {
   };
 
   return (
-    <HCModal
-      show={props.exportModalVisibility}
-      size={"lg"}
-      onHide={onClose}
-    >
+    <HCModal show={props.exportModalVisibility} size={"lg"} onHide={onClose}>
       <Modal.Header>
         <span className={"fs-5"}>{"Export"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onClose} />
       </Modal.Header>
       <Modal.Body>
-        <Form name="basic" data-testid="query-export-form" className={"container-fluid"} >
-          {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
-
-          <div>
-            <HCAlert
-              data-testid="export-warning"
-              variant="warning"
-              className={styles.dataWarning}
-              showIcon
-            >
-              {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. Click \"Show Preview\" below to see what will be exported."}
-            </HCAlert>
-            <br />
-          </div>}
+        <Form name="basic" data-testid="query-export-form" className={"container-fluid"}>
+          {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && (
+            <div>
+              <HCAlert data-testid="export-warning" variant="warning" className={styles.dataWarning} showIcon>
+                {
+                  "One or more structured properties are included in this query. The data for those properties will not be included in the export file. Click \"Show Preview\" below to see what will be exported."
+                }
+              </HCAlert>
+              <br />
+            </div>
+          )}
 
           <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
 
           <Row>
-            <FormLabel column lg={2}>{"Rows:"}</FormLabel>
+            <FormLabel column lg={2}>
+              {"Rows:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <span className={styles.radio}>
                 <Form.Check
@@ -115,45 +105,59 @@ const QueryExportModal = (props) => {
             </Col>
           </Row>
         </Form>
-        <Form
-          name="basic"
-        >
-          {value === 2 &&
+        <Form name="basic">
+          {value === 2 && (
             <Row>
-              <FormLabel column lg={"auto"} className={"offset-4"}>{"Maximum rows:"}</FormLabel>
+              <FormLabel column lg={"auto"} className={"offset-4"}>
+                {"Maximum rows:"}
+              </FormLabel>
               <Col className={"d-flex"}>
-                <HCInput dataTestid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
+                <HCInput
+                  dataTestid="max-rows-input"
+                  className={styles.text}
+                  type="number"
+                  min="1"
+                  onChange={e => setLimit(Number(e.target.value))}
+                  style={{width: 60}}
+                />
               </Col>
             </Row>
-          }
+          )}
         </Form>
-        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
-        <Accordion id="export-panel" className={"w-100"} flush>
-          <Accordion.Item eventKey="1">
-            <div className={"d-flex"}>
-              <Accordion.Button>Show Preview</Accordion.Button>
-            </div>
-            <Accordion.Body style={{overflowX: "auto"}}>
-              <br />
-              {props.tableColumns && props.tableData &&
-                <Table data-testid="export-preview-table" bordered>
-                  <thead>
-                    <tr>
-                      {props.tableColumns.map(oHeader => <th key={oHeader.key}>{oHeader.title}</th>)}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {props.tableData.map(oRow => {
-                      return <tr key={oRow.key}>
-                        {props.tableColumns.map(oColumn => <td key={`row${oRow.key}-col${oColumn.key}`}>{oRow[oColumn.dataIndex]}</td>)}
-                      </tr>;
-                    })}
-                  </tbody>
-                </Table>
-              }
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>}
+        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && (
+          <Accordion id="export-panel" className={"w-100"} flush>
+            <Accordion.Item eventKey="1">
+              <div className={"d-flex"}>
+                <Accordion.Button>Show Preview</Accordion.Button>
+              </div>
+              <Accordion.Body style={{overflowX: "auto"}}>
+                <br />
+                {props.tableColumns && props.tableData && (
+                  <Table data-testid="export-preview-table" bordered>
+                    <thead>
+                      <tr>
+                        {props.tableColumns.map(oHeader => (
+                          <th key={oHeader.key}>{oHeader.title}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {props.tableData.map(oRow => {
+                        return (
+                          <tr key={oRow.key}>
+                            {props.tableColumns.map(oColumn => (
+                              <td key={`row${oRow.key}-col${oColumn.key}`}>{oRow[oColumn.dataIndex]}</td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                )}
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onClose}>

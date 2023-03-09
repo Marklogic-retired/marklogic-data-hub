@@ -16,7 +16,7 @@ interface Props {
   onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
 }
 
-const NumericFacet: React.FC<Props> = (props) => {
+const NumericFacet: React.FC<Props> = props => {
   const {searchOptions} = useContext(SearchContext);
   const {handleError} = useContext(UserContext);
 
@@ -36,7 +36,10 @@ const NumericFacet: React.FC<Props> = (props) => {
           let facetName: string = "";
           if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             facetName = props.constraint;
-          } else if (searchOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+          } else if (
+            searchOptions.selectedFacets.hasOwnProperty(props.propertyPath) &&
+            props.constraint !== props.propertyPath
+          ) {
             facetName = props.propertyPath;
           }
           if (facetName) {
@@ -62,16 +65,15 @@ const NumericFacet: React.FC<Props> = (props) => {
     } catch (error) {
       handleError(error);
     }
-
   };
 
-  const onChange = (e) => {
+  const onChange = e => {
     let isNested = props.name === props.propertyPath ? false : true;
     setRange(e);
     props.onChange(props.datatype, props.constraint, e, isNested);
   };
 
-  const onChangeMinInput = (e) => {
+  const onChangeMinInput = e => {
     const {value} = e.target;
     if (value && typeof +value === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
@@ -82,7 +84,7 @@ const NumericFacet: React.FC<Props> = (props) => {
     }
   };
 
-  const onChangeMaxInput = (e) => {
+  const onChangeMaxInput = e => {
     const {value} = e.target;
     if (value && typeof +value === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
@@ -101,7 +103,6 @@ const NumericFacet: React.FC<Props> = (props) => {
     !Object.keys(searchOptions.selectedFacets).includes(props.name) && setRange(rangeLimit);
 
     if (Object.entries(searchOptions.selectedFacets).length !== 0) {
-
       let facetName: string = "";
       if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
         facetName = props.constraint;
@@ -136,27 +137,61 @@ const NumericFacet: React.FC<Props> = (props) => {
       let first = objects[0];
       let last = objects.slice(-1);
       // returns an array for rendering that looks like "first > ... > last"
-      return <p>{first} &gt; ... &gt; <b>{last}</b></p>;
+      return (
+        <p>
+          {first} &gt; ... &gt; <b>{last}</b>
+        </p>
+      );
     } else if (objects.length === 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return <p>{first} &gt; <b>{last}</b></p>;
+      return (
+        <p>
+          {first} &gt; <b>{last}</b>
+        </p>
+      );
     }
     return <b>{props.name}</b>;
   };
 
   return (
-    <div className={styles.facetName} >
+    <div className={styles.facetName}>
       <p className={styles.name}>
-        <HCTooltip text={props.name.replace(/\./g, " > ")} id="facet-name-tooltip" placement="top">{formatTitle()}</HCTooltip>
+        <HCTooltip text={props.name.replace(/\./g, " > ")} id="facet-name-tooltip" placement="top">
+          {formatTitle()}
+        </HCTooltip>
       </p>
       <div className={styles.numericFacet} data-testid="numeric-slider">
-        <HCSlider minLimit={rangeLimit[0]} maxLimit={rangeLimit[1]} min={range[0]} max={range[1]} onChange={(e) => onChange(e)} />
+        <HCSlider
+          minLimit={rangeLimit[0]}
+          maxLimit={rangeLimit[1]}
+          min={range[0]}
+          max={range[1]}
+          onChange={e => onChange(e)}
+        />
         <div id={"min-numeric-value"} className={styles.minNumericValue}>
-          <input type="number" data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
+          <input
+            type="number"
+            data-testid="numeric-slider-min"
+            className={styles.inputNumber}
+            value={range[0]}
+            min={rangeLimit[0]}
+            max={rangeLimit[1]}
+            step={props.step}
+            onChange={onChangeMinInput}
+          />
         </div>
         <div id={"max-numeric-value"}>
-          <input type="number" data-testid="numeric-slider-max" className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />
+          <input
+            type="number"
+            data-testid="numeric-slider-max"
+            className={styles.inputNumber}
+            value={range[1]}
+            min={rangeLimit[0]}
+            max={rangeLimit[1]}
+            step={props.step}
+            onChange={onChangeMaxInput}
+          />
         </div>
       </div>
     </div>

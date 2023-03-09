@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  render,
-  fireEvent,
-  waitForElement,
-  cleanup,
-  wait,
-} from "@testing-library/react";
+import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import axiosMock from "axios";
 import mocks from "../api/__mocks__/mocks.data";
@@ -33,16 +27,13 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
-
 const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
 
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
+  const childrenDontHaveText = Array.from(node.children).every(child => !hasText(child));
   return nodeHasText && childrenDontHaveText;
 };
 
@@ -59,10 +50,13 @@ describe("Verify links back to step details", () => {
 
     let getByText, getByLabelText, getByTestId;
     await act(() => {
-      const renderResults = render(<MemoryRouter>
-        <AuthoritiesContext.Provider value={authorityService}>
-          <Run />
-        </AuthoritiesContext.Provider></MemoryRouter>);
+      const renderResults = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <Run />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
+      );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId;
@@ -77,7 +71,7 @@ describe("Verify links back to step details", () => {
       fireEvent.click(document.querySelector(".accordion-button")!);
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
-    steps.forEach((step) => {
+    steps.forEach(step => {
       const viewStepId = `${existingFlowName}-${step.stepNumber}`;
       const stepElement = getByLabelText(`${viewStepId}-content`);
       act(() => {
@@ -98,10 +92,13 @@ describe("Verify links back to step details", () => {
     authorityService.setAuthorities(["readFlow"]);
     let getByLabelText, getByTestId;
     await act(() => {
-      const renderResults = render(<MemoryRouter>
-        <AuthoritiesContext.Provider value={authorityService}>
-          <Run />
-        </AuthoritiesContext.Provider></MemoryRouter>);
+      const renderResults = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <Run />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
+      );
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId;
     });
@@ -113,7 +110,7 @@ describe("Verify links back to step details", () => {
       fireEvent.click(document.querySelector(".accordion-button")!);
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
-    steps.forEach((step) => {
+    steps.forEach(step => {
       const viewStepId = `${existingFlowName}-${step.stepNumber}`;
       const stepElement = getByLabelText(`${viewStepId}-content`);
       act(() => {
@@ -130,7 +127,6 @@ describe("Verify links back to step details", () => {
 });
 
 describe("Verify load step failures in a flow", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -139,14 +135,13 @@ describe("Verify load step failures in a flow", () => {
   test("Verify errors when flow with Load step fails with jobStatus finished_with_errors", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {
-      getByText,
-      getByLabelText,
-      getAllByLabelText,
-      getAllByText,
-      getByTestId
-    } = await render(<MemoryRouter><AuthoritiesContext.Provider
-      value={mockDevRolesService}><Run /></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getByLabelText, getAllByLabelText, getAllByText, getByTestId} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button")!);
@@ -158,14 +153,17 @@ describe("Verify load step failures in a flow", () => {
 
     let upload;
     upload = document.querySelector("#fileUpload");
-    const files = [new File(["text1"], "test1.txt", {
-      type: "text/plain"
-    }), new File(["text2"], "test2.txt", {
-      type: "text/plain"
-    })];
+    const files = [
+      new File(["text1"], "test1.txt", {
+        type: "text/plain",
+      }),
+      new File(["text2"], "test2.txt", {
+        type: "text/plain",
+      }),
+    ];
 
     Object.defineProperty(upload, "files", {
-      value: files
+      value: files,
     });
     fireEvent.change(upload);
 
@@ -193,7 +191,8 @@ describe("Verify load step failures in a flow", () => {
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>);
+      </MemoryRouter>,
+    );
     const {getByLabelText, getByTestId, getAllByTestId} = result;
 
     // Click disclosure icon
@@ -201,12 +200,14 @@ describe("Verify load step failures in a flow", () => {
 
     let upload;
     upload = document.querySelector("#fileUpload");
-    const files = [new File(["text1"], "test1.txt", {
-      type: "text/plain"
-    })];
+    const files = [
+      new File(["text1"], "test1.txt", {
+        type: "text/plain",
+      }),
+    ];
 
     Object.defineProperty(upload, "files", {
-      value: files
+      value: files,
     });
     fireEvent.change(upload);
 
@@ -217,7 +218,9 @@ describe("Verify load step failures in a flow", () => {
       expect(getByTestId(`failedIngest-failure`)).toBeInTheDocument();
       fireEvent.click(getByTestId(`failedIngest-failure`));
       fireEvent.click(getByTestId(`failedIngest-error-1`));
-      expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
+      expect(getAllByTestId("error-message")[0]).toHaveTextContent(
+        "Local message: failed to apply resource at documents",
+      );
 
       fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`));
     });
@@ -237,20 +240,17 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can create", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {
-      getByText,
-      getByPlaceholderText
-    } = await render(
+    const {getByText, getByPlaceholderText} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
     fireEvent.click(getByText("Create Flow"));
-    await (waitForElement(() => getByText("Name:")));
+    await waitForElement(() => getByText("Name:"));
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByText("Save"));
@@ -261,15 +261,12 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can update", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {
-      getByText,
-      getByPlaceholderText
-    } = await render(
+    const {getByText, getByPlaceholderText} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const existingFlowName = data.flows.data[0].name;
@@ -277,7 +274,7 @@ describe("Verify Run CRUD operations", () => {
 
     const updatedFlow = {name: existingFlowName, description: `updated ${existingFlowName} description`};
     fireEvent.click(getByText(existingFlowName));
-    await (waitForElement(() => getByText("Name:")));
+    await waitForElement(() => getByText("Name:"));
     expect(getByPlaceholderText("Enter name")).toBeDisabled();
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: updatedFlow.description}});
     fireEvent.click(getByText("Save"));
@@ -288,15 +285,12 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can delete", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {
-      getByText,
-      getByTestId
-    } = await render(
+    const {getByText, getByTestId} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const existingFlowName = data.flows.data[0].name;
@@ -306,24 +300,18 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.click(getByText("Yes"));
 
     expect(axiosMock.delete).toHaveBeenNthCalledWith(1, updateFlowURL);
-
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
   test.skip("Verify a user with readFlow authority only cannot create/update/delete", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow"]);
-    const {
-      getByPlaceholderText,
-      getByText,
-      getByLabelText,
-      queryByText
-    } = await render(
+    const {getByPlaceholderText, getByText, getByLabelText, queryByText} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const existingFlowName = data.flows.data[0].name;
@@ -341,18 +329,19 @@ describe("Verify Run CRUD operations", () => {
     expect(getByPlaceholderText("Enter description")).toBeDisabled();
     expect(queryByText("Save")).toBeDisabled();
     fireEvent.click(getByText("Cancel"));
-
   });
 
   test("Verify a user with writeFlow authority can CREATE a new flow, ADD a step to the new flow, and RUN the step, all via a step card", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
     // Create flow and add/run step settings passed as newStepToFlowOptions
-    const {getByText, getByLabelText, getByPlaceholderText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <Run newStepToFlowOptions={data.newStepToFlowOptions} />
-      </AuthoritiesContext.Provider>
-    </MemoryRouter>);
+    const {getByText, getByLabelText, getByPlaceholderText} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run newStepToFlowOptions={data.newStepToFlowOptions} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
     expect(getByText("New Flow")).toBeInTheDocument();
     const newFlowValues = {name: "testFlow", description: "testFlow description"};
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
@@ -362,7 +351,7 @@ describe("Verify Run CRUD operations", () => {
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
     const newStepValues = {
       stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType,
-      stepName: data.newStepToFlowOptions.newStepName
+      stepName: data.newStepToFlowOptions.newStepName,
     };
     // Add step to new flow and Run step
     await wait(() => {
@@ -377,11 +366,13 @@ describe("Verify Run CRUD operations", () => {
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
     const history = createMemoryHistory();
     history.push("/tiles/run/add-run"); // initial state
-    const {getByText, getByLabelText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <Run newStepToFlowOptions={data.newStepToFlowOptions} />
-      </AuthoritiesContext.Provider>
-    </MemoryRouter>);
+    const {getByText, getByLabelText} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <Run newStepToFlowOptions={data.newStepToFlowOptions} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
     expect(getByText("New Flow")).toBeInTheDocument();
     // Clicking Cancel returns to Curate tile
     fireEvent.click(getByLabelText("Cancel"));
@@ -394,15 +385,14 @@ describe("Verify Run CRUD operations", () => {
           "sortOrderInfo": data.newStepToFlowOptions.sortOrderInfo,
           "stepDefinitionType": data.newStepToFlowOptions.stepDefinitionType,
           "targetEntityType": data.newStepToFlowOptions.targetEntityType,
-          "viewMode": data.newStepToFlowOptions.viewMode
-        }
+          "viewMode": data.newStepToFlowOptions.viewMode,
+        },
       });
     });
   });
 });
 
 describe("Verify map/match/merge/master step failures in a flow", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -416,7 +406,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
     const {getByLabelText, getByTestId, getAllByTestId} = result;
 
@@ -433,7 +423,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[1].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
     fireEvent.click(getByTestId(`${steps[1].stepName}-error-1`));
-    expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
+    expect(getAllByTestId("error-message")[0]).toHaveTextContent(
+      "Local message: failed to apply resource at documents",
+    );
     await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
     //Matching step failed error
@@ -443,7 +435,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[3].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[3].stepName}-failure`));
     fireEvent.click(getByTestId(`${steps[3].stepName}-error-1`));
-    expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
+    expect(getAllByTestId("error-message")[0]).toHaveTextContent(
+      "Local message: failed to apply resource at documents",
+    );
 
     await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
@@ -454,7 +448,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[4].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[4].stepName}-failure`));
     fireEvent.click(getByTestId(`${steps[4].stepName}-error-1`));
-    expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
+    expect(getAllByTestId("error-message")[0]).toHaveTextContent(
+      "Local message: failed to apply resource at documents",
+    );
 
     await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
 
@@ -466,25 +462,22 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[5].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[5].stepName}-failure`));
     fireEvent.click(getByTestId(`${steps[5].stepName}-error-1`));
-    expect(getAllByTestId("error-message")[0]).toHaveTextContent("Local message: failed to apply resource at documents");
+    expect(getAllByTestId("error-message")[0]).toHaveTextContent(
+      "Local message: failed to apply resource at documents",
+    );
 
     await waitForElement(() => fireEvent.click(getByLabelText(`${data.flows.data[0].name}-close`)));
-
   });
 
   test("Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {
-      getByLabelText,
-      getAllByText,
-      getByTestId
-    } = await render(
+    const {getByLabelText, getAllByText, getByTestId} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <Run />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     let steps = data.flows.data[0].steps;
@@ -496,10 +489,12 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     // New Modal with Error message, uri and details is opened
     await waitForElement(() => getByLabelText("jobResponse"));
     expect(getByLabelText("jobResponse")).toBeInTheDocument();
-    expect(await waitForElement(() => (getByTestId(`${steps[1].stepName}-failure`)))).toBeInTheDocument();
+    expect(await waitForElement(() => getByTestId(`${steps[1].stepName}-failure`))).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[1].stepName}-failure`));
 
-    expect(getByTestId(`${steps[1].stepName}-error-list`)).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
+    expect(getByTestId(`${steps[1].stepName}-error-list`)).toHaveTextContent(
+      "Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below",
+    );
 
     expect(getAllByText("Message:")[0]).toBeInTheDocument();
     expect(getAllByText("Details:")[0]).toBeInTheDocument();
@@ -516,7 +511,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[3].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[3].stepName}-failure`));
 
-    expect(getByTestId(`${steps[3].stepName}-error-list`)).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
+    expect(getByTestId(`${steps[3].stepName}-error-list`)).toHaveTextContent(
+      "Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below",
+    );
     expect(getAllByText("Message:")[0]).toBeInTheDocument();
     expect(getAllByText("Details:")[0]).toBeInTheDocument();
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
@@ -532,7 +529,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[4].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[4].stepName}-failure`));
 
-    expect(getByTestId(`${steps[4].stepName}-error-list`)).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
+    expect(getByTestId(`${steps[4].stepName}-error-list`)).toHaveTextContent(
+      "Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below",
+    );
     expect(getAllByText("Message:")[0]).toBeInTheDocument();
     expect(getAllByText("Details:")[0]).toBeInTheDocument();
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
@@ -549,7 +548,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     expect(getByTestId(`${steps[5].stepName}-failure`)).toBeInTheDocument();
     fireEvent.click(getByTestId(`${steps[5].stepName}-failure`));
 
-    expect(getByTestId(`${steps[5].stepName}-error-list`)).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
+    expect(getByTestId(`${steps[5].stepName}-error-list`)).toHaveTextContent(
+      "Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below",
+    );
     expect(getAllByText("Message:")[0]).toBeInTheDocument();
     expect(getAllByText("Details:")[0]).toBeInTheDocument();
     expect(getAllByText("URI:")[0]).toBeInTheDocument();
@@ -564,14 +565,16 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
     let getByLabelText, getByTestId;
     await act(async () => {
-      const renderResults = render(<MemoryRouter>
-        <AuthoritiesContext.Provider value={mockDevRolesService}>
-          <Run />
-        </AuthoritiesContext.Provider></MemoryRouter>);
+      const renderResults = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={mockDevRolesService}>
+            <Run />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
+      );
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId;
     });
-
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon
@@ -593,11 +596,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
   });
-
 });
 
 describe("Verify Add Step function", () => {
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
@@ -605,9 +606,13 @@ describe("Verify Add Step function", () => {
 
   test("Verify a user with developer privileges can add a step to a flow", async () => {
     mocks.runAddStepAPI(axiosMock);
-    const {getByText, getByLabelText, getAllByText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider>
-    </MemoryRouter>);
+    const {getByText, getByLabelText, getAllByText} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button")!);
@@ -620,23 +625,35 @@ describe("Verify Add Step function", () => {
     fireEvent.click(step);
 
     // Click to confirm the add in the dialog
-    expect(getByText((content, node) => {
-      return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
-    })).toBeInTheDocument();
+    expect(
+      getByText((content, node) => {
+        return getSubElements(
+          content,
+          node,
+          `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`,
+        );
+      }),
+    ).toBeInTheDocument();
 
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
     await wait(() => {
-      expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
+      expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {
+        "stepDefinitionType": "ingestion",
+        "stepName": data.steps.data["ingestionSteps"][0].name,
+      });
     });
-
   });
 
   test("Verify a user with operator privileges cannot add a step to a flow", async () => {
     mocks.runAddStepAPI(axiosMock);
-    const {getByText, getByLabelText, queryByText, getAllByText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={mockOpRolesService}><Run /></AuthoritiesContext.Provider>
-    </MemoryRouter>);
+    const {getByText, getByLabelText, queryByText, getAllByText} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockOpRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     // Click disclosure icon
     fireEvent.click(document.querySelector(".accordion-button")!);
@@ -646,15 +663,18 @@ describe("Verify Add Step function", () => {
     expect(getByLabelText("addStep-testFlow")).toBeInTheDocument();
     fireEvent.click(getAllByText("Add Step")[0]);
     expect(queryByText(data.steps.data["ingestionSteps"][0].name)).not.toBeInTheDocument();
-
   });
 
   test("Verify a flow panel that is closed reopens when a step is added to it", async () => {
     mocks.runAddStepAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
-    const {getByText, getByLabelText, getByPlaceholderText, getAllByText, getByTestId} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={mockDevRolesService}><Run /></AuthoritiesContext.Provider>
-    </MemoryRouter>);
+    const {getByText, getByLabelText, getByPlaceholderText, getAllByText, getByTestId} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <Run />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
 
     //Create a flow
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
@@ -663,7 +683,10 @@ describe("Verify Add Step function", () => {
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByLabelText("Save"));
-    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {name: newFlowValues.name, description: newFlowValues.description});
+    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {
+      name: newFlowValues.name,
+      description: newFlowValues.description,
+    });
 
     // Click to open Add Step menu and click a step
     await wait(() => {
@@ -673,13 +696,22 @@ describe("Verify Add Step function", () => {
       fireEvent.click(step);
 
       // Click to confirm the add in the dialog
-      expect(getByText((content, node) => {
-        return getSubElements(content, node, `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`);
-      })).toBeInTheDocument();
+      expect(
+        getByText((content, node) => {
+          return getSubElements(
+            content,
+            node,
+            `Are you sure you want to add step ${data.steps.data["ingestionSteps"][0].name} to flow ${data.flows.data[0].name}?`,
+          );
+        }),
+      ).toBeInTheDocument();
 
       let confirm = getByLabelText("Yes");
       fireEvent.click(confirm);
-      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data["ingestionSteps"][0].name});
+      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {
+        "stepDefinitionType": "ingestion",
+        "stepName": data.steps.data["ingestionSteps"][0].name,
+      });
 
       // Panel is open
       expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
@@ -705,17 +737,21 @@ describe("Verify Add Step function", () => {
     const mockContext = {
       errorMessageOptions: {
         isVisible: true,
-        message: "Error message"
+        message: "Error message",
       },
-      setErrorMessageOptions: () => { }
+      setErrorMessageOptions: () => {},
     };
-    const {getByText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={mockOpRolesService}>
-        <ErrorMessageContext.Provider value={mockContext}>
-          <TilesView id="run" />
-        </ErrorMessageContext.Provider>
-      </AuthoritiesContext.Provider>
-    </MemoryRouter>);
-    await wait(() => { expect(getByText("Error message")).toBeInTheDocument(); });
+    const {getByText} = await render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={mockOpRolesService}>
+          <ErrorMessageContext.Provider value={mockContext}>
+            <TilesView id="run" />
+          </ErrorMessageContext.Provider>
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>,
+    );
+    await wait(() => {
+      expect(getByText("Error message")).toBeInTheDocument();
+    });
   });
 });

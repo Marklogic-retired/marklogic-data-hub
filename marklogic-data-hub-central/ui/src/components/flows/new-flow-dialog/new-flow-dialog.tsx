@@ -11,13 +11,13 @@ interface Props {
   newFlow: any;
   title: string;
   setNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
-  setAddedFlowName:React.Dispatch<React.SetStateAction<string>>;
-  createFlow: (payload: any)=>void;
+  setAddedFlowName: React.Dispatch<React.SetStateAction<string>>;
+  createFlow: (payload: any) => void;
   createAdd: boolean;
   updateFlow: (name: any, description: any, steps?: any) => Promise<void>;
   flowData: any;
   canWriteFlow: boolean;
-  addStepToFlow: (artifactName: any, flowName: string, stepDefinitionType: string)=>void;
+  addStepToFlow: (artifactName: any, flowName: string, stepDefinitionType: string) => void;
   newStepToFlowOptions: any;
   setOpenNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -34,9 +34,8 @@ const NewFlowDialog: React.FC<Props> = ({
   canWriteFlow,
   addStepToFlow,
   newStepToFlowOptions,
-  setOpenNewFlow
+  setOpenNewFlow,
 }) => {
-
   const isNewFlow = title === "New Flow";
 
   const [flowName, setFlowName] = useState(isNewFlow ? "" : flowData?.name);
@@ -61,12 +60,12 @@ const NewFlowDialog: React.FC<Props> = ({
       setFlowNameTouched(false);
       setDescription("");
     }
-    return (() => {
+    return () => {
       setFlowName("");
       setFlowNameTouched(false);
       setDescription("");
       setTobeDisabled(false);
-    });
+    };
   }, [title, newFlow]);
 
   const onCancel = () => {
@@ -85,13 +84,13 @@ const NewFlowDialog: React.FC<Props> = ({
           viewMode: newStepToFlowOptions.viewMode,
           pageSize: newStepToFlowOptions.pageSize,
           sortOrderInfo: newStepToFlowOptions.sortOrderInfo,
-          page: newStepToFlowOptions.page
-        }
+          page: newStepToFlowOptions.page,
+        },
       });
     }
   };
 
-  const handleSubmit = async (event: {preventDefault: () => void;}) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (!flowName || invalidChars) {
       // missing name
       setFlowNameTouched(true);
@@ -102,7 +101,7 @@ const NewFlowDialog: React.FC<Props> = ({
     if (event) event.preventDefault();
     let dataPayload = {
       name: flowName,
-      description: description
+      description: description,
     };
     setIsLoading(true);
     if (title === "Edit Flow") {
@@ -118,7 +117,7 @@ const NewFlowDialog: React.FC<Props> = ({
     setNewFlow(false);
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "name") {
       if (event.target.value === " ") {
         setFlowNameTouched(false);
@@ -127,12 +126,11 @@ const NewFlowDialog: React.FC<Props> = ({
         setFlowName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
+        if (event.target.value !== "" && !/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value)) {
           setInvalidChars(true);
         } else {
           setInvalidChars(false);
         }
-
       }
     }
     if (event.target.id === "name" && event.target.value.length === 0) {
@@ -144,95 +142,129 @@ const NewFlowDialog: React.FC<Props> = ({
     }
   };
 
-  return (<HCModal
-    show={newFlow}
-    dialogClassName={styles.modal700w}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"bb-none"}>
-      <span className={"fs-3"}>{title || "New Flow"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}} />
-    </Modal.Header>
-    <Modal.Body className={"py-2"}>
-      <div className={styles.newFlowForm}>
-        <Form onSubmit={handleSubmit}>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Name:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
-            <Col>
-              <Row>
-                <Col className={(flowName || !isFlowNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                  {tobeDisabled ?
-                    <HCTooltip id="disabled-namefield-tooltip" text={NewFlowTooltips.nameField} placement={"bottom"} >
-                      <span className={"w-100"} tabIndex={0}>
-                        <HCInput
-                          id="name"
-                          placeholder="Enter name"
-                          dataTestid={"new-flow-name"}
-                          value={flowName}
-                          onChange={handleChange}
-                          disabled={tobeDisabled}
+  return (
+    <HCModal show={newFlow} dialogClassName={styles.modal700w} onHide={onCancel}>
+      <Modal.Header className={"bb-none"}>
+        <span className={"fs-3"}>{title || "New Flow"}</span>
+        <button
+          type="button"
+          className="btn-close"
+          aria-label="Close"
+          onClick={onCancel}
+          style={{"marginTop": "-30px"}}
+        />
+      </Modal.Header>
+      <Modal.Body className={"py-2"}>
+        <div className={styles.newFlowForm}>
+          <Form onSubmit={handleSubmit}>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Name:"}&nbsp;<span className={styles.asterisk}>*</span>
+              </FormLabel>
+              <Col>
+                <Row>
+                  <Col
+                    className={
+                      flowName || !isFlowNameTouched
+                        ? invalidChars
+                          ? "d-flex has-error"
+                          : "d-flex"
+                        : "d-flex has-error"
+                    }
+                  >
+                    {tobeDisabled ? (
+                      <HCTooltip id="disabled-namefield-tooltip" text={NewFlowTooltips.nameField} placement={"bottom"}>
+                        <span className={"w-100"} tabIndex={0}>
+                          <HCInput
+                            id="name"
+                            placeholder="Enter name"
+                            dataTestid={"new-flow-name"}
+                            value={flowName}
+                            onChange={handleChange}
+                            disabled={tobeDisabled}
+                          />
+                        </span>
+                      </HCTooltip>
+                    ) : (
+                      <HCInput
+                        id="name"
+                        placeholder="Enter name"
+                        dataTestid={"new-flow-name"}
+                        value={flowName}
+                        onChange={handleChange}
+                        disabled={tobeDisabled}
+                      />
+                    )}
+                    <div className={"p-2 d-flex"}>
+                      <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          tabIndex={0}
                         />
-                      </span>
-                    </HCTooltip> :
-                    <HCInput
-                      id="name"
-                      placeholder="Enter name"
-                      dataTestid={"new-flow-name"}
-                      value={flowName}
-                      onChange={handleChange}
-                      disabled={tobeDisabled}
-                    />}
-                  <div className={"p-2 d-flex"}>
-                    <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
-                      <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>
-                    </HCTooltip>
-                  </div>
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (flowName || !isFlowNameTouched) ? "" : "Name is required"}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Description:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <HCInput
-                id="description"
-                placeholder="Enter description"
-                dataTestid={"new-flow-description"}
-                value={description}
-                onChange={handleChange}
-                disabled={!canWriteFlow}
-                className={styles.input}
-              />
-              <div className={"p-2 d-flex"}>
-                <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
-                  <QuestionCircleFill color={themeColors.defaults.questionCircle} className={styles.questionCircle} size={13} tabIndex={0}/>
-                </HCTooltip>
-              </div>
-            </Col>
-          </Row>
-          <Row className={"mb-3 mt-5"}>
-            <Col className={"w-100 text-end"}>
-              <HCButton size={"sm"} aria-label="Cancel" variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                  <Col xs={12} className={styles.validationError}>
+                    {invalidChars
+                      ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."
+                      : flowName || !isFlowNameTouched
+                        ? ""
+                        : "Name is required"}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {"Description:"}
+              </FormLabel>
+              <Col className={"d-flex"}>
+                <HCInput
+                  id="description"
+                  placeholder="Enter description"
+                  dataTestid={"new-flow-description"}
+                  value={description}
+                  onChange={handleChange}
+                  disabled={!canWriteFlow}
+                  className={styles.input}
+                />
+                <div className={"p-2 d-flex"}>
+                  <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
+                    <QuestionCircleFill
+                      color={themeColors.defaults.questionCircle}
+                      className={styles.questionCircle}
+                      size={13}
+                      tabIndex={0}
+                    />
+                  </HCTooltip>
+                </div>
+              </Col>
+            </Row>
+            <Row className={"mb-3 mt-5"}>
+              <Col className={"w-100 text-end"}>
+                <HCButton size={"sm"} aria-label="Cancel" variant="outline-light" onClick={() => onCancel()}>
+                  Cancel
+                </HCButton>
                 &nbsp;&nbsp;
-              <HCButton
-                size={"sm"}
-                aria-label="Save"
-                variant="primary"
-                type="submit"
-                disabled={!canWriteFlow}
-                onClick={handleSubmit}
-              >
-                Save
-              </HCButton>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    </Modal.Body>
-  </HCModal>);
+                <HCButton
+                  size={"sm"}
+                  aria-label="Save"
+                  variant="primary"
+                  type="submit"
+                  disabled={!canWriteFlow}
+                  onClick={handleSubmit}
+                >
+                  Save
+                </HCButton>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      </Modal.Body>
+    </HCModal>
+  );
 };
 
 export default NewFlowDialog;

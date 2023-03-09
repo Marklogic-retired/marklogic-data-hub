@@ -11,7 +11,7 @@ jest.mock("axios");
 
 describe("Entity Tiles component", () => {
   beforeEach(() => {
-    axiosMock.get["mockImplementation"]((url) => {
+    axiosMock.get["mockImplementation"](url => {
       switch (url) {
       case "/api/flows":
         return Promise.resolve(data.flows);
@@ -35,7 +35,7 @@ describe("Entity Tiles component", () => {
 
   test("Map tab does not appear without readMapping authority", async () => {
     let entityModels = {};
-    data.primaryEntityTypes.data.forEach((model) => {
+    data.primaryEntityTypes.data.forEach(model => {
       // model has an entityTypeId property, perhaps that should be used instead of entityName?
       entityModels[model.entityName] = model;
     });
@@ -55,7 +55,8 @@ describe("Entity Tiles component", () => {
             getEntityModels={jest.fn}
             canWriteFlow={false}
             addStepToFlow={jest.fn}
-            addStepToNew={jest.fn}/>
+            addStepToNew={jest.fn}
+          />
         </Router>,
       );
       queryAllByText = renderResults.queryAllByText;
@@ -67,12 +68,18 @@ describe("Entity Tiles component", () => {
 
   test("Map tab does appear with readMapping authority", async () => {
     let entityModels = {};
-    data.primaryEntityTypes.data.forEach((model) => {
+    data.primaryEntityTypes.data.forEach(model => {
       // model has an entityTypeId property, perhaps that should be used instead of entityName?
       entityModels[model.entityName] = model;
     });
     let flows = [];
-    let [canReadMatchMerge, canWriteMatchMerge, canWriteMapping, canReadMapping, canReadCustom] = [false, false, false, true, false];
+    let [canReadMatchMerge, canWriteMatchMerge, canWriteMapping, canReadMapping, canReadCustom] = [
+      false,
+      false,
+      false,
+      true,
+      false,
+    ];
     let queryAllByText, getByText;
     await act(async () => {
       const renderResults = render(
@@ -88,7 +95,8 @@ describe("Entity Tiles component", () => {
             canWriteFlow={false}
             canReadCustom={canReadCustom}
             addStepToFlow={jest.fn}
-            addStepToNew={jest.fn}/>
+            addStepToNew={jest.fn}
+          />
         </Router>,
       );
       getByText = renderResults.getByText;
@@ -105,12 +113,18 @@ describe("Entity Tiles component", () => {
 
   test("Custom tab appears with readCustom authority", async () => {
     let entityModels = {};
-    data.primaryEntityTypes.data.forEach((model) => {
+    data.primaryEntityTypes.data.forEach(model => {
       // model has an entityTypeId property, perhaps that should be used instead of entityName?
       entityModels[model.entityName] = model;
     });
     let flows = [];
-    let [canReadMatchMerge, canWriteMatchMerge, canWriteMapping, canReadMapping, canReadCustom] = [false, false, false, true, true];
+    let [canReadMatchMerge, canWriteMatchMerge, canWriteMapping, canReadMapping, canReadCustom] = [
+      false,
+      false,
+      false,
+      true,
+      true,
+    ];
     let queryAllByText, getByText, getByLabelText;
     await act(async () => {
       const renderResults = render(
@@ -126,7 +140,8 @@ describe("Entity Tiles component", () => {
             canWriteFlow={false}
             canReadCustom={canReadCustom}
             addStepToFlow={jest.fn}
-            addStepToNew={jest.fn}/>
+            addStepToNew={jest.fn}
+          />
         </Router>,
       );
       getByText = renderResults.getByText;
@@ -142,8 +157,8 @@ describe("Entity Tiles component", () => {
     await fireEvent.click(customerPanel);
     // Check for Mapping tab
     expect(getByText("Mapping (1)")).toBeInTheDocument();
-    await(() => fireEvent.click(getByText("Custom")));
-    await(() => expect(getByLabelText("customEntityTitle")).toBeInTheDocument());
+    await (() => fireEvent.click(getByText("Custom")));
+    await (() => expect(getByLabelText("customEntityTitle")).toBeInTheDocument());
     // Check for Matching tab
     expect(queryAllByText("Matching")).toHaveLength(0);
     await fireEvent.click(customerPanel);

@@ -21,7 +21,7 @@ import {getEnvironment} from "@util/environment";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./system-info.module.scss";
 
-const SystemInfo = (props) => {
+const SystemInfo = props => {
   const {handleError} = useContext(UserContext);
   const authorityService = useContext(AuthoritiesContext);
   const serviceName = props.serviceName || "";
@@ -76,7 +76,7 @@ const SystemInfo = (props) => {
     }
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -85,7 +85,7 @@ const SystemInfo = (props) => {
   const targetDbOptions = databaseOptions.map(d => ({value: d, label: d}));
   const targetBasedOnOptions = basedOnOptions.map(d => ({value: d, label: d}));
 
-  const handleSelectedDeleteOpt = (event) => {
+  const handleSelectedDeleteOpt = event => {
     setSelectedDeleteOpt(event.target.value);
     setTargetBasedOn("None");
     setEmptyError(false);
@@ -93,11 +93,11 @@ const SystemInfo = (props) => {
     setEntitySelected("");
   };
 
-  const handleSourceDatabase = (selectedItem) => {
+  const handleSourceDatabase = selectedItem => {
     setTargetDatabase(selectedItem.value);
   };
 
-  const handleTargetBasedOn = (selectedItem) => {
+  const handleTargetBasedOn = selectedItem => {
     setTargetBasedOn(selectedItem.value);
     setCollectionSelected("");
     setClearClicked(false);
@@ -109,7 +109,7 @@ const SystemInfo = (props) => {
     }
   };
 
-  const handleCollectionChange = (selectedItem) => {
+  const handleCollectionChange = selectedItem => {
     const selected = selectedItem[0];
     if (selected) {
       setCollectionSelected(selectedItem[0]);
@@ -121,7 +121,7 @@ const SystemInfo = (props) => {
     }
   };
 
-  const handleEntitiesChange = (selectedItem) => {
+  const handleEntitiesChange = selectedItem => {
     const selected = selectedItem[0];
     if (selected) {
       setEntitySelected(selectedItem[0]);
@@ -138,18 +138,17 @@ const SystemInfo = (props) => {
     axios({
       url: "/api/environment/downloadHubCentralFiles",
       method: "GET",
-      responseType: "blob"
-    })
-      .then(response => {
-        let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
-        let filename = result.replace(/"/g, "");
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-      });
+      responseType: "blob",
+    }).then(response => {
+      let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
+      let filename = result.replace(/"/g, "");
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+    });
   };
 
   const downloadProjectFiles = () => {
@@ -157,18 +156,17 @@ const SystemInfo = (props) => {
     axios({
       url: "/api/environment/downloadProjectFiles",
       method: "GET",
-      responseType: "blob"
-    })
-      .then(response => {
-        let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
-        let filename = result.replace(/"/g, "");
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", filename);
-        document.body.appendChild(link);
-        link.click();
-      });
+      responseType: "blob",
+    }).then(response => {
+      let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
+      let filename = result.replace(/"/g, "");
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+    });
   };
 
   const copyToClipBoard = async (copyMe, event) => {
@@ -196,7 +194,7 @@ const SystemInfo = (props) => {
         }
         payload = {
           "targetDatabase": targetDatabase,
-          "targetCollection": sourceName
+          "targetCollection": sourceName,
         };
       }
       let response = await Axios.post("/api/environment/clearUserData", payload);
@@ -260,7 +258,6 @@ const SystemInfo = (props) => {
         console.error(error);
         handleError(error);
       }
-
     } else {
       setCollectionOptions([]);
     }
@@ -283,7 +280,6 @@ const SystemInfo = (props) => {
         setEmptyError(true);
       }
     }
-
   };
 
   const clearDataConfirmation = (
@@ -294,11 +290,14 @@ const SystemInfo = (props) => {
             <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}} />
           </div>
           <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
-            {selectedDeleteOpt !== "deleteAll" ?
-              ClearDataMessages.clearSubsetConfirmation(targetDatabase, targetBasedOn, collectionSelected, entitySelected)
-              :
-              ClearDataMessages.clearAllConfirmation([...databaseOptions, jobsDbName])
-            }
+            {selectedDeleteOpt !== "deleteAll"
+              ? ClearDataMessages.clearSubsetConfirmation(
+                targetDatabase,
+                targetBasedOn,
+                collectionSelected,
+                entitySelected,
+              )
+              : ClearDataMessages.clearAllConfirmation([...databaseOptions, jobsDbName])}
           </div>
         </div>
       </Modal.Body>
@@ -322,7 +321,9 @@ const SystemInfo = (props) => {
         disabled={!authorityService.canDownloadProjectFiles()}
         onClick={downloadHubCentralFiles}
         className={styles.focusTab}
-      >Download</HCButton>
+      >
+        Download
+      </HCButton>
     </div>
   );
 
@@ -335,28 +336,44 @@ const SystemInfo = (props) => {
       backdrop="static"
       className={clearDataVisible ? styles.disabledMain : ""}
     >
-      <Modal.Body className={styles.systemModalBody} >
+      <Modal.Body className={styles.systemModalBody}>
         <Modal.Header closeButton className={"bb-none"} />
         <div className={styles.systemContainer}>
-          <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
-            <HCAlert variant="success" showIcon>{selectedDeleteOpt !== "deleteAll" ? <span>A subset of user data was cleared successfully</span> : <span>All user data was cleared successfully</span>}</HCAlert>
+          <div
+            data-testid="alertTrue"
+            className={styles.alertPosition}
+            style={message.show ? {display: "block"} : {display: "none"}}
+          >
+            <HCAlert variant="success" showIcon>
+              {selectedDeleteOpt !== "deleteAll" ? (
+                <span>A subset of user data was cleared successfully</span>
+              ) : (
+                <span>All user data was cleared successfully</span>
+              )}
+            </HCAlert>
           </div>
 
           <div className={styles.serviceName}>
             {serviceName}
-            <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"} show={showTooltipCopy}>
+            <HCTooltip
+              text="Copy to clipboard"
+              id="copy-to-clipboard-tooltip"
+              placement={"bottom"}
+              show={showTooltipCopy}
+            >
               <span>
-                {<FontAwesomeIcon
-                  icon={faCopy}
-                  data-testid="copyServiceName"
-                  className={styles.copyIcon}
-                  onClick={(event) => copyToClipBoard(serviceName, event)}
-                  tabIndex={0}
-                  onKeyPress={(event) => copyToClipBoard(serviceName, event)}
-                  onMouseEnter={() => setShowTooltipCopy(true)}
-                  onMouseLeave={() => setShowTooltipCopy(false)}
-
-                />}
+                {
+                  <FontAwesomeIcon
+                    icon={faCopy}
+                    data-testid="copyServiceName"
+                    className={styles.copyIcon}
+                    onClick={event => copyToClipBoard(serviceName, event)}
+                    tabIndex={0}
+                    onKeyPress={event => copyToClipBoard(serviceName, event)}
+                    onMouseEnter={() => setShowTooltipCopy(true)}
+                    onMouseLeave={() => setShowTooltipCopy(false)}
+                  />
+                }
               </span>
             </HCTooltip>
           </div>
@@ -371,193 +388,244 @@ const SystemInfo = (props) => {
           <div className={styles.cardsContainer}>
             <div className={styles.cards}>
               <Row>
-                { <Col>
-                  <HCCard className={styles.download} >
-                    <div className={styles.title}>Download Hub Central Files</div>
-                    <div className={styles.cardContent}><p>{SystemInfoMessages.downloadHubCentralFiles}</p></div>
-                    {!authorityService.canDownloadProjectFiles() ?
-                      <HCTooltip id="missing-permission-tooltip" text={SecurityTooltips.missingPermission}
-                        placement="top">
-                        {downloadHCFilesButton}
-                      </HCTooltip> :
-                      downloadHCFilesButton}
-                  </HCCard>
-                </Col>
+                {
+                  <Col>
+                    <HCCard className={styles.download}>
+                      <div className={styles.title}>Download Hub Central Files</div>
+                      <div className={styles.cardContent}>
+                        <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
+                      </div>
+                      {!authorityService.canDownloadProjectFiles() ? (
+                        <HCTooltip
+                          id="missing-permission-tooltip"
+                          text={SecurityTooltips.missingPermission}
+                          placement="top"
+                        >
+                          {downloadHCFilesButton}
+                        </HCTooltip>
+                      ) : (
+                        downloadHCFilesButton
+                      )}
+                    </HCCard>
+                  </Col>
                 }
-                {<Col>
-                  <HCCard className={styles.download} >
-                    <div className={styles.title}>Download Project Files</div>
-                    <div className={styles.cardContent}><p>{SystemInfoMessages.downloadProjectFiles}</p></div>
-                    <div className={styles.buttonContainer}>
-                      <HCButton
-                        variant="primary"
-                        aria-label="Download"
-                        data-testid="downloadProjectFiles"
-                        onClick={downloadProjectFiles}
-                        disabled={!authorityService.canDownloadProjectFiles()}
-                        className={styles.focusTab}
-                      >Download</HCButton>
-                    </div>
-                  </HCCard>
-                </Col>
+                {
+                  <Col>
+                    <HCCard className={styles.download}>
+                      <div className={styles.title}>Download Project Files</div>
+                      <div className={styles.cardContent}>
+                        <p>{SystemInfoMessages.downloadProjectFiles}</p>
+                      </div>
+                      <div className={styles.buttonContainer}>
+                        <HCButton
+                          variant="primary"
+                          aria-label="Download"
+                          data-testid="downloadProjectFiles"
+                          onClick={downloadProjectFiles}
+                          disabled={!authorityService.canDownloadProjectFiles()}
+                          className={styles.focusTab}
+                        >
+                          Download
+                        </HCButton>
+                      </div>
+                    </HCCard>
+                  </Col>
                 }
 
-                {<Col>
-                  <HCCard className={styles.clearAll}>
-                    {isLoading === true ? <div className={styles.spinRunning}>
-                      <Spinner animation="border" variant="primary" />
-                    </div> : ""}
-                    <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                    <div className={styles.cardContent}>
-                      <Row className={"mb-4"}>
-                        <Col xs lg="1">
-                          <Form.Check
-                            data-testid="deleteAll"
-                            inline
-                            id={"deleteAll"}
-                            name={"source-query"}
-                            type={"radio"}
-                            checked={selectedDeleteOpt === "deleteAll" ? true : false}
-                            onChange={handleSelectedDeleteOpt}
-                            value={"deleteAll"}
-                            aria-label={"deleteAll"}
-                            className={["mb-0", styles.inputRadio].join(" ")}
-                          />
-                        </Col>
-                        <Col>
-                          <span className={selectedDeleteOpt !== "deleteAll" ? styles.optionDisabled : ""}>{SystemInfoMessages.clearAllUserData}</span>
-                        </Col>
-                      </Row>
-                      <div className={styles.title}>Clear Subset of User Data</div>
-                      <Row className={"mb-2"}>
-                        <Col xs lg="1">
-                          <Form.Check
-                            inline
-                            id={"deleteSubset"}
-                            data-testid="deleteSubset"
-                            name={"source-query"}
-                            type={"radio"}
-                            checked={selectedDeleteOpt === "deleteSubset" ? true : false}
-                            onChange={handleSelectedDeleteOpt}
-                            value={"deleteSubset"}
-                            aria-label={"deleteSubset"}
-                            className={["mt-2", styles.inputRadio].join(" ")}
-                          />
-                        </Col>
-                        <FormLabel column
-                          className={`${styles.subSetSelection} ${selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""}`}>
-                          {"Select a Database:"}
-                        </FormLabel>
-                        <Col className={"d-flex ps-1"}>
-                          <Select
-                            id="targetDatabase-select"
-                            inputId="targetDatabase"
-                            tabIndex={0}
-                            className={styles.subsetSelect}
-                            components={{MenuList: props => MenuList("targetDatabase", props)}}
-                            placeholder="Please select a database"
-                            value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
-                            onChange={handleSourceDatabase}
-                            isSearchable={false}
-                            aria-label="targetDatabase-select"
-                            isDisabled={selectedDeleteOpt !== "deleteSubset"}
-                            options={targetDbOptions}
-                            styles={reactSelectThemeConfig}
-                            formatOptionLabel={({value, label}) => {
-                              return (
-                                <span data-testid={`targetDbOptions-${value}`}>
-                                  {label}
-                                </span>
-                              );
-                            }}
-                          />
-                          <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="" >
-                            <QuestionCircleFill aria-label={"database-select-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}/>
-                          </HCTooltip>
-                        </Col>
-                      </Row>
-                      <Row className={"mb-2"}>
-                        <Col xs lg="1"/>
-                        <FormLabel column
-                          className={`${styles.subSetSelection} ${selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""}`}>
-                          {<span>Based on <span className="fst-italic">(optional)</span>:</span>}
-                        </FormLabel>
-                        <Col className={"d-flex ps-1"}>
-                          <Select
-                            id="targetBasedOn-select"
-                            inputId="targetBasedOn"
-                            tabIndex={0}
-                            className={styles.subsetSelect}
-                            components={{MenuList: props => MenuList("targetBasedOn", props)}}
-                            placeholder="None"
-                            value={targetBasedOnOptions.find(oItem => oItem.value === targetBasedOn)}
-                            onChange={handleTargetBasedOn}
-                            isSearchable={false}
-                            aria-label="targetBasedOn-select"
-                            isDisabled={selectedDeleteOpt !== "deleteSubset"}
-                            options={targetBasedOnOptions}
-                            styles={reactSelectThemeConfig}
-                            formatOptionLabel={({value, label}) => {
-                              return (
-                                <span data-testid={`targetBasedOnOptions-${value}`}>
-                                  {label}
-                                </span>
-                              );
-                            }}
-                          />
-                          <HCTooltip text={ClearDataMessages.basedOnTooltip} placement="bottom" id="">
-                            <QuestionCircleFill aria-label={"based-on-info"} className={styles.infoIcon} size={13} tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}/>
-                          </HCTooltip>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col xs lg="1"/>
-                        <Col className={styles.subSetSelection}/>
-                        <Col className={"d-flex ps-1"}>
-                          {targetBasedOn === "Collection" ? <div className={"position-relative w-100"}>
-                            <Typeahead
-                              id="collection-input"
-                              options={collectionOptions}
-                              className={styles.subsetInputSelect}
-                              aria-label="collection-input"
-                              placeholder={"Search collections"}
-                              value={collectionSelected}
-                              onInputChange={handleCollectionSearch}
-                              onChange={handleCollectionChange}
-                              minLength={3}
+                {
+                  <Col>
+                    <HCCard className={styles.clearAll}>
+                      {isLoading === true ? (
+                        <div className={styles.spinRunning}>
+                          <Spinner animation="border" variant="primary" />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      <div className={styles.title} data-testid="clearData">
+                        Clear All User Data
+                      </div>
+                      <div className={styles.cardContent}>
+                        <Row className={"mb-4"}>
+                          <Col xs lg="1">
+                            <Form.Check
+                              data-testid="deleteAll"
+                              inline
+                              id={"deleteAll"}
+                              name={"source-query"}
+                              type={"radio"}
+                              checked={selectedDeleteOpt === "deleteAll" ? true : false}
+                              onChange={handleSelectedDeleteOpt}
+                              value={"deleteAll"}
+                              aria-label={"deleteAll"}
+                              className={["mb-0", styles.inputRadio].join(" ")}
                             />
-                            <span aria-label={"collection-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyCollectionError : null}</span>
-                            <Search className={styles.searchIcon} /></div>
-                            : ""}
-                          {targetBasedOn === "Entity" ? <div className={"position-relative w-100"}>
-                            <Typeahead
-                              id="entities-input"
-                              options={entitiesOptions}
-                              className={styles.subsetInputSelect}
-                              aria-label="entities-input"
-                              placeholder={"Search entities"}
-                              value={entitySelected}
-                              onInputChange={handleEntitiesSearch}
-                              onChange={handleEntitiesChange}
-                              minLength={3}
+                          </Col>
+                          <Col>
+                            <span className={selectedDeleteOpt !== "deleteAll" ? styles.optionDisabled : ""}>
+                              {SystemInfoMessages.clearAllUserData}
+                            </span>
+                          </Col>
+                        </Row>
+                        <div className={styles.title}>Clear Subset of User Data</div>
+                        <Row className={"mb-2"}>
+                          <Col xs lg="1">
+                            <Form.Check
+                              inline
+                              id={"deleteSubset"}
+                              data-testid="deleteSubset"
+                              name={"source-query"}
+                              type={"radio"}
+                              checked={selectedDeleteOpt === "deleteSubset" ? true : false}
+                              onChange={handleSelectedDeleteOpt}
+                              value={"deleteSubset"}
+                              aria-label={"deleteSubset"}
+                              className={["mt-2", styles.inputRadio].join(" ")}
                             />
-                            <span aria-label={"entities-empty-error"} className={styles.errorMessageEmpty}>{emptyError && clearClicked ? ClearDataMessages.emptyEntityError : null}</span>
-                            <Search className={styles.searchIcon} /></div> : ""}
-                        </Col>
-                      </Row>
-                    </div>
-                    <div className={styles.buttonContainer}>
-                      <HCButton
-                        variant="primary"
-                        aria-label="Clear"
-                        data-testid="clearUserData"
-                        onClick={handleClearData}
-                        disabled={!authorityService.canClearUserData()}
-                        className={styles.focusTab}
-                      >Clear</HCButton>
-                    </div>
-                  </HCCard>
-                </Col>
+                          </Col>
+                          <FormLabel
+                            column
+                            className={`${styles.subSetSelection} ${
+                              selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""
+                            }`}
+                          >
+                            {"Select a Database:"}
+                          </FormLabel>
+                          <Col className={"d-flex ps-1"}>
+                            <Select
+                              id="targetDatabase-select"
+                              inputId="targetDatabase"
+                              tabIndex={0}
+                              className={styles.subsetSelect}
+                              components={{MenuList: props => MenuList("targetDatabase", props)}}
+                              placeholder="Please select a database"
+                              value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
+                              onChange={handleSourceDatabase}
+                              isSearchable={false}
+                              aria-label="targetDatabase-select"
+                              isDisabled={selectedDeleteOpt !== "deleteSubset"}
+                              options={targetDbOptions}
+                              styles={reactSelectThemeConfig}
+                              formatOptionLabel={({value, label}) => {
+                                return <span data-testid={`targetDbOptions-${value}`}>{label}</span>;
+                              }}
+                            />
+                            <HCTooltip text={ClearDataMessages.databaseSelectionTooltip} placement="bottom" id="">
+                              <QuestionCircleFill
+                                aria-label={"database-select-info"}
+                                className={styles.infoIcon}
+                                size={13}
+                                tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}
+                              />
+                            </HCTooltip>
+                          </Col>
+                        </Row>
+                        <Row className={"mb-2"}>
+                          <Col xs lg="1" />
+                          <FormLabel
+                            column
+                            className={`${styles.subSetSelection} ${
+                              selectedDeleteOpt !== "deleteSubset" ? styles.optionDisabled : ""
+                            }`}
+                          >
+                            {
+                              <span>
+                                Based on <span className="fst-italic">(optional)</span>:
+                              </span>
+                            }
+                          </FormLabel>
+                          <Col className={"d-flex ps-1"}>
+                            <Select
+                              id="targetBasedOn-select"
+                              inputId="targetBasedOn"
+                              tabIndex={0}
+                              className={styles.subsetSelect}
+                              components={{MenuList: props => MenuList("targetBasedOn", props)}}
+                              placeholder="None"
+                              value={targetBasedOnOptions.find(oItem => oItem.value === targetBasedOn)}
+                              onChange={handleTargetBasedOn}
+                              isSearchable={false}
+                              aria-label="targetBasedOn-select"
+                              isDisabled={selectedDeleteOpt !== "deleteSubset"}
+                              options={targetBasedOnOptions}
+                              styles={reactSelectThemeConfig}
+                              formatOptionLabel={({value, label}) => {
+                                return <span data-testid={`targetBasedOnOptions-${value}`}>{label}</span>;
+                              }}
+                            />
+                            <HCTooltip text={ClearDataMessages.basedOnTooltip} placement="bottom" id="">
+                              <QuestionCircleFill
+                                aria-label={"based-on-info"}
+                                className={styles.infoIcon}
+                                size={13}
+                                tabIndex={selectedDeleteOpt === "deleteSubset" ? 0 : -1}
+                              />
+                            </HCTooltip>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col xs lg="1" />
+                          <Col className={styles.subSetSelection} />
+                          <Col className={"d-flex ps-1"}>
+                            {targetBasedOn === "Collection" ? (
+                              <div className={"position-relative w-100"}>
+                                <Typeahead
+                                  id="collection-input"
+                                  options={collectionOptions}
+                                  className={styles.subsetInputSelect}
+                                  aria-label="collection-input"
+                                  placeholder={"Search collections"}
+                                  value={collectionSelected}
+                                  onInputChange={handleCollectionSearch}
+                                  onChange={handleCollectionChange}
+                                  minLength={3}
+                                />
+                                <span aria-label={"collection-empty-error"} className={styles.errorMessageEmpty}>
+                                  {emptyError && clearClicked ? ClearDataMessages.emptyCollectionError : null}
+                                </span>
+                                <Search className={styles.searchIcon} />
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                            {targetBasedOn === "Entity" ? (
+                              <div className={"position-relative w-100"}>
+                                <Typeahead
+                                  id="entities-input"
+                                  options={entitiesOptions}
+                                  className={styles.subsetInputSelect}
+                                  aria-label="entities-input"
+                                  placeholder={"Search entities"}
+                                  value={entitySelected}
+                                  onInputChange={handleEntitiesSearch}
+                                  onChange={handleEntitiesChange}
+                                  minLength={3}
+                                />
+                                <span aria-label={"entities-empty-error"} className={styles.errorMessageEmpty}>
+                                  {emptyError && clearClicked ? ClearDataMessages.emptyEntityError : null}
+                                </span>
+                                <Search className={styles.searchIcon} />
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </Col>
+                        </Row>
+                      </div>
+                      <div className={styles.buttonContainer}>
+                        <HCButton
+                          variant="primary"
+                          aria-label="Clear"
+                          data-testid="clearUserData"
+                          onClick={handleClearData}
+                          disabled={!authorityService.canClearUserData()}
+                          className={styles.focusTab}
+                        >
+                          Clear
+                        </HCButton>
+                      </div>
+                    </HCCard>
+                  </Col>
                 }
               </Row>
             </div>

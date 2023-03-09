@@ -3,20 +3,19 @@ import NoMatchRedirect from "../../pages/noMatchRedirect";
 
 interface Props {
   children?: ReactNode;
-
 }
 
 interface State {
-  hasError: boolean
-  errorMessage?: string
+  hasError: boolean;
+  errorMessage?: string;
 }
 
 class ErrorBoundary extends React.Component<Props, State> {
   public state: State = {
-    hasError: false
+    hasError: false,
   };
 
-  static getDerivedStateFromError(error:Error):State {
+  static getDerivedStateFromError(error: Error): State {
     return {hasError: true};
   }
 
@@ -27,7 +26,7 @@ class ErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return <NoMatchRedirect message={this.state.errorMessage}/>;
+      return <NoMatchRedirect message={this.state.errorMessage} />;
     }
 
     return this.props.children;

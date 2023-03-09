@@ -3,15 +3,16 @@ import {render, waitForElement, fireEvent, wait} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import MonitorSelectedFacets from "./monitor-selected-facets";
 
-
 test("No Selected Facets", () => {
   const {getByTestId} = render(
-    <MonitorSelectedFacets selectedFacets={[]}
+    <MonitorSelectedFacets
+      selectedFacets={[]}
       greyFacets={[]}
       toggleApplyClicked={jest.fn()}
       toggleApply={jest.fn()}
       showApply={false}
-      applyClicked={false}/>,
+      applyClicked={false}
+    />,
   );
   const container = getByTestId("selected-facet-block");
   expect(container).toHaveStyle("visibility: hidden");
@@ -49,9 +50,9 @@ test("Grey Facets: Verify apply/discard icons", async () => {
   let applyButton = getByTestId("facet-apply-button");
   fireEvent.mouseOver(getByLabelText("clear-all-grey-button"));
   fireEvent.mouseOver(getByLabelText("facet-apply-button"));
-  await(waitForElement(() => (getByText("Apply facets"))));
+  await waitForElement(() => getByText("Apply facets"));
   fireEvent.mouseOver(discardButton);
-  await(waitForElement(() => (getByText("Clear unapplied facets"))));
+  await waitForElement(() => getByText("Clear unapplied facets"));
 
   const facetActions = [greyFacet, discardButton, applyButton];
 

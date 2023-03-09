@@ -14,7 +14,7 @@ type Props = {
   confirmAction: (e?: any) => void;
 };
 
-const ConfirmationModal: React.FC<Props> = (props) => {
+const ConfirmationModal: React.FC<Props> = props => {
   const [showSteps, toggleSteps] = useState(false);
   const [showEntities, toggleEntities] = useState(false);
   const [loading, toggleLoading] = useState(false);
@@ -35,46 +35,43 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
   const renderArrayValues = props.arrayValues?.map((item, index) => <li key={item + index}>{item}</li>);
 
-  const modalFooter = <div className={`text-center ${styles.modalFooter}`}>
-    <HCButton
-      aria-label={`confirm-${props.type}-no`}
-      variant="outline-light"
-      onClick={closeModal}
-      className={"me-2"}
-    >No</HCButton>
-    <HCButton
-      aria-label={`confirm-${props.type}-yes`}
-      variant="primary"
-      loading={loading}
-      onClick={(e) => {
-        switch (props.type) {
-        // non async confirm types
-        case ConfirmationType.NavigationWarn:
-        case ConfirmationType.DiscardChanges:
-          break;
-        default:
-          toggleLoading(true);
-          break;
-        }
-        props.confirmAction(e);
-      }}
-    >Yes</HCButton>
-  </div>;
+  const modalFooter = (
+    <div className={`text-center ${styles.modalFooter}`}>
+      <HCButton aria-label={`confirm-${props.type}-no`} variant="outline-light" onClick={closeModal} className={"me-2"}>
+        No
+      </HCButton>
+      <HCButton
+        aria-label={`confirm-${props.type}-yes`}
+        variant="primary"
+        loading={loading}
+        onClick={e => {
+          switch (props.type) {
+          // non async confirm types
+          case ConfirmationType.NavigationWarn:
+          case ConfirmationType.DiscardChanges:
+            break;
+          default:
+            toggleLoading(true);
+            break;
+          }
+          props.confirmAction(e);
+        }}
+      >
+        Yes
+      </HCButton>
+    </div>
+  );
 
-  const modalFooterClose = <div className={"text-center"}>
-    <HCButton
-      aria-label={`confirm-${props.type}-close`}
-      variant="primary"
-      onClick={closeModal}
-    >Close</HCButton>
-  </div>;
+  const modalFooterClose = (
+    <div className={"text-center"}>
+      <HCButton aria-label={`confirm-${props.type}-close`} variant="primary" onClick={closeModal}>
+        Close
+      </HCButton>
+    </div>
+  );
 
   return (
-    <HCModal
-      show={props.isVisible}
-      data-testid={"confirmation-modal"}
-      onHide={closeModal}
-    >
+    <HCModal show={props.isVisible} data-testid={"confirmation-modal"} onHide={closeModal}>
       <Modal.Header className={"bb-none"}>
         <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
       </Modal.Header>
@@ -82,26 +79,39 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         <div className={styles.modalBody}>
           {props.type === ConfirmationType.Identifer && (
             <>
-              <p aria-label="identifier-text">Each entity type is allowed a maximum of one identifier. The current identifier is <b>{props.boldTextArray[0]}</b>.
-                Choosing a different identifier could affect custom applications and other code that uses <b>{props.boldTextArray[0]}</b> for searching.</p>
+              <p aria-label="identifier-text">
+                Each entity type is allowed a maximum of one identifier. The current identifier is{" "}
+                <b>{props.boldTextArray[0]}</b>. Choosing a different identifier could affect custom applications and
+                other code that uses <b>{props.boldTextArray[0]}</b> for searching.
+              </p>
 
-              <p>Are you sure you want to change the identifier from <b>{props.boldTextArray[0]}</b> to <b>{props.boldTextArray[1]}</b>?</p>
+              <p>
+                Are you sure you want to change the identifier from <b>{props.boldTextArray[0]}</b> to{" "}
+                <b>{props.boldTextArray[1]}</b>?
+              </p>
             </>
           )}
 
-          {(props.type === ConfirmationType.DeleteEntity || props.type === ConfirmationType.DeleteConceptClass) && <p aria-label="delete-text">Permanently delete <b>{props.boldTextArray[0]}</b>?</p>}
+          {(props.type === ConfirmationType.DeleteEntity || props.type === ConfirmationType.DeleteConceptClass) && (
+            <p aria-label="delete-text">
+              Permanently delete <b>{props.boldTextArray[0]}</b>?
+            </p>
+          )}
 
           {props.type === ConfirmationType.DeleteEntityRelationshipWarn && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Existing entity type relationships."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Existing entity type relationships."}
+              </HCAlert>
 
-              <p aria-label="delete-relationship-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
-                those relationships to be removed from all involved entity types.</p>
-              <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?</p>
+              <p aria-label="delete-relationship-text">
+                The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting{" "}
+                <b>{props.boldTextArray[0]}</b> will cause those relationships to be removed from all involved entity
+                types.
+              </p>
+              <p>
+                Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?
+              </p>
             </>
           )}
 
@@ -128,40 +138,39 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
           {props.type === ConfirmationType.DeleteEntityStepWarn && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Entity type is used in one or more steps."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Entity type is used in one or more steps."}
+              </HCAlert>
 
-              <p aria-label="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this entity property.</p>
-              <p
-                aria-label="toggle-steps"
-                className={styles.toggleSteps}
-                onClick={() => toggleSteps(!showSteps)}
-              >{showSteps ? "Hide Steps..." : "Show Steps..."}</p>
+              <p aria-label="delete-step-text">
+                Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to
+                correlate with your changes to this entity property.
+              </p>
+              <p aria-label="toggle-steps" className={styles.toggleSteps} onClick={() => toggleSteps(!showSteps)}>
+                {showSteps ? "Hide Steps..." : "Show Steps..."}
+              </p>
 
-              {showSteps && (
-                <ul className={styles.stepList}>
-                  {renderArrayValues}
-                </ul>
-              )}
+              {showSteps && <ul className={styles.stepList}>{renderArrayValues}</ul>}
             </>
           )}
           {props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Entity type appears in foreign key relationship in 1 or more other entity types."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Entity type appears in foreign key relationship in 1 or more other entity types."}
+              </HCAlert>
 
-              <p aria-label="delete-entity-foreign-key-text">Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
+              <p aria-label="delete-entity-foreign-key-text">
+                Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.
+              </p>
               <p
                 aria-label="toggle-entities"
                 className={styles.toggleSteps}
                 onClick={() => toggleEntities(!showEntities)}
-              >{showEntities ? "Hide Entities in foreign key relationship..." : "Show Entities in foreign key relationship..."}</p>
+              >
+                {showEntities
+                  ? "Hide Entities in foreign key relationship..."
+                  : "Show Entities in foreign key relationship..."}
+              </p>
 
               {showEntities && (
                 <ul className={styles.stepList} data-testid="entitiesWithForeignKeyReferences">
@@ -171,35 +180,42 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             </>
           )}
 
-          {props.type === ConfirmationType.DeletePropertyWarn &&
-            <p aria-label="delete-property-text"
-            >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
-          }
+          {props.type === ConfirmationType.DeletePropertyWarn && (
+            <p aria-label="delete-property-text">
+              Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?
+            </p>
+          )}
 
-          {props.type === ConfirmationType.PropertyName &&
+          {props.type === ConfirmationType.PropertyName && (
             <>
-              <p aria-label="property-name-text"
-              >Entity properties with the name <b>{props.boldTextArray[0]}</b> will not return SQL queries.
-             In SQL, <b>{props.boldTextArray[0]}</b> is a special column and therefore, queries on entities titled <b>{props.boldTextArray[0]}</b> will not return meaningful search results.
+              <p aria-label="property-name-text">
+                Entity properties with the name <b>{props.boldTextArray[0]}</b> will not return SQL queries. In SQL,{" "}
+                <b>{props.boldTextArray[0]}</b> is a special column and therefore, queries on entities titled{" "}
+                <b>{props.boldTextArray[0]}</b> will not return meaningful search results.
               </p>
-              <p>Are you sure you want to keep <b>{props.boldTextArray[0]}</b> as your property name?</p>
+              <p>
+                Are you sure you want to keep <b>{props.boldTextArray[0]}</b> as your property name?
+              </p>
             </>
-          }
+          )}
 
           {props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Deleting this property may affect some entities."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Deleting this property may affect some entities."}
+              </HCAlert>
 
-              <p aria-label="delete-property-foreign-key-text">The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other entity types.</p>
+              <p aria-label="delete-property-foreign-key-text">
+                The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other
+                entity types.
+              </p>
               <p
                 aria-label="toggle-entities"
                 className={styles.toggleSteps}
                 onClick={() => toggleEntities(!showEntities)}
-              >{showEntities ? "Hide Entities..." : "Show Entities..."}</p>
+              >
+                {showEntities ? "Hide Entities..." : "Show Entities..."}
+              </p>
 
               {showEntities && (
                 <ul className={styles.stepList} data-testid="entityPropertyWithForeignKeyReferences">
@@ -212,40 +228,38 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
           {props.type === ConfirmationType.DeletePropertyStepWarn && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Deleting this property may affect some steps."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Deleting this property may affect some steps."}
+              </HCAlert>
 
-              <p aria-label="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps,
-                so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
-              <p
-                aria-label="toggle-steps"
-                className={styles.toggleSteps}
-                onClick={() => toggleSteps(!showSteps)}
-              >{showSteps ? "Hide Steps..." : "Show Steps..."}</p>
+              <p aria-label="delete-property-step-text">
+                The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps, so deleting this property
+                may require editing the steps to make sure this deletion doesn't affect those steps.
+              </p>
+              <p aria-label="toggle-steps" className={styles.toggleSteps} onClick={() => toggleSteps(!showSteps)}>
+                {showSteps ? "Hide Steps..." : "Show Steps..."}
+              </p>
 
-              {showSteps && (
-                <ul className={styles.stepList}>
-                  {renderArrayValues}
-                </ul>
-              )}
-              <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
+              {showSteps && <ul className={styles.stepList}>{renderArrayValues}</ul>}
+              <p>
+                Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?
+              </p>
             </>
           )}
           {props.type === ConfirmationType.MissingParameterFunction && (
             <>
-              <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p>
+              <p aria-label="error-text">
+                Missing <b>getParamaterDefinitions</b> function. Please verify your module file.{" "}
+              </p>
             </>
           )}
-          {(props.type === ConfirmationType.PublishAll) && (
+          {props.type === ConfirmationType.PublishAll && (
             <>
               <p aria-label="save-all-text">Are you sure you want to publish your changes to the data model?</p>
               <p className={styles.publishAllText}>{ModelingMessages.saveEntityConfirm}</p>
             </>
           )}
-          {(props.type === ConfirmationType.RevertChanges) && (
+          {props.type === ConfirmationType.RevertChanges && (
             <>
               <p aria-label="save-all-text">Are you sure you want to revert all of your unpublished changes?</p>
               <p className={styles.revertChangeText}>{ModelingMessages.revertChangesConfirm}</p>
@@ -253,61 +267,60 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           )}
           {props.type === ConfirmationType.NavigationWarn && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Unpublished Changes"}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Unpublished Changes"}
+              </HCAlert>
 
-              <p aria-label="navigation-warn-text">You have made changes to the properties of one or more entity types.
-                If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.
+              <p aria-label="navigation-warn-text">
+                You have made changes to the properties of one or more entity types. If you leave the screen without
+                publishing your changes, they will not be available in the rest of Hub Central.
               </p>
 
               <p>Are you sure you want to leave the Model screen?</p>
             </>
           )}
 
-          {props.type === ConfirmationType.DeleteStep &&
-            <p aria-label="delete-step-text"
-            >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> step?</p>
-          }
+          {props.type === ConfirmationType.DeleteStep && (
+            <p aria-label="delete-step-text">
+              Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> step?
+            </p>
+          )}
 
-          {props.type === ConfirmationType.DeleteNotificationRow &&
-            <p aria-label="delete-notification-row"
-            >Are you sure you want to delete this match notification?</p>
-          }
+          {props.type === ConfirmationType.DeleteNotificationRow && (
+            <p aria-label="delete-notification-row">Are you sure you want to delete this match notification?</p>
+          )}
 
           {/**
-            * Confirmation message for adding a step to a flow
-            * @param props.boldTextArray[0] = step name
-            * @example 'order-ingest'
-            * @param props.boldTextArray[1] = flow name
-            * @example 'order-flow'
-          **/}
-          {props.type === ConfirmationType.AddStepToFlow &&
-            <p aria-label="add-step-to-flow-text"
-            >Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
+           * Confirmation message for adding a step to a flow
+           * @param props.boldTextArray[0] = step name
+           * @example 'order-ingest'
+           * @param props.boldTextArray[1] = flow name
+           * @example 'order-flow'
+           **/}
+          {props.type === ConfirmationType.AddStepToFlow && (
+            <p aria-label="add-step-to-flow-text">
+              Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
             </p>
-          }
+          )}
 
-          {props.type === ConfirmationType.DiscardChanges &&
-            <p aria-label="discard-changes-text">Discard Changes?</p>
-          }
+          {props.type === ConfirmationType.DiscardChanges && <p aria-label="discard-changes-text">Discard Changes?</p>}
 
           {props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes && (
             <>
-              <HCAlert
-                className={`mt-2 ${styles.alert}`}
-                showIcon
-                variant="warning"
-              >{"Concept class appears to be related to 1 or more entity types."}</HCAlert>
+              <HCAlert className={`mt-2 ${styles.alert}`} showIcon variant="warning">
+                {"Concept class appears to be related to 1 or more entity types."}
+              </HCAlert>
 
-              <p aria-label="delete-concept-class-related-entities-text">Edit the concept relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
+              <p aria-label="delete-concept-class-related-entities-text">
+                Edit the concept relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.
+              </p>
               <p
                 aria-label="toggle-entities"
                 className={styles.toggleSteps}
                 onClick={() => toggleEntities(!showEntities)}
-              >{showEntities ? "Hide Entities in concept relationship..." : "Show Entities in concept relationship..."}</p>
+              >
+                {showEntities ? "Hide Entities in concept relationship..." : "Show Entities in concept relationship..."}
+              </p>
 
               {showEntities && (
                 <ul className={styles.stepList} data-testid="conceptClassWithRelatedEntityTypes">
@@ -317,10 +330,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             </>
           )}
         </div>
-        {(props.type === ConfirmationType.DeleteEntityStepWarn
-          || props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences
-          || props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences
-          || props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes) ? modalFooterClose : modalFooter}
+        {props.type === ConfirmationType.DeleteEntityStepWarn ||
+        props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences ||
+        props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences ||
+        props.type === ConfirmationType.DeleteConceptClassWithRelatedEntityTypes
+          ? modalFooterClose
+          : modalFooter}
       </Modal.Body>
     </HCModal>
   );

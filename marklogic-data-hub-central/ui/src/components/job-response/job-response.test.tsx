@@ -17,7 +17,8 @@ const mockHistoryPush = jest.fn();
 jest.useRealTimers();
 
 jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"), useHistory: () => ({
+  ...jest.requireActual("react-router-dom"),
+  useHistory: () => ({
     push: mockHistoryPush,
   }),
 }));
@@ -25,15 +26,11 @@ jest.mock("react-router-dom", () => ({
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
   const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
+  const childrenDontHaveText = Array.from(node.children).every(child => !hasText(child));
   return nodeHasText && childrenDontHaveText;
 };
 
-
 describe("Job response modal", () => {
-
   beforeEach(() => {
     mocks.advancedAPI(axiosMock);
   });
@@ -52,19 +49,20 @@ describe("Job response modal", () => {
       ({getByText, getAllByText, getByTestId} = render(
         <Router>
           <CurationContext.Provider value={customerMatchingStep}>
-            <JobResponse
-              jobId={"e4590649-8c4b-419c-b6a1-473069186592"}
-              setOpenJobResponse={() => { }}
-            />
+            <JobResponse jobId={"e4590649-8c4b-419c-b6a1-473069186592"} setOpenJobResponse={() => {}} />
           </CurationContext.Provider>
-        </Router>
+        </Router>,
       ));
     });
 
     // verify modal text and headers
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "The flow testFlow completed");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "The flow testFlow completed");
+        }),
+      ),
+    ).toBeInTheDocument();
 
     expect(getByText("Job ID:")).toBeInTheDocument();
     expect(getByText("Start Time:")).toBeInTheDocument();
@@ -72,7 +70,7 @@ describe("Job response modal", () => {
 
     expect(getByText("e4590649-8c4b-419c-b6a1-473069186592")).toBeInTheDocument();
     // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    await waitForElement(() => getByText("testFlow"));
     let ts: string = curateData.jobRespSuccess.data.timeEnded; // "2020-04-24T14:05:01.019819-07:00"
     let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-24 14:05"
@@ -86,19 +84,19 @@ describe("Job response modal", () => {
     expect(getAllByText("Ingestion1")[0]).toBeInTheDocument();
 
     // checks merge-customer explore button
-    let exploreButton = await (waitForElement(() => getByTestId(`merge-customer-explorer-link`)));
+    let exploreButton = await waitForElement(() => getByTestId(`merge-customer-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
     // checks Mapping1 explore button
-    exploreButton = await (waitForElement(() => getByTestId(`Mapping1-explorer-link`)));
+    exploreButton = await waitForElement(() => getByTestId(`Mapping1-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
     });
     // checks Ingestion1 explore button
-    exploreButton = await (waitForElement(() => getByTestId(`Ingestion1-explorer-link`)));
+    exploreButton = await waitForElement(() => getByTestId(`Ingestion1-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
@@ -112,17 +110,14 @@ describe("Job response modal", () => {
       ({getByText, queryByText, getByTestId} = render(
         <Router>
           <CurationContext.Provider value={customerMatchingStep}>
-            <JobResponse
-              jobId={"350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}
-              setOpenJobResponse={() => { }}
-            />
+            <JobResponse jobId={"350da405-c1e9-4fa7-8269-d9aefe3b4b9a"} setOpenJobResponse={() => {}} />
           </CurationContext.Provider>
-        </Router>
+        </Router>,
       ));
     });
 
     // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    await waitForElement(() => getByText("testFlow"));
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
     let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-04 01:17"
@@ -130,7 +125,7 @@ describe("Job response modal", () => {
 
     expect(getByTestId("stepType-header")).toBeInTheDocument();
     // check that expected steps and step types are listed
-    await wait(()  => {
+    await wait(() => {
       expect(getByText("failedIngest")).toBeInTheDocument();
       expect(getByTestId("failedIngest-loading-type")).toBeInTheDocument();
       expect(getByText("Mapping1")).toBeInTheDocument();
@@ -158,18 +153,21 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"8c69c502-e682-46ce-a0f4-6506ab527ab8"}
-              setOpenJobResponse={() => { }}
+              setOpenJobResponse={() => {}}
               stopRun={stopRun}
             />
           </CurationContext.Provider>
-        </Router>
+        </Router>,
       ));
     });
 
-
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "The flow testFlow is running");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "The flow testFlow is running");
+        }),
+      ),
+    ).toBeInTheDocument();
 
     expect(getByText("Job ID:")).toBeInTheDocument();
     expect(getByText("Start Time:")).toBeInTheDocument();
@@ -177,14 +175,12 @@ describe("Job response modal", () => {
 
     expect(getByText("8c69c502-e682-46ce-a0f4-6506ab527ab8")).toBeInTheDocument();
     // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    await waitForElement(() => getByText("testFlow"));
     const stopButton = getByLabelText("icon: stop-circle");
     expect(stopButton).toBeInTheDocument();
     fireEvent.click(stopButton);
     expect(stopRun).toBeCalled();
-
   });
-
 
   test("Verify canceled job response", async () => {
     mocks.runAPI(axiosMock);
@@ -196,17 +192,21 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
-              setOpenJobResponse={() => { }}
+              setOpenJobResponse={() => {}}
               stopRun={stopRun}
             />
           </CurationContext.Provider>
-        </Router>
+        </Router>,
       ));
     });
 
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "The flow testFlow was canceled");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "The flow testFlow was canceled");
+        }),
+      ),
+    ).toBeInTheDocument();
 
     expect(getByText("Job ID:")).toBeInTheDocument();
     expect(getByText("Start Time:")).toBeInTheDocument();
@@ -229,17 +229,21 @@ describe("Job response modal", () => {
           <CurationContext.Provider value={customerMatchingStep}>
             <JobResponse
               jobId={"666f23f6-7fc7-492e-980f-8b2ba21a4b94"}
-              setOpenJobResponse={() => { }}
+              setOpenJobResponse={() => {}}
               stopRun={stopRun}
             />
           </CurationContext.Provider>
-        </Router>
+        </Router>,
       ));
     });
 
-    expect(await (waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "The flow testFlow was canceled");
-    })))).toBeInTheDocument();
+    expect(
+      await waitForElement(() =>
+        getByText((content, node) => {
+          return getSubElements(content, node, "The flow testFlow was canceled");
+        }),
+      ),
+    ).toBeInTheDocument();
 
     const infoIcon = getByLabelText("icon: info-circle");
     expect(infoIcon).toBeInTheDocument();

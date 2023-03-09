@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 
 type ErrorMessageContextInterface = {
-  isVisible: boolean,
-  message: JSX.Element|string,
-}
+  isVisible: boolean;
+  message: JSX.Element | string;
+};
 
 interface IErrorMessageContextInterface {
-  errorMessageOptions: ErrorMessageContextInterface,
+  errorMessageOptions: ErrorMessageContextInterface;
   setErrorMessageOptions: (options: ErrorMessageContextInterface) => void;
 }
 
@@ -17,25 +17,24 @@ const defaultErrorMessageOptions = {
 
 export const ErrorMessageContext = React.createContext<IErrorMessageContextInterface>({
   errorMessageOptions: defaultErrorMessageOptions,
-  setErrorMessageOptions: () => { },
+  setErrorMessageOptions: () => {},
 });
 
-const ErrorMessageProvider: React.FC<{ children: any }> = ({children}) => {
-
+const ErrorMessageProvider: React.FC<{children: any}> = ({children}) => {
   const [errorMessageOptions, setErrorMessageOptions] = useState<ErrorMessageContextInterface>({
     ...defaultErrorMessageOptions,
   });
 
   return (
-    <ErrorMessageContext.Provider value={{
-      errorMessageOptions,
-      setErrorMessageOptions,
-    }}>
+    <ErrorMessageContext.Provider
+      value={{
+        errorMessageOptions,
+        setErrorMessageOptions,
+      }}
+    >
       {children}
     </ErrorMessageContext.Provider>
   );
 };
 
 export default ErrorMessageProvider;
-
-

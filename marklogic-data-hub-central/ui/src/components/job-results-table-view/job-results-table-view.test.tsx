@@ -6,15 +6,12 @@ import {jobResults} from "../../assets/mock-data/monitor/job-results";
 import {validateTableRow} from "../../util/test-utils";
 import dayjs from "dayjs";
 
-
 describe("Job results Table view component", () => {
   test("Job Results table with data renders", async () => {
     const {getByText, getByTestId} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
     // Check table column headers are rendered
     expect(getByText("Step Name")).toBeInTheDocument();
@@ -25,34 +22,32 @@ describe("Job results Table view component", () => {
     expect(getByText("Duration")).toBeInTheDocument();
 
     //check table data is rendered correctly
-    await(() => expect(getByText("mapClientJSON")).toBeInTheDocument());
-    await(() => expect(getByText("mapping")).toBeInTheDocument());
+    await (() => expect(getByText("mapClientJSON")).toBeInTheDocument());
+    await (() => expect(getByText("mapping")).toBeInTheDocument());
     let ts: string = jobResults.results[0].startTime; // "2021-04-21T20:37:42.962833-05:00"
     let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
-    await(() => expect(getByText(tsExpected)).toBeInTheDocument()); // "2021-04-21 20:37"
-    await(() => expect(getByText("0s 66ms")).toBeInTheDocument());
-    await(() => expect(getByText("pari")).toBeInTheDocument());
+    await (() => expect(getByText(tsExpected)).toBeInTheDocument()); // "2021-04-21 20:37"
+    await (() => expect(getByText("0s 66ms")).toBeInTheDocument());
+    await (() => expect(getByText("pari")).toBeInTheDocument());
 
     //Check if the tooltip on 'completed Status works fine'.
-    await(() => fireEvent.mouseOver(getByTestId("success")));
-    await (() => (getByText("Completed Successfully")));
+    await (() => fireEvent.mouseOver(getByTestId("success")));
+    await (() => getByText("Completed Successfully"));
 
     //Check if the tooltip on 'Finished with errors works fine'.
     await (() => fireEvent.mouseOver(getByTestId("error")));
-    await (() => (getByText("Completed With Errors")));
+    await (() => getByText("Completed With Errors"));
 
     //Check if the tooltip on 'Running status works fine'.
     await (() => fireEvent.mouseOver(getByTestId("progress")));
-    await (() => (getByText("Running")));
+    await (() => getByText("Running"));
   });
 
   test("Job result table with no data renders", () => {
     const {getByText} = render(
       <Router>
-        <JobResultsTableView
-          data={[]}
-        />
-      </Router>
+        <JobResultsTableView data={[]} />
+      </Router>,
     );
     // Check for Empty Table
     expect(getByText(/No Data/i)).toBeInTheDocument();
@@ -61,10 +56,8 @@ describe("Job results Table view component", () => {
   test("Sorting in job results table with data renders properly", async () => {
     const {getByText} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
 
     const stepNameColumnSort = getByText("Step Name"); // For name column sorting
@@ -77,7 +70,6 @@ describe("Job results Table view component", () => {
     const stepTypeDefault = ["mapping", "ingestion", "mappingOrder"];
     const stepTypeDescending = ["mappingOrder", "mapping", "ingestion"];
     const stepTypeAscending = ["ingestion", "mapping", "mappingOrder"];
-
 
     /* Validate sorting on step name column in results*/
     //Check the sort order of step Name column rows before enforcing sort order
@@ -107,7 +99,6 @@ describe("Job results Table view component", () => {
     fireEvent.click(stepTypeColumnSort);
     resultsTable = document.querySelectorAll(".ant-table-row ant-table-row-level-0");
     validateTableRow(resultsTable, stepTypeDescending);
-
   });
 });
 
@@ -115,10 +106,8 @@ describe("Column Selector in Job results Table view component", () => {
   test("Verify visibility of columns selector popover", async () => {
     const {getByText, getByTestId, queryByTestId} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
 
     // check the initial non visibility of the popover
@@ -129,7 +118,7 @@ describe("Column Selector in Job results Table view component", () => {
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-icon"));
-    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await waitForElement(() => getByText("Select the columns to display."));
     await fireEvent.click(getByTestId("column-selector-icon"));
 
     expect(getByTestId("column-selector-popover")).toBeVisible();
@@ -138,15 +127,13 @@ describe("Column Selector in Job results Table view component", () => {
   test("Verify default values are checked", async () => {
     const {getByText, getByTestId} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-icon"));
-    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await waitForElement(() => getByText("Select the columns to display."));
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
     expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
@@ -157,10 +144,8 @@ describe("Column Selector in Job results Table view component", () => {
   test("Verify Cancel button", async () => {
     const {getByText, getByTestId} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
@@ -183,10 +168,8 @@ describe("Column Selector in Job results Table view component", () => {
   test("Verify Apply button", async () => {
     const {getByText, getByTestId, queryByText} = render(
       <Router>
-        <JobResultsTableView
-          data={jobResults.results}
-        />
-      </Router>
+        <JobResultsTableView data={jobResults.results} />
+      </Router>,
     );
 
     // Check table Configurable column headers are rendered
@@ -194,9 +177,9 @@ describe("Column Selector in Job results Table view component", () => {
     expect(getByText("Flow Name")).toBeInTheDocument();
 
     //check table data is rendered correctly
-    await(() => expect(getByText("pari")).toBeInTheDocument());
+    await (() => expect(getByText("pari")).toBeInTheDocument());
     expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument();
-    await(() => expect(getByText("convertedFlow")).toBeInTheDocument());
+    await (() => expect(getByText("convertedFlow")).toBeInTheDocument());
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     await fireEvent.click(getByTestId("column-selector-icon"));
@@ -213,8 +196,8 @@ describe("Column Selector in Job results Table view component", () => {
     await fireEvent.click(applyButton);
 
     //check table data is rendered correctly
-    await(() => expect(queryByText("pari")).not.toBeInTheDocument());
-    await(() => expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument());
-    await(() => expect(queryByText("convertedFlow")).not.toBeInTheDocument());
+    await (() => expect(queryByText("pari")).not.toBeInTheDocument());
+    await (() => expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument());
+    await (() => expect(queryByText("convertedFlow")).not.toBeInTheDocument());
   });
 });

@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import {getViewSettings, setViewSettings} from "./user-context";
 
 type LoadingContextInterface = {
-  start: number,
-  pageNumber: number,
-  pageSize: number,
-}
+  start: number;
+  pageNumber: number;
+  pageSize: number;
+};
 
 const defaultLoadingOptions = {
   start: 1,
@@ -21,21 +21,20 @@ interface ILoadingContextInterface {
 
 export const LoadingContext = React.createContext<ILoadingContextInterface>({
   loadingOptions: defaultLoadingOptions,
-  setPage: () => { },
-  setPageSize: () => { },
+  setPage: () => {},
+  setPageSize: () => {},
 });
 
-const LoadingProvider: React.FC<{ children: any }> = ({children}) => {
-
+const LoadingProvider: React.FC<{children: any}> = ({children}) => {
   const storage = getViewSettings();
   const storedPageNumber = storage?.load?.page;
 
   const [loadingOptions, setLoadingOptions] = useState<LoadingContextInterface>({
     ...defaultLoadingOptions,
-    ...(storedPageNumber !== null ? {pageNumber: storedPageNumber} : {})
+    ...(storedPageNumber !== null ? {pageNumber: storedPageNumber} : {}),
   });
 
-  const setPage = (pageNumber) => {
+  const setPage = pageNumber => {
     setLoadingOptions({
       ...loadingOptions,
       pageNumber: pageNumber,
@@ -64,8 +63,6 @@ const LoadingProvider: React.FC<{ children: any }> = ({children}) => {
     }
   }, [loadingOptions.pageNumber]);
 
-
-
   const setPageSize = (current: number, pageSize: number) => {
     setLoadingOptions({
       ...loadingOptions,
@@ -75,16 +72,16 @@ const LoadingProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   return (
-    <LoadingContext.Provider value={{
-      loadingOptions,
-      setPage,
-      setPageSize,
-    }}>
+    <LoadingContext.Provider
+      value={{
+        loadingOptions,
+        setPage,
+        setPageSize,
+      }}
+    >
       {children}
     </LoadingContext.Provider>
   );
 };
 
 export default LoadingProvider;
-
-

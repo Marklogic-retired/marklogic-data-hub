@@ -14,11 +14,9 @@ import loadData from "../assets/mock-data/curation/ingestion.data";
 jest.mock("axios");
 jest.setTimeout(30000);
 
-
 const DEFAULT_VIEW = "card";
 
 describe("Load component", () => {
-
   beforeEach(() => {
     mocks.loadAPI(axiosMock);
   });
@@ -32,22 +30,16 @@ describe("Load component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion"]);
 
-    const {
-      baseElement,
-      getByText,
-      getByPlaceholderText,
-      getByLabelText,
-      getByTestId,
-      queryByTestId,
-      queryByTitle} = render(
-      <MemoryRouter>
-        <AuthoritiesContext.Provider value={authorityService}>
-          <Load/>
-        </AuthoritiesContext.Provider>
-      </MemoryRouter>
-    );
+    const {baseElement, getByText, getByPlaceholderText, getByLabelText, getByTestId, queryByTestId, queryByTitle} =
+      render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <Load />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
+      );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("switch-view-list"))).toBeInTheDocument();
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
@@ -79,7 +71,7 @@ describe("Load component", () => {
     expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
     expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
 
-    expect(await(waitForElement(() => getByText("Target Database:")))).toBeInTheDocument();
+    expect(await waitForElement(() => getByText("Target Database:"))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
     fireEvent.click(getByText("Interceptors"));
     expect(getByLabelText("interceptors-textarea")).toBeDisabled();
@@ -96,7 +88,6 @@ describe("Load component", () => {
     // Check card layout
     fireEvent.click(getByLabelText("switch-view-card"));
 
-
     // test delete
     expect(queryByTitle("delete")).not.toBeInTheDocument();
   });
@@ -105,22 +96,16 @@ describe("Load component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "writeIngestion"]);
 
-    const {
-      baseElement,
-      getByText,
-      getAllByText,
-      getByLabelText,
-      getByPlaceholderText,
-      getByTestId,
-      queryAllByText} = render(
-      <MemoryRouter>
-        <AuthoritiesContext.Provider value={authorityService}>
-          <Load/>
-        </AuthoritiesContext.Provider>
-      </MemoryRouter>
-    );
+    const {baseElement, getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId, queryAllByText} =
+      render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <Load />
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>,
+      );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("switch-view-list"))).toBeInTheDocument();
 
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
@@ -200,7 +185,7 @@ describe("Load component", () => {
 
     // test delete
     fireEvent.click(getByTestId("testLoad-delete"));
-    expect(await(waitForElement(() => getByText("Yes")))).toBeInTheDocument();
+    expect(await waitForElement(() => getByText("Yes"))).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(getByText("Yes"));
     });
@@ -214,15 +199,15 @@ describe("Load component", () => {
     const {getByText, getAllByText, getByLabelText, getByTestId} = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <Load/>
+          <Load />
         </AuthoritiesContext.Provider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(await(waitForElement(() => getByLabelText("switch-view-list")))).toBeInTheDocument();
+    expect(await waitForElement(() => getByLabelText("switch-view-list"))).toBeInTheDocument();
 
     let intro = tiles.load.intro;
-    if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text
+    if (intro) expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated in default view
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
@@ -248,11 +233,8 @@ describe("Load component", () => {
     expect(getByText("Last Updated: " + tsExpected2)).toBeInTheDocument(); // "Last Updated: 01/01/2000 4:00AM"
     expect(getByTestId("testLoad-edit")).toBeInTheDocument();
     expect(getByLabelText("icon: delete")).toBeInTheDocument();
-
   });
-
 });
-
 
 describe("getViewSettings", () => {
   beforeEach(() => {
@@ -275,12 +257,12 @@ describe("getViewSettings", () => {
       },
       clear() {
         store = {};
-      }
+      },
     };
   })();
 
   Object.defineProperty(window, "sessionStorage", {
-    value: sessionStorageMock
+    value: sessionStorageMock,
   });
 
   it("should get page number from session storage", () => {

@@ -37,7 +37,14 @@ test("should render a HCSearch component with addon before and prefix", () => {
 });
 
 test("should render a HCSearch component with addon before, prefix and suffix", () => {
-  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} placeholder={"Search"} />);
+  render(
+    <HCSearch
+      addonBefore={"Addon Before"}
+      prefix={<FilePerson />}
+      suffix={<ArrowLeftCircleFill />}
+      placeholder={"Search"}
+    />,
+  );
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   const inputAddonElement = screen.getByTestId("hc-input-addonBefore");
   const inputSuffixElement = screen.getByTestId("hc-input-suffix");
@@ -47,7 +54,15 @@ test("should render a HCSearch component with addon before, prefix and suffix", 
 });
 
 test("should render a HCSearch component with addon before, prefix, suffix and allow clear", () => {
-  render(<HCSearch addonBefore={"Addon Before"} prefix={<FilePerson />} suffix={<ArrowLeftCircleFill />} allowClear placeholder={"Search"} />);
+  render(
+    <HCSearch
+      addonBefore={"Addon Before"}
+      prefix={<FilePerson />}
+      suffix={<ArrowLeftCircleFill />}
+      allowClear
+      placeholder={"Search"}
+    />,
+  );
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");
@@ -72,7 +87,15 @@ test("should click the HCSearch component after click clean icon", () => {
 });
 
 test("should click the HCSearch component with error and label", () => {
-  render(<HCSearch allowClear placeholder={"Search"} onSearch={() => {}} error errorMessage={"You have an error, please check the content"} />);
+  render(
+    <HCSearch
+      allowClear
+      placeholder={"Search"}
+      onSearch={() => {}}
+      error
+      errorMessage={"You have an error, please check the content"}
+    />,
+  );
   const inputElement = screen.getByTestId("hc-inputSearch-component");
   fireEvent.change(inputElement, {target: {value: "test"}});
   expect(inputElement["value"]).toBe("test");

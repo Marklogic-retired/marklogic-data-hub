@@ -9,7 +9,12 @@ import authorities from "../assets/mock-data/authorities.testutils";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
 import {getEntityTypes} from "../assets/mock-data/modeling/modeling";
-import {isModified, notModified, isModifiedTableView, notModifiedTableView} from "../assets/mock-data/modeling/modeling-context-mock";
+import {
+  isModified,
+  notModified,
+  isModifiedTableView,
+  notModifiedTableView,
+} from "../assets/mock-data/modeling/modeling-context-mock";
 import {primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
@@ -26,13 +31,13 @@ const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
 const mockHCUserRolesService = authorities.HCUserRolesService;
 
-const renderView = (view) => {
+const renderView = view => {
   let contextValue = view === "table" ? isModifiedTableView : isModified;
   return (
     <AuthoritiesContext.Provider value={mockDevRolesService}>
       <ModelingContext.Provider value={contextValue}>
         <Router>
-          <Modeling/>
+          <Modeling />
         </Router>
       </ModelingContext.Provider>
     </AuthoritiesContext.Provider>
@@ -55,10 +60,10 @@ describe("Modeling Page", () => {
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <ModelingContext.Provider value={isModifiedTableView}>
             <Router>
-              <Modeling/>
+              <Modeling />
             </Router>
           </ModelingContext.Provider>
-        </AuthoritiesContext.Provider>
+        </AuthoritiesContext.Provider>,
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -117,10 +122,10 @@ describe("Modeling Page", () => {
         <AuthoritiesContext.Provider value={mockOpRolesService}>
           <ModelingContext.Provider value={notModifiedTableView}>
             <Router>
-              <Modeling/>
+              <Modeling />
             </Router>
           </ModelingContext.Provider>
-        </AuthoritiesContext.Provider>
+        </AuthoritiesContext.Provider>,
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -140,7 +145,9 @@ describe("Modeling Page", () => {
     fireEvent.mouseOver(getByText("Add"));
     await wait(() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver(getByText("Publish"));
-    await wait(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await wait(() =>
+      expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument(),
+    );
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
     expect(getByLabelText("publish-to-database")).toBeDisabled();
   });
@@ -152,10 +159,10 @@ describe("Modeling Page", () => {
       <AuthoritiesContext.Provider value={mockHCUserRolesService}>
         <ModelingContext.Provider value={notModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(0));
@@ -168,7 +175,6 @@ describe("Modeling Page", () => {
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
   });
 
-
   test("Modeling: add button should be enabled if user has entity model writer role", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
 
@@ -176,10 +182,10 @@ describe("Modeling Page", () => {
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={notModifiedTableView}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
@@ -196,10 +202,10 @@ describe("Modeling Page", () => {
         <AuthoritiesContext.Provider value={mockOpRolesService}>
           <ModelingContext.Provider value={notModifiedTableView}>
             <Router>
-              <Modeling/>
+              <Modeling />
             </Router>
           </ModelingContext.Provider>
-        </AuthoritiesContext.Provider>
+        </AuthoritiesContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
     });
@@ -232,12 +238,12 @@ describe("getViewSettings", () => {
       },
       clear() {
         store = {};
-      }
+      },
     };
   })();
 
   Object.defineProperty(window, "sessionStorage", {
-    value: sessionStorageMock
+    value: sessionStorageMock,
   });
 
   it("should get entity expanded rows from session storage", () => {
@@ -250,7 +256,10 @@ describe("getViewSettings", () => {
 
   it("should get property expanded rows from session storage", () => {
     const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
-    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({model: {propertyExpandedRows: ["shipping,31"]}}));
+    window.sessionStorage.setItem(
+      "dataHubViewSettings",
+      JSON.stringify({model: {propertyExpandedRows: ["shipping,31"]}}),
+    );
     const actualValue = getViewSettings();
     expect(actualValue).toEqual({model: {propertyExpandedRows: ["shipping,31"]}});
     expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
@@ -258,7 +267,10 @@ describe("getViewSettings", () => {
 
   it("should get entity and property expanded rows from session storage", () => {
     const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
-    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({model: {entityExpandedRows: ["Customer,"], propertyExpandedRows: ["shipping,31"]}}));
+    window.sessionStorage.setItem(
+      "dataHubViewSettings",
+      JSON.stringify({model: {entityExpandedRows: ["Customer,"], propertyExpandedRows: ["shipping,31"]}}),
+    );
     const actualValue = getViewSettings();
     expect(actualValue).toEqual({model: {entityExpandedRows: ["Customer,"], propertyExpandedRows: ["shipping,31"]}});
     expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
@@ -286,21 +298,21 @@ describe("Graph view page", () => {
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
     let intro = tiles.model.intro;
-    if (intro)expect(getByText(intro)).toBeInTheDocument(); // tile intro text
+    if (intro) expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     expect(getByLabelText("switch-view")).toBeInTheDocument();
     expect(document.querySelector("#switch-view-graph")).toBeChecked(); // Graph view is checked by default.
     expect(getByText("Data Model")).toBeInTheDocument();
-    expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
+    expect(document.querySelector(".rbt-input-main")).toBeInTheDocument();
     userEvent.click(getByText("Add"));
     await expect(getByLabelText("add-entity-type")).toBeInTheDocument();
     await expect(getByLabelText("add-relationship")).toBeInTheDocument();
@@ -319,15 +331,15 @@ describe("Graph view page", () => {
       <AuthoritiesContext.Provider value={mockOpRolesService}>
         <ModelingContext.Provider value={notModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
-    let addEntityOrRelationshipBtn:any = await(() => getByLabelText("add-entity-type-relationship"));
-    await(() => expect(addEntityOrRelationshipBtn.firstChild).toBeDisabled());
+    let addEntityOrRelationshipBtn: any = await (() => getByLabelText("add-entity-type-relationship"));
+    await (() => expect(addEntityOrRelationshipBtn.firstChild).toBeDisabled());
   });
 
   it("Modeling: add button is enabled for model writer role", async () => {
@@ -338,15 +350,15 @@ describe("Graph view page", () => {
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={notModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
-    let addEntityOrRelationshipBtn:any = await(() => getByLabelText("add-entity-type-relationship"));
-    await(() => expect(addEntityOrRelationshipBtn.firstChild).toBeEnabled());
+    let addEntityOrRelationshipBtn: any = await (() => getByLabelText("add-entity-type-relationship"));
+    await (() => expect(addEntityOrRelationshipBtn.firstChild).toBeEnabled());
   });
 
   it("can toggle between graph view and table view properly", async () => {
@@ -357,20 +369,20 @@ describe("Graph view page", () => {
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
     let intro = tiles.model.intro;
-    if (intro)expect(getAllByText(intro)[0]).toBeInTheDocument(); // tile intro text
+    if (intro) expect(getAllByText(intro)[0]).toBeInTheDocument(); // tile intro text
 
     let graphViewButton = document.querySelector("#switch-view-graph");
     let tableViewButton = document.querySelector("#switch-view-table");
-    let filterInput = document.querySelector((".rbt-input-main"));
+    let filterInput = document.querySelector(".rbt-input-main");
     let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
     let publishToDatabaseBtn = getByLabelText("publish-to-database");
     let graphExportIcon = getByLabelText("graph-export");
@@ -409,16 +421,17 @@ describe("Graph view page", () => {
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
-            <Modeling/>
+            <Modeling />
           </Router>
         </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
+      </AuthoritiesContext.Provider>,
     );
 
     act(() => {
       userEvent.click(getByLabelText("publish-to-database"));
     });
-    expect(screen.getByLabelText("save-entity-confirm").textContent).toEqual("You have unpublished changes that are only available in the Model screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.");
+    expect(screen.getByLabelText("save-entity-confirm").textContent).toEqual(
+      "You have unpublished changes that are only available in the Model screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.",
+    );
   });
-
 });

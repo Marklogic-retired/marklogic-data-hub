@@ -10,8 +10,7 @@ interface Props {
   handleSelection: (index: number) => void;
 }
 
-const SourceNavigation: React.FC<Props> = (props) => {
-
+const SourceNavigation: React.FC<Props> = props => {
   return (
     <span className={styles.navigate_source_uris}>
       <HCButton
@@ -23,9 +22,11 @@ const SourceNavigation: React.FC<Props> = (props) => {
       >
         <ChevronLeft className={styles.navigateIcon} />
       </HCButton>
-        &nbsp;
-      <div aria-label="uriIndex" className={styles.URI_Index}><p>{props.currentIndex + 1}</p></div>
-        &nbsp;
+      &nbsp;
+      <div aria-label="uriIndex" className={styles.URI_Index}>
+        <p>{props.currentIndex + 1}</p>
+      </div>
+      &nbsp;
       <HCButton
         className={styles.navigate_uris_right}
         variant="outline-light"

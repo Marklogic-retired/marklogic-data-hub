@@ -16,11 +16,7 @@ import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../../../types/common-types";
 import {getSystemInfo} from "@api/environment";
 import {entityReferences} from "@api/modeling";
-import {
-  PropertyOptions,
-  PropertyType,
-  EntityModified
-} from "../../../../types/modeling-types";
+import {PropertyOptions, PropertyType, EntityModified} from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCInput, HCTooltip, HCCard, DynamicIcons, HCDivider, HCModal} from "@components/common";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
@@ -31,7 +27,7 @@ import {simulateMouseClick} from "@util/common-utils";
 
 type Props = {
   openRelationshipModal: boolean;
-  setOpenRelationshipModal: (boolean) => (void);
+  setOpenRelationshipModal: (boolean) => void;
   isEditing: boolean;
   relationshipInfo: any;
   dataModel: any;
@@ -43,14 +39,14 @@ type Props = {
   hubCentralConfig: any;
   getColor: any;
   mapFunctions: any;
-  edgeData?: any
-}
+  edgeData?: any;
+};
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
 enum eVisibleSettings {
   EntityToEntity,
-  EntityToConceptClass
+  EntityToConceptClass,
 }
 
 const AddEditRelationship: React.FC<Props> = ({
@@ -67,14 +63,19 @@ const AddEditRelationship: React.FC<Props> = ({
   hubCentralConfig,
   getColor,
   mapFunctions,
-  edgeData
+  edgeData,
 }) => {
-
-  const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(relationshipInfo.isConcept ? eVisibleSettings.EntityToConceptClass : eVisibleSettings.EntityToEntity);
-  const headerText = !isEditing ? visibleSettings === eVisibleSettings.EntityToConceptClass ? ModelingTooltips.addRelationshipHeader("entityToConceptClass") : ModelingTooltips.addRelationshipHeader("entityToEntity") : "";
+  const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(
+    relationshipInfo.isConcept ? eVisibleSettings.EntityToConceptClass : eVisibleSettings.EntityToEntity,
+  );
+  const headerText = !isEditing
+    ? visibleSettings === eVisibleSettings.EntityToConceptClass
+      ? ModelingTooltips.addRelationshipHeader("entityToConceptClass")
+      : ModelingTooltips.addRelationshipHeader("entityToEntity")
+    : "";
 
   const [relationshipName, setRelationshipName] = useState(""); //set default value when editing
-  const [joinPropertyValue, setJoinPropertyValue] = useState("");  //set default value when editing
+  const [joinPropertyValue, setJoinPropertyValue] = useState(""); //set default value when editing
   const [submitClicked, setSubmitClicked] = useState(false);
   const [oneToManySelected, setOneToManySelected] = useState(false); //set default value when editing
   const [errorMessage, setErrorMessage] = useState("");
@@ -110,7 +111,7 @@ const AddEditRelationship: React.FC<Props> = ({
   //Dummy ref node to simulate a click event
   const dummyNode: any = useRef();
 
-  const initRelationship = (sourceEntityIdx) => {
+  const initRelationship = sourceEntityIdx => {
     let sourceEntityDetails = dataModel[sourceEntityIdx];
     if (relationshipInfo.relationshipName !== "") {
       setRelationshipName(relationshipInfo.relationshipName);
@@ -140,7 +141,11 @@ const AddEditRelationship: React.FC<Props> = ({
     setTargetEntityName(relationshipInfo.targetNodeName);
     setTargetEntityColor(relationshipInfo.targetNodeColor);
     setOneToManySelected(false);
-    if (sourceEntityDetails.model.definitions[relationshipInfo.sourceNodeName]?.properties[relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
+    if (
+      sourceEntityDetails.model.definitions[relationshipInfo.sourceNodeName]?.properties[
+        relationshipInfo.relationshipName
+      ]?.hasOwnProperty("items")
+    ) {
       //set cardinality selection to "multiple"
       setOneToManySelected(true);
     }
@@ -150,7 +155,11 @@ const AddEditRelationship: React.FC<Props> = ({
     if (dataModel.length > 0 && JSON.stringify(relationshipInfo) !== "{}") {
       let isConcept = relationshipInfo.isConcept;
       setVisibleSettings(!isConcept ? eVisibleSettings.EntityToEntity : eVisibleSettings.EntityToConceptClass);
-      let targetEntityIdx = dataModel.findIndex(obj => isConcept ? obj.conceptName === relationshipInfo.targetNodeName : obj.entityName === relationshipInfo.targetNodeName);
+      let targetEntityIdx = dataModel.findIndex(obj =>
+        isConcept
+          ? obj.conceptName === relationshipInfo.targetNodeName
+          : obj.entityName === relationshipInfo.targetNodeName,
+      );
       let sourceEntityIdx = dataModel.findIndex(obj => obj.entityName === relationshipInfo.sourceNodeName);
 
       initRelationship(sourceEntityIdx);
@@ -219,7 +228,6 @@ const AddEditRelationship: React.FC<Props> = ({
           joinPropertyName: propertyOptions.joinPropertyName,
         };
       }
-
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
       let externalEntity = dataModel.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
@@ -231,7 +239,7 @@ const AddEditRelationship: React.FC<Props> = ({
             datatype: "string",
             relatedEntityType: externalEntity.entityTypeId,
             joinPropertyName: propertyOptions.joinPropertyName,
-          }
+          },
         };
       } else {
         return {
@@ -242,15 +250,13 @@ const AddEditRelationship: React.FC<Props> = ({
             datatype: propertyOptions.joinPropertyType,
             relatedEntityType: externalEntity.entityTypeId,
             joinPropertyName: propertyOptions.joinPropertyName,
-          }
+          },
         };
       }
-
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
         $ref: "#/definitions/" + propertyOptions.type,
       };
-
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
       return {
         datatype: "array",
@@ -258,9 +264,8 @@ const AddEditRelationship: React.FC<Props> = ({
         sortable: sortable,
         items: {
           $ref: "#/definitions/" + propertyOptions.type,
-        }
+        },
       };
-
     } else if (propertyOptions.propertyType === PropertyType.Basic && multiple) {
       return {
         datatype: "array",
@@ -269,19 +274,24 @@ const AddEditRelationship: React.FC<Props> = ({
         items: {
           datatype: propertyOptions.type,
           collation: "http://marklogic.com/collation/codepoint",
-        }
+        },
       };
     } else if (propertyOptions.propertyType === PropertyType.Basic && !multiple) {
       return {
         datatype: propertyOptions.type,
         facetable: facetable,
         sortable: sortable,
-        collation: "http://marklogic.com/collation/codepoint"
+        collation: "http://marklogic.com/collation/codepoint",
       };
     }
   };
 
-  const editPropertyUpdateDefinition = async (entityIdx: number, definitionName: string, propertyName: string, editPropertyOptions) => {
+  const editPropertyUpdateDefinition = async (
+    entityIdx: number,
+    definitionName: string,
+    propertyName: string,
+    editPropertyOptions,
+  ) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...dataModel[entityIdx].model.definitions};
@@ -289,11 +299,13 @@ const AddEditRelationship: React.FC<Props> = ({
 
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
 
-    const edge = edgeData.find((edge) => edge.from === definitionName && edge.label === propertyName && edge.structParent !== "");
+    const edge = edgeData.find(
+      edge => edge.from === definitionName && edge.label === propertyName && edge.structParent !== "",
+    );
     if (edge) {
       updatedDefinitions[edge.structParent]["properties"][propertyName] = newProperty;
       if (propertyName !== editPropertyOptions.name) {
-        let reMapDefinition = Object.keys(updatedDefinitions[edge.structParent]["properties"]).map((key) => {
+        let reMapDefinition = Object.keys(updatedDefinitions[edge.structParent]["properties"]).map(key => {
           const newKey = key === propertyName ? editPropertyOptions.name : key;
           const value = key === propertyName ? newProperty : updatedDefinitions[edge.structParent]["properties"][key];
           return {[newKey]: value};
@@ -305,7 +317,10 @@ const AddEditRelationship: React.FC<Props> = ({
 
       if (editPropertyOptions.propertyOptions.identifier === "yes") {
         entityTypeDefinition.primaryKey = editPropertyOptions.name;
-      } else if (entityTypeDefinition.hasOwnProperty("primaryKey") && entityTypeDefinition.primaryKey === propertyName) {
+      } else if (
+        entityTypeDefinition.hasOwnProperty("primaryKey") &&
+        entityTypeDefinition.primaryKey === propertyName
+      ) {
         delete entityTypeDefinition.primaryKey;
       }
 
@@ -328,30 +343,45 @@ const AddEditRelationship: React.FC<Props> = ({
       }
 
       if (propertyName !== editPropertyOptions.name) {
-        let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map((key) => {
+        let reMapDefinition = Object.keys(entityTypeDefinition["properties"]).map(key => {
           const newKey = key === propertyName ? editPropertyOptions.name : key;
           const value = key === propertyName ? newProperty : entityTypeDefinition["properties"][key];
           return {[newKey]: value};
         });
         entityTypeDefinition["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
 
-        if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
+        if (
+          entityTypeDefinition.hasOwnProperty("required") &&
+          entityTypeDefinition.required.some(value => value === propertyName)
+        ) {
           let index = entityTypeDefinition.required.indexOf(propertyName);
           entityTypeDefinition.required[index] = editPropertyOptions.name;
         }
-        if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
+        if (
+          entityTypeDefinition.hasOwnProperty("rangeIndex") &&
+          entityTypeDefinition.rangeIndex.some(value => value === propertyName)
+        ) {
           let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
           entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
         }
-        if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
+        if (
+          entityTypeDefinition.hasOwnProperty("pathRangeIndex") &&
+          entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)
+        ) {
           let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
           entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
         }
-        if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
+        if (
+          entityTypeDefinition.hasOwnProperty("elementRangeIndex") &&
+          entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)
+        ) {
           let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
           entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
         }
-        if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
+        if (
+          entityTypeDefinition.hasOwnProperty("wordLexicon") &&
+          entityTypeDefinition.wordLexicon.some(value => value === propertyName)
+        ) {
           let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
           entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
         }
@@ -362,7 +392,7 @@ const AddEditRelationship: React.FC<Props> = ({
 
     let modifiedEntityStruct: EntityModified = {
       entityName: definitionName,
-      modelDefinition: updatedDefinitions
+      modelDefinition: updatedDefinitions,
     };
     if (updateSavedEntity) {
       await updateSavedEntity([modifiedEntityStruct]);
@@ -371,14 +401,20 @@ const AddEditRelationship: React.FC<Props> = ({
     return modifiedEntityStruct;
   };
 
-  const editRelatedConceptUpdateEntityType = async (entityIdx: number, definitionName: string, editRelatedConceptOptions) => {
+  const editRelatedConceptUpdateEntityType = async (
+    entityIdx: number,
+    definitionName: string,
+    editRelatedConceptOptions,
+  ) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...dataModel[entityIdx].model.definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let conceptClassName = editRelatedConceptOptions.conceptClass;
     if (entityTypeDefinition.hasOwnProperty("relatedConcepts")) {
-      let conceptClassIndex = entityTypeDefinition.relatedConcepts.findIndex(obj => obj.conceptClass === conceptClassName);
+      let conceptClassIndex = entityTypeDefinition.relatedConcepts.findIndex(
+        obj => obj.conceptClass === conceptClassName,
+      );
       if (conceptClassIndex !== -1) {
         entityTypeDefinition["relatedConcepts"][conceptClassIndex] = editRelatedConceptOptions;
       } else {
@@ -392,7 +428,7 @@ const AddEditRelationship: React.FC<Props> = ({
 
     let modifiedEntityStruct: EntityModified = {
       entityName: definitionName,
-      modelDefinition: updatedDefinitions
+      modelDefinition: updatedDefinitions,
     };
     if (updateSavedEntity) {
       await updateSavedEntity([modifiedEntityStruct]);
@@ -423,14 +459,19 @@ const AddEditRelationship: React.FC<Props> = ({
       if (visibleSettings === eVisibleSettings.EntityToConceptClass && propertyErrorMessage !== "") return;
       let sourceEntityIdx = dataModel.findIndex(obj => obj.entityName === relationshipInfo.sourceNodeName);
       let sourceProperties = dataModel[sourceEntityIdx].model.definitions[relationshipInfo.sourceNodeName].properties;
-      let propertyNamesArray = isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== relationshipInfo.relationshipName) : Object.keys(sourceProperties);
+      let propertyNamesArray = isEditing
+        ? Object.keys(sourceProperties).filter(propertyName => propertyName !== relationshipInfo.relationshipName)
+        : Object.keys(sourceProperties);
       let joinPropertyVal = joinPropertyValue === "None" ? "" : joinPropertyValue;
       if (propertyNamesArray.includes(relationshipName) || relationshipInfo.sourceNodeName === relationshipName) {
         setErrorMessage("name-error");
       } else {
-
         //do not enter loading save if no changes have been made
-        if (joinPropertyValue === relationshipInfo.joinPropertyName && relationshipName === relationshipInfo.relationshipName && !cardinalityToggled) {
+        if (
+          joinPropertyValue === relationshipInfo.joinPropertyName &&
+          relationshipName === relationshipInfo.relationshipName &&
+          !cardinalityToggled
+        ) {
           toggleLoading(false);
           setOpenRelationshipModal(false);
         } else {
@@ -449,18 +490,27 @@ const AddEditRelationship: React.FC<Props> = ({
                 pii: "no",
                 propertyType: "relatedEntity",
                 sortable: false,
-                type: targetEntityName
-              }
+                type: targetEntityName,
+              },
             };
-            entityModified = editPropertyUpdateDefinition(sourceEntityIdx, relationshipInfo.sourceNodeName, relationshipInfo.relationshipName, newEditPropertyOptions);
+            entityModified = editPropertyUpdateDefinition(
+              sourceEntityIdx,
+              relationshipInfo.sourceNodeName,
+              relationshipInfo.relationshipName,
+              newEditPropertyOptions,
+            );
           } else {
             let newRelatedConceptPayload = {
               conceptClass: targetEntityName,
               conceptExpression: relationshipExpression,
               context: sourcePropertyValue,
-              predicate: relationshipName
+              predicate: relationshipName,
             };
-            entityModified = editRelatedConceptUpdateEntityType(sourceEntityIdx, relationshipInfo.sourceNodeName, newRelatedConceptPayload);
+            entityModified = editRelatedConceptUpdateEntityType(
+              sourceEntityIdx,
+              relationshipInfo.sourceNodeName,
+              newRelatedConceptPayload,
+            );
           }
           updateEntityModified(entityModified);
         }
@@ -473,13 +523,19 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
-  const createJoinMenu = (entityIdx) => {
+  const createJoinMenu = entityIdx => {
     let targetEntityDetails, entityUpdated, modelUpdated, menuProps, model, definitions;
     targetEntityDetails = dataModel[entityIdx];
     let isConceptClassJoinView = visibleSettings === eVisibleSettings.EntityToConceptClass;
-    model = isConceptClassJoinView ? targetEntityDetails.model.definitions[relationshipInfo.sourceNodeName] : targetEntityDetails.model.definitions[relationshipInfo.targetNodeName];
-    definitions = isConceptClassJoinView ? targetEntityDetails.model.definitions : targetEntityDetails.model.definitions;
-    entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === relationshipInfo.targetNodeName);
+    model = isConceptClassJoinView
+      ? targetEntityDetails.model.definitions[relationshipInfo.sourceNodeName]
+      : targetEntityDetails.model.definitions[relationshipInfo.targetNodeName];
+    definitions = isConceptClassJoinView
+      ? targetEntityDetails.model.definitions
+      : targetEntityDetails.model.definitions;
+    entityUpdated = modelingOptions.modifiedEntitiesArray.find(
+      ent => ent.entityName === relationshipInfo.targetNodeName,
+    );
     // Modified model data (if present)
     if (entityUpdated) {
       modelUpdated = entityUpdated.modelDefinition[relationshipInfo.targetNodeName];
@@ -498,77 +554,80 @@ const AddEditRelationship: React.FC<Props> = ({
   };
 
   const getJoinMenuProps = (model, modelUpdated, definitions, parentKey) => {
-    let alreadyAdded: string[] = [], result;
+    let alreadyAdded: string[] = [],
+      result;
     // Check each property from saved model and build menu items
     if (model) {
-      result = model.properties && Object.keys(model.properties).map(key => {
-        const generatedKey = parentKey ? `${parentKey}/${key}` : key;
-        alreadyAdded.push(key);
-        // Structured property case
-        if (model.properties[key].hasOwnProperty("$ref")) {
-          let parsedRef = model.properties[key]["$ref"].split("/");
-          let structuredType = parsedRef[parsedRef.length - 1];
-          let structuredTypeDefinition = definitions[structuredType];
-          if (!structuredType || !structuredTypeDefinition) {
+      result =
+        model.properties &&
+        Object.keys(model.properties).map(key => {
+          const generatedKey = parentKey ? `${parentKey}/${key}` : key;
+          alreadyAdded.push(key);
+          // Structured property case
+          if (model.properties[key].hasOwnProperty("$ref")) {
+            let parsedRef = model.properties[key]["$ref"].split("/");
+            let structuredType = parsedRef[parsedRef.length - 1];
+            let structuredTypeDefinition = definitions[structuredType];
+            if (!structuredType || !structuredTypeDefinition) {
+              return {
+                value: key,
+                label: key,
+                type: "", // TODO
+                disabled: true,
+                key: generatedKey,
+              };
+            }
+            const children = getJoinMenuProps(structuredTypeDefinition, "", definitions, generatedKey);
             return {
               value: key,
               label: key,
               type: "", // TODO
-              disabled: true,
-              key: generatedKey
+              disabled: false,
+              key: generatedKey,
+              children: children,
             };
-          }
-          const children = getJoinMenuProps(structuredTypeDefinition, "", definitions, generatedKey);
-          return {
-            value: key,
-            label: key,
-            type: "", // TODO
-            disabled: false,
-            key: generatedKey,
-            children: children
-          };
-        } else if (model.properties[key]["datatype"] === "array") {
-          // Array property case
-          if (!model.properties[key].hasOwnProperty("items") || !model.properties[key].items.hasOwnProperty("$ref")) {
+          } else if (model.properties[key]["datatype"] === "array") {
+            // Array property case
+            if (!model.properties[key].hasOwnProperty("items") || !model.properties[key].items.hasOwnProperty("$ref")) {
+              return {
+                value: key,
+                label: key,
+                type: "", // TODO
+                array: true,
+                key: generatedKey,
+              };
+            }
+            let parsedRef = model.properties[key].items["$ref"].split("/");
+            let structuredType = parsedRef[parsedRef.length - 1];
+            let structuredTypeDefinition = definitions[structuredType];
+            if (!structuredType || !structuredTypeDefinition) {
+              return {
+                value: key,
+                label: key,
+                type: "", // TODO
+                array: true,
+                key: generatedKey,
+              };
+            }
+            const children = getJoinMenuProps(structuredTypeDefinition, "", definitions, generatedKey);
             return {
               value: key,
               label: key,
               type: "", // TODO
               array: true,
-              key: generatedKey
+              key: generatedKey,
+              children: children,
             };
-          }
-          let parsedRef = model.properties[key].items["$ref"].split("/");
-          let structuredType = parsedRef[parsedRef.length - 1];
-          let structuredTypeDefinition = definitions[structuredType];
-          if (!structuredType || !structuredTypeDefinition) {
+          } else {
+            // Default case
             return {
               value: key,
               label: key,
-              type: "", // TODO
-              array: true,
-              key: generatedKey
+              type: model.properties[key].datatype,
+              key: generatedKey,
             };
           }
-          const children = getJoinMenuProps(structuredTypeDefinition, "", definitions, generatedKey);
-          return {
-            value: key,
-            label: key,
-            type: "", // TODO
-            array: true,
-            key: generatedKey,
-            children: children
-          };
-        } else {
-          // Default case
-          return {
-            value: key,
-            label: key,
-            type: model.properties[key].datatype,
-            key: generatedKey
-          };
-        }
-      });
+        });
     }
     // Include any new properties from updated model object
     if (modelUpdated) {
@@ -578,7 +637,7 @@ const AddEditRelationship: React.FC<Props> = ({
             value: key,
             label: key,
             type: modelUpdated.properties[key].datatype,
-            disabled: true
+            disabled: true,
           });
         }
       });
@@ -595,7 +654,7 @@ const AddEditRelationship: React.FC<Props> = ({
     setCardinalityToggled(!cardinalityToggled);
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "relationship") {
       setRelationshipName(event.target.value);
       if (event.target.value === "") {
@@ -608,10 +667,9 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
-  const handleOptionSelect = (selectedItem) => {
+  const handleOptionSelect = selectedItem => {
     setJoinPropertyValue(selectedItem.value);
   };
-
 
   function handleMenuClick(event) {
     let model, menuProps, entityName, entityIdx, definitions;
@@ -642,12 +700,14 @@ const AddEditRelationship: React.FC<Props> = ({
   }
 
   //format entity types to tuples to work
-  const entityTypesToTuples = (entityTypes) => {
+  const entityTypesToTuples = entityTypes => {
     let entityTuples: any = [];
     let isConcept = visibleSettings === eVisibleSettings.EntityToConceptClass;
     let nodeName = !isConcept ? "entityName" : "conceptName";
     let entityTypesUpdated = !isConcept ? entityTypes : entityTypes.filter(e => e.hasOwnProperty("conceptName"));
-    entityTypesUpdated.forEach(entity => entityTuples.push({value: entity[nodeName], key: entity[nodeName], struct: false}));
+    entityTypesUpdated.forEach(entity =>
+      entityTuples.push({value: entity[nodeName], key: entity[nodeName], struct: false}),
+    );
     return entityTuples;
   };
 
@@ -657,18 +717,21 @@ const AddEditRelationship: React.FC<Props> = ({
 
   const cardinalityTooltipText = ModelingTooltips.cardinalityButton();
 
-  const DropdownMenu = <Dropdown.Menu style={{minWidth: "250px"}} align={"end"}>
-    <HCInput
-      value={filterEntity}
-      id="inputEntitySearch"
-      className={`mx-2 my-2 w-auto`}
-      onChange={(e) => setFilterEntity(e.target.value)}
-      suffix={<FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />}
-    />
-    {
-      entityTypesToTuples(dataModel)
-        .filter(oElement => !filterEntity || (oElement.value && oElement.value.toLowerCase().includes(filterEntity.toLowerCase())))
-        .map((item, index) =>
+  const DropdownMenu = (
+    <Dropdown.Menu style={{minWidth: "250px"}} align={"end"}>
+      <HCInput
+        value={filterEntity}
+        id="inputEntitySearch"
+        className={`mx-2 my-2 w-auto`}
+        onChange={e => setFilterEntity(e.target.value)}
+        suffix={<FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />}
+      />
+      {entityTypesToTuples(dataModel)
+        .filter(
+          oElement =>
+            !filterEntity || (oElement.value && oElement.value.toLowerCase().includes(filterEntity.toLowerCase())),
+        )
+        .map((item, index) => (
           <Dropdown.Item
             data-testid={`${item.value}-option`}
             onClick={() => handleMenuClick(item.value)}
@@ -676,17 +739,19 @@ const AddEditRelationship: React.FC<Props> = ({
             role={"option"}
             key={index}
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") { handleMenuClick(item.value); }
+            onKeyDown={e => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleMenuClick(item.value);
+              }
             }}
           >
             {item.value}
           </Dropdown.Item>
-        )
-    }
-  </Dropdown.Menu>;
+        ))}
+    </Dropdown.Menu>
+  );
 
-  const MenuList = (props) => (
+  const MenuList = props => (
     <div id="foreignKey-dropdown-MenuList">
       <SelectComponents.MenuList {...props} />
     </div>
@@ -702,8 +767,16 @@ const AddEditRelationship: React.FC<Props> = ({
     return flatArray;
   };
 
-  const foreignKeyOptions = targetNodeJoinProperties.length > 0 ? targetNodeJoinProperties.map((prop, index) => ({value: prop.value, label: prop.label, isDisabled: prop.hasOwnProperty("children") || prop.array})) : [];
-  const sourcePropertyOptions = sourceNodeJoinProperties.length > 0 ? flattenSourceArray([...sourceNodeJoinProperties], []) : [];
+  const foreignKeyOptions =
+    targetNodeJoinProperties.length > 0
+      ? targetNodeJoinProperties.map((prop, index) => ({
+        value: prop.value,
+        label: prop.label,
+        isDisabled: prop.hasOwnProperty("children") || prop.array,
+      }))
+      : [];
+  const sourcePropertyOptions =
+    sourceNodeJoinProperties.length > 0 ? flattenSourceArray([...sourceNodeJoinProperties], []) : [];
   const listIdent = sourcePropertyOptions.reduce((acc, element) => {
     if (!element.key) {
       acc.push(0);
@@ -729,11 +802,7 @@ const AddEditRelationship: React.FC<Props> = ({
       tabIndex={0}
       openMenuOnFocus
       formatOptionLabel={({value, label}) => {
-        return (
-          <span aria-label={`${label}-option`}>
-            {label === "None" ? "- " + label + " -" : label}
-          </span>
-        );
+        return <span aria-label={`${label}-option`}>{label === "None" ? "- " + label + " -" : label}</span>;
       }}
     />
   );
@@ -764,8 +833,16 @@ const AddEditRelationship: React.FC<Props> = ({
     return (
       <div className={styles.propertySelectorContainer}>
         <Dropdown className="m-0 w-100" as={ButtonGroup} autoClose="outside">
-          <Dropdown.Toggle id="property-dropdown-wrapper" variant="outline-light" className="p-0 ps-2 pe-2 w-100 d-flex justify-content-between align-items-center" style={{height: "24px"}} size="sm">
-            <span id="property-dropdown" className="d-inline-block text-truncate">{sourcePropertyValue ? sourcePropertyValue : "select property*"}</span>
+          <Dropdown.Toggle
+            id="property-dropdown-wrapper"
+            variant="outline-light"
+            className="p-0 ps-2 pe-2 w-100 d-flex justify-content-between align-items-center"
+            style={{height: "24px"}}
+            size="sm"
+          >
+            <span id="property-dropdown" className="d-inline-block text-truncate">
+              {sourcePropertyValue ? sourcePropertyValue : "select property*"}
+            </span>
             <i id="listIcon" data-testid={"sourceProperty-listIcon"}>
               <FontAwesomeIcon
                 icon={faChevronDown}
@@ -783,18 +860,23 @@ const AddEditRelationship: React.FC<Props> = ({
                 onItemSelect={onEntityPropertySelect}
                 srcData={dataOptions}
                 indentList={listIdent}
-                modelling={false} />
+                modelling={false}
+              />
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        {propertyErrorMessage && submitClicked ?
+        {propertyErrorMessage && submitClicked ? (
           <HCTooltip text={propertyErrorMessage} placement={"bottom"} id="exclamation-property-tooltip">
-            <i data-testid="error-property-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.propertyErrorIcon} /></i>
-          </HCTooltip> : ""}
+            <i data-testid="error-property-circle">
+              <FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.propertyErrorIcon} />
+            </i>
+          </HCTooltip>
+        ) : (
+          ""
+        )}
       </div>
     );
   };
-
 
   const handleRelationshipDeletion = async () => {
     let entityName = relationshipInfo.sourceNodeName;
@@ -818,7 +900,7 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
-  const handleDelete = (e) => {
+  const handleDelete = e => {
     if (!canWriteEntityModel && canReadEntityModel) {
       return e.preventDefault();
     } else {
@@ -826,41 +908,50 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
-  const modalFooter = <>
-    <div className={styles.deleteTooltip}>
-      <HCTooltip text={ModelingTooltips.deleteRelationshipIcon} id="delete-relationship-tooltip" placement="top">
-        <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
-          <FontAwesomeIcon tabIndex={0} className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
-            icon={faTrashAlt}
-            onClick={(event) => {
-              handleDelete(event);
-            }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
+  const modalFooter = (
+    <>
+      <div className={styles.deleteTooltip}>
+        <HCTooltip text={ModelingTooltips.deleteRelationshipIcon} id="delete-relationship-tooltip" placement="top">
+          <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
+            <FontAwesomeIcon
+              tabIndex={0}
+              className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon}
+              size="lg"
+              icon={faTrashAlt}
+              onClick={event => {
                 handleDelete(event);
-              }
-            }}
-          />
-        </i>
-      </HCTooltip>
-    </div>
-    <div>
-      <HCButton
-        aria-label="relationship-modal-cancel"
-        variant="outline-light"
-        className={"ms-auto me-2"}
-        onClick={onCancel}
-      >Cancel</HCButton>
-      <HCButton
-        aria-label="relationship-modal-submit"
-        // form="property-form"
-        variant="primary"
-        type="submit"
-        loading={loading}
-        onClick={onSubmit}
-      >{isEditing ? "Save" : "Add"}</HCButton>
-    </div>
-  </>;
+              }}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  handleDelete(event);
+                }
+              }}
+            />
+          </i>
+        </HCTooltip>
+      </div>
+      <div>
+        <HCButton
+          aria-label="relationship-modal-cancel"
+          variant="outline-light"
+          className={"ms-auto me-2"}
+          onClick={onCancel}
+        >
+          Cancel
+        </HCButton>
+        <HCButton
+          aria-label="relationship-modal-submit"
+          // form="property-form"
+          variant="primary"
+          type="submit"
+          loading={loading}
+          onClick={onSubmit}
+        >
+          {isEditing ? "Save" : "Add"}
+        </HCButton>
+      </div>
+    </>
+  );
 
   const confirmAction = async () => {
     let propertyName = relationshipInfo.relationshipName;
@@ -880,13 +971,15 @@ const AddEditRelationship: React.FC<Props> = ({
     if (visibleSettings === eVisibleSettings.EntityToEntity) {
       delete entityTypeDefinition["properties"][propertyName];
     } else {
-      let itemIndex = entityTypeDefinition["relatedConcepts"].findIndex(obj => obj.predicate === propertyName && obj.conceptClass === targetEntityName);
+      let itemIndex = entityTypeDefinition["relatedConcepts"].findIndex(
+        obj => obj.predicate === propertyName && obj.conceptClass === targetEntityName,
+      );
       entityTypeDefinition["relatedConcepts"].splice(itemIndex, 1);
     }
     updatedDefinitions[sourceEntityName] = entityTypeDefinition;
     let entityModifiedInfo: EntityModified = {
       entityName: sourceEntityName,
-      modelDefinition: updatedDefinitions.definitions
+      modelDefinition: updatedDefinitions.definitions,
     };
     setModifiedEntity(entityModifiedInfo);
     updateEntityModified(modifiedEntity);
@@ -900,15 +993,16 @@ const AddEditRelationship: React.FC<Props> = ({
     let icon = defaultNodeIcon;
     let modelCategory = getCategoryWithinModel(isConceptTarget);
     let iconExistsOnServer = iconExistsForNode(nodeName, isConceptTarget, hubCentralConfig);
-    return iconExistsOnServer ? hubCentralConfig.modeling[modelCategory][nodeName].icon
-      : icon;
+    return iconExistsOnServer ? hubCentralConfig.modeling[modelCategory][nodeName].icon : icon;
   };
 
   const handleSelectedVisibleSetting = async ({target: {value}}) => {
     setVisibleSettings(eVisibleSettings[value as keyof typeof eVisibleSettings]);
     setTargetEntityName(value === "EntityToConceptClass" ? "Select a concept class*" : "Select target entity type*");
     setEmptyTargetEntity(true);
-    setTargetEntityColor(value === "EntityToConceptClass" ? themeColors.defaults.conceptColor : themeColors.defaults.entityColor);
+    setTargetEntityColor(
+      value === "EntityToConceptClass" ? themeColors.defaults.conceptColor : themeColors.defaults.entityColor,
+    );
     setSubmitClicked(false);
   };
 
@@ -917,7 +1011,9 @@ const AddEditRelationship: React.FC<Props> = ({
     if (!relationshipExpression) {
       newExpression = "";
     }
-    newExpression = relationshipExpression.substr(0, caretPosition) + content +
+    newExpression =
+      relationshipExpression.substr(0, caretPosition) +
+      content +
       relationshipExpression.substr(caretPosition, relationshipExpression.length);
     setRelationshipExpression(newExpression);
 
@@ -935,7 +1031,7 @@ const AddEditRelationship: React.FC<Props> = ({
     simulateMouseClick(dummyNode.current);
   };
 
-  const functionsDef = (functionName) => {
+  const functionsDef = functionName => {
     return mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
@@ -968,7 +1064,7 @@ const AddEditRelationship: React.FC<Props> = ({
     }
   };
 
-  const handleSourceList = async (e) => {
+  const handleSourceList = async e => {
     if (!displaySourceList && !displaySourceMenu) {
       setSourceValue("");
       await setDisplaySourceList(true);
@@ -991,30 +1087,28 @@ const AddEditRelationship: React.FC<Props> = ({
 
   const functionDropdown = () => {
     return (
-      <Dropdown as={ButtonGroup} autoClose="outside"
-        onToggle={(show) => {
+      <Dropdown
+        as={ButtonGroup}
+        autoClose="outside"
+        onToggle={show => {
           show && handleFunctionsList();
         }}
       >
-
-        <Dropdown.Toggle id="functionIcon"
+        <Dropdown.Toggle
+          id="functionIcon"
           data-testid={"optionalExpression-functionIcon"}
           className={styles.functionIcon}
           size="sm"
-          variant="outline-light">
+          variant="outline-light"
+        >
           <HCTooltip id="function-tooltip" text={"Function"} placement="bottom">
-            <span>
-              fx
-            </span>
+            <span>fx</span>
           </HCTooltip>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-          <Dropdown.Item className={styles.dropdownMenuItem}>
-            {functionMenu}
-          </Dropdown.Item>
+          <Dropdown.Item className={styles.dropdownMenuItem}>{functionMenu}</Dropdown.Item>
         </Dropdown.Menu>
-
       </Dropdown>
     );
   };
@@ -1027,16 +1121,14 @@ const AddEditRelationship: React.FC<Props> = ({
       onItemSelect={onSourcePropertySelect}
       srcData={sourcePropertyOptions}
       indentList={listIdent}
-      modelling={false} />
+      modelling={false}
+    />
   );
 
   const sourceDropdown = () => {
     return (
-
-      <Dropdown as={ButtonGroup} autoClose="outside"
-      >
-        <Dropdown.Toggle id="sourcePropertyIcon" variant="outline-light" className={styles.sourceDrop}
-          size="sm">
+      <Dropdown as={ButtonGroup} autoClose="outside">
+        <Dropdown.Toggle id="sourcePropertyIcon" variant="outline-light" className={styles.sourceDrop} size="sm">
           <HCTooltip id="source-field-tooltip" text={"Source Field"} placement="bottom">
             <i id="listIcon" data-testid={"sourceProperty-listIcon"}>
               <FontAwesomeIcon
@@ -1044,203 +1136,334 @@ const AddEditRelationship: React.FC<Props> = ({
                 size="lg"
                 data-testid="sourcePropertylistIcon"
                 className={styles.listIcon}
-                onClick={(e) => handleSourceList(e)}
+                onClick={e => handleSourceList(e)}
               />
             </i>
           </HCTooltip>
         </Dropdown.Toggle>
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-          <Dropdown.Item className={styles.dropdownMenuItem}>
-            {sourceMenu}
-          </Dropdown.Item>
+          <Dropdown.Item className={styles.dropdownMenuItem}>{sourceMenu}</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
   };
 
-  const handleRelationshipExpression = (event) => {
+  const handleRelationshipExpression = event => {
     setCaretPosition(event.target.selectionStart);
     setRelationshipExpression(event.target.value);
   };
 
-  const optionalExpressionField = <div className={styles.optionalExpressionContainer}>
-    <FormLabel column lg={1}>{"Expression:"}</FormLabel>
-    <HCInput
-      value={relationshipExpression}
-      id="relationshipExpression"
-      placeholder="Enter the expression to create a custom concept IRI"
-      onChange={handleRelationshipExpression}
-    />
-    <span>{sourceDropdown()}</span>
-    <span>{functionDropdown()}</span>
-  </div>;
+  const optionalExpressionField = (
+    <div className={styles.optionalExpressionContainer}>
+      <FormLabel column lg={1}>
+        {"Expression:"}
+      </FormLabel>
+      <HCInput
+        value={relationshipExpression}
+        id="relationshipExpression"
+        placeholder="Enter the expression to create a custom concept IRI"
+        onChange={handleRelationshipExpression}
+      />
+      <span>{sourceDropdown()}</span>
+      <span>{functionDropdown()}</span>
+    </div>
+  );
 
-  return (<HCModal
-    show={openRelationshipModal}
-    dialogClassName={styles.dialog960w}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"pe-4"}>
-      <span aria-label="relationshipHeader" className={"fs-3"}>{isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"py-4"}>
-      <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
-        {
-          <div aria-label="header-message">
-            {headerText}
-          </div>
-        }
-        <HCTooltip id="relationshipTypeToggleDisabled-tooltip" text={isEditing ? ModelingTooltips.relationshipTypeToggleDisabledInfo : ""} placement={"bottom"}>
-          <div id={isEditing ? "relationshipTypeToggleDisabled" : "relationshipTypeToggle"} className={isEditing ? styles.relationshipTypeToggleDisabled : ""}>
-            <Row>
-              <Col className={"d-flex mb-2 mt-3 align-items-center"} id="srcType">
-                <Form.Check
-                  inline
-                  id={"entityToEntity"}
-                  name={"visibleSettings"}
-                  type={"radio"}
-                  checked={visibleSettings === eVisibleSettings.EntityToEntity ? true : false}
-                  onChange={handleSelectedVisibleSetting}
-                  label={"Entity to Entity"}
-                  value={eVisibleSettings[eVisibleSettings.EntityToEntity]}
-                  aria-label={"entityToEntity"}
-                  className={"mb-0"}
-                  style={isEditing ? {cursor: "not-allowed"} : {cursor: "default"}}
-                  disabled={isEditing}
-                />
-                <Form.Check
-                  inline
-                  id={"entityToConceptClass"}
-                  name={"visibleSettings"}
-                  type={"radio"}
-                  checked={visibleSettings === eVisibleSettings.EntityToConceptClass ? true : false}
-                  onChange={handleSelectedVisibleSetting}
-                  label={"Entity to Concept class"}
-                  value={eVisibleSettings[eVisibleSettings.EntityToConceptClass]}
-                  aria-label={"entityToConceptClass"}
-                  className={"mb-0"}
-                  style={{cursor: "not-allowed"}}
-                  disabled={isEditing}
-                />
-              </Col>
-            </Row>
-          </div>
-        </HCTooltip>
-        <HCDivider />
-        <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
-          <div ref={dummyNode} />
-          <div className={styles.nodeDisplay}>
-            <span className={styles.nodeLabel}>SOURCE</span>
-            <HCCard data-testid={"sourceEntityNode"} style={{width: 240, backgroundColor: relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
-              <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
-                <p data-testid={`${relationshipInfo.sourceNodeName}-sourceNodeName`} className={"m-0 text-center"}>
-                  <DynamicIcons name={getEntityTypeIcon(relationshipInfo.sourceNodeName)} />
-                  <b>{relationshipInfo.sourceNodeName}</b>
-                </p>
-              </div>
-            </HCCard>
-          </div>
-          {visibleSettings === eVisibleSettings.EntityToConceptClass && <><div className={`mx-0.75 ${styles.propertyContainer}`}>
-            {propertyDropdown()}
-            <HCTooltip id="sourceProperty-key-tooltip" text={ModelingTooltips.sourcePropertyKeyInfo} placement={"right"}>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
-            </HCTooltip>
-          </div>
-          <hr className={styles.horizontalLineBeforeName} />
-          </>}
-          <div className={styles.relationshipInputContainer}>
-            <HCInput
-              id="relationship"
-              placeholder="Relationship*"
-              value={relationshipName}
-              onChange={handleChange}
-              size={"sm"}
-              className={styles.relationshipInput}
-              ariaLabel="relationship-textarea"
-              style={errorMessage && submitClicked ? {border: "solid 1px #C00"} : {}}
-            />
-            {errorMessage && submitClicked ?
-              <HCTooltip text={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(relationshipName) : errorMessage} placement={"bottom"} id="exclamation-tooltip">
-                <i data-testid="error-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} /></i>
-              </HCTooltip> : ""}
-            <HCTooltip text={ModelingTooltips.relationshipNameInfo(relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-            </HCTooltip>
-          </div>
-          <hr className={styles.horizontalLine} style={{width: visibleSettings === eVisibleSettings.EntityToConceptClass ? "100px" : "185px"}} />
-          {visibleSettings === eVisibleSettings.EntityToConceptClass ? <span>
-            <HCButton variant="onlined-light" className={styles.cardinalityButtonConcept} data-testid="cardinalityButton">
-              <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} style={{marginRight: "-10px"}} src={oneToOneIcon} alt={""} />
-            </HCButton>
-          </span> :
-            <HCTooltip id="cardinality-tooltip" text={cardinalityTooltipText} placement={"bottom"}>
-              <span>
-                <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
-                  {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()} /> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()} />}
-                </HCButton>
-              </span>
-            </HCTooltip>}
-          <div className={styles.nodeDisplay}>
-            <span className={styles.nodeLabel}>TARGET</span>
-            <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-              <HCCard data-testid={"targetEntityNode"} style={{width: 240, backgroundColor: targetEntityColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
+  return (
+    <HCModal show={openRelationshipModal} dialogClassName={styles.dialog960w} onHide={onCancel}>
+      <Modal.Header className={"pe-4"}>
+        <span aria-label="relationshipHeader" className={"fs-3"}>
+          {isEditing ? "Edit Relationship" : "Add a Relationship"}
+        </span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"py-4"}>
+        <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
+          {<div aria-label="header-message">{headerText}</div>}
+          <HCTooltip
+            id="relationshipTypeToggleDisabled-tooltip"
+            text={isEditing ? ModelingTooltips.relationshipTypeToggleDisabledInfo : ""}
+            placement={"bottom"}
+          >
+            <div
+              id={isEditing ? "relationshipTypeToggleDisabled" : "relationshipTypeToggle"}
+              className={isEditing ? styles.relationshipTypeToggleDisabled : ""}
+            >
+              <Row>
+                <Col className={"d-flex mb-2 mt-3 align-items-center"} id="srcType">
+                  <Form.Check
+                    inline
+                    id={"entityToEntity"}
+                    name={"visibleSettings"}
+                    type={"radio"}
+                    checked={visibleSettings === eVisibleSettings.EntityToEntity ? true : false}
+                    onChange={handleSelectedVisibleSetting}
+                    label={"Entity to Entity"}
+                    value={eVisibleSettings[eVisibleSettings.EntityToEntity]}
+                    aria-label={"entityToEntity"}
+                    className={"mb-0"}
+                    style={isEditing ? {cursor: "not-allowed"} : {cursor: "default"}}
+                    disabled={isEditing}
+                  />
+                  <Form.Check
+                    inline
+                    id={"entityToConceptClass"}
+                    name={"visibleSettings"}
+                    type={"radio"}
+                    checked={visibleSettings === eVisibleSettings.EntityToConceptClass ? true : false}
+                    onChange={handleSelectedVisibleSetting}
+                    label={"Entity to Concept class"}
+                    value={eVisibleSettings[eVisibleSettings.EntityToConceptClass]}
+                    aria-label={"entityToConceptClass"}
+                    className={"mb-0"}
+                    style={{cursor: "not-allowed"}}
+                    disabled={isEditing}
+                  />
+                </Col>
+              </Row>
+            </div>
+          </HCTooltip>
+          <HCDivider />
+          <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
+            <div ref={dummyNode} />
+            <div className={styles.nodeDisplay}>
+              <span className={styles.nodeLabel}>SOURCE</span>
+              <HCCard
+                data-testid={"sourceEntityNode"}
+                style={{width: 240, backgroundColor: relationshipInfo.sourceNodeColor}}
+                bodyClassName={styles.cardBody}
+                className={styles.cardContainer}
+              >
                 <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
-                  <p data-testid={`${targetEntityName}-targetNodeName`} className={"m-0 text-center"}>
-                    <DynamicIcons name={getEntityTypeIcon(targetEntityName, visibleSettings === eVisibleSettings.EntityToConceptClass)} />{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}
+                  <p data-testid={`${relationshipInfo.sourceNodeName}-sourceNodeName`} className={"m-0 text-center"}>
+                    <DynamicIcons name={getEntityTypeIcon(relationshipInfo.sourceNodeName)} />
+                    <b>{relationshipInfo.sourceNodeName}</b>
                   </p>
                 </div>
               </HCCard>
-              {!isEditing ?
-                <Dropdown>
-                  <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.chevron} ${styles.dropdownButtonMenu}`}>
-                    <ChevronDown className={styles.test}/>
-                  </Dropdown.Toggle>
-                  {DropdownMenu}
-                </Dropdown>
-                : null}
             </div>
-            {submitClicked && emptyTargetEntity ? <span className={styles.targetEntityErrorMsg}>{ModelingTooltips.targetEntityEmpty(visibleSettings === eVisibleSettings.EntityToConceptClass ? "concept class" : "entity type")}</span> : null}
+            {visibleSettings === eVisibleSettings.EntityToConceptClass && (
+              <>
+                <div className={`mx-0.75 ${styles.propertyContainer}`}>
+                  {propertyDropdown()}
+                  <HCTooltip
+                    id="sourceProperty-key-tooltip"
+                    text={ModelingTooltips.sourcePropertyKeyInfo}
+                    placement={"right"}
+                  >
+                    <QuestionCircleFill
+                      color={themeColors.defaults.questionCircle}
+                      size={13}
+                      className={styles.questionCircle}
+                      data-testid={"foreign-key-tooltip"}
+                    />
+                  </HCTooltip>
+                </div>
+                <hr className={styles.horizontalLineBeforeName} />
+              </>
+            )}
+            <div className={styles.relationshipInputContainer}>
+              <HCInput
+                id="relationship"
+                placeholder="Relationship*"
+                value={relationshipName}
+                onChange={handleChange}
+                size={"sm"}
+                className={styles.relationshipInput}
+                ariaLabel="relationship-textarea"
+                style={errorMessage && submitClicked ? {border: "solid 1px #C00"} : {}}
+              />
+              {errorMessage && submitClicked ? (
+                <HCTooltip
+                  text={
+                    errorMessage === "name-error"
+                      ? ModelingTooltips.duplicatePropertyError(relationshipName)
+                      : errorMessage
+                  }
+                  placement={"bottom"}
+                  id="exclamation-tooltip"
+                >
+                  <i data-testid="error-circle">
+                    <FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} />
+                  </i>
+                </HCTooltip>
+              ) : (
+                ""
+              )}
+              <HCTooltip
+                text={ModelingTooltips.relationshipNameInfo(relationshipInfo.sourceNodeName)}
+                placement={"bottom"}
+                id="relationship-name-tooltip"
+              >
+                <QuestionCircleFill
+                  color={themeColors.defaults.questionCircle}
+                  size={13}
+                  className={styles.questionCircle}
+                />
+              </HCTooltip>
+            </div>
+            <hr
+              className={styles.horizontalLine}
+              style={{width: visibleSettings === eVisibleSettings.EntityToConceptClass ? "100px" : "185px"}}
+            />
+            {visibleSettings === eVisibleSettings.EntityToConceptClass ? (
+              <span>
+                <HCButton
+                  variant="onlined-light"
+                  className={styles.cardinalityButtonConcept}
+                  data-testid="cardinalityButton"
+                >
+                  <img
+                    data-testid="oneToOneIcon"
+                    className={styles.oneToOneIcon}
+                    style={{marginRight: "-10px"}}
+                    src={oneToOneIcon}
+                    alt={""}
+                  />
+                </HCButton>
+              </span>
+            ) : (
+              <HCTooltip id="cardinality-tooltip" text={cardinalityTooltipText} placement={"bottom"}>
+                <span>
+                  <HCButton
+                    variant="onlined-light"
+                    className={styles.cardinalityButton}
+                    data-testid="cardinalityButton"
+                    onClick={() => toggleCardinality()}
+                  >
+                    {oneToManySelected ? (
+                      <img
+                        data-testid="oneToManyIcon"
+                        className={styles.oneToManyIcon}
+                        src={oneToManyIcon}
+                        alt={""}
+                        onClick={() => toggleCardinality()}
+                      />
+                    ) : (
+                      <img
+                        data-testid="oneToOneIcon"
+                        className={styles.oneToOneIcon}
+                        src={oneToOneIcon}
+                        alt={""}
+                        onClick={() => toggleCardinality()}
+                      />
+                    )}
+                  </HCButton>
+                </span>
+              </HCTooltip>
+            )}
+            <div className={styles.nodeDisplay}>
+              <span className={styles.nodeLabel}>TARGET</span>
+              <div
+                className={
+                  submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer
+                }
+              >
+                <HCCard
+                  data-testid={"targetEntityNode"}
+                  style={{width: 240, backgroundColor: targetEntityColor}}
+                  bodyClassName={styles.cardBody}
+                  className={styles.cardContainer}
+                >
+                  <div className={`${styles.cardText} w-100 h-100 d-flex justify-content-center align-items-center`}>
+                    <p data-testid={`${targetEntityName}-targetNodeName`} className={"m-0 text-center"}>
+                      <DynamicIcons
+                        name={getEntityTypeIcon(
+                          targetEntityName,
+                          visibleSettings === eVisibleSettings.EntityToConceptClass,
+                        )}
+                      />
+                      {emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}
+                    </p>
+                  </div>
+                </HCCard>
+                {!isEditing ? (
+                  <Dropdown>
+                    <Dropdown.Toggle
+                      data-testid={"targetEntityDropdown"}
+                      className={`p-0 border-none rounded-0 ${styles.chevron} ${styles.dropdownButtonMenu}`}
+                    >
+                      <ChevronDown className={styles.test} />
+                    </Dropdown.Toggle>
+                    {DropdownMenu}
+                  </Dropdown>
+                ) : null}
+              </div>
+              {submitClicked && emptyTargetEntity ? (
+                <span className={styles.targetEntityErrorMsg}>
+                  {ModelingTooltips.targetEntityEmpty(
+                    visibleSettings === eVisibleSettings.EntityToConceptClass ? "concept class" : "entity type",
+                  )}
+                </span>
+              ) : null}
+            </div>
           </div>
-        </div>
-        <div className={styles.toggleOptional}>
-          {optionalCollapsed ?
-            <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronRight} size={"sm"} onClick={(e) => toggleOptionalIcon()} />
-            :
-            <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick={(e) => toggleOptionalIcon()} />
-          }
-          <span id={"toggleOptional"} className={styles.optionalText} tabIndex={0} onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") { toggleOptionalIcon(); }
-          }} onClick={(e) => toggleOptionalIcon()}>Optional</span>
-        </div>
-        {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToConceptClass && <div data-testid={"optionalContent"} className={styles.expressionContainer}>{optionalExpressionField}</div>}
-        {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToEntity && (<div data-testid={"optionalContent"} className={styles.foreignKeyContainer}>
-          <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
-          <div className={`mx-3 mb-3 ${styles.foreignKeyDropdownContainer}`}>
-            {foreignKeyDropdown}
-            <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
-              <QuestionCircleFill color={themeColors.defaults.questionCircle} tabIndex={0} size={13} className={styles.questionCircle} data-testid={"foreign-key-tooltip"} />
-            </HCTooltip>
+          <div className={styles.toggleOptional}>
+            {optionalCollapsed ? (
+              <FontAwesomeIcon
+                className={styles.optionalIcon}
+                icon={faChevronRight}
+                size={"sm"}
+                onClick={e => toggleOptionalIcon()}
+              />
+            ) : (
+              <FontAwesomeIcon
+                className={styles.optionalIcon}
+                icon={faChevronDown}
+                size={"sm"}
+                onClick={e => toggleOptionalIcon()}
+              />
+            )}
+            <span
+              id={"toggleOptional"}
+              className={styles.optionalText}
+              tabIndex={0}
+              onKeyDown={event => {
+                if (event.key === "Enter" || event.key === " ") {
+                  toggleOptionalIcon();
+                }
+              }}
+              onClick={e => toggleOptionalIcon()}
+            >
+              Optional
+            </span>
           </div>
+          {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToConceptClass && (
+            <div data-testid={"optionalContent"} className={styles.expressionContainer}>
+              {optionalExpressionField}
+            </div>
+          )}
+          {!optionalCollapsed && visibleSettings === eVisibleSettings.EntityToEntity && (
+            <div data-testid={"optionalContent"} className={styles.foreignKeyContainer}>
+              <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
+              <div className={`mx-3 mb-3 ${styles.foreignKeyDropdownContainer}`}>
+                {foreignKeyDropdown}
+                <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
+                  <QuestionCircleFill
+                    color={themeColors.defaults.questionCircle}
+                    tabIndex={0}
+                    size={13}
+                    className={styles.questionCircle}
+                    data-testid={"foreign-key-tooltip"}
+                  />
+                </HCTooltip>
+              </div>
+            </div>
+          )}
+          <div className={styles.requiredFootnote}>* Required</div>
         </div>
-        )
-        }
-        <div className={styles.requiredFootnote}>* Required</div>
-      </div>
-      <ConfirmationModal
-        isVisible={showConfirmModal}
-        type={confirmType}
-        boldTextArray={confirmBoldTextArray}
-        arrayValues={stepValuesArray}
-        toggleModal={toggleConfirmModal}
-        confirmAction={confirmAction}
-      />
-    </Modal.Body>
-    <Modal.Footer className={"d-flex justify-content-between py-2"}>
-      {modalFooter}
-    </Modal.Footer>
-  </HCModal>);
-
+        <ConfirmationModal
+          isVisible={showConfirmModal}
+          type={confirmType}
+          boldTextArray={confirmBoldTextArray}
+          arrayValues={stepValuesArray}
+          toggleModal={toggleConfirmModal}
+          confirmAction={confirmAction}
+        />
+      </Modal.Body>
+      <Modal.Footer className={"d-flex justify-content-between py-2"}>{modalFooter}</Modal.Footer>
+    </HCModal>
+  );
 };
 
 export default AddEditRelationship;

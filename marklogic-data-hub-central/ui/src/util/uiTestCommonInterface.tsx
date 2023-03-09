@@ -19,9 +19,9 @@ export const defaultSearchOptions = {
   conceptFilterTypeIds: [],
   mergeUnmerge: false,
   preselectedFacets: [],
-  setSearchFromUserPref: () => { },
-  setSavedNode: () => { },
-  setQuery: () => { },
+  setSearchFromUserPref: () => {},
+  setSavedNode: () => {},
+  setQuery: () => {},
   relatedEntityTypeId: [],
   relatedEntityTypeIds: [],
   sidebarQuery: "Select a saved query",
@@ -84,4 +84,3 @@ export const searchContextInterfaceByDefault = {
   entityInstanceId: "",
   setDatabaseAndDatasource: jest.fn(),
 };
-

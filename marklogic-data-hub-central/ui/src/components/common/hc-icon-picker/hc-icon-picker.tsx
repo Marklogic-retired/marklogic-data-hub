@@ -7,10 +7,10 @@ import {DynamicIcons} from "@components/common";
 const ignoredImport = ["default", "FaInstalod"];
 
 interface HCIconPickerProps {
-  identifier?: string,
-  value: string
-  onChange: (value: any) => void
-  hideSearch?: boolean
+  identifier?: string;
+  value: string;
+  onChange: (value: any) => void;
+  hideSearch?: boolean;
 }
 
 const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange, hideSearch}) => {
@@ -42,13 +42,22 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
   }, [ref]);
 
   return (
-    <div className={styles.pickerWrapper} ref={ref} data-testid={`${identifier}-hc-icon-picker-wrapper`} onClick={() => setIsVisible(isVisible => !isVisible)}>
+    <div
+      className={styles.pickerWrapper}
+      ref={ref}
+      data-testid={`${identifier}-hc-icon-picker-wrapper`}
+      onClick={() => setIsVisible(isVisible => !isVisible)}
+    >
       <div className={styles.pickerIcon} data-testid={`${identifier}-${value}-icon-selected`}>
         <DynamicIcons name={value} />
-        <div tabIndex={0}
+        <div
+          tabIndex={0}
           onFocus={() => setIsVisible(isVisible => !isVisible)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") { setIsVisible(isVisible => !isVisible); e.preventDefault(); }
+          onKeyDown={e => {
+            if (e.key === "Escape") {
+              setIsVisible(isVisible => !isVisible);
+              e.preventDefault();
+            }
           }}
         />
       </div>
@@ -56,7 +65,7 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
         <div
           data-testid={`${identifier}-hc-icon-picker-list`}
           className={styles.pickerContainer}
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {!hideSearch && (
             <input
@@ -65,7 +74,7 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
               onChange={event => setSearchString(event.target.value)}
               value={searchString}
               placeholder="Search"
-              onKeyDown={(event) => {
+              onKeyDown={event => {
                 if (event.key === "Escape") {
                   setIsVisible(false);
                   setSearchString("");
@@ -75,16 +84,14 @@ const HCIconPicker: React.FC<HCIconPickerProps> = ({identifier, value, onChange,
             />
           )}
           {iconList
-            .filter((i: string) =>
-              i.toLowerCase().includes(searchString.toLowerCase())
-            )
+            .filter((i: string) => i.toLowerCase().includes(searchString.toLowerCase()))
             .map((icon: string) => (
               <div
                 data-testid={`${identifier}-${icon}-icon-option`}
                 key={icon}
                 className={styles.pickerIcon}
                 tabIndex={0}
-                onKeyDown={(event) => {
+                onKeyDown={event => {
                   if (event.key === "Escape") {
                     setIsVisible(false);
                     setSearchString("");

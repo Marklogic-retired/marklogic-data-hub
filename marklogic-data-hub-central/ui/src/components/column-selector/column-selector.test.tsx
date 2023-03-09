@@ -10,11 +10,10 @@ let defaultProps = {
   selectedPropertyDefinitions: selectedPropertyDefinitions,
   setColumnSelectorTouched: jest.fn(),
   columns: ["customerId", "name", "nicknames", "shipping", "billing"],
-  primaryKey: ""
+  primaryKey: "",
 };
 
 describe("Column selector component", () => {
-
   test("Verify popover is visible", () => {
     const {queryByTestId} = render(<ColumnSelector {...defaultProps} />);
     expect(queryByTestId("column-selector-popover")).toBeInTheDocument();
@@ -62,9 +61,9 @@ describe("Column selector component", () => {
     expect(getByTestId("pk-tooltip")).toBeInTheDocument();
     expect(getByTestId("column-selector-tooltip")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("column-selector-tooltip"));
-    await(waitForElement(() => (getByText("Select the columns to display."))));
+    await waitForElement(() => getByText("Select the columns to display."));
     fireEvent.mouseOver(getByTestId("pk-tooltip"));
-    await(waitForElement(() => (getByText("The column identified as the unique identifier must always be displayed."))));
+    await waitForElement(() => getByText("The column identified as the unique identifier must always be displayed."));
   });
 
   test("Verify that if a character is typed and no property has it, no results should be returned", () => {
@@ -105,8 +104,5 @@ describe("Column selector component", () => {
     expect(getByTestId("node-customerId")).toBeInTheDocument();
     expect(getByTestId("node-customerSince")).toBeInTheDocument();
     expect(getByTestId("node-nicknames")).toBeInTheDocument();
-
   });
-
 });
-

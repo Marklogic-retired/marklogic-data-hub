@@ -26,7 +26,7 @@ describe("Search Result view component", () => {
             onExpand={() => {}}
           />
         </AuthoritiesContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(getByTestId("source-icon")).toBeInTheDocument();
     expect(getByTestId("instance-icon")).toBeInTheDocument();
@@ -38,13 +38,13 @@ describe("Search Result view component", () => {
     expect(getByTestId("sources")).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("source-icon"));
-    await (waitForElement(() => (getByText("Show the complete JSON"))));
+    await waitForElement(() => getByText("Show the complete JSON"));
 
     fireEvent.mouseOver(getByTestId("instance-icon"));
-    await (waitForElement(() => (getByText("Show the processed data"))));
+    await waitForElement(() => getByText("Show the processed data"));
 
     fireEvent.mouseOver(getByTestId("graph-icon"));
-    await (waitForElement(() => (getByText("View entity in graph view"))));
+    await waitForElement(() => getByText("View entity in graph view"));
   });
 
   test("UnmergeIcon available", async () => {
@@ -61,10 +61,10 @@ describe("Search Result view component", () => {
             onExpand={() => {}}
           />
         </AuthoritiesContext.Provider>
-      </Router>
+      </Router>,
     );
     fireEvent.mouseOver(getByTestId("unmerge-icon"));
-    await (waitForElement(() => (getByText("Unmerge Documents"))));
+    await waitForElement(() => getByText("Unmerge Documents"));
   });
 
   test("UnmergeIcon not available, missing permission", async () => {
@@ -81,7 +81,7 @@ describe("Search Result view component", () => {
             onExpand={() => {}}
           />
         </AuthoritiesContext.Provider>
-      </Router>
+      </Router>,
     );
     expect(queryByTestId("unmerge-icon")).toHaveClass("unMergeIconDisabled");
     fireEvent.click(getByTestId("unmerge-icon"));

@@ -34,21 +34,26 @@ describe("Custom Card component", () => {
     authorityService.setAuthorities(["readCustom", "writeCustom"]);
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
     const {getByText, queryByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Router><AuthoritiesContext.Provider value={authorityService}>
-        <CustomCard
-          data={customData}
-          canReadOnly={true}
-          canReadWrite={true}
-          entityModel={{entityTypeId: "Customer"}}
-          getArtifactProps={() => { return customData[0]; }}
-          flows={""}
-          entityTypeTitle={""}
-          updateCustomArtifact={jest.fn()}
-          canWriteFlow={true}
-          addStepToFlow={jest.fn()}
-          addStepToNew={jest.fn()}
-        />
-      </AuthoritiesContext.Provider></Router>);
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <CustomCard
+            data={customData}
+            canReadOnly={true}
+            canReadWrite={true}
+            entityModel={{entityTypeId: "Customer"}}
+            getArtifactProps={() => {
+              return customData[0];
+            }}
+            flows={""}
+            entityTypeTitle={""}
+            updateCustomArtifact={jest.fn()}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     await wait(() => {
       fireEvent.click(getByTestId("customJSON-edit"));
@@ -116,21 +121,26 @@ describe("Custom Card component", () => {
     authorityService.setAuthorities(["readCustom"]);
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
     const {getByText, queryByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Router><AuthoritiesContext.Provider value={authorityService}>
-        <CustomCard
-          data={customData}
-          canReadOnly={true}
-          canReadWrite={false}
-          entityModel={{entityTypeId: "Customer"}}
-          getArtifactProps={() => { return customData[0]; }}
-          flows={""}
-          entityTypeTitle={""}
-          updateCustomArtifact={jest.fn()}
-          canWriteFlow={true}
-          addStepToFlow={jest.fn()}
-          addStepToNew={jest.fn()}
-        />
-      </AuthoritiesContext.Provider></Router>);
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <CustomCard
+            data={customData}
+            canReadOnly={true}
+            canReadWrite={false}
+            entityModel={{entityTypeId: "Customer"}}
+            getArtifactProps={() => {
+              return customData[0];
+            }}
+            flows={""}
+            entityTypeTitle={""}
+            updateCustomArtifact={jest.fn()}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     await wait(() => {
       fireEvent.click(getByTestId("customJSON-edit"));
@@ -186,19 +196,23 @@ describe("Custom Card component", () => {
     let getByRole, queryAllByRole, getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><CustomCard
-          data={customData}
-          canReadOnly={true}
-          canReadWrite={false}
-          entityModel={{entityTypeId: "Customer"}}
-          flows={""}
-          entityTypeTitle={""}
-          updateCustomArtifact={jest.fn()}
-          canWriteFlow={true}
-          addStepToFlow={jest.fn()}
-          addStepToNew={jest.fn()}
-          getArtifactProps={() => { return customData[0]; }}
-        /></Router>
+        <Router>
+          <CustomCard
+            data={customData}
+            canReadOnly={true}
+            canReadWrite={false}
+            entityModel={{entityTypeId: "Customer"}}
+            flows={""}
+            entityTypeTitle={""}
+            updateCustomArtifact={jest.fn()}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()}
+            getArtifactProps={() => {
+              return customData[0];
+            }}
+          />
+        </Router>,
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
@@ -220,21 +234,26 @@ describe("Custom Card component", () => {
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
     let flows = data.flows.data;
     const {getByText, getByLabelText, getByTestId} = render(
-      <Router><AuthoritiesContext.Provider value={authorityService}>
-        <CustomCard
-          data={customData}
-          flows={flows}
-          canReadOnly={true}
-          canReadWrite={false}
-          canWriteFlow={true}
-          entityModel={{entityTypeId: "Customer"}}
-          addStepToFlow={() => { }}
-          getArtifactProps={() => { return customData[0]; }}
-          entityTypeTitle={""}
-          updateCustomArtifact={jest.fn()}
-          addStepToNew={jest.fn()}
-        />
-      </AuthoritiesContext.Provider></Router>);
+      <Router>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <CustomCard
+            data={customData}
+            flows={flows}
+            canReadOnly={true}
+            canReadWrite={false}
+            canWriteFlow={true}
+            entityModel={{entityTypeId: "Customer"}}
+            addStepToFlow={() => {}}
+            getArtifactProps={() => {
+              return customData[0];
+            }}
+            entityTypeTitle={""}
+            updateCustomArtifact={jest.fn()}
+            addStepToNew={jest.fn()}
+          />
+        </AuthoritiesContext.Provider>
+      </Router>,
+    );
 
     expect(getByText("customJSON")).toBeInTheDocument();
 
@@ -252,6 +271,8 @@ describe("Custom Card component", () => {
     fireEvent.click(getByTestId("customJSON-to-testFlow-Confirm"));
 
     // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+    });
   });
 });

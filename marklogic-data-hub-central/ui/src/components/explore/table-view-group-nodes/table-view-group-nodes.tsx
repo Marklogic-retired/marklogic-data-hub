@@ -19,15 +19,11 @@ type Props = {
   relatedToData: any;
 };
 
-const TableViewGroupNodes: React.FC<Props> = (props) => {
+const TableViewGroupNodes: React.FC<Props> = props => {
   const {isVisible, toggleTableViewForGroupNodes, relatedToData} = props;
 
-  const {
-    handleError
-  } = useContext(UserContext);
-  const {
-    searchOptions
-  } = useContext(SearchContext);
+  const {handleError} = useContext(UserContext);
+  const {searchOptions} = useContext(SearchContext);
   const [isLoading, setIsLoading] = useState(false);
   const componentIsMounted = useRef(true);
   const [data, setData] = useState<any[]>([]);
@@ -71,16 +67,18 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
             entityTypeIds: [relatedTableData.entityTypeId],
             selectedFacets: {},
             hideHubArtifacts: true,
-            relatedDocument: !relatedTableData ? null : {
-              docIRI: relatedTableData.parentNode,
-              predicate: relatedTableData.predicateFilter
-            }
+            relatedDocument: !relatedTableData
+              ? null
+              : {
+                docIRI: relatedTableData.parentNode,
+                predicate: relatedTableData.predicateFilter,
+              },
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
           start: pageProperties.start,
           pageLength: pageProperties.pageLength,
-          sortOrder: searchOptions?.sortOrder
-        }
+          sortOrder: searchOptions?.sortOrder,
+        },
       };
       const response = await searchResultsQuery(searchPayload);
       if (componentIsMounted.current && response.data) {
@@ -116,16 +114,34 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
     let baseRecordLabel = parentNodeURIParts && parentNodeURIParts[parentNodeURIParts.length - 1];
     return (
       <div className={styles.modalTitleContainer}>
-        <div className={styles.modalTitle} aria-label={`title-${entityTypeId}`}>{`Group of ${entityTypeId} records`}</div>
-        <div>Base Entity: <span className={styles.baseEntity} aria-label={`baseEntity-${baseEntity}`}>{baseEntity}</span></div>
-        <div>Base Record Label: <span className={styles.baseEntity} aria-label={`baseRecordLabel-${baseRecordLabel}`}>{baseRecordLabel}</span></div>
+        <div
+          className={styles.modalTitle}
+          aria-label={`title-${entityTypeId}`}
+        >{`Group of ${entityTypeId} records`}</div>
+        <div>
+          Base Entity:{" "}
+          <span className={styles.baseEntity} aria-label={`baseEntity-${baseEntity}`}>
+            {baseEntity}
+          </span>
+        </div>
+        <div>
+          Base Record Label:{" "}
+          <span className={styles.baseEntity} aria-label={`baseRecordLabel-${baseRecordLabel}`}>
+            {baseRecordLabel}
+          </span>
+        </div>
       </div>
     );
   };
 
   const exceededThresholdWarning = (
     <div className={styles.exceededThresholdWarning} aria-label="exceededThresholdWarning">
-      <span><i data-testid="warning-large-data"><FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} /></i></span> {expandThresholdExceededWarning(relatedToData.entityTypeId)}
+      <span>
+        <i data-testid="warning-large-data">
+          <FontAwesomeIcon icon={faExclamationTriangle} className={styles.largeDatasetWarning} />
+        </i>
+      </span>{" "}
+      {expandThresholdExceededWarning(relatedToData.entityTypeId)}
     </div>
   );
 
@@ -156,8 +172,8 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
     let pageLength = pageProperties.pageSize;
     let start = pageNumber === 1 ? 1 : (pageNumber - 1) * pageProperties.pageSize + 1;
 
-    if ((totalDocuments - ((pageNumber - 1) * pageProperties.pageSize)) < pageProperties.pageSize) {
-      pageLength = (totalDocuments - ((pageNumber - 1) * pageProperties.pageLength));
+    if (totalDocuments - (pageNumber - 1) * pageProperties.pageSize < pageProperties.pageSize) {
+      pageLength = totalDocuments - (pageNumber - 1) * pageProperties.pageLength;
     }
     setPageProperties({
       ...pageProperties,
@@ -177,7 +193,7 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
     });
   };
 
-  const onPageChange = (pageNumber) => {
+  const onPageChange = pageNumber => {
     setPage(pageNumber, totalDocuments);
   };
 
@@ -206,14 +222,9 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
     const pageNumber = index + 1;
     const isPageNumberFirst = pageNumber === 1;
     const isPageNumberLast = pageNumber === totalPage;
-    const isCurrentPageWithinTwoPageNumbers =
-      Math.abs(pageNumber - currentPage) <= 2;
+    const isCurrentPageWithinTwoPageNumbers = Math.abs(pageNumber - currentPage) <= 2;
 
-    if (
-      isPageNumberFirst ||
-      isPageNumberLast ||
-      isCurrentPageWithinTwoPageNumbers
-    ) {
+    if (isPageNumberFirst || isPageNumberLast || isCurrentPageWithinTwoPageNumbers) {
       isPageNumberOutOfRange = false;
       return (
         <Pagination.Item
@@ -221,7 +232,8 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
           data-testid={`pagination-item-${pageNumber}`}
           id={`pagination-item-${pageNumber}`}
           active={pageProperties.pageNumber === pageNumber}
-          onClick={() => onPageChange(pageNumber)}>
+          onClick={() => onPageChange(pageNumber)}
+        >
           {pageNumber}
         </Pagination.Item>
       );
@@ -237,7 +249,11 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
 
   const renderOptions = () => {
     const options = pageSizeOptions.map((item, index) => {
-      return <option key={index} className={+item === +pageProperties.pageSize ? styles.optionSelected : ""} value={item}>{item} / page</option>;
+      return (
+        <option key={index} className={+item === +pageProperties.pageSize ? styles.optionSelected : ""} value={item}>
+          {item} / page
+        </option>
+      );
     });
     return options;
   };
@@ -245,11 +261,26 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   const renderPagination = (
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
-        <Pagination.Prev onClick={handlePrev} disabled={pageProperties.pageNumber === 1} className={`${pageProperties.pageNumber === 1 && styles.disable} ${styles.corner}`} />
+        <Pagination.Prev
+          onClick={handlePrev}
+          disabled={pageProperties.pageNumber === 1}
+          className={`${pageProperties.pageNumber === 1 && styles.disable} ${styles.corner}`}
+        />
         {renderPages}
-        <Pagination.Next onClick={handleNext} disabled={pageProperties.pageNumber === totalPage} className={`${pageProperties.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
+        <Pagination.Next
+          onClick={handleNext}
+          disabled={pageProperties.pageNumber === totalPage}
+          className={`${pageProperties.pageNumber === totalPage && styles.disable} ${styles.corner}`}
+        />
       </Pagination>
-      <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" value={pageProperties.pageSize} onChange={onPageSizeChange} className={styles.select}>
+      <Form.Select
+        data-testid="pageSizeSelect"
+        color="secondary"
+        id="pageSizeSelect"
+        value={pageProperties.pageSize}
+        onChange={onPageSizeChange}
+        className={styles.select}
+      >
         {renderOptions()}
       </Form.Select>
     </div>
@@ -258,12 +289,9 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   const modalFooter = (
     <div className={styles.editFooter}>
       <div className={styles.footer}>
-        <HCButton
-          size="sm"
-          variant="primary"
-          aria-label={`closeGroupNodeModal`}
-          onClick={closeModal}
-        >Close</HCButton>
+        <HCButton size="sm" variant="primary" aria-label={`closeGroupNodeModal`} onClick={closeModal}>
+          Close
+        </HCButton>
       </div>
     </div>
   );
@@ -273,12 +301,7 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={isVisible}
-      size={"lg"}
-      dialogClassName={styles.modalDialog}
-      onHide={closeModal}
-    >
+    <HCModal show={isVisible} size={"lg"} dialogClassName={styles.modalDialog} onHide={closeModal}>
       <div className={styles.modalInfoContainer}>
         <Modal.Header className={"bb-none align-items-start"}>
           {modalTitle()}
@@ -287,7 +310,6 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
         {displayWarning() && exceededThresholdWarning}
       </div>
       <Modal.Body>
-
         <div className={styles.tableViewResult}>
           <ResultsTabularView
             data={data}
@@ -299,9 +321,7 @@ const TableViewGroupNodes: React.FC<Props> = (props) => {
             groupNodeTableView={true}
           />
         </div>
-        <div className={styles.searchPaginationContainer}>
-          {totalDocuments > 20 && renderPagination}
-        </div>
+        <div className={styles.searchPaginationContainer}>{totalDocuments > 20 && renderPagination}</div>
         {modalFooter}
       </Modal.Body>
     </HCModal>

@@ -11,7 +11,7 @@ import {
   userSessionWarning,
   userModalError,
   userNoErrorNoSessionWarning,
-  userHasModalErrorHasSessionWarning
+  userHasModalErrorHasSessionWarning,
 } from "../../assets/mock-data/user-context-mock";
 import mocks from "../../api/__mocks__/mocks.data";
 
@@ -38,7 +38,8 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await wait(() => {
       expect(getByText("Continue Session")).toBeInTheDocument();
@@ -56,7 +57,8 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await wait(() => {
       expect(getByText("Continue Session")).toBeInTheDocument();
@@ -73,10 +75,13 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userModalError}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await waitForElement(() => getByText("500 Internal Server Error"));
-    expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument();
+    expect(
+      getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011"),
+    ).toBeInTheDocument();
 
     await wait(() => {
       userEvent.click(getByText("OK"));
@@ -92,16 +97,19 @@ describe("Modal Status Component", () => {
           <ModalStatus />
           <NoMatchRedirect />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await waitForElement(() => getByText("500 Internal Server Error"));
-    await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
+    await (() =>
+      expect(
+        getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011"),
+      ).toBeInTheDocument());
 
     await wait(() => {
       userEvent.click(getByText("Cancel"));
     });
     await (() => expect(getByText("Operation failed")).toBeInTheDocument());
-
   });
 
   test("Modal does not render when no error and no session warning", () => {
@@ -110,7 +118,8 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userNoErrorNoSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     expect(queryByText("Due to Inactivity, you will be logged out in")).toBeNull();
   });
@@ -122,10 +131,14 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await waitForElement(() => getByText("500 Internal Server Error"));
-    await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
+    await (() =>
+      expect(
+        getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011"),
+      ).toBeInTheDocument());
     await (() => expect(queryByText("Due to Inactivity, you will be logged out in")).toBeNull());
   });
 
@@ -136,11 +149,11 @@ describe("Modal Status Component", () => {
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus />
         </UserContext.Provider>
-      </Router>);
+      </Router>,
+    );
 
     await waitForElement(() => getByText("Session Timeout"));
     expect(mockHistoryPush.mock.calls.length).toBe(1);
     expect(mockHistoryPush.mock.calls[0][0]).toBe("/noresponse");
   });
-
 });

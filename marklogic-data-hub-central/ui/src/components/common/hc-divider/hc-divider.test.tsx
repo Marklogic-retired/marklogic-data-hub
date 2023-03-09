@@ -14,14 +14,22 @@ test("should render a Divider component ", () => {
 });
 
 test("should render a vertical Divider component with styles", () => {
-  render(<HCDivider type="vertical" style={{height: "55vh !important"}}>This is a vertical component divider with style</HCDivider>);
+  render(
+    <HCDivider type="vertical" style={{height: "55vh !important"}}>
+      This is a vertical component divider with style
+    </HCDivider>,
+  );
   const dividerElement = screen.getByTestId("divider-component");
   expect(dividerElement).toHaveStyle("height: 55vh !important");
   expect(dividerElement).toBeInTheDocument();
 });
 
 test("should render a vertical Divider component with a class", () => {
-  render(<HCDivider type="vertical" className={styles.verticalDiv}>This is a vertical divider check with a class</HCDivider>);
+  render(
+    <HCDivider type="vertical" className={styles.verticalDiv}>
+      This is a vertical divider check with a class
+    </HCDivider>,
+  );
   const dividerElement = screen.getByTestId("divider-component");
   expect(dividerElement).toContainHTML("verticalDiv");
   expect(dividerElement).toBeInTheDocument();

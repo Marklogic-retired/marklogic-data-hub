@@ -6,16 +6,18 @@ jest.mock("../../api/facets");
 
 describe("<NumericFacet/>", () => {
   test("Numeric component renders without crashing, has range slider", async () => {
-    const {getByTestId} = render(<NumericFacet
-      name={""}
-      step={0}
-      constraint={""}
-      datatype={""}
-      onChange={jest.fn()}
-      referenceType={""}
-      entityTypeId={""}
-      propertyPath={""}
-    />);
+    const {getByTestId} = render(
+      <NumericFacet
+        name={""}
+        step={0}
+        constraint={""}
+        datatype={""}
+        onChange={jest.fn()}
+        referenceType={""}
+        entityTypeId={""}
+        propertyPath={""}
+      />,
+    );
 
     await act(async () => {
       expect(getByTestId("numeric-slider")).toBeInTheDocument();
@@ -23,16 +25,18 @@ describe("<NumericFacet/>", () => {
   });
 
   test("Numeric component renders with mock data", async () => {
-    const {getByTestId, getByDisplayValue} = render(<NumericFacet
-      name={"age"}
-      step={1}
-      constraint={"age"}
-      datatype={"int"}
-      onChange={jest.fn()}
-      referenceType={"element"}
-      entityTypeId={""}
-      propertyPath={"age"}
-    />);
+    const {getByTestId, getByDisplayValue} = render(
+      <NumericFacet
+        name={"age"}
+        step={1}
+        constraint={"age"}
+        datatype={"int"}
+        onChange={jest.fn()}
+        referenceType={"element"}
+        entityTypeId={""}
+        propertyPath={"age"}
+      />,
+    );
 
     await act(async () => {
       setTimeout(() => {
@@ -47,16 +51,18 @@ describe("<NumericFacet/>", () => {
   });
 
   test("Can render name with nested property", async () => {
-    const {getByText, queryByText} = render(<NumericFacet
-      name={"Order.OrderDetail.DateTime"}
-      constraint={"Order.OrderDetail.DateTime"}
-      step={0}
-      datatype={""}
-      onChange={jest.fn()}
-      referenceType={""}
-      entityTypeId={""}
-      propertyPath={""}
-    />);
+    const {getByText, queryByText} = render(
+      <NumericFacet
+        name={"Order.OrderDetail.DateTime"}
+        constraint={"Order.OrderDetail.DateTime"}
+        step={0}
+        datatype={""}
+        onChange={jest.fn()}
+        referenceType={""}
+        entityTypeId={""}
+        propertyPath={""}
+      />,
+    );
 
     expect(getByText(/Order/)).toBeInTheDocument();
     expect(getByText(/DateTime/)).toBeInTheDocument();
@@ -66,5 +72,3 @@ describe("<NumericFacet/>", () => {
     expect(queryByText(/OrderDetail/)).not.toBeInTheDocument();
   });
 });
-
-

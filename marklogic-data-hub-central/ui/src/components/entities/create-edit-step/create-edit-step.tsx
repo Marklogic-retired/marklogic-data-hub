@@ -15,7 +15,6 @@ import {Typeahead} from "react-bootstrap-typeahead";
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import {themeColors} from "@config/themes.config";
 
-
 type Props = {
   tabKey: string;
   openStepSettings: boolean;
@@ -35,18 +34,27 @@ type Props = {
   setPayload: any;
   onCancel: any;
   preloadTypeahead?: string;
-}
+};
 
-const CreateEditStep: React.FC<Props> = (props) => {
+const CreateEditStep: React.FC<Props> = props => {
   // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
-  const {curationOptions, setActiveStepWarning, validateCalled, setValidateMatchCalled, setValidateMergeCalled, validateMerge} = useContext(CurationContext);
+  const {
+    curationOptions,
+    setActiveStepWarning,
+    validateCalled,
+    setValidateMatchCalled,
+    setValidateMergeCalled,
+    validateMerge,
+  } = useContext(CurationContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
 
   const [collections, setCollections] = useState("");
   const [collectionOptions, setCollectionOptions] = useState(["a", "b"]);
-  const [selectedSource, setSelectedSource] = useState(props.editStepArtifactObject.selectedSource ? props.editStepArtifactObject.selectedSource : "collection");
+  const [selectedSource, setSelectedSource] = useState(
+    props.editStepArtifactObject.selectedSource ? props.editStepArtifactObject.selectedSource : "collection",
+  );
   const [srcQuery, setSrcQuery] = useState("");
   const [timestamp, setTimestamp] = useState("");
 
@@ -72,7 +80,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
     if (props.editStepArtifactObject.selectedSource === "collection") {
       let srcCollection = props.editStepArtifactObject.sourceQuery.substring(
         props.editStepArtifactObject.sourceQuery.lastIndexOf("[") + 2,
-        props.editStepArtifactObject.sourceQuery.lastIndexOf("]") - 1
+        props.editStepArtifactObject.sourceQuery.lastIndexOf("]") - 1,
       );
       setCollections(srcCollection);
     }
@@ -92,18 +100,29 @@ const CreateEditStep: React.FC<Props> = (props) => {
     // Edit Step Artifact
     if (props.isEditing) {
       initStep();
-    } else { // New Step Artifact
+    } else {
+      // New Step Artifact
       reset();
       props.setIsValid(false);
     }
   }, [props.openStepSettings]);
 
   useEffect(() => {
-    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && props.stepType === StepType.Matching && validateCalled) {
+    if (
+      isSubmit &&
+      curationOptions.activeStep.hasWarnings.length === 0 &&
+      props.stepType === StepType.Matching &&
+      validateCalled
+    ) {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
-    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && (props.stepType === StepType.Merging) && validateMerge) {
+    if (
+      isSubmit &&
+      curationOptions.activeStep.hasWarnings.length === 0 &&
+      props.stepType === StepType.Merging &&
+      validateMerge
+    ) {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
@@ -149,12 +168,13 @@ const CreateEditStep: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    if (!isStepNameTouched
-      && !isDescriptionTouched
-      && !isSelectedSourceTouched
-      && !isCollectionsTouched
-      && !isSrcQueryTouched
-      && !isTimestampTouched
+    if (
+      !isStepNameTouched &&
+      !isDescriptionTouched &&
+      !isSelectedSourceTouched &&
+      !isCollectionsTouched &&
+      !isSrcQueryTouched &&
+      !isTimestampTouched
     ) {
       return false;
     } else {
@@ -172,7 +192,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
         description: description,
         collection: collections,
         selectedSource: selectedSource,
-        sourceQuery: sQuery
+        sourceQuery: sQuery,
       };
     } else {
       sQuery = srcQuery ? srcQuery : props.editStepArtifactObject.sourceQuery;
@@ -181,7 +201,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
         targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
-        sourceQuery: sQuery
+        sourceQuery: sQuery,
       };
     }
     if (props.stepType === StepType.Merging) {
@@ -195,7 +215,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
   const [targetQueryPopover, setTargetQueryPopover] = useState(null);
   const QueryPopoverContainerRef = useRef(null);
 
-  const collectionQueryInfo =
+  const collectionQueryInfo = (
     <Overlay
       show={showQueryPopover}
       target={targetQueryPopover}
@@ -204,13 +224,13 @@ const CreateEditStep: React.FC<Props> = (props) => {
     >
       <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}>
         <Popover.Body className={styles.popoverCreateEditStepBody}>
-          <div className={styles.collectionQueryInfo}>
-            {CommonStepTooltips.radioQuery}
-          </div>
-        </Popover.Body></Popover>
-    </Overlay>;
+          <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioQuery}</div>
+        </Popover.Body>
+      </Popover>
+    </Overlay>
+  );
 
-  const handleSubmit = async (event: {preventDefault: () => void;}) => {
+  const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (!stepName) {
       // missing name
       setStepNameTouched(true);
@@ -223,7 +243,12 @@ const CreateEditStep: React.FC<Props> = (props) => {
       // missing query (if query is selected)
       setSrcQueryTouched(true);
     }
-    if (!stepName || invalidChars || (!collections && selectedSource === "collection") || (!srcQuery && selectedSource !== "collection")) {
+    if (
+      !stepName ||
+      invalidChars ||
+      (!collections && selectedSource === "collection") ||
+      (!srcQuery && selectedSource !== "collection")
+    ) {
       // if missing flags are set, do not submit handle
       event.preventDefault();
       return;
@@ -238,7 +263,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
     } else {
       props.updateStepArtifact(getPayload(), props.stepType);
     }
-    ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging)) ? setIsSubmit(true) : setIsSubmit(false);
+    props.stepType === StepType.Matching || props.stepType === StepType.Merging
+      ? setIsSubmit(true)
+      : setIsSubmit(false);
     if (props.stepType !== StepType.Matching && props.stepType !== StepType.Merging) {
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -247,7 +274,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
 
   const handleSearch = async (value: any) => {
     let database: string = "";
-    if (!props.isEditing && props.stepType === StepType.Matching || props.stepType === StepType.Merging) {
+    if ((!props.isEditing && props.stepType === StepType.Matching) || props.stepType === StepType.Merging) {
       database = "final";
     } else if (!props.isEditing && props.stepType === StepType.Mapping) {
       database = "staging";
@@ -316,7 +343,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "name") {
       let isSpecialChars = false;
       if (event.target.value === " ") {
@@ -326,7 +353,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
         setStepName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
+        if (event.target.value !== "" && !/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value)) {
           setInvalidChars(true);
           isSpecialChars = true;
         } else {
@@ -405,7 +432,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
       } else {
         setTimestampTouched(true);
         setTimestamp(event.target.value);
-        if (props.isEditing && props.editStepArtifactObject.lastUpdatedDateTime && props.editStepArtifactObject.lastUpdatedDateTime.documentXPath) {
+        if (
+          props.isEditing &&
+          props.editStepArtifactObject.lastUpdatedDateTime &&
+          props.editStepArtifactObject.lastUpdatedDateTime.documentXPath
+        ) {
           if (event.target.value === props.editStepArtifactObject.lastUpdatedDateTime.documentXPath) {
             setTimestampTouched(false);
           }
@@ -414,7 +445,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSelectedSource = (event) => {
+  const handleSelectedSource = event => {
     if (event.target.value === " ") {
       setSelectedSourceTouched(false);
     } else {
@@ -443,7 +474,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
     }
   };
 
-  const handleShowQueryPopover = (event) => {
+  const handleShowQueryPopover = event => {
     event.persist();
     setShowQueryPopover(true);
     setTargetQueryPopover(event.target);
@@ -454,80 +485,120 @@ const CreateEditStep: React.FC<Props> = (props) => {
   };
 
   return (
-
-
     <div className={styles.createEditStep}>
-      {(props.stepType === StepType.Matching || props.stepType === StepType.Merging) ? curationOptions.activeStep.hasWarnings.length > 0 ? (
-        curationOptions.activeStep.hasWarnings.map((warning, index) => {
-          let description;
-          if (warning["message"].includes("target entity type")) {
-            description = "Please remove target entity type from target collections";
-          } else if (warning["message"].includes("source collection")) {
-            description = "Please remove source collection from target collections";
-          } else if (warning["message"].includes("temporal collection")) {
-            description = "Please remove temporal collection from target collections";
-          } else {
-            description = "";
-          }
-          return (
-            <HCAlert
-              className={styles.alert}
-              variant="warning"
-              showIcon
-              key={warning["level"] + index}
-              heading={warning["message"]}
-            >
-              {description}
-            </HCAlert>
-          );
-        })
-      ) : null : null}
+      {props.stepType === StepType.Matching || props.stepType === StepType.Merging
+        ? curationOptions.activeStep.hasWarnings.length > 0
+          ? curationOptions.activeStep.hasWarnings.map((warning, index) => {
+            let description;
+            if (warning["message"].includes("target entity type")) {
+              description = "Please remove target entity type from target collections";
+            } else if (warning["message"].includes("source collection")) {
+              description = "Please remove source collection from target collections";
+            } else if (warning["message"].includes("temporal collection")) {
+              description = "Please remove temporal collection from target collections";
+            } else {
+              description = "";
+            }
+            return (
+              <HCAlert
+                className={styles.alert}
+                variant="warning"
+                showIcon
+                key={warning["level"] + index}
+                heading={warning["message"]}
+              >
+                {description}
+              </HCAlert>
+            );
+          })
+          : null
+        : null}
       <Form onSubmit={handleSubmit} className={"container-fluid"}>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <FormLabel column lg={3}>
+            {"Name:"}
+            <span className={styles.asterisk}>*</span>
+          </FormLabel>
           <Col>
             <Row>
-              <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                {tobeDisabled ? <HCTooltip id="disabled-namefield-tooltip" text={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><HCInput
-                  id="name"
-                  placeholder="Enter name"
-                  value={stepName ? stepName : " "}
-                  onChange={handleChange}
-                  disabled={tobeDisabled}
-                  className={styles.input}
-                  onBlur={sendPayload}
-                /></div></HCTooltip> : <HCInput
-                  id="name"
-                  placeholder="Enter name"
-                  value={stepName ? stepName : " "}
-                  onChange={handleChange}
-                  disabled={tobeDisabled}
-                  className={styles.input}
-                  onBlur={sendPayload}
-                />}
+              <Col
+                className={
+                  stepName || !isStepNameTouched ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"
+                }
+              >
+                {tobeDisabled ? (
+                  <HCTooltip id="disabled-namefield-tooltip" text={NewMatchTooltips.nameField} placement={"bottom"}>
+                    <div className={"d-flex w-100"}>
+                      <HCInput
+                        id="name"
+                        placeholder="Enter name"
+                        value={stepName ? stepName : " "}
+                        onChange={handleChange}
+                        disabled={tobeDisabled}
+                        className={styles.input}
+                        onBlur={sendPayload}
+                      />
+                    </div>
+                  </HCTooltip>
+                ) : (
+                  <HCInput
+                    id="name"
+                    placeholder="Enter name"
+                    value={stepName ? stepName : " "}
+                    onChange={handleChange}
+                    disabled={tobeDisabled}
+                    className={styles.input}
+                    onBlur={sendPayload}
+                  />
+                )}
                 <div className={"p-2 d-flex align-items-center"}>
-                  {props.stepType === StepType.Mapping ?
-                    <HCTooltip  text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                      <QuestionCircleFill  data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                    </HCTooltip> :
-                    props.stepType === StepType.Matching ?
-                      <HCTooltip  text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                      </HCTooltip> :
-                      <HCTooltip   text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                        <QuestionCircleFill  data-testid="NameTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                      </HCTooltip>
-                  }
+                  {props.stepType === StepType.Mapping ? (
+                    <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill
+                        data-testid="NameTooltip"
+                        tabIndex={0}
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.questionCircle}
+                      />
+                    </HCTooltip>
+                  ) : props.stepType === StepType.Matching ? (
+                    <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill
+                        data-testid="NameTooltip"
+                        tabIndex={0}
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.questionCircle}
+                      />
+                    </HCTooltip>
+                  ) : (
+                    <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill
+                        data-testid="NameTooltip"
+                        tabIndex={0}
+                        color={themeColors.defaults.questionCircle}
+                        size={13}
+                        className={styles.questionCircle}
+                      />
+                    </HCTooltip>
+                  )}
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
+                {invalidChars
+                  ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only."
+                  : stepName || !isStepNameTouched
+                    ? ""
+                    : "Name is required"}
               </Col>
             </Row>
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <FormLabel column lg={3}>
+            {"Description:"}
+          </FormLabel>
           <Col className={"d-flex"}>
             <HCInput
               id="description"
@@ -539,24 +610,46 @@ const CreateEditStep: React.FC<Props> = (props) => {
               onBlur={sendPayload}
             />
             <div className={"p-2 d-flex align-items-center"}>
-              {props.stepType === StepType.Mapping ?
+              {props.stepType === StepType.Mapping ? (
                 <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill  data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                </HCTooltip> :
-                props.stepType === StepType.Matching ?
-                  <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                  </HCTooltip> :
-                  <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                    <QuestionCircleFill  data-testid="descriptionTooltip" tabIndex={0} color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
-                  </HCTooltip>
-              }
+                  <QuestionCircleFill
+                    data-testid="descriptionTooltip"
+                    tabIndex={0}
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+              ) : props.stepType === StepType.Matching ? (
+                <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
+                  <QuestionCircleFill
+                    data-testid="descriptionTooltip"
+                    tabIndex={0}
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+              ) : (
+                <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
+                  <QuestionCircleFill
+                    data-testid="descriptionTooltip"
+                    tabIndex={0}
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                  />
+                </HCTooltip>
+              )}
             </div>
           </Col>
         </Row>
 
         <Row className={"mb-4"}>
-          <FormLabel column lg={3}>{"Source Query:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <FormLabel column lg={3}>
+            {"Source Query:"}
+            <span className={styles.asterisk}>*</span>
+          </FormLabel>
           <Col>
             <Row>
               <Col className={"d-flex mb-3 align-items-center"} id="srcType">
@@ -573,7 +666,10 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={"mb-0"}
                 />
-                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover"} className={"me-4"}>
+                <span
+                  id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover"}
+                  className={"me-4"}
+                >
                   <HCTooltip text={CommonStepTooltips.radioCollection} id="radio-collection-tooltip" placement={"top"}>
                     <QuestionCircleFill
                       tabIndex={0}
@@ -587,7 +683,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
                         }
                       }}
                     />
-                  </HCTooltip>  </span>
+                  </HCTooltip>{" "}
+                </span>
                 <Form.Check
                   inline
                   id={"query"}
@@ -617,7 +714,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                     onFocus={handleShowQueryPopover}
                     onMouseEnter={handleShowQueryPopover}
                     onMouseLeave={() => handleMouseLeaveTooltip()}
-                    onKeyDown={(event) => {
+                    onKeyDown={event => {
                       if (event.key === "Enter" || event.key === " ") {
                         handleShowQueryPopover(event);
                       }
@@ -625,52 +722,83 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   />
                 </span>
               </Col>
-              <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
-                {selectedSource === "collection" ? <div className={"position-relative w-100 pe-3"}>
-                  <Typeahead
-                    id="collList"
-                    options={collectionOptions}
-                    aria-label="collection-input"
-                    placeholder={"Enter collection name"}
-                    value={collections}
-                    defaultInputValue={props.isEditing ? props.preloadTypeahead : ""}
-                    disabled={!props.canReadWrite}
-                    onInputChange={handleSearch}
-                    onChange={handleTypeaheadChange}
-                    onBlur={sendPayload}
-                    style={{width: "100%"}}
-                    minLength={3}
-                    onFocus={() => {
-                      if (showQueryPopover) {
-                        setShowQueryPopover(false);
-                      }
-                    }}
-                  />
-                  {props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
-                  id="srcQuery"
-                  placeholder="Enter source query"
-                  value={srcQuery}
-                  onChange={handleChange}
-                  disabled={!props.canReadWrite}
-                  className={styles.input}
-                  onFocus={() => {
-                    if (showQueryPopover) {
-                      setShowQueryPopover(false);
-                    }
-                  }}
-                  onBlur={sendPayload}
-                  style={{borderRadius: 4, border: ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "1px solid #B32424"}}
-                /></div>}
+              <Col
+                xs={12}
+                className={
+                  (collections && selectedSource === "collection") ||
+                  (srcQuery && selectedSource !== "collection") ||
+                  (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)
+                    ? "d-flex pe-4"
+                    : "d-flex pe-4 has-error"
+                }
+              >
+                {selectedSource === "collection" ? (
+                  <div className={"position-relative w-100 pe-3"}>
+                    <Typeahead
+                      id="collList"
+                      options={collectionOptions}
+                      aria-label="collection-input"
+                      placeholder={"Enter collection name"}
+                      value={collections}
+                      defaultInputValue={props.isEditing ? props.preloadTypeahead : ""}
+                      disabled={!props.canReadWrite}
+                      onInputChange={handleSearch}
+                      onChange={handleTypeaheadChange}
+                      onBlur={sendPayload}
+                      style={{width: "100%"}}
+                      minLength={3}
+                      onFocus={() => {
+                        if (showQueryPopover) {
+                          setShowQueryPopover(false);
+                        }
+                      }}
+                    />
+                    {props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}
+                  </div>
+                ) : (
+                  <div className={"w-100 pe-3"}>
+                    <FormControl
+                      as="textarea"
+                      id="srcQuery"
+                      placeholder="Enter source query"
+                      value={srcQuery}
+                      onChange={handleChange}
+                      disabled={!props.canReadWrite}
+                      className={styles.input}
+                      onFocus={() => {
+                        if (showQueryPopover) {
+                          setShowQueryPopover(false);
+                        }
+                      }}
+                      onBlur={sendPayload}
+                      style={{
+                        borderRadius: 4,
+                        border:
+                          (collections && selectedSource === "collection") ||
+                          (srcQuery && selectedSource !== "collection") ||
+                          (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)
+                            ? ""
+                            : "1px solid #B32424",
+                      }}
+                    />
+                  </div>
+                )}
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
+                {(collections && selectedSource === "collection") ||
+                (srcQuery && selectedSource !== "collection") ||
+                (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)
+                  ? ""
+                  : "Collection or Query is required"}
               </Col>
             </Row>
           </Col>
         </Row>
-        {props.stepType === StepType.Merging ?
+        {props.stepType === StepType.Merging ? (
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Timestamp Path:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Timestamp Path:"}
+            </FormLabel>
             <Col className={`d-flex ${styles.timestamp}`}>
               <HCInput
                 id="timestamp"
@@ -683,19 +811,65 @@ const CreateEditStep: React.FC<Props> = (props) => {
               />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
-                  <QuestionCircleFill tabIndex={0} aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.questionCircle} />
+                  <QuestionCircleFill
+                    tabIndex={0}
+                    aria-label="icon: question-circle"
+                    color={themeColors.defaults.questionCircle}
+                    size={13}
+                    className={styles.questionCircle}
+                  />
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : ""}
+          </Row>
+        ) : (
+          ""
+        )}
         <Row className={"mb-3"}>
           <Col className={"d-flex justify-content-end"}>
             <div className={styles.submitButtons}>
-              <HCButton data-testid={`${props.stepType}-dialog-cancel`} variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
+              <HCButton
+                data-testid={`${props.stepType}-dialog-cancel`}
+                variant="outline-light"
+                size="sm"
+                onClick={() => onCancel()}
+              >
+                Cancel
+              </HCButton>
               &nbsp;&nbsp;
-              {!props.canReadWrite ? <HCTooltip text={NewMergeTooltips.missingPermission} id="save-disabled-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}>
-                <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></HCTooltip>
-                : <HCButton variant="primary" size="sm" type="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</HCButton>}
+              {!props.canReadWrite ? (
+                <HCTooltip
+                  text={NewMergeTooltips.missingPermission}
+                  id="save-disabled-tooltip"
+                  placement={"bottom-end"}
+                >
+                  <span className={styles.disabledCursor}>
+                    <HCButton
+                      size="sm"
+                      className={styles.disabledSaveButton}
+                      variant="primary"
+                      type="submit"
+                      disabled={true}
+                      data-testid={`${props.stepType}-dialog-save`}
+                      onClick={handleSubmit}
+                    >
+                      Save
+                    </HCButton>
+                  </span>
+                </HCTooltip>
+              ) : (
+                <HCButton
+                  variant="primary"
+                  size="sm"
+                  type="submit"
+                  disabled={false}
+                  data-testid={`${props.stepType}-dialog-save`}
+                  onClick={handleSubmit}
+                  onFocus={sendPayload}
+                >
+                  Save
+                </HCButton>
+              )}
             </div>
           </Col>
         </Row>

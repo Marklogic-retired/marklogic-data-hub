@@ -23,26 +23,18 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender, getByLabelText, queryByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText, queryByLabelText} = render(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={false} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={true} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
@@ -62,26 +54,18 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender, getByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText} = render(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={false} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={true} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
@@ -93,33 +77,23 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
   });
 
-
-
   it("can add a match threshold as a custom type", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
 
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender, getByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText} = render(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={false} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editThreshold={{}}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={true} toggleModal={toggleModalMock} editThreshold={{}} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
@@ -134,7 +108,6 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
   });
 
-
   it("can edit a merge type match threshold and click cancel", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
 
@@ -142,29 +115,21 @@ describe("Matching Ruleset Single Modal component", () => {
     let editThreshold = {
       thresholdName: "test",
       action: "merge",
-      score: 8
+      score: 8,
     };
 
-    const {queryByText, getByText, rerender, getByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText} = render(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editThreshold={editThreshold}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={false} toggleModal={toggleModalMock} editThreshold={editThreshold} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Edit Match Threshold")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editThreshold={editThreshold}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={true} toggleModal={toggleModalMock} editThreshold={editThreshold} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Edit Match Threshold")).toBeInTheDocument();
@@ -187,29 +152,21 @@ describe("Matching Ruleset Single Modal component", () => {
     let editThreshold = {
       thresholdName: "testing",
       action: "notify",
-      score: 8
+      score: 8,
     };
 
-    const {queryByText, getByText, rerender, getByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText} = render(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={false}
-          toggleModal={toggleModalMock}
-          editThreshold={editThreshold}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={false} toggleModal={toggleModalMock} editThreshold={editThreshold} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Edit Match Threshold")).toBeNull();
 
     rerender(
       <CurationContext.Provider value={matchThresholdArtifact}>
-        <ThresholdModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editThreshold={editThreshold}
-        />
-      </CurationContext.Provider>
+        <ThresholdModal isVisible={true} toggleModal={toggleModalMock} editThreshold={editThreshold} />
+      </CurationContext.Provider>,
     );
 
     expect(queryByText("Edit Match Threshold")).toBeInTheDocument();

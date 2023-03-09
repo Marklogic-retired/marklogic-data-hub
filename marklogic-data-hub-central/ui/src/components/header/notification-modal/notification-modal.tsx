@@ -24,8 +24,7 @@ import {AxiosResponse} from "axios";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
-const NotificationModal = (props) => {
-
+const NotificationModal = props => {
   const {notificationOptions} = useContext(NotificationContext); // eslint-disable-line @typescript-eslint/no-unused-vars
   const authorityService = useContext(AuthoritiesContext);
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
@@ -37,23 +36,28 @@ const NotificationModal = (props) => {
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [flowName, setFlowName] = useState<string>("");
-  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({
+    sampleSize: 100,
+    uris: [],
+    actionPreview: [],
+  });
   const [loading, setToggleLoading] = useState<string>("");
   const [uriInfo, setUriInfo] = useState<any>();
 
   const {user} = useContext(UserContext);
 
-  let idRow = 0, idRowAux = 0, pageLength = notificationOptions.pageLength, totalRowsLastPage = notificationOptions.pageLength;
+  let idRow = 0,
+    idRowAux = 0,
+    pageLength = notificationOptions.pageLength,
+    totalRowsLastPage = notificationOptions.pageLength;
   const {notifications, totalCount, pageLength: defaultPageLength} = defaultNotificationOptions;
 
-
-
-  const checkRowsPerPage = (totalRows) => {
+  const checkRowsPerPage = totalRows => {
     let totalPages = Math.floor(totalRows / pageLength);
     let rem = totalRows % pageLength;
     if (rem > 0) totalPages = totalPages + 1;
     if (totalPages === pageTableNotification) {
-      totalRowsLastPage = totalRows - (pageLength * (totalPages - 1));
+      totalRowsLastPage = totalRows - pageLength * (totalPages - 1);
     }
   };
 
@@ -62,7 +66,13 @@ const NotificationModal = (props) => {
     await deleteNotification(uri).then((responseDelete: any) => {
       let totalRows = notificationOptions?.totalCount;
       checkRowsPerPage(totalRows);
-      if (responseDelete) fetchNotifications(pageTableNotification, totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1, false);
+      if (responseDelete) {
+        fetchNotifications(
+          pageTableNotification,
+          totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1,
+          false,
+        );
+      }
       //if one notification left on the last page and its merged or deleted
       if (totalRowsLastPage - 1 === 0) {
         updatePage(pageTableNotification - 1);
@@ -72,26 +82,27 @@ const NotificationModal = (props) => {
   };
 
   const fetchNotifications = async (page?, pageLength?, updated?) => {
-    user.authenticated === true && await getNotifications((page - 1) * 10 + 1, pageLength)
-      .then((resp: any) => {
-        if (resp && resp.data) {
-          setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength, updated);
-        } else {
-          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
-        }
-      })
-      .catch((err) => {
-        if (err.response) {
-          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
-        } else {
-          setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
-        }
-      });
+    user.authenticated === true &&
+      (await getNotifications((page - 1) * 10 + 1, pageLength)
+        .then((resp: any) => {
+          if (resp && resp.data) {
+            setNotificationsObj(resp.data.notifications, resp.data.total, defaultPageLength, updated);
+          } else {
+            setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
+          }
+        })
+        .catch(err => {
+          if (err.response) {
+            setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
+          } else {
+            setNotificationsObj(notifications, totalCount, defaultPageLength, updated);
+          }
+        }));
   };
 
-  const addUniqueKeyToNotificationObject = (notifications) => {
+  const addUniqueKeyToNotificationObject = notifications => {
     let idx = 0;
-    notifications.forEach(notification => notification["unique_key"] = idx++);
+    notifications.forEach(notification => (notification["unique_key"] = idx++));
     return notifications;
   };
 
@@ -108,7 +119,8 @@ const NotificationModal = (props) => {
             <HCTooltip
               text="Document labels will be 'undefined' unless a property is set as an 'Identifier' in the entity model or assigned as a 'Record Label' in the explore graph display settings."
               id="additional-collections-tooltip"
-              placement="top">
+              placement="top"
+            >
               <QuestionCircleFill
                 tabIndex={0}
                 aria-label="icon: question-circle"
@@ -120,7 +132,7 @@ const NotificationModal = (props) => {
           </div>
         );
       },
-      formatter: (text) => (
+      formatter: text => (
         <span className={styles.labelText}>
           <AddTooltipWhenTextOverflow text={text} />
         </span>
@@ -140,9 +152,7 @@ const NotificationModal = (props) => {
       text: "Date",
       dataField: "meta.dateTime",
       key: "meta.dateTime",
-      formatter: (text) => (
-        <span className={styles.tableRow}>{dateConverter(text)}</span>
-      ),
+      formatter: text => <span className={styles.tableRow}>{dateConverter(text)}</span>,
     },
     {
       text: "Actions",
@@ -150,79 +160,97 @@ const NotificationModal = (props) => {
       key: "Actions",
       formatter: (text, row) => (
         <>
-          <span className={styles.tableRow}>{text}
-            {
-              canWriteMatchMerge ?
-                <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
-                  <i>
-                    <MdCallMerge
-                      color={themeColors.info}
-                      className={styles.mergeIcon}
-                      data-testid={`merge-icon${idRow}`}
-                      aria-label={`merge-icon`}
-                      tabIndex={0}
-                      onClick={() => openMergeCompare(row)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          openMergeCompare(row);
-                        }
-                      }}
-                    />
-                  </i>
-                </HCTooltip>
-                :
-                <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
-                  <i><MdCallMerge color={themeColors.info} className={styles.mergeIconDisabled} data-testid={`disabled-merge-icon${idRow++}`} aria-label={`disabled-merge-icon`} /></i>
-                </HCTooltip>
-            }
+          <span className={styles.tableRow}>
+            {text}
+            {canWriteMatchMerge ? (
+              <HCTooltip text={"Merge"} id={`merge-icon${idRow++}`} placement="top-end">
+                <i>
+                  <MdCallMerge
+                    color={themeColors.info}
+                    className={styles.mergeIcon}
+                    data-testid={`merge-icon${idRow}`}
+                    aria-label={`merge-icon`}
+                    tabIndex={0}
+                    onClick={() => openMergeCompare(row)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openMergeCompare(row);
+                      }
+                    }}
+                  />
+                </i>
+              </HCTooltip>
+            ) : (
+              <HCTooltip
+                text={SecurityTooltips.missingPermissionMerge}
+                id="missing-permission-tooltip"
+                placement="top-end"
+              >
+                <i>
+                  <MdCallMerge
+                    color={themeColors.info}
+                    className={styles.mergeIconDisabled}
+                    data-testid={`disabled-merge-icon${idRow++}`}
+                    aria-label={`disabled-merge-icon`}
+                  />
+                </i>
+              </HCTooltip>
+            )}
           </span>
-          <span className={styles.tableRow}>{text}
-            {
-              canWriteMatchMerge ?
-                <HCTooltip text={"Delete"} id={`delete-icon${idRowAux++}`} placement="top-end">
-                  <i aria-label={`deleteIcon`}>
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      color={themeColors.info}
-                      data-testid={`delete-icon${idRowAux}`}
-                      className={styles.deleteRow}
-                      onClick={() => onDelete(row)}
-                      size="lg"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          onDelete(row);
-                        }
-                      }}
-                    />
-                  </i>
-                </HCTooltip>
-                :
-                <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="disabled-delete-icon" placement="top-end">
-                  <i aria-label={`disabledDeleteIcon`}><FontAwesomeIcon icon={faTrashAlt} color={themeColors.info} data-testid={`delete-icon${idRowAux}-disabled`} className={styles.deleteRowDisabled} size="lg" /></i>
-                </HCTooltip>
-            }
+          <span className={styles.tableRow}>
+            {text}
+            {canWriteMatchMerge ? (
+              <HCTooltip text={"Delete"} id={`delete-icon${idRowAux++}`} placement="top-end">
+                <i aria-label={`deleteIcon`}>
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    color={themeColors.info}
+                    data-testid={`delete-icon${idRowAux}`}
+                    className={styles.deleteRow}
+                    onClick={() => onDelete(row)}
+                    size="lg"
+                    tabIndex={0}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onDelete(row);
+                      }
+                    }}
+                  />
+                </i>
+              </HCTooltip>
+            ) : (
+              <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="disabled-delete-icon" placement="top-end">
+                <i aria-label={`disabledDeleteIcon`}>
+                  <FontAwesomeIcon
+                    icon={faTrashAlt}
+                    color={themeColors.info}
+                    data-testid={`delete-icon${idRowAux}-disabled`}
+                    className={styles.deleteRowDisabled}
+                    size="lg"
+                  />
+                </i>
+              </HCTooltip>
+            )}
           </span>
-          <span className={styles.tableRow}>{text}
-            {
-              loading === row.meta.uri ?
-                <Spinner
-                  data-testid="hc-button-component-spinner"
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                  className={styles.spinner}
-                />
-                : null
-            }
+          <span className={styles.tableRow}>
+            {text}
+            {loading === row.meta.uri ? (
+              <Spinner
+                data-testid="hc-button-component-spinner"
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                className={styles.spinner}
+              />
+            ) : null}
           </span>
         </>
       ),
-      formatExtraData: {loading}
+      formatExtraData: {loading},
     },
   ];
 
@@ -230,7 +258,7 @@ const NotificationModal = (props) => {
     props.setNotificationModalVisible(false);
   };
 
-  const onDelete = (row) => {
+  const onDelete = row => {
     toggleConfirmModal(true);
     setRowInformation(row);
   };
@@ -238,10 +266,16 @@ const NotificationModal = (props) => {
   const submitMergeUri = async (uri, payload) => {
     const documentsHaveMerged = await mergeUris(payload);
     if (documentsHaveMerged) {
-      await deleteNotification(activeUri).then((resp) => {
+      await deleteNotification(activeUri).then(resp => {
         let totalRows = notificationOptions?.totalCount;
         checkRowsPerPage(totalRows);
-        if (resp) fetchNotifications(pageTableNotification, totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1, false);
+        if (resp) {
+          fetchNotifications(
+            pageTableNotification,
+            totalRowsLastPage - 1 === 0 ? defaultPageLength : totalRowsLastPage - 1,
+            false,
+          );
+        }
         if (totalRowsLastPage - 1 === 0) {
           updatePage(pageTableNotification - 1);
         }
@@ -255,10 +289,11 @@ const NotificationModal = (props) => {
     }
   }, [notificationOptions]);
 
-
-  const openMergeCompare = async (item) => {
-    let arrayUris = item.uris.map((elem) => { return elem["uri"]; });
-    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item.meta.entityName);
+  const openMergeCompare = async item => {
+    let arrayUris = item.uris.map(elem => {
+      return elem["uri"];
+    });
+    let activeEntityIndex = props.entityDefArray.findIndex(entity => entity.name === item.meta.entityName);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
     setActiveEntityUris(arrayUris);
     setActiveUri(item.meta.uri);
@@ -269,14 +304,14 @@ const NotificationModal = (props) => {
 
   const fetchCompareData = async (array, item) => {
     let uriRequests: Promise<AxiosResponse<any>>[] = [];
-    array.forEach((uri) => {
+    array.forEach(uri => {
       uriRequests.push(getDocFromURI(uri));
     });
     const results = await Promise.all(uriRequests);
     const result1 = results[0];
     const result2 = results[1];
     const flowName = result1.data.recordMetadata.datahubCreatedInFlow;
-    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+    const preview = flowName ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let urisInfo: any[] = [];
@@ -296,7 +331,7 @@ const NotificationModal = (props) => {
       restrictToUris: true,
       uris: array,
       sampleSize: 100,
-      stepName: item.meta.matchStepName
+      stepName: item.meta.matchStepName,
     };
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
@@ -308,7 +343,7 @@ const NotificationModal = (props) => {
 
   const [pageTableNotification, setPageTableNotification] = useState(1);
 
-  const updatePage = (p) => {
+  const updatePage = p => {
     setPageTableNotification(p);
   };
 
@@ -318,7 +353,7 @@ const NotificationModal = (props) => {
     let rem = totalRows % pageLength;
     if (rem > 0) totalPages = totalPages + 1;
     if (totalPages === pageTableNotification) {
-      totalRowsLastPage = totalRows - (pageLength * (totalPages - 1));
+      totalRowsLastPage = totalRows - pageLength * (totalPages - 1);
     }
     fetchNotifications(pageTableNotification, totalRowsLastPage);
   }, [pageTableNotification]);
@@ -333,38 +368,58 @@ const NotificationModal = (props) => {
         backdrop="static"
         className={props.notificationModalVisible ? styles.disabledMain : ""}
       >
-        <Modal.Body className={styles.notificationModalBody} >
+        <Modal.Body className={styles.notificationModalBody}>
           <Modal.Header className={"bb-none"}>
-            {notificationOptions.totalCount < 1 ? null : <span className={"fs-3"} aria-label={"notification-modal-title"}>{"Merge Notifications"}</span>}
-            <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}} />
+            {notificationOptions.totalCount < 1 ? null : (
+              <span className={"fs-3"} aria-label={"notification-modal-title"}>
+                {"Merge Notifications"}
+              </span>
+            )}
+            <button
+              type="button"
+              className="btn-close"
+              aria-label="Close"
+              onClick={onCancel}
+              style={{"marginTop": "-30px"}}
+            />
           </Modal.Header>
-          <div className={notificationOptions.totalCount < 1 ? styles.emptyNotificationModalContainer : styles.notificationModalContainer}>
-            {notificationOptions.totalCount < 1 ?
-
-              <div className={styles.emptyList}>
-                <i><TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" /></i>
-                <div className={styles.emptyText}><strong>No Merge Notifications Present</strong></div>
-              </div>
-              :
-              notificationOptions?.notifications &&
-              <>
-                <div className={styles.tableContainer}>
-                  <HCTable
-                    pagination={false}
-                    columns={columns}
-                    data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
-                    rowKey="unique_key"
-                  />
-                </div>
-                <SearchPaginationSimple
-                  total={notificationOptions?.totalCount}
-                  pageSize={pageLength}
-                  pageNumber={pageTableNotification}
-                  maxRowsPerPage={pageLength}
-                  updatePage={updatePage}
-                />
-              </>
+          <div
+            className={
+              notificationOptions.totalCount < 1
+                ? styles.emptyNotificationModalContainer
+                : styles.notificationModalContainer
             }
+          >
+            {notificationOptions.totalCount < 1 ? (
+              <div className={styles.emptyList}>
+                <i>
+                  <TbClipboardText className={styles.emptyListIcon} aria-label="icon: empty-list" />
+                </i>
+                <div className={styles.emptyText}>
+                  <strong>No Merge Notifications Present</strong>
+                </div>
+              </div>
+            ) : (
+              notificationOptions?.notifications && (
+                <>
+                  <div className={styles.tableContainer}>
+                    <HCTable
+                      pagination={false}
+                      columns={columns}
+                      data={addUniqueKeyToNotificationObject(notificationOptions?.notifications)}
+                      rowKey="unique_key"
+                    />
+                  </div>
+                  <SearchPaginationSimple
+                    total={notificationOptions?.totalCount}
+                    pageSize={pageLength}
+                    pageNumber={pageTableNotification}
+                    maxRowsPerPage={pageLength}
+                    updatePage={updatePage}
+                  />
+                </>
+              )
+            )}
           </div>
         </Modal.Body>
       </HCModal>
@@ -388,7 +443,7 @@ const NotificationModal = (props) => {
         isPreview={false}
         isMerge={true}
         flowName={flowName}
-        mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
+        mergeUris={async payload => submitMergeUri(activeUri, payload)}
         unmergeUri={{}}
         fetchNotifications={fetchNotifications}
         originalUri={activeUri}

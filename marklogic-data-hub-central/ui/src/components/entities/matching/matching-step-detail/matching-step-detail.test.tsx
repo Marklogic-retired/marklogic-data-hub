@@ -4,7 +4,10 @@ import userEvent from "@testing-library/user-event";
 import MatchingStepDetail from "./matching-step-detail";
 
 import {CurationContext} from "../../../../util/curation-context";
-import {customerMatchingStep, customerMatchingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {
+  customerMatchingStep,
+  customerMatchingStepEmpty,
+} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {calculateMatchingActivity, getAllExcludeValuesList} from "../../../../api/matching";
 import {matchingActivity} from "../../../../assets/mock-data/curation/matching.data";
 
@@ -18,12 +21,12 @@ describe("Matching Step Detail view component", () => {
     jest.clearAllMocks();
   });
 
-  it("can render matching step with no rulesets or thresholds and click less/more text", async() => {
+  it("can render matching step with no rulesets or thresholds and click less/more text", async () => {
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
-    const {getByLabelText, queryByLabelText, getByTestId, getAllByPlaceholderText, getByText} =  render(
+    const {getByLabelText, queryByLabelText, getByTestId, getAllByPlaceholderText, getByText} = render(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
-        <MatchingStepDetail/>
-      </CurationContext.Provider>
+        <MatchingStepDetail />
+      </CurationContext.Provider>,
     );
 
     expect(queryByLabelText("threshold-more")).toBeNull();
@@ -33,9 +36,9 @@ describe("Matching Step Detail view component", () => {
     expect(getByTestId("default-ruleset-timeline")).toBeInTheDocument();
     expect(getByTestId("default-threshold-timeline")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("info-tooltip-threshold"));
-    await(waitForElement(() => (getByText("Enable the scale to position, edit or delete thresholds."))));
+    await waitForElement(() => getByText("Enable the scale to position, edit or delete thresholds."));
     fireEvent.mouseOver(getByTestId("info-tooltip-ruleset"));
-    await(waitForElement(() => (getByText("Enable the scale to position, edit or delete rulesets."))));
+    await waitForElement(() => getByText("Enable the scale to position, edit or delete rulesets."));
 
     userEvent.click(getByLabelText("threshold-less"));
     expect(queryByLabelText("threshold-more")).toBeInTheDocument();
@@ -65,15 +68,14 @@ describe("Matching Step Detail view component", () => {
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
     expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
     // expect(getByLabelText("testMatchTab")).toBeInTheDocument();
-
   });
 
   it("Keyboard Navigation sequence is correct", async () => {
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
-    const {getByLabelText} =  render(
+    const {getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <MatchingStepDetail/>
-      </CurationContext.Provider>
+        <MatchingStepDetail />
+      </CurationContext.Provider>,
     );
 
     let i: number;
@@ -112,7 +114,7 @@ describe("Matching Step Detail view component", () => {
       uriInput,
       uriAdd,
       allDataRadio,
-      testMatch
+      testMatch,
     ];
 
     // verify element exists and can be focused
@@ -129,7 +131,6 @@ describe("Matching Step Detail view component", () => {
       expect(matchingPageItems[i]).toHaveFocus();
     }
 
-
     // verify elements tab backwards in same order
     for (i = 3; i >= 0; --i) {
       userEvent.tab({shift: true});
@@ -137,12 +138,12 @@ describe("Matching Step Detail view component", () => {
     }
   });
 
-  it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
+  it("can render matching step with rulesets and thresholds and click add single ruleset", async () => {
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
-    const {getByLabelText, getByText, queryByLabelText, getAllByPlaceholderText, getByTestId} =  render(
+    const {getByLabelText, getByText, queryByLabelText, getAllByPlaceholderText, getByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <MatchingStepDetail/>
-      </CurationContext.Provider>
+        <MatchingStepDetail />
+      </CurationContext.Provider>,
     );
 
     expect(queryByLabelText("threshold-more")).toBeInTheDocument();
@@ -157,7 +158,6 @@ describe("Matching Step Detail view component", () => {
     userEvent.click(queryByLabelText("ruleset-scale-switch")!);
     expect(queryByLabelText("ruleset-scale-switch")).toBeChecked();
     expect(getByTestId("active-ruleset-timeline")).toBeInTheDocument();
-
 
     userEvent.click(document.querySelector("#add-ruleset")!);
     expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
@@ -178,16 +178,16 @@ describe("Matching Step Detail view component", () => {
 
     userEvent.click(getByLabelText("allDataRadio"));
     expect(getByLabelText("allDataContent")).toBeInTheDocument();
-  //  expect(getByLabelText("testMatchTab")).toBeInTheDocument();
+    //  expect(getByLabelText("testMatchTab")).toBeInTheDocument();
   });
 
-  it("can render possible combinations of matched rulesets", async() => {
+  it("can render possible combinations of matched rulesets", async () => {
     mockCalculateMatchingActivity.mockResolvedValue({status: 200, data: matchingActivity});
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
-    const {getByLabelText, rerender} =  render(
+    const {getByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <MatchingStepDetail/>
-      </CurationContext.Provider>
+        <MatchingStepDetail />
+      </CurationContext.Provider>,
     );
     expect(mockCalculateMatchingActivity).toHaveBeenCalledTimes(1);
 
@@ -201,13 +201,11 @@ describe("Matching Step Detail view component", () => {
     //Verify if no match combinations label is displayed properly for no matches.
     rerender(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
-        <MatchingStepDetail/>
-      </CurationContext.Provider>
+        <MatchingStepDetail />
+      </CurationContext.Provider>,
     );
 
     expect(getByLabelText("matchCombinationsHeading")).toBeInTheDocument();
     expect(getByLabelText("noMatchedCombinations")).toBeInTheDocument();
   });
-
-
 });

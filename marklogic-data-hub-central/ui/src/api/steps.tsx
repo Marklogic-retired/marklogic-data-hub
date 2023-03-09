@@ -12,7 +12,7 @@ export const getStep = async (name, type) => {
   return await axios.get(`/api/steps/${type}/${name}`);
 };
 
-export const getSteps = async (type) => {
+export const getSteps = async type => {
   return await axios.get(`/api/steps/${type}`);
 };
 

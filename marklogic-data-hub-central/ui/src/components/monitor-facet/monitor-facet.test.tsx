@@ -5,7 +5,7 @@ import MonitorFacet from "./monitor-facet";
 import userEvent from "@testing-library/user-event";
 
 describe("Facet component", () => {
-  it("Facet component renders with data properly", async() => {
+  it("Facet component renders with data properly", async () => {
     const {getByTestId, getByText} = render(<MonitorFacet {...flowNameFacetProps} />);
 
     expect(getByText(/Flow/i)).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe("Facet component", () => {
     expect(getByText(/personXML/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-flowName"));
-    await(waitForElement(() => (getByText("A sequence of one or more steps that process the data."))));
+    await waitForElement(() => getByText("A sequence of one or more steps that process the data."));
   });
 
   it("Collapse/Expand carets render properly for facet properties", () => {
@@ -47,7 +47,7 @@ describe("Facet component", () => {
     expect(getByText(/loadCustomersWithRelatedEntitiesJSON/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-Step"));
-    await(waitForElement(() => (getByText("Code that processes the data."))));
+    await waitForElement(() => getByText("Code that processes the data."));
   });
 
   it("Keyboard Navigation sequence is correct", async () => {
@@ -60,7 +60,6 @@ describe("Facet component", () => {
     let mappingType = getByTestId("step-type-mapping-checkbox");
     let loadingType = getByTestId("step-type-ingestion-checkbox");
     let customType = getByTestId("step-type-custom-checkbox");
-
 
     const facetActions = [clearFacet, toggleFacetPanel, loadingType, mappingType, customType, showMoreLink];
 
@@ -77,7 +76,6 @@ describe("Facet component", () => {
       userEvent.tab();
       expect(facetActions[i]).toHaveFocus();
     }
-
 
     // verify elements tab backwards in same order
     for (i = 3; i >= 0; --i) {

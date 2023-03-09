@@ -115,18 +115,23 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     cy.waitForAsyncRequest();
-    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.name).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.email).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(
+      defaultEntityTypeData.properties.shipping).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
@@ -182,17 +187,22 @@ describe("Entity Type Settings Modal", () => {
 
     cy.log("**Select label and check the selection**");
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Select propertiesOnHover and check the selection**");
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.name).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.name).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.email).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.email).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(defaultEntityTypeData.properties.shipping).click({force: true});
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverExpandDropdownOption(
+      defaultEntityTypeData.properties.shipping).click({force: true});
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.shippingStreet.value).click({force: true});
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.email);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.shippingStreet.label);
@@ -300,11 +310,13 @@ describe("Entity Type Settings Modal", () => {
 
     cy.log("**Select new icon and check the selection**");
     dataModelDisplaySettingsModal.getEntityTypeIconButton(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getEntityTypeIconSearchInput(defaultEntityTypeData.name).type(newEntityTypeData2.icon);
+    dataModelDisplaySettingsModal.getEntityTypeIconSearchInput(
+      defaultEntityTypeData.name).type(newEntityTypeData2.icon);
     dataModelDisplaySettingsModal.getEntityTypeIconMenu(defaultEntityTypeData.name).find("svg").last().click();
     dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData2.icon);
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.email).click();
 
     cy.log("**Save the changes**");
     dataModelDisplaySettingsModal.getModalSaveButton().click();

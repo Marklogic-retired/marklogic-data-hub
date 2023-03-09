@@ -13,18 +13,23 @@ const props = {
 const newColor = "#C9EBC4";
 
 describe("Entity type color picker", () => {
-
   afterEach(cleanup);
 
   test("Render entity type color picker menu", () => {
-    const {getByLabelText, queryByLabelText} = render(<EntityTypeColorPicker {...props}/>);
+    const {getByLabelText, queryByLabelText} = render(<EntityTypeColorPicker {...props} />);
     expect(getByLabelText(`${props.entityType}-color-button`)).toBeInTheDocument();
     expect(getByLabelText(`${props.entityType}-color-button`)).toHaveAttribute("data-color", props.color);
     expect(queryByLabelText(`${props.entityType}-color-picker-menu`)).toBeNull();
   });
 
   test("Open color choose a color and save", () => {
-    const {getByLabelText, queryByLabelText, getByTitle} = render(<EntityTypeColorPicker entityType={props.entityType} color={props.color} handleColorChange={props.handleColorChange}/>);
+    const {getByLabelText, queryByLabelText, getByTitle} = render(
+      <EntityTypeColorPicker
+        entityType={props.entityType}
+        color={props.color}
+        handleColorChange={props.handleColorChange}
+      />,
+    );
     expect(getByLabelText(`${props.entityType}-color-button`)).toHaveAttribute("data-color", props.color);
 
     fireEvent.click(getByLabelText(`${props.entityType}-color-button`));

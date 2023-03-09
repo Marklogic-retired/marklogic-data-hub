@@ -8,7 +8,7 @@ import {
   createModelErrorResponse,
   createModelErrorResponseNamespace,
   createModelErrorResponsePrefix,
-  createModelResponse
+  createModelResponse,
 } from "../../../assets/mock-data/modeling/modeling";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 
@@ -19,7 +19,7 @@ const placeholders = {
   name: "Enter name",
   description: "Enter description",
   namespace: "Example: http://example.org/es/gs",
-  namespacePrefix: "Example: esgs"
+  namespacePrefix: "Example: esgs",
 };
 
 const defaultModalOptions = {
@@ -33,10 +33,7 @@ const defaultModalOptions = {
   prefix: "",
   updateHubCentralConfig: jest.fn(),
   hubCentralConfig: defaultHubCentralConfig,
-  dataModel: [
-    {entityName: "Client"},
-    {conceptName: "ClothStyle"}
-  ]
+  dataModel: [{entityName: "Client"}, {conceptName: "ClothStyle"}],
 };
 
 let hubCentralConfig = defaultHubCentralConfig;
@@ -47,9 +44,7 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Modal is not visible", () => {
-    const {queryByText} = render(
-      <EntityTypeModal {...defaultModalOptions} isVisible={false} color="" icon=""/>
-    );
+    const {queryByText} = render(<EntityTypeModal {...defaultModalOptions} isVisible={false} color="" icon="" />);
     expect(queryByText("Add Entity Type")).toBeNull();
   });
 
@@ -57,7 +52,7 @@ describe("EntityTypeModal Component", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon="" />,
     );
 
     let url = "/api/models";
@@ -90,7 +85,7 @@ describe("EntityTypeModal Component", () => {
 
   test("Adding a new Entity with an existing name should show an error message", async () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon="" />,
     );
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
@@ -101,13 +96,13 @@ describe("EntityTypeModal Component", () => {
       userEvent.click(getByText("Add"));
     });
 
-    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByLabelText("entity-name-error")).toBeInTheDocument();
+    });
   });
 
   test("Adding an invalid Entity name shows error message", async () => {
-    const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
-    );
+    const {getByText, getByPlaceholderText} = render(<EntityTypeModal {...defaultModalOptions} color="" icon="" />);
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
     userEvent.type(getByPlaceholderText(placeholders.name), "123-Box");
@@ -121,11 +116,12 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Creating duplicate entity shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() =>
-      Promise.reject({response: {status: 400, data: createModelErrorResponse}})));
+    axiosMock.post["mockImplementationOnce"](
+      jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponse}})),
+    );
 
     const {getByText, getByPlaceholderText, getByLabelText} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon="" />,
     );
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
@@ -141,20 +137,28 @@ describe("EntityTypeModal Component", () => {
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
-    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
+    await wait(() => {
+      expect(getByLabelText("entity-name-error")).toBeInTheDocument();
+    });
   });
 
   test("Edit modal is not visible", () => {
     const {queryByText} = render(
-      <EntityTypeModal {...defaultModalOptions} isVisible={false} isEditModal={true} color="" icon=""/>
+      <EntityTypeModal {...defaultModalOptions} isVisible={false} isEditModal={true} color="" icon="" />,
     );
     expect(queryByText("Edit Entity Type")).toBeNull();
   });
 
   test("Edit modal is visible", async () => {
     const {getByText, getByDisplayValue, queryByText, getByTestId, getByLabelText} = render(
-      <EntityTypeModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt"/>
+      <EntityTypeModal
+        {...defaultModalOptions}
+        isEditModal={true}
+        name={"ModelName"}
+        description={"Model description"}
+        color="#CEE0ED"
+        icon="FaUserAlt"
+      />,
     );
 
     expect(getByText("Edit Entity Type")).toBeInTheDocument();
@@ -172,12 +176,22 @@ describe("EntityTypeModal Component", () => {
     axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
-      <EntityTypeModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon=""/>
+      <EntityTypeModal
+        {...defaultModalOptions}
+        isEditModal={true}
+        name={"ModelName"}
+        description={"Model description"}
+        color="#CEE0ED"
+        icon=""
+      />,
     );
 
     let url = "/api/models/ModelName/info";
-    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated"};
+    let payload = {
+      "description": "Updated Description",
+      "namespace": "http://example.org/updated",
+      "namespacePrefix": "updated",
+    };
 
     userEvent.clear(getByPlaceholderText(placeholders.description));
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -205,12 +219,11 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Submitting invalid namespace shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() =>
-      Promise.reject({response: {status: 400, data: createModelErrorResponseNamespace}})));
-
-    const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+    axiosMock.post["mockImplementationOnce"](
+      jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponseNamespace}})),
     );
+
+    const {getByText, getByPlaceholderText} = render(<EntityTypeModal {...defaultModalOptions} color="" icon="" />);
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
@@ -231,17 +244,20 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Submitting invalid namespace prefix shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() =>
-      Promise.reject({response: {status: 400, data: createModelErrorResponsePrefix}})));
-
-    const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
+    axiosMock.post["mockImplementationOnce"](
+      jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponsePrefix}})),
     );
+
+    const {getByText, getByPlaceholderText} = render(<EntityTypeModal {...defaultModalOptions} color="" icon="" />);
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "http://example.org/test", "namespacePrefix": "xml"};
-
+    let payload = {
+      "name": "Testing",
+      "description": "",
+      "namespace": "http://example.org/test",
+      "namespacePrefix": "xml",
+    };
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -256,6 +272,4 @@ describe("EntityTypeModal Component", () => {
 
     expect(getByText(createModelErrorResponsePrefix.message)).toBeInTheDocument();
   });
-
 });
-

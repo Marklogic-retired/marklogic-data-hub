@@ -4,7 +4,7 @@ import jsonDocPayload from "../../assets/mock-data/explore/json-document-payload
 import {render} from "@testing-library/react";
 
 describe("Detail component", () => {
-  let infoRender:any;
+  let infoRender: any;
 
   describe("Using JSON document payload with primaryKey", () => {
     beforeEach(() => {
@@ -15,7 +15,7 @@ describe("Detail component", () => {
           primaryKey="1000201"
           contentType="json"
           sources={jsonDocPayload.data.envelope.headers.sources}
-        />
+        />,
       );
     });
 
@@ -45,7 +45,8 @@ describe("Detail component", () => {
           primaryKey=""
           contentType="json"
           sources={jsonDocPayload.data.envelope.headers.sources}
-        />);
+        />,
+      );
     });
 
     test("component renders", () => {

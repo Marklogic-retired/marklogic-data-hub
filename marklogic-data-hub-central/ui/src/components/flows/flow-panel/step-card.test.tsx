@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Router} from "react-router";
 import {render, fireEvent} from "@testing-library/react";
@@ -35,17 +34,15 @@ const defaultProps: Props = {
   runningStep: undefined,
   flowRunning: {name: "", steps: []},
   showUploadError: "",
-  uploadError: ""
+  uploadError: "",
 };
 
-
 describe("Flow Card test suite", () => {
-
   it("links for steps lead to correct path", async () => {
     const {getByLabelText} = render(
-      <Router history={history}><StepCard
-        {...defaultProps}
-      /></Router>
+      <Router history={history}>
+        <StepCard {...defaultProps} />
+      </Router>,
     );
     const flowName = flow.name;
 
@@ -58,10 +55,9 @@ describe("Flow Card test suite", () => {
   it("links for steps lead to correct path 2ay", async () => {
     const newStep = flow.steps[0];
     const {getByLabelText} = render(
-      <Router history={history}><StepCard
-        {...defaultProps}
-        step={newStep}
-      /></Router>
+      <Router history={history}>
+        <StepCard {...defaultProps} step={newStep} />
+      </Router>,
     );
     const flowName = flow.name;
 
@@ -73,9 +69,9 @@ describe("Flow Card test suite", () => {
 
   it("reorder flow buttons can be focused and pressed by keyboard", async () => {
     const {getByLabelText} = render(
-      <Router history={history}><StepCard
-        {...defaultProps}
-      /></Router>
+      <Router history={history}>
+        <StepCard {...defaultProps} />
+      </Router>,
     );
     const rightArrowButton = getByLabelText("rightArrow-" + step.stepName);
     expect(rightArrowButton).toBeInTheDocument();

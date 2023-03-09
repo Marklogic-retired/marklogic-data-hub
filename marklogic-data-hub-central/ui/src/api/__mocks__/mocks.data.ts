@@ -4,8 +4,8 @@ import stepsData from "../../assets/mock-data/curation/steps.data";
 import commonData from "../../assets/mock-data/curation/common.data";
 import systemInfoData from "../../assets/mock-data/system-info.data";
 
-const loadAPI = (axiosMock) => {
-  axiosMock.delete["mockImplementation"]((url) => {
+const loadAPI = axiosMock => {
+  axiosMock.delete["mockImplementation"](url => {
     switch (url) {
     case "/api/steps/ingestion/" + loadData.loads.data[0].name:
       return Promise.resolve(loadData.genericSuccess);
@@ -13,18 +13,18 @@ const loadAPI = (axiosMock) => {
       return Promise.reject(new Error("not found"));
     }
   });
-  axiosMock.post["mockImplementation"]((url) => {
+  axiosMock.post["mockImplementation"](url => {
     switch (url) {
     case "/api/steps/ingestion/" + loadData.loads.data[0].name:
       return Promise.resolve({
         "data": {},
-        "status": 200
+        "status": 200,
       });
     default:
       return Promise.reject(new Error("not found"));
     }
   });
-  return axiosMock.get["mockImplementation"]((url) => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(loadData.flows);
@@ -40,8 +40,8 @@ const loadAPI = (axiosMock) => {
   });
 };
 
-const curateAPI = (axiosMock) => {
-  axiosMock.delete["mockImplementation"]((url) => {
+const curateAPI = axiosMock => {
+  axiosMock.delete["mockImplementation"](url => {
     switch (url) {
     case "/api/steps/ingestion/" + loadData.loads.data[0].name:
       return Promise.resolve(loadData.genericSuccess);
@@ -52,19 +52,19 @@ const curateAPI = (axiosMock) => {
       return Promise.reject(new Error("not found"));
     }
   });
-  axiosMock.post["mockImplementation"]((url) => {
+  axiosMock.post["mockImplementation"](url => {
     switch (url) {
     case "/api/steps/mapping/" + curateData.mappings.data[0].artifacts[0].name:
       return Promise.resolve({
         "data": {},
-        "status": 200
+        "status": 200,
       });
     default:
       console.error("no POST defined: " + url);
       return Promise.reject(new Error("not found"));
     }
   });
-  return axiosMock.get["mockImplementation"]((url) => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flows);
@@ -101,10 +101,14 @@ const curateAPI = (axiosMock) => {
     case "/api/steps/mapping/" + curateData.mappings.data[0].artifacts[0].name + "/uris?limit=20":
       return Promise.resolve({
         "data": ["/testdoc.xml"],
-        "status": 200
+        "status": 200,
       });
-    case `/api/steps/mapping/${curateData.mappings.data[0].artifacts[0].name}/doc?docUri=${encodeURIComponent("/testdoc.xml")}`:
-      return Promise.resolve({status: 200, data: `<Order xmlns="https://www.w3schools.com/OrderNS">
+    case `/api/steps/mapping/${curateData.mappings.data[0].artifacts[0].name}/doc?docUri=${encodeURIComponent(
+      "/testdoc.xml",
+    )}`:
+      return Promise.resolve({
+        status: 200,
+        data: `<Order xmlns="https://www.w3schools.com/OrderNS">
   <RequiredDate>1996-09-23T13:27:06</RequiredDate>
   <ShipName>B's Beverages</ShipName>
   <OrderDetails xmlns:y="https://www.w3schools.com/OD">
@@ -134,7 +138,8 @@ const curateAPI = (axiosMock) => {
   <ShipCountry>UK</ShipCountry>
   <EmployeeID>7</EmployeeID>
   <Freight>22.7700</Freight>
-</Order>`});
+</Order>`,
+      });
     default:
       console.error("no GET defined: " + url);
       return Promise.reject(new Error("not found"));
@@ -142,8 +147,8 @@ const curateAPI = (axiosMock) => {
   });
 };
 
-const runAPI = (axiosMock) => {
-  return axiosMock.get["mockImplementation"]((url) => {
+const runAPI = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flows);
@@ -167,10 +172,10 @@ const runAPI = (axiosMock) => {
   });
 };
 
-const runCrudAPI = (axiosMock) => {
+const runCrudAPI = axiosMock => {
   // call Run API for the GET operations
   runAPI(axiosMock);
-  axiosMock.post["mockImplementation"]((url) => {
+  axiosMock.post["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve({status: 201, data: {}});
@@ -183,7 +188,7 @@ const runCrudAPI = (axiosMock) => {
     }
   });
   const updateURL = `/api/flows/${curateData.flows.data[0].name}`;
-  axiosMock.put["mockImplementation"]((url) => {
+  axiosMock.put["mockImplementation"](url => {
     switch (url) {
     case updateURL:
       return Promise.resolve({status: 200, data: {}});
@@ -191,7 +196,7 @@ const runCrudAPI = (axiosMock) => {
       return Promise.reject(new Error("not found"));
     }
   });
-  return axiosMock.delete["mockImplementation"]((url) => {
+  return axiosMock.delete["mockImplementation"](url => {
     switch (url) {
     case updateURL:
       return Promise.resolve({status: 200, data: {}});
@@ -201,10 +206,10 @@ const runCrudAPI = (axiosMock) => {
   });
 };
 
-const runAddStepAPI = (axiosMock) => {
+const runAddStepAPI = axiosMock => {
   // call Run API for the GET operations
   runAPI(axiosMock);
-  axiosMock.post["mockImplementation"]((url) => {
+  axiosMock.post["mockImplementation"](url => {
     switch (url) {
     case `/api/flows/${curateData.flows.data[0].name}/steps`:
       return Promise.resolve({status: 200, data: {}});
@@ -215,17 +220,17 @@ const runAddStepAPI = (axiosMock) => {
 };
 
 // For testing display of a flow missing a step (DHFPROD-6369)
-const runMissingStep = (axiosMock) => {
-  axiosMock.get["mockImplementation"]((url) => {
+const runMissingStep = axiosMock => {
+  axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.reject({
         "response": {
           "data": {
             "code": 400,
-            "message": "Error message"
-          }
-        }
+            "message": "Error message",
+          },
+        },
       });
     case "/api/steps":
       return Promise.resolve(curateData.steps);
@@ -235,8 +240,8 @@ const runMissingStep = (axiosMock) => {
   });
 };
 
-const runErrorsAPI = (axiosMock) => {
-  return axiosMock.get["mockImplementation"]((url) => {
+const runErrorsAPI = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flows);
@@ -256,8 +261,8 @@ const runErrorsAPI = (axiosMock) => {
   });
 };
 
-const runFailedAPI = (axiosMock) => {
-  return axiosMock.get["mockImplementation"]((url) => {
+const runFailedAPI = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flows);
@@ -277,8 +282,8 @@ const runFailedAPI = (axiosMock) => {
   });
 };
 
-const runXMLAPI = (axiosMock) => {
-  return axiosMock.get["mockImplementation"]((url) => {
+const runXMLAPI = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flowsXML);
@@ -298,10 +303,9 @@ const runXMLAPI = (axiosMock) => {
   });
 };
 
-const advancedAPI = (axiosMock) => {
-  axiosMock.post["mockImplementationOnce"](jest.fn(() =>
-    Promise.resolve({status: 200, data: {}})));
-  return axiosMock.get["mockImplementation"]((url) => {
+const advancedAPI = axiosMock => {
+  axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: {}})));
+  return axiosMock.get["mockImplementation"](url => {
     const targetEntityType = String(stepsData.stepMerging.targetEntityType);
     const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
     const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURIComponent(targetEntityTitle)}`;
@@ -310,7 +314,10 @@ const advancedAPI = (axiosMock) => {
       return Promise.resolve({status: 200, data: stepsData.stepLoad});
       //Settings for a custom ingestion step
     case "/api/steps/ingestion/CustomLoad":
-      return Promise.resolve({data: {...stepsData.stepLoad, stepDefinitionName: "custom-ingestion", name: "CustomLoad"}, status: 200});
+      return Promise.resolve({
+        data: {...stepsData.stepLoad, stepDefinitionName: "custom-ingestion", name: "CustomLoad"},
+        status: 200,
+      });
     case "/api/steps/mapping/AdvancedMapping":
       return Promise.resolve(stepsData.stepMapping);
     case "/api/steps/matching/AdvancedMatching":
@@ -325,8 +332,8 @@ const advancedAPI = (axiosMock) => {
   });
 };
 
-const systemInfoAPI = (axiosMock) => {
-  return axiosMock["mockImplementation"]((url) => {
+const systemInfoAPI = axiosMock => {
+  return axiosMock["mockImplementation"](url => {
     switch (url) {
     case "/api/environment/systemInfo":
       return Promise.resolve({status: 200, data: systemInfoData.environment});
@@ -336,8 +343,8 @@ const systemInfoAPI = (axiosMock) => {
   });
 };
 
-const noResponseAPI = (axiosMock) => {
-  return axiosMock.get["mockImplementation"]((url) => {
+const noResponseAPI = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/environment/systemInfo":
       return Promise.reject(new Error());
@@ -347,13 +354,13 @@ const noResponseAPI = (axiosMock) => {
   });
 };
 
-const clearUserDataAPI = (axiosMock) => {
-  return axiosMock.post["mockImplementation"]((url) => {
+const clearUserDataAPI = axiosMock => {
+  return axiosMock.post["mockImplementation"](url => {
     switch (url) {
     case "/api/environment/clearUserData":
       return Promise.resolve({
         "data": {},
-        "status": 200
+        "status": 200,
       });
     default:
       return Promise.reject(new Error("not found"));
@@ -361,13 +368,13 @@ const clearUserDataAPI = (axiosMock) => {
   });
 };
 
-const getAllExcludeValuesList = (axiosMock) => {
-  return  axiosMock.get["mockImplementation"]((url) => {
+const getAllExcludeValuesList = axiosMock => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/steps/matching/exclusionList":
       return Promise.resolve({
         "data": {"name": "Preset List 1", "values": ["one", "two", "one", "two", "one", "two", "one", "two"]},
-        "status": 200
+        "status": 200,
       });
     default:
       return Promise.reject(new Error("not found"));
@@ -389,7 +396,7 @@ const mocks = {
   systemInfoAPI: systemInfoAPI,
   noResponseAPI: noResponseAPI,
   clearUserDataAPI: clearUserDataAPI,
-  getAllExcludeValuesList: getAllExcludeValuesList
+  getAllExcludeValuesList: getAllExcludeValuesList,
 };
 
 export default mocks;

@@ -35,7 +35,7 @@ interface Props {
 
 const DEFAULT_TAB = "1";
 
-const Steps: React.FC<Props> = (props) => {
+const Steps: React.FC<Props> = props => {
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [isValid, setIsValid] = useState(true);
   const [hasBasicChanged, setHasBasicChanged] = useState(false);
@@ -86,52 +86,69 @@ const Steps: React.FC<Props> = (props) => {
     setErrorModalVisible(false);
   };
 
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
+  const discardChanges = (
+    <ConfirmYesNo visible={discardChangesVisible} type="discardChanges" onYes={discardOk} onNo={discardCancel} />
+  );
 
   const confirmAction = () => {
     setErrorModalVisible(false);
   };
 
-  const errorModal = <HCModal
-    show={errorModalVisible}
-    onHide={onErrorCancel}
-  >
-    <Modal.Header className={"bb-none"}>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel} />
-    </Modal.Header>
-    <Modal.Body className={"text-center pt-0 pb-4"}>
-      <div className={"d-flex align-items-start justify-content-center"}>
-        <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />
-        <p data-testid={"invalid-path-error"}><b>Parameter Module Path</b> not found. Please enter a valid path.</p>
-        {/* <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p> */}
-      </div>
-      <div>
-        <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={confirmAction}>
-          OK
-        </HCButton>
-      </div>
-    </Modal.Body>
-  </HCModal>;
+  const errorModal = (
+    <HCModal show={errorModalVisible} onHide={onErrorCancel}>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onErrorCancel} />
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={"d-flex align-items-start justify-content-center"}>
+          <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />
+          <p data-testid={"invalid-path-error"}>
+            <b>Parameter Module Path</b> not found. Please enter a valid path.
+          </p>
+          {/* <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p> */}
+        </div>
+        <div>
+          <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={confirmAction}>
+            OK
+          </HCButton>
+        </div>
+      </Modal.Body>
+    </HCModal>
+  );
 
   const resetTabs = () => {
     setCurrentTab(DEFAULT_TAB);
   };
 
-  const handleTabChange = (key) => {
+  const handleTabChange = key => {
     setCurrentTab(key);
   };
 
   const getStepPayload = (payload, newStepFlag?: boolean) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
-    let targetFormat = props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
-    if (props.activityType === "matching" || props.activityType === "merging") return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat}, {targetEntityType: props.targetEntityName});
-    else return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
+    let targetFormat =
+      props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
+    if (props.activityType === "matching" || props.activityType === "merging") {
+      return Object.assign(
+        newStepFlag ? {} : props.stepData,
+        basicPayload,
+        advancedPayload,
+        payload,
+        {name: name},
+        {targetFormat: targetFormat},
+        {targetEntityType: props.targetEntityName},
+      );
+    } else {
+      return Object.assign(
+        newStepFlag ? {} : props.stepData,
+        basicPayload,
+        advancedPayload,
+        payload,
+        {name: name},
+        {targetFormat: targetFormat},
+      );
+    }
   };
 
   const createStep = async (payload, stepType) => {
@@ -197,72 +214,81 @@ const Steps: React.FC<Props> = (props) => {
     resetTabs: resetTabs,
     setHasChanged: setHasBasicChanged,
     setPayload: setBasicPayload,
-    onCancel: onCancel
+    onCancel: onCancel,
   };
 
-  const createEditLoad = (<CreateEditLoad
-    {...createEditDefaults}
-    isEditing={props.isEditing}
-    createLoadArtifact={createStep}
-    updateLoadArtifact={updateStep}
-    stepData={props.stepData}
-  />);
-
+  const createEditLoad = (
+    <CreateEditLoad
+      {...createEditDefaults}
+      isEditing={props.isEditing}
+      createLoadArtifact={createStep}
+      updateLoadArtifact={updateStep}
+      stepData={props.stepData}
+    />
+  );
 
   const preloadTypeahead = (editStepArtifactObject: any) => {
     if (editStepArtifactObject.selectedSource === "collection") {
       let srcCollection = editStepArtifactObject.sourceQuery.substring(
         editStepArtifactObject.sourceQuery.lastIndexOf("[") + 2,
-        editStepArtifactObject.sourceQuery.lastIndexOf("]") - 1
+        editStepArtifactObject.sourceQuery.lastIndexOf("]") - 1,
       );
       return srcCollection;
     }
   };
 
-  const createEditMapping = (<CreateEditStep
-    {...createEditDefaults}
-    isEditing={props.isEditing}
-    editStepArtifactObject={props.stepData}
-    stepType={StepType.Mapping}
-    targetEntityType={props.targetEntityType}
-    createStepArtifact={createStep}
-    updateStepArtifact={updateStep}
-    preloadTypeahead={preloadTypeahead(props.stepData)}
-  />);
+  const createEditMapping = (
+    <CreateEditStep
+      {...createEditDefaults}
+      isEditing={props.isEditing}
+      editStepArtifactObject={props.stepData}
+      stepType={StepType.Mapping}
+      targetEntityType={props.targetEntityType}
+      createStepArtifact={createStep}
+      updateStepArtifact={updateStep}
+      preloadTypeahead={preloadTypeahead(props.stepData)}
+    />
+  );
 
-  const createEditMatching = (<CreateEditStep
-    {...createEditDefaults}
-    isEditing={props.isEditing}
-    editStepArtifactObject={props.stepData}
-    stepType={StepType.Matching}
-    targetEntityType={props.targetEntityType}
-    createStepArtifact={createStep}
-    updateStepArtifact={updateStep}
-    preloadTypeahead={preloadTypeahead(props.stepData)}
-  />);
+  const createEditMatching = (
+    <CreateEditStep
+      {...createEditDefaults}
+      isEditing={props.isEditing}
+      editStepArtifactObject={props.stepData}
+      stepType={StepType.Matching}
+      targetEntityType={props.targetEntityType}
+      createStepArtifact={createStep}
+      updateStepArtifact={updateStep}
+      preloadTypeahead={preloadTypeahead(props.stepData)}
+    />
+  );
 
-  const createEditMerging = (<CreateEditStep
-    {...createEditDefaults}
-    isEditing={props.isEditing}
-    editStepArtifactObject={props.stepData}
-    stepType={StepType.Merging}
-    targetEntityType={props.targetEntityType}
-    createStepArtifact={createStep}
-    updateStepArtifact={updateStep}
-    preloadTypeahead={preloadTypeahead(props.stepData)}
-  />);
+  const createEditMerging = (
+    <CreateEditStep
+      {...createEditDefaults}
+      isEditing={props.isEditing}
+      editStepArtifactObject={props.stepData}
+      stepType={StepType.Merging}
+      targetEntityType={props.targetEntityType}
+      createStepArtifact={createStep}
+      updateStepArtifact={updateStep}
+      preloadTypeahead={preloadTypeahead(props.stepData)}
+    />
+  );
 
-  const viewCustom = (<CreateEditStep
-    {...createEditDefaults}
-    isEditing={props.isEditing}
-    editStepArtifactObject={props.stepData}
-    stepType={StepType.Custom}
-    targetEntityType={props.targetEntityType}
-    createStepArtifact={() => { } /** custom steps cannot be created through hub central */}
-    updateStepArtifact={updateStep}
-  />);
+  const viewCustom = (
+    <CreateEditStep
+      {...createEditDefaults}
+      isEditing={props.isEditing}
+      editStepArtifactObject={props.stepData}
+      stepType={StepType.Custom}
+      targetEntityType={props.targetEntityType}
+      createStepArtifact={() => {} /** custom steps cannot be created through hub central */}
+      updateStepArtifact={updateStep}
+    />
+  );
 
-  const getCreateEditStep = (activityType) => {
+  const getCreateEditStep = activityType => {
     if (activityType === "ingestion") {
       return createEditLoad;
     } else if (activityType === StepType.Mapping) {
@@ -286,18 +312,22 @@ const Steps: React.FC<Props> = (props) => {
         activity = "Loading";
       }
       break;
-    case StepType.Mapping: activity = "Mapping";
+    case StepType.Mapping:
+      activity = "Mapping";
       break;
-    case StepType.Matching: activity = "Matching";
+    case StepType.Matching:
+      activity = "Matching";
       break;
-    case StepType.Merging: activity = "Merging";
+    case StepType.Merging:
+      activity = "Merging";
       break;
-    default: activity = "Custom";
+    default:
+      activity = "Custom";
     }
     return !props.isEditing ? "New " + activity + " Step" : activity + " Step Settings";
   };
 
-  const handleStepDetails = (name) => {
+  const handleStepDetails = name => {
     onCancel();
     props.openStepDetails(name);
   };
@@ -306,70 +336,94 @@ const Steps: React.FC<Props> = (props) => {
     if (setLoadModalClickedCalled !== undefined) setLoadModalClickedCalled(true);
   };
 
-  return <HCModal
-    show={props.openStepSettings}
-    size={"xl"}
-    onClick={() => handleIsModelClicked()}
-    onHide={onCancel}
-  >
-    <Modal.Header className={"bb-none pb-0"}>
-      <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>
-      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
-    </Modal.Header>
-    <Modal.Body className={"pt-0 pb-4"}>
-      <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
-        <div className="tabs-container">
-          <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange} className={"ms-auto me-5"}>
-            <Tab title={(
-              <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span tabIndex={0}>Basic</span></HCTooltip>
-            )}  eventKey="1" disabled={!isValid && currentTab !== "1"}>
-              <TabPane mountOnEnter={false}>
-                {getCreateEditStep(props.activityType)}
-              </TabPane>
-            </Tab>
-            <Tab title={(
-              <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span tabIndex={0}>Advanced</span></HCTooltip>
-            )} key="2" eventKey="2" disabled={!isValid && currentTab !== "2"}>
-              <TabPane>
-                <AdvancedSettings
-                  tabKey="2"
-                  tooltipsData={props.tooltipsData}
-                  isEditing={props.isEditing}
-                  openStepSettings={props.openStepSettings}
-                  setOpenStepSettings={props.setOpenStepSettings}
-                  stepData={props.stepData}
-                  updateStep={updateStep}
-                  activityType={props.activityType}
-                  canWrite={props.canWrite}
-                  currentTab={currentTab}
-                  setIsValid={setIsValid}
-                  resetTabs={resetTabs}
-                  setHasChanged={setHasAdvancedChanged}
-                  setPayload={setAdvancedPayload}
-                  createStep={createStep}
-                  onCancel={onCancel}
-                  defaultCollections={defaultCollections}
-                />
-              </TabPane>
-            </Tab>
-          </Tabs>
+  return (
+    <HCModal show={props.openStepSettings} size={"xl"} onClick={() => handleIsModelClicked()} onHide={onCancel}>
+      <Modal.Header className={"bb-none pb-0"}>
+        <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
+      </Modal.Header>
+      <Modal.Body className={"pt-0 pb-4"}>
+        <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
+          <div className="tabs-container">
+            <Tabs
+              activeKey={currentTab}
+              defaultActiveKey={DEFAULT_TAB}
+              onSelect={handleTabChange}
+              className={"ms-auto me-5"}
+            >
+              <Tab
+                title={
+                  <HCTooltip
+                    text={!isValid && currentTab !== "1" ? ErrorTooltips.disabledTab : ""}
+                    id="basic-tooltip"
+                    placement="bottom"
+                  >
+                    <span tabIndex={0}>Basic</span>
+                  </HCTooltip>
+                }
+                eventKey="1"
+                disabled={!isValid && currentTab !== "1"}
+              >
+                <TabPane mountOnEnter={false}>{getCreateEditStep(props.activityType)}</TabPane>
+              </Tab>
+              <Tab
+                title={
+                  <HCTooltip
+                    text={!isValid && currentTab !== "2" ? ErrorTooltips.disabledTab : ""}
+                    id="advanced-tooltip"
+                    placement="bottom"
+                  >
+                    <span tabIndex={0}>Advanced</span>
+                  </HCTooltip>
+                }
+                key="2"
+                eventKey="2"
+                disabled={!isValid && currentTab !== "2"}
+              >
+                <TabPane>
+                  <AdvancedSettings
+                    tabKey="2"
+                    tooltipsData={props.tooltipsData}
+                    isEditing={props.isEditing}
+                    openStepSettings={props.openStepSettings}
+                    setOpenStepSettings={props.setOpenStepSettings}
+                    stepData={props.stepData}
+                    updateStep={updateStep}
+                    activityType={props.activityType}
+                    canWrite={props.canWrite}
+                    currentTab={currentTab}
+                    setIsValid={setIsValid}
+                    resetTabs={resetTabs}
+                    setHasChanged={setHasAdvancedChanged}
+                    setPayload={setAdvancedPayload}
+                    createStep={createStep}
+                    onCancel={onCancel}
+                    defaultCollections={defaultCollections}
+                  />
+                </TabPane>
+              </Tab>
+            </Tabs>
+          </div>
+          {/* Step Details link for Mapping steps */}
+          {props.isEditing && props.activityType === StepType.Mapping ? (
+            <div
+              className={styles.stepDetailsLink}
+              onClick={() => handleStepDetails(props.stepData.name)}
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") handleStepDetails(props.stepData.name);
+              }}
+            >
+              <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"} />
+              <span className={styles.stepDetailsLabel}>Step Details</span>
+            </div>
+          ) : null}
+          {discardChanges}
+          {errorModal}
         </div>
-        {/* Step Details link for Mapping steps */}
-        {(props.isEditing && props.activityType === StepType.Mapping) ?
-          <div
-            className={styles.stepDetailsLink}
-            onClick={() => handleStepDetails(props.stepData.name)}
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleStepDetails(props.stepData.name); }}
-          >
-            <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"} />
-            <span className={styles.stepDetailsLabel}>Step Details</span>
-          </div> : null}
-        {discardChanges}
-        {errorModal}
-      </div>
-    </Modal.Body>
-  </HCModal>;
+      </Modal.Body>
+    </HCModal>
+  );
 };
 
 export default Steps;

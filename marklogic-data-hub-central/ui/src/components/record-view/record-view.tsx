@@ -23,30 +23,31 @@ import {deleteNotification, mergeUris} from "@api/merging";
 import CompareValuesModal from "../../components/entities/matching/compare-values-modal/compare-values-modal";
 import {AxiosResponse} from "axios";
 
-const RecordCardView = (props) => {
+const RecordCardView = props => {
   const authorityService = useContext(AuthoritiesContext);
   const history: any = useHistory();
-  const {
-    searchOptions
-  } = useContext(SearchContext);
+  const {searchOptions} = useContext(SearchContext);
   const [loading, setToggleLoading] = useState<string>("");
   const [activeUri, setActiveUri] = useState<string>("");
   const [compareModalVisible, setCompareModalVisible] = useState(false);
-  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({sampleSize: 100, uris: [], actionPreview: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity] = useState<{}>({
+    sampleSize: 100,
+    uris: [],
+    actionPreview: [],
+  });
   const [activeEntityArray, setActiveEntityArray] = useState<any>([]);
   const [activeEntityUris, setActiveEntityUris] = useState<string[]>([]);
   const [uriInfo, setUriInfo] = useState<any>();
   const [flowName, setFlowname] = useState<string>("");
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
-  const handleDetailViewNavigation = () => { }; // eslint-disable-line @typescript-eslint/no-unused-vars
+  const handleDetailViewNavigation = () => {}; // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const [infoVisibility, setInfoVisibility] = useState(false);
   const [target, setTarget] = useState(null);
   const [element, setElement] = useState(null);
 
-
   // Custom CSS for source Format
-  const sourceFormatStyle = (sourceFmt) => {
+  const sourceFormatStyle = sourceFmt => {
     let customStyles: CSSProperties = {
       display: "inline-flex",
       alignItems: "center",
@@ -60,16 +61,16 @@ const RecordCardView = (props) => {
       textAlign: "center",
       color: "#ffffff",
       verticalAlign: "middle",
-      marginRight: "8px"
+      marginRight: "8px",
     };
     return customStyles;
   };
 
-  const displayUri = (uri) => {
+  const displayUri = uri => {
     return formatCardUri(uri);
   };
 
-  const displaySnippet = (item) => {
+  const displaySnippet = item => {
     if (["json", "xml", "text"].includes(item.format)) {
       let str = "";
       item.matches.forEach(item => {
@@ -84,26 +85,29 @@ const RecordCardView = (props) => {
       return <p>{ReactHtmlParser(str)}</p>;
     } else if ("binary" === item.format) {
       return (
-        <div className={styles.binaryCard} >
+        <div className={styles.binaryCard}>
           <FileEarmark className={styles.binaryIcon} />
-          <div className={styles.binaryText} data-testid={item.uri + "-noPreview"}> No preview available</div>
+          <div className={styles.binaryText} data-testid={item.uri + "-noPreview"}>
+            {" "}
+            No preview available
+          </div>
         </div>
       );
     }
   };
 
-  const displayRecordSources = (item) => {
-    let sources = item.hubMetadata?.sources.map((record) => {
-      return record.datahubSourceName;
-    }).join(", ");
+  const displayRecordSources = item => {
+    let sources = item.hubMetadata?.sources
+      .map(record => {
+        return record.datahubSourceName;
+      })
+      .join(", ");
     return sources;
   };
 
-  const emptyField = (
-    <p className={styles.textDisabled}>none</p>
-  );
+  const emptyField = <p className={styles.textDisabled}>none</p>;
 
-  const displayRecordMetadata = (item) => {
+  const displayRecordMetadata = item => {
     return (
       <Popover id={`popover-positioned-record-view-${item?.index ? item.index : ""}`} className={styles.popoverWrap}>
         <Popover.Body>
@@ -115,33 +119,55 @@ const RecordCardView = (props) => {
               <p>Created On:</p>
             </div>
             <div className={styles.colValue}>
-              {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
-                <HCTooltip
-                  text={displayRecordSources(item)}
-                  id="source-tooltip"
-                  placement="bottom"
-                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span tabIndex={0}>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
-              </span> : emptyField}
-              {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
-                <HCTooltip
-                  text={item.hubMetadata?.lastProcessedByFlow}
-                  id="last-processed-by-flow-tooltip"
-                  placement="bottom"
-                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span tabIndex={0}>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
-              </span> : emptyField}
-              {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
-                <HCTooltip
-                  text={item.hubMetadata.lastProcessedByStep}
-                  id="last-processed-by-step-tooltip"
-                  placement="bottom"
-                //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-                ><span tabIndex={0}>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
-              </span> : emptyField}
-              {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
-                {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
-              </span> : emptyField}
+              {item.hubMetadata?.sources?.length > 0 ? (
+                <span className={styles.valText} data-testid={item.uri + "-sources"}>
+                  <HCTooltip
+                    text={displayRecordSources(item)}
+                    id="source-tooltip"
+                    placement="bottom"
+                    //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                  >
+                    <span tabIndex={0}>{displayRecordSources(item).substring(0, 28)}</span>
+                  </HCTooltip>
+                </span>
+              ) : (
+                emptyField
+              )}
+              {item.hubMetadata?.lastProcessedByFlow ? (
+                <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
+                  <HCTooltip
+                    text={item.hubMetadata?.lastProcessedByFlow}
+                    id="last-processed-by-flow-tooltip"
+                    placement="bottom"
+                    //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                  >
+                    <span tabIndex={0}>{item.hubMetadata?.lastProcessedByFlow}</span>
+                  </HCTooltip>
+                </span>
+              ) : (
+                emptyField
+              )}
+              {item.hubMetadata?.lastProcessedByStep ? (
+                <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
+                  <HCTooltip
+                    text={item.hubMetadata.lastProcessedByStep}
+                    id="last-processed-by-step-tooltip"
+                    placement="bottom"
+                    //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                  >
+                    <span tabIndex={0}>{item.hubMetadata.lastProcessedByStep}</span>
+                  </HCTooltip>
+                </span>
+              ) : (
+                emptyField
+              )}
+              {item.hubMetadata?.lastProcessedDateTime ? (
+                <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
+                  {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
+                </span>
+              ) : (
+                emptyField
+              )}
             </div>
           </div>
         </Popover.Body>
@@ -149,11 +175,12 @@ const RecordCardView = (props) => {
     );
   };
 
-  const getLinkProperties = (elem) => {
+  const getLinkProperties = elem => {
     let sources = elem.hubMetadata && elem.hubMetadata.hasOwnProperty("sources") ? elem.hubMetadata["sources"] : [];
 
     let linkObject = {
-      pathname: "/tiles/explore/detail", state: {
+      pathname: "/tiles/explore/detail",
+      state: {
         selectedValue: "instance",
         entity: searchOptions.entityTypeIds,
         pageNumber: searchOptions.pageNumber,
@@ -168,8 +195,8 @@ const RecordCardView = (props) => {
         entityInstance: elem.entityInstance ? elem.entityInstance : undefined,
         database: searchOptions.database,
         isEntityInstance: false,
-        targetDatabase: searchOptions.database
-      }
+        targetDatabase: searchOptions.database,
+      },
     };
 
     return linkObject;
@@ -180,7 +207,7 @@ const RecordCardView = (props) => {
     }
   };
 
-  const download = async (docUri) => {
+  const download = async docUri => {
     try {
       const response = await getRecord(docUri, searchOptions.database);
       if (response) {
@@ -198,15 +225,15 @@ const RecordCardView = (props) => {
     }
   };
 
-  const displayFileSize = (elem) => {
+  const displayFileSize = elem => {
     let size = elem.documentSize?.hasOwnProperty("value") ? elem.documentSize?.value : "";
     let unit = elem.documentSize?.hasOwnProperty("units") ? elem.documentSize?.units : "";
     return `Download (${size} ${unit})`;
   };
 
-  const openMergeCompare = async (item) => {
+  const openMergeCompare = async item => {
     let arrayUris = item.notifiedDocumentUris;
-    let activeEntityIndex = props.entityDefArray.findIndex((entity) => entity.name === item["entityName"]);
+    let activeEntityIndex = props.entityDefArray.findIndex(entity => entity.name === item["entityName"]);
     setFlowname(item.hubMetadata.lastProcessedByFlow);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
     setActiveEntityUris(arrayUris);
@@ -218,7 +245,7 @@ const RecordCardView = (props) => {
 
   const fetchCompareData = async (array, item) => {
     let uriRequests: Promise<AxiosResponse<any>>[] = [];
-    array.forEach((uri) => {
+    array.forEach(uri => {
       uriRequests.push(getDocFromURI(uri));
     });
     const results = await Promise.all(uriRequests);
@@ -226,7 +253,7 @@ const RecordCardView = (props) => {
     const result2 = results[1];
 
     const flowName = result1.data.recordMetadata?.datahubCreatedInFlow;
-    const preview = (flowName) ? await getPreviewFromURIs(flowName, array) : null;
+    const preview = flowName ? await getPreviewFromURIs(flowName, array) : null;
 
     if (result1.status === 200 && result2.status === 200 && preview?.status === 200) {
       let urisInfo: any[] = [];
@@ -245,7 +272,7 @@ const RecordCardView = (props) => {
       restrictToUris: true,
       uris: array,
       sampleSize: 100,
-      stepName: item.matchStepName
+      stepName: item.matchStepName,
     };
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
@@ -253,7 +280,6 @@ const RecordCardView = (props) => {
       setToggleLoading("");
       setPreviewMatchedActivity(previewMatchActivity);
     }
-
   };
 
   const submitMergeUri = async (uri, payload) => {
@@ -286,133 +312,147 @@ const RecordCardView = (props) => {
   };
 
   const infoPopover = (
-    <Overlay
-      show={infoVisibility}
-      target={target}
-      placement="bottom-end"
-    >
+    <Overlay show={infoVisibility} target={target} placement="bottom-end">
       {element ? displayRecordMetadata(element) : <></>}
-    </Overlay>);
-
+    </Overlay>
+  );
 
   return (
-    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard} >
+    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
       <Row className="w-100 m-0">
         {infoVisibility && element && infoPopover}
-        {props.data && props.data.length > 0 ? props.data.map((elem, index) => (
-          <Col xs={"auto"} key={index}>
-            <div >
-              <HCCard
-                className={styles.cardStyle}
-              >
-                <div className={styles.cardMetadataContainer}>
-                  <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>URI: <span className={styles.uri}>
-                    <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
-                      <span tabIndex={0} onFocus={closePopover}>{displayUri(elem.uri)}</span>
-                    </HCTooltip>
-                  </span></span>
-                  <span className={styles.cardIcons}>
-                    <span>
-                      <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
-                        <span className={styles.infoIcon}>
-                          <i>
-                            <FontAwesomeIcon
-                              tabIndex={0}
-                              icon={faInfoCircle}
-                              size="1x"
-                              data-testid={elem.uri + "-InfoIcon"}
-                              onClick={(event) => handleInfoIconClick(event, elem)}
-                              onKeyDown={(event) => infoKeyDownHandler(event, elem)}
-                            />
-                          </i>
-                        </span>
-                      </HCTooltip>
-                    </span>
-                    <span className={styles.sourceFormat}
-                      style={sourceFormatStyle(elem.format)}
-                      data-testid={elem.uri + "-sourceFormat"}
-                    >{sourceFormatOptions[elem.format].label}</span>
-                    {elem.format === "binary" ?
-                      <span id={"instance"}
-                        data-cy="instance">
-                        <HCTooltip text="View details" id="binary-detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare} />
+        {props.data && props.data.length > 0 ? (
+          props.data.map((elem, index) => (
+            <Col xs={"auto"} key={index}>
+              <div>
+                <HCCard className={styles.cardStyle}>
+                  <div className={styles.cardMetadataContainer}>
+                    <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>
+                      URI:{" "}
+                      <span className={styles.uri}>
+                        <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
+                          <span tabIndex={0} onFocus={closePopover}>
+                            {displayUri(elem.uri)}
+                          </span>
                         </HCTooltip>
                       </span>
-                      :
-                      <Link to={getLinkProperties(elem)} onKeyDown={(e) => navigateUsingKey(e, elem)}
-                        id={"instance"}
-                        data-cy="instance"
-                        onFocus={closePopover}
-                      >
-                        <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
-                          <ArrowRightSquare className={styles.arrowRightSquare} role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"} />
-                        </HCTooltip>
-                      </Link>
-                    }
-                  </span>
-                </div>
-                <div className={styles.snippetContainer} data-testid={elem.uri + "-snippet"} >
-                  {displaySnippet(elem)}
-                </div>
-                {
-                  elem.notifiedDoc ?
-                    <div className={styles.mergeIconDiv}>
-                      {
-                        loading === elem.uri ?
-                          <Spinner
-                            data-testid="hc-button-component-spinner"
-                            as="span"
-                            animation="border"
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                            className={styles.spinner}
-                          /> : null
-                      }
-                      {
-                        canWriteMatchMerge ?
-                          <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
+                    </span>
+                    <span className={styles.cardIcons}>
+                      <span>
+                        <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
+                          <span className={styles.infoIcon}>
                             <i>
-                              <MdCallMerge
-                                className={styles.mergeIcon}
-                                data-testid={"merge-icon"}
-                                onClick={() => openMergeCompare(elem)}
+                              <FontAwesomeIcon
                                 tabIndex={0}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" || e.key === " ") {
-                                    openMergeCompare(elem);
-                                  }
-                                }}
+                                icon={faInfoCircle}
+                                size="1x"
+                                data-testid={elem.uri + "-InfoIcon"}
+                                onClick={event => handleInfoIconClick(event, elem)}
+                                onKeyDown={event => infoKeyDownHandler(event, elem)}
                               />
                             </i>
+                          </span>
+                        </HCTooltip>
+                      </span>
+                      <span
+                        className={styles.sourceFormat}
+                        style={sourceFormatStyle(elem.format)}
+                        data-testid={elem.uri + "-sourceFormat"}
+                      >
+                        {sourceFormatOptions[elem.format].label}
+                      </span>
+                      {elem.format === "binary" ? (
+                        <span id={"instance"} data-cy="instance">
+                          <HCTooltip text="View details" id="binary-detail-view-tooltip" placement="bottom">
+                            <ArrowRightSquare className={styles.arrowRightSquare} />
                           </HCTooltip>
-                          :
-                          <HCTooltip text={SecurityTooltips.missingPermissionMerge} id="missing-permission-tooltip" placement="top-end">
-                            <i data-testid={`merge-icon${index}`}><MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"} /></i>
+                        </span>
+                      ) : (
+                        <Link
+                          to={getLinkProperties(elem)}
+                          onKeyDown={e => navigateUsingKey(e, elem)}
+                          id={"instance"}
+                          data-cy="instance"
+                          onFocus={closePopover}
+                        >
+                          <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
+                            <ArrowRightSquare
+                              className={styles.arrowRightSquare}
+                              role="detail-link icon"
+                              data-testid={elem.uri + "-detailViewIcon"}
+                            />
                           </HCTooltip>
-                      }
-
+                        </Link>
+                      )}
+                    </span>
+                  </div>
+                  <div className={styles.snippetContainer} data-testid={elem.uri + "-snippet"}>
+                    {displaySnippet(elem)}
+                  </div>
+                  {elem.notifiedDoc ? (
+                    <div className={styles.mergeIconDiv}>
+                      {loading === elem.uri ? (
+                        <Spinner
+                          data-testid="hc-button-component-spinner"
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className={styles.spinner}
+                        />
+                      ) : null}
+                      {canWriteMatchMerge ? (
+                        <HCTooltip text={"Merge Documents"} id="merge-icon" placement="top-end">
+                          <i>
+                            <MdCallMerge
+                              className={styles.mergeIcon}
+                              data-testid={"merge-icon"}
+                              onClick={() => openMergeCompare(elem)}
+                              tabIndex={0}
+                              onKeyDown={e => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                  openMergeCompare(elem);
+                                }
+                              }}
+                            />
+                          </i>
+                        </HCTooltip>
+                      ) : (
+                        <HCTooltip
+                          text={SecurityTooltips.missingPermissionMerge}
+                          id="missing-permission-tooltip"
+                          placement="top-end"
+                        >
+                          <i data-testid={`merge-icon${index}`}>
+                            <MdCallMerge className={styles.mergeIconDisabled} data-testid={"merge-icon"} />
+                          </i>
+                        </HCTooltip>
+                      )}
                     </div>
-                    : null}
-                <span className={styles.downloadIcon}>
-                  <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom" >
-                    <Download
-                      onClick={() => download(elem.uri)}
-                      data-testid={elem.uri + "-download-icon"}
-                      size={18}
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          download(elem.uri);
-                        }
-                      }}
-                    />
-                  </HCTooltip>
-                </span>
-              </HCCard>
-            </div>
-          </Col>)) : <span />}
+                  ) : null}
+                  <span className={styles.downloadIcon}>
+                    <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom">
+                      <Download
+                        onClick={() => download(elem.uri)}
+                        data-testid={elem.uri + "-download-icon"}
+                        size={18}
+                        tabIndex={0}
+                        onKeyDown={e => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            download(elem.uri);
+                          }
+                        }}
+                      />
+                    </HCTooltip>
+                  </span>
+                </HCCard>
+              </div>
+            </Col>
+          ))
+        ) : (
+          <span />
+        )}
       </Row>
       <CompareValuesModal
         isVisible={compareModalVisible}
@@ -428,7 +468,7 @@ const RecordCardView = (props) => {
         isPreview={false}
         isMerge={true}
         flowName={flowName}
-        mergeUris={async (payload) => submitMergeUri(activeUri, payload)}
+        mergeUris={async payload => submitMergeUri(activeUri, payload)}
         unmergeUri={{}}
         originalUri={activeUri}
       />

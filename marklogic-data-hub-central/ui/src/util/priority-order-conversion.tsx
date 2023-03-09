@@ -1,5 +1,5 @@
-export const parsePriorityOrder = (priorityOptions) => {
-  let priorityOrder:any = {};
+export const parsePriorityOrder = priorityOptions => {
+  let priorityOrder: any = {};
   priorityOrder.sources = [];
   for (let key of priorityOptions) {
     if (key.hasOwnProperty("value")) {
@@ -9,12 +9,10 @@ export const parsePriorityOrder = (priorityOptions) => {
         priorityOrder.timeWeight = key.start;
       } else {
         if (key.value.split(":")[0].split(" - ")[0] === "Source") {
-          priorityOrder.sources.push(
-            {
-              "sourceName": key.value.split(":")[0].split(" - ")[1],
-              "weight": key.start
-            }
-          );
+          priorityOrder.sources.push({
+            "sourceName": key.value.split(":")[0].split(" - ")[1],
+            "weight": key.start,
+          });
         }
       }
     }
@@ -22,7 +20,7 @@ export const parsePriorityOrder = (priorityOptions) => {
   return priorityOrder;
 };
 
-export const addSliderOptions =  (priorityOrderOptions, dropdownOption) => {
+export const addSliderOptions = (priorityOrderOptions, dropdownOption) => {
   let priorityOrderDropdownOptions = [...priorityOrderOptions];
   for (let key of priorityOrderDropdownOptions) {
     let priorityName;
@@ -37,18 +35,16 @@ export const addSliderOptions =  (priorityOrderOptions, dropdownOption) => {
   }
   let priorityName;
   if (dropdownOption.indexOf("Length") !== -1) priorityName = "Length";
-  else priorityName = "Source - " +   dropdownOption;
-  priorityOrderDropdownOptions.push(
-    {
-      start: 1,
-      value: priorityName + ":1",
-      id: priorityName + ":1"
-    }
-  );
+  else priorityName = "Source - " + dropdownOption;
+  priorityOrderDropdownOptions.push({
+    start: 1,
+    value: priorityName + ":1",
+    id: priorityName + ":1",
+  });
   return priorityOrderDropdownOptions;
 };
 
-export const handleSliderOptions = (values, options, priorityOrderOptions:any[]) => {
+export const handleSliderOptions = (values, options, priorityOrderOptions: any[]) => {
   for (let key of priorityOrderOptions) {
     if (key.hasOwnProperty("props")) {
       if (key.props[0].prop === options.prop && options.type === key.props[0].type) {
@@ -78,4 +74,3 @@ export const handleDeleteSliderOptions = (options, priorityOrderOptions) => {
   }
   return priorityOrderDropdownOptions;
 };
-

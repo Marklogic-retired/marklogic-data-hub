@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import {cleanup, render, screen} from "@testing-library/react";
 
 describe("Footer component", () => {
-  const globalAny:any = global;
+  const globalAny: any = global;
   beforeAll(() => {
     cleanup();
   });
@@ -17,13 +17,12 @@ describe("Footer component", () => {
 
   it("should display correct text", () => {
     const infoRender = render(<Footer />);
-    const currentYear = (new Date()).getFullYear();
+    const currentYear = new Date().getFullYear();
     let regex = new RegExp("© " + currentYear + " MarkLogic Corporation|Privacy");
     expect(infoRender.getAllByText(regex)).toHaveLength(2);
   });
 
   it("can focus and goto on privacy link", () => {
-
     globalAny.window = {location: {href: null}};
     render(<Footer />);
     // get the actual link wrapper by traversing DOM tree

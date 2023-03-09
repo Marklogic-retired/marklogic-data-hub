@@ -85,6 +85,7 @@ describe("Concepts", () => {
 
     cy.wait(4000);
 
+    graphExplore.fit();
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();

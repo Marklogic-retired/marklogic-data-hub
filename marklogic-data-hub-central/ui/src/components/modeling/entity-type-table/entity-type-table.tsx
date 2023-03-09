@@ -25,32 +25,54 @@ type Props = {
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
   autoExpand: string;
-  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => void;
+  editEntityTypeDescription: (
+    entityTypeName: string,
+    entityTypeDescription: string,
+    entityTypeNamespace: string,
+    entityTypePrefix: string,
+    entityTypeColor: string,
+    entityTypeIcon: string,
+  ) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified, errorHandler: Function | undefined) => void;
   hubCentralConfig: any;
-  editConceptClassDescription: (conceptClassName: string, conceptClassDescription: string, conceptClassColor: string, conceptClassIcon: string) => void;
+  editConceptClassDescription: (
+    conceptClassName: string,
+    conceptClassDescription: string,
+    conceptClassColor: string,
+    conceptClassIcon: string,
+  ) => void;
   deleteConceptClass: (conceptClassName: string) => void;
-}
+};
 
-const EntityTypeTable: React.FC<Props> = (props) => {
+const EntityTypeTable: React.FC<Props> = props => {
   const storage = getViewSettings();
   const expandedRowStorage = storage?.model?.entityExpandedRows;
 
   const {handleError} = useContext(UserContext);
   const {modelingOptions, setGraphViewOptions} = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
-  const [expandedNewRows, setExpandedNewRows] = useState<number[]>(expandedRowStorage ? expandedRowStorage.map(e => +e) : []);
+  const [expandedNewRows, setExpandedNewRows] = useState<number[]>(
+    expandedRowStorage ? expandedRowStorage.map(e => +e) : [],
+  );
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [arrayValues, setArrayValues] = useState<string[]>([]);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
-  const [sortedCol, setSortedCol] = useState<{ columnKey?: string, order?: string }>();
+  const [sortedCol, setSortedCol] = useState<{columnKey?: string; order?: string}>();
 
-  const {allEntityTypesData, canReadEntityModel, canWriteEntityModel, autoExpand, editEntityTypeDescription,
-    editConceptClassDescription, hubCentralConfig, deleteConceptClass} = props;
+  const {
+    allEntityTypesData,
+    canReadEntityModel,
+    canWriteEntityModel,
+    autoExpand,
+    editEntityTypeDescription,
+    editConceptClassDescription,
+    hubCentralConfig,
+    deleteConceptClass,
+  } = props;
 
   useEffect(() => {
     const sortOrder = getViewSettings().model?.sortOrder;
@@ -83,14 +105,20 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
       if (modelingOptions.isModified && modelingOptions.modifiedEntitiesArray.length > 0) {
         let modifiedEntitiesMap = {};
-        modelingOptions.modifiedEntitiesArray.forEach(entity => { modifiedEntitiesMap[entity.entityName] = entity.modelDefinition; });
+        modelingOptions.modifiedEntitiesArray.forEach(entity => {
+          modifiedEntitiesMap[entity.entityName] = entity.modelDefinition;
+        });
 
         newEntityTypes.forEach(entity => {
           if (modifiedEntitiesMap.hasOwnProperty(entity.entityName)) {
             // modified entities doesn't update description, use description from payload
-            if (entity.model.definitions[entity.entityName].hasOwnProperty("description") &&
-              entity.model.definitions[entity.entityName]["description"] !== modifiedEntitiesMap[entity.entityName][entity.entityName]["description"]) {
-              modifiedEntitiesMap[entity.entityName][entity.entityName]["description"] = entity.model.definitions[entity.entityName]["description"];
+            if (
+              entity.model.definitions[entity.entityName].hasOwnProperty("description") &&
+              entity.model.definitions[entity.entityName]["description"] !==
+                modifiedEntitiesMap[entity.entityName][entity.entityName]["description"]
+            ) {
+              modifiedEntitiesMap[entity.entityName][entity.entityName]["description"] =
+                entity.model.definitions[entity.entityName]["description"];
             }
             entity.model.definitions = JSON.parse(JSON.stringify(modifiedEntitiesMap[entity.entityName]));
           }
@@ -102,7 +130,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   }, [JSON.stringify(allEntityTypesData), JSON.stringify(modelingOptions.modifiedEntitiesArray)]);
 
-  const deepCopy = (object) => {
+  const deepCopy = object => {
     return JSON.parse(JSON.stringify(object));
   };
 
@@ -153,11 +181,11 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     deleteEntityFromServer();
   };
 
-  const navigateToGraphView = (entityName) => {
+  const navigateToGraphView = entityName => {
     setGraphViewOptions({view: ViewType.graph, selectedEntity: entityName});
   };
 
-  const isSorted = (dataField) => {
+  const isSorted = dataField => {
     return sortedCol?.columnKey === dataField;
   };
 
@@ -168,8 +196,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         ...previousSettings,
         model: {
           ...previousSettings.model,
-          sortOrder: {columnKey: columnKey, order: order}
-        }
+          sortOrder: {columnKey: columnKey, order: order},
+        },
       };
       setViewSettings(newSortSettings);
     }
@@ -204,7 +232,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       sort: true,
       defaultSortOrder: isSorted("nodeName") ? sortedCol?.order : undefined,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="entityName">Name</span>{sortElement}</>
+        <>
+          <span data-testid="entityName">Name</span>
+          {sortElement}
+        </>
       ),
       formatter: (text, row) => {
         let isConceptClass = row.nodeType === "Concept Class";
@@ -214,25 +245,32 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           <>
             {canWriteEntityModel && canReadEntityModel ? (
               <HCTooltip text={ModelingTooltips.nodeName(nodeType)} id="entity-name-tooltip" placement="top">
-                <span data-testid={entityName + "-span"} tabIndex={0} className={styles.link}
-                  onKeyDown={(event) => {
+                <span
+                  data-testid={entityName + "-span"}
+                  tabIndex={0}
+                  className={styles.link}
+                  onKeyDown={event => {
                     if (event.key === "Enter" || event.key === " ") {
                       clickEnterEvent(isConceptClass, entityName);
                     }
                   }}
                   onClick={() => {
                     clickEnterEvent(isConceptClass, entityName);
-                  }}>
-                  {entityName}</span>
+                  }}
+                >
+                  {entityName}
+                </span>
               </HCTooltip>
-            ) : <span data-testid={entityName + "-span"}>{entityName}</span>}
+            ) : (
+              <span data-testid={entityName + "-span"}>{entityName}</span>
+            )}
           </>
         );
       },
       sortFunc: (a, b, order) => {
         return order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
       },
-      formatExtraData: {allEntityTypes}
+      formatExtraData: {allEntityTypes},
     },
     {
       text: "Entity Type/Concept Class",
@@ -242,13 +280,16 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       sort: true,
       defaultSortOrder: isSorted("nodeType") ? sortedCol?.order : undefined,
       headerFormatter: (_, $, {sortElement}) => (
-        <><span data-testid="nodeType">Entity Type/Concept Class</span>{sortElement}</>
+        <>
+          <span data-testid="nodeType">Entity Type/Concept Class</span>
+          {sortElement}
+        </>
       ),
 
       sortFunc: (a, b, order) => {
         return order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
       },
-      formatExtraData: {allEntityTypes}
+      formatExtraData: {allEntityTypes},
     },
     {
       text: "Instances",
@@ -257,7 +298,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       width: 100,
       sort: true,
       defaultSortOrder: isSorted("instances") ? sortedCol?.order : undefined,
-      headerFormatter: (_, $, {sortElement}) => (<><span data-testid="Instances">Instances</span>{sortElement}</>),
+      headerFormatter: (_, $, {sortElement}) => (
+        <>
+          <span data-testid="Instances">Instances</span>
+          {sortElement}
+        </>
+      ),
       formatter: text => {
         if (!text) {
           return;
@@ -267,12 +313,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
         return (
           <>
-            {instanceCount === "0" ? <span data-testid={parseText[0] + "-instance-count"}>{instanceCount}</span> : (
+            {instanceCount === "0" ? (
+              <span data-testid={parseText[0] + "-instance-count"}>{instanceCount}</span>
+            ) : (
               <HCTooltip text={ModelingTooltips.instanceNumber} id="explore-instances-tooltip" placement="top">
                 <Link
                   to={{
                     pathname: "/tiles/explore",
-                    state: {entity: parseText[0]}
+                    state: {entity: parseText[0]},
                   }}
                   data-testid={parseText[0] + "-instance-count"}
                   className={styles.iconHover}
@@ -280,8 +328,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   {instanceCount}
                 </Link>
               </HCTooltip>
-            )
-            }
+            )}
           </>
         );
       },
@@ -292,7 +339,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let bCount = parseInt(splitB);
 
         return order === "asc" ? aCount - bCount : bCount - aCount;
-      }
+      },
     },
     {
       text: "Last Processed",
@@ -301,7 +348,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       width: 100,
       sort: true,
       defaultSortOrder: isSorted("lastProcessed") ? sortedCol?.order : undefined,
-      headerFormatter: (_, $, {sortElement}) => (<><span data-testid="lastProcessed">Last Processed</span>{sortElement}</>),
+      headerFormatter: (_, $, {sortElement}) => (
+        <>
+          <span data-testid="lastProcessed">Last Processed</span>
+          {sortElement}
+        </>
+      ),
       formatter: text => {
         if (!text) {
           return;
@@ -312,11 +364,15 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         } else {
           let displayDate = relativeTimeConverter(parseText[2]);
           return (
-            <HCTooltip text={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed} id="explore-last-processed-tooltip" placement="top">
+            <HCTooltip
+              text={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}
+              id="explore-last-processed-tooltip"
+              placement="top"
+            >
               <Link
                 to={{
                   pathname: "/tiles/explore",
-                  state: {entityName: parseText[0], jobId: parseText[1]}
+                  state: {entityName: parseText[0], jobId: parseText[1]},
                 }}
                 data-testid={parseText[0] + "-last-processed"}
                 className={styles.iconHover}
@@ -324,7 +380,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 {displayDate}
               </Link>
             </HCTooltip>
-
           );
         }
       },
@@ -334,7 +389,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         splitA = splitA ? splitA : "undefined";
         splitB = splitB ? splitB : "undefined";
         return order === "asc" ? splitA.localeCompare(splitB) : splitB.localeCompare(splitA);
-      }
+      },
     },
     {
       text: "Color",
@@ -348,11 +403,33 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let color = parseText[1];
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
-          <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> {nodeType} throughout your project.</span>}>
-            <div tabIndex={0} style={{width: "33px", height: "35px", background: color, marginLeft: "3%", borderStyle: "solid", borderWidth: "1px", borderColor: "#eeeeee", borderRadius: "4px"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`} />
+          <HCTooltip
+            placement="top"
+            id="color-tooltip"
+            text={
+              <span>
+                This color is associated with the <b>{entityName}</b> {nodeType} throughout your project.
+              </span>
+            }
+          >
+            <div
+              tabIndex={0}
+              style={{
+                width: "33px",
+                height: "35px",
+                background: color,
+                marginLeft: "3%",
+                borderStyle: "solid",
+                borderWidth: "1px",
+                borderColor: "#eeeeee",
+                borderRadius: "4px",
+              }}
+              data-testid={`${entityName}-${color}-color`}
+              aria-label={`${entityName}-${color}-color`}
+            />
           </HCTooltip>
         );
-      }
+      },
     },
     {
       text: "Icon",
@@ -366,13 +443,26 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let icon = parseText[1];
         let nodeType = row.nodeType === "Concept Class" ? "concept class" : "entity";
         return (
-          <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> {nodeType} throughout your project.</span>}>
-            <div tabIndex={0} style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
+          <HCTooltip
+            placement="top"
+            id="icon-tooltip"
+            text={
+              <span>
+                This icon is associated with the <b>{entityName}</b> {nodeType} throughout your project.
+              </span>
+            }
+          >
+            <div
+              tabIndex={0}
+              style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}}
+              data-testid={`${entityName}-${icon}-icon`}
+              aria-label={`${entityName}-${icon}-icon`}
+            >
               <DynamicIcons name={icon} />
             </div>
           </HCTooltip>
         );
-      }
+      },
     },
     {
       text: "Actions",
@@ -391,16 +481,28 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   icon={faProjectDiagram}
                   onClick={() => navigateToGraphView(text)}
                   tabIndex={0}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") { navigateToGraphView(text); }
+                  onKeyDown={event => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      navigateToGraphView(text);
+                    }
                   }}
-                /></span>
+                />
+              </span>
             </HCTooltip>
-            <HCTooltip text={canWriteEntityModel ? ModelingTooltips.deleteIcon(isConceptClass) : (!isConceptClass ? "Delete Entity: " : "Delete Concept Class: ") + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
+            <HCTooltip
+              text={
+                canWriteEntityModel
+                  ? ModelingTooltips.deleteIcon(isConceptClass)
+                  : (!isConceptClass ? "Delete Entity: " : "Delete Concept Class: ") +
+                    SecurityTooltips.missingPermission
+              }
+              id="trash-icon-tooltip"
+              placement="top"
+            >
               <span className="p-2 inline-block cursor-pointer">
                 <FontAwesomeIcon
                   tabIndex={0}
-                  onKeyDown={(event) => {
+                  onKeyDown={event => {
                     if (event.key === "Enter" || event.key === " ") {
                       if (!canWriteEntityModel && canReadEntityModel) {
                         return event.preventDefault();
@@ -416,7 +518,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   data-testid={text + "-trash-icon"}
                   className={!canWriteEntityModel && canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
                   icon={faTrashAlt}
-                  onClick={(event) => {
+                  onClick={event => {
                     if (!canWriteEntityModel && canReadEntityModel) {
                       return event.preventDefault();
                     } else {
@@ -433,12 +535,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
             </HCTooltip>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
 
   const getEntityTypeProp = (nodeName: any, prop: string, isConceptClass: boolean) => {
-    const node = allEntityTypes.find(e => !isConceptClass ? e.entityName === nodeName : e.conceptName === nodeName);
+    const node = allEntityTypes.find(e => (!isConceptClass ? e.entityName === nodeName : e.conceptName === nodeName));
     if (prop === "color") {
       return getColor(nodeName, isConceptClass);
     }
@@ -446,28 +548,32 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       return getIcon(nodeName, isConceptClass);
     }
     if (!isConceptClass) {
-      return (node.hasOwnProperty("model") &&
+      return node.hasOwnProperty("model") &&
         node.model.hasOwnProperty("definitions") &&
         node.model.definitions.hasOwnProperty(node.entityName) &&
-        node.model.definitions[node.entityName].hasOwnProperty(prop)) ? node.model.definitions[node.entityName][prop] : "";
+        node.model.definitions[node.entityName].hasOwnProperty(prop)
+        ? node.model.definitions[node.entityName][prop]
+        : "";
     } else {
-      return (node.hasOwnProperty("model") &&
-        node.model.hasOwnProperty("info") &&
-        node.model.info.hasOwnProperty(prop)) ? node.model.info[prop] : "";
+      return node.hasOwnProperty("model") && node.model.hasOwnProperty("info") && node.model.info.hasOwnProperty(prop)
+        ? node.model.info[prop]
+        : "";
     }
   };
 
-  const expandedRowRender = (entity) => {
+  const expandedRowRender = entity => {
     let isConcept = entity.nodeType === "Concept Class";
-    return !isConcept ? <PropertyTable
-      entityName={entity.nodeName.split(",")[0]}
-      definitions={entity.definitions}
-      canReadEntityModel={canReadEntityModel}
-      canWriteEntityModel={canWriteEntityModel}
-      sidePanelView={false}
-      updateSavedEntity={props.updateSavedEntity}
-      dataModel={allEntityTypesData}
-    /> : undefined;
+    return !isConcept ? (
+      <PropertyTable
+        entityName={entity.nodeName.split(",")[0]}
+        definitions={entity.definitions}
+        canReadEntityModel={canReadEntityModel}
+        canWriteEntityModel={canWriteEntityModel}
+        sidePanelView={false}
+        updateSavedEntity={props.updateSavedEntity}
+        dataModel={allEntityTypesData}
+      />
+    ) : undefined;
   };
 
   const onExpand = (record, expanded, rowIndex) => {
@@ -490,11 +596,20 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       return null;
     }
 
-    return <HCButton data-testid={`${rowKey}-expand-icon`} aria-label="Expand row" variant="outline-light" className={styles.expandButtonIndicator}>
-      {expanded ?
-        <ChevronDown className={styles.iconIndicator} aria-label="down" /> :
-        <ChevronRight className={styles.iconIndicator} aria-label="right" />}
-    </HCButton>;
+    return (
+      <HCButton
+        data-testid={`${rowKey}-expand-icon`}
+        aria-label="Expand row"
+        variant="outline-light"
+        className={styles.expandButtonIndicator}
+      >
+        {expanded ? (
+          <ChevronDown className={styles.iconIndicator} aria-label="down" />
+        ) : (
+          <ChevronRight className={styles.iconIndicator} aria-label="right" />
+        )}
+      </HCButton>
+    );
   };
 
   const getColor = (nodeName, isConcept: boolean) => {
@@ -531,7 +646,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       nodeName: nodeName,
       nodeType: nodeType,
       instances: !isConceptClass ? entity.entityName + "," + parseInt(entity.entityInstanceCount) : "",
-      lastProcessed: !isConceptClass ? entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime : "",
+      lastProcessed: !isConceptClass
+        ? entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime
+        : "",
       color: nodeName + "," + getColor(nodeName, isConceptClass),
       icon: nodeName + "," + getIcon(nodeName, isConceptClass),
       actions: nodeName,
@@ -556,8 +673,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         columns={columns}
         keyUtil={"key"}
         baseIndent={15}
-        expandedRowRender={(node) => node.nodeType === "Entity Type" ? expandedRowRender(node) : undefined}
-        onExpand={(node, expanded, rowIndex) => node.nodeType === "Entity Type" ? onExpand(node, expanded, rowIndex) : ""}
+        expandedRowRender={node => (node.nodeType === "Entity Type" ? expandedRowRender(node) : undefined)}
+        onExpand={(node, expanded, rowIndex) =>
+          node.nodeType === "Entity Type" ? onExpand(node, expanded, rowIndex) : ""
+        }
         onTableChange={onSort}
         expandedRowKeys={expandedRows}
         data={renderTableData}

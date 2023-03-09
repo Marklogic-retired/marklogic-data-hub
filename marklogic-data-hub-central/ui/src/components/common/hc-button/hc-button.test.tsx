@@ -2,11 +2,9 @@ import React from "react";
 import {render, screen, cleanup} from "@testing-library/react";
 import HCButton from "./hc-button";
 
-
 afterEach(() => {
   cleanup();
 });
-
 
 test("should render a HCButton component ", () => {
   render(<HCButton>click me</HCButton>);

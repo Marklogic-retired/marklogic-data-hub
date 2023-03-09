@@ -12,34 +12,37 @@ import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip} from "@components/common";
 
 interface Props {
-    facets: any;
-    facetRender: (facets: any) => void;
-    checkFacetRender: (facets: any) => void;
+  facets: any;
+  facetRender: (facets: any) => void;
+  checkFacetRender: (facets: any) => void;
 }
 
-
-export const MonitorSidebar:  (React.FC<Props>) = (props) => {
+export const MonitorSidebar: React.FC<Props> = props => {
   const {
     monitorOptions,
     monitorGreyedOptions,
     setAllMonitorGreyedOptions,
     clearMonitorFacet,
     clearMonitorGreyFacet,
-    clearMonitorConstraint
+    clearMonitorConstraint,
   } = useContext(MonitorContext);
 
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(monitorOptions.selectedFacets);
   const [facetsList, setFacetsList] = useState<any[]>([]);
-  const initialDateRangeValue = monitorOptions.selectedFacets["startTime"] ? monitorOptions.selectedFacets["startTime"][2] : "select time";
+  const initialDateRangeValue = monitorOptions.selectedFacets["startTime"]
+    ? monitorOptions.selectedFacets["startTime"][2]
+    : "select time";
   const [dateRangeValue, setDateRangeValue] = useState<string>(initialDateRangeValue);
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const timeFormat = "YYYY-MM-DDTHH:mm:ssZ";
   const dateFormat = "YYYY-MM-DD";
-  let initialDatePickerValue = monitorOptions.selectedFacets["startTime"] ? [dayjs(monitorOptions.selectedFacets["startTime"][0]), dayjs(monitorOptions.selectedFacets["startTime"][1])] : [null, null];
+  let initialDatePickerValue = monitorOptions.selectedFacets["startTime"]
+    ? [dayjs(monitorOptions.selectedFacets["startTime"][0]), dayjs(monitorOptions.selectedFacets["startTime"][1])]
+    : [null, null];
   const [datePickerValue, setDatePickerValue] = useState<any[]>(initialDatePickerValue);
   const [startTimeTooltipVisible, setStartTimeTooltipVisible] = useState<boolean>(false);
 
-  const timeWindow = (selectedDateRangeValue) => {
+  const timeWindow = selectedDateRangeValue => {
     let date = "";
     if (selectedDateRangeValue === "This Week") {
       const startOfWeek = dayjs().startOf("week").format("MMM DD");
@@ -74,7 +77,8 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     endDate = dayjs().endOf("day").format(timeFormat).toString();
 
     updateFacets = {
-      ...updateFacets, startTime: [startDate, endDate, option.value]
+      ...updateFacets,
+      startTime: [startDate, endDate, option.value],
     };
     setAllSelectedFacets(updateFacets);
     setAllMonitorGreyedOptions(updateFacets);
@@ -84,7 +88,8 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     let updateFacets = {...allSelectedFacets};
     if (dateStart && dateEnd && dateStart.isValid() && dateEnd.isValid()) {
       updateFacets = {
-        ...updateFacets, startTime: [dayjs(dateStart).format(timeFormat), dayjs(dateEnd).endOf("day").format(timeFormat), "Custom"]
+        ...updateFacets,
+        startTime: [dayjs(dateStart).format(timeFormat), dayjs(dateEnd).endOf("day").format(timeFormat), "Custom"],
       };
       setDatePickerValue([dayjs(dateStart), dayjs(dateEnd)]);
     } else {
@@ -94,7 +99,6 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     setAllSelectedFacets(updateFacets);
     setAllMonitorGreyedOptions(updateFacets);
   };
-
 
   useEffect(() => {
     if (props.facets) {
@@ -109,11 +113,18 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
         let selectedFacets: any[] = [];
         for (let constraint in monitorOptions.selectedFacets) {
           let displayName = "";
-          if (constraint === "startTime" && monitorOptions.selectedFacets["startTime"] && monitorOptions.selectedFacets["startTime"].length > 0) {
+          if (
+            constraint === "startTime" &&
+            monitorOptions.selectedFacets["startTime"] &&
+            monitorOptions.selectedFacets["startTime"].length > 0
+          ) {
             if (dateRangeValue === "Custom") {
               let facetValue = "Custom";
               if (datePickerValue[0] && datePickerValue[1]) {
-                facetValue = dayjs(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(dayjs(datePickerValue[1]).format(dateFormat));
+                facetValue = dayjs(datePickerValue[0])
+                  .format(dateFormat)
+                  .concat(" ~ ")
+                  .concat(dayjs(datePickerValue[1]).format(dateFormat));
               }
               selectedFacets.push({constraint, "facet": facetValue, displayName});
             } else {
@@ -126,7 +137,10 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             }
           });
         }
-        if (!Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") && !Object.keys(monitorOptions.selectedFacets).includes("startTime")) {
+        if (
+          !Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") &&
+          !Object.keys(monitorOptions.selectedFacets).includes("startTime")
+        ) {
           setDateRangeValue("select time");
         }
         props.facetRender(selectedFacets);
@@ -145,11 +159,18 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
       let checkedFacets: any[] = [];
       for (let constraint in monitorGreyedOptions.selectedFacets) {
         let displayName = "";
-        if (constraint === "startTime" && monitorGreyedOptions.selectedFacets["startTime"] && monitorGreyedOptions.selectedFacets["startTime"].length) {
+        if (
+          constraint === "startTime" &&
+          monitorGreyedOptions.selectedFacets["startTime"] &&
+          monitorGreyedOptions.selectedFacets["startTime"].length
+        ) {
           if (dateRangeValue === "Custom") {
             let facetValue = "Custom";
             if (datePickerValue[0] && datePickerValue[1]) {
-              facetValue = dayjs(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(dayjs(datePickerValue[1]).format(dateFormat));
+              facetValue = dayjs(datePickerValue[0])
+                .format(dateFormat)
+                .concat(" ~ ")
+                .concat(dayjs(datePickerValue[1]).format(dateFormat));
             }
             checkedFacets.push({constraint, "facet": facetValue, displayName});
           } else {
@@ -162,11 +183,13 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
           }
         });
       }
-      if (!Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") && !Object.keys(monitorOptions.selectedFacets).includes("startTime")) {
+      if (
+        !Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") &&
+        !Object.keys(monitorOptions.selectedFacets).includes("startTime")
+      ) {
         setDateRangeValue("select time");
       }
       props.checkFacetRender(checkedFacets);
-
     } else {
       if (Object.entries(monitorOptions.selectedFacets).length === 0) {
         //setAllSearchFacets({});
@@ -189,19 +212,25 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     if (vals.length > 0) {
       facets = {
         ...facets,
-        [facetName]: vals
+        [facetName]: vals,
       };
       greyFacets = {
         ...greyFacets,
-        [facetName]: vals
+        [facetName]: vals,
       };
     } else {
       delete facets[facetName];
     }
     if (toDelete) {
-      if (Object.entries(monitorOptions.selectedFacets).length > 0 && monitorOptions.selectedFacets.hasOwnProperty(constraint)) {
+      if (
+        Object.entries(monitorOptions.selectedFacets).length > 0 &&
+        monitorOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearMonitorFacet(constraint, vals[0]);
-      } else if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0 && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+      } else if (
+        Object.entries(monitorGreyedOptions.selectedFacets).length > 0 &&
+        monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)
+      ) {
         clearMonitorGreyFacet(constraint, vals[0]);
       }
     } else if (toDeleteAll) {
@@ -211,7 +240,6 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
       setAllMonitorGreyedOptions(greyFacets);
     }
   };
-
 
   const addFacetValues = (constraint: string, vals: string[]) => {
     let newAllSelectedfacets = {...allSelectedFacets};
@@ -226,7 +254,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
 
       newAllSelectedfacets = {
         ...newAllSelectedfacets,
-        [constraint]: vals
+        [constraint]: vals,
       };
       for (let i = 0; i < additionalFacetVals.length; i++) {
         for (let j = 0; j < newFacetsList[index]["facetValues"].length; j++) {
@@ -242,7 +270,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     if (vals.length > 0) {
       newAllSelectedfacets = {
         ...newAllSelectedfacets,
-        [constraint]: vals
+        [constraint]: vals,
       };
     } else {
       delete newAllSelectedfacets[constraint];
@@ -254,20 +282,25 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
 
   const serviceNameKeyDownHandler = async (event, component) => {
     //Make seleection when user presses space or enter key
-    if ((event.keyCode === 13) || (event.keyCode === 32)) {
+    if (event.keyCode === 13 || event.keyCode === 32) {
       if (component === "startTimeTooltip") setStartTimeTooltipVisible(!startTimeTooltipVisible);
     }
   };
-
 
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
 
   return (
     <div className={styles.container}>
       <div className={styles.facetContainer} style={{"marginLeft": "7px"}}>
-        <div className={styles.name} data-testid="start-time-facet">Start Time
-          <span tabIndex={0} onKeyDown={(e) => serviceNameKeyDownHandler(e, "startTimeTooltip")}>
-            <HCTooltip text="Start time for a step that has run" id="start-time-tooltip" placement="bottom-start" show={startTimeTooltipVisible ? startTimeTooltipVisible : undefined}>
+        <div className={styles.name} data-testid="start-time-facet">
+          Start Time
+          <span tabIndex={0} onKeyDown={e => serviceNameKeyDownHandler(e, "startTimeTooltip")}>
+            <HCTooltip
+              text="Start time for a step that has run"
+              id="start-time-tooltip"
+              placement="bottom-start"
+              show={startTimeTooltipVisible ? startTimeTooltipVisible : undefined}
+            >
               <i>
                 <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" />
               </i>
@@ -286,39 +319,38 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             options={selectTimeOptions}
             styles={reactSelectThemeConfig}
             formatOptionLabel={({value, label}) => {
-              return (
-                <span data-testid={`${value}-option`}>
-                  {label}
-                </span>
-              );
+              return <span data-testid={`${value}-option`}>{label}</span>;
             }}
           />
         </div>
-        <div className={styles.dateTimeWindow}>
-          {timeWindow(dateRangeValue)}
-        </div>
-        {dateRangeValue === "Custom" && <HCDateTimePicker
-          name="range-picker"
-          className={styles.datePicker}
-          value={datePickerValue}
-          onChange={onDateChange}
-          parentEl="#date-select-wrapper" />}
+        <div className={styles.dateTimeWindow}>{timeWindow(dateRangeValue)}</div>
+        {dateRangeValue === "Custom" && (
+          <HCDateTimePicker
+            name="range-picker"
+            className={styles.datePicker}
+            value={datePickerValue}
+            onChange={onDateChange}
+            parentEl="#date-select-wrapper"
+          />
+        )}
       </div>
       {facetsList.map(facet => {
-        return facet && (
-          <MonitorFacet
-            name={facet.facetName}
-            displayName={facet.displayName}
-            facetValues={facet.facetValues}
-            key={facet.facetName}
-            tooltip={facet.tooltip}
-            updateSelectedFacets={updateSelectedFacets}
-            addFacetValues={addFacetValues}
-          />
+        return (
+          facet && (
+            <MonitorFacet
+              name={facet.facetName}
+              displayName={facet.displayName}
+              facetValues={facet.facetValues}
+              key={facet.facetName}
+              tooltip={facet.tooltip}
+              updateSelectedFacets={updateSelectedFacets}
+              addFacetValues={addFacetValues}
+            />
+          )
         );
       })}
-    </div>);
+    </div>
+  );
 };
-
 
 export default MonitorSidebar;

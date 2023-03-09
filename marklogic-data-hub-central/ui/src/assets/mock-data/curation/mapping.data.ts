@@ -15,7 +15,7 @@ const mappingArtifactCommonProps = {
   "provenanceGranularityLevel": "coarse",
   "interceptors": [],
   "customHook": {},
-  "validateEntity": "doNotValidate"
+  "validateEntity": "doNotValidate",
 };
 
 export const mappingStep = {
@@ -33,10 +33,10 @@ export const mappingStep = {
         items: {
           sourcedFrom: "",
           properties: {
-            itemTypes: {sourcedFrom: ""}
+            itemTypes: {sourcedFrom: ""},
           },
-          targetEntityType: "#/definitions/ItemType"
-        }
+          targetEntityType: "#/definitions/ItemType",
+        },
       },
     },
     {
@@ -50,10 +50,10 @@ export const mappingStep = {
         items: {
           sourcedFrom: "",
           properties: {
-            itemTypes: {sourcedFrom: ""}
+            itemTypes: {sourcedFrom: ""},
           },
-          targetEntityType: "#/definitions/ItemType"
-        }
+          targetEntityType: "#/definitions/ItemType",
+        },
       },
       relatedEntityMappings: [
         {
@@ -69,12 +69,12 @@ export const mappingStep = {
             items: {
               sourcedFrom: "",
               properties: {
-                itemTypes: {sourcedFrom: ""}
+                itemTypes: {sourcedFrom: ""},
               },
-              targetEntityType: "#/definitions/ItemType"
-            }
+              targetEntityType: "#/definitions/ItemType",
+            },
           },
-          targetEntityType: "http://example.org/Order-0.0.1/Order"
+          targetEntityType: "http://example.org/Order-0.0.1/Order",
         },
         {
           relatedEntityMappingId: "Person.items:BabyRegistry",
@@ -88,12 +88,12 @@ export const mappingStep = {
             items: {
               sourcedFrom: "",
               properties: {
-                itemTypes: {sourcedFrom: ""}
+                itemTypes: {sourcedFrom: ""},
               },
-              targetEntityType: "#/definitions/ItemType"
-            }
+              targetEntityType: "#/definitions/ItemType",
+            },
           },
-          targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
+          targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry",
         },
         {
           relatedEntityMappingId: "Person.items:Order.lineItem.orderIncludes:Product",
@@ -105,7 +105,7 @@ export const mappingStep = {
             productId: {sourcedFrom: ""},
             productName: {sourcedFrom: ""},
           },
-          targetEntityType: "http://example.org/Product-0.0.1/Product"
+          targetEntityType: "http://example.org/Product-0.0.1/Product",
         },
         {
           relatedEntityMappingId: "Person.items:BabyRegistry.hasProduct:Product",
@@ -117,15 +117,15 @@ export const mappingStep = {
             productId: {sourcedFrom: ""},
             productName: {sourcedFrom: ""},
           },
-          targetEntityType: "http://example.org/Product-0.0.1/Product"
-        }
-      ]
+          targetEntityType: "http://example.org/Product-0.0.1/Product",
+        },
+      ],
     },
     {
       "name": "mapCustomersEmpty",
       "stepId": "mapCustomersEmpty-mapping",
       ...mappingArtifactCommonProps,
-      "properties": {}
+      "properties": {},
     },
     {
       "name": "mapProductsXML",
@@ -134,8 +134,8 @@ export const mappingStep = {
       "targetFormat": "XML",
       "properties": {},
       "namespaces": {
-        "entity-services": "http://marklogic.com/entity-services"
-      }
+        "entity-services": "http://marklogic.com/entity-services",
+      },
     },
     {
       "name": "mapCustomers",
@@ -148,19 +148,19 @@ export const mappingStep = {
         items: {
           sourcedFrom: "",
           properties: {
-            itemTypes: {sourcedFrom: ""}
+            itemTypes: {sourcedFrom: ""},
           },
-          targetEntityType: "#/definitions/ItemType"
-        }
+          targetEntityType: "#/definitions/ItemType",
+        },
       },
       "interceptors": [
         {
           path: "/custom-modules/step-interceptors/updateCustomerId.sjs",
-          when: "beforeMain"
-        }
-      ]
-    }
-  ]
+          when: "beforeMain",
+        },
+      ],
+    },
+  ],
 };
 
 export const mappingStepPerson = {
@@ -172,10 +172,13 @@ export const mappingStepPerson = {
       ...mappingArtifactCommonProps,
       "properties": {
         "propName": {output: "extremelylongusername@marklogic.com", sourcedFrom: "proteinId"},
-        "propAttribute": {output: ["s@ml.com", "", "t@ml.com", "u@ml.com", "v@ml.com", "w@ml.com", "x@ml.com", "y@ml.com", "z@ml.com"], sourcedFrom: "proteinType"},
+        "propAttribute": {
+          output: ["s@ml.com", "", "t@ml.com", "u@ml.com", "v@ml.com", "w@ml.com", "x@ml.com", "y@ml.com", "z@ml.com"],
+          sourcedFrom: "proteinType",
+        },
       },
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
     {
       "name": "testJSONResponse",
@@ -185,7 +188,7 @@ export const mappingStepPerson = {
         "propAttribute": {output: "home", sourcedFrom: "proteinType"},
       },
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
     {
       "name": "testJSONResponseWithFunctions",
@@ -195,24 +198,28 @@ export const mappingStepPerson = {
         "propAttribute": {output: "home-NEW", sourcedFrom: "concat(proteinType,'NEW')"},
       },
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
     {
       "name": "errorJSONResponse",
       ...mappingArtifactCommonProps,
       "properties": {
-        "propId": {errorMessage: "Invalid lexical value: \"123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest\"", sourcedFrom: "proteinId"},
+        "propId": {
+          errorMessage:
+            "Invalid lexical value: \"123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest\"",
+          sourcedFrom: "proteinId",
+        },
         "propAttribute": {output: "home", sourcedFrom: "proteinType"},
       },
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
     {
       "name": "mapXMLPersonResponse",
       ...mappingArtifactCommonProps,
       "properties": {},
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
     {
       "name": "testPersonJSONResponseWithRelatedEntities",
@@ -222,73 +229,73 @@ export const mappingStepPerson = {
         "propName": {output: "123EAC", sourcedFrom: "proteinId"},
         "propAttribute": {output: "home", sourcedFrom: "proteinType"},
       },
-      "relatedEntityMappings": [{
-        relatedEntityMappingId: "Order:Person.items",
-        collections: ["mapPersonWithRelated", "Order"],
-        expressionContext: "/Orders",
-        uriExpression: {output: "/Order/301.json"},
-        permissions: "data-hub-common,read,data-hub-common,update",
-        properties: {
-          orderId: {sourcedFrom: "id"},
-          propName: {sourcedFrom: "testNameInExp"},
-          propAttribute: {sourcedFrom: "placeholderAttribute"},
-          items: {
-            sourcedFrom: "",
-            properties: {
-              itemTypes: {sourcedFrom: ""}
+      "relatedEntityMappings": [
+        {
+          relatedEntityMappingId: "Order:Person.items",
+          collections: ["mapPersonWithRelated", "Order"],
+          expressionContext: "/Orders",
+          uriExpression: {output: "/Order/301.json"},
+          permissions: "data-hub-common,read,data-hub-common,update",
+          properties: {
+            orderId: {sourcedFrom: "id"},
+            propName: {sourcedFrom: "testNameInExp"},
+            propAttribute: {sourcedFrom: "placeholderAttribute"},
+            items: {
+              sourcedFrom: "",
+              properties: {
+                itemTypes: {sourcedFrom: ""},
+              },
+              targetEntityType: "#/definitions/ItemType",
             },
-            targetEntityType: "#/definitions/ItemType"
-          }
+          },
+          targetEntityType: "http://example.org/Order-0.0.1/Order",
         },
-        targetEntityType: "http://example.org/Order-0.0.1/Order"
-      },
-      {
-        relatedEntityMappingId: "BabyRegistry:Person.items",
-        collections: ["mapPersonWithRelated", "BabyRegistry"],
-        permissions: "data-hub-common,read,data-hub-common,update",
-        expressionContext: "/",
-        uriExpression: {errorMessage: "Invalid XPath expression: ###"},
-        properties: {
-          babyRegistryId: {output: "3039", sourcedFrom: "BabyRegistryId"},
-          arrivalDate: {output: "2021-01-07-07:00", sourcedFrom: "Arrival_Date"},
-          items: {
-            sourcedFrom: "",
-            properties: {
-              itemTypes: {sourcedFrom: ""}
+        {
+          relatedEntityMappingId: "BabyRegistry:Person.items",
+          collections: ["mapPersonWithRelated", "BabyRegistry"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "/",
+          uriExpression: {errorMessage: "Invalid XPath expression: ###"},
+          properties: {
+            babyRegistryId: {output: "3039", sourcedFrom: "BabyRegistryId"},
+            arrivalDate: {output: "2021-01-07-07:00", sourcedFrom: "Arrival_Date"},
+            items: {
+              sourcedFrom: "",
+              properties: {
+                itemTypes: {sourcedFrom: ""},
+              },
+              targetEntityType: "#/definitions/ItemType",
             },
-            targetEntityType: "#/definitions/ItemType"
-          }
+          },
+          targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry",
         },
-        targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
-      },
-      {
-        relatedEntityMappingId: "Product:Order.lineItem.orderIncludes",
-        collections: ["mapPersonWithRelated", "Product"],
-        permissions: "data-hub-common,read,data-hub-common,update",
-        expressionContext: "/Orders/Products",
-        uriExpression: {output: "/Product/6322.json"},
-        properties: {
-          productId: {sourcedFrom: ""},
-          productName: {sourcedFrom: ""}
+        {
+          relatedEntityMappingId: "Product:Order.lineItem.orderIncludes",
+          collections: ["mapPersonWithRelated", "Product"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "/Orders/Products",
+          uriExpression: {output: "/Product/6322.json"},
+          properties: {
+            productId: {sourcedFrom: ""},
+            productName: {sourcedFrom: ""},
+          },
+          targetEntityType: "http://example.org/Product-0.0.1/Product",
         },
-        targetEntityType: "http://example.org/Product-0.0.1/Product"
-      },
-      {
-        relatedEntityMappingId: "Product:BabyRegistry.hasProduct",
-        collections: ["mapPersonWithRelated", "Product"],
-        permissions: "data-hub-common,read,data-hub-common,update",
-        expressionContext: "/Orders/Products",
-        uriExpression: {output: "/Product/6455.json"},
-        properties: {
-          productId: {sourcedFrom: ""},
-          productName: {sourcedFrom: ""}
+        {
+          relatedEntityMappingId: "Product:BabyRegistry.hasProduct",
+          collections: ["mapPersonWithRelated", "Product"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "/Orders/Products",
+          uriExpression: {output: "/Product/6455.json"},
+          properties: {
+            productId: {sourcedFrom: ""},
+            productName: {sourcedFrom: ""},
+          },
+          targetEntityType: "http://example.org/Product-0.0.1/Product",
         },
-        targetEntityType: "http://example.org/Product-0.0.1/Product"
-      }
       ],
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
-      "sourceQuery": "cts.collectionQuery(['Person'])"
+      "sourceQuery": "cts.collectionQuery(['Person'])",
     },
-  ]
+  ],
 };
-

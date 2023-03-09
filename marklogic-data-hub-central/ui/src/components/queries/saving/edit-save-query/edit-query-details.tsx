@@ -15,16 +15,10 @@ interface Props {
   setCurrentQueryDescription: (name: string) => void;
 }
 
-const EditQueryDetails: React.FC<Props> = (props) => {
+const EditQueryDetails: React.FC<Props> = props => {
+  const {handleError} = useContext(UserContext);
 
-  const {
-    handleError
-  } = useContext(UserContext);
-
-  const {
-    setSelectedQuery
-  } = useContext(SearchContext);
-
+  const {setSelectedQuery} = useContext(SearchContext);
 
   const [queryName, setQueryName] = useState("");
   const [queryDescription, setQueryDescription] = useState("");
@@ -32,7 +26,12 @@ const EditQueryDetails: React.FC<Props> = (props) => {
   const [previousQueryName, setPreviousQueryName] = useState("");
 
   useEffect(() => {
-    if (props.currentQuery && JSON.stringify(props.currentQuery) !== JSON.stringify({}) && props.currentQuery.hasOwnProperty("savedQuery") && props.currentQuery.savedQuery.hasOwnProperty("name")) {
+    if (
+      props.currentQuery &&
+      JSON.stringify(props.currentQuery) !== JSON.stringify({}) &&
+      props.currentQuery.hasOwnProperty("savedQuery") &&
+      props.currentQuery.savedQuery.hasOwnProperty("name")
+    ) {
       setPreviousQueryName(props.currentQuery.savedQuery.name);
       setQueryName(props.currentQuery.savedQuery.name);
       if (props.currentQuery.savedQuery.hasOwnProperty("description")) {
@@ -45,7 +44,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     props.setEditQueryDetailVisibility();
   };
 
-  const onOk = async (event: { preventDefault: () => void; }, queryName, queryDescription, currentQuery) => {
+  const onOk = async (event: {preventDefault: () => void}, queryName, queryDescription, currentQuery) => {
     if (event) event.preventDefault();
     try {
       currentQuery.savedQuery.name = queryName.trim();
@@ -68,8 +67,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     }
   };
 
-
-  const handleChange = (event) => {
+  const handleChange = event => {
     if (event.target.id === "edit-query-detail-name") {
       setQueryName(event.target.value);
     }
@@ -79,18 +77,18 @@ const EditQueryDetails: React.FC<Props> = (props) => {
   };
 
   return (
-    <HCModal
-      show={true}
-      onHide={onCancel}
-    >
+    <HCModal show={true} onHide={onCancel}>
       <Modal.Header>
         <span className={"fs-5"}>{"Edit Query Details"}</span>
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} />
       </Modal.Header>
       <Modal.Body>
-        <Form name="basic" className={"container-fluid"} >
+        <Form name="basic" className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <FormLabel column lg={3}>
+              {"Name:"}
+              <span className={styles.asterisk}>*</span>
+            </FormLabel>
             <Col>
               <Row>
                 <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
@@ -108,7 +106,9 @@ const EditQueryDetails: React.FC<Props> = (props) => {
             </Col>
           </Row>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <FormLabel column lg={3}>
+              {"Description:"}
+            </FormLabel>
             <Col className={"d-flex"}>
               <HCInput
                 id="edit-query-detail-description"
@@ -120,13 +120,18 @@ const EditQueryDetails: React.FC<Props> = (props) => {
           </Row>
           <Row className={"mb-3"}>
             <Col className={"d-flex justify-content-end"}>
-              <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+              <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>
+                Cancel
+              </HCButton>
               &nbsp;&nbsp;
-              <HCButton variant="primary"
+              <HCButton
+                variant="primary"
                 type="submit"
                 disabled={queryName.length === 0}
-                onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)}
-                id="edit-query-detail-button">Save
+                onClick={event => onOk(event, queryName, queryDescription, props.currentQuery)}
+                id="edit-query-detail-button"
+              >
+                Save
               </HCButton>
             </Col>
           </Row>
@@ -137,5 +142,3 @@ const EditQueryDetails: React.FC<Props> = (props) => {
 };
 
 export default EditQueryDetails;
-
-

@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 
 type MonitorContextInterface = {
-    start: number,
-    pageNumber: number,
-    pageLength: number,
-    pageSize: number,
-    selectedFacets: any,
-    maxRowsPerPage: number,
-    sortOrder: any,
-}
+  start: number;
+  pageNumber: number;
+  pageLength: number;
+  pageSize: number;
+  selectedFacets: any;
+  maxRowsPerPage: number;
+  sortOrder: any;
+};
 
 const defaultMonitorOptions = {
   start: 1,
@@ -17,57 +17,53 @@ const defaultMonitorOptions = {
   pageSize: 20,
   selectedFacets: {},
   maxRowsPerPage: 100,
-  sortOrder: []
+  sortOrder: [],
 };
 
-
-
 interface IMonitorContextInterface {
-    monitorOptions: MonitorContextInterface;
-    monitorGreyedOptions: MonitorContextInterface;
-    setMonitorPage: (pageNumber: number, totalDocuments: number) => void;
-    setMonitorPageLength: (current: number, pageSize: number) => void;
-    setMonitorSortOrder:(propertyName: string, sortOrder: any) => void;
-    clearMonitorFacet: (constraint: string, val: string) => void;
-    setAllMonitorFacets: (facets: any) => void;
-    setAllMonitorGreyedOptions: (facets: any) => void;
-    clearMonitorGreyFacet: (constraint: string, val: string) => void;
-    clearMonitorConstraint: (constraint: string) => void;
-    clearAllMonitorGreyFacets: () => void;
-    clearAllMonitorFacets: () => void;
+  monitorOptions: MonitorContextInterface;
+  monitorGreyedOptions: MonitorContextInterface;
+  setMonitorPage: (pageNumber: number, totalDocuments: number) => void;
+  setMonitorPageLength: (current: number, pageSize: number) => void;
+  setMonitorSortOrder: (propertyName: string, sortOrder: any) => void;
+  clearMonitorFacet: (constraint: string, val: string) => void;
+  setAllMonitorFacets: (facets: any) => void;
+  setAllMonitorGreyedOptions: (facets: any) => void;
+  clearMonitorGreyFacet: (constraint: string, val: string) => void;
+  clearMonitorConstraint: (constraint: string) => void;
+  clearAllMonitorGreyFacets: () => void;
+  clearAllMonitorFacets: () => void;
 }
 
 export const MonitorContext = React.createContext<IMonitorContextInterface>({
   monitorOptions: defaultMonitorOptions,
   monitorGreyedOptions: defaultMonitorOptions,
-  setMonitorPage: () => { },
-  setMonitorPageLength: () => { },
-  setMonitorSortOrder: () => { },
-  clearMonitorFacet: () => { },
-  setAllMonitorFacets: () => { },
-  setAllMonitorGreyedOptions: () => { },
-  clearMonitorGreyFacet: () => { },
-  clearMonitorConstraint: () => { },
-  clearAllMonitorGreyFacets: () => { },
-  clearAllMonitorFacets: () => { },
+  setMonitorPage: () => {},
+  setMonitorPageLength: () => {},
+  setMonitorSortOrder: () => {},
+  clearMonitorFacet: () => {},
+  setAllMonitorFacets: () => {},
+  setAllMonitorGreyedOptions: () => {},
+  clearMonitorGreyFacet: () => {},
+  clearMonitorConstraint: () => {},
+  clearAllMonitorGreyFacets: () => {},
+  clearAllMonitorFacets: () => {},
 });
 
-const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
-
+const MonitorProvider: React.FC<{children: any}> = ({children}) => {
   const [monitorOptions, setMonitorOptions] = useState<MonitorContextInterface>(defaultMonitorOptions);
   const [monitorGreyedOptions, setMonitorGreyedOptions] = useState<MonitorContextInterface>(defaultMonitorOptions);
 
   const setMonitorPage = (pageNumber: number, totalDocuments: number) => {
     let pageLength = monitorOptions.pageSize;
-    let start = pageNumber ;
+    let start = pageNumber;
     setMonitorOptions({
       ...monitorOptions,
       start,
       pageLength,
-      pageNumber
+      pageNumber,
     });
   };
-
 
   const setMonitorPageLength = (current: number, pageSize: number) => {
     setMonitorOptions({
@@ -83,16 +79,20 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
     let sortingOrder: any = [];
     switch (sortOrder) {
     case "ascend":
-      sortingOrder = [{
-        propertyName: propertyName,
-        sortDirection: "ascending"
-      }];
+      sortingOrder = [
+        {
+          propertyName: propertyName,
+          sortDirection: "ascending",
+        },
+      ];
       break;
     case "descend":
-      sortingOrder = [{
-        propertyName: propertyName,
-        sortDirection: "descending"
-      }];
+      sortingOrder = [
+        {
+          propertyName: propertyName,
+          sortDirection: "descending",
+        },
+      ];
       break;
     default:
       sortingOrder = [];
@@ -100,7 +100,7 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
     }
     setMonitorOptions({
       ...monitorOptions,
-      sortOrder: sortingOrder
+      sortOrder: sortingOrder,
     });
   };
 
@@ -112,8 +112,12 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       delete facets[constraint];
     }
     setMonitorOptions({...monitorOptions, selectedFacets: facets});
-    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0
-    && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) { clearMonitorGreyFacet(constraint, val); }
+    if (
+      Object.entries(monitorGreyedOptions.selectedFacets).length > 0 &&
+      monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
+      clearMonitorGreyFacet(constraint, val);
+    }
   };
 
   const setAllMonitorFacets = (facets: any) => {
@@ -122,7 +126,7 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: facets,
       start: 1,
       pageNumber: 1,
-      pageLength: monitorOptions.pageSize
+      pageLength: monitorOptions.pageSize,
     });
   };
 
@@ -132,7 +136,7 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: facets,
       start: 1,
       pageNumber: 1,
-      pageLength: monitorGreyedOptions.pageSize
+      pageLength: monitorGreyedOptions.pageSize,
     });
   };
 
@@ -149,13 +153,17 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
   const clearMonitorConstraint = (constraint: string) => {
     let selectedFacet = monitorOptions.selectedFacets;
     let greyFacets = monitorGreyedOptions.selectedFacets;
-    if (Object.entries(monitorGreyedOptions.selectedFacets).length > 0
-    && monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (
+      Object.entries(monitorGreyedOptions.selectedFacets).length > 0 &&
+      monitorGreyedOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
       delete greyFacets[constraint];
       setMonitorGreyedOptions({...monitorGreyedOptions, selectedFacets: greyFacets});
     }
-    if (Object.entries(monitorOptions.selectedFacets).length > 0
-    && monitorOptions.selectedFacets.hasOwnProperty(constraint)) {
+    if (
+      Object.entries(monitorOptions.selectedFacets).length > 0 &&
+      monitorOptions.selectedFacets.hasOwnProperty(constraint)
+    ) {
       delete selectedFacet[constraint];
       setMonitorOptions({...monitorOptions, selectedFacets: selectedFacet});
     }
@@ -167,7 +175,7 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: {},
       start: 1,
       pageNumber: 1,
-      pageLength: monitorGreyedOptions.pageSize
+      pageLength: monitorGreyedOptions.pageSize,
     });
   };
 
@@ -177,28 +185,28 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: {},
       start: 1,
       pageNumber: 1,
-      pageLength: monitorOptions.pageSize
+      pageLength: monitorOptions.pageSize,
     });
     clearAllMonitorGreyFacets();
   };
 
-
   return (
-    <MonitorContext.Provider value={{
-      monitorOptions,
-      monitorGreyedOptions,
-      setMonitorPage,
-      setMonitorPageLength,
-      setMonitorSortOrder,
-      clearMonitorFacet,
-      setAllMonitorFacets,
-      setAllMonitorGreyedOptions,
-      clearMonitorGreyFacet,
-      clearMonitorConstraint,
-      clearAllMonitorGreyFacets,
-      clearAllMonitorFacets
-
-    }}>
+    <MonitorContext.Provider
+      value={{
+        monitorOptions,
+        monitorGreyedOptions,
+        setMonitorPage,
+        setMonitorPageLength,
+        setMonitorSortOrder,
+        clearMonitorFacet,
+        setAllMonitorFacets,
+        setAllMonitorGreyedOptions,
+        clearMonitorGreyFacet,
+        clearMonitorConstraint,
+        clearAllMonitorGreyFacets,
+        clearAllMonitorFacets,
+      }}
+    >
       {children}
     </MonitorContext.Provider>
   );

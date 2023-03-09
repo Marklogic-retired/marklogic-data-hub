@@ -24,12 +24,17 @@ export enum EntityTableColumns {
   Color,
   Icon,
   EntityLabel,
-  PropertiesOnHover
+  PropertiesOnHover,
 }
 
 const {entityTypeDisplaySettings} = tooltipsConfig;
 
-const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsData, entityDefinitionsArray, onEntityColumnValueChange}) => {
+const EntityDisplaySettings: React.FC<Props> = ({
+  entityModels,
+  exploreSettingsData,
+  entityDefinitionsArray,
+  onEntityColumnValueChange,
+}) => {
   const [filteredSettingsData, setFilteredSettingsData] = useState<any[]>([]);
   const [searchText, setSearchText] = useState("");
 
@@ -37,7 +42,7 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
     setFilteredSettingsData(prev => {
       return exploreSettingsData
         .filter(entityTypeObject => entityTypeObject.entityType.toLowerCase().includes(searchText.toLowerCase()))
-        .map((entityTypeObject) => ({...entityTypeObject, searchText}));
+        .map(entityTypeObject => ({...entityTypeObject, searchText}));
     });
 
     return () => {
@@ -45,26 +50,35 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
     };
   }, [exploreSettingsData, searchText]);
 
-  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+  const columnSorter = (a: any, b: any, order: string) => (order === "asc" ? a.localeCompare(b) : b.localeCompare(a));
 
-  const renderOptions = (entityType) => {
-    let entityTypeDef:any = entityDefinitionsArray.find(entity => entity.name === entityType);
-    const options:any = entityTypeDef?.properties?.filter(property => property.ref === "").map(item => ({value: item?.name, label: item?.name}));
+  const renderOptions = entityType => {
+    let entityTypeDef: any = entityDefinitionsArray.find(entity => entity.name === entityType);
+    const options: any = entityTypeDef?.properties
+      ?.filter(property => property.ref === "")
+      .map(item => ({value: item?.name, label: item?.name}));
     return options;
   };
 
   const getHeaderLabel = (label, tooltipInfo) => {
-    let headerLabel = <span className={styles.labelContainer}>
-      <span className={styles.headerLabel}>{label}</span>
-      <HCTooltip id="entity-label" text={tooltipInfo} placement="right">
-        <QuestionCircleFill aria-label="icon: question-circle" color={themeColors.defaults.questionCircle} size={13} className={styles.infoIcon} />
-      </HCTooltip>
-    </span>;
+    let headerLabel = (
+      <span className={styles.labelContainer}>
+        <span className={styles.headerLabel}>{label}</span>
+        <HCTooltip id="entity-label" text={tooltipInfo} placement="right">
+          <QuestionCircleFill
+            aria-label="icon: question-circle"
+            color={themeColors.defaults.questionCircle}
+            size={13}
+            className={styles.infoIcon}
+          />
+        </HCTooltip>
+      </span>
+    );
 
     return headerLabel;
   };
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -72,36 +86,40 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
 
   const exploreSettingsColumns: any = [
     {
-      text: <span className={styles.labelContainer}>
-        <span className={styles.headerLabel}>Entity Type</span>
-        <span className="position-absolute end-0 me-3">
-          <HCPopoverSearch
-            inputId={`searchInput-settings`}
-            inputValue={searchText}
-            onSearch={(value) => {
-              setSearchText(value);
-            }}
-            onReset={() => {
-              setSearchText("");
-            }}
-          />
+      text: (
+        <span className={styles.labelContainer}>
+          <span className={styles.headerLabel}>Entity Type</span>
+          <span className="position-absolute end-0 me-3">
+            <HCPopoverSearch
+              inputId={`searchInput-settings`}
+              inputValue={searchText}
+              onSearch={value => {
+                setSearchText(value);
+              }}
+              onReset={() => {
+                setSearchText("");
+              }}
+            />
+          </span>
         </span>
-      </span>,
+      ),
       dataField: "entityType",
       headerClassName: "position-relative",
       sort: true,
       width: "20%",
       sortFunc: columnSorter,
       formatter: (text, row) => {
-        return (<span aria-label={`${row.entityType}-entityType`}>
-          <Highlighter
-            highlightClassName={styles.highlightStyle}
-            searchWords={[row.searchText]}
-            autoEscape
-            textToHighlight={row.entityType}
-          />
-        </span>);
-      }
+        return (
+          <span aria-label={`${row.entityType}-entityType`}>
+            <Highlighter
+              highlightClassName={styles.highlightStyle}
+              searchWords={[row.searchText]}
+              autoEscape
+              textToHighlight={row.entityType}
+            />
+          </span>
+        );
+      },
     },
     {
       text: getHeaderLabel("Color", entityTypeDisplaySettings.color),
@@ -109,8 +127,16 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
       align: "center" as "center",
       headerAlign: "center",
       formatter: (text, row) => {
-        return <EntityTypeColorPicker color={row.color} entityType={row.entityType} handleColorChange={(color, event) => onEntityColumnValueChange(row, {color, event}, EntityTableColumns.Color)} />;
-      }
+        return (
+          <EntityTypeColorPicker
+            color={row.color}
+            entityType={row.entityType}
+            handleColorChange={(color, event) =>
+              onEntityColumnValueChange(row, {color, event}, EntityTableColumns.Color)
+            }
+          />
+        );
+      },
     },
     {
       text: getHeaderLabel("Icon", entityTypeDisplaySettings.icon),
@@ -118,10 +144,20 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
       align: "center" as "center",
       headerAlign: "center",
       formatter: (text, row) => {
-        return (<div className={"m-auto d-inline-block"} aria-label={`${row.entityType}-icon-picker`} id={`${row.entityType}-icon-picker`} data-icon={row.icon}>
-          <HCIconPicker value={row.icon} onChange={value => onEntityColumnValueChange(row, value, EntityTableColumns.Icon)}/>
-        </div>);
-      }
+        return (
+          <div
+            className={"m-auto d-inline-block"}
+            aria-label={`${row.entityType}-icon-picker`}
+            id={`${row.entityType}-icon-picker`}
+            data-icon={row.icon}
+          >
+            <HCIconPicker
+              value={row.icon}
+              onChange={value => onEntityColumnValueChange(row, value, EntityTableColumns.Icon)}
+            />
+          </div>
+        );
+      },
     },
     {
       text: getHeaderLabel("Record Label", entityTypeDisplaySettings.entityLabel),
@@ -135,18 +171,22 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
             defaultValue={row.label ? {label: row.label, value: row.label} : null}
             value={row.label ? {label: row.label, value: row.label} : null}
             options={renderOptions(row.entityType)}
-            onChange={(e) => onEntityColumnValueChange(row, e, EntityTableColumns.EntityLabel)}
+            onChange={e => onEntityColumnValueChange(row, e, EntityTableColumns.EntityLabel)}
             classNamePrefix="select"
             aria-label={`${row.entityType}-label-select-dropdown`}
             formatOptionLabel={({value, label}) => {
               return (
-                <span data-testid={`${row.entityType}-labelOption-${value}`} aria-label={`${row.entityType}-labelOption-${value}`}>
+                <span
+                  data-testid={`${row.entityType}-labelOption-${value}`}
+                  aria-label={`${row.entityType}-labelOption-${value}`}
+                >
                   {label}
                 </span>
               );
             }}
             styles={reactSelectThemeConfig}
-          />);
+          />
+        );
       },
     },
     {
@@ -157,31 +197,32 @@ const EntityDisplaySettings: React.FC<Props> = ({entityModels, exploreSettingsDa
         if (entityModels[row.entityType]?.model.definitions) {
           definitions = definitionsParser(entityModels[row.entityType]?.model.definitions);
         }
-        let entityTypeDefinition: Definition = definitions.find(entityDefinition => entityDefinition.name === row.entityType) || defaultEntityDefinition;
+        let entityTypeDefinition: Definition =
+          definitions.find(entityDefinition => entityDefinition.name === row.entityType) || defaultEntityDefinition;
         return (
           <EntityPropertyTreeSelect
             isForMerge={true}
             propertyDropdownOptions={entityTypeDefinition.properties}
             entityDefinitionsArray={definitions}
-            value={row.propertiesOnHover?.length ? row.propertiesOnHover.map(property => property.replace(/\./g, " > ")) : undefined}
-            onValueSelected={(value) => {
+            value={
+              row.propertiesOnHover?.length
+                ? row.propertiesOnHover.map(property => property.replace(/\./g, " > "))
+                : undefined
+            }
+            onValueSelected={value => {
               onEntityColumnValueChange(row, value, EntityTableColumns.PropertiesOnHover);
             }}
             multiple={true}
             identifier={row.entityType}
           />
         );
-      }
-    }
+      },
+    },
   ];
 
   return (
     <div className={styles.entityTable}>
-      <HCTable
-        rowKey="entityType"
-        columns={exploreSettingsColumns}
-        data={filteredSettingsData}
-      />
+      <HCTable rowKey="entityType" columns={exploreSettingsColumns} data={filteredSettingsData} />
     </div>
   );
 };

@@ -79,17 +79,21 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Verify no label are selected, select new one and check the selection**");
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
+    graphViewSidePanel.getEntityLabelDropdownOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.babyRegistryId).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.babyRegistryId).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.arrivalDate).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.arrivalDate).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.ownedBy).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(
+      defaultEntityTypeData.properties.ownedBy).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
@@ -117,9 +121,11 @@ describe("Entity display settings in model tile", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
       cy.wait(150);
-      graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+      graphExplore.getGraphVisCanvas().click(
+        baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
       if (Cypress.isBrowser("!firefox")) {
-        graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+        graphExplore.getGraphVisCanvas().click(
+          baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
       }
       if (Cypress.isBrowser("!chrome")) {
         cy.findByText(propertiesOnHoverData.babyRegistryId).should("exist");
@@ -137,7 +143,8 @@ describe("Entity display settings in model tile", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let baby_registry_3039_nodeposition: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
       graphExplore.getGraphVisCanvas().scrollTo(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {ensureScrollable: false}).trigger("mouseover", baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
-      graphExplore.getGraphVisCanvas().click(baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
+      graphExplore.getGraphVisCanvas().click(
+        baby_registry_3039_nodeposition.x, baby_registry_3039_nodeposition.y, {force: true});
     });
 
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
@@ -152,7 +159,8 @@ describe("Entity display settings in model tile", () => {
     cy.log("**Verify label are selected, and select new one**");
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultEntityTypeData.properties.ownedBy);
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click();
+    dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click();
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
 
     cy.log("**Verify propertiesOnHover are selected**");
@@ -161,7 +169,8 @@ describe("Entity display settings in model tile", () => {
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Deselect ownedBy properties on properties on hover**");
-    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownCloseOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
+    dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownCloseOption(
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("not.contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Save changes and close the modal**");

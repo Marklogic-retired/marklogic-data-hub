@@ -2,17 +2,17 @@ import {Definition, Property} from "../types/modeling-types";
 
 export const entityFromJSON = (data: any) => {
   interface EntityModel {
-    uri: string,
-    info: any,
-    definitions: Definitions[]
+    uri: string;
+    info: any;
+    definitions: Definitions[];
   }
 
   interface Definitions {
-    name: string,
-    pii: [],
-    required: [],
-    wordLexicon: [],
-    properties: []
+    name: string;
+    pii: [];
+    required: [];
+    wordLexicon: [];
+    properties: [];
   }
 
   let entityArray: EntityModel[] = data.map(item => {
@@ -20,19 +20,18 @@ export const entityFromJSON = (data: any) => {
     let entityModel: EntityModel = {
       uri: item["uri"],
       info: item["info"],
-      definitions: []
+      definitions: [],
     };
 
     let definitions = item["definitions"];
 
     for (let definition in definitions) {
-
       let entityDefinition: Definitions = {
         name: "",
         pii: [],
         required: [],
         wordLexicon: [],
-        properties: []
+        properties: [],
       };
 
       let entityProperties: any = [];
@@ -47,7 +46,7 @@ export const entityFromJSON = (data: any) => {
               datatype: "",
               ref: "",
               collation: "",
-              related: ""
+              related: "",
             };
             property.name = properties;
             property.collation = item["definitions"][definition][entityKeys][properties]["collation"];
@@ -56,17 +55,24 @@ export const entityFromJSON = (data: any) => {
 
               if (item["definitions"][definition][entityKeys][properties]["datatype"] === "array") {
                 if (item["definitions"][definition][entityKeys][properties]["items"].hasOwnProperty("$ref")) {
-                  property.ref = item["definitions"][definition][entityKeys][properties]["items"]["$ref"].split("/").pop();
+                  property.ref = item["definitions"][definition][entityKeys][properties]["items"]["$ref"]
+                    .split("/")
+                    .pop();
                 } else {
                   property.ref = "";
                 }
                 if (item["definitions"][definition][entityKeys][properties]["items"]["relatedEntityType"]) {
-                  property.related = item["definitions"][definition][entityKeys][properties]["items"]["relatedEntityType"].split("/").pop();
+                  property.related = item["definitions"][definition][entityKeys][properties]["items"][
+                    "relatedEntityType"
+                  ]
+                    .split("/")
+                    .pop();
                 }
               } else if (item["definitions"][definition][entityKeys][properties]["relatedEntityType"]) {
-                property.related = item["definitions"][definition][entityKeys][properties]["relatedEntityType"].split("/").pop();
+                property.related = item["definitions"][definition][entityKeys][properties]["relatedEntityType"]
+                  .split("/")
+                  .pop();
               }
-
             } else if (item["definitions"][definition][entityKeys][properties]["$ref"]) {
               property.ref = item["definitions"][definition][entityKeys][properties]["$ref"].split("/").pop();
               property.datatype = "entity";
@@ -92,7 +98,7 @@ export const entityFromJSON = (data: any) => {
 };
 
 export const entityParser = (data: any) => {
-  return data.map((entity) => {
+  return data.map(entity => {
     let parsedEntity = {};
     let properties = [];
     let relatedEntities: string[] = [];
@@ -127,7 +133,7 @@ export const entityParser = (data: any) => {
         properties: [],
         relatedEntities: [],
         relatedConcepts: [],
-        isDefinitionInvalid: true
+        isDefinitionInvalid: true,
       };
     }
 
@@ -140,7 +146,7 @@ export const facetParser = (facets: any) => {
   for (let facet in facets) {
     let parsedFacet = {
       facetName: facet,
-      ...facets[facet]
+      ...facets[facet],
     };
     facetArray.push(parsedFacet);
   }
@@ -148,7 +154,7 @@ export const facetParser = (facets: any) => {
 };
 
 export const getKeys = function (obj: Object) {
-  let keys : any[] = [];
+  let keys: any[] = [];
   const parser = (obj: Object) => {
     for (let i in obj) {
       if (obj[i].hasOwnProperty("key")) {
@@ -164,7 +170,7 @@ export const getKeys = function (obj: Object) {
 };
 
 export const getChildKeys = function (obj: Object) {
-  let keys : any[] = [];
+  let keys: any[] = [];
   const parser = (obj: Object) => {
     for (let i in obj) {
       if (obj[i].hasOwnProperty("children")) {
@@ -194,22 +200,26 @@ export const getParentKey = (key, tree) => {
 };
 
 export function getObject(object, k) {
-  if (object.hasOwnProperty("key") && object["key"] === k) { return object; }
+  if (object.hasOwnProperty("key") && object["key"] === k) {
+    return object;
+  }
 
   for (let i = 0; i < Object.keys(object).length; i++) {
     if (typeof object[Object.keys(object)[i]] === "object") {
       let o = getObject(object[Object.keys(object)[i]], k);
-      if (o !== null) { return o; }
+      if (o !== null) {
+        return o;
+      }
     }
   }
   return null;
 }
 
-export const toStringArray = (obj) => {
-  let arr : any[] = [];
-  const toArray = (obj) => {
+export const toStringArray = obj => {
+  let arr: any[] = [];
+  const toArray = obj => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
+      if (obj[i] !== null && obj[i].hasOwnProperty("children")) {
         arr.indexOf(obj[i].key) === -1 && arr.push(obj[i].key);
         toArray(obj[i].children);
       } else {
@@ -226,7 +236,7 @@ export const reconstructHeader = (obj1, keys) => {
   let obj = deepCopy(obj1);
   const reconstruct = (obj, keys) => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
+      if (obj[i] !== null && obj[i].hasOwnProperty("children")) {
         let k = obj[i].key;
         if (!keys.includes(k)) {
           let hasParent = getParentKey(k, obj);
@@ -256,7 +266,6 @@ export const reconstructHeader = (obj1, keys) => {
   return reconstruct(obj, keys);
 };
 
-
 export const deepCopy = inObject => {
   let outObject, value, key;
   if (typeof inObject !== "object" || inObject === null) {
@@ -267,7 +276,7 @@ export const deepCopy = inObject => {
   for (key in inObject) {
     value = inObject[key];
     // Recursively (deep) copy for nested objects, including arrays
-    outObject[key] = (typeof value === "object" && value !== null) ? deepCopy(value) : value;
+    outObject[key] = typeof value === "object" && value !== null ? deepCopy(value) : value;
   }
   return outObject;
 };
@@ -289,7 +298,6 @@ export const updateHeader = (tree, keys) => {
       if (!updatedHeader.find(obj => obj.key === headerObj.key)) {
         updatedHeader.push(headerObj);
       }
-
     } else {
       // could not find column. must be child key
       // TODO: keep parsing key until a parentObj is found?
@@ -305,7 +313,8 @@ export const updateHeader = (tree, keys) => {
 
         // adding child obj to update header
         let index = tree.findIndex(obj => obj.key === parentKey);
-        let childObj = tree[index].hasOwnProperty("children") && tree[index].children.find(childObj => childObj.key === key);
+        let childObj =
+          tree[index].hasOwnProperty("children") && tree[index].children.find(childObj => childObj.key === key);
         if (childObj) {
           if (!parentObj.children.find(child => child.key === childObj.key)) {
             parentObj.children.push(childObj);
@@ -331,10 +340,10 @@ export const updateHeader = (tree, keys) => {
 };
 
 export const setTreeVisibility = (ob, str) => {
-  const filter = (ob) => {
+  const filter = ob => {
     let v;
     for (let i = 0; i < ob.length; i++) {
-      if (ob[i] !== null && (ob[i]).hasOwnProperty("children")) {
+      if (ob[i] !== null && ob[i].hasOwnProperty("children")) {
         let n = filter(ob[i].children);
         if (n.v === false || n.v === undefined) {
           ob[i].visible = false;
@@ -360,13 +369,12 @@ export const setTreeVisibility = (ob, str) => {
 };
 
 export const definitionsParser = (definitions: any): Definition[] => {
-
   let entityDefinitions: Definition[] = [];
 
   for (let definition in definitions) {
     let entityDefinition: Definition = {
       name: "",
-      properties: []
+      properties: [],
     };
 
     let entityProperties: Property[] = [];
@@ -388,7 +396,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
             collation: defProp["collation"] || "",
             multiple: defProp["datatype"] === "array",
             facetable: defProp["facetable"] || false,
-            sortable: defProp["sortable"] || false
+            sortable: defProp["sortable"] || false,
           };
 
           if (defProp["datatype"] || defProp["datatype"] === "") {
@@ -405,7 +413,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
               if (defProp["items"].hasOwnProperty("$ref")) {
                 if (defProp["items"]["$ref"] === "") {
                   property.datatype = "";
-                // Array of Structured/Entity type
+                  // Array of Structured/Entity type
                 } else if (defProp["items"]["$ref"].split("/")[1] === "definitions") {
                   property.datatype = "structured";
                 } else {
@@ -429,7 +437,6 @@ export const definitionsParser = (definitions: any): Definition[] => {
                 property.collation = defProp["items"]["collation"];
               }
             }
-
           } else if (defProp["$ref"] !== "") {
             let refSplit = defProp["$ref"].split("/");
             if (refSplit[1] === "definitions") {
@@ -457,10 +464,10 @@ export const definitionsParser = (definitions: any): Definition[] => {
 };
 
 export const getTableProperties = (object: Array<Object>) => {
-  let labels : any[] = [];
-  const getProperties = (obj) => {
+  let labels: any[] = [];
+  const getProperties = obj => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty("properties")) {
+      if (obj[i] !== null && obj[i].hasOwnProperty("properties")) {
         getProperties(obj[i].properties);
       } else {
         labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath);
@@ -472,10 +479,10 @@ export const getTableProperties = (object: Array<Object>) => {
 };
 
 export const getSelectedTableProperties = (object: Array<Object>, keys: Array<String>) => {
-  let labels : any[] = [];
-  const getProperties = (obj) => {
+  let labels: any[] = [];
+  const getProperties = obj => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
+      if (obj[i] !== null && obj[i].hasOwnProperty("children")) {
         getProperties(obj[i].children);
       } else {
         labels.indexOf(obj[i].propertyPath) === -1 && keys.includes(obj[i].key) && labels.push(obj[i].propertyPath);
@@ -488,11 +495,11 @@ export const getSelectedTableProperties = (object: Array<Object>, keys: Array<St
 
 //constructs array of entity parameter name objects with zero dash keys.
 export const treeConverter = function (obj: Object) {
-  let keys : any[] = [];
+  let keys: any[] = [];
   let deep = 0;
   keys.push(0);
   const parser = (obj: Object, counter) => {
-    let parsedTitle : any[] = [];
+    let parsedTitle: any[] = [];
     for (let i in obj) {
       if (obj[i].hasOwnProperty("properties")) {
         deep = counter;
@@ -502,7 +509,7 @@ export const treeConverter = function (obj: Object) {
           title: obj[i].propertyLabel,
           key: keys.join("-"),
           propertyPath: obj[i].propertyPath,
-          children: parser(obj[i].properties, deep)
+          children: parser(obj[i].properties, deep),
         });
         keys.pop();
         counter++;
@@ -521,7 +528,7 @@ export const treeConverter = function (obj: Object) {
 };
 
 export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropertyDefinitions: any[]) => {
-  let keys : any[] = [];
+  let keys: any[] = [];
   const parser = (selectedPropertyDefinitions: any[]) => {
     selectedPropertyDefinitions.filter(item => {
       if (item.hasOwnProperty("properties")) {
@@ -536,7 +543,7 @@ export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropert
   return parser(selectedPropertyDefinitions);
 };
 
-export const trimText  = (text, lettersToCut = 19) => {
+export const trimText = (text, lettersToCut = 19) => {
   if (text?.length > lettersToCut + 1) {
     text = text.slice(0, lettersToCut) + "...";
   }
