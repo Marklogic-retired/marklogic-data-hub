@@ -35,6 +35,13 @@ public interface FlowManager {
     String FLOW_FILE_EXTENSION = ".flow.json";
 
     /**
+     * Returns the HubConfig set
+     *
+     * @return a hubConfig object
+     */
+    HubConfig getHubConfig();
+
+    /**
      * Set the HubConfig
      *
      * @param hubConfig - the hubConfig to use

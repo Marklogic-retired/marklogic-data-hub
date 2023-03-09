@@ -137,7 +137,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     FlowRunner flowRunner;
 
     @Autowired
-    FlowManager flowManager;
+    FlowManagerImpl flowManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

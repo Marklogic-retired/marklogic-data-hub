@@ -85,6 +85,10 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         this.stepDefinitionManager = stepDefinitionManager;
     }
 
+    public HubConfig getHubConfig() {
+        return this.hubConfig;
+    }
+
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
