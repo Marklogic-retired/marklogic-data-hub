@@ -38,6 +38,14 @@ class EntityTypeModal {
     return cy.get("#entity-modal-add", {timeout: 20000});
   }
 
+  getNamespaceInput() {
+    return cy.get("#namespace");
+  }
+
+  getPrefixInput() {
+    return cy.get("#prefix");
+  }
+
 }
 
 const entityTypeModal = new EntityTypeModal();

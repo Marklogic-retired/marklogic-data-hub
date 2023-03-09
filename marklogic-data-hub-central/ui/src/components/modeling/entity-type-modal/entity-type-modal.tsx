@@ -151,9 +151,11 @@ const EntityTypeModal: React.FC<Props> = props => {
       const response = await updateModelInfo(name, description, namespace, prefix);
       if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
+        return true;
       }
+      return false;
     } catch (error) {
-      if (error.response.status === 400) {
+      if (error.response.status  === 400) {
         if (error.response.data.hasOwnProperty("message")) {
           setErrorMessage(error["response"]["data"]["message"]);
         }
@@ -212,9 +214,10 @@ const EntityTypeModal: React.FC<Props> = props => {
   };
 
   const handleSubmit = async () => {
+    let success:any = true;
     try {
       if (entityPropertiesEdited()) {
-        await updateEntityDescription(name, description, namespace, prefix);
+        success = await updateEntityDescription(name, description, namespace, prefix);
       }
       if (colorTouched || iconTouched) {
         await updateHubCentralConfig(name, colorSelected, iconSelected);
@@ -229,11 +232,11 @@ const EntityTypeModal: React.FC<Props> = props => {
       }
     } finally {
       toggleLoading(false);
-      if (props.isVisible) {
+      if (props.isVisible && success) {
+        setName("");
         props.toggleModal(false);
       }
     }
-    setName("");
   };
 
   const onOk = event => {

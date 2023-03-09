@@ -135,13 +135,17 @@ describe("Validate the scenarios when the steps are added in different flows", (
     });
   });
   it("Add Client map Step to New Flow", {defaultCommandTimeout: 120000}, () => {
+    cy.intercept("GET", "api/flows/testFlows1/latestJobInfo").as("latestJobInfo");
     loadPage.runStep(mapStep).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.runInNewFlow(mapStep).click();
+    cy.wait("@latestJobInfo", {timeout: 15000});
+    cy.wait("@latestJobInfo", {timeout: 15000});
     runPage.setFlowName(flowName2);
     loadPage.confirmationOptions("Save").click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    cy.intercept("GET", "api/flows/testFlows2/latestJobInfo").as("latestJobInfo2");
+    cy.wait("@latestJobInfo2", {timeout: 15000});
+    cy.wait("@latestJobInfo2", {timeout: 15000});
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName2);
   });
