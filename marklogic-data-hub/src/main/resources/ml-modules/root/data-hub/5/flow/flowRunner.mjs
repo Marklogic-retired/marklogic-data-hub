@@ -392,7 +392,7 @@ function invokeFeatureBefore(stepExecutionContext, contentArray) {
         const features = Object.keys(featuresCore.getFeatures());
         contentArray.forEach(content => {
             features.forEach(feat => {
-                const funct = hubUtils.requireFunction(feat, "onInstancePassToStep");
+                const funct = featuresCore.getFeatureMethod(feat, "onInstancePassToStep");
                 if (funct) {
                     funct(flowStep, targetEntityType, content);
                 }

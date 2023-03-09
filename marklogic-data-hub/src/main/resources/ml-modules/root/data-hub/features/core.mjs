@@ -21,10 +21,7 @@ import ProtectedCollections from './protected-collections.mjs';
 import Provenance from './provenance.mjs';
 import Temporal from './temporal.mjs';
 
-import httpUtils from '/data-hub/5/impl/http-utils.mjs';
-
 // define constants for caching expensive operations
-const cachedFeatures = {};
 const registeredFeatures = {
     docPermission: DocPermission,
     mapping: Mapping,
@@ -40,7 +37,12 @@ function getFeatures() {
     return registeredFeatures;
 }
 
+function getFeatureMethod(featureName, featureMethod) {
+    return registeredFeatures[featureName][featureMethod];
+}
+
 
 export default {
-    getFeatures
+    getFeatures,
+    getFeatureMethod
 };
