@@ -22,6 +22,8 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -435,7 +437,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     @Override
-    public void upgradeProject(FlowManager flowManager) throws IOException {
+    public void upgradeProject(FlowManagerImpl flowManager) throws IOException {
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
         Path oldMappingsDir = this.getLegacyHubMappingsDir();
         Path newEntitiesDirPath = this.getHubEntitiesDir();
@@ -461,6 +463,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     }
                 }
             }
+            upgradeLegacyFlows(flowManager, oldEntityDirectories);
         }
         File[] oldMappingsDirectories = oldMappingsDir.toFile().listFiles();
         if (oldMappingsDirectories != null) {
@@ -485,6 +488,36 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
         upgradeFinalDatabaseXmlFile();
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
+    }
+
+    private void upgradeLegacyFlows(FlowManagerImpl flowManager, File[] oldEntityDirectories) {
+        ScaffoldingImpl scaffolding = new ScaffoldingImpl(flowManager.getHubConfig());
+        if(oldEntityDirectories != null) {
+            for(File legacyEntityDir: oldEntityDirectories) {
+                File[] flows = legacyEntityDir.listFiles(File::isDirectory);
+                if(flows != null) {
+                    Flow newFlow = new FlowImpl();
+                    String flowName = "dh_Upgrade_".concat(legacyEntityDir.getName()).concat("Flow");
+                    newFlow.setName(flowName);
+                    newFlow.setSteps(new HashMap<>());
+                    flowManager.saveFlow(newFlow);
+
+                    for(File oldFlow: flows) {
+                        String stepName = oldFlow.listFiles(File::isDirectory)[0].getName();
+                        stepName = stepName.replaceAll("[^\\w\\-]", "");
+                        stepName = Character.isLetter(stepName.charAt(0)) ? stepName : "dh_".concat(stepName);
+                        if(oldFlow.getName().equals("input")) {
+                            scaffolding.createStepFile(stepName, "ingestion", stepName, null);
+                            flowManager.addStepToFlow(flowName, stepName, "ingestion");
+                        } else if(oldFlow.getName().equals("harmonize")) {
+                            scaffolding.createStepFile(stepName, "custom", stepName, null);
+                            flowManager.addStepToFlow(flowName, stepName, "custom");
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {
