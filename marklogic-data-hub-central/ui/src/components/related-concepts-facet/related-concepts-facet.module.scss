@@ -5,14 +5,23 @@
   width: 100%;
   color: #777 !important;
   border-radius: 4px;
-  
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
   label {
     font-size: 13px;
   }
 
   .conceptName {
       font-weight: bold;
+      margin-left: 5px;
+      max-width: 75%;
   }
+
+  .checkAndIcon {
+    display: flex;
+    flex-direction: row;
+}
 
   .conceptAmount {
       margin-top: 2px;
@@ -22,7 +31,7 @@
 }
 
 .conceptItem {
-cursor: pointer;
+  cursor: pointer;
 }
 
 .more {

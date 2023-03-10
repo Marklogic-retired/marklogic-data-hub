@@ -11,6 +11,7 @@ import {defaultPaginationOptions, defaultIcon, exploreSidebar} from "@config/exp
 import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {themeColors} from "@config/themes.config";
 import {EntityProps} from "types/entity-types";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 interface BaseEntityProps {
   filter: number;
@@ -262,7 +263,7 @@ const BaseEntitiesFacet: React.FC<Props> = ({
                   <span className={styles.entityIcon}>
                     <DynamicIcons name={finalIcon} />
                   </span>
-                  <span className={styles.entityName}>{name}</span>
+                  <span className={styles.entityName}><AddTooltipWhenTextOverflow text={name} placement="right" /></span>
                   <span className={styles.entityChevron}>
                     <ChevronDoubleRight />
                   </span>

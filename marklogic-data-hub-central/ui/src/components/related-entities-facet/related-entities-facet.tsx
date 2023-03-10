@@ -9,6 +9,7 @@ import {ExploreGraphViewToolTips} from "@config/tooltips.config";
 import {HCTooltip, DynamicIcons, HCFacetIndicator} from "@components/common";
 import {deepCopy} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const SHOW_MINIMUM = values => (values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length);
 const SHOW_FILTER = filter => (filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `);
@@ -104,7 +105,6 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
   };
 
   const isNotEmptyIndicatorData = entityIndicatorData.entities && Object.keys(entityIndicatorData.entities).length > 0;
-
   return (
     <>
       <div aria-label="related-entities-list">
@@ -131,7 +131,7 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
                     borderStyle: "solid",
                     borderWidth: "1px",
                     borderColor: "#d9d9d9",
-                    borderRadius: "4px",
+                    borderRadius: "4px", overflow: "hidden",
                   }}
                   className={relatedEntitiesDisabled.includes(option) ? styles.entityItemDisabled : styles.entityItem}
                   key={name}
@@ -141,39 +141,43 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
                       : setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})
                   }
                 >
-                  <HCCheckbox
-                    id={name}
-                    checked={checked}
-                    cursorDisabled={relatedEntitiesDisabled.includes(option)}
-                    handleKeyDown={
-                      relatedEntitiesDisabled.includes(option)
-                        ? () => {
-                          return;
-                        }
-                        : handleColOptionsChecked
-                    }
-                    handleClick={
-                      relatedEntitiesDisabled.includes(option)
-                        ? () => {
-                          return;
-                        }
-                        : handleColOptionsChecked
-                    }
-                    value={name}
-                    ariaLabel={`related-entity-check-${name}`}
-                  >
-                    <DynamicIcons name={finalIcon} />
-                    <span className={styles.entityName} aria-label={`related-entity-${name}`}>
-                      {name}
-                    </span>
-                    <span className={styles.entityChevron}>
-                      <ChevronDoubleRight />
-                    </span>
-                    <span className={styles.entityAmount} aria-label={`related-entity-${name}-filter`}>
-                      {filter && SHOW_FILTER(filter)}
-                      {isNotEmptyIndicatorData && entityIndicatorData.entities[name]?.amount}
-                    </span>
-                  </HCCheckbox>
+                  <div className={styles.checkAndIcon}>
+                    <HCCheckbox
+                      id={name}
+                      checked={checked}
+                      cursorDisabled={relatedEntitiesDisabled.includes(option)}
+                      handleKeyDown={
+                        relatedEntitiesDisabled.includes(option)
+                          ? () => {
+                            return;
+                          }
+                          : handleColOptionsChecked
+                      }
+                      handleClick={
+                        relatedEntitiesDisabled.includes(option)
+                          ? () => {
+                            return;
+                          }
+                          : handleColOptionsChecked
+                      }
+                      value={name}
+                      ariaLabel={`related-entity-check-${name}`}
+                    >
+                      <DynamicIcons name={finalIcon} />
+                    </HCCheckbox>
+                  </div>
+
+                  <span className={styles.entityName} aria-label={`related-entity-${name}`}><AddTooltipWhenTextOverflow text=
+                    {name} placement="right" />
+                  </span>
+                  <span className={styles.entityChevron}>
+                    <ChevronDoubleRight />
+                  </span>
+                  <span className={styles.entityAmount} aria-label={`related-entity-${name}-filter`}>
+                    {filter && SHOW_FILTER(filter)}
+                    {isNotEmptyIndicatorData && entityIndicatorData.entities[name]?.amount}
+                  </span>
+
                   {isNotEmptyIndicatorData && (
                     <span className={styles.indicatorContainer} aria-label={`related-entity-${name}-amountbar`}>
                       <HCFacetIndicator

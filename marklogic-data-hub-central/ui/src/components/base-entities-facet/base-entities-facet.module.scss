@@ -4,10 +4,14 @@
   font-size: 14px;
   padding: 8px;
   margin-block: 10px;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
   cursor: pointer;
 
   .entityName {
     font-weight: bold;
+    max-width: 70%;
   }
 
   .entityIcon {
@@ -20,6 +24,8 @@
   }
   .entityAmount {
       float: right;
+      margin-left: auto;
+      white-space: nowrap;
       margin-top: 2px;
       font-size: 12px;
   }

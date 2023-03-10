@@ -9,6 +9,7 @@ import * as _ from "lodash";
 
 import {DynamicIcons, HCFacetIndicator} from "@components/common";
 import {themeColors} from "@config/themes.config";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const SHOW_MINIMUM = values => (values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES : values.length);
 // const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
@@ -106,23 +107,26 @@ const RelatedConceptsFacets: React.FC<Props> = props => {
                 className={styles.conceptItem}
                 key={name}
               >
-                <HCCheckbox
-                  id={name}
-                  checked={checked}
-                  handleClick={handleColOptionsChecked}
-                  handleKeyDown={handleColOptionsChecked}
-                  value={name}
-                  ariaLabel={`related-concept-check-${name}`}
-                >
-                  <DynamicIcons name={finalIcon} />
-                  <span className={styles.conceptName} aria-label={`related-concept-${name}`}>
-                    {name}
-                  </span>
-                  <span className={styles.conceptAmount} aria-label={`related-concept-${name}-filter`}>
-                    {/* {filter && SHOW_FILTER(filter)} */}
-                    {count > 0 && count}
-                  </span>
-                </HCCheckbox>
+                <div className={styles.checkAndIcon}>
+                  <HCCheckbox
+                    id={name}
+                    checked={checked}
+                    handleClick={handleColOptionsChecked}
+                    handleKeyDown={handleColOptionsChecked}
+                    value={name}
+                    ariaLabel={`related-concept-check-${name}`}
+                  >
+                    <DynamicIcons name={finalIcon} />
+                  </HCCheckbox>
+                </div>
+                <div className={styles.conceptName} aria-label={`related-concept-${name}`}>
+                  <AddTooltipWhenTextOverflow text={name}placement="right" forceRender={true}/>
+                </div>
+                <span className={styles.conceptAmount} aria-label={`related-concept-${name}-filter`}>
+                  {/* {filter && SHOW_FILTER(filter)} */}
+                  {count > 0 && count}
+                </span>
+
                 {count > 0 && (
                   <span className={styles.indicatorContainer} aria-label={`related-concept-${name}-amountbar`}>
                     <HCFacetIndicator

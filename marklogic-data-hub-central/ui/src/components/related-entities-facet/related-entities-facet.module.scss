@@ -5,13 +5,21 @@
     width: 100%;
     color: #777 !important;
     border-radius: 4px;
-    
+    display: flex;
+    flex-direction: row;
     label {
       font-size: 13px;
     }
 
     .entityName {
         font-weight: bold;
+        margin-left: 5px;
+        max-width: 65%;
+    }
+
+    .checkAndIcon {
+        display: flex;
+        flex-direction: row;
     }
 
     .entityIcon {
@@ -31,6 +39,7 @@
 
 .entityItem {
   cursor: pointer;
+  
 }
 
 .entityItemDisabled {
