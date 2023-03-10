@@ -1041,17 +1041,16 @@ const Sidebar: React.FC<Props> = props => {
           onChange={handleSearchBox}
           onPressEnter={handleSearchFromInput}
           suffix={
-            <FontAwesomeIcon
-              icon={faSearch}
+            <button
               data-testid="search-icon"
-              size="sm"
-              className={
+              disabled={
                 Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === searchOptions.query
-                  ? styles.disabledSearchIcon
-                  : styles.searchIcon
               }
+              className={styles.searchIcon}
               onClick={handleSearchFromInput}
-            />
+            >
+              <FontAwesomeIcon icon={faSearch} size="sm" />
+            </button>
           }
           placeholder="Search"
           size="sm"

@@ -233,15 +233,17 @@
   position: relative;
   color: #bfbfbf;
   cursor: pointer;
+  border: none !important;
+  background: none;
+  height: 20px;
+  display: flex;
+  
+  &:disabled {
+    color: #cecece;
+    cursor: not-allowed;
+  }
 }
 
-.disabledSearchIcon {
-  float: right;
-  font-size: 20px;
-  position: relative;
-  color: #cecece;
-  cursor: not-allowed;
-}
 
 .toggleDataHubArtifacts {
   margin-left: 15px;
