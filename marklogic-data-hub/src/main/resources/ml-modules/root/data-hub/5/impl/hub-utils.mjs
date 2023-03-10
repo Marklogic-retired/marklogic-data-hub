@@ -117,7 +117,9 @@ function normalizeToSequence(value) {
 }
 
 function normalizeToArray(value) {
-  if (isSequence(value)) {
+  if (value == null || value == undefined) {
+    return [];
+  } else if (isSequence(value)) {
     return value.toArray();
   } else if (Array.isArray(value)) {
     return value;

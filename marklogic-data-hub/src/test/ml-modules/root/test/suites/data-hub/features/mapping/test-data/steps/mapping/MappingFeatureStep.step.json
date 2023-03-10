@@ -10,5 +10,5 @@
   "sourceQuery" : "cts.collectionQuery('customer')",
   "customHook" : { },
   "lang" : "zxx",
-  "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+  "modulePath" : "/data-hub/5/builtins/steps/mapping/default/main.mjs"
 }
