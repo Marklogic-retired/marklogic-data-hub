@@ -48,27 +48,26 @@ describe("Test '/Explore' left sidebar", () => {
      TODO: this test is commented because the entity specific search input was commented
      */
 
-  // it("Validate search text and applying them over a base entities", () => {
-  //   cy.log("**Selecting Customer entity**");
-  //   // browsePage.getGraphView().click();
-  //   entitiesSidebar.showMoreEntities().should(`be.visible`).click({force: true});
-  //   entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
+  /*   it("Validate search text and applying them over a base entities", () => {
+    cy.log("**Selecting Customer entity**");
+    browsePage.getGraphView().click();
+    entitiesSidebar.showMoreEntities().should(`be.visible`).click({force: true});
+    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
 
-  //   cy.log("**Testing search input**");
-  //   entitiesSidebar.getInputSearch().type("adams");
-  //   entitiesSidebar.getInputSearch().should("have.value", "adams");
+    cy.log("**Testing search input**");
+    entitiesSidebar.getInputSearch().type("adams");
+    entitiesSidebar.getInputSearch().should("have.value", "adams");
 
-  //   cy.log("****Applying text search**");
-  //   entitiesSidebar.clickOnApplyFacetsButton();
-  //   browsePage.waitForSpinnerToDisappear();
-  //   cy.wait(3000);
+    cy.log("****Applying text search**");
+    entitiesSidebar.clickOnApplyFacetsButton();
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(3000);
 
-  //   cy.log("**Checking node amount shown**");
-  //   graphExplore.getAllNodes().then((nodes: any) => {
-  //     expect(Object.keys(nodes).length).to.be.equals(2);
-  //   });
-  // });
-
+    cy.log("**Checking node amount shown**");
+    graphExplore.getAllNodes().then((nodes: any) => {
+      expect(Object.keys(nodes).length).to.be.equals(2);
+    });
+  }); */
 
   //For now it's skip until BE is integrated and can apply facets over graph
   it.skip("Validate facets on graph view and applying them over a base entities", () => {

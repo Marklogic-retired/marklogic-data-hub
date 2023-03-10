@@ -299,13 +299,25 @@ class BrowsePage {
     return cy.get("[data-cy=datepicker-facet-apply-button]").click();
   }
 
+
+  searchWithMagnifyingGlass() {
+    return cy.get(`[data-testid="search-icon"]`);
+  }
+
   //search bar
-  search(str: string) {
-    cy.findByPlaceholderText("Search").scrollIntoView().clear().type(str);
-    this.getApplyFacetsButton().click();
+  search(str: string, withEnter = false, isCopyPaste = false) {
+    const searchInput = withEnter ? str + "{enter}" : str;
+    cy.findByPlaceholderText("Search").scrollIntoView().clear().type(searchInput);
+    if (isCopyPaste) {
+      cy.findByPlaceholderText("Search").scrollIntoView().invoke("val", searchInput);
+    }
+    if (!withEnter) {
+      this.searchWithMagnifyingGlass().click();
+    }
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    this.searchWithMagnifyingGlass().should("be.disabled");
   }
 
   // common
