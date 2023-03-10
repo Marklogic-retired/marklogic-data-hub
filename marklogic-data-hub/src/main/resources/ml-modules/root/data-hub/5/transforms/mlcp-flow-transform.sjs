@@ -14,6 +14,8 @@
   limitations under the License.
 */
 // must keep as sjs to be compatible with MLCP, otherwise we get the following error: XDMP-NOEXECUTE: var xform = require(transformModule)[transformFunction]; -- Document is not of executable mimetype. URI: /data-hub/5/transforms/mlcp-flow-transform.mjs
+  // also, emptySequence is declared prior to mjsProxy so type checking by MLCP isn't corrupted
+const emptySequence = Sequence.from([]);
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const [DataHubSingleton, consts, flowApi, httpUtils, hubUtils] = mjsProxy.requireMjsModules("/data-hub/5/datahub-singleton.mjs",
   "/data-hub/5/impl/consts.mjs",
@@ -30,15 +32,15 @@ for (let requestField of xdmp.getRequestFieldNames()) {
     urisInBatch.push(fn.head(xdmp.getRequestField(fn.replace(requestField, "^evl","evv"))));
   }
 }
-const visitedURIs = [];
-const urisToContent = {};
+const visitedURIs = new Set();
+const urisToContent = new Map();
 
 function transform(content, context = {}) {
   const contentUri = content.uri;
-  urisToContent[contentUri] = content;
-  visitedURIs.push(contentUri);
+  urisToContent.set(contentUri, content);
+  visitedURIs.add(contentUri);
 
-  if (urisInBatch.every((uri) => visitedURIs.includes(uri))) {
+  if (urisInBatch.every((uri) => visitedURIs.has(uri))) {
     let params = {};
     let optionsString = null;
     let parsedTransformParam = null;
@@ -81,7 +83,7 @@ function transform(content, context = {}) {
     if (stepNumbers) {
       options.throwStepError = true; // Let errors propagate to MLCP
       flowApi.runFlowOnContent(flowName, contentArray, jobId, options, stepNumbers);
-      return Sequence.from([]);
+      return emptySequence;
     }
 
     // It would be possible to always use the above approach, thus removing all of the code below. The only issue
@@ -112,23 +114,20 @@ function transform(content, context = {}) {
         return Sequence.from(contentDocuments);
       }
     }
-  } else {
-    return Sequence.from([]);
   }
+  return emptySequence;
 }
 
 function buildContentArray(context) {
   const contentArray = [];
-  Object.keys(urisToContent).forEach(uri => {
-    // Sanity check, though uri/value should always exist when MLCP passes a content object to a transform
-    if (urisToContent.hasOwnProperty(uri)) {
-      let content = urisToContent[uri];
-      if (content.value) {
-        content.context = context;
-        contentArray.push(content);
-      }
+  const urisToContentEntries = urisToContent.entries();
+  for (const entry of urisToContentEntries) {
+    let content = entry[1];
+    if (content.value) {
+      content.context = context;
+      contentArray.push(content);
     }
-  });
+  };
   return contentArray;
 }
 
