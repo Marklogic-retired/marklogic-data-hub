@@ -256,7 +256,7 @@ function prepareContentBeforeStepIsRun(stepExecutionContext, contentArray) {
   const permissions = options.permissions ? hubUtils.parsePermissions(options.permissions) : null;
   contentArray.forEach(content => {
     if (content.value) {
-      const valueNeedsToBeWrappedAsNode = "object" == xdmp.nodeKind(content.value);
+      const valueNeedsToBeWrappedAsNode = !hubUtils.isJsonNode(content.value);
       if (valueNeedsToBeWrappedAsNode) {
         content.value = xdmp.toJSON(content.value);
       }
