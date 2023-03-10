@@ -122,7 +122,9 @@ describe("Test '/Explore' graph right panel", () => {
     browsePage.getAllDataButton().click();
     cy.findByTestId("collection-loadPersonJSON-checkbox").click();
     cy.findByTestId("facet-apply-button").click();
+    cy.wait(1500);
     cy.findByTestId("/json/persons/last-name-dob-custom1.json-detailViewIcon").click();
+    cy.wait(1500);
     cy.findByLabelText("Back").click();
     cy.wait(6000); // There was a bug when the element appears and later disappear
     cy.get("[data-cy=\"clear-loadPersonJSON\"]");
