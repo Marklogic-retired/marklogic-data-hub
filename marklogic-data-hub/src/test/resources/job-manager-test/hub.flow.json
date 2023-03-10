@@ -106,7 +106,7 @@
       "retryLimit" : null,
       "batchSize" : null,
       "threadCount" : null,
-      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.mjs"
     }
   }
 }
