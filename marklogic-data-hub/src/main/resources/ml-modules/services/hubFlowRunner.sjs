@@ -83,7 +83,7 @@ function parseJsonOptionsFromXml(input) {
     // Fall-back to JSON String if provided
     } else if (fn.exists(options.xpath("text()[normalize-space()]"))) {
       try {
-        return xdmp.fromJsonString(fn.string(options));
+        return JSON.parse(fn.string(options));
       } catch (error) {
         httpUtils.throwBadRequest(`Could not parse JSON options; cause: ${error.message}; options: ${options}`);
       }
