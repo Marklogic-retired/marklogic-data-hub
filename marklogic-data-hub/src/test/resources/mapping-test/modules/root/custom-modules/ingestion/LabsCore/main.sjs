@@ -9,7 +9,7 @@ function main(content, options) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
 
   let instance = content.value.root || content.value;
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
+  if (instance.nodeType === "binary" || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
     return content;
   }
   else if (instance.nodeType === Node.TEXT_NODE) {
