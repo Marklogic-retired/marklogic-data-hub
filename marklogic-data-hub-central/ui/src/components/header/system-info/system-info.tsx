@@ -27,6 +27,7 @@ const SystemInfo = props => {
   const serviceName = props.serviceName || "";
   const dataHubVersion = props.dataHubVersion || "";
   const marklogicVersion = props.marklogicVersion || "";
+  const hubCentralVersion = props.hubCentralVersion || "";
 
   const {user} = useContext(UserContext);
 
@@ -380,6 +381,10 @@ const SystemInfo = props => {
           <div className={styles.version}>
             <div className={styles.label}>Data Hub Version:</div>
             <div className={styles.value}>{dataHubVersion}</div>
+          </div>
+          <div className={styles.version}>
+            <div className={styles.label}>Hub Central Version:</div>
+            <div className={styles.value}>{hubCentralVersion}</div>
           </div>
           <div className={styles.version}>
             <div className={styles.label}>MarkLogic Version:</div>
