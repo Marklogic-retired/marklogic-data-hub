@@ -1,17 +1,19 @@
 import schemaValidation from "/data-hub/features/schema-validation.mjs";
 const test = require("/test/test-helper.xqy");
 
-const assertions = [];
-
 schemaValidation.onArtifactSave("model", "Customer");
 
-// assert
-xdmp.invokeFunction(function() {
-  assertions.push(test.assertTrue(fn.exists(cts.doc("/entities/Customer.entity.xsd")), `Customer xml schema should exist.`))
-  assertions.push(test.assertTrue(fn.exists(cts.doc("/entities/Customer.entity.schema.json")), `Customer json schema should exist.`))
-},{database: xdmp.schemaDatabase()});
+const assertions = [
+test.assertTrue(checkForSchema("/entities/Customer.entity.schema.json"), "TDE should be generated when 'tdeGenerationDisabled' is set to false"),
+test.assertTrue(checkForSchema("/entities/Customer.entity.xsd"), "TDE should be generated when 'tdeGenerationDisabled' is set to false")
+];
 
-
+function checkForSchema(uri){
+    return fn.head(xdmp.eval(
+        `fn.docAvailable('${uri}') `,
+        {uri:uri}, {database: xdmp.schemaDatabase()}
+    ));
+}
 
 
 assertions;

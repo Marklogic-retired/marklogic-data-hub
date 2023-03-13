@@ -125,9 +125,9 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         logger.info("Time to fix: " + (System.currentTimeMillis() - start));
 
         verifyCreatedByStepIsFixed("runEchoStep");
-        assertEquals(0, createdByStepFixer.previewFixingDocuments(finalDatabaseName).getLeft(),
+        assertEquals(customerUris.size(), createdByStepFixer.previewFixingDocuments(finalDatabaseName).getLeft(),
             "datahubCreatedByStep should be fixed again, which means we have no documents left to fix");
-        assertEquals(customerUris.size(), getFinalDocCount(FIXED_COLLECTION));
+        assertEquals(0, getFinalDocCount(FIXED_COLLECTION));
     }
 
     @Test
