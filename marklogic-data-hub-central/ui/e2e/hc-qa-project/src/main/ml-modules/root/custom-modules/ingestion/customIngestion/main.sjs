@@ -35,7 +35,7 @@ function main(content, options) {
   let instance = content.value.root || content.value;
 
   //If the type of data is binary OR the expected output was set to unstructured data (binary/text), let's return it as is.
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
+  if (instance.nodeType === "binary" || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
     return content;
   }
   else if (instance.nodeType === Node.TEXT_NODE) {
