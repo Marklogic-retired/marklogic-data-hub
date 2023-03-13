@@ -212,6 +212,8 @@ const Header: React.FC<Props> = props => {
     <div aria-label="info-text">
       Data Hub Version: <strong>{props.environment.dataHubVersion}</strong>
       <br />
+      Hub Central Version: <strong>{props.environment.hubCentralVersion}</strong>
+      <br />
       MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong>
       <br />
       Service Name: <strong>{props.environment.serviceName}</strong>
@@ -402,6 +404,7 @@ const Header: React.FC<Props> = props => {
         serviceName={props.environment.serviceName}
         dataHubVersion={props.environment.dataHubVersion}
         marklogicVersion={props.environment.marklogicVersion}
+        hubCentralVersion={props.environment.hubCentralVersion}
         systemInfoVisible={systemInfoVisible}
         setSystemInfoVisible={setSystemInfoVisible}
       />

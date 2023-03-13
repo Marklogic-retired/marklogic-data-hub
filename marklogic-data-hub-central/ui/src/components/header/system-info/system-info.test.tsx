@@ -58,6 +58,8 @@ describe("Update data load settings component", () => {
     expect(getByText("Data Hub Version:")).toBeInTheDocument();
     expect(getByText(data.environment.dataHubVersion)).toBeInTheDocument();
     expect(getByText("MarkLogic Version:")).toBeInTheDocument();
+    expect(getByText(data.environment.hubCentralVersion)).toBeInTheDocument();
+    expect(getByText("Hub Central Version:")).toBeInTheDocument();
     expect(getByText(data.environment.marklogicVersion)).toBeInTheDocument();
     expect(getByText("Download Hub Central Files")).toBeInTheDocument();
     expect(getByText("Download Project Files")).toBeInTheDocument();

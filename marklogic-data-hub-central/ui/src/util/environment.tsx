@@ -2,6 +2,7 @@ const defaultEnv = {
   serviceName: "",
   dataHubVersion: "",
   markLogicVersion: "",
+  hubCentralVersion: "",
 };
 
 export function getEnvironment(): any {

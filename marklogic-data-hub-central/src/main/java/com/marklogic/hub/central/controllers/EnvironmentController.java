@@ -91,6 +91,7 @@ public class EnvironmentController extends BaseController {
         SystemInfo info = new SystemInfo();
         info.serviceName = versionInfo.getClusterName();
         info.dataHubVersion = versionInfo.getHubVersion();
+        info.hubCentralVersion = environment.getProperty("hubCentralVersion");
         info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
         info.stagingDb = versionInfo.getStagingDbName();
@@ -115,6 +116,7 @@ public class EnvironmentController extends BaseController {
         public String serviceName;
         public String dataHubVersion;
         public String marklogicVersion;
+        public String hubCentralVersion;
         public String host;
         public String stagingDb;
         public String finalDb;
