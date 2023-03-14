@@ -8,6 +8,8 @@ describe("Compare Values Modal component", () => {
     jest.clearAllMocks();
   });
 
+  const twoComparedUris = ["/xml/persons/first-name-synonym1.xml", "/xml/persons/first-name-synonym2.xml"];
+
   const comparedUris = [
     "/com.marklogic.smart-mastering/Cust1.json",
     "/com.marklogic.smart-mastering/Cust2.json",
@@ -46,6 +48,102 @@ describe("Compare Values Modal component", () => {
     "31",
     "32",
   ];
+
+  const uriInfo = [
+    {
+      "result1Instance": {
+        "info": {"title": "Person", "version": "0.0.1", "baseUri": "http://example.org/", "draft": false},
+        "Person": {"fname": "Alexandra", "lname": "Wilson", "Address": "123 Wilsons St", "ZipCode": "68150"},
+      },
+    },
+    {
+      "result2Instance": {
+        "info": {"title": "Person", "version": "0.0.1", "baseUri": "http://example.org/", "draft": false},
+        "Person": {"fname": "Alexandria", "lname": "Wilson", "Address": "123 Wilson Rd", "ZipCode": "68150"},
+      },
+    },
+    {
+      "previewInstance": {
+        "info": {"title": "Person", "version": "0.0.1", "baseUri": "http://example.org/", "draft": false},
+        "Person": {
+          "ZipCode": "68150",
+          "Address": "123 Wilsons St",
+          "lname": "Wilson",
+          "fname": ["Alexandra", "Alexandria"],
+        },
+      },
+    },
+  ];
+
+  const entityDefinitionsArray = [
+    {
+      "name": "Person",
+      "info": {"title": "Person", "version": "0.0.1", "baseUri": "http://example.org/", "draft": false},
+      "primaryKey": "id",
+      "properties": [
+        {
+          "name": "id",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "related": "",
+        },
+        {
+          "name": "fname",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation//S2",
+          "related": "",
+          "sortable": true,
+          "facetable": true,
+        },
+        {
+          "name": "lname",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation//S2",
+          "related": "",
+          "sortable": true,
+          "facetable": true,
+        },
+        {
+          "name": "desc",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "related": "",
+        },
+        {
+          "name": "SSN",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "related": "",
+        },
+        {
+          "name": "ZipCode",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "related": "",
+        },
+        {
+          "name": "Address",
+          "datatype": "string",
+          "ref": "",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "related": "",
+        },
+        {"name": "DateOfBirth", "datatype": "date", "ref": "", "related": ""},
+      ],
+      "relatedEntities": [],
+      "relatedConcepts": [],
+      "icon": "FaShapes",
+      "color": "#eeeff1",
+    },
+  ];
+
+  const originalUri = "/com.marklogic.smart-mastering/merged/ea11539a17ebe56343556a2f0ea1eb99.xml";
 
   const mockUnmergeUri = jest.fn();
 
@@ -250,5 +348,33 @@ describe("Compare Values Modal component", () => {
     expect(getByText("...")).toBeInTheDocument();
     expect(queryByLabelText(`${overflowedUris[30]}-uri`)).not.toBeInTheDocument();
     expect(queryByLabelText(`${overflowedUris[31]}-uri`)).not.toBeInTheDocument();
+  });
+
+  test("Unmerge Modal renders with popup info for showing less than 4 URIs", async () => {
+    const {queryAllByText, findByText} = render(
+      <CompareValuesModal
+        {...data.compareModal}
+        uris={twoComparedUris}
+        uriCompared={twoComparedUris}
+        isVisible={true}
+        toggleModal={jest.fn()}
+        fetchNotifications={jest.fn()}
+        previewMatchActivity={{}}
+        uriInfo={uriInfo}
+        activeStepDetails={{}}
+        entityProperties={{}}
+        entityDefinitionsArray={entityDefinitionsArray}
+        isPreview={false}
+        isMerge={false}
+        mergeUris={""}
+        originalUri={originalUri}
+        flowName={""}
+      />,
+    );
+
+    const labels = await queryAllByText(`Preview:`);
+    expect(labels).toHaveLength(2);
+    expect(await findByText(`/xml/persons/first-name-synonym1.xml`)).toBeVisible();
+    expect(await findByText(`/xml/persons/first-name-synonym2.xml`)).toBeVisible();
   });
 });
