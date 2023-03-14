@@ -4,7 +4,7 @@ import CreatableSelect from "react-select/creatable";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./advanced-target-collections.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faTimes, faSquare, faSave} from "@fortawesome/free-solid-svg-icons";
 import {HCTooltip, HCTable} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {themeColors} from "@config/themes.config";
@@ -61,7 +61,7 @@ const defaultTargetCollectionHeaders = [
   {
     text: "Default Collections",
     headerFormatter: () => (
-      <span>
+      <div className={styles.tableHeader}>
         Default Collections{" "}
         <HCTooltip
           text="Collection tags that are added to the resulting records by default."
@@ -75,7 +75,7 @@ const defaultTargetCollectionHeaders = [
             className={styles.questionCircle}
           />
         </HCTooltip>
-      </span>
+      </div>
     ),
     dataField: "defaultCollections",
     visible: true,
@@ -87,7 +87,7 @@ const defaultTargetCollectionHeaders = [
   {
     text: "Additional Collections",
     headerFormatter: () => (
-      <span>
+      <div className={styles.tableHeader}>
         Additional Collections{" "}
         <HCTooltip
           text="Collection tags that you specify to be added to the resulting records."
@@ -101,7 +101,7 @@ const defaultTargetCollectionHeaders = [
             className={styles.questionCircle}
           />
         </HCTooltip>
-      </span>
+      </div>
     ),
     dataField: "additionalCollectionsField",
     visible: true,
@@ -160,7 +160,7 @@ const defaultTargetCollectionHeaders = [
                 }}
               >
                 <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare} />
-                <FontAwesomeIcon className={styles.checkIcon} size={"lg"} icon={faCheck} inverse />
+                <FontAwesomeIcon className={styles.checkIcon} size={"lg"} icon={faSave} inverse />
               </span>
               <span
                 data-testid={action.event + "-discard"}
@@ -200,7 +200,7 @@ const defaultTargetCollectionHeaders = [
   {
     text: "Remove Collections",
     headerFormatter: () => (
-      <span>
+      <div className={styles.tableHeader}>
         Remove Collections{" "}
         <HCTooltip
           text="Use this column to filter out the collections you do not want to merge."
@@ -214,7 +214,7 @@ const defaultTargetCollectionHeaders = [
             className={styles.questionCircle}
           />
         </HCTooltip>
-      </span>
+      </div>
     ),
     dataField: "removeCollectionsField",
     key: "removeCollectionsField",
@@ -281,7 +281,7 @@ const defaultTargetCollectionHeaders = [
                 }}
               >
                 <FontAwesomeIcon tabIndex={0} size={"2x"} icon={faSquare} />
-                <FontAwesomeIcon className={styles.checkIcon} size={"lg"} icon={faCheck} inverse />
+                <FontAwesomeIcon className={styles.checkIcon} size={"lg"} icon={faSave} inverse />
               </span>
               <span
                 data-testid={removeAction.event + "-discardRemoved"}
