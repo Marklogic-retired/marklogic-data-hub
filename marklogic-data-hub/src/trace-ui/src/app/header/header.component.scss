@@ -1,5 +1,7 @@
 @import '../theme/styles/variables';
 
+$palette-datahub-red: unquote("rgb(#{$palette-datahub-red})");
+$palette-datahub-lightred: unquote("rgb(#{$palette-datahub-lightred})");
 $highlight-color: unquote("rgb(#{$palette-datahub-A100})");
 $bg-color: unquote("rgb(#{$palette-datahub-500})");
 
@@ -19,7 +21,7 @@ header.mdl-layout__header {
   overflow: hidden;
 }
 
-img {
+.logo {
   margin-right: 20px;
   width: 32px;
 }
@@ -28,6 +30,34 @@ img {
   &:hover {
     background-color: $highlight-color;
   }
+}
+
+.mdl-layout-spacer {
+  display: flex;
+  justify-content: center;
+}
+
+.alertLogo {
+  width: 20px;
+  height: 20px;
+  color: $palette-datahub-lightred;
+}
+
+.alert {
+  padding: 20px;
+  color: #CB2626;
+  background-color: rgb(253, 237, 237);
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: fit-content;
+}
+
+.alert-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }
 
 a.active {
