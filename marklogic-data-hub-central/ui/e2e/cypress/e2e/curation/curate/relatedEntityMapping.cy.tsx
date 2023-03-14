@@ -49,8 +49,8 @@ describe("Mapping", () => {
     propertyTable.getAddPropertyButton("Relation").scrollIntoView().should("be.visible").click();
     propertyModal.newPropertyName("relatedTo");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("id").click({force: true});
     propertyModal.getSubmitButton().click();

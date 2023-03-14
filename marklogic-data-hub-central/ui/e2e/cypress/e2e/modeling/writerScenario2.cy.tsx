@@ -47,8 +47,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("Address");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
-    propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("New Property Type");
     structuredTypeModal.newName("Address");
     structuredTypeModal.getAddButton().should("be.visible").click({force: true});
     propertyModal.getYesRadio("multiple").click();
@@ -68,8 +68,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("street");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More date types").click();
-    propertyModal.getCascadedTypeFromDropdown("gDay").click();
+    propertyModal.getTypeFromDropdown("More date types");
+    propertyModal.getCascadedTypeFromDropdown("gDay");
     propertyModal.getNoRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();
     propertyModal.getSubmitButton().click();
@@ -89,7 +89,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("rowId");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
 
     propertyModal.getSubmitButton().click();
     confirmationModal.getPropertyNameText().should("exist");
@@ -108,8 +108,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("zip");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
-    propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("New Property Type");
     structuredTypeModal.newName("street");
     structuredTypeModal.getAddButton().click();
     propertyModal.verifySameNamePropertyError("A property is already using the name street. A structured type cannot use the same name as an existing property.");
@@ -142,7 +142,7 @@ describe("Entity Modeling: Writer Role", () => {
   it("Add a Structured sub-property inside one of the same type (the option is disabled)", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
+    propertyModal.getTypeFromDropdown("Structured");
     propertyModal.getDisabledTypeFromDropdown().should("exist");
     propertyModal.getCancelButton();
 
@@ -151,8 +151,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Customer").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Customer");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
@@ -186,8 +186,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getStructuredTypeName().should("have.text", "Address.Zip");
     propertyModal.newPropertyName("fiveDigit");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More number types").click();
-    propertyModal.getCascadedTypeFromDropdown("int").click();
+    propertyModal.getTypeFromDropdown("More number types");
+    propertyModal.getCascadedTypeFromDropdown("int");
     propertyModal.getSubmitButton().click();
     cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
     propertyTable.getProperty("zip-fiveDigit");  // DHFPROD-8325: added check for expanded structured property
@@ -199,8 +199,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("zip").click({force: true});
     propertyModal.newPropertyName("extra");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
-    propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("New Property Type");
     structuredTypeModal.newName("Extra");
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
@@ -210,7 +210,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdownCascaderRC("integer").click();
+    propertyModal.getTypeFromDropdownCascaderRC("integer");
     propertyModal.getYesRadio("pii").click();
     propertyModal.getSubmitButton().click();
 
@@ -228,9 +228,9 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyButton("AddEntity").scrollIntoView().click();
     propertyModal.newPropertyName("extra2");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
+    propertyModal.getTypeFromDropdown("Structured");
 
-    propertyModal.getCascadedTypeFromDropdown("Extra").click();
+    propertyModal.getCascadedTypeFromDropdown("Extra");
     propertyModal.getSubmitButton().click();
 
     cy.log("**Add property to 'Extra' Structured type**");
@@ -251,7 +251,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("extra").click({force: true});
     propertyModal.newPropertyName("newExtra");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdownCascaderRC("string").click();
+    propertyModal.getTypeFromDropdownCascaderRC("string");
     propertyModal.getSubmitButton().click();
 
     cy.log("**Close 'address' property**");
@@ -297,8 +297,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.newPropertyName("streetAlt");
     propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More number types").click();
-    propertyModal.getCascadedTypeFromDropdown("unsignedByte").click();
+    propertyModal.getTypeFromDropdown("More number types");
+    propertyModal.getCascadedTypeFromDropdown("unsignedByte");
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
@@ -311,8 +311,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("alt_address");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("Address").click();
     propertyModal.getYesRadio("multiple").click();
@@ -328,8 +328,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Structured").click();
-    propertyModal.getCascadedTypeFromDropdown("Address").click();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("Address");
     propertyModal.getSubmitButton().click();
     // TODO DHFPROD-7711 skip since fails for Ant Design Table component
     //propertyTable.expandStructuredTypeIcon("alt_address").click();
@@ -341,8 +341,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.getForeignKeyDropdown().should("not.exist");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Customer").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Customer");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
@@ -427,8 +427,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyButton("Concept").click();
     propertyModal.newPropertyName("order");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Order").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Order");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("orderId").click();
     propertyModal.getYesRadio("multiple").click();
@@ -439,8 +439,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyButton("Concept").click();
     propertyModal.newPropertyName("testing");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More date types").click();
-    propertyModal.getCascadedTypeFromDropdown("yearMonthDuration").click();
+    propertyModal.getTypeFromDropdown("More date types");
+    propertyModal.getCascadedTypeFromDropdown("yearMonthDuration");
     propertyModal.getSubmitButton().click();
     propertyTable.getDeletePropertyIcon("Concept", "testing").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");

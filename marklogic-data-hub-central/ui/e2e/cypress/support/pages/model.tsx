@@ -51,7 +51,7 @@ class ModelPage {
   }
 
   clickModelingInfoIcon() {
-    cy.findByLabelText("modelInfoIcon").click();
+    cy.findByLabelText("modelInfoIcon").scrollIntoView().click({force: true});
   }
 
   verifyModelingInfo() {

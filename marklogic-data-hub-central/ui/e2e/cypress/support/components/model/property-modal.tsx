@@ -24,15 +24,15 @@ class PropertyModal {
   }
 
   getTypeFromDropdown(type: string) {
-    return cy.get(`ul > li`).first().get(`[title="${type}"]`).should("be.visible");
+    cy.get(`ul > li`).first().get(`[title="${type}"]`).should("be.visible").click();
   }
 
   getTypeFromDropdownCascaderRC(type: string) {
-    return cy.get(`.rc-cascader-menus > ul > li`).first().get(`[data-value="${type}"]`).should("be.visible");
+    cy.get(`.rc-cascader-menus > ul > li`).first().get(`[data-value="${type}"]`).should("be.visible").click();
   }
 
   getCascadedTypeFromDropdown(type: string) {
-    return cy.get(`ul > li`).last().get(`[title="${type}"]`).should("be.visible");
+    cy.get(`ul > li`).last().get(`[title="${type}"]`).should("be.visible").click();
   }
 
   getDisabledTypeFromDropdown() {

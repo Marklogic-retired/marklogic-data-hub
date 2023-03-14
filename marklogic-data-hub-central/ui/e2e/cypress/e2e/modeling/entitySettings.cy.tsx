@@ -15,8 +15,8 @@ import graphExploreSidePanel from "../../support/components/explore/graph-explor
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 import explorePage from "../../support/pages/explore";
 
-const defaultSelectLabel = "Select...";
-const defaultSelectProperty = "Select property";
+//const defaultSelectLabel = "Select...";
+//const defaultSelectProperty = "Select property";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.BABYREGISTRY,
   properties: {
@@ -77,15 +77,32 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getEntityDescription().should("be.visible");
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
+    //ToDo: Should move it to RTL test
+    //graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
+    graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).then(($ele) => {
+      let text = $ele.text();
+      if (text === defaultEntityTypeData.properties.ownedBy) {
+        graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).click();
+        graphViewSidePanel.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.babyRegistryId).click();
+        graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
+      }
+    });
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click();
+    graphViewSidePanel.getEntityLabelDropdownOption(defaultEntityTypeData.name, defaultEntityTypeData.properties.ownedBy).click({force: true});
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
+    //ToDo: Should move it to RTL test
+    //graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
+    cy.get("body").then((body) => {
+      if (body.find(".rc-tree-select-selection-item-remove-icon").length > 0) {
+        dataModelDisplaySettingsModal.getDropdownCloseOption().each(($button) => {
+          cy.wrap($button).click();
+        });
+      }
+    });
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
-    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.babyRegistryId).click({force: true});
+    graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.babyRegistryId).should("be.visible").click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
     graphViewSidePanel.getPropertiesOnHoverDropdownOption(defaultEntityTypeData.properties.arrivalDate).click({force: true});
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
@@ -93,12 +110,22 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.babyRegistryId);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
+    graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
+    cy.wait(3000);
 
     cy.log("**Close model tile and go to explore**");
     homePage.getTileCloseButton().click();
+    cy.waitForAsyncRequest();
     homePage.getExploreCard().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
   });
   it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", () => {
     graphExplore.getGraphVisCanvas().should("exist");

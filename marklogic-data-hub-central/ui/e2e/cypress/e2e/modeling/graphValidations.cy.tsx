@@ -226,7 +226,7 @@ describe("Graph Validations", () => {
     propertyTable.getAddPropertyButton("a-Test2").scrollIntoView().click();
     propertyModal.addTextInput("hc-input-component", "id-test2");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getSubmitButton().click();
 
     cy.log("**Creating new entity Test1 in table view**");
@@ -240,15 +240,15 @@ describe("Graph Validations", () => {
     propertyTable.getAddPropertyButton("a-Test1").scrollIntoView().click();
     propertyModal.addTextInput("hc-input-component", "id");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getSubmitButton().click();
 
     cy.log("**Creating relation**");
     propertyTable.getAddPropertyButton("a-Test1").scrollIntoView().click();
     propertyModal.addTextInput("hc-input-component", "relTest1-Test2");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("a-Test2").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("a-Test2");
     propertyModal.getForeignKeySelectWrapper().click();
     propertyModal.getForeignKey("id-test2").click();
     propertyModal.getSubmitButton().click();
@@ -320,23 +320,23 @@ describe("Graph Validations", () => {
 
   it("Deleting relation, entities and publish", () => {
     cy.log("**Sort table by entities Name**");
-    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();
+    cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click({force: true});
     entityTypeTable.getExpandEntityIcon("a-Test1");
 
     cy.log("**Deletes rel-Test1-Test2 relationship**");
-    propertyModal.getDeleteIcon("a-Test1-rel-Test1-Test2").should("exist").scrollIntoView().should("be.visible").click();
+    propertyModal.getDeleteIcon("a-Test1-rel-Test1-Test2").should("exist").scrollIntoView().should("be.visible").click({force: true});
     propertyModal.confirmDeleteProperty("deletePropertyWarn-yes");
     cy.waitForAsyncRequest();
     propertyModal.getDeleteIcon("a-Test1-rel-Test1-Test2").should("not.exist");
 
     cy.log("**Deletes a-Test2 Entity**");
-    propertyTable.getEntityToDelete("a-Test2-trash-icon").should("exist").scrollIntoView().should("be.visible").click();
+    propertyTable.getEntityToDelete("a-Test2-trash-icon").should("exist").scrollIntoView().should("be.visible").click({force: true});
     propertyModal.confirmDeleteProperty("deleteEntity-yes");
     cy.waitForAsyncRequest();
     propertyTable.getEntityToDelete("a-Test2-trash-icon").should("not.exist");
 
     cy.log("**Deletes a-Test1 Entity**");
-    propertyTable.getEntityToDelete("a-Test1-trash-icon").should("exist").scrollIntoView().should("be.visible").click();
+    propertyTable.getEntityToDelete("a-Test1-trash-icon").should("exist").scrollIntoView().should("be.visible").click({force: true});
     propertyModal.confirmDeleteProperty("deleteEntity-yes");
     cy.waitForAsyncRequest();
     propertyTable.getEntityToDelete("a-Test1-trash-icon").should("not.exist");

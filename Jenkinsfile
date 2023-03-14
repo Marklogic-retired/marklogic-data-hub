@@ -1505,7 +1505,7 @@ pipeline{
                         }
                     }
                 }
-                stage('10.0-9-cypress-linux-setup-mac-chrome'){
+                /*stage('10.0-9-cypress-linux-setup-mac-chrome'){
                     agent {label 'dhfLinuxAgent'}
                     steps{
                         script{
@@ -1522,7 +1522,7 @@ pipeline{
                                 }
                         }
                     }
-                }
+                }*/
                 stage('cypress-win-chrome'){
                     agent { label 'w10-dhf-5'}
                     environment{

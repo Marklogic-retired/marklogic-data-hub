@@ -70,7 +70,7 @@ describe("login", () => {
       .url().should("include", "/tiles");
     cy.get(`#user-dropdown`).click();
     cy.get("#logOut").should("be.visible");
-    loginPage.clickTitle();
+    toolbar.getLoadToolbarIcon().click({force: true});
     cy.get("#logOut").should("not.be.visible");
   });
 
