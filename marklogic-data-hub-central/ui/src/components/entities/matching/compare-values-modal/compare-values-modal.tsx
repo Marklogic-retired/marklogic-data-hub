@@ -266,7 +266,15 @@ const CompareValuesModal: React.FC<Props> = props => {
         key: dataField,
         title: cell => `${cell.value}`,
         ellipsis: true,
-        text: uri,
+        text:
+          !props.isMerge && props.uris.length < pageSize ? (
+            <>
+              <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
+              <div>{uri}</div>
+            </>
+          ) : (
+            uri
+          ),
         style: property => {
           if (property?.matchedRow) {
             return {
