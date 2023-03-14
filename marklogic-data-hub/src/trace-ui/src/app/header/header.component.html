@@ -1,9 +1,15 @@
 <header class="mdl-layout__header">
   <div class="mdl-layout__header-row">
-    <img src="assets/img/odh.svg">
+    <img alt="logo" class="logo" src="assets/img/odh.svg">
     <span class="mdl-layout-title">Trace Viewer</span>
     <!-- Add spacer, to align navigation to the right -->
-    <div class="mdl-layout-spacer"></div>
+    <div class="mdl-layout-spacer">
+      <div class="alert">
+        <img alt="alert" class="alertLogo" src="assets/img/triangle-exclamation-solid.svg">
+        <span class="alert-text">This feature is deprecated and will soon be removed in Data Hub 6</span>
+        <img alt="alert" class="alertLogo" src="assets/img/triangle-exclamation-solid.svg">
+      </div>
+    </div>
     <nav class="mdl-navigation mdl-layout--large-screen-only">
       <a class="mdl-navigation__link" [routerLink]="['']"><i class="fa fa-flash"></i> Traces</a>
     </nav>
