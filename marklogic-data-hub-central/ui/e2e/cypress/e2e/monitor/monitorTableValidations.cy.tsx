@@ -22,10 +22,6 @@ describe("Monitor Tile", () => {
     cy.waitForAsyncRequest();
     monitorPage.waitForMonitorTableToLoad();
   });
-  afterEach(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
-  });
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();

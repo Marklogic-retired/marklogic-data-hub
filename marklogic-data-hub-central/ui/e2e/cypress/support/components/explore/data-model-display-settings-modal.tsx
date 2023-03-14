@@ -117,6 +117,9 @@ class DataModelDisplaySettingsModal {
   getConceptIconMenu(concept: string) {
     return cy.get(`[id="${concept}-icon-picker"] > div > div:last-child`);
   }
+  getDropdownCloseOption() {
+    return cy.get(`[class="rc-tree-select-selection-item-remove-icon"]`);
+  }
 }
 
 const dataModelDisplaySettingsModal = new DataModelDisplaySettingsModal();
