@@ -183,10 +183,21 @@ const ModelingTooltips = {
     return (
       <span>
         The name that identifies the relationship between the source and target entity types. The relationship is saved
-        as a entity property in the <strong>{entityName}</strong> entity type.
+        as an entity property in the <strong>{entityName}</strong> entity type.
         <br />
         Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Entity property names
         cannot use the same name as the associated entity type or its existing Entity properties.
+      </span>
+    );
+  },
+  relationshipNameEntityConcept: function (entityName) {
+    return (
+      <span>
+        The name that identifies the relationship between the source and target concept. The relationship is saved as an
+        entity property in the <strong>{entityName}</strong> entity type.
+        <br />
+        Names cannot contain whitespaces. Entity property names cannot use the same name as the associated entity type
+        or its existing Entity properties.
       </span>
     );
   },
@@ -210,6 +221,8 @@ const ModelingTooltips = {
       You can only edit the relationship type of an entity when adding a new relationship to the data model.
     </span>
   ),
+
+  whiteSpacesControl: "Names cannot contain whitespaces.",
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex:
