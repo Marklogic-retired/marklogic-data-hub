@@ -163,6 +163,7 @@ describe("Add Edit Relationship component", () => {
         mapFunctions={[]}
       />,
     );
+
     //verify duplicate property error message with relationship name same as entity name
     fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
     fireEvent.click(getByText("Add"));
@@ -170,9 +171,39 @@ describe("Add Edit Relationship component", () => {
     fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
 
+    //verify error only with white spaces are in the entity name
+    fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "https: // www.marklogic.com/"}});
+    fireEvent.click(getByText("Add"));
+    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId("error-circle"));
+    wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
+
+    fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: " https://www.marklogic.com/ "}});
+    fireEvent.click(getByText("Add"));
+    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId("error-circle"));
+    wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
+
+    rerender(
+      <AddEditRelationship
+        openRelationshipModal={true}
+        setOpenRelationshipModal={jest.fn()}
+        isEditing={false}
+        relationshipInfo={mockRelationshipWithTarget}
+        dataModel={entityTypesWithRelationship}
+        relationshipModalVisible={true}
+        toggleRelationshipModal={true}
+        updateSavedEntity={updateSavedEntity}
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        hubCentralConfig={mockHubCentralConfig}
+        getColor={jest.fn()}
+        mapFunctions={[]}
+      />,
+    );
+
     //verify node colors and updated colors with target entity selections
     expect(getByTestId("sourceEntityNode")).toHaveStyle("background-color: rgb(227, 235, 188)"); //to have BabyRegistry color
-
     expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(236, 247, 253)"); //to have Customer color
 
     fireEvent.click(getByTestId("targetEntityDropdown"));
@@ -182,4 +213,32 @@ describe("Add Edit Relationship component", () => {
     expect(getByTestId("Order-targetNodeName")).toHaveTextContent("Order");
     expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(232, 250, 244)"); //to have Order color
   });
+});
+
+test("Add an IRI as a Relationship name", async () => {
+  const updateSavedEntity = jest.fn(() => {});
+
+  const {getByText, getByLabelText} = render(
+    <AddEditRelationship
+      openRelationshipModal={true}
+      setOpenRelationshipModal={jest.fn()}
+      isEditing={false}
+      relationshipInfo={mockAddRelationshipInfo}
+      dataModel={entityTypesWithRelationship}
+      relationshipModalVisible={true}
+      toggleRelationshipModal={true}
+      updateSavedEntity={updateSavedEntity}
+      canReadEntityModel={true}
+      canWriteEntityModel={true}
+      hubCentralConfig={mockHubCentralConfig}
+      getColor={jest.fn()}
+      mapFunctions={[]}
+    />,
+  );
+
+  fireEvent.change(getByLabelText("relationship-textarea"), {
+    target: {value: "http://example.com/TestModel#isSdnType"},
+  });
+  fireEvent.click(getByText("Add"));
+  wait(() => expect(getByLabelText("error-circle")).not.toBeInTheDocument());
 });

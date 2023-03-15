@@ -42,6 +42,9 @@ type Props = {
   edgeData?: any;
 };
 
+//Not allowing white spaces
+const NAME_REGEXWS = new RegExp("^[^\\n ]*$");
+//Not allowing special characters
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
 enum eVisibleSettings {
@@ -659,7 +662,9 @@ const AddEditRelationship: React.FC<Props> = ({
       setRelationshipName(event.target.value);
       if (event.target.value === "") {
         setErrorMessage(ModelingTooltips.relationshipEmpty);
-      } else if (!NAME_REGEX.test(event.target.value)) {
+      } else if (visibleSettings === eVisibleSettings.EntityToConceptClass && !NAME_REGEXWS.test(event.target.value)) {
+        setErrorMessage(ModelingTooltips.whiteSpacesControl);
+      } else if (visibleSettings !== eVisibleSettings.EntityToConceptClass && !NAME_REGEX.test(event.target.value)) {
         setErrorMessage(ModelingTooltips.nameRegex);
       } else {
         setErrorMessage("");
@@ -1291,7 +1296,11 @@ const AddEditRelationship: React.FC<Props> = ({
                 ""
               )}
               <HCTooltip
-                text={ModelingTooltips.relationshipNameInfo(relationshipInfo.sourceNodeName)}
+                text={
+                  visibleSettings === eVisibleSettings.EntityToConceptClass
+                    ? ModelingTooltips.relationshipNameEntityConcept(relationshipInfo.sourceNodeName)
+                    : ModelingTooltips.relationshipNameInfo(relationshipInfo.sourceNodeName)
+                }
                 placement={"bottom"}
                 id="relationship-name-tooltip"
               >
