@@ -170,6 +170,11 @@ class CuratePage {
     cy.findByText(stepName).should("be.visible");
   }
 
+  addStepToNewFlow(stepName: string) {
+    cy.findByLabelText(`${stepName}-step-label`).trigger("mouseover", {force: true});
+    cy.findByTestId(`${stepName}-toNewFlow`).click({force: true});
+  }
+
   verifyStepNameIsVisibleEdit(stepName: string) {
     cy.waitUntil(() => cy.findByLabelText(`${stepName}-step-label`).should("have.length.gt", 0));
     cy.findByLabelText(`${stepName}-step-label`).should("be.visible");
