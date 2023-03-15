@@ -5,7 +5,8 @@ const config = require("/com.marklogic.hub/config.sjs");
 const assertions = [];
 
 schemaValidation.onArtifactSave("model", "Customer");
-
+//TODO just for test purposes
+xdmp.sleep(7000);
 // assert
 xdmp.invokeFunction(function() {
 
