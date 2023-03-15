@@ -94,7 +94,7 @@ class RunPage {
   }
 
   verifyFlowModalCompleted(flowName: string) {
-    cy.findByLabelText(`${flowName}-completed`).should("be.visible");
+    cy.findByLabelText(`${flowName}-completed`).should("be.visible", {timeout: 5000});
   }
 
   openFlowStatusModal(flowName: string) {

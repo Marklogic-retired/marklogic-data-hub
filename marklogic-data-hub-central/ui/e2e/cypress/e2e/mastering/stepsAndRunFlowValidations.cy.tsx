@@ -76,6 +76,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.get("input[type=\"file\"]").attachFile(["agents/agent1.json", "agents/agent2.json", "agents/agent3.json"], {force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    runPage.verifyFlowModalCompleted(flowName1);
     runPage.verifyStepRunResult(loadStepName, "success");
     runPage.closeFlowStatusModal(flowName1);
   });
@@ -108,6 +109,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
   });
   it("Create Client mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.toggleEntityTypeId("Agent");
     curatePage.addNewStep("Agent").click();
@@ -127,6 +129,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     mappingStepDetail.expandEntity().click();
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.goBackToCurateHomePage();
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Agent").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
         cy.log("**Toggling Entity because it was closed.**");
@@ -135,22 +138,20 @@ describe("Validate the scenarios when the steps are added in different flows", (
     });
   });
   it("Add Client map Step to New Flow", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("GET", "api/flows/testFlows1/latestJobInfo").as("latestJobInfo");
-    loadPage.runStep(mapStep).click();
-    loadPage.runStepSelectFlowConfirmation().should("be.visible");
-    loadPage.runInNewFlow(mapStep).click();
-    cy.wait("@latestJobInfo", {timeout: 15000});
-    cy.wait("@latestJobInfo", {timeout: 15000});
+    curatePage.addStepToNewFlow(mapStep);
+    cy.waitForAsyncRequest();
+    cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     loadPage.confirmationOptions("Save").click();
-    cy.intercept("GET", "api/flows/testFlows2/latestJobInfo").as("latestJobInfo2");
-    cy.wait("@latestJobInfo2", {timeout: 15000});
-    cy.wait("@latestJobInfo2", {timeout: 15000});
+    cy.waitForAsyncRequest();
+    runPage.runStep(mapStep, flowName2);
+    cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName2);
   });
   it("Create Client match step", () => {
     toolbar.getCurateToolbarIcon().click();
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.toggleEntityTypeId("Agent");
     curatePage.selectMatchTab("Agent");
@@ -173,18 +174,20 @@ describe("Validate the scenarios when the steps are added in different flows", (
     });
   });
   it("Add Client match Step to New Flow", {defaultCommandTimeout: 120000}, () => {
-    loadPage.runStep(matchStep).click();
-    loadPage.runStepSelectFlowConfirmation().should("be.visible");
-    loadPage.runInNewFlow(matchStep).click();
+    curatePage.addStepToNewFlow(matchStep);
+    cy.waitForAsyncRequest();
+    cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName3);
     loadPage.confirmationOptions("Save").click();
-    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    runPage.runStep(matchStep, flowName3);
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName3);
   });
   it("Create Client merge step ", () => {
     toolbar.getCurateToolbarIcon().click();
+    cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.getEntityTypePanel("Agent").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
@@ -203,12 +206,13 @@ describe("Validate the scenarios when the steps are added in different flows", (
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
   it("Add Client merge Step to New Flow", {defaultCommandTimeout: 120000}, () => {
-    loadPage.runStep(mergeStep).click();
-    loadPage.runStepSelectFlowConfirmation().should("be.visible");
-    loadPage.runInNewFlow(mergeStep).click();
+    curatePage.addStepToNewFlow(mergeStep);
+    cy.waitForAsyncRequest();
+    cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName4);
     loadPage.confirmationOptions("Save").click();
-    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    runPage.runStep(mergeStep, flowName4);
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(mergeStep, "success");
 
