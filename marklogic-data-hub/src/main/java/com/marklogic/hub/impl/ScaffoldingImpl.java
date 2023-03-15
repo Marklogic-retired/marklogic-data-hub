@@ -93,6 +93,9 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return stepDef;
     }
 
+    public Pair<File, String> createStepFile(String stepName, String stepType, String stepDefName, String entityType) {
+        return createStepFile(stepName, stepType, stepDefName, entityType, false);
+    }
     /**
      * Create a step file  based on the given stepName, stepType, entityType (for non ingestion steps),
      *  and stepDefName.
@@ -104,13 +107,18 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
      * @return a Pair with a File representing the created file, and a String representing an optional message that,
      * if not null, should likely be presented to the caller
      */
-    public Pair<File, String> createStepFile(String stepName, String stepType, String stepDefName, String entityType) {
+    public Pair<File, String> createStepFile(String stepName, String stepType, String stepDefName, String entityType, boolean acceptSourceModule) {
+        Pair<JsonNode, String> stepPayLoadPair = getStepConfig(stepName, stepType, stepDefName, entityType, acceptSourceModule);
+        Pair<File, String> step = saveStep(stepType, stepPayLoadPair.getLeft());
+        return Pair.of(step.getLeft(), stepPayLoadPair.getRight().concat(step.getRight()));
+    }
+
+    public Pair<JsonNode, String> getStepConfig(String stepName, String stepType, String stepDefName, String entityType, boolean acceptSourceModule) {
         StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
         StepDefinitionType stepDefType = StepDefinitionType.getStepDefinitionType(stepType);
         Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
 
         StepDefinition stepDefinition = null;
-        JsonNode step;
         StringBuilder messageBuilder = new StringBuilder();
         File stepFile = hubConfig.getHubProject().getStepFile(stepDefType, stepName);
         if (stepFile.exists()) {
@@ -140,7 +148,15 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         else {
             stepPayLoad.put("selectedSource", "query");
             if("custom".equalsIgnoreCase(stepType) || "mapping".equalsIgnoreCase(stepType)){
-                stepPayLoad.put("sourceQuery", "cts.collectionQuery('changeme')");
+                if(acceptSourceModule) {
+                    stepPayLoad.put("selectedSource", "sourceModule");
+                    ObjectNode node = objectMapper.createObjectNode();
+                    node.put("modulePath", "");
+                    node.put("functionName", "");
+                    stepPayLoad.put("sourceModule", node);
+                } else {
+                    stepPayLoad.put("sourceQuery", "cts.collectionQuery('changeme')");
+                }
                 if(entityType != null){
                     stepPayLoad.put("entityType", entityType);
                 }
@@ -165,8 +181,15 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs" + ". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
-        DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
+        return Pair.of(stepPayLoad, messageBuilder.toString());
+    }
 
+    public Pair<File, String> saveStep(String stepType, JsonNode stepPayLoad) {
+        DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
+        JsonNode step;
+        String stepName = stepPayLoad.get("name").asText();
+        File stepFile = hubConfig.getHubProject().getStepFile(StepDefinitionType.getStepDefinitionType(stepType), stepName);
+        StringBuilder messageBuilder = new StringBuilder();
         try {
             StepService stepService = StepService.on(stagingClient);
             //We don't update step using this command, hence 'overwrite' is set to false and 'throwErrorIfStepIsPresent' is set to 'true'
@@ -176,7 +199,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         }
         messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. The step has been deployed to staging and final databases.");
         try {
-            objectMapper.writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
             return Pair.of(stepFile, messageBuilder.toString());
         } catch (IOException e) {
             throw new RuntimeException("Unable to write step to file: " + stepFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
