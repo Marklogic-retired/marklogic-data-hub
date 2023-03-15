@@ -139,34 +139,8 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getProjectDir().resolve("entities").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("step-definitions").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("steps").toFile().exists());
-        assertTrue(hubProject.getProjectDir().resolve("flows").toFile().exists());
 
-        // Check flows are upgraded
-        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_CustomerFlow.flow.json").toFile().exists());
-        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_OrderFlow.flow.json").toFile().exists());
-        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_ProductFlow.flow.json").toFile().exists());
-
-        // Check steps are created
-        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
-        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders.step.json").toFile().exists());
-        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
-        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
-
-        // Check step definitions are created
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers").resolve("LoadCustomers.step.json").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders").resolve("LoadOrders.step.json").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts").resolve("LoadProducts.step.json").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts").toFile().exists());
-        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts").resolve("HarmonizeProducts.step.json").toFile().exists());
-
-        // Check step definition custom modules are created
-        hubProject.getCustomModuleDir("LoadCustomers", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("LoadOrders", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("LoadProducts", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("HarmonizeProducts", StepDefinition.StepDefinitionType.CUSTOM.toString());
+        verify4xUpgradedFlows();
     }
 
     @Test
@@ -249,5 +223,49 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         }
         getHubProject().createProject(projectPath);
         return projectDir;
+    }
+
+    private void verify4xUpgradedFlows() throws IOException {
+        HubProject hubProject = getHubProject();
+        assertTrue(hubProject.getProjectDir().resolve("flows").toFile().exists());
+
+        // Check flows are upgraded
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_CustomerFlow.flow.json").toFile().exists());
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_OrderFlow.flow.json").toFile().exists());
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_ProductFlow.flow.json").toFile().exists());
+
+        // Check steps are created
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders.step.json").toFile().exists());
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
+
+        // Check step definitions are created
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers").resolve("LoadCustomers.step.json").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders").resolve("LoadOrders.step.json").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts").resolve("LoadProducts.step.json").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts").resolve("HarmonizeProducts.step.json").toFile().exists());
+
+        // Check step definition custom modules are created
+        hubProject.getCustomModuleDir("LoadCustomers", StepDefinition.StepDefinitionType.INGESTION.toString());
+        hubProject.getCustomModuleDir("LoadOrders", StepDefinition.StepDefinitionType.INGESTION.toString());
+        hubProject.getCustomModuleDir("LoadProducts", StepDefinition.StepDefinitionType.INGESTION.toString());
+        hubProject.getCustomModuleDir("HarmonizeProducts", StepDefinition.StepDefinitionType.CUSTOM.toString());
+
+        // Validate source module options are added
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readTree(hubProject.getStepFile(StepDefinition.StepDefinitionType.CUSTOM, "HarmonizeProducts"));
+        assertEquals("sourceModule", node.get("selectedSource").asText());
+        assertNotNull(node.get("sourceModule"));
+        assertEquals("/entities/Product/harmonize/Harmonize Products/main.sjs", node.get("sourceModule").get("modulePath").asText());
+        assertEquals("main", node.get("sourceModule").get("functionName").asText());
+        assertNotNull(node.get("options"));
+        assertEquals("Harmonize Products", node.get("options").get("flow").asText());
+        assertEquals("Product", node.get("options").get("entity").asText());
+        assertEquals("json", node.get("options").get("dataFormat").asText());
     }
 }

@@ -16,6 +16,7 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -51,6 +52,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -494,30 +496,71 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(flowManager.getHubConfig());
         if(oldEntityDirectories != null) {
             for(File legacyEntityDir: oldEntityDirectories) {
-                File[] flows = legacyEntityDir.listFiles(File::isDirectory);
-                if(flows != null) {
+                File[] flowTypes = legacyEntityDir.listFiles(File::isDirectory);
+                if(flowTypes != null) {
                     Flow newFlow = new FlowImpl();
                     String flowName = "dh_Upgrade_".concat(legacyEntityDir.getName()).concat("Flow");
                     newFlow.setName(flowName);
                     newFlow.setSteps(new HashMap<>());
                     flowManager.saveFlow(newFlow);
 
-                    for(File oldFlow: flows) {
-                        String stepName = oldFlow.listFiles(File::isDirectory)[0].getName();
-                        stepName = stepName.replaceAll("[^\\w\\-]", "");
-                        stepName = Character.isLetter(stepName.charAt(0)) ? stepName : "dh_".concat(stepName);
-                        if(oldFlow.getName().equals("input")) {
-                            scaffolding.createStepFile(stepName, "ingestion", stepName, null);
-                            flowManager.addStepToFlow(flowName, stepName, "ingestion");
-                        } else if(oldFlow.getName().equals("harmonize")) {
-                            scaffolding.createStepFile(stepName, "custom", stepName, null);
-                            flowManager.addStepToFlow(flowName, stepName, "custom");
+                    for(File oldFlowType: flowTypes) {
+                        File[] stepFiles = oldFlowType.listFiles(File::isDirectory);
+                        for(File stepFile: stepFiles) {
+                            String stepName = stepFile.getName();
+                            // Step names are not allowed to have special characters
+                            String newStepName = stepName.replaceAll("[^\\w\\-]", "");
+                            newStepName = Character.isLetter(newStepName.charAt(0)) ? newStepName : "dh_".concat(newStepName);
+                            String slash = "/";
+                            String mainModulePath = slash
+                                .concat("entities").concat(slash)
+                                .concat(legacyEntityDir.getName()).concat(slash)
+                                .concat(oldFlowType.getName()).concat(slash)
+                                .concat(stepName);
+                            String stepType = "";
+                            boolean acceptSourceModule = false;
+                            if(oldFlowType.getName().equals("input")) {
+                                stepType = "ingestion";
+                            } else if(oldFlowType.getName().equals("harmonize")) {
+                                stepType = "custom";
+                                acceptSourceModule = true;
+                            }
+                            JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule).getLeft();
+                            updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName());
+                            scaffolding.saveStep(stepType, stepPayLoad);
+                            flowManager.addStepToFlow(flowName, newStepName, stepType);
                         }
                     }
                 }
-
             }
         }
+    }
+
+    private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType) {
+        Properties properties = new Properties();
+        try {
+            File propsFile = stepFile.listFiles((File file, String name) -> name.equals(stepName.concat(".properties")))[0];
+            properties.load(new FileInputStream(propsFile));
+        } catch (IOException e) {
+            logger.warn("%s.properties file is missing in the %s directory. The dataFormat and mainModule is defaulted to json and main.sjs" +
+                "If the default values are inappropriate, change the values in steps/%s file", stepName, stepName, stepPayLoad.get("name").asText());
+            properties.put("mainModule", "main.sjs");
+            properties.put("dataFormat", "json");
+        }
+        ObjectNode optionsNode = new ObjectMapper().createObjectNode();
+        optionsNode.put("flow", stepName);
+        optionsNode.put("entity", "");
+        optionsNode.put("dataFormat", properties.get("dataFormat").toString());
+
+        if(stepPayLoad.get("stepDefinitionType").asText().equals("custom")) {
+            mainModulePath = mainModulePath.concat("/").concat(properties.get("mainModule").toString());
+            ObjectNode sourceModuleNode = (ObjectNode) stepPayLoad.get("sourceModule");
+            sourceModuleNode.put("modulePath", mainModulePath);
+            sourceModuleNode.put("functionName", "main");
+
+            optionsNode.put("entity", entityType);
+        }
+        ((ObjectNode)stepPayLoad).put("options", optionsNode);
     }
 
     private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {
