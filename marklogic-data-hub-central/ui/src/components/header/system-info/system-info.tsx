@@ -7,7 +7,6 @@ import {faCopy, faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
 import {facetValues, primaryEntityTypes} from "@api/queries";
 
 import {AuthoritiesContext} from "@util/authorities";
-import Axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {Search} from "react-bootstrap-icons";
@@ -16,7 +15,7 @@ import Spinner from "react-bootstrap/Spinner";
 import StepsConfig from "@config/steps.config";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {UserContext} from "@util/user-context";
-import axios from "axios";
+import axios from "@config/axios";
 import {getEnvironment} from "@util/environment";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./system-info.module.scss";
@@ -197,7 +196,7 @@ const SystemInfo = (props) => {
           "targetCollection": sourceName
         };
       }
-      let response = await Axios.post("/api/environment/clearUserData", payload);
+      let response = await axios.post("/api/environment/clearUserData", payload);
       if (response.status === 200) {
         setIsLoading(false);
         setMessage({show: true});

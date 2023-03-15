@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {Modal} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
-import axios from "axios";
+import axios from "@config/axios";
 import {QueryOptions} from "../../../../types/query-types";
 import {HCButton, HCModal} from "@components/common";
 

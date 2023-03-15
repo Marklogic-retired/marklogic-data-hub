@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 import {getStep, updateStep} from "./steps";
 
 export const updateMappingArtifact = async (mapping) => {

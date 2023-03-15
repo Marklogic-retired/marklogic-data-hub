@@ -1,11 +1,10 @@
 import {Col, Form, Row} from "react-bootstrap";
 import {HCAlert, HCButton, HCInput} from "@components/common";
 import {Lock, Person} from "react-bootstrap-icons";
-import React, {useContext, useState} from "react";
-
+import React, {useContext, useState, useEffect, useRef} from "react";
 import {Spinner} from "react-bootstrap";
 import {UserContext} from "@util/user-context";
-import axios from "axios";
+import axios from "@config/axios";
 import styles from "./login-form.module.scss";
 
 const LoginForm: React.FC = () => {
@@ -17,6 +16,27 @@ const LoginForm: React.FC = () => {
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
   const [message, setMessage] = useState({show: false, text: ""});
+  const formRef = useRef<any>();
+
+  useEffect(() => {
+    let mlAuthenticationFlag = document.cookie.split("; ").filter(row => row.startsWith("mlAuthentication=")).map(c => c.split("=")[1])[0];
+    let basePathURL = document.cookie.split("; ").filter(row => row.startsWith("mlHcBasePath=")).map(c => c.split("=")[1])[0];
+    if (basePathURL) {
+      window.localStorage.setItem("dataHubBasePath", basePathURL);
+    } else {
+      window.localStorage.setItem("dataHubBasePath", "");
+    }
+    if (mlAuthenticationFlag && mlAuthenticationFlag === "cloud") {
+      window.localStorage.setItem("dataHubEnvironmentSettings", mlAuthenticationFlag);
+
+      //automatically submit empty username and password if environment is cloud
+      if (formRef && formRef.current) {
+        formRef.current.dispatchEvent(new Event("submit", {cancelable: true}));
+      }
+    } else {
+      window.localStorage.setItem("dataHubEnvironmentSettings", "");
+    }
+  }, []);
 
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -74,7 +94,7 @@ const LoginForm: React.FC = () => {
       </div>
 
       <div className={styles.loginForm}>
-        <Form onSubmit={handleSubmit} className={`container-fluid ${styles.loginForm}`}>
+        <Form onSubmit={handleSubmit} className={`container-fluid ${styles.loginForm}`} ref={formRef}>
           <Row className={"mb-2"}>
             <Col>
               <HCInput

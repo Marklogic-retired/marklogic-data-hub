@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "@config/axios";
 
 export const updateMergingArtifact = async (merging) => {
   try {

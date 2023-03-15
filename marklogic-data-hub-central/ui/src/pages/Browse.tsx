@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
-import axios from "axios";
+import axios from "@config/axios";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";

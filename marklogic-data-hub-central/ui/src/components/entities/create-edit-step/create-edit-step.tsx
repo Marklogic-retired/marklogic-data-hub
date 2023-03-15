@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
-import axios from "axios";
+import axios from "@config/axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
 import {UserContext} from "@util/user-context";

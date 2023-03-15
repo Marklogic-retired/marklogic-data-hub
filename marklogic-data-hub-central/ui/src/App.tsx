@@ -1,5 +1,5 @@
 import React, {useEffect, useContext} from "react";
-import axios from "axios";
+import axios from "@config/axios";
 import {Switch} from "react-router";
 import {Route, Redirect, RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
