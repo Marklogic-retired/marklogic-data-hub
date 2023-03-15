@@ -135,7 +135,6 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
         assertTrue(privilegeManager.exists("dhf-internal-data-hub"));
         assertTrue(privilegeManager.exists("dhf-internal-entities"));
         assertTrue(privilegeManager.exists("dhf-internal-mappings"));
-        assertTrue(privilegeManager.exists("dhf-internal-trace-ui"));
         assertTrue(privilegeManager.exists("example-privilege1"));
 
         AmpManager ampManager = new AmpManager(manageClient);
@@ -189,8 +188,6 @@ public class VerifyDeploymentTest extends AbstractDataHubTest {
         }
 
         assertEquals(5, getModuleCountInDirectory("/entities/"), "The Person entity has an input flow with 5 modules");
-
-        assertEquals(24, getModuleCountInDirectory("/trace-ui/"), "DHF 4.1.0 has 24 modules in this directory");
 
         if (wasInstalledViaQuickStart) {
             // This is failing with QS, need to figure out why it doesn't read from a second module path (logging indicates that it does)

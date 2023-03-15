@@ -52,48 +52,6 @@ declare function local:add-transform-reroutes($rewriter) {
 
 xdmp:security-assert("http://marklogic.com/xdmp/privileges/any-uri", "execute"),
 
-let $rewriter := system:get-default-rewriter()
-
-let $job-routes := <wrapper xmlns="http://marklogic.com/xdmp/rewriter">
-    <match-path matches="^/?$">
-        <dispatch>/trace-ui/index.html</dispatch>
-    </match-path>
-    <match-path matches="^/?$|^/content/([^/]+)/?$">
-        <dispatch>/trace-ui/index.html</dispatch>
-    </match-path>
-    <match-path matches="^/.*\.(ico|js|css|ttf|eot|woff|woff2|svg)$">
-        <add-query-param name="uri">$0</add-query-param>
-        <add-query-param name="extension">$1</add-query-param>
-        <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
-    </match-path>
-    <match-path matches="^/assets/.+$">
-        <add-query-param name="uri">$0</add-query-param>
-        <dispatch>/data-hub/4/tracing/trace-ui.xqy</dispatch>
-    </match-path>
-    <match-path matches="^/hub">
-        <match-path matches="^/hub/traces">
-            <match-path matches="^/hub/traces/?$">
-                <dispatch>/data-hub/4/tracing/get-traces.xqy</dispatch>
-            </match-path>
-            <match-path matches="^/hub/traces/ids">
-                <dispatch>/data-hub/4/tracing/get-ids.xqy</dispatch>
-            </match-path>
-            <match-path matches="^/hub/traces/search">
-                <dispatch>/data-hub/4/tracing/search.xqy</dispatch>
-            </match-path>
-            <match-path matches="^/hub/traces/(\d+)">
-                <add-query-param name="id">$1</add-query-param>
-                <dispatch>/data-hub/4/tracing/get-trace.xqy</dispatch>
-            </match-path>
-        </match-path>
-    </match-path>
-</wrapper>
-
-let $jobs-rewriter := element {fn:node-name($rewriter)} {
-  $rewriter/@*,
-  $job-routes/element(),
-  local:add-transform-reroutes($rewriter)/element()
-}
 
 (:
 Per DHFPROD-7334, DHF 5.5 is no longer forking a couple dozen REST API modules in order to support the "ml:*"

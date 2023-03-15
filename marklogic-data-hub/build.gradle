@@ -135,9 +135,6 @@ node {
 
     // Set the work directory for unpacking node
     workDir = file("${project.buildDir}/nodejs")
-
-    // Set the work directory where node_modules should be located
-    nodeModulesDir = file("${project.projectDir}/src/trace-ui")
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -148,26 +145,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-}
-
-task cleanUI(type: Delete) {
-  delete 'src/main/resources/ml-modules/root/trace-ui'
-}
-
-task npmInstallUI(type: NpmTask) {
-    args = ['install']
-    dependsOn tasks.cleanUI
-}
-
-task buildUI(type: NpmTask) {
-    args = ['run', 'build.prod']
-    dependsOn tasks.npmInstallUI
-}
-
-task copyUIAssets(type: Copy) {
-    from 'src/trace-ui/dist'
-    into 'src/main/resources/ml-modules/root/trace-ui'
-    dependsOn tasks.buildUI
 }
 
 processResources {
@@ -209,15 +186,6 @@ task generateSparkInterface(type: com.marklogic.client.tools.gradle.EndpointProx
     serviceDeclarationFile = "src/main/resources/ml-modules/root/marklogic-data-hub-spark-connector/service.json"
     javaBaseDirectory = "../marklogic-data-hub-spark-connector/src/main/java"
 }
-
-// When publishing the DHF core jar, or building it for release, it needs to have the compiled trace-ui files in it so
-// that the trace-ui feature is available for those users that are aware of it. Otherwise, copyUIAssets is not executed as it can take a couple
-// minutes to finish, and it's not typically needed during local development.
-if (gradle.startParameter.taskNames*.toLowerCase().contains("publish") || gradle.startParameter.taskNames*.toLowerCase().contains("build")) {
-    processResources.dependsOn copyUIAssets
-}
-
-tasks.clean.dependsOn cleanUI
 
 jar{
     enabled = true

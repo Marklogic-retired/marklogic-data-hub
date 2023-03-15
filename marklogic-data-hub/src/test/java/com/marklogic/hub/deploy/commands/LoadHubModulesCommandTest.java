@@ -18,8 +18,6 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.impl.Versions;
-import com.marklogic.rest.util.Fragment;
-import org.jdom2.Namespace;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,14 +47,4 @@ public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
                 "loading REST extensions");
     }
 
-    @Test
-    void dataHubDeveloperCanCreateCustomRewriters() {
-        runAsDataHubDeveloper();
-        new LoadHubModulesCommand(getHubConfig()).createCustomRewriters();
-
-        Fragment rewriter = new Fragment(getModulesFile("/data-hub/5/rest-api/jobs-rewriter.xml"),
-            Namespace.getNamespace("rw", "http://marklogic.com/xdmp/rewriter"));
-        assertTrue(rewriter.elementExists("/rw:rewriter/rw:match-path/rw:dispatch[. = '/trace-ui/index.html']"),
-            "Verifying that the route for the DHF 4 trace-ui app was added when modules were installed");
-    }
 }

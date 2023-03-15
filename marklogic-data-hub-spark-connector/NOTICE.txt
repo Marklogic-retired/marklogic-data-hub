@@ -7510,9 +7510,6 @@ License Text (http://spdx.org/licenses/MIT)
 Made available under the MIT License. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/raszi/node-tmp
-trace-ui 3.0.0
-Attribution Statements
-https://github.com/ancestorcloud/trace-ui
 
 Copyright Statements
 Copyright (c) 2017 ancestorcloud
@@ -7520,7 +7517,6 @@ Copyright (c) 2017 ancestorcloud
 License Text (http://spdx.org/licenses/MIT)
 Made available under the MIT License. See Appendix for full text.
 
-Source materials are available for download at: https://github.com/ancestorcloud/trace-ui
 ts-node 4.1.0
 Attribution Statements
 https://github.com/TypeStrong/ts-node

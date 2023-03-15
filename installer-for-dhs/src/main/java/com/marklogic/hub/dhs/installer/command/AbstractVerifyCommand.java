@@ -26,7 +26,7 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     protected void verifyPrivileges() {
         ResourcesFragment privileges = new PrivilegeManager(hubConfig.getManageClient()).getAsXml();
         for (String privilege : new String[]{"dhf-internal-data-hub", "dhf-internal-entities",
-            "dhf-internal-mappings", "dhf-internal-trace-ui"}) {
+            "dhf-internal-mappings"}) {
             verify(privileges.resourceExists(privilege), "Expected privilege to have been created: " + privilege);
         }
     }
