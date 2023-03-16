@@ -40,9 +40,9 @@ export default class FlowExecutionContext {
     this.flow = flow;
     this.jobId = jobId || sem.uuidString();
     this.runtimeOptions = runtimeOptions || {};
-    this.combinedFlowOptions = Object.assign({}, flow.options, this.runtimeOptions);
+    const flowOptions = flow.options || {};
+    this.combinedFlowOptions = Object.assign({}, flowOptions, this.runtimeOptions);
     this.stepNumbers = stepNumbers != null && stepNumbers.length > 0 ? stepNumbers : Object.keys(this.flow.steps);
-
     this.flowResponse = {
       jobId,
       jobStatus: "started",
