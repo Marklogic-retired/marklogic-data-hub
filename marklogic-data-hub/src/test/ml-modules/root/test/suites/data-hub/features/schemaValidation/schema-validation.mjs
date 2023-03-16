@@ -10,9 +10,9 @@ schemaValidation.onArtifactSave("model", "Customer");
 xdmp.invokeFunction(function() {
 
     assertions.push(test.assertTrue(fn.head(xdmp.eval(  "fn.docAvailable('/entities/Customer.entity.schema.json') "
-        ,  {}, {database: xdmp.schemaDatabase()}))), `Customer json schema should exist.`);
+        ,  {}, {database: xdmp.schemaDatabase()})), `Customer json schema should exist.`));
     assertions.push(test.assertTrue(fn.head(xdmp.eval(  " fn.docAvailable('/entities/Customer.entity.xsd') "
-        ,  {}, {database: xdmp.schemaDatabase()}))), `Customer xml schema should exist.`)
+        ,  {}, {database: xdmp.schemaDatabase()})), `Customer xml schema should exist.`))
 
 },{database: xdmp.database(config.FINALDATABASE)});
 
