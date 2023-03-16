@@ -60,18 +60,23 @@ td.tableText, td.rightHeader {
   thead th:first-child {
     border: none;
   }
+  td {
+    max-width: 400px;
+  }
 }
 
 table table {
   tbody {
     border: 1px solid $bg-clean;
   }
+  
 }
 
 .link {
   color: $info;
   cursor: pointer;
   margin-top: 15px;
+
   &:hover{
       color: var(--hoverColor);
   }

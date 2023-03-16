@@ -1,5 +1,7 @@
 @import "../../../theme/HCUtils.scss";
 
+$entityTypeColumWidth: 600px;
+
 .modal1400w {
     width: 1000vw;
 }
@@ -33,6 +35,26 @@ line-height:normal;
     margin-left: 5px;
   }
 }
+.entityTable{
+  table{
+    td{
+      max-width: $entityTypeColumWidth;
+    }
+  }
+}
+
+.entityType{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ghostTextWithTooltip{
+  position: absolute;
+  max-width: $entityTypeColumWidth;
+  color: transparent;
+}
+
 
 .conceptsTable th:nth-child(1) {
   border-bottom-width: 0 !important;

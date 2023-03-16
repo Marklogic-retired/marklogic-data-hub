@@ -15,6 +15,7 @@ import {LoadingContext} from "@util/loading-context";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCDivider, HCTooltip, HCTable, HCModal} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 interface Props {
   data: any;
@@ -536,7 +537,7 @@ const LoadList: React.FC<Props> = props => {
             onClick={() => OpenStepSettings(record)}
             className={styles.editLoadConfig}
           >
-            {text}
+            <AddTooltipWhenTextOverflow text={text} />
           </span>{" "}
         </span>
       ),

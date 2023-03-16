@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, MemoryRouter} from "react-router-dom";
-import {fireEvent, render, wait, cleanup, waitForElement, screen} from "@testing-library/react";
+import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import MappingCard from "./mapping-card";
 import axiosMock from "axios";
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -9,7 +9,7 @@ import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities"
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import dayjs from "dayjs";
-import {getSubElements} from "@util/test-utils";
+
 
 jest.mock("axios");
 
@@ -92,7 +92,7 @@ describe("Mapping Card component", () => {
 
   test("Mapping card does allow edit with writeMapping authority", async () => {
     const deleteMappingArtifact = jest.fn(() => {});
-    let getByText, getByRole, queryAllByRole, getByTestId;
+    let getByText, getByRole, queryAllByRole, getByTestId, findByLabelText;
     await act(async () => {
       const renderResults = render(
         <Router>
@@ -108,6 +108,7 @@ describe("Mapping Card component", () => {
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
       getByTestId = renderResults.getByTestId;
+      findByLabelText = renderResults.findByLabelText;
     });
 
     expect(getByRole("edit-mapping")).toBeInTheDocument();
@@ -119,13 +120,8 @@ describe("Mapping Card component", () => {
     fireEvent.mouseOver(getByRole("delete-mapping"));
     await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     await fireEvent.click(getByRole("delete-mapping"));
-    expect(
-      await waitForElement(() =>
-        getByText((content, node) => {
-          return getSubElements(content, node, "Are you sure you want to delete the Mapping1 step?");
-        }),
-      ),
-    ).toBeInTheDocument();
+    screen.debug(undefined, 300000);
+    expect(await findByLabelText("confirm-delete-Mapping1")).toBeInTheDocument();
     await fireEvent.click(getByText("Yes"));
     expect(deleteMappingArtifact).toBeCalled();
   });

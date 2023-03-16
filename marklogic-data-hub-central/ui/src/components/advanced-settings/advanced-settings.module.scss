@@ -91,6 +91,12 @@ span.readOnlyLabel {
     padding-bottom: 2px;
     vertical-align: middle;
     margin-left: -6px;
+    width: 97%;
+}
+
+.colDefaultCollection{
+    overflow: hidden;
+    width: 100%;
 }
 
 .inputBatchSize {

@@ -22,6 +22,9 @@
     thead th:nth-child(6):hover {
         pointer-events: none;
     }
+    tbody > tr > td{
+        max-width: 600px;
+    }
 }
 
 .editLoadConfig{

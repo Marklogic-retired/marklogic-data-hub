@@ -54,7 +54,10 @@ margin-bottom: 0px;
 .formatFileContainer {
 position:absolute;
 width: 100%;
-width: 310px
+width: 310px;
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;
 }
 .sourceQuery {
 font-size: 13px;

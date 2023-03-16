@@ -600,7 +600,7 @@ const MatchingCard: React.FC<Props> = props => {
                 <HCCard className={styles.cardStyle} actions={renderCardActions(step, index)}>
                   <div className={styles.formatFileContainer}>
                     <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>
-                      {getInitialChars(step.name, 27, "...")}
+                      {step.name}
                     </span>
                   </div>
                   <br />

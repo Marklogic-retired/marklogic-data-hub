@@ -91,15 +91,6 @@ const LoadCard: React.FC<Props> = props => {
     return customStyles;
   };
 
-  // Truncate a string (Step Name) to desired no. of characters
-  const getInitialChars = (str, num, suffix) => {
-    suffix = suffix ? suffix : "...";
-    let result = str;
-    if (typeof str === "string" && str.length > num) {
-      result = str.substr(0, num) + suffix;
-    }
-    return result;
-  };
 
   const handleCardDelete = name => {
     setDialogVisible(true);
@@ -615,7 +606,7 @@ const LoadCard: React.FC<Props> = props => {
                     </div>
                   </div>
                   <div className={styles.stepNameStyle} aria-label={elem.name}>
-                    {getInitialChars(elem.name, 23, "...")}
+                    {elem.name}
                   </div>
                   <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                   <div className={styles.cardLinks} style={{display: showLinks === elem.name ? "block" : "none"}}>

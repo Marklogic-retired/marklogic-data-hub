@@ -601,7 +601,7 @@ const MergingCard: React.FC<Props> = props => {
                 <HCCard actions={renderCardActions(step, index)} className={styles.cardStyle}>
                   <div className={styles.formatFileContainer}>
                     <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>
-                      {getInitialChars(step.name, 26, "...")}
+                      {step.name}
                     </span>
                   </div>
                   <br />

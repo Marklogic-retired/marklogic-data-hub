@@ -10,6 +10,7 @@ import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker, HCMod
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {hubCentralConfig} from "../../../types/modeling-types";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   isVisible: boolean;
@@ -295,16 +296,16 @@ const EntityTypeModal: React.FC<Props> = props => {
       </Modal.Header>
       <Modal.Body className={"py-4"}>
         <Form id="entity-type-form" onSubmit={onOk} className={"container-fluid"} style={{padding: "0px"}}>
-          <Row className={"mb-3"}>
+          <Row className={`mb-3 ${styles.nameWrap}`}>
             <FormLabel column lg={3}>
               {"Name:"}
               {props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
             </FormLabel>
-            <Col>
+            <Col style={{overflow: "hidden"}}>
               <Row>
                 <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
                   {props.isEditModal ? (
-                    <span>{name}</span>
+                    <div className={styles.nameOverflow}><AddTooltipWhenTextOverflow text={name} /></div>
                   ) : (
                     <HCInput
                       id="entity-name"

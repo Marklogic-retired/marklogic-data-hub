@@ -11,6 +11,7 @@ import Highlighter from "react-highlight-words";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
 import {definitionsParser} from "@util/data-conversion";
 import {Definition} from "../../../../types/modeling-types";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   entityModels: any;
@@ -110,14 +111,17 @@ const EntityDisplaySettings: React.FC<Props> = ({
       sortFunc: columnSorter,
       formatter: (text, row) => {
         return (
-          <span aria-label={`${row.entityType}-entityType`}>
+          <div aria-label={`${row.entityType}-entityType`} className={styles.entityType}>
+            <div className={styles.ghostTextWithTooltip}>
+              <AddTooltipWhenTextOverflow text={row.entityType} />
+            </div>
             <Highlighter
               highlightClassName={styles.highlightStyle}
               searchWords={[row.searchText]}
               autoEscape
               textToHighlight={row.entityType}
             />
-          </span>
+          </div>
         );
       },
     },

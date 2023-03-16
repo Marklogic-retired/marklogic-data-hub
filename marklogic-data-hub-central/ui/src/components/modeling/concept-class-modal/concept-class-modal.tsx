@@ -10,6 +10,7 @@ import {EntityTypeColorPicker, HCButton, HCInput, HCTooltip, HCIconPicker, HCMod
 import {themeColors} from "@config/themes.config";
 import {defaultConceptIcon} from "@config/explore.config";
 import {hubCentralConfig} from "../../../types/modeling-types";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   isVisible: boolean;
@@ -254,16 +255,16 @@ const ConceptClassModal: React.FC<Props> = props => {
       </Modal.Header>
       <Modal.Body className={"py-4"}>
         <Form id="concept-class-form" onSubmit={onOk} className={"container-fluid"} style={{padding: "0px"}}>
-          <Row className={"mb-3"}>
+          <Row className={`mb-3 ${styles.nameWrap}`}>
             <FormLabel column lg={3}>
               {"Name:"}
               {isEditModal ? null : <span className={styles.asterisk}>*</span>}
             </FormLabel>
-            <Col>
+            <Col style={{overflow: "hidden"}}>
               <Row>
                 <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
                   {isEditModal ? (
-                    <span>{conceptName}</span>
+                    <div className={styles.nameOverflow}><AddTooltipWhenTextOverflow text={conceptName} /></div>
                   ) : (
                     <HCInput
                       id="concept-class-name"

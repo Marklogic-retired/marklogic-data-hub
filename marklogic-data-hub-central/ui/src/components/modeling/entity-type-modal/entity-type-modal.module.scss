@@ -84,3 +84,19 @@ color: $span-hover;
 .validationError {
   @extend .validationError;
 }
+
+.nameWrap{
+  flex-wrap: nowrap !important;
+}
+
+@media (max-width: 992px){
+  .nameWrap{
+    flex-wrap: wrap !important;
+  }
+}
+
+
+.nameOverflow{
+  overflow: hidden;
+  width: 95%;
+}

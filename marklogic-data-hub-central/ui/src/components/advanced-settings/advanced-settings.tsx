@@ -18,6 +18,7 @@ import {Overlay} from "react-bootstrap";
 import {getEnvironment} from "@util/environment";
 import {themeColors} from "@config/themes.config";
 import {delayTooltip} from "@util/common-utils";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   tabKey: string;
@@ -1071,13 +1072,13 @@ const AdvancedSettings: React.FC<Props> = props => {
             <FormLabel column lg={3} className={"text-left"}>
               {"Default Collections:"}
             </FormLabel>
-            <Col className={"d-flex"}>
-              <div className={"p-2 d-flex"}>
+            <Col className={`d-flex ${styles.colDefaultCollection}`}>
+              <div className={`p-2 d-flex ${styles.colDefaultCollection}`}>
                 <div className={styles.defaultCollections}>
                   {defaultCollections.map((collection, i) => {
                     return (
                       <div data-testid={`defaultCollections-${collection}`} key={i}>
-                        {collection}
+                        <AddTooltipWhenTextOverflow text={collection}  forceRender={true}/>
                       </div>
                     );
                   })}

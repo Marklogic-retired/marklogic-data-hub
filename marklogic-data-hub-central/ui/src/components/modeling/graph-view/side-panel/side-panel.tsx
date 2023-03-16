@@ -36,6 +36,7 @@ import ConfirmationModal from "@components/confirmation-modal/confirmation-modal
 import {getMappingFunctions} from "@api/mapping";
 import {NotificationContext} from "@util/notification-context";
 import {getNotifications} from "@api/merging";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   dataModel: any;
@@ -636,12 +637,12 @@ const GraphViewSidePanel: React.FC<Props> = ({
       return (
         <div id="entityType-tab-content">
           <Form className={"container-fluid"}>
-            <Row className={"mb-3"}>
+            <Row className={`mb-3 ${styles.nameWrap}`} >
               <FormLabel column lg={3}>
                 {"Name:"}
               </FormLabel>
-              <Col className={"d-flex align-items-center"} data-testid={modelingOptions.selectedEntity}>
-                {modelingOptions.selectedEntity}
+              <Col className={`d-flex align-items-center ${styles.nameOverflow}`} data-testid={modelingOptions.selectedEntity}>
+                <AddTooltipWhenTextOverflow text={modelingOptions.selectedEntity ? modelingOptions.selectedEntity : ""} />
               </Col>
             </Row>
             <Row className={"mb-3"}>
@@ -907,7 +908,7 @@ const GraphViewSidePanel: React.FC<Props> = ({
     <div id="sidePanel" className={styles.sidePanel}>
       <div>
         <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>
-          {modelingOptions.selectedEntity}{" "}
+          <AddTooltipWhenTextOverflow text={modelingOptions.selectedEntity + " "} />
           {isConceptNode && (
             <span
               className={styles.conceptHeadingInfo}
