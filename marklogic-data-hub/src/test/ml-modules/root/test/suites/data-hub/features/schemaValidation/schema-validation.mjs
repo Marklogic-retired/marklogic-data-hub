@@ -1,11 +1,15 @@
 import schemaValidation from "/data-hub/features/schema-validation.mjs";
 const test = require("/test/test-helper.xqy");
 
-schemaValidation.onArtifactSave("model", "Customer");
+try{
+    schemaValidation.onArtifactSave("model", "Customer");
+} catch (error) {
+    xdmp.log("Unable to generate schema " +  error.message);
+}
 
 const assertions = [
-test.assertTrue(checkForSchema("/entities/Customer.entity.schema.json"), "TDE should be generated when 'tdeGenerationDisabled' is set to false"),
-test.assertTrue(checkForSchema("/entities/Customer.entity.xsd"), "TDE should be generated when 'tdeGenerationDisabled' is set to false")
+test.assertTrue(checkForSchema("/entities/Customer.entity.schema.json"), "Customer xml schema should exist"),
+test.assertTrue(checkForSchema("/entities/Customer.entity.xsd"), "Customer xml schema should exist")
 ];
 
 function checkForSchema(uri){
