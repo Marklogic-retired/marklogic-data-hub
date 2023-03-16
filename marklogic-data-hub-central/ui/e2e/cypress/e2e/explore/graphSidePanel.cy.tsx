@@ -115,11 +115,13 @@ describe("Test '/Explore' graph right panel", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify Graph view is default view**");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(6000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
     browsePage.waitForSpinnerToDisappear();
     graphExplore.getGraphVisCanvas().should("be.visible");
-    browsePage.getStagingButton().click();
+    cy.clearLocalStorage();
     browsePage.getAllDataButton().click();
+    cy.wait(2000);
+    browsePage.getStagingButton().click();
     cy.findByTestId("collection-loadPersonJSON-checkbox").click();
     cy.findByTestId("facet-apply-button").click();
     cy.wait(1500);
