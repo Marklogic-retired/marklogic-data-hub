@@ -58,6 +58,7 @@ function onArtifactSave(artifactType, artifactName) {
             },{database: xdmp.schemaDatabase()});
 
         hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Finished creating schemas for ${artifactName}.`);
+        xdmp.sleep(10000);
     }
 }
 
