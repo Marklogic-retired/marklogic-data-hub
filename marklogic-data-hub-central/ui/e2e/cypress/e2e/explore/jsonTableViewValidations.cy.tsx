@@ -1,32 +1,27 @@
-/// <reference types="cypress"/>
-
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import table from "../../support/components/common/tables";
+import {toolbar} from "../../support/components/common";
+import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {BaseEntityTypes} from "../../support/types/base-entity-types";
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
-// import detailPageNonEntity from "../../support/pages/detail-nonEntity";
-import LoginPage from "../../support/pages/login";
-import explorePage from "../../support/pages/explore";
-import table from "../../support/components/common/tables";
 
 describe("json scenario for table on browse documents page", () => {
-
   let facets: string[] = ["collection", "flow"];
 
-  //login with valid account and go to /browse page
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    cy.intercept("GET", "/api/models/primaryEntityTypes?includeDrafts=true").as("lastRequest");
+    cy.visit("/tiles/explore");
+    cy.wait("@lastRequest");
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("select \"all entities\" and verify table default columns", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
@@ -66,15 +61,6 @@ describe("json scenario for table on browse documents page", () => {
     table.getTableColumns().should("have.length", 5);
   });
 
-  it("select Product entity and long text should be trimmed and tooltip appears on hover", () => {
-    entitiesSidebar.openBaseEntityDropdown();
-    entitiesSidebar.selectBaseEntityOption("Product");
-    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...");
-    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...").trigger("mouseover");
-    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless");
-    cy.findByText("product5");
-  });
-
   it("select Person entity and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
@@ -83,14 +69,14 @@ describe("json scenario for table on browse documents page", () => {
     //check table rows. Validates the records were filtered
     browsePage.getHCTableRows().should("have.length.lt", 52);
     //check table columns
-    table.getTableColumns().should("to.have.length.of.at.most", 9);
+    table.getTableColumns().should("to.have.length.of.at.most", 10);
   });
-
 
   it("search for a simple text/query and verify content", () => {
     entitiesSidebar.getMainPanelSearchInput("Alice");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.firstTableRow.should("be.visible").and("contain.text", false);
     browsePage.getTotalDocuments().should("be.equal", 2);
     browsePage.getHCTableRows().should("have.length", 2);
   });
@@ -124,10 +110,16 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
-    cy.visit("/tiles/explore");
-    cy.wait(3000);
-    browsePage.waitForSpinnerToDisappear();
+  });
+
+  it("select Product entity and long text should be trimmed and tooltip appears on hover", () => {
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.removeLastSelectedBaseEntity();
+    entitiesSidebar.selectBaseEntityOption("Product");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Foo...").trigger("mouseover");
+    cy.findByText("Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless");
+    cy.findByText("product5");
   });
 
   it("verify instance view of the document with pk", () => {
@@ -145,7 +137,6 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "OrdersSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
-    // detailPage.getDocumentTable().should("exist");
   });
 
   it("verify source view of the document", () => {
@@ -304,7 +295,6 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.backToMainSidebar();
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
-    // });
 
     // it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
     cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
@@ -373,7 +363,6 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Adams Cole").should("not.exist");
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("not.exist");
   });
-
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
     entitiesSidebar.backToMainSidebar();

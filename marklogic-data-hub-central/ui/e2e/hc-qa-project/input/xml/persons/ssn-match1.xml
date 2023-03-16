@@ -5,4 +5,5 @@
   <DateOfBirth>1981-01-01</DateOfBirth>
   <Address>111 Main St</Address>
   <ZipCode>11111</ZipCode>
+  <Verified>true</Verified>
 </root>

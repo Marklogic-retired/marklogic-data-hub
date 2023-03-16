@@ -1,9 +1,6 @@
 {
-  "collections": [
-    "mapPersonJSON",
-    "Person"
-  ],
-  "additionalCollections": [ ],
+  "collections": ["mapPersonJSON", "Person"],
+  "additionalCollections": [],
   "permissions": "data-hub-common,read,data-hub-common,update",
   "batchSize": 100,
   "validateEntity": "doNotValidate",
@@ -34,6 +31,9 @@
     },
     "DateOfBirth": {
       "sourcedFrom": "DateOfBirth"
+    },
+    "Verified": {
+      "sourcedFrom": "Verified"
     },
     "ZipCode": {
       "sourcedFrom": "ZipCode"

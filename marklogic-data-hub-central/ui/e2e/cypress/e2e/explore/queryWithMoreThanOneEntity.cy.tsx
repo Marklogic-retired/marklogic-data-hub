@@ -1,13 +1,8 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common/index";
-import "cypress-wait-until";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import LoginPage from "../../support/pages/login";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
+import browsePage from "../../support/pages/browse";
+import "cypress-wait-until";
 
 const query = {
   name: "newQueryWithTwoEntities",
@@ -16,33 +11,31 @@ const query = {
 
 describe("manage queries with more than one entity", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-    cy.waitForAsyncRequest();
-    cy.deleteSavedQueries();
+
+    cy.log("**Go to Explore page and select the table view option**");
+    cy.intercept("GET", "/api/models/primaryEntityTypes?includeDrafts=true").as("lastRequest");
+    cy.visit("/tiles/explore");
+    cy.wait("@lastRequest");
+    browsePage.getTableView().click();
+    table.mainTable.should("be.visible");
+    table.getTableRows().should("not.be.empty");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
-    //clearing all the saved queries
     cy.loginAsDeveloper().withRequest();
     cy.deleteSavedQueries();
     cy.waitForAsyncRequest();
   });
 
   it("Create query with two entities", () => {
-    cy.log("**Go to explore tile and select table view**");
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.clickTableView();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-
     cy.log("**Select two entities in the entities select**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption(BaseEntityTypes.CUSTOMER);

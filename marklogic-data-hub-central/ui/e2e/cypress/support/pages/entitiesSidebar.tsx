@@ -100,6 +100,7 @@ class BaseEntitySidebar {
     cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child").click({force: true});
     cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child").click({force: true});
   }
+
   getMainPanelSearchInput(input: string) {
     cy.get("#graph-view-filter-input").scrollIntoView().should("be.visible").then((e) => {
       Cypress.$(e).click();
@@ -122,6 +123,7 @@ class BaseEntitySidebar {
   getClearQueryTooltip() {
     return cy.get(`[aria-label="clear-query-tooltip"]`);
   }
+
   getClearOneFacet(facetName: String) {
     return cy.get(`[data-cy="clear-${facetName}"]`);
   }
@@ -132,6 +134,10 @@ class BaseEntitySidebar {
 
   getRelatedEntityPanel() {
     return cy.get(`[data-testid="related-entity-panel"]`);
+  }
+
+  clearMainPanelSearch() {
+    cy.get("[data-testid=\"hc-button-component\"]").contains("Clear Selection").click({force: true});
   }
 
   toggleAllDataView() {

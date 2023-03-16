@@ -1,7 +1,8 @@
 {
-    "FirstName": "Barbara",
-    "LastName": "Taylor",
-    "DateOfBirth": "1991-01-01",
-    "Address": "1991 Taylor St",
-    "ZipCode": "91828"
+  "FirstName": "Barbara",
+  "LastName": "Taylor",
+  "DateOfBirth": "1991-01-01",
+  "Address": "1991 Taylor St",
+  "ZipCode": "91828",
+  "Verified": false
 }

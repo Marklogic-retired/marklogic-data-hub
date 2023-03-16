@@ -9,9 +9,7 @@
     "Person": {
       "primaryKey": "id",
       "required": [],
-      "pii": [
-        "SSN"
-      ],
+      "pii": ["SSN"],
       "wordLexicon": [],
       "properties": {
         "id": {
@@ -50,6 +48,9 @@
         },
         "DateOfBirth": {
           "datatype": "date"
+        },
+        "Verified": {
+          "datatype": "boolean"
         }
       },
       "description": ""
