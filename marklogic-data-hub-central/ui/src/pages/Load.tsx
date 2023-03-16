@@ -14,6 +14,7 @@ import {LoadingContext} from "@util/loading-context";
 import {MissingPagePermission} from "@config/messages.config";
 import {ErrorMessageContext} from "@util/error-message-context";
 import {ViewType} from "../types/modeling-types";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const INITIAL_VIEW = ViewType.card;
 
@@ -88,8 +89,12 @@ const Load: React.FC = () => {
         ? setErrorMessageOptions({
           isVisible: true,
           message: (
-            <p className={"mb-0"} aria-label="duplicate-step-error">
-                Unable to create load step. A load step with the name <b>{ingestionStep.name}</b> already exists.
+            <p className={"mb-0"} aria-label="duplicate-step-error" style={{overflow: "hidden"}}>
+                Unable to create load step. A load step with the name
+              <b>
+                <AddTooltipWhenTextOverflow text={ingestionStep.name} />
+              </b>
+                already exists.
             </p>
           ),
         })

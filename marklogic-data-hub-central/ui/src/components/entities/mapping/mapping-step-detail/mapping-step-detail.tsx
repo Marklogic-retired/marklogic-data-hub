@@ -28,6 +28,7 @@ import CustomPageHeader from "../../page-header/page-header";
 import {ChevronDown, ChevronRight, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
 import {HCAlert, HCButton, HCCheckbox, HCInput, HCTooltip, HCTable, HCPopoverSearch} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -2360,7 +2361,12 @@ const MappingStepDetail: React.FC = () => {
                 <span className={styles.entityTypeTitle}>
                   <p className={styles.entityTypeText}>
                     <span className={styles.entityIcon} />
-                    <strong>Entity Type: {curationOptions.activeStep.entityName}</strong>
+                    <strong className={styles.entityName} aria-label={`Entity-Type-${curationOptions.activeStep.entityName}`} >
+                      <div>
+                        Entity Type:&nbsp;
+                      </div>
+                      <AddTooltipWhenTextOverflow text={curationOptions.activeStep.entityName} />
+                    </strong>
                   </p>
                 </span>
               </div>

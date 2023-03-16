@@ -134,7 +134,12 @@ const MappingCard: React.FC<Props> = props => {
       </Modal.Header>
       <Modal.Body className={"pt-0 pb-4"}>
         <span style={{fontSize: "16px"}}>
-          Are you sure you want to delete the <strong>{mappingArtifactName}</strong> step?
+          <p style={{textAlign: "center"}} aria-label={`confirm-delete-${mappingArtifactName}`}>
+            Are you sure you want to delete the
+            <strong>
+              <AddTooltipWhenTextOverflow text={mappingArtifactName} />
+            </strong> step?
+          </p>
         </span>
         <div className={"d-flex justify-content-center pt-4 pb-2"}>
           <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
@@ -633,7 +638,7 @@ const MappingCard: React.FC<Props> = props => {
                 >
                   <div className={styles.formatFileContainer}>
                     <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>
-                      {getInitialChars(elem.name, 27, "...")}
+                      {elem.name}
                     </span>
                   </div>
                   <br />

@@ -4,6 +4,7 @@ import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "@config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
 import {HCAlert, HCButton, HCModal} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   isVisible: boolean;
@@ -279,7 +280,9 @@ const ConfirmationModal: React.FC<Props> = props => {
           )}
           {props.type === ConfirmationType.RevertChanges && (
             <>
-              <p aria-label="save-all-text">Are you sure you want to revert all of your unpublished changes?</p>
+              <p aria-label="save-all-text">
+                Are you sure you want to revert all of your unpublished changes?
+              </p>
               <p className={styles.revertChangeText}>{ModelingMessages.revertChangesConfirm}</p>
             </>
           )}
@@ -300,7 +303,11 @@ const ConfirmationModal: React.FC<Props> = props => {
 
           {props.type === ConfirmationType.DeleteStep && (
             <p aria-label="delete-step-text">
-              Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> step?
+              Are you sure you want to delete the
+              <b>
+                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+              </b>
+              step?
             </p>
           )}
 

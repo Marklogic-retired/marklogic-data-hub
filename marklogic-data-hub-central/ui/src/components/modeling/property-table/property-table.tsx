@@ -29,6 +29,7 @@ import {ModelingMessages} from "@config/tooltips.config";
 import {getSystemInfo} from "@api/environment";
 import arrayIcon from "../../../assets/icon_array.png";
 import {HCButton, HCTooltip, HCTable} from "@components/common";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
@@ -146,12 +147,7 @@ const PropertyTable: React.FC<Props> = props => {
     }
   }, [newRowKey]);
 
-  const textTooltip = name => (
-    <div>
-      {ModelingTooltips.entityPropertyName} <br />
-      {name.length > 20 ? name : null}
-    </div>
-  );
+
   const columns = [
     {
       text: "Property Name",
@@ -175,7 +171,7 @@ const PropertyTable: React.FC<Props> = props => {
                 editPropertyShowModal(record.propertyName, record);
               }}
             >
-              <HCTooltip text={textTooltip(record.propertyName)} id={`property-${text}-tooltip`} placement="top">
+              <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="top">
                 <span
                   tabIndex={0}
                   onKeyDown={event => {
@@ -188,7 +184,7 @@ const PropertyTable: React.FC<Props> = props => {
                     record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""
                   }`}
                 >
-                  {record.propertyName}
+                  <AddTooltipWhenTextOverflow text={record.propertyName} />
                 </span>
               </HCTooltip>
               {record.multiple === record.propertyName && (
@@ -212,7 +208,8 @@ const PropertyTable: React.FC<Props> = props => {
         } else {
           renderText = (
             <span data-testid={text + "-span"} aria-label={"Property-name"}>
-              {record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
+
+              {record.joinPropertyType && record.joinPropertyType !== "" ? <i><AddTooltipWhenTextOverflow text={text} /></i> : <AddTooltipWhenTextOverflow text={text} />}
               {record.multiple === record.propertyName && (
                 <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
                   <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />

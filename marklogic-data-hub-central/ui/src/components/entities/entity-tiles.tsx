@@ -18,6 +18,7 @@ import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
 import {useLocation} from "react-router-dom";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 const EntityTiles = props => {
   const {setActiveStepWarning, setValidateMatchCalled, setValidateMergeCalled} = useContext(CurationContext);
@@ -180,8 +181,11 @@ const EntityTiles = props => {
           ? setModalError({
             isVisible: true,
             message: (
-              <p aria-label="duplicate-step-error">
-                  Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.
+              <p aria-label="duplicate-step-error" style={{overflow: "hidden"}}>
+                  Unable to create mapping step. A mapping step with the name
+                <b>
+                  <AddTooltipWhenTextOverflow text={mapping.name} />
+                </b> already exists.
               </p>
             ),
           })
@@ -258,8 +262,12 @@ const EntityTiles = props => {
         ? setModalError({
           isVisible: true,
           message: (
-            <p aria-label="duplicate-step-error">
-                Unable to create matching step. A matching step with the name <b>{matchingObj.name}</b> already exists.
+            <p aria-label="duplicate-step-error" style={{overflow: "hidden"}}>
+                Unable to create matching step. A matching step with the name
+              <b>
+                <AddTooltipWhenTextOverflow text={matchingObj.name} />
+              </b>
+                already exists.
             </p>
           ),
         })
@@ -337,8 +345,12 @@ const EntityTiles = props => {
         ? setModalError({
           isVisible: true,
           message: (
-            <p aria-label="duplicate-step-error">
-                Unable to create merging step. A merging step with the name <b>{mergingObj.name}</b> already exists.
+            <p aria-label="duplicate-step-error" style={{overflow: "hidden"}}>
+                Unable to create merging step. A merging step with the name
+              <b>
+                <AddTooltipWhenTextOverflow text={mergingObj.name} />
+              </b>
+                already exists.
             </p>
           ),
         })

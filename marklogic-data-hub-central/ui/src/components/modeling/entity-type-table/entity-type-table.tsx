@@ -19,6 +19,7 @@ import {themeColors} from "@config/themes.config";
 import {defaultConceptIcon, defaultIcon} from "@config/explore.config";
 import {colorExistsForNode, getCategoryWithinModel, iconExistsForNode} from "@util/modeling-utils";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 type Props = {
   allEntityTypesData: any[];
@@ -258,11 +259,11 @@ const EntityTypeTable: React.FC<Props> = props => {
                     clickEnterEvent(isConceptClass, entityName);
                   }}
                 >
-                  {entityName}
+                  <AddTooltipWhenTextOverflow text={entityName} placement="right" />
                 </span>
               </HCTooltip>
             ) : (
-              <span data-testid={entityName + "-span"}>{entityName}</span>
+              <span data-testid={entityName + "-span"}><AddTooltipWhenTextOverflow text={entityName} placement="right" /></span>
             )}
           </>
         );

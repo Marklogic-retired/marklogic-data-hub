@@ -389,10 +389,16 @@
 }
 .stepMenu {
     &>.dropdown-menu {
-        max-height: 50vh;
+        max-height: 50vh;  
         overflow: scroll;
     }
 }
+
+.dropDownMenu{
+  width: 30vw;
+  overflow-x: hidden;
+}
+
 .stepMenuDisabled {
   pointer-events: auto !important;
   &:hover {

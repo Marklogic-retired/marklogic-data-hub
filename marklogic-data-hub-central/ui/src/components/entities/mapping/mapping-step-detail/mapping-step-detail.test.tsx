@@ -114,12 +114,13 @@ describe("RTL Source-to-entity map tests", () => {
   test("RTL tests with no source data", async () => {
     mockGetUris.mockResolvedValueOnce({status: 200, data: []});
 
-    let getByText, getByRole, getByTestId;
+    let getByText, getByRole, getByTestId, getByLabelText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepEmpty);
       getByText = renderResults.getByText;
       getByRole = renderResults.getByRole;
       getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("Test")).toBeDisabled;
@@ -128,7 +129,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("srcContainer")).toBeInTheDocument();
     expect(getByText("Unable to find source records using the specified collection or query.")).toBeInTheDocument;
     expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
-    expect(getByText("Entity Type: Person")).toBeInTheDocument();
+    expect(getByLabelText("Entity-Type-Person")).toBeInTheDocument();
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
   }, 50000);
 
@@ -248,7 +249,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("entityContainer")).toBeInTheDocument();
     expect(getByTestId("srcContainer")).toBeInTheDocument();
     expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
-    expect(getByText("Entity Type: Person")).toBeInTheDocument();
+    expect(getByLabelText("Entity-Type-Person")).toBeInTheDocument();
     expect(getByText("Test")).toBeEnabled();
 
     // No related entity filter if no related entities
@@ -2325,17 +2326,18 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     jest.setTimeout(20000);
 
-    let getByText, getByTestId, getAllByText, getAllByRole;
+    let getByText, getByTestId, getAllByText, getAllByRole, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       getAllByText = renderResults.getAllByText;
       getAllByRole = renderResults.getAllByRole;
+      getByLabelText = renderResults.getByLabelText;
     });
 
     expect(getByText("Source Data")).toBeInTheDocument();
-    expect(getByText("Entity Type: Person")).toBeInTheDocument();
+    expect(getByLabelText("Entity-Type-Person")).toBeInTheDocument();
     await wait(() => expect(getByText("Test")).toBeEnabled());
 
     let sourceSelector = getByTestId("itemTypes-listIcon");

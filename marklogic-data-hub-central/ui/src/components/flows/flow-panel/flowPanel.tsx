@@ -14,6 +14,7 @@ import {Flow, Step} from "../../../types/run-types";
 import {dynamicSortDates} from "@util/conversionFunctions";
 
 import sourceFormatOptions from "@config/formats.config";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 export interface Props {
   idx: number;
@@ -333,7 +334,7 @@ const FlowPanel: React.FC<Props> = ({
           </HCTooltip>
         )}
       </Dropdown.Toggle>
-      <Dropdown.Menu>
+      <Dropdown.Menu className={styles.dropDownMenu}>
         <Dropdown.Header className="py-0 px-2 fs-6">Loading</Dropdown.Header>
         {steps && steps["ingestionSteps"] && steps["ingestionSteps"].length > 0
           ? steps["ingestionSteps"].map((elem, index) => (
@@ -351,7 +352,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "ingestion");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
@@ -374,7 +375,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "mapping");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
@@ -397,7 +398,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "matching");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
@@ -420,7 +421,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "merging");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
@@ -443,7 +444,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "mastering");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
@@ -466,7 +467,7 @@ const FlowPanel: React.FC<Props> = ({
                   handleStepAdd(elem.name, flowName, "custom");
                 }}
               >
-                {elem.name}
+                <AddTooltipWhenTextOverflow text={elem.name} placement="left" />
               </div>
             </Dropdown.Item>
           ))
