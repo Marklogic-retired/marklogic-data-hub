@@ -2,5 +2,6 @@
   "FirstName": "Gary",
   "LastName": "Turner",
   "Address": "123 Main St",
-  "ZipCode": "44556"
+  "ZipCode": "44556",
+  "Verified": true
 }

@@ -3,5 +3,6 @@
   "LastName": "Jones",
   "SSN": "222-22-2221",
   "Address": "456 Jones St",
-  "ZipCode": "22222"
+  "ZipCode": "22222",
+  "Verified": true
 }

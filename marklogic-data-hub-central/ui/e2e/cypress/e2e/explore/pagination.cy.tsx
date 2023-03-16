@@ -1,45 +1,35 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
-import LoginPage from "../../support/pages/login";
-import table from "../../support/components/common/tables";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import table from "../../support/components/common/tables";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import "cypress-wait-until";
 
 describe("Validate scenarios for pagination in the explore page table", () => {
-  let firstPageTableCells: any[] = [];
+  let firstPageTableCells: string[] = [];
 
   before(() => {
-    cy.log("**Go to the Home Page and log into the app**");
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    //Loggin into the app
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
 
     cy.log("**Go to Explore page and select the table view option**");
-    cy.visit("/tiles/explore").wait(5000);
+    cy.intercept("GET", "/api/models/primaryEntityTypes?includeDrafts=true").as("lastRequest");
+    cy.visit("/tiles/explore");
+    cy.wait("@lastRequest");
     browsePage.getTableView().click();
     table.mainTable.should("be.visible");
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Saving table rows text from the first page");
-    table.getTableRows().should("not.be.empty");
-    // get rows from the table first page
     table.getTableRows().then(($els) => {
-      // get inner text from each row
-      return (
-        Cypress.$.makeArray($els)
-          .map((el) => firstPageTableCells.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")))
-      );
+      Cypress.$.makeArray($els)
+        .map((el) => firstPageTableCells.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")[0]));
     });
+    entitiesSidebar.clearMainPanelSearch();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
   });
 
   it("Change page number and verify the updated result", () => {
@@ -48,12 +38,11 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Validate that elements from page 1 do not exist on page 2**");
-    //get the second page rows
     table.getTableRows().each((item, i) => {
       expect(item).to.not.equal(firstPageTableCells[i]);
     });
-
   });
+
   it("Change page size and validate it gets updated correctly", () => {
     cy.log("**Go back to page number 1**");
     browsePage.clickPaginationItem(1);
@@ -69,14 +58,13 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     });
     table.getTableRows().should("have.length", 10);
   });
+
   it("Verify page number persists when navigating back from detail view", () => {
     cy.log("**Select 'Order' and 'BabyRegistry' entity**");
-    //Select Order
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
     entitiesSidebar.getBaseEntityOption("Order").scrollIntoView().should("be.visible");
     table.getTableRows().should("not.be.empty");
-    //Select BabyRegistry so that we have more than 10 records
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
     entitiesSidebar.getBaseEntityOption("BabyRegistry").scrollIntoView().should("be.visible");
@@ -93,7 +81,6 @@ describe("Validate scenarios for pagination in the explore page table", () => {
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Go back to 'All Entities'**");
-    //Select All Entities
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");

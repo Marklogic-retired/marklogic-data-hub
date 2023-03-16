@@ -3,4 +3,5 @@
   <LastName>Wilson</LastName>
   <SSN>444-44-4441</SSN>
   <Address>123 Wilson Rd</Address>
+  <Verified>true</Verified>
 </root>

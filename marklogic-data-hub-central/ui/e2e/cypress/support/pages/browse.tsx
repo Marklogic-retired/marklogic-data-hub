@@ -781,6 +781,9 @@ class BrowsePage {
     return cy.findByText("All Data");
   }
 
+  get firstTableRow() {
+    return cy.get("tr.hc-table_row");
+  }
 }
 
 const browsePage = new BrowsePage();

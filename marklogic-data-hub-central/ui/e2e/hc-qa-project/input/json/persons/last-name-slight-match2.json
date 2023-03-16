@@ -1,5 +1,6 @@
 {
   "FirstName": "Rachel",
   "LastName": "Mason",
-  "Address": "999 Main St"
+  "Address": "999 Main St",
+  "Verified": false
 }
