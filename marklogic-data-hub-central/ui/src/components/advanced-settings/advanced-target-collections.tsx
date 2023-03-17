@@ -19,6 +19,12 @@ const eventLabels = {
   "onNotification": "Notification",
 };
 
+const NAME_REGEX = new RegExp("^[^\\n ]*$");
+
+const containsOnlySpaces = (str) => {
+  return str.trim().length === 0;
+};
+
 const MenuList = (selector, props) => (
   <div id={`${selector}-select-MenuList`} aria-label={"select-MenuList"}>
     <SelectComponents.MenuList {...props} />
@@ -90,7 +96,7 @@ const defaultTargetCollectionHeaders = [
       <div className={styles.tableHeader}>
         Additional Collections{" "}
         <HCTooltip
-          text="Collection tags that you specify to be added to the resulting records."
+          text="Collection tags that you specify to be added to the resulting records. Cannot contain whitespaces."
           id="default-collections-tooltip"
           placement="top"
         >
@@ -126,7 +132,11 @@ const defaultTargetCollectionHeaders = [
             additionalCollectionsField.values = values.map(option => option.value);
             additionalCollectionsField.toggleRefresh();
           }}
+          isValidNewOption={(values) => containsOnlySpaces(values) ? false : true}
           onCreateOption={values => {
+            if (!NAME_REGEX.test(values)) {
+              return false;
+            }
             additionalCollectionsField.values = additionalCollectionsField.values.concat(values);
             additionalCollectionsField.toggleRefresh();
           }}
@@ -203,7 +213,7 @@ const defaultTargetCollectionHeaders = [
       <div className={styles.tableHeader}>
         Remove Collections{" "}
         <HCTooltip
-          text="Use this column to filter out the collections you do not want to merge."
+          text="Use this column to filter out the collections you do not want to merge. Cannot contain whitespaces."
           id="remove-collections-tooltip"
           placement="top"
         >
@@ -243,9 +253,13 @@ const defaultTargetCollectionHeaders = [
                 removeCollectionsField.toggleRefresh();
               }}
               onCreateOption={values => {
+                if (!NAME_REGEX.test(values)) {
+                  return false;
+                }
                 removeCollectionsField.values = removeCollectionsField.values.concat(values);
                 removeCollectionsField.toggleRefresh();
               }}
+              isValidNewOption={(values) => containsOnlySpaces(values) ? false : true}
               aria-label={"removeColl-select-" + removeCollectionsField.event}
               options={removeCollectionsField.values.map(d => ({value: d, label: d}))}
               styles={reactSelectThemeConfig}
