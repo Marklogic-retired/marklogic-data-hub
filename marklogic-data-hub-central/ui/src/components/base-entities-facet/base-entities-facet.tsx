@@ -263,7 +263,9 @@ const BaseEntitiesFacet: React.FC<Props> = ({
                   <span className={styles.entityIcon}>
                     <DynamicIcons name={finalIcon} />
                   </span>
-                  <span className={styles.entityName}><AddTooltipWhenTextOverflow text={name} placement="right" /></span>
+                  <span className={styles.entityName}>
+                    <AddTooltipWhenTextOverflow text={name} placement="right" />
+                  </span>
                   <span className={styles.entityChevron}>
                     <ChevronDoubleRight />
                   </span>

@@ -95,7 +95,8 @@
     "lint": "eslint --ext .js,.ts,.tsx",
     "eject": "react-scripts eject",
     "preinstall": "npx npm-force-resolutions",
-    "prettier-format": "prettier --config .prettierrc.json --write \"src/**/*.{jsx,ts,tsx}\""
+    "prettier-format": "prettier --config .prettierrc.json --write \"src/**/*.{jsx,ts,tsx}\"",
+    "linter-format": "npm run prettier-format && npm run lint . -- --fix"
   },
   "resolutions": {
     "shell-quote": "^1.7.3",

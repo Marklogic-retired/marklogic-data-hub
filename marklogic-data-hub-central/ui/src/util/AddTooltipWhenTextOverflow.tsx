@@ -2,7 +2,15 @@ import {HCTooltip} from "@components/common";
 import React, {useLayoutEffect, useRef, useState} from "react";
 import {Placement} from "react-bootstrap/esm/types";
 
-export function AddTooltipWhenTextOverflow({text, placement = "auto", forceRender = false}:{text: string; placement?: Placement; forceRender?:Boolean}) {
+export function AddTooltipWhenTextOverflow({
+  text,
+  placement = "auto",
+  forceRender = false,
+}: {
+  text: string;
+  placement?: Placement;
+  forceRender?: Boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [isEllipsisActive, setIsEllipsisActive] = useState(false);
   const [labelWidth, setLabelWidth] = useState(0);
@@ -16,13 +24,16 @@ export function AddTooltipWhenTextOverflow({text, placement = "auto", forceRende
     }, 10);
   }
 
-  useLayoutEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize, false);
-    return () => {
-      window.removeEventListener("resize", handleResize, false);
-    };
-  }, forceRender ? undefined : []);
+  useLayoutEffect(
+    () => {
+      handleResize();
+      window.addEventListener("resize", handleResize, false);
+      return () => {
+        window.removeEventListener("resize", handleResize, false);
+      };
+    },
+    forceRender ? undefined : [],
+  );
 
   return (
     <div ref={ref} style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>

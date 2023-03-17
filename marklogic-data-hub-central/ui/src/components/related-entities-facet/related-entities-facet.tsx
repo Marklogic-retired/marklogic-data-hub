@@ -131,7 +131,8 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
                     borderStyle: "solid",
                     borderWidth: "1px",
                     borderColor: "#d9d9d9",
-                    borderRadius: "4px", overflow: "hidden",
+                    borderRadius: "4px",
+                    overflow: "hidden",
                   }}
                   className={relatedEntitiesDisabled.includes(option) ? styles.entityItemDisabled : styles.entityItem}
                   key={name}
@@ -167,8 +168,8 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
                     </HCCheckbox>
                   </div>
 
-                  <span className={styles.entityName} aria-label={`related-entity-${name}`}><AddTooltipWhenTextOverflow text=
-                    {name} placement="right" />
+                  <span className={styles.entityName} aria-label={`related-entity-${name}`}>
+                    <AddTooltipWhenTextOverflow text={name} placement="right" />
                   </span>
                   <span className={styles.entityChevron}>
                     <ChevronDoubleRight />
