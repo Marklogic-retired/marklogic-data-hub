@@ -13,7 +13,7 @@ test.assertTrue(checkForSchema("/entities/Customer.entity.xsd"), "Customer xml s
 function checkForSchema(uri){
     return fn.head(xdmp.eval(
         `fn.docAvailable('${uri}') `,
-        {uri:uri}, {database: xdmp.database(config.FINALSCHEMASDATABASE)}
+        {uri:uri}, {database: xdmp.schemaDatabase()}
     ));
 }
 
