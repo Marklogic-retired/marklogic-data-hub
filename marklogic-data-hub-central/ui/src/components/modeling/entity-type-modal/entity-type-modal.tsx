@@ -155,7 +155,7 @@ const EntityTypeModal: React.FC<Props> = props => {
       }
       return false;
     } catch (error) {
-      if (error.response.status  === 400) {
+      if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
           setErrorMessage(error["response"]["data"]["message"]);
         }
@@ -214,7 +214,7 @@ const EntityTypeModal: React.FC<Props> = props => {
   };
 
   const handleSubmit = async () => {
-    let success:any = true;
+    let success: any = true;
     try {
       if (entityPropertiesEdited()) {
         success = await updateEntityDescription(name, description, namespace, prefix);

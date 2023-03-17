@@ -120,7 +120,7 @@ const RelatedConceptsFacets: React.FC<Props> = props => {
                   </HCCheckbox>
                 </div>
                 <div className={styles.conceptName} aria-label={`related-concept-${name}`}>
-                  <AddTooltipWhenTextOverflow text={name}placement="right" forceRender={true}/>
+                  <AddTooltipWhenTextOverflow text={name} placement="right" forceRender={true} />
                 </div>
                 <span className={styles.conceptAmount} aria-label={`related-concept-${name}-filter`}>
                   {/* {filter && SHOW_FILTER(filter)} */}
