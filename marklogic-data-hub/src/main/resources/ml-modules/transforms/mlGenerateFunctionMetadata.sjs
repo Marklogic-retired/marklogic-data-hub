@@ -1,11 +1,11 @@
 'use strict';
 
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const es = require('/MarkLogic/entity-services/entity-services');
+const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
 const datahub = DataHubSingleton.instance();
 const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
-const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 
 function mlGenerateFunctionMetadata(context, params, content) {
   const uri = context.uri;
