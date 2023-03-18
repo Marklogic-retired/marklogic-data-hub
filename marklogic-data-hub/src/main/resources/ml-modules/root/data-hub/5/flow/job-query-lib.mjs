@@ -52,7 +52,7 @@ function findStepResponses(query) {
       'Job.StepResponse.flowName as flowName' +
       ' from Job.StepResponse ' + whereClause;
 
-  const totalCount = op.fromSQL(totalCountQuery).result().toObject();
+  const totalCount = xdmp.sql(totalCountQuery).toArray();
   const jobsDataResults = op.fromSQL(jobsDataQuery).orderBy(orderByConstraint).offset(pageLength * (start-1)).limit(pageLength).result();
 
   let jobsDataResultsObj = jobsDataResults.toObject();
@@ -65,8 +65,7 @@ function findStepResponses(query) {
       }
     }
   })
-
-  response["total"] = totalCount[0]["total"];
+  response["total"] = totalCount[1][0];
   response["start"] = start;
   response["pageLength"] = pageLength;
   response["results"] = jobsDataResultsObj;
