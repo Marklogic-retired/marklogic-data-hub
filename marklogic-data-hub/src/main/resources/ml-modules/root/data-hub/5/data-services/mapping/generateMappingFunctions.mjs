@@ -1,14 +1,14 @@
 'use strict';
 
-const es = require('/MarkLogic/entity-services/entity-services');
-const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
-const datahub = DataHubSingleton.instance();
-const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-function mlGenerateFunctionMetadata(context, params, content) {
-  const uri = context.uri;
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
+
+const es = require("/MarkLogic/entity-services/entity-services");
+const datahub = DataHubSingleton.instance();
+const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
+function mlGenerateFunctionMetadata(uri) {
   const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
 
   // The core.sjs is intended to be a pass through to support upgrades. Function Metadata is not generated so that there is no
@@ -35,7 +35,7 @@ function mlGenerateFunctionMetadata(context, params, content) {
     ]);
 
     let writeInfo = fn.head(xdmp.invokeFunction(() =>
-      hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
+        hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
       {update: "true"}));
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       xqueryLib.functionMetadataPut(uriVal + ".xml");
@@ -43,7 +43,6 @@ function mlGenerateFunctionMetadata(context, params, content) {
       datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
     }
   }
-  return content;
 }
 
 function generateMetadata(uri) {
@@ -51,9 +50,9 @@ function generateMetadata(uri) {
   if (uri === "/data-hub/5/mapping-functions/core-functions.xqy") {
     metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/data-hub/mapping/functions", uri);
   }
-  // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
+    // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
   // a namespace of http://marklogic.com/mapping-functions/custom
-  else if (uri.endsWith(".xqy")) {
+  else if (fn.endsWith(uri, ".xqy")) {
     metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/mapping-functions/custom", uri);
   }
   else {
@@ -85,5 +84,8 @@ function addMapNamespaceToMetadata(xml) {
   return metadata;
 }
 
-exports.transform = mlGenerateFunctionMetadata;
-exports.addMapNamespaceToMetadata = addMapNamespaceToMetadata;
+xdmp.invokeFunction(() => {
+  for (const uri of cts.uris(null, ["concurrent", "eager"], cts.directoryQuery(["/data-hub/5/mapping-functions/", "/custom-modules/mapping-functions/"], "infinity"))) {
+    mlGenerateFunctionMetadata(fn.string(uri));
+  }
+}, {database: xdmp.modulesDatabase(), update: "true"});

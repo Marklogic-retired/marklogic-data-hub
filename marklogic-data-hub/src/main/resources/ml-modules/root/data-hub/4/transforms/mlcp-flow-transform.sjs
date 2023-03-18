@@ -19,8 +19,13 @@ const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+
+const ERROR_CODE = "RESTAPI-SRVEXERR";
+
+// not throwing error with shared lib to avoid call to MJS
+function throwNotFoundWithArray(args){
+  fn.error(null, ERROR_CODE, Sequence.from([404].concat(args)));
+}
 
 function transform(content, context) {
   let uri = content.uri;
@@ -51,7 +56,7 @@ function transform(content, context) {
   let flow = flowlib.getFlow(entityName, flowName, consts.INPUT_FLOW);
 
   if (!flow) {
-    httpUtils.throwNotFoundWithArray(["Not Found", "The specified flow " + params.flow + " is missing."]);
+    throwNotFoundWithArray(["Not Found", "The specified flow " + params.flow + " is missing."]);
   }
   let options = {};
   if (optionsString) {
