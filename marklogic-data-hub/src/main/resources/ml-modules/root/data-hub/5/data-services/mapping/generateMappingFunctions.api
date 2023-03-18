@@ -1,0 +1,4 @@
+{
+ "functionName": "generateMappingFunctions",
+ "desc": "Generates mapping function meta for custom functions"
+}

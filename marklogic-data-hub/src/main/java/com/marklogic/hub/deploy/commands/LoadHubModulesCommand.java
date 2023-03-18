@@ -102,13 +102,11 @@ public class LoadHubModulesCommand extends AbstractCommand {
             }
         }
 
-        if (caughtException == null) {
-            loadJobsSearchOptions(modulesLoader);
-        }
-
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
         }
+        loadJobsSearchOptions(modulesLoader);
+
     }
 
     /**

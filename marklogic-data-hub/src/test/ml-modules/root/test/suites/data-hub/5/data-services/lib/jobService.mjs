@@ -1,8 +1,8 @@
 'use strict';
 import config from "/com.marklogic.hub/config.mjs";
 
-function invokeModule(module, args) {
-  return fn.head(xdmp.invoke("/data-hub/5/data-services/job/" + module, args, {update: "true"}));
+function invokeModule(module, args, options = {}) {
+  return fn.head(xdmp.invoke("/data-hub/5/data-services/job/" + module, args));
 }
 
 function findStepResponses(endpointConstants) {
@@ -24,15 +24,15 @@ function getMatchingPropertyValues(facetValuesSearchQuery) {
 }
 
 function startJob(jobId, flowName, stepNumber) {
-  return invokeModule("startJob.mjs", {jobId, flowName});
+  return invokeModule("startJob.mjs", {jobId, flowName}, {update: "true"});
 }
 
 function finishJob(jobId, jobStatus) {
-  return invokeModule("finishJob.mjs", {jobId, jobStatus});
+  return invokeModule("finishJob.mjs", {jobId, jobStatus}, {update: "true"});
 }
 
 function startStep(jobId, stepNumber, flowName, runTimeOptions) {
-  return invokeModule("startStep.mjs", {jobId, stepNumber, flowName, runTimeOptions});
+  return invokeModule("startStep.mjs", {jobId, stepNumber, flowName, runTimeOptions}, {update: "true"});
 }
 
 export default {

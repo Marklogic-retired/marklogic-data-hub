@@ -419,11 +419,11 @@ declare function wait-for-indexes()
 };
 
 declare function wait-for-indexes($count as xs:unsignedLong) {
+  let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
   let $is-indexing := 0 lt fn:sum(xdmp:forest-counts(xdmp:database-forests(xdmp:database()), (), "preview-reindexer")/*:reindex-refragment-fragment-count, 0)
   return
     if ($is-indexing and $count lt 250) then
-      let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
-      return wait-for-indexes($count + 1)
+      wait-for-indexes($count + 1)
     else
       ()
 };
@@ -441,13 +441,13 @@ declare function wait-for-triggers()
 };
 
 declare function wait-for-triggers($count as xs:unsignedLong) {
+  let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
   let $host-statuses := xdmp:host-status(xdmp:hosts())
   let $host-task-servers := $host-statuses/host:task-server/host:task-server-id
   let $triggers-are-running := 0 lt fn:count($host-statuses/host:transactions/host:transaction[host:server-id = $host-task-servers])
   return
     if ($triggers-are-running and $count lt 250) then
-      let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
-      return wait-for-triggers($count + 1)
+      wait-for-triggers($count + 1)
     else
       ()
 };
