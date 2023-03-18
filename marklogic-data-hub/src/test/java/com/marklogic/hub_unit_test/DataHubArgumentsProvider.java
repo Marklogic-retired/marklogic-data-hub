@@ -36,7 +36,7 @@ public class DataHubArgumentsProvider extends LoggingObject implements Arguments
         try {
             List<TestModule> testModules = testManager.list();
             logger.info("marklogic-unit-test test count: " + testModules.size());
-            return Stream.of(testModules.toArray(new TestModule[]{})).map(Arguments::of);
+            return Stream.of(testModules.toArray(new TestModule[]{})).map((testModule) -> Arguments.of(testModule, testManager));
         } catch (Exception ex) {
             logger.error("Could not obtain a list of marklogic-unit-test modules; " +
                 "please verify that the ml-unit-test library has been properly loaded and that /v1/resources/marklogic-unit-test is accessible", ex);

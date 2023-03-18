@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
 
     private static boolean initialized = false;
-
+    private TestManager testManager = null;
     /**
      * We don't need to claim a HubConfig, as one was already claimed by DataHubArgumentsProvider. And all the test
      * modules will be run on the same thread.
@@ -74,10 +74,10 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
      */
     @ParameterizedTest
     @ArgumentsSource(DataHubArgumentsProvider.class)
-    public void test(TestModule testModule) {
+    public void test(TestModule testModule, TestManager testManager) {
         logger.info("Running test: " + testModule.getTest() + "; thread: " + Thread.currentThread().getName() + "; host: " + getHubConfig().getHost());
         long start = System.currentTimeMillis();
-        TestSuiteResult result = new TestManager(getHubConfig().newFinalClient()).run(testModule);
+        TestSuiteResult result = testManager.run(testModule);
         logger.info("Finished test: " + testModule.getTest() + "; time: " + (System.currentTimeMillis() - start) + "ms");
 
         for (TestResult testResult : result.getTestResults()) {
