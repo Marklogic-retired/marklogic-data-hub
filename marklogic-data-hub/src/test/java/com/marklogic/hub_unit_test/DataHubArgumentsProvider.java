@@ -30,13 +30,21 @@ public class DataHubArgumentsProvider extends LoggingObject implements Arguments
         logger.info("Loading test modules and running security commands to ensure that test modules and certain " +
             "test resources are in place before unit tests are run; host: " + hubConfig.getHost() + "; user: " + hubConfig.getMlUsername());
         TestAppInstaller.loadTestModules(hubConfig, true);
-
+        Properties newProps = new Properties();
+        String previousUsername = hubConfig.getMlUsername();
+        String previousPassword = hubConfig.getPassword();
+        newProps.setProperty("mlUsername", "test-data-hub-developer");
+        newProps.setProperty("mlPassword", "password");
+        hubConfig.applyProperties(newProps);
         final DatabaseClient client = hubConfig.newFinalClient();
         TestManager testManager = new TestManager(client);
+        newProps.setProperty("mlUsername", previousUsername);
+        newProps.setProperty("mlPassword", previousPassword);
+        hubConfig.applyProperties(newProps);
         try {
             List<TestModule> testModules = testManager.list();
             logger.info("marklogic-unit-test test count: " + testModules.size());
-            return Stream.of(testModules.toArray(new TestModule[]{})).map(Arguments::of);
+            return Stream.of(testModules.toArray(new TestModule[]{})).map((testModule) -> Arguments.of(testModule, testManager));
         } catch (Exception ex) {
             logger.error("Could not obtain a list of marklogic-unit-test modules; " +
                 "please verify that the ml-unit-test library has been properly loaded and that /v1/resources/marklogic-unit-test is accessible", ex);

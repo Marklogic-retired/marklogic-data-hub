@@ -3,7 +3,6 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +35,9 @@ public class GenerateFunctionMetadataInDhsTest extends AbstractHubCoreTest {
         try {
             command.execute(newCommandContext());
             fail("Expected this to fail because the echoFunction module has malformed syntax");
-        } catch (RuntimeException ex) {
-            assertTrue(ex.getCause() instanceof FailedRequestException, "Expecting a FailedRequestException due to malformed syntax");
-            String message = ex.getCause().getMessage();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof FailedRequestException, "Expecting a FailedRequestException due to malformed syntax");
+            String message = ((FailedRequestException) ex).getFailedRequest().getMessage();
             assertTrue(message.contains("SyntaxError: Unexpected token"), "Unexpected error message: " + message);
         }
 
