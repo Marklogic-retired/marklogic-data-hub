@@ -15,7 +15,7 @@ xdmp.invokeFunction(() => {
       "sourceQuery": "cts.collectionQuery('raw-content')",
       "interceptors": [
         {
-          "path": "/test/suites/data-hub/5/data-services/mapping/test-data/beforeMain.mjs",
+          "path": "/test/suites/data-hub/5/data-services/mapping/general/test-data/beforeMain.mjs",
           "when": "beforeMain"
         }
       ]

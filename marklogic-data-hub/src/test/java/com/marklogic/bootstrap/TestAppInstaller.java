@@ -230,6 +230,8 @@ class InstallerThread extends LoggingObject implements Runnable {
             "admin-like capabilities, such as being able to deploy a DHF application");
         testAdmin.setPassword("password");
         testAdmin.addRole("admin");
+        // Adding so views can be seen
+        testAdmin.addRole("data-hub-developer");
         testAdmin.save();
 
         User dataHubEnvManager = new User(api, "test-data-hub-environment-manager");

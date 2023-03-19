@@ -64,12 +64,16 @@ function runXMLMapping(){
 }
 
 function executeSql() {
-  let queryResponse = xdmp.eval('xdmp.sql(\'select Customer.Customer.firstName,Customer.Customer.lastName,"Order"."Order".orderId  from Customer, "Order" where "Order".orderedBy = Customer.customerId order by "Order"."Order".orderId\')');
-  let res = new Array();
-  for (let row of queryResponse) {
-    res.push(fn.concat("firstName=", row[0], "; lastName=", row[1], "; orderId=", row[2]));
+  try {
+    let queryResponse = xdmp.invokeFunction(() => xdmp.sql('select Customer.Customer.firstName,Customer.Customer.lastName,"Order"."Order".orderId  from Customer, "Order" where "Order".orderedBy = Customer.customerId order by "Order"."Order".orderId'));
+    let res = new Array();
+    for (let row of queryResponse) {
+      res.push(fn.concat("firstName=", row[0], "; lastName=", row[1], "; orderId=", row[2]));
+    }
+    return res;
+  } catch (e) {
+    test.assertTrue(false, `Failed to execute SQL with user '${xdmp.getCurrentUser()}' due to '${e.toString()}'`);
   }
-  return res;
 }
 runJSONMapping();
 runXMLMapping();
