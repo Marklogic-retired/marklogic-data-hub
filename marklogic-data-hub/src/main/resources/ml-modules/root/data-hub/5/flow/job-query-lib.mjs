@@ -65,8 +65,7 @@ function findStepResponses(query) {
       }
     }
   })
-
-  response["total"] = totalCount[0]["total"];
+  response["total"] = totalCount[1][0];
   response["start"] = start;
   response["pageLength"] = pageLength;
   response["results"] = jobsDataResultsObj;

@@ -4,8 +4,6 @@ const test = require("/test/test-helper.xqy");
 
 xdmp.invokeFunction(() => {
   hubTestX.resetHub();
-  // Clearing the schema databases so that the merge step does not pickup any TDE triples that might be left behind from any previous tests
-  hubTestX.clearSchemasDatabases();
   hubTestX.loadNonEntities(test.__CALLER_FILE__);
 
   const mappingStep = hubTest.makeSimpleMappingStep("mappingStep", {

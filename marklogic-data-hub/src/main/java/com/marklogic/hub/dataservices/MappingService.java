@@ -54,6 +54,7 @@ public interface MappingService {
             private BaseProxy.DBFunctionRequest req_getUris;
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
+            private BaseProxy.DBFunctionRequest req_generateMappingFunctions;
 
             private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -73,6 +74,8 @@ public interface MappingService {
                     "generateMappingTransforms.mjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_generateMappingFunctions = this.baseProxy.request(
+                    "generateMappingFunctions.mjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -178,6 +181,16 @@ public interface MappingService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public void generateMappingFunctions() {
+                generateMappingFunctions(
+                    this.req_generateMappingFunctions.on(this.dbClient)
+                    );
+            }
+            private void generateMappingFunctions(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
+            }
         }
 
         return new MappingServiceImpl(db, serviceDeclaration);
@@ -242,5 +255,13 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getMappingFunctions(Boolean excludeMLMappingFunctions);
+
+  /**
+   * Generates mapping function meta for custom functions
+   *
+   * 
+   * 
+   */
+    void generateMappingFunctions();
 
 }
