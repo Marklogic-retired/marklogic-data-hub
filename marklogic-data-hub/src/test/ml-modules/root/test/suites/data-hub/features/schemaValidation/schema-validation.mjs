@@ -1,5 +1,5 @@
 import schemaValidation from "/data-hub/features/schema-validation.mjs";
-const test = require("/test/test-helper.xqy");
+//const test = require("/test/test-helper.xqy");
 
 xdmp.invokeFunction(() => schemaValidation.onArtifactSave("model", "Customer"), {update: "true"});
 
