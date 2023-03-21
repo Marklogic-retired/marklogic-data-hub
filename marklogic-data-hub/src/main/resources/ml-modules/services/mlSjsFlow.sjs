@@ -21,8 +21,7 @@ const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 
 function throwHttpErrorWithArray(functionName, array){
-  const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-  const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+  const httpUtils = require("/data-hub/4/impl/http-utils.sjs");
   httpUtils[functionName](array);
 }
 function throwNotFoundWithArray(array) {

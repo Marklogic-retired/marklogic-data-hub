@@ -16,11 +16,13 @@
 'use strict';
 
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const Artifacts = mjsProxy.requireMjsModule("/data-hub/5/artifacts/core.mjs");
-const config = mjsProxy.requireMjsModule("/com.marklogic.hub/config.mjs");
-const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
-const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const [Artifacts, config, DataHubSingleton, hubUtils, httpUtils] = mjsProxy.requireMjsModules(
+    "/data-hub/5/artifacts/core.mjs",
+    "/com.marklogic.hub/config.mjs",
+    "/data-hub/5/datahub-singleton.mjs",
+    "/data-hub/5/impl/hub-utils.mjs",
+    "/data-hub/5/impl/http-utils.mjs"
+  );
 
 function get(context, params) {}
 

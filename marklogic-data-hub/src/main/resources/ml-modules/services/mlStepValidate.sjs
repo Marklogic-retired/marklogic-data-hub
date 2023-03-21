@@ -15,9 +15,10 @@
  */
 'use strict';
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
-const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
+const [DataHubSingleton, httpUtils, hubUtils] = mjsProxy.requireMjsModules(
+  "/data-hub/5/datahub-singleton.mjs",
+  "/data-hub/5/impl/http-utils.mjs",
+  "/data-hub/5/impl/hub-utils.mjs");
 
 function get(context, params) {
   return post(context, params, null);
