@@ -1,4 +1,3 @@
-import graphUtils from "/data-hub/5/impl/graph-utils.mjs";
 const test = require("/test/test-helper.xqy");
 
 function invoke(module, args) {
