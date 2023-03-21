@@ -36,10 +36,9 @@ function onArtifactSave(artifactType, artifactName) {
         const entityModel = core.getArtifact(artifactType, artifactName);
         const targetUri = core.getArtifactUri(artifactType, artifactName);
 
-        let schemaPermissions = (
-            xdmp.defaultPermissions(),
+        let schemaPermissions = xdmp.defaultPermissions().concat([
                 xdmp.permission("data-hub-common", "read"),
-                xdmp.permission("data-hub-entity-model-writer", "update"));
+                xdmp.permission("data-hub-entity-model-writer", "update")]);
         let xmlSchemaCollection = "ml-data-hub-xml-schema";
         let jsonSchemaCollection = "ml-data-hub-json-schema";
 

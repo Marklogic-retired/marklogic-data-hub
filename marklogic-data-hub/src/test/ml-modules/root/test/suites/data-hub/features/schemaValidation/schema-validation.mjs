@@ -2,9 +2,9 @@ import schemaValidation from "/data-hub/features/schema-validation.mjs";
 const test = require("/test/test-helper.xqy");
 
 function checkForSchema(uri){
-  return fn.head(xdmp.eval(
-      `fn.docAvailable('${uri}') `,
-      {uri:uri}, {database: xdmp.schemaDatabase()}
+  return fn.head(xdmp.invokeFunction(
+    () => fn.docAvailable(uri),
+    {database: xdmp.schemaDatabase()}
   ));
 }
 
