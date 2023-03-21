@@ -15,8 +15,7 @@
  */
 'use strict';
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const [DataHubSingleton, httpUtils] = mjsProxy.requireMjsModules("/data-hub/5/datahub-singleton.mjs", "/data-hub/5/impl/http-utils.mjs");
 
 /**
  * DO NOT USE THIS; it is deprecated as of DHF 5.3.0.

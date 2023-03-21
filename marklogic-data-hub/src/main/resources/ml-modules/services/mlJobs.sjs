@@ -16,8 +16,7 @@
 'use strict';
 
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
-const jobs = mjsProxy.requireMjsModule("/data-hub/5/impl/jobs.mjs");
+const [httpUtils, jobs] = mjsProxy.requireMjsModules("/data-hub/5/impl/http-utils.mjs", "/data-hub/5/impl/jobs.mjs");
 
 /**
  * This is still supporting what's documented at https://docs.marklogic.com/datahub/5.4/tools/rest/rest-extensions.html

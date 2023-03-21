@@ -13,11 +13,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
+const httpUtils = require("/data-hub/4/impl/http-utils.sjs");
 
 function transform(context, params, content) {
   let jobId = params["job-id"] ||sem.uuidString();
