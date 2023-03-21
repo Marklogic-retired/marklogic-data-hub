@@ -19,15 +19,17 @@ import DocPermission from "./doc-permissions.mjs";
 import Mapping from './mapping.mjs';
 import ProtectedCollections from './protected-collections.mjs';
 import Provenance from './provenance.mjs';
+import SchemaValidation from './schema-validation.mjs';
 import Temporal from './temporal.mjs';
 
 // define constants for caching expensive operations
 const registeredFeatures = {
-    docPermission: DocPermission,
-    mapping: Mapping,
-    protectedCollections: ProtectedCollections,
-    provenance: Provenance,
-    temporal: Temporal
+  docPermission: DocPermission,
+  mapping: Mapping,
+  protectedCollections: ProtectedCollections,
+  provenance: Provenance,
+  schemaValidation: SchemaValidation,
+  temporal: Temporal
 };
 
 
