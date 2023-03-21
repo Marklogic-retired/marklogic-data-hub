@@ -20,6 +20,7 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import FlowExecutionContext from "/data-hub/5/flow/flowExecutionContext.mjs";
 import flowProvenance from "./flowProvenance.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import provLib from "/data-hub/5/impl/prov.mjs";
 import WriteQueue from "/data-hub/5/flow/writeQueue.mjs";
@@ -133,8 +134,8 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
   }
 
   invokeFeatureBefore(stepExecutionContext, contentArray);
-
   invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
+  invokeFeatureAfter(stepExecutionContext, contentArray);
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
     runStepMainOnBatch(contentArray, stepExecutionContext) :
@@ -149,6 +150,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 
   invokeFeatureBefore(stepExecutionContext, contentArray);
   invokeInterceptors(stepExecutionContext, outputContentArray, "beforeContentPersisted");
+  invokeFeatureAfter(stepExecutionContext, contentArray);
 
   if (hookRunner && !hookRunner.runBefore) {
     hookRunner.runHook(outputContentArray);
@@ -385,20 +387,29 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
   }
 }
 
+function invokeFeatureMethods(stepExecutionContext, contentArray, method) {
+  const flowStep = stepExecutionContext.flowStep;
+  let targetEntityType = flowStep.options.targetEntity || flowStep.options.targetEntityType;
+  if (targetEntityType) {
+    const model = entityLib.findModelForEntityTypeId(targetEntityType).toObject();
+    const features = Object.keys(featuresCore.getFeatures());
+    contentArray.forEach(content => {
+      features.forEach(feat => {
+        const funct = featuresCore.getFeatureMethod(feat, method);
+        if (funct) {
+          funct(flowStep, model, content);
+        }
+      });
+    });
+  }
+}
+
 function invokeFeatureBefore(stepExecutionContext, contentArray) {
-    const flowStep = stepExecutionContext.flowStep;
-    let targetEntityType = flowStep.options.targetEntity || flowStep.options.targetEntityType;
-    if (targetEntityType) {
-        const features = Object.keys(featuresCore.getFeatures());
-        contentArray.forEach(content => {
-            features.forEach(feat => {
-                const funct = featuresCore.getFeatureMethod(feat, "onInstancePassToStep");
-                if (funct) {
-                    funct(flowStep, targetEntityType, content);
-                }
-            });
-        });
-    }
+  invokeFeatureMethods(stepExecutionContext, contentArray, "onInstancePassToStep");
+}
+
+function invokeFeatureAfter(stepExecutionContext, contentArray) {
+  invokeFeatureMethods(stepExecutionContext, contentArray, "onInstanceSave");
 }
 
 /**
