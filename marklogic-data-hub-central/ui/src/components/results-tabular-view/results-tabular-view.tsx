@@ -12,6 +12,7 @@ import {
   IconDefinition,
   faFileExport,
   faColumns,
+  faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import {MdCallSplit} from "react-icons/md";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -159,42 +160,45 @@ const ResultsTabularView = props => {
   };
 
   const renderStructuredProperty = (properties, cell) => {
-    let dataToRender = cell.map((item, indicator) => {
-      const row = properties.map((property, index) => {
-        const {propertyPath} = property;
-        if (!property.hasOwnProperty("properties")) {
+    //alert(cell);
+    let dataToRender =
+      cell &&
+      cell?.map((item, indicator) => {
+        const row = properties.map((property, index) => {
+          const {propertyPath} = property;
+          if (!property.hasOwnProperty("properties")) {
+            return (
+              <td key={index}>
+                <div className={styles.columData} key={`${index}`}>
+                  {item[propertyPath]}
+                </div>
+              </td>
+            );
+          }
+          if (expandedNestedTableColumn.includes(property.propertyPath)) {
+            return (
+              <td className={styles.innerTableContainer} key={`table${propertyPath}`}>
+                {renderStructuredProperty(property.properties, item[propertyPath])}
+              </td>
+            );
+          }
           return (
-            <td key={index}>
-              <div className={styles.columData} key={`${index}`}>
-                {item[propertyPath]}
-              </div>
+            <td key={`${property.propertyPath}-${index}`} className={styles.nestedColumn}>
+              {property?.properties?.map((col, index) => (
+                <HCTooltip
+                  key={col.propertyPath}
+                  text={col.propertyLabel}
+                  id={`title-tooltip-${indicator}-${index}`}
+                  placement="top"
+                >
+                  <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
+                </HCTooltip>
+              ))}
             </td>
           );
-        }
-        if (expandedNestedTableColumn.includes(property.propertyPath)) {
-          return (
-            <td className={styles.innerTableContainer} key={`table${propertyPath}`}>
-              {renderStructuredProperty(property.properties, item[propertyPath])}
-            </td>
-          );
-        }
-        return (
-          <td key={`${property.propertyPath}-${index}`} className={styles.nestedColumn}>
-            {property?.properties?.map((col, index) => (
-              <HCTooltip
-                key={col.propertyPath}
-                text={col.propertyLabel}
-                id={`title-tooltip-${indicator}-${index}`}
-                placement="top"
-              >
-                <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
-              </HCTooltip>
-            ))}
-          </td>
-        );
+        });
+        return <tr key={indicator}>{row}</tr>;
       });
-      return <tr key={indicator}>{row}</tr>;
-    });
 
     const render = (
       <table key={`table-${Math.random()}`} className={styles.innerColumnTable}>
@@ -213,7 +217,21 @@ const ResultsTabularView = props => {
                             handleSubHeaderClick(col.propertyPath);
                           }}
                         >
-                          {col.propertyLabel}
+                          <div style={{float: "left"}}>{col.propertyLabel}</div>
+                          <HCTooltip
+                            text={`Click to expand or collapse the nested properties.`}
+                            id={`${col?.propertyLabel}-expandnestedtooltip`}
+                            placement="right"
+                          >
+                            <i style={{marginLeft: 5}}>
+                              <FontAwesomeIcon
+                                className={styles.iconHover}
+                                icon={faLayerGroup}
+                                size="sm"
+                                data-testid={`${col?.propertyLabel}-expandnested`}
+                              />
+                            </i>
+                          </HCTooltip>
                         </div>
                       ) : (
                         <div className={styles.columHeader}>{col.propertyLabel}</div>
@@ -263,12 +281,31 @@ const ResultsTabularView = props => {
           },
           headerStyle: {
             cursor: "pointer",
+            textAlign: "right",
           },
           headerFormatter: (_, $, {sortElement}) => (
             <>
-              <span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>
+              <span
+                style={{float: "left"}}
+                className="resultsTableHeaderColumn"
+                data-testid={`resultsTableColumn-${item.propertyLabel}`}
+              >
                 {item.propertyLabel}
               </span>
+              <HCTooltip
+                text={`Click to expand or collapse the nested properties.`}
+                id={`${item.propertyLabel}-expandnestedtooltip`}
+                placement="top-end"
+              >
+                <i style={{marginLeft: 5}}>
+                  <FontAwesomeIcon
+                    className={styles.iconHover}
+                    icon={faLayerGroup}
+                    size="sm"
+                    data-testid={`${item.propertyLabel}-expandnested`}
+                  />
+                </i>
+              </HCTooltip>
               {sortElement}
             </>
           ),
