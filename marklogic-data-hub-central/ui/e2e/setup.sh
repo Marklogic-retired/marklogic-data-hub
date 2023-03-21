@@ -28,7 +28,7 @@ then
         ./gradlew -i mldeployusers -PenvironmentName=$env -PmlUsername=$mlSecurityUsername -PmlPassword=$mlSecurityPassword
         ./gradlew hubDeploy -PenvironmentName=$env --info --stacktrace
 else
-        ./gradlew mlSetTraceEvents -Pevents=hub-core,hub-mapping
+        ./gradlew mlSetTraceEvents -Pevents=hub-core,hub-mapping -PmlUsername=$mlSecurityUsername -PmlPassword=$mlSecurityPassword 
         ./gradlew mlDeploy -PmlUsername=$mlSecurityUsername -PmlPassword=$mlSecurityPassword --info --stacktrace
         # deployAsDeveloper so custom roles don't break hubDeploy since roles were created by admin
         ./gradlew hubDeployAsDeveloper --info --stacktrace
