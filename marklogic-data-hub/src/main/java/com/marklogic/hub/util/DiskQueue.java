@@ -132,7 +132,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
     @Override
     public void close() {
         if (closeFile()) {
-            LOG.warning(MessageFormat.format("{0} still had open file", com.marklogic.hub.legacy.collector.DiskQueue.class.getSimpleName()));
+            LOG.warning(MessageFormat.format("{0} still had open file", DiskQueue.class.getSimpleName()));
         }
     }
 

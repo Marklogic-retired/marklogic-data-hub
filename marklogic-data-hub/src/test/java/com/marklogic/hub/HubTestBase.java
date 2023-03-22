@@ -30,14 +30,8 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.legacy.LegacyDebugging;
-import com.marklogic.hub.legacy.LegacyTracing;
-import com.marklogic.hub.legacy.flow.CodeFormat;
-import com.marklogic.hub.legacy.flow.DataFormat;
-import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.test.AbstractHubTest;
 import com.marklogic.hub.test.HubConfigInterceptor;
-import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.apache.commons.io.FilenameUtils;
@@ -134,22 +128,6 @@ public class HubTestBase extends AbstractHubTest {
         logger.info("Starting: " + testId);
         hubConfigInterceptor.borrowHubConfig(Thread.currentThread().getName());
         logger.info("Borrowed HubConfig for host: " + getHubConfig().getHost() + "; test: " + testId);
-    }
-
-    protected void enableDebugging() {
-        LegacyDebugging.create(getHubClient().getStagingClient()).enable();
-    }
-
-    protected void disableDebugging() {
-        LegacyDebugging.create(getHubClient().getStagingClient()).disable();
-    }
-
-    protected void enableTracing() {
-        LegacyTracing.create(getHubClient().getStagingClient()).enable();
-    }
-
-    protected void disableTracing() {
-        LegacyTracing.create(getHubClient().getStagingClient()).disable();
     }
 
     @Deprecated // since DHF 5.4.0; using this may not work when the test is run against DHS; use runAsDataHubOperator instead
@@ -354,22 +332,6 @@ public class HubTestBase extends AbstractHubTest {
             return getClientByName(databaseName).newServerEval().xquery(query).eval(handle);
         } catch (FailedRequestException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    protected void allCombos(ComboListener listener) {
-        CodeFormat[] codeFormats = new CodeFormat[]{CodeFormat.JAVASCRIPT, CodeFormat.XQUERY};
-        DataFormat[] dataFormats = new DataFormat[]{DataFormat.JSON, DataFormat.XML};
-        FlowType[] flowTypes = new FlowType[]{FlowType.INPUT, FlowType.HARMONIZE};
-        Boolean[] useEses = new Boolean[]{false, true};
-        for (CodeFormat codeFormat : codeFormats) {
-            for (DataFormat dataFormat : dataFormats) {
-                for (FlowType flowType : flowTypes) {
-                    for (Boolean useEs : useEses) {
-                        listener.onCombo(codeFormat, dataFormat, flowType, useEs);
-                    }
-                }
-            }
         }
     }
 

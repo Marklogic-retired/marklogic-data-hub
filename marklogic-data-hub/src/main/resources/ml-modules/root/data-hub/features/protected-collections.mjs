@@ -91,6 +91,9 @@ function onInstanceSave(stepContext, model, contentObject) {
 
     }
 
+    if (!model) {
+        return contentObject;
+    }
     const modelName = model.info.title;
     if(featureEnabled(model.definitions[modelName]))
     {

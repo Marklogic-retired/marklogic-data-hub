@@ -21,10 +21,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.legacy.flow.LegacyFlow;
-import com.marklogic.hub.legacy.job.Job;
-import com.marklogic.hub.legacy.job.JobStatus;
-import com.marklogic.hub.legacy.job.LegacyJobManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
@@ -35,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -43,8 +38,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class MlcpRunner extends ProcessRunner {
 
-    private final LegacyJobManager jobManager;
-    private final LegacyFlow flow;
     private final JsonNode mlcpOptions;
     private MlcpBean mlcpBean;
     private final String jobId = UUID.randomUUID().toString();
@@ -66,11 +59,11 @@ public class MlcpRunner extends ProcessRunner {
      * @param mlcpOptions
      */
     public MlcpRunner(HubConfigImpl hubConfig, JsonNode mlcpOptions) {
-        this(hubConfig, null, null, mlcpOptions);
+        this(hubConfig, null, mlcpOptions);
     }
 
     public MlcpRunner(HubConfigImpl hubConfig, MlcpBean mlcpBean) {
-        this(hubConfig, null, null, null);
+        this(hubConfig, null, null);
         this.mlcpBean = mlcpBean;
         mlcpBean.setCommand("IMPORT");
         mlcpBean.setHost(hubConfig.getHost());
@@ -81,11 +74,9 @@ public class MlcpRunner extends ProcessRunner {
         mlcpBean.setPassword(hubConfig.getMlPassword());
     }
 
-    public MlcpRunner(HubConfigImpl hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions) {
+    public MlcpRunner(HubConfigImpl hubConfig, DatabaseClient databaseClient, JsonNode mlcpOptions) {
         super();
 
-        this.jobManager = LegacyJobManager.create(hubConfig.newJobDbClient());
-        this.flow = flow;
         this.mlcpOptions = mlcpOptions;
         this.databaseClient = databaseClient;
 
@@ -115,44 +106,15 @@ public class MlcpRunner extends ProcessRunner {
 
     @Override
     public void run() {
-        Job job = null;
-        if (flow != null) {
-            job = Job.withFlow(flow).withJobId(jobId);
-            jobManager.saveJob(job);
-        }
-
         try {
-            MlcpBean bean = this.mlcpBean != null ? this.mlcpBean : makeMlcpBean(job);
+            MlcpBean bean = this.mlcpBean != null ? this.mlcpBean : makeMlcpBean();
             if (this.isHostLoadBalancer) {
                 bean.setRestrict_hosts(true);
             }
             buildCommand(bean);
             super.run();
         } catch (Exception e) {
-            if (job != null) {
-                job.withStatus(JobStatus.FAILED)
-                    .withEndTime(new Date());
-                jobManager.saveJob(job);
-            }
             throw new RuntimeException(e);
-        } finally {
-            if (job != null) {
-                JobStatus status;
-                if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                    status = JobStatus.FINISHED_WITH_ERRORS;
-                } else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
-                    status = JobStatus.FINISHED;
-                } else {
-                    status = JobStatus.FAILED;
-                }
-
-                // store the thing in MarkLogic
-                job.withJobOutput(getProcessOutput())
-                    .withStatus(status)
-                    .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
-                    .withEndTime(new Date());
-                jobManager.saveJob(job);
-            }
         }
     }
 
@@ -198,7 +160,7 @@ public class MlcpRunner extends ProcessRunner {
                 "</Configuration>\n";
     }
 
-    private MlcpBean makeMlcpBean(Job job) throws Exception {
+    private MlcpBean makeMlcpBean() throws Exception {
         MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
         if (databaseClient != null) {
             bean.setHost(databaseClient.getHost());
@@ -218,10 +180,6 @@ public class MlcpRunner extends ProcessRunner {
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
             bean.setInput_file_path(canonicalPath);
-        }
-
-        if (job != null) {
-            bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
         }
 
         bean.setModules_root("/");
