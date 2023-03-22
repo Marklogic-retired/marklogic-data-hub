@@ -17,12 +17,8 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.legacy.flow.CodeFormat;
-import com.marklogic.hub.legacy.flow.DataFormat;
-import com.marklogic.hub.legacy.flow.FlowType;
 
 import java.io.File;
-import java.nio.file.Path;
 
 /**
  * Interface that handles the management of DHF projects on disk
@@ -34,25 +30,10 @@ import java.nio.file.Path;
 public interface Scaffolding {
 
     /**
-     * Returns the directory of the flow
-     * @param entityName - the entity name
-     * @param flowName - the name of the flow
-     * @param flowType - FlowType (sjs or xqy)
-     * @return the directory path as a Path type
-     */
-    Path getLegacyFlowDir(String entityName, String flowName, FlowType flowType);
-
-    /**
      * Creates an entity given a string name
      * @param entityName - the name of the entity as string
      */
     void createEntity(String entityName);
-
-    /**
-     * Creates a legacy mapping given a string name
-     * @param mappingName - the name of the mapping as string
-     */
-    void createLegacyMappingDir(String mappingName);
 
     /**
      * Creates a mapping given a string name
@@ -81,50 +62,4 @@ public interface Scaffolding {
      * @return the File that the flow was written to
      */
     File createDefaultFlow(String flowName);
-
-    /**
-     * Creates a flow for an entity with Entity Services model as default
-     * @param entityName - name of the entity to associate the flow with
-     * @param flowName - the name of the flow as a string
-     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @param codeFormat - the format of the code as CodeFormat enum
-     * @param dataFormat - the format of the data (json or xml)
-     */
-    void createLegacyFlow(String entityName, String flowName,
-                          FlowType flowType, CodeFormat codeFormat,
-                          DataFormat dataFormat);
-
-    /**
-     * Creates a flow for an entity with an additional option for using Entity Services
-     * @param entityName - name of the entity to associate the flow with
-     * @param flowName - the name of the flow as a string
-     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @param codeFormat - the format of the code as CodeFormat enum
-     * @param dataFormat - the format of the data (json or xml)
-     * @param useEsModel - true to use Entity Services, false not to
-     */
-    void createLegacyFlow(String entityName, String flowName,
-                          FlowType flowType, CodeFormat codeFormat,
-                          DataFormat dataFormat, boolean useEsModel);
-
-    /**
-     * Creates a flow for an entity with an additional option for using Entity Services
-     * @param entityName - name of the entity to associate the flow with
-     * @param flowName - the name of the flow as a string
-     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @param codeFormat - the format of the code as CodeFormat enum
-     * @param dataFormat - the format of the data (json or xml)
-     * @param useEsModel - true to use Entity Services, false not to
-     * @param mappingNameWithVersion - the name of the mapping name and version together (name-version) you wish to use to generate the content plugin
-     */
-    void createLegacyFlow(String entityName, String flowName,
-                          FlowType flowType, CodeFormat codeFormat,
-                          DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion);
-
-
-    /**
-     * Update a specific entity that's legacy
-     * @param entityName - name of the entity
-     */
-    void updateLegacyEntity(String entityName);
 }

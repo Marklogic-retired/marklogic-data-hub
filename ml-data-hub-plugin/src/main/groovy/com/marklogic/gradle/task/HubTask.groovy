@@ -26,10 +26,6 @@ import com.marklogic.hub.deploy.commands.LoadHubArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
-import com.marklogic.hub.legacy.LegacyDebugging
-import com.marklogic.hub.legacy.LegacyFlowManager
-import com.marklogic.hub.legacy.LegacyTracing
-import com.marklogic.hub.legacy.job.LegacyJobManager
 import com.marklogic.hub.impl.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -105,28 +101,8 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    LegacyTracing getLegacyTracing() {
-        return LegacyTracing.create(getStagingClient())
-    }
-
-    @Internal
-    LegacyDebugging getLegacyDebugging() {
-        return LegacyDebugging.create(getStagingClient())
-    }
-
-    @Internal
     FlowManager getFlowManager() {
         getProject().property("flowManager")
-    }
-
-    @Internal
-    LegacyFlowManager getLegacyFlowManager() {
-        getProject().property("legacyFlowManager")
-    }
-
-    @Internal
-    LegacyJobManager getJobManager() {
-        return LegacyJobManager.create(getHubConfig().newJobDbClient());
     }
 
     @Internal

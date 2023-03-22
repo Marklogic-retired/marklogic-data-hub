@@ -20,10 +20,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.modules.AllButAssetsModulesFinder;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
-import com.marklogic.client.ext.modulesloader.ModulesManager;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
@@ -31,32 +28,20 @@ import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.impl.EntityManagerImpl;
-import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.legacy.flow.LegacyFlow;
-import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Date;
 
 
 /**
@@ -73,9 +58,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Autowired
     protected EntityManager entityManager;
-
-    @Autowired
-    private LegacyFlowManager legacyFlowManager;
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -103,7 +85,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         this();
         this.hubConfig = hubConfig;
         this.entityManager = new EntityManagerImpl(hubConfig);
-        this.legacyFlowManager = new LegacyFlowManagerImpl(hubConfig);
     }
 
     private PropertiesModuleManager getModulesManager() {
@@ -257,60 +238,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                 }
             }
             entityManager.deployQueryOptions();
-        }
-
-        try {
-            if (startPath.toFile().exists()) {
-                XMLDocumentManager documentManager = hubConfig.newModulesDbClient().newXMLDocumentManager();
-                DocumentWriteSet documentWriteSet = documentManager.newWriteSet();
-                // Provide default permissions for files written
-                DocumentMetadataHandle meta = new DocumentMetadataHandle();
-                documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
-                documentWriteSet.addDefault(meta);
-
-                ModulesManager modulesManager = modulesLoader.getModulesManager();
-
-                //first let's do the entities and flows + extensions
-                Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                        String currentDir = dir.normalize().toAbsolutePath().toString();
-
-                        // for REST dirs we need to deploy all the REST stuff (transforms, options, services, etc)
-                        if (isInputRestDir(dir)) {
-                            modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, stagingClient);
-                            return FileVisitResult.SKIP_SUBTREE;
-                        }
-                        // for harmonize dir we put stuff in final
-                        else if (isHarmonizeRestDir(dir)) {
-                            modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
-                            return FileVisitResult.SKIP_SUBTREE;
-                        }
-                        else {
-                            return FileVisitResult.CONTINUE;
-                        }
-                    }
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                        if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
-                            LegacyFlow flow = legacyFlowManager.getFlowFromProperties(file);
-                            StringHandle handle = new StringHandle(flow.serialize());
-                            handle.setFormat(Format.XML);
-                            documentWriteSet.add(flow.getFlowDbPath(), handle);
-                            modulesManager.saveLastLoadedTimestamp(file.toFile(), new Date());
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-                if (documentWriteSet.size() > 0) {
-                    documentManager.write(documentWriteSet);
-                }
-            }
-            threadPoolTaskExecutor.shutdown();
-        } catch (IOException e) {
-            e.printStackTrace();
-            //throw new RuntimeException(e);
         }
     }
 

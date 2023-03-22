@@ -13,11 +13,6 @@ public class GetInstalledVersionTest extends AbstractHubCoreTest {
         String installedVersion = versions.getInstalledVersion();
         assertEquals(getHubConfig().getJarVersion(), installedVersion, "This is the happy path - when DH is " +
             "installed, we expect this to return the same version as that of the DH client");
-
-        assertEquals(installedVersion, versions.getVersionFromViaLegacyRestExtension(getHubClient().getStagingClient()),
-            "Per DHFPROD-7334, DHF 5.5 no longer forks a bunch of REST modules to support the 'ml:*' pattern. " +
-                "However, the Versions class still makes use of ml:hubversion to determine the version of a DHF 4 " +
-                "instance. So we need to ensure that the staging rewriter still supports that route.");
     }
 
     @Test

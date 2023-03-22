@@ -20,19 +20,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
-import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,9 +34,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -206,13 +206,6 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         }
     }
 
-    @Override public Path getLegacyFlowDir(String entityName, String flowName, FlowType flowType) {
-        Path entityDir = hubConfig.getHubProject().getEntityDir(entityName);
-        Path typeDir = entityDir.resolve(flowType.toString());
-        Path flowDir = typeDir.resolve(flowName);
-        return flowDir;
-    }
-
     @Override public void createEntity(String entityName) {
         Path entityDir = hubConfig.getHubProject().getHubEntitiesDir();
 
@@ -227,11 +220,6 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         }
         String fileContents = getFileContent("scaffolding/Entity.json", entityName);
         writeToFile(fileContents, entityFile);
-    }
-
-    @Override public void createLegacyMappingDir(String mappingName) {
-        Path mappingDir = hubConfig.getHubProject().getLegacyMappingDir(mappingName);
-        mappingDir.toFile().mkdirs();
     }
 
     @Override public void createMappingDir(String mappingName) {
@@ -329,98 +317,6 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return fileContents;
     }
 
-    @Override public void createLegacyFlow(String entityName, String flowName,
-                                           FlowType flowType, CodeFormat codeFormat,
-                                           DataFormat dataFormat) {
-        createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
-    }
-
-    @Override public void createLegacyFlow(String entityName, String flowName,
-                                           FlowType flowType, CodeFormat codeFormat,
-                                           DataFormat dataFormat, boolean useEsModel) {
-        createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
-    }
-
-    @Override public void createLegacyFlow(String entityName, String flowName,
-                                           FlowType flowType, CodeFormat codeFormat,
-                                           DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
-        try {
-            Path flowDir = getLegacyFlowDir(entityName, flowName, flowType);
-            flowDir.toFile().mkdirs();
-
-            if (useEsModel) {
-                ContentPlugin cp = new ContentPlugin(hubConfig.newStagingClient());
-                String content = cp.getContents(entityName, codeFormat, flowType, mappingNameWithVersion);
-                writeBuffer(content, flowDir.resolve("content." + codeFormat));
-            } else {
-                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/content." + codeFormat,
-                    flowDir.resolve("content." + codeFormat));
-            }
-
-            if (flowType.equals(FlowType.HARMONIZE)) {
-                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/collector." + codeFormat,
-                    flowDir.resolve("collector." + codeFormat));
-
-                writeFile("scaffolding/" + flowType + "/" + codeFormat + "/writer." + codeFormat,
-                    flowDir.resolve("writer." + codeFormat));
-            }
-
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/headers." + codeFormat,
-                flowDir.resolve("headers." + codeFormat));
-
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/triples." + codeFormat,
-                flowDir.resolve("triples." + codeFormat));
-
-
-            writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main." + codeFormat,
-                flowDir.resolve("main." + codeFormat));
-
-            LegacyFlow flow = LegacyFlowBuilder.newFlow()
-                .withEntityName(entityName)
-                .withName(flowName)
-                .withType(flowType)
-                .withCodeFormat(codeFormat)
-                .withDataFormat(dataFormat)
-                .withMapping(mappingNameWithVersion)
-                .build();
-
-            try (OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(flowDir.resolve(flowName + ".properties").toFile()), StandardCharsets.UTF_8)) {
-                flow.toProperties().store(fw, "");
-            }
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override public void updateLegacyEntity(String entityName) {
-        Path oldEntityDir = hubConfig.getHubProject().getEntityDir(entityName);
-        Path newEntityDir = hubConfig.getHubProject().getHubEntitiesDir();
-        String entityFileName = entityName + "entity.json";
-        try {
-            Files.move(oldEntityDir.resolve(entityFileName), newEntityDir.resolve(entityFileName));
-        } catch (IOException e) {
-            logger.warn("Unable to move legacy entity '" + entityName + "'", e);
-        }
-    }
-
-    private void writeFile(String srcFile, Path dstFile) {
-        logger.info("writing: " + srcFile + " => " + dstFile.toString());
-        if (!dstFile.toFile().exists()) {
-            InputStream inputStream = Scaffolding.class.getClassLoader()
-                .getResourceAsStream(srcFile);
-            FileUtil.copy(inputStream, dstFile.toFile());
-        }
-    }
-
-    private void writeBuffer(String buffer, Path dstFile) {
-        logger.info("writing: " + dstFile.toString());
-        if (!dstFile.toFile().exists()) {
-            InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8));
-            FileUtil.copy(inputStream, dstFile.toFile());
-        }
-    }
-
     private void writeToFile(String fileContent, File dstFile) {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dstFile),StandardCharsets.UTF_8))) {
             bw.write(fileContent);
@@ -451,31 +347,5 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             throw new RuntimeException(e);
         }
         return output.toString();
-    }
-
-    public static class ContentPlugin extends ResourceManager {
-        private static final String NAME = "mlScaffoldContent";
-
-        private RequestParameters params = new RequestParameters();
-
-        public ContentPlugin(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        public String getContents(String entityName, CodeFormat codeFormat, FlowType flowType, String mappingName) {
-            params.add("entity", entityName);
-            params.add("codeFormat", codeFormat.toString());
-            params.add("flowType", flowType.toString());
-            if(mappingName != null) {
-                params.add("mapping", mappingName);
-            }
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || ! resultItr.hasNext()) {
-                throw new RuntimeException("Unable to get Content Plugin scaffold");
-            }
-            ResourceServices.ServiceResult res = resultItr.next();
-            return res.getContent(new StringHandle()).get().replaceAll("\n", "\r\n");
-        }
     }
 }

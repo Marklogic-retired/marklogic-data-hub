@@ -17,7 +17,6 @@
 package com.marklogic.hub.scaffolding;
 
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.impl.Scaffolding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScaffoldingTest extends AbstractHubCoreTest {
 
@@ -47,11 +47,6 @@ public class ScaffoldingTest extends AbstractHubCoreTest {
 
         Path entityPath = getHubProject().getProjectDir().resolve("entities").resolve("my-fun-test.entity.json");
         assertTrue(entityPath.toFile().exists());
-
-        Path flowDir = scaffolding.getLegacyFlowDir("my-fun-test", "blah", FlowType.INPUT);
-        assertEquals(Paths.get(pluginDir.toString(), "entities", "my-fun-test", "input", "blah"),
-            flowDir);
-        assertFalse(flowDir.toFile().exists());
     }
 
     @Test

@@ -30,7 +30,7 @@ import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteJobsTask
-import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
+
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
 import com.marklogic.hub.gradle.task.DescribeRoleTask
 import com.marklogic.hub.gradle.task.DescribeUserTask
@@ -44,7 +44,6 @@ import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
 import com.marklogic.hub.gradle.task.PrintInheritableRolesTask
 import com.marklogic.hub.gradle.task.PullChangesTask
 import com.marklogic.hub.impl.*
-import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import com.marklogic.mgmt.ManageClient
 import com.marklogic.mgmt.ManageConfig
 import com.marklogic.mgmt.admin.AdminConfig
@@ -69,7 +68,6 @@ class DataHubPlugin implements Plugin<Project> {
     private MappingManagerImpl mappingManager
     private MasteringManagerImpl masteringManager
     private FlowManagerImpl flowManager
-    private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
     private GenerateFunctionMetadataCommand generateFunctionMetadataCommand
 
@@ -136,9 +134,6 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubInfo", type: HubInfoTask)
 
         String hubConversionGroup = "Data Hub Conversion"
-        project.task("hubDeleteLegacyMappings", group: hubConversionGroup, type: DeleteLegacyMappingsTask,
-            description: "Delete installed legacy mappings, which are mappings that have not been converted into the format required by Hub Central"
-        ).mustRunAfter("hubDeployUserArtifacts")
         project.task("hubConvertForHubCentral", group: hubConversionGroup, type: ConvertForHubCentralTask,
             description: "Convert flows, mappings and entity models in the local project that were created before version 5.3.0 into the new format required for usage within Hub Central"
         ).finalizedBy(["hubSaveIndexes"])
@@ -176,9 +171,6 @@ class DataHubPlugin implements Plugin<Project> {
                 "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubClearUserSchemas", type: ClearUserSchemasTask, group: developGroup,
             description: "Clears all user schemas in the staging, final schemas databases. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
-        project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask,
-            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " +
-                "only use this if your project has not been converted for Hub Central usage")
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
                 "a type (either 'ingestion' or 'custom'; defaults to 'custom') via -PstepDefType=ingestion|custom, " +
@@ -221,14 +213,6 @@ class DataHubPlugin implements Plugin<Project> {
         String runGroup = "Data Hub Run"
         project.task("hubRunFlow", group: runGroup, type: RunFlowTask,
             description: "Run a flow; requires defining flowName at a minimum; e.g. -PflowName=myFlow")
-        project.task("hubEnableDebugging", group: runGroup, type: EnableDebuggingTask,
-            description: "Enables debugging on the running DHF server. Requires flow-developer-role or equivalent.")
-        project.task("hubDisableDebugging", group: runGroup, type: DisableDebuggingTask,
-            description: "Disables debugging on the running DHF server. Requires flow-developer-role or equivalent.")
-        project.task("hubEnableTracing", group: runGroup, type: EnableTracingTask,
-            description: "Enables tracing on the running DHF server. Requires flow-developer-role or equivalent.")
-        project.task("hubDisableTracing", group: runGroup, type: DisableTracingTask,
-            description: "Disables tracing on the running DHF server. Requires flow-developer-role or equivalent.")
         project.task("hubUnmergeEntities", group: runGroup, type: UnmergeEntitiesTask,
             description: "Reverses the last set of merges made into the given merge URI.\n -PmergeURI=URI. \n" +
                 "-PretainAuditTrail=<true|false> (default true) determines if provenance for the merge/unmerge is kept. \n" +
@@ -252,20 +236,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Previews running hubFixCreatedByStep by printing the number of documents whose datahubCreatedByStep " +
                 "metadata key is a step definition name instead of a step name. " +
                 "Specify the database to perform this in via -Pdatabase=(name of staging or final database).")
-
-        String legacyFlowGroup = "Data Hub Legacy Flow"
-        project.task("hubCreateHarmonizeFlow", group: legacyFlowGroup, type: CreateHarmonizeLegacyFlowTask,
-            description: "Create a DHF 4 harmonize flow in the project directory")
-        project.task("hubCreateInputFlow", group: legacyFlowGroup, type: CreateInputLegacyFlowTask,
-            description: "Create a DHF 4 input flow in the project directory")
-        project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask,
-            description: "Run a DHF 4 flow")
-        project.task("hubDeleteLegacyJobs", group: legacyFlowGroup, type: DeleteLegacyJobsTask,
-            description: "Delete DHF 4 jobs data")
-        project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask,
-            description: "Export DHF jobs data")
-        project.task("hubImportLegacyJobs", group: legacyFlowGroup, type: ImportJobsTask,
-            description: "Import DHF 4 jobs data")
 
         ((UpdateIndexesTask)project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)
 
@@ -311,7 +281,6 @@ class DataHubPlugin implements Plugin<Project> {
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         masteringManager = ctx.getBean(MasteringManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
-        legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
 
         project.extensions.add("dataHubApplicationContext", ctx)
@@ -369,7 +338,6 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("masteringManager", masteringManager)
             project.extensions.add("flowManager", flowManager)
-            project.extensions.add("legacyFlowManager", legacyFlowManager)
             project.extensions.add("entityManager", entityManager)
 
             configureAppDeployer(project)

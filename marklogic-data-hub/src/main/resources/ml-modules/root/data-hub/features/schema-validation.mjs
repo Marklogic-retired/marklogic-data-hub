@@ -62,7 +62,9 @@ function onArtifactSave(artifactType, artifactName) {
 }
 
 function onInstanceSave(stepContext, model, contentObject) {
-
+    if (!model) {
+        return contentObject;
+    }
     hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Validating schema for content of type ${model.info.title}.`);
 
     const options = stepContext.options;
