@@ -185,10 +185,12 @@ function replaceLanguageWithLang(artifact) {
   }
 }
 
-function writeDocument(docUri, content, permissions, collections, database = xdmp.databaseName(xdmp.database())) {
+function writeDocument(docUri, content, permissions, collections, database = xdmp.databaseName(xdmp.database()), forceDifferentTransaction = false) {
   const dbId = xdmp.database(database);
-  assertUriHasNotBeenActedOn(docUri, dbId);
-  if (isWriteTransaction() && dbId === xdmp.database()) {
+  if (!forceDifferentTransaction) {
+    assertUriHasNotBeenActedOn(docUri, dbId);
+  }
+  if (!forceDifferentTransaction && isWriteTransaction() && dbId === xdmp.database()) {
     xdmp.documentInsert(docUri, content, {permissions: permissions, collections: normalizeToArray(collections) });
     return {
       transaction: xdmp.transaction(),
