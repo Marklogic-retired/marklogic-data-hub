@@ -197,7 +197,7 @@ function cleanupConceptsFromHubCentralConfig(retainConceptNames) {
         }
       }
       if (changesMade) {
-        hubUtils.writeDocument(hubCentralConfigURI, hubCentralConfigObj, xdmp.nodePermissions(hubCentralConfig), xdmp.nodeCollections(hubCentralConfig), config.FINALDATABASE);
+        hubUtils.writeDocument(hubCentralConfigURI, hubCentralConfigObj, xdmp.nodePermissions(hubCentralConfig), xdmp.nodeCollections(hubCentralConfig), config.FINALDATABASE, true);
       }
     }
   }
