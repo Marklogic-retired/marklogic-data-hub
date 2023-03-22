@@ -391,7 +391,8 @@ function invokeFeatureMethods(stepExecutionContext, contentArray, method) {
   const flowStep = stepExecutionContext.flowStep;
   let targetEntityType = flowStep.options.targetEntity || flowStep.options.targetEntityType;
   if (targetEntityType) {
-    const model = entityLib.findModelForEntityTypeId(targetEntityType).toObject();
+    const modelNode = entityLib.findModelForEntityTypeId(targetEntityType);
+    const model = fn.exists(modelNode) ? modelNode.toObject(): null;
     const features = Object.keys(featuresCore.getFeatures());
     contentArray.forEach(content => {
       features.forEach(feat => {

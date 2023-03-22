@@ -54,9 +54,9 @@ public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
         runAsDataHubDeveloper();
         new LoadHubModulesCommand(getHubConfig()).createCustomRewriters();
 
-        Fragment rewriter = new Fragment(getModulesFile("/data-hub/5/rest-api/jobs-rewriter.xml"),
+        Fragment rewriter = new Fragment(getModulesFile("/data-hub/5/rest-api/staging-rewriter.xml"),
             Namespace.getNamespace("rw", "http://marklogic.com/xdmp/rewriter"));
-        assertTrue(rewriter.elementExists("/rw:rewriter/rw:match-path/rw:dispatch[. = '/trace-ui/index.html']"),
-            "Verifying that the route for the DHF 4 trace-ui app was added when modules were installed");
+        assertTrue(rewriter.elementExists("/rw:rewriter/rw:match-path/rw:match-method/rw:dispatch[. = '/data-hub/5/endpoints/collector.mjs']"),
+            "Verifying that the route for the hub collector endpoint is added to the staging-rewriter");
     }
 }
