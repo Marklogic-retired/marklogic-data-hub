@@ -136,6 +136,8 @@
   &:hover{
       color: var(--hoverColor);
   }
+  display: flex;
+  align-items: center;
 }
 
 .foreignKeyRelationshipIcon {
@@ -163,4 +165,33 @@
   width: 100%;
   padding-top: 5px;
   padding-bottom: 10px;
+}
+
+.addEntityProp{
+  display: grid;
+  place-items: center;
+  padding: 16px 16px !important;
+  border: 1px solid #e8e8e8;
+  border-radius: 0px !important;
+  border-top-width: 0px !important;
+
+  &SidePanel {
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+.buttonLink{
+  padding: 0px !important;
+  border: 0 !important;
+  margin: 0 !important;
+  text-align: center;
+}
+
+.tableContainer{
+  margin-bottom: 1rem !important;
+}
+
+table {
+  margin-bottom: 0 !important;
 }

@@ -259,6 +259,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
 
   it("Adding property to Person entity", () => {
     entityTypeTable.getExpandEntityIcon("Person");
+    // as Person has less than 10 properties, the add property link button shouldn't be visible
+    propertyTable.getLinkAddButton("Person").should("not.exist");
     propertyTable.getAddPropertyButton("Person").click();
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newID");

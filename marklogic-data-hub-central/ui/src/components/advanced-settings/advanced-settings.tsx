@@ -1078,7 +1078,7 @@ const AdvancedSettings: React.FC<Props> = props => {
                   {defaultCollections.map((collection, i) => {
                     return (
                       <div data-testid={`defaultCollections-${collection}`} key={i}>
-                        <AddTooltipWhenTextOverflow text={collection}  forceRender={true}/>
+                        <AddTooltipWhenTextOverflow text={collection} forceRender={true} />
                       </div>
                     );
                   })}

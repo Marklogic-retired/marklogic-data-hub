@@ -185,7 +185,8 @@ const EntityTiles = props => {
                   Unable to create mapping step. A mapping step with the name
                 <b>
                   <AddTooltipWhenTextOverflow text={mapping.name} />
-                </b> already exists.
+                </b>{" "}
+                  already exists.
               </p>
             ),
           })
