@@ -147,7 +147,6 @@ const PropertyTable: React.FC<Props> = props => {
     }
   }, [newRowKey]);
 
-
   const columns = [
     {
       text: "Property Name",
@@ -208,8 +207,13 @@ const PropertyTable: React.FC<Props> = props => {
         } else {
           renderText = (
             <span data-testid={text + "-span"} aria-label={"Property-name"}>
-
-              {record.joinPropertyType && record.joinPropertyType !== "" ? <i><AddTooltipWhenTextOverflow text={text} /></i> : <AddTooltipWhenTextOverflow text={text} />}
+              {record.joinPropertyType && record.joinPropertyType !== "" ? (
+                <i>
+                  <AddTooltipWhenTextOverflow text={text} />
+                </i>
+              ) : (
+                <AddTooltipWhenTextOverflow text={text} />
+              )}
               {record.multiple === record.propertyName && (
                 <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
                   <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
@@ -503,9 +507,21 @@ const PropertyTable: React.FC<Props> = props => {
           >
             <span className="p-2 inline-block cursor-pointer">
               <FontAwesomeIcon
+                tabIndex={0}
                 data-testid={"add-struct-" + propertyName}
                 className={styles.addIcon}
                 icon={faPlusSquare}
+                onKeyDown={event => {
+                  if (event.key === "Enter") {
+                    setStructuredTypeOptions({
+                      isStructured: true,
+                      name: text,
+                      propertyName: "",
+                    });
+                    setEditPropertyOptions({...editPropertyOptions, isEdit: false});
+                    toggleShowPropertyModal(true);
+                  }
+                }}
                 onClick={() => {
                   setStructuredTypeOptions({
                     isStructured: true,
@@ -531,6 +547,7 @@ const PropertyTable: React.FC<Props> = props => {
           >
             <i>
               <FontAwesomeIcon
+                tabIndex={0}
                 data-testid={"add-struct-" + propertyName}
                 className={styles.addIconReadOnly}
                 icon={faPlusSquare}
@@ -1306,42 +1323,61 @@ const PropertyTable: React.FC<Props> = props => {
         </div>
       ) : (
         <>
-          {headerColumns.length ? (
-            <HCTable
-              rowKey={sidePanelView ? "key" : "propertyName"}
-              rowClassName={record => {
-                let propertyName =
+          <div className={styles.tableContainer}>
+            {headerColumns.length ? (
+
+              <HCTable
+                rowKey={sidePanelView ? "key" : "propertyName"}
+                rowClassName={record => {
+                  let propertyName =
                   record.hasOwnProperty("add") && record.add !== ""
                     ? record.add
                       .split(",")
                       .map(item => encrypt(item))
                       .join("-")
                     : encrypt(record.propertyName);
-                return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
-              }}
-              columns={headerColumns}
-              data={handlePropertyNames(tableData)}
-              onExpand={
-                sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand
-              }
-              expandedRowKeys={sidePanelView ? sourceExpandedKeys : expandedRows}
-              keyUtil={"key"}
-              baseIndent={20}
-              pagination={false}
-              component={"property"}
-              showExpandIndicator={{bordered: true}}
-              childrenIndent={true}
-              subTableHeader={!sidePanelView}
-              nestedParams={{
-                headerColumns,
-                iconCellList: ["identifier", "multiple", "sortable", "delete", "add"],
-                state: sidePanelView
-                  ? [sourceExpandedKeys, setSourceExpandedKeys]
-                  : [expandedNestedRows, setExpandedNestedRows],
-              }}
-              className={sidePanelView ? "side-panel" : ""}
-            />
-          ) : null}
+                  return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
+                }}
+                columns={headerColumns}
+                data={handlePropertyNames(tableData)}
+                onExpand={
+                  sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand
+                }
+                expandedRowKeys={sidePanelView ? sourceExpandedKeys : expandedRows}
+                keyUtil={"key"}
+                baseIndent={20}
+                pagination={false}
+                component={"property"}
+                showExpandIndicator={{bordered: true}}
+                childrenIndent={true}
+                subTableHeader={!sidePanelView}
+                nestedParams={{
+                  headerColumns,
+                  iconCellList: ["identifier", "multiple", "sortable", "delete", "add"],
+                  state: sidePanelView
+                    ? [sourceExpandedKeys, setSourceExpandedKeys]
+                    : [expandedNestedRows, setExpandedNestedRows],
+                }}
+                className={sidePanelView ? "side-panel" : ""}
+              />
+            ) : null}
+            {tableData.length > 9 && (
+              <div
+                className={
+                  sidePanelView ? [styles.addEntityProp, styles.addEntityPropSidePanel].join(" ") : styles.addEntityProp
+                }
+              >
+                <button
+                  aria-label={`${entityName}-linkAddButton`}
+                  onClick={() => addPropertyButtonClicked()}
+                  className={["d-block btn-lg btn btn-link", styles.buttonLink].join(" ")}
+                >
+              + Add Entity Property
+                </button>
+              </div>
+            )}
+
+          </div>
         </>
       )}
     </div>

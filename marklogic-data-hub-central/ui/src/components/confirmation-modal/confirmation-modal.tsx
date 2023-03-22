@@ -280,9 +280,7 @@ const ConfirmationModal: React.FC<Props> = props => {
           )}
           {props.type === ConfirmationType.RevertChanges && (
             <>
-              <p aria-label="save-all-text">
-                Are you sure you want to revert all of your unpublished changes?
-              </p>
+              <p aria-label="save-all-text">Are you sure you want to revert all of your unpublished changes?</p>
               <p className={styles.revertChangeText}>{ModelingMessages.revertChangesConfirm}</p>
             </>
           )}

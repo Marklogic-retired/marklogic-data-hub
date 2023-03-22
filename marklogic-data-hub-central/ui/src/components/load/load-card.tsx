@@ -91,7 +91,6 @@ const LoadCard: React.FC<Props> = props => {
     return customStyles;
   };
 
-
   const handleCardDelete = name => {
     setDialogVisible(true);
     setLoadArtifactName(name);

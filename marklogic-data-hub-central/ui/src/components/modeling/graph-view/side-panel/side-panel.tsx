@@ -637,12 +637,17 @@ const GraphViewSidePanel: React.FC<Props> = ({
       return (
         <div id="entityType-tab-content">
           <Form className={"container-fluid"}>
-            <Row className={`mb-3 ${styles.nameWrap}`} >
+            <Row className={`mb-3 ${styles.nameWrap}`}>
               <FormLabel column lg={3}>
                 {"Name:"}
               </FormLabel>
-              <Col className={`d-flex align-items-center ${styles.nameOverflow}`} data-testid={modelingOptions.selectedEntity}>
-                <AddTooltipWhenTextOverflow text={modelingOptions.selectedEntity ? modelingOptions.selectedEntity : ""} />
+              <Col
+                className={`d-flex align-items-center ${styles.nameOverflow}`}
+                data-testid={modelingOptions.selectedEntity}
+              >
+                <AddTooltipWhenTextOverflow
+                  text={modelingOptions.selectedEntity ? modelingOptions.selectedEntity : ""}
+                />
               </Col>
             </Row>
             <Row className={"mb-3"}>

@@ -121,6 +121,10 @@ class GraphViewSidePanel {
   getConfirmationModal() {
     return cy.findByTestId("confirmation-modal");
   }
+
+  getAddPropertyLinkButton(entity: string) {
+    return cy.get(`[aria-label=${entity}-linkAddButton]`);
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

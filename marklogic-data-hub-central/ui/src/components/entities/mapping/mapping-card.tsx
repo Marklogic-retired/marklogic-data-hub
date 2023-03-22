@@ -138,7 +138,8 @@ const MappingCard: React.FC<Props> = props => {
             Are you sure you want to delete the
             <strong>
               <AddTooltipWhenTextOverflow text={mappingArtifactName} />
-            </strong> step?
+            </strong>{" "}
+            step?
           </p>
         </span>
         <div className={"d-flex justify-content-center pt-4 pb-2"}>

@@ -10,7 +10,6 @@ import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import dayjs from "dayjs";
 
-
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();

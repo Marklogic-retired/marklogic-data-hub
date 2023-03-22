@@ -2361,10 +2361,11 @@ const MappingStepDetail: React.FC = () => {
                 <span className={styles.entityTypeTitle}>
                   <p className={styles.entityTypeText}>
                     <span className={styles.entityIcon} />
-                    <strong className={styles.entityName} aria-label={`Entity-Type-${curationOptions.activeStep.entityName}`} >
-                      <div>
-                        Entity Type:&nbsp;
-                      </div>
+                    <strong
+                      className={styles.entityName}
+                      aria-label={`Entity-Type-${curationOptions.activeStep.entityName}`}
+                    >
+                      <div>Entity Type:&nbsp;</div>
                       <AddTooltipWhenTextOverflow text={curationOptions.activeStep.entityName} />
                     </strong>
                   </p>

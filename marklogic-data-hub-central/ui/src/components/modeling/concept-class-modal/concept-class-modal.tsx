@@ -264,7 +264,9 @@ const ConceptClassModal: React.FC<Props> = props => {
               <Row>
                 <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
                   {isEditModal ? (
-                    <div className={styles.nameOverflow}><AddTooltipWhenTextOverflow text={conceptName} /></div>
+                    <div className={styles.nameOverflow}>
+                      <AddTooltipWhenTextOverflow text={conceptName} />
+                    </div>
                   ) : (
                     <HCInput
                       id="concept-class-name"

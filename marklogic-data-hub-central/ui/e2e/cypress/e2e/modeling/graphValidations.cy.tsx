@@ -102,6 +102,7 @@ describe("Graph Validations", () => {
   it("can view and works with the Optional section and select source property dropdown", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Visit Customer entity**");
     entityTypeTable.viewEntityInGraphView("Customer");
+    graphViewSidePanel.getAddPropertyLinkButton("Customer").scrollIntoView().should("exist");
 
     cy.log("**Select Related Concept Classes tab**");
     graphViewSidePanel.getRelatedConceptClassesTab().click();

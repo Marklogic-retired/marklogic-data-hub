@@ -106,6 +106,10 @@ class PropertyTable {
     return cy.findByText(property);
   }
 
+  getLinkAddButton(entity: string) {
+    return cy.get(`[aria-label=${entity}-linkAddButton]`);
+  }
+
 }
 
 const propertyTable = new PropertyTable();

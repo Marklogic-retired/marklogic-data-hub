@@ -263,7 +263,9 @@ const EntityTypeTable: React.FC<Props> = props => {
                 </span>
               </HCTooltip>
             ) : (
-              <span data-testid={entityName + "-span"}><AddTooltipWhenTextOverflow text={entityName} placement="right" /></span>
+              <span data-testid={entityName + "-span"}>
+                <AddTooltipWhenTextOverflow text={entityName} placement="right" />
+              </span>
             )}
           </>
         );

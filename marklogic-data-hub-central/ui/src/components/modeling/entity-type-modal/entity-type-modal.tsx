@@ -305,7 +305,9 @@ const EntityTypeModal: React.FC<Props> = props => {
               <Row>
                 <Col className={errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex"}>
                   {props.isEditModal ? (
-                    <div className={styles.nameOverflow}><AddTooltipWhenTextOverflow text={name} /></div>
+                    <div className={styles.nameOverflow}>
+                      <AddTooltipWhenTextOverflow text={name} />
+                    </div>
                   ) : (
                     <HCInput
                       id="entity-name"
