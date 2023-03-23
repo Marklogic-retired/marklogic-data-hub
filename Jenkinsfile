@@ -755,6 +755,22 @@ println("Core Unit Tests Completed")
                     sendMail email,'<h3>All the Core Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
                     }
 }
+void postCoreTestsUnstable(){
+println("Unit Tests Failed")
+                      sh 'mkdir -p MLLogs;mkdir -p MLLogs/container1;docker cp  ml1.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container1/;mkdir -p MLLogs/container2;docker cp  ml2.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container2/;mkdir -p MLLogs/container3;docker cp  ml3.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container3/;'
+                      archiveArtifacts artifacts: 'MLLogs/**/*'
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	 email=getEmailFromGITUser author
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'<h3>Some of the  Core Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Core Unit Tests for $BRANCH_NAME Failed'
+                      }
+}
+
 
 void postTestsUnstable(){
 println("Unit Tests Failed")
@@ -768,7 +784,7 @@ println("Unit Tests Failed")
                     }else{
                     email=Email
                     }
-                      sendMail email,'<h3>Some of the  Core Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
+                      sendMail email,'<h3>Some of the Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
                       }
 }
 
@@ -899,7 +915,7 @@ pipeline{
                     postTestsSuccess()
                    }
                    unstable {
-                        postTestsUnstable()
+                        postCoreTestsUnstable()
                   }
             }
 		}
@@ -935,12 +951,12 @@ pipeline{
               postStage('Tests Passed')
            }
            unstable {
-              sh 'rm -rf ${STAGE_NAME}|| true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
+              sh 'rm -rf ${STAGE_NAME}|| true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
               archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
               postStage('Tests Failed')
            }
            failure{
-              sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
+              sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
               archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
               postStage('Stage Failed')
           }}
