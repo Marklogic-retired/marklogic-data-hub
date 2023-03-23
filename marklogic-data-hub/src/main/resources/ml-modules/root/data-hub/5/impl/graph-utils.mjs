@@ -31,8 +31,6 @@ const graphTraceEvent = xdmp.traceEnabled(consts.TRACE_GRAPH) ? consts.TRACE_GRA
 const isDefinedByIri = sem.iri("http://www.w3.org/2000/01/rdf-schema#isDefinedBy");
 const rdfTypeIri = sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
-const ctsQuery = cts.trueQuery();
-
 // Alterations to rdf:type values that qualify as Concepts in Hub Central graph views go in this function.
 function getRdfConceptTypes() {
   return [
@@ -61,7 +59,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                  {
                    {
                      # The primary entity query
-                     SELECT ?docURI ?subjectIRI (MIN(?label) AS ?subjectLabel) ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) (MIN(?objectIRI) AS ?firstObjectIRI) WHERE {
+                     SELECT ?docURI ?subjectIRI (MIN(?label) AS ?subjectLabel) ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (COUNT(DISTINCT(?objectIdentifier)) AS ?nodeCount) (MIN(?objectIRI) AS ?firstObjectIRI) WHERE {
                         ?subjectIRI rdf:type $entityTypeIRIs;
                           rdfs:isDefinedBy ?docURI.
                         FILTER (?docURI = $docURIs)
@@ -80,31 +78,19 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                             OPTIONAL {
                               ?predicateIRI $labelIRI ?anyPredicateLabel.
                             }
+                            OPTIONAL {
+                                ?objectIRI rdfs:isDefinedBy ?objectDocURI.
+                            }
+                            BIND(IF(BOUND(?objectDocURI), ?objectDocURI, ?objectIRI) AS ?objectIdentifier)
                         }
                       }
                       GROUP BY ?docURI ?subjectIRI ?predicateIRI
                     }
                     OPTIONAL {
                       ?firstObjectIRI rdfs:isDefinedBy ?firstDocURI.
+                      FILTER (BOUND(?predicateIRI) && !ISBLANK(?predicateIRI))
                     }
-                  } UNION {
-                    # The connected primary entities
-                    SELECT ?subjectIRI ?docURI ?predicateIRI  (MIN(?anyPredicateLabel) as ?predicateLabel)  ?firstObjectIRI  (MIN(?docObjectURI) AS ?firstDocURI) (MIN(?anyObjectLabel) as ?objectLabel) WHERE {
-                      ?subjectIRI rdf:type $entityTypeIRIs;
-                      rdfs:isDefinedBy ?docURI;
-                      ?predicateIRI ?firstObjectIRI.
-                      FILTER (?docURI = $docURIs)
-                      ?firstObjectIRI rdf:type $entityTypeIRIs;
-                          rdfs:isDefinedBy ?docObjectURI.
-                      OPTIONAL {
-                        ?predicateIRI $labelIRI ?anyPredicateLabel.
-                      }
-                      OPTIONAL {
-                        ?firstObjectIRI $labelIRI ?anyObjectLabel.
-                      }
-                    }
-                    GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
-                    LIMIT ${relatedLimit}
+                    BIND("entity graph" AS ?origin)
                   } UNION {
                        # The matching concepts
                      {
@@ -118,6 +104,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                                   $entityTypeIRIs <http://www.marklogic.com/data-hub#relatedConcept> ?conceptClassName.
                                   ?conceptClassName <http://www.marklogic.com/data-hub#conceptPredicate> ?predicateIRI.
                                   ?subjectIRI ?predicateIRI ?firstObjectIRI.
+                                  FILTER (isIRI(?predicateIRI) && ?predicateIRI = $predicateConceptList)
                                   OPTIONAL {
                                     ?firstObjectIRI $labelIRI ?anyConceptLabel.
                                   }
@@ -127,9 +114,10 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                       GROUP BY ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?conceptClassName
                       LIMIT ${conceptLimit} 
                      }
+                     BIND("concept graph" AS ?origin)
                }
            }
-  `, { docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
+  `, { docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
     if (graphTraceEnabled) {
       xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
     }
@@ -228,13 +216,17 @@ function getEntityNodesByDocument(docURI, limit) {
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
         {
-          SELECT ?subjectIRI ?docURI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(DISTINCT(?objectIRI)) AS ?nodeCount) WHERE {
+          SELECT ?subjectIRI ?docURI ?predicateIRI (MIN(?anyPredicateLabel) AS ?predicateLabel) (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(DISTINCT(?objectIdentifier)) AS ?nodeCount) WHERE {
               ?subjectIRI rdfs:isDefinedBy ?docURI.
               {
                   ?subjectIRI ?predicateIRI ?objectIRI
               } UNION {
                   ?objectIRI ?predicateIRI ?subjectIRI
               }
+              OPTIONAL {
+                  ?objectIRI rdfs:isDefinedBy ?objectDocURI.
+              }
+              BIND(IF(BOUND(?objectDocURI), ?objectDocURI, ?objectIRI) AS ?objectIdentifier)
               OPTIONAL {
                 ?predicateIRI $labelIRI ?anyPredicateLabel.
               }
@@ -338,7 +330,7 @@ function getNodeLabel(objectIRIArr, objectUri, document) {
 
 function shouldCreateGroupNode(item, individualNodeCount) {
   const nodeCount = fn.head(Sequence.from([item.nodeCount, 1]));
-  return (nodeCount - individualNodeCount) > 0;
+  return fn.exists(item.predicateIRI) && (nodeCount - individualNodeCount) > 0;
 }
 
 function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludeOriginNode = false) {
@@ -428,6 +420,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     let newLabel = "";
     const docUri = fn.string(item.docURI);
     if (archivedURIs.has(docUri)) {
+      xdmp.trace(consts.TRACE_GRAPH_DEBUG, `Skip adding archived document to graph: ${docUri}`);
       continue;
     }
 
@@ -506,11 +499,11 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           objectNode.propertiesOnHover = "";
           objectNode.group = objectIRI.substring(0, objectIRI.length - label.length - 1);
           objectNode.isConcept = false;
-          objectNode.count = item.nodeCount;
+          objectNode.count = fn.number(item.nodeCount) - numberOfPredicateConnections;
           objectNode.hasRelationships = false;
           nodesByID[objectId] = objectNode;
         }
-      } else if (fn.empty(item.nodeCount) || fn.head(item.nodeCount) === 1) {
+      } else {
         let edge = {};
         const docUriToNodeKeys = getUrisByIRI(objectIRI);
         const buildNodesAndEdgesFunction = key => {
@@ -527,7 +520,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
           edge = {};
           const sortedIds = [originId, key].sort();
           edge.id = "edge-" + sortedIds[0] + "-" + item.predicateIRI + "-" + sortedIds[1];
-          if (!edgesByID[edge.id]) {
+          if (fn.exists(item.predicateIRI) && !edgesByID[edge.id]) {
             edge.predicate = fn.string(item.predicateIRI);
             edge.label = originId === sortedIds[0] ? `${edgeLabel} →`:`← ${edgeLabel}`;
             edge.from = sortedIds[0];
@@ -545,7 +538,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             objectNode.group = objectGroup;
             objectNode.isConcept = !(objectHasDoc || entityTypeIds.includes(objectEntityType));
             objectNode.conceptClassName = item.conceptClassName;
-            objectNode.count = item.nodeCount;
+            objectNode.count = 1;
             const edgeCount = objectIRIs.reduce((total, iri) => total + getEdgeCount(iri), 0);
             objectNode.edgeCount = edgeCount;
             objectNode.hasRelationships = relatedObjHasRelationships(objectIRIs, objectEntityType, edgeCount, objectNode.isConcept);
