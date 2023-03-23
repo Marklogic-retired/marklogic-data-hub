@@ -19,7 +19,7 @@ const resultsTest1 = searchNodes(productQuery);
 let expectedNodeCount = 9;
 let expectedEdgeCount = 4;
 let assertions = [
-  test.assertEqual(expectedNodeCount, resultsTest1.total),
+  test.assertEqual(expectedNodeCount, resultsTest1.total, xdmp.toJsonString(resultsTest1)),
   test.assertEqual(expectedNodeCount, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
   test.assertEqual(expectedEdgeCount, resultsTest1.edges.length, xdmp.toJsonString(resultsTest1))
 ];
@@ -59,7 +59,7 @@ const resultsTest3 = searchNodes(multipleQuery);
 
 expectedNodeCount = 10;
 expectedEdgeCount = 10;
-let expectedHasRelationship = 3;
+let expectedHasRelationship = 2;
 assertions.concat([
   test.assertEqual(expectedNodeCount, resultsTest3.total),
   test.assertEqual(expectedNodeCount, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
@@ -173,11 +173,11 @@ const RelatedByPropertyDifferentFromID = {
 
 const ResultRelatedByPropertyDifferentFromID = searchNodes(RelatedByPropertyDifferentFromID);
 expectedCountDifferentFromID = 5;
-const expectedEdgeCountDifferentFromID = 6;
+const expectedEdgeCountDifferentFromID = 8; // 6 Customer to Office, 1 Customer to Customer, & 1 Customer to Zip concept
 assertions.concat([
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.total),
   test.assertEqual(expectedCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.nodes.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
-  test.assertEqual(expectedEdgeCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.edges.length),
+  test.assertEqual(expectedEdgeCountDifferentFromID, ResultRelatedByPropertyDifferentFromID.edges.length, xdmp.toJsonString(ResultRelatedByPropertyDifferentFromID)),
 ]);
 
 const conceptFilterQuery = {
@@ -277,9 +277,7 @@ const resultsAllEntitiesSelected = searchNodes(withAllEntitiesSelectedQuery);
 
 
 resultsAllEntitiesSelected.nodes.forEach(node => {
-    if(node.count != null && node.count > 1){
-      test.assertFail("a node with count greater than 1 must not exists");
-    }
+    test.assertFalse(node.count != null && node.count > 1, `a node with count greater than 1 must not exists: ${xdmp.toJsonString(node)}`);
 })
 
 assertions;

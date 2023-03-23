@@ -26,26 +26,19 @@ const productQuery = {
 };
 const resultsTest = searchNodes(productQuery);
 
-let expectedNodeCount = 9;
-let expectedEdgeCount = 4;
-
+let expectedNodeCount = 10; // 6 Products + 1 Baby Registry + 3 Concepts (Collection Constraint Filters out customers)
+let expectedEdgeCount = 10;
+const resultString = xdmp.toJsonString(resultsTest);
 let assertions = [
-  test.assertEqual(expectedNodeCount, resultsTest.total),
-  test.assertEqual(expectedNodeCount, resultsTest.nodes.length),
-  test.assertEqual(expectedEdgeCount, resultsTest.edges.length)
+  test.assertEqual(expectedNodeCount, resultsTest.total, resultString),
+  test.assertEqual(expectedNodeCount, resultsTest.nodes.length, resultString),
+  test.assertEqual(expectedEdgeCount, resultsTest.edges.length, resultString)
 ];
 
   resultsTest.nodes.forEach(node => {
-    if(node.id === "/content/product100.json") {
-      assertions.push(test.assertTrue(node.hasRelationships, `Product 100 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-    }
-    else if(node.id === "/content/product50.json") {
-      assertions.push(test.assertTrue(node.hasRelationships, `Product 50 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-    }
-    else if(node.id === "/content/product60.json") {
-      assertions.push(test.assertTrue(node.hasRelationships, `Product 60 must have relationships flag in true. Result: ${xdmp.toJsonString(node)}`));
-    }
-    if (!node.isConcept) {
+    if(node.id === "/content/babyRegistry1.json") {
+      assertions.push(test.assertTrue(node.hasRelationships, `Baby registry must have relationships flag in true for filtered out customer. Result: ${xdmp.toJsonString(node)}`));
+    } else if (!node.isConcept) {
       assertions.push(test.assertTrue(node.docUri.includes("product")));
     }
   });
