@@ -1,0 +1,19 @@
+{
+  "name" : "mapCustomersCustom",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "mapCustomersCustom",
+  "stepDefinitionType" : "CUSTOM",
+  "collections" : [ "mapCustomersCustom", "Customer" ],
+  "sourceDatabase" : "data-hub-STAGING",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Customer",
+  "stepId" : "mapCustomersCustom-custom",
+  "sourceQueryIsModule": true,
+  "sourceModule": {
+    "modulePath": "/custom-modules/custom/collector.sjs",
+    "functionName": "collect"
+  }
+}

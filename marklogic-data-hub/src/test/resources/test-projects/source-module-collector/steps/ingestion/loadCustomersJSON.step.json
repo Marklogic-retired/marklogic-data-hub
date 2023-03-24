@@ -1,0 +1,14 @@
+{
+  "name": "loadCustomersJSON",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCustomersJSON-ingestion",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "collections": [
+    "loadCustomersJSON"
+  ],
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse"
+}

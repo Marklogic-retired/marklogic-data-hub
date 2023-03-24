@@ -1,0 +1,15 @@
+{
+  "name" : "incorrectMapCustomersCustom",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "mapCustomersCustom",
+  "stepDefinitionType" : "CUSTOM",
+  "collections" : [ "incorrectMapCustomersCustom", "Customer" ],
+  "sourceDatabase" : "data-hub-STAGING",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Customer",
+  "stepId" : "incorrectMapCustomersCustom-custom",
+  "sourceQueryIsModule": true
+}
