@@ -253,6 +253,22 @@ const EntityMapTable: React.FC<Props> = props => {
                 </li>
                 <li>
                   <a
+                    href="https://docs.marklogic.com/datahub/5.8/flows/create-custom-mapping-functions.html"
+                    tabIndex={showDocLinksPopover ? 0 : -1}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.docLink}
+                    onKeyDown={e => {
+                      if (e.key === "Tab" && !e.shiftKey) {
+                        setShowDocLinksPopover(false);
+                      }
+                    }}
+                  >
+                    Custom Functions
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html"
                     tabIndex={showDocLinksPopover ? 0 : -1}
                     target="_blank"
