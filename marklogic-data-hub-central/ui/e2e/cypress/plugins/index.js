@@ -12,6 +12,8 @@
 // the project's config changing)
 
 const wp = require("@cypress/webpack-preprocessor");
+const {cloudPlugin} = require("cypress-cloud/plugin");
+
 module.exports = (on) => {
   const options = {
     webpackOptions: {
@@ -31,6 +33,11 @@ module.exports = (on) => {
   };
   on("file:preprocessor", wp(options));
 };
+
+module.exports = (on, config) => {
+  return cloudPlugin(on, config);
+};
+
 module.exports = (on, config) => {
   require("cypress-fail-fast/plugin")(on, config);
   return config;

@@ -30,12 +30,12 @@ def loadProperties() {
     }
 }
 def dhflinuxTests(String mlVersion,String type){
-    	script{
-    		props = readProperties file:'data-hub/pipeline.properties';
-    		copyRPM type,mlVersion
-    		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;"'
-    		junit '**/TEST-*.xml'
+        script{
+            props = readProperties file:'data-hub/pipeline.properties';
+            copyRPM type,mlVersion
+            def dockerhost=setupMLDockerCluster 3
+            sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;"'
+            junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
                     def result=false;
             if(output.contains("npm ERR!")){
@@ -47,60 +47,21 @@ def dhflinuxTests(String mlVersion,String type){
                 }
 
 }
-def dhfCypressE2ETests(String mlVersion, String type){
-    script{
-        copyRPM type,mlVersion
-        env.mlVersion=mlVersion;
-        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
-        sh(script:'''#!/bin/bash
-                    export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-                    export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
-                    export M2_HOME=$MAVEN_HOME/bin;
-                    export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
-                    cd $WORKSPACE;
-                    WAR_NAME=$(basename *central*.war )
-                    cd $WORKSPACE/data-hub;
-                    rm -rf $GRADLE_USER_HOME/caches;
-                    ./gradlew clean;
-                    cd marklogic-data-hub-central/ui/e2e;
-                    chmod +x setup.sh;
-                    ./setup.sh dhs=false mlHost=localhost;
-                    nohup java -jar $WORKSPACE/$WAR_NAME >> nohup.out &
-                    sleep 10s;
-                    mkdir -p output;
-                    docker build . -t cypresstest;
-                    docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 --env cypress_mlHost=$HOSTNAME cypresstest |& tee output/console.log;
-                    docker cp cypresstest:results output;
-                    docker cp cypresstest:cypress/videos output
-                    mkdir -p ${mlVersion};
-                    mv output ${mlVersion}/;
-                 ''')
-        junit '**/e2e/**/*.xml'
-        def output=readFile "data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log"
-        def result=false;
-        if(output.contains("npm ERR!")){
-            result=true;
-        }
-        if(result){
-           currentBuild.result='UNSTABLE'
-        }
-    }
-}
+
 def dhfWinTests(String mlVersion, String type){
     script{
         copyMSI type,mlVersion;
         def pkgOutput=bat(returnStdout:true , script: '''
-	                    cd xdmp/src
-	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
-	                    echo %name%
-	                    ''').trim().split();
-	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
-	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
-	    def bldOutput=bat(returnStdout:true , script: '''
-        	           cd ml-builds/scripts/lib/
-        	           CD
-        	        ''').trim().split();
+                        cd xdmp/src
+                        for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+                        echo %name%
+                        ''').trim().split();
+        def pkgLoc=pkgOutput[pkgOutput.size()-1]
+        gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+        def bldOutput=bat(returnStdout:true , script: '''
+                       cd ml-builds/scripts/lib/
+                       CD
+                    ''').trim().split();
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
         bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
@@ -115,16 +76,16 @@ def winParallel(){
 script{
                                 copyMSI "Release","10.0-9";
                                 def pkgOutput=bat(returnStdout:true , script: '''
-                        	                    cd xdmp/src
-                        	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
-                        	                    echo %name%
-                        	                    ''').trim().split();
-                        	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
-                        	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
-                        	    def bldOutput=bat(returnStdout:true , script: '''
-                                	           cd ml-builds/scripts/lib/
-                                	           CD
-                                	        ''').trim().split();
+                                                cd xdmp/src
+                                                for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+                                                echo %name%
+                                                ''').trim().split();
+                                def pkgLoc=pkgOutput[pkgOutput.size()-1]
+                                gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+                                def bldOutput=bat(returnStdout:true , script: '''
+                                               cd ml-builds/scripts/lib/
+                                               CD
+                                            ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
                                 bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
@@ -177,7 +138,7 @@ def isPRUITest(){
          return false
 }
 
-void runCypressE2e(String cmd){
+void cypressParallelSetup(String cmd){
    copyRPM 'Release','10.0-9'
    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
    sh 'rm -rf *central*.rpm || true'
@@ -217,7 +178,9 @@ void runCypressE2e(String cmd){
         ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin;
        '''
   )
+}
 
+void runCypressTest(){
   sh(script:'''#!/bin/bash
         export NODE_HOME=$NODE_HOME_DIR/bin;
         export PATH=$NODE_HOME:$PATH
@@ -566,24 +529,24 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
 
     copyMSI type,mlVersion;
     def pkgOutput=bat(returnStdout:true , script: '''
-	                    cd xdmp/src
-	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
-	                    echo %name%
-	                    ''').trim().split();
+                        cd xdmp/src
+                        for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+                        echo %name%
+                        ''').trim().split();
     def pkgLoc=pkgOutput[pkgOutput.size()-1]
     gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
     def bldOutput=bat(returnStdout:true , script: '''
-        	           cd ml-builds/scripts/lib/
-        	           CD
-        	        ''').trim().split();
+                       cd ml-builds/scripts/lib/
+                       CD
+                    ''').trim().split();
     def bldPath=bldOutput[bldOutput.size()-1]
     setupMLWinCluster bldPath,pkgLoc
     copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
 
     bat '''
-	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
-	    start java -jar %name%
-	'''
+        for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
+        start java -jar %name%
+    '''
 
     //wait for prem to start
     timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
@@ -750,7 +713,7 @@ println("Core Unit Tests Completed")
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                      email=getEmailFromGITUser author
                     }else{
-                    	email=Email
+                        email=Email
                     }
                     sendMail email,'<h3>All the Core Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
                     }
@@ -762,8 +725,8 @@ println("Unit Tests Failed")
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
+                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                         email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -779,8 +742,8 @@ println("Unit Tests Failed")
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
+                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                         email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -872,44 +835,51 @@ def cypressE2ePostFailed(){
     sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
 
 }
+
 pipeline{
-	agent none;
-	options {
-  	checkoutToSubdirectory 'data-hub'
-  	buildDiscarder logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
-	}
-	environment{
-	JAVA_HOME_DIR="/home/builder/java/openjdk-1.8.0-262"
-	GRADLE_DIR="/.gradle"
-	MAVEN_HOME="/usr/local/maven"
-	M2_HOME_REPO="/repository"
-	NODE_HOME_DIR="/home/builder/nodeJs/node-v12.18.3-linux-x64"
-	DMC_USER     = credentials('MLBUILD_USER')
+    agent none;
+    options {
+      checkoutToSubdirectory 'data-hub'
+      buildDiscarder logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
+    }
+    environment{
+    JAVA_HOME_DIR="/home/builder/java/openjdk-1.8.0-262"
+    GRADLE_DIR="/.gradle"
+    MAVEN_HOME="/usr/local/maven"
+    M2_HOME_REPO="/repository"
+    NODE_HOME_DIR="/home/builder/nodeJs/node-v12.18.3-linux-x64"
+    DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
-	}
-	parameters{
-	string(name: 'Email', defaultValue: 'rdew@marklogic.com,mwooldri@marklogic.com,rvudutal@marklogic.com,Sanjeevani.Vishaka@marklogic.com,btang@marklogic.com' ,description: 'Who should I say send the email to?')
+    }
+    parameters{
+    string(name: 'Email', defaultValue: 'rdew@marklogic.com,mwooldri@marklogic.com,rvudutal@marklogic.com,Sanjeevani.Vishaka@marklogic.com,btang@marklogic.com' ,description: 'Who should I say send the email to?')
     booleanParam(name: 'regressions', defaultValue: false, description: 'indicator if build is for regressions')
-	}
-	stages{
-	    stage('Pre-Build-Check'){
-	    agent { label 'dhfLinuxAgent'}
-	    steps{ PreBuildCheck() }
-	    post{failure{postStage('Stage Failed')}}
-	    }
+    }
+    stages{
+        stage('Pre-Build-Check'){
+        agent { label 'dhfLinuxAgent'}
+        steps{ PreBuildCheck() }
+        post{failure{postStage('Stage Failed')}}
+        }
 
-		stage('Build-datahub'){
-		agent { label 'dhfLinuxAgent'}
-			steps{BuildDatahub()}
-			post{failure {postStage('Stage Failed')}}
-		}
+        stage('Build-datahub'){
+        agent { label 'dhfLinuxAgent'}
+            steps{BuildDatahub()}
+            post{failure {postStage('Stage Failed')}}
+        }
 
-		stage('tests'){
-		parallel{
-		 stage('Core-Unit-Tests'){
-		 agent { label 'dhfLinuxAgent'}
-			steps{Tests()}
-			post{
+        stage('Cypress--Parallel-Setup'){
+        agent { label 'dhfLinuxAgent'}
+            steps{cypressParallelSetup()}
+            post{failure {postStage('Stage Failed')}}
+        }
+
+        stage('tests'){
+        parallel{
+         stage('Core-Unit-Tests'){
+         agent { label 'dhfLinuxAgent'}
+            steps{Tests()}
+            post{
                   success {
                   script{env.TESTS_PASSED=true}
                     postTestsSuccess()
@@ -918,14 +888,14 @@ pipeline{
                         postCoreTestsUnstable()
                   }
             }
-		}
+        }
         stage('Unit-Tests'){
-		agent { label 'dhfLinuxAgent'}
-			steps{UnitTest()}
-			post{
-				  always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
+        agent { label 'dhfLinuxAgent'}
+            steps{UnitTest()}
+            post{
+                  always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                  }
                   success {
                   script{ env.UNIT_TESTS_PASSED=true }
                     postTestsSuccess()
@@ -934,33 +904,7 @@ pipeline{
                       postTestsUnstable()
                   }
              }
-		}
-		stage('cypresse2e'){
-        when {
-            expression {return !env.NO_UI_TESTS}
-            beforeAgent true
         }
-		agent { label 'dhfLinuxAgent'}
-        steps{timeout(time: 3,  unit: 'HOURS'){
-          catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run')}
-        }}
-        post{
-		   always{sh 'rm -rf $WORKSPACE/xdmp;sudo mladmin stop-hubcentral' }
-           success {
-              script{env.CYPRESSE2E_TESTS_PASSED=true}
-              postStage('Tests Passed')
-           }
-           unstable {
-              sh 'rm -rf ${STAGE_NAME}|| true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
-              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
-              postStage('Tests Failed')
-           }
-           failure{
-              sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
-              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
-              postStage('Stage Failed')
-          }}
-		}
        /* stage('cypresse2e-firefox') {
             when {
                 expression { return params.regressions }
@@ -1027,32 +971,78 @@ pipeline{
            }}
         }}
 
-		stage('code-review'){
-		 when {
+        stage('cypresse2e'){
+        when {
+            expression {return !env.NO_UI_TESTS}
+            beforeAgent true
+        }
+        agent { label 'dhfLinuxAgent'}
+        parallel{
+            stage{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressTest('npm run cy:run-parallel')}
+                }
+            }
+            stage{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressTest('npm run cy:run-parallel')}
+                }
+            }
+            stage{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressTest('npm run cy:run-parallel')}
+                }
+            }
+            stage{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressTest('npm run cy:run-parallel')}
+                }
+            }
+        }
+        post{
+           always{sh 'rm -rf $WORKSPACE/xdmp;sudo mladmin stop-hubcentral' }
+           success {
+              script{env.CYPRESSE2E_TESTS_PASSED=true}
+              postStage('Tests Passed')
+           }
+           unstable {
+              sh 'rm -rf ${STAGE_NAME}|| true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
+              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
+              postStage('Tests Failed')
+           }
+           failure{
+              sh 'rm -rf ${STAGE_NAME} || true;mkdir -p ${STAGE_NAME}/MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/${STAGE_NAME}/MLLogs/ || true; mkdir -p ${STAGE_NAME}/E2ELogs; cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/videos ${STAGE_NAME}/E2ELogs/;cp -r data-hub/marklogic-data-hub-central/ui/e2e/cypress/screenshots ${STAGE_NAME}/E2ELogs/'
+              archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
+              postStage('Stage Failed')
+          }}
+        }
+
+        stage('code-review'){
+         when {
             expression {return isPRMergable()}
             allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
-  			beforeAgent true
-		 }
-		 agent {label 'dhmaster'};
-		 steps{codeReview()}
-		}
+              beforeAgent true
+         }
+         agent {label 'dhmaster'};
+         steps{codeReview()}
+        }
 
-		stage('Merge-PR'){
-		when {
+        stage('Merge-PR'){
+        when {
             expression {return isPRMergable()}
             changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
-  			beforeAgent true
-		}
-		agent {label 'dhmaster'}
+              beforeAgent true
+        }
+        agent {label 'dhmaster'}
         steps{retry(5){mergePR()}}
-		post{
+        post{
                   success {
                     println("Merge Successful")
                     script{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
                     def email=getEmailFromGITUser author
-					sendMail email,'<h3><a href=${CHANGE_URL}>$BRANCH_NAME</a> is merged </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME is Merged'
-					}
+                    sendMail email,'<h3><a href=${CHANGE_URL}>$BRANCH_NAME</a> is merged </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME is Merged'
+                    }
                    }
                    failure {
                       println("Retried 5times")
@@ -1063,7 +1053,7 @@ pipeline{
                       }
                   }
                   }
-		}
+        }
 
         stage('publishing'){
          when {expression {return params.regressions}}
@@ -1093,19 +1083,19 @@ pipeline{
                    }}
         }
 
-		stage('Linux Core Parallel Execution'){
+        stage('Linux Core Parallel Execution'){
         when { expression {return params.regressions} }
-		parallel{
-		stage('rh7_cluster_11.0-Nightly'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
+        parallel{
+        stage('rh7_cluster_11.0-Nightly'){
+            agent { label 'dhfLinuxAgent'}
+            steps{
             timeout(time: 6,  unit: 'HOURS'){
                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("11.0","Latest")}
             }}
-			post{
-				 always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
+            post{
+                 always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                  }
                   success {
                     println("rh7_cluster_11.0-Nightly Tests Completed")
                     sendMail Email,'<h3>Tests Passed on Nigtly 11.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0-Nightly | Cluster | Passed'
@@ -1116,17 +1106,17 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Nightly 11.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-11.0-Nightly | Cluster | Failed'
                   }
                   }
-		}
+        }
             stage('rh7_cluster_10.0-Nightly'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
+            agent { label 'dhfLinuxAgent'}
+            steps{
             timeout(time: 5,  unit: 'HOURS'){
                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
             }}
-			post{
-				 always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
+            post{
+                 always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                  }
                   success {
                     println("rh7_cluster_10.0-Nightly Tests Completed")
                     sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Passed'
@@ -1137,17 +1127,17 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Failed'
                   }
                   }
-		}
-		stage('rh7_cluster_9.0-Nightly'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
+        }
+        stage('rh7_cluster_9.0-Nightly'){
+            agent { label 'dhfLinuxAgent'}
+            steps{
              timeout(time: 4,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0","Latest")}
-			}}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
+            }}
+            post{
+                always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                  }
                   success {
                     println("rh7_cluster_9.0-Nightly Completed")
                     sendMail Email,'<h3>Tests Passed on Nigtly 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-Nightly | Cluster | Passed'
@@ -1157,17 +1147,17 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Nightly 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-Nightly | Cluster | Failed'
                   }
                   }
-		}
+        }
         stage('rh7_cluster_9.0-11'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
+            agent { label 'dhfLinuxAgent'}
+            steps{
              timeout(time: 4,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0-11","Release")}
-			}}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
+            }}
+            post{
+                always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                  }
                   success {
                     println("rh7_cluster_9.0-11 Tests Completed")
                     sendMail Email,'<h3>Tests Passed on  9.0-11 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Cluster | Passed'
@@ -1176,7 +1166,7 @@ pipeline{
                       println("rh7_cluster_9.0-11 Tests Failed")
                   }
                   }
-		}
+        }
          stage('rh7_cluster_10.0-9'){
              agent { label 'dhfLinuxAgent'}
              steps{
@@ -1257,10 +1247,10 @@ pipeline{
                             }
                             }
               }
-		}
-	}
+        }
+    }
 
-	stage('example projects parallel'){
+    stage('example projects parallel'){
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
@@ -1335,21 +1325,21 @@ pipeline{
                  }
                  }
             }
-		}
-		}
-		stage('Windows Core Parallel'){
+        }
+        }
+        stage('Windows Core Parallel'){
             when { expression {return params.regressions} }
             parallel{
-        		stage('w10_SN_9.0-Nightly'){
-        			agent { label 'dhfWinagent'}
-        			steps{
+                stage('w10_SN_9.0-Nightly'){
+                    agent { label 'dhfWinagent'}
+                    steps{
                      timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
                     }}
-        			post{
-        				always{
-        				  	 bat 'RMDIR /S/Q xdmp'
-        				  }
+                    post{
+                        always{
+                               bat 'RMDIR /S/Q xdmp'
+                          }
                           success {
                             println("w12_SN_9.0-nightly Tests Completed")
                             sendMail Email,'<h3>Tests Passed on Nigtly 9.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-Nightly | Single Node | Passed'
@@ -1359,17 +1349,17 @@ pipeline{
                               sendMail Email,'<h3>Some Tests Failed on Nightly 9.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-Nightly | Single Node | Failed'
                           }
                           }
-        		}
+                }
                 stage('w10_SN_11.0-Nightly'){
-        			agent { label 'dhfWinagent'}
-        			steps{
+                    agent { label 'dhfWinagent'}
+                    steps{
                      timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("11.0","Latest")}
-        			}}
-        			post{
-        				always{
-        				  	 bat 'RMDIR /S/Q xdmp'
-        				  }
+                    }}
+                    post{
+                        always{
+                               bat 'RMDIR /S/Q xdmp'
+                          }
                           success {
                             println("w12_SN_11.0-nightly Tests Completed")
                             sendMail Email,'<h3>Tests Passed on Nigtly 10.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-11.0-Nightly | Single Node | Passed'
@@ -1379,17 +1369,17 @@ pipeline{
                               sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-11.0-Nightly | Single Node | Failed'
                           }
                           }
-        		}
-        		stage('w10_SN_9.0-11'){
-        			agent { label 'dhfWinagent'}
-        			steps{
+                }
+                stage('w10_SN_9.0-11'){
+                    agent { label 'dhfWinagent'}
+                    steps{
                     timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
-        			}}
-        			post{
-        				always{
+                    }}
+                    post{
+                        always{
                                bat 'RMDIR /S/Q xdmp'
-        				  }
+                          }
                           success {
                             println("w12_SN_9.0-11 Tests Completed")
                             sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-11 | Single Node | Passed'
@@ -1399,17 +1389,17 @@ pipeline{
                               sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-11 | Single Node | Failed'
                           }
                           }
-        		}
-        		stage('w12_cluster_10.0-9'){
-        			agent { label 'dhfWinCluster'}
-        			steps{
+                }
+                stage('w12_cluster_10.0-9'){
+                    agent { label 'dhfWinCluster'}
+                    steps{
                     timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){winParallel()}
-        			}}
-        			post{
-        				always{
-        				  	bat 'RMDIR /S/Q xdmp'
-        				  }
+                    }}
+                    post{
+                        always{
+                              bat 'RMDIR /S/Q xdmp'
+                          }
                           success {
                             println("w12_cluster_10.0-9 Tests Completed")
                             sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-9 | Cluster | Passed'
@@ -1419,10 +1409,10 @@ pipeline{
                               sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-9 | Cluster | Failed'
                           }
                           }
-        		}
+                }
 
-        		    }
-        		}
+                    }
+                }
 
         stage('HC on Prem parallel'){
             when { expression {return params.regressions} }
