@@ -1,0 +1,39 @@
+{
+  "name": "mapCustomersJSON",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersJSON-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQueryIsModule": true,
+  "sourceModule": {
+    "modulePath": "/custom-modules/custom/collector.sjs",
+    "functionName": "collect"
+  },
+  "options": {
+    "flow": "mapCustomersJSON",
+    "entity": "Customer",
+    "dataFormat": "json"
+  },
+  "collections": [
+    "Customer",
+    "mapCustomersJSON"
+  ],
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "off",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    }
+  },
+  "customHook": {
+    "module": "",
+    "parameters": "{}",
+    "user": "",
+    "runBefore": false
+  }
+}

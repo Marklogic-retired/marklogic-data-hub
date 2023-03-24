@@ -1,0 +1,17 @@
+{
+  "name" : "sourceModuleTestFlow",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadCustomersJSON-ingestion"
+    },
+    "2" : {
+      "stepId" : "mapCustomersJSON-mapping"
+    },
+    "3" : {
+      "stepId" : "mapCustomersCustom-custom"
+    },
+    "4" : {
+      "stepId" : "incorrectMapCustomersCustom-custom"
+    }
+  }
+}

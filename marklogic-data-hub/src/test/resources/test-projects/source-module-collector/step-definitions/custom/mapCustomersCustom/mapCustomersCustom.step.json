@@ -1,0 +1,8 @@
+{
+  "lang" : "zxx",
+  "name" : "mapCustomersCustom",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "modulePath" : "/custom-modules/custom/mapCustomersCustom/main.sjs"
+}
