@@ -202,10 +202,6 @@ export default class Flow {
       throw error;
     }
 
-    // Queueing the provenance here so it is available to write with the documents starting in 5.7
-    if (stepExecutionContext.provenanceIsEnabled()) {
-      flowProvenance.queueProvenanceData(stepExecutionContext, outputContentArray);
-    }
     let writeTransactionInfo = {};
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
