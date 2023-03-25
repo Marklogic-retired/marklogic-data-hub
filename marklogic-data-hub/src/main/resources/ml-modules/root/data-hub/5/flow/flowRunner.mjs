@@ -68,11 +68,9 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       }
       else {
         addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
-        if (stepExecutionContext.provenanceIsEnabled()) {
-          flowProvenance.queueProvenanceData(stepExecutionContext, currentContentArray);
-        } else {
-          hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
-        }
+        if (!(stepExecutionContext.provenanceIsEnabled())) {
+              hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
+         }
         flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
       }
     } catch (error) {
@@ -390,19 +388,18 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
 function invokeFeatureMethods(stepExecutionContext, contentArray, method) {
   const flowStep = stepExecutionContext.flowStep;
   let targetEntityType = flowStep.options.targetEntity || flowStep.options.targetEntityType;
+  let model = null;
   if (targetEntityType) {
     const modelNode = entityLib.findModelForEntityTypeId(targetEntityType);
-    const model = fn.exists(modelNode) ? modelNode.toObject(): null;
-    const features = Object.keys(featuresCore.getFeatures());
-    contentArray.forEach(content => {
-      features.forEach(feat => {
-        const funct = featuresCore.getFeatureMethod(feat, method);
-        if (funct) {
-          funct(flowStep, model, content);
-        }
-      });
-    });
+    model = fn.exists(modelNode) ? modelNode.toObject() : null;
   }
+  const features = Object.keys(featuresCore.getFeatures());
+  features.forEach(feat => {
+    const funct = featuresCore.getFeatureMethod(feat, method);
+    if (funct) {
+        funct(stepExecutionContext, model, contentArray);
+    }
+  });
 }
 
 function invokeFeatureBefore(stepExecutionContext, contentArray) {
