@@ -57,18 +57,20 @@ function onArtifactSave(artifactType, artifactName) {
             },{database: xdmp.schemaDatabase()});
 
         hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Finished creating schemas for ${artifactName}.`);
-        xdmp.sleep(10000);
+
     }
 }
 
-function onInstanceSave(stepContext, model, contentObject) {
+function onInstanceSave(stepContext, model, contentArray) {
     if (!model) {
-        return contentObject;
+        return contentArray;
     }
     hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Validating schema for content of type ${model.info.title}.`);
 
-    const options = stepContext.options;
-    entityValidation.validateEntity(contentObject, options, model.info);
+    const options = stepContext.flowStep.options;
+    contentArray.forEach(contentObject => {
+        entityValidation.validateEntity(contentObject, options, model.info);
+    });
     if (options.headers != null && options.headers.datahub != null && options.headers.datahub.validationErrors != null) {
         const errors = options.headers.datahub.validationErrors;
         hubUtils.hubTrace(INFO_EVENT, `Schema validation feature: Schema validation for content of type ${model.info.title} got errors.`);
