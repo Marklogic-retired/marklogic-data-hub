@@ -1,0 +1,52 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Order",
+  "sourceQuery": "cts.collectionQuery(['matchOrderScenario'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "mergeOrderScenario"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "orderName",
+      "mergeType": "strategy",
+      "mergeStrategyName": "mergeStrategy"
+    }
+  ],
+  "mergeStrategies": [
+    {
+      "strategyName": "mergeStrategy",
+      "maxSources": "All",
+      "maxValues": "1",
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0
+      },
+      "default": false
+    }
+  ],
+  "targetCollections": null,
+  "name": "mergeOrderScenario",
+  "description": "",
+  "collection": [
+    "matchOrderScenario"
+  ],
+  "selectedSource": "collection",
+  "lastUpdatedLocation": {
+    "documentXPath": ""
+  },
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "mergeOrderScenario-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2023-03-26T04:03:01.923741-07:00"
+}

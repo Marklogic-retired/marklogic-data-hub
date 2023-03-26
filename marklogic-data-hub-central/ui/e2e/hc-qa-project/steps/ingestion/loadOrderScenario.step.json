@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "sources": [
+      {
+        "name": "loadOrderScenario"
+      }
+    ],
+    "lastLoadedDateTime": "currentDateTime",
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadOrderScenario"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadOrderScenario",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "inputFilePath": "input/json/orders",
+  "sourceName": "",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadOrderScenario-ingestion",
+  "lastUpdated": "2023-03-26T03:36:47.817552-07:00"
+}

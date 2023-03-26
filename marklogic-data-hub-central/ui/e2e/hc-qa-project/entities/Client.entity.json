@@ -2,8 +2,8 @@
   "info": {
     "title": "Client",
     "version": "0.0.1",
-"baseUri": "http://example.org/",
-"draft": false
+    "baseUri": "http://example.org/",
+    "draft": false
   },
   "definitions": {
     "Client": {
@@ -18,9 +18,9 @@
         },
         "lastname": {
           "datatype": "string",
-          "description": "This has a case-insensitive collation for the match queries that use range indexes",
-          "collation": "http://marklogic.com/collation//S2",
-          "facetable": true
+          "facetable": true,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
         },
         "email": {
           "datatype": "string",
@@ -48,8 +48,9 @@
           "datatype": "dateTime",
           "facetable": true
         }
-},
-"description": ""
-      }
-}
+      },
+      "description": "",
+      "primaryKey": "lastname"
+    }
+  }
 }

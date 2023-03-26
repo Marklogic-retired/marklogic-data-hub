@@ -163,8 +163,9 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     table.getColumnTitle(2).should("contain", "orderId");
-    table.getColumnTitle(3).should("contain", "address");
-    table.getColumnTitle(4).should("contain", "orderDetails");
+    table.getColumnTitle(3).should("contain", "orderName");
+    table.getColumnTitle(4).should("contain", "address");
+    table.getColumnTitle(5).should("contain", "orderDetails");
 
     //orderId value should be present while customerID should not
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
@@ -182,7 +183,7 @@ describe("Test '/Explore' left sidebar", () => {
 
     //both Order and Customer ID's should be present in table
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
-    browsePage.getTableViewCell("101").should("have.length.gt", 0);
+    browsePage.getTableViewCell("102").should("have.length.gt", 0);
 
     cy.log("**Verify related entity icons are disabled in table view**");
     entitiesSidebar.openBaseEntityFacets("Customer");

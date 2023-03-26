@@ -252,7 +252,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
     propertyModal.openForeignKeyDropdown();
-    propertyModal.checkForeignKeyDropdownLength(7); // Check for -None- (1), saved (5), unsaved (1) Order properties
+    propertyModal.checkForeignKeyDropdownLength(9); // Check for -None- (1), saved (5), unsaved (1) Order properties
     propertyModal.openForeignKeyDropdown();
     propertyModal.getCancelButton();
   });

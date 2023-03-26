@@ -129,7 +129,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.totalNumberDocuments("1");
+    browsePage.totalNumberDocuments("2");
     browsePage.getTableViewInstanceIcon().click();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Order");

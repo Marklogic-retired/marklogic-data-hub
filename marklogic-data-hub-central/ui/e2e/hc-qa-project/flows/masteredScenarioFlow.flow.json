@@ -1,0 +1,30 @@
+{
+  "name": "masteredScenarioFlow",
+  "steps": {
+    "1": {
+      "stepId": "loadOrderScenario-ingestion"
+    },
+    "2": {
+      "stepId": "mapOrderScenario-mapping"
+    },
+    "3": {
+      "stepId": "matchOrderScenario-matching"
+    },
+    "4": {
+      "stepId": "mergeOrderScenario-merging"
+    },
+    "5": {
+      "stepId": "loadClientScenario-ingestion"
+    },
+    "6": {
+      "stepId": "mapClientScenario-mapping"
+    },
+    "7": {
+      "stepId": "matchClientScenario-matching"
+    },
+    "8": {
+      "stepId": "mergeClientScenario-merging"
+    }
+  },
+  "lastUpdated": "2023-03-26T04:05:42.477062-07:00"
+}

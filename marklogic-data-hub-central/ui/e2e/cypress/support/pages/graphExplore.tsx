@@ -26,6 +26,18 @@ class GraphExplore {
     })));
   }
 
+  getPositionOfEdgeBetween(nodeIds: any) {
+    return new Cypress.Promise((resolve) => resolve(this.getPositionsOfNodes(nodeIds).then((nodePositions: any) => {
+      let nodesList = nodeIds.split(",");
+      let fromNodeCoordinates: any = nodePositions[nodesList[0]];
+      let toNodeCoordinates: any = nodePositions[nodesList[1]];
+      let edgeCenterCoordinates: any = {
+        x: (fromNodeCoordinates.x + toNodeCoordinates.x) / 2,
+        y: (fromNodeCoordinates.y + toNodeCoordinates.y) / 2
+      };
+      return edgeCenterCoordinates;
+    })));
+  }
 
   getAllNodes() {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {

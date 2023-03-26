@@ -1,0 +1,52 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Client",
+  "sourceQuery": "cts.collectionQuery(['mapClientScenario'])",
+  "collections": [
+    "matchClientScenario"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "postal - Exact",
+      "weight": 33,
+      "reduce": false,
+      "fuzzyMatch": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "postal",
+          "matchType": "exact",
+          "options": { },
+          "exclusionLists": [ ]
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Exact",
+      "action": "merge",
+      "score": 11
+    }
+  ],
+  "name": "matchClientScenario",
+  "description": "",
+  "collection": [
+    "mapClientScenario"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "matchClientScenario-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2023-03-26T04:04:49.135161-07:00"
+}

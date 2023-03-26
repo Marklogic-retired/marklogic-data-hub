@@ -1,0 +1,58 @@
+{
+  "collections": [
+    "mapClientScenario",
+    "Client"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "mapClientScenario",
+  "targetEntityType": "http://example.org/Client-0.0.1/Client",
+  "description": "",
+  "collection": [
+    "loadClientScenario"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadClientScenario'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapClientScenario-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-26T03:41:40.297213-07:00",
+  "properties": {
+    "firstname": {
+      "sourcedFrom": "FirstName"
+    },
+    "lastname": {
+      "sourcedFrom": "LastName"
+    },
+    "email": {
+      "sourcedFrom": "Email"
+    },
+    "postal": {
+      "sourcedFrom": "Postal"
+    },
+    "phone": {
+      "sourcedFrom": "Phone"
+    },
+    "pin": {
+      "sourcedFrom": "PIN"
+    },
+    "updated": {
+      "sourcedFrom": "Updated"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}

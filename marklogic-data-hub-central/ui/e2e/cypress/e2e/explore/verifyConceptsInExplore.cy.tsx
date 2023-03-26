@@ -32,7 +32,7 @@ describe("Concepts", () => {
     cy.log("**Verify results number change**");
     cy.log("**Turn off concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
-    graphExplore.getViewingResultsCount().should("be.lessThan", 68);
+    graphExplore.getViewingResultsCount().should("be.lessThan", 78);
     cy.log("**Turn on concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
   });

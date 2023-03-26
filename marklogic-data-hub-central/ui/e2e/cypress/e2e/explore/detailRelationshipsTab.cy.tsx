@@ -29,6 +29,7 @@ describe("Test graph export to png", () => {
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to Detail page**");
+    browsePage.clickPaginationItem(2);
     browsePage.getDetailInstanceViewIcon("101").scrollIntoView().should("be.visible").click();
 
     cy.log("**Switch to Relationships tab**");
@@ -46,6 +47,7 @@ describe("Test graph export to png", () => {
     browsePage.getTableView().click();
 
     cy.log("**Go to Detail page**");
+    browsePage.clickPaginationItem(1);
     browsePage.getDetailInstanceViewIcon("90").scrollIntoView().should("be.visible").click();
 
     cy.log("**Check Relationships tab**");

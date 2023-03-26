@@ -13,6 +13,9 @@
         "orderId": {
           "datatype": "string"
         },
+        "orderName": {
+          "datatype": "string"
+        },
         "address": {
           "$ref": "#/definitions/Address"
         },
@@ -30,10 +33,15 @@
         },
         "shippedDate": {
           "datatype": "dateTime"
+        },
+        "purchasedBy": {
+          "datatype": "string",
+          "relatedEntityType": "http://example.org/Client-0.0.1/Client",
+          "joinPropertyName": "lastname"
         }
+      },
+      "description": ""
     },
-"description": ""
-},
     "Address": {
       "properties": {
         "city": {
@@ -60,5 +68,5 @@
         }
       }
     }
-}
+  }
 }

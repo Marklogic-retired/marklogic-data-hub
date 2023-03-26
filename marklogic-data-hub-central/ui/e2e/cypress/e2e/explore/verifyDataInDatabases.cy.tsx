@@ -54,7 +54,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should("be.equal", 0);
+    browsePage.getTotalDocuments().should("be.equal", 2);
   });
   it("Switch to staging database and verify data for query parameters", () => {
     explorePage.getStagingDatabaseButton();
@@ -71,7 +71,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should("be.equal", 1);
+    browsePage.getTotalDocuments().should("be.equal", 2);
     browsePage.getAllDataSnippetByUri("/json/clients/client1.json").should("contain", "Barbi");
   });
 

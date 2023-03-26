@@ -38,6 +38,10 @@ class CompareValuesModal {
   getUnmergedPreview() {
     return cy.findByText(`Current Document:`);
   }
+
+  includeUnmergedDocsInFutureMatch() {
+    return cy.get(`[aria-label=unmerge-inclusion-checkbox]`);
+  }
 }
 
 const compareValuesModal = new CompareValuesModal();

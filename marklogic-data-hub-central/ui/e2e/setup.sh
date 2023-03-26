@@ -42,6 +42,7 @@ fi
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateClientJSON --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=officeFlow --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=productFlow --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=masteredScenarioFlow --info --stacktrace
 
 # Add document properites to records for e2e test
 ./gradlew addDocProperties -PenvironmentName=$env --info --stacktrace

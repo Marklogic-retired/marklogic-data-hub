@@ -354,7 +354,7 @@ const GraphVisExplore: React.FC<Props> = props => {
         nodeTitle = tooltipsConfig.graphVis.singleNode(e.label);
       }
       nodes.push({
-        id: nodeId,
+        id: nodeId.includes("merged") ? nodeLabel : nodeId,
         shape: "custom",
         title: nodeTitle,
         label: nodeLabel,

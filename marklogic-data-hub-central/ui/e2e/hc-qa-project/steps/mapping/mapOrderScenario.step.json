@@ -1,0 +1,82 @@
+{
+  "collections": [
+    "mapOrderScenario",
+    "Order"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "mapOrderScenario",
+  "targetEntityType": "http://marklogic.com/example/Order-0.0.1/Order",
+  "description": "",
+  "collection": [
+    "loadOrderScenario"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadOrderScenario'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapOrderScenario-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-26T03:39:34.276755-07:00",
+  "properties": {
+    "orderId": {
+      "sourcedFrom": "OrderID"
+    },
+    "orderName": {
+      "sourcedFrom": "CustomerID"
+    },
+    "address": {
+      "sourcedFrom": "/",
+      "properties": {
+        "city": {
+          "sourcedFrom": "ShipCity"
+        },
+        "state": {
+          "sourcedFrom": "ShipAddress"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "orderDetails": {
+      "sourcedFrom": "OrderDetails",
+      "properties": {
+        "productID": {
+          "sourcedFrom": "ProductID"
+        },
+        "unitPrice": {
+          "sourcedFrom": "head(OrderDetails/UnitPrice)"
+        },
+        "quantity": {
+          "sourcedFrom": "Quantity"
+        },
+        "discount": {
+          "sourcedFrom": "head(OrderDetails/Discount)"
+        }
+      },
+      "targetEntityType": "#/definitions/OrderDetails"
+    },
+    "shipRegion": {
+      "sourcedFrom": "ShipRegion"
+    },
+    "shippedDate": {
+      "sourcedFrom": "ShippedDate"
+    },
+    "purchasedBy": {
+      "sourcedFrom": "CustomerID"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "$URI"
+}
