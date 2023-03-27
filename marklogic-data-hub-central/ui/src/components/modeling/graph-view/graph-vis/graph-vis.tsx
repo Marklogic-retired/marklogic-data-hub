@@ -382,6 +382,12 @@ const GraphVis: React.FC<Props> = props => {
         canvasToDOM: (xCoordinate, yCoordinate) => {
           return network.canvasToDOM({x: xCoordinate, y: yCoordinate});
         },
+        getEdgesNames: (nodeId?: any) => {
+          return network.getConnectedEdges(nodeId);
+        },
+        getLabelEdge: (edgeId?: any) => {
+          return network.body.data.edges.get(edgeId);
+        }
       };
     }
   }, [network]);

@@ -43,6 +43,21 @@ class GraphVis {
     })));
   }
 
+  getEdgesRelatedToaNode(nodeId:string, textMatch:string) {
+    return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
+      const edgeNames = win.graphVisApi.getEdgesNames(nodeId);
+      let reg_ex = new RegExp(textMatch);
+      let edgeName = "";
+      for (let edge of edgeNames) {
+        if (reg_ex.test(edge)) {
+          edgeName = edge;
+          break;
+        }
+      }
+      return win.graphVisApi.getLabelEdge(edgeName);
+    })));
+  }
+
   /**
      * Get coordinates of the connecting edge between two nodes
      * @param nodeIds
