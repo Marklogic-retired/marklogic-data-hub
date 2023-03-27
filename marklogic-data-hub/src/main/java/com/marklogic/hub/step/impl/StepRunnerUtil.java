@@ -56,7 +56,7 @@ public class StepRunnerUtil {
     }
 
     /**
-     * Note that this logic exists in flow-utils.sjs as well; this is apparently because FlowRunner needs to combine
+     * Note that this logic exists in flow-utils.mjs as well; this is apparently because FlowRunner needs to combine
      * options before it runs any steps. But each call to process a batch of items also needs to combine steps, as
      * it's not always invoked by FlowRunner. So there's some duplication that would be good to get rid of, possibly
      * by having FlowRunner make a call to ML to combine options.
