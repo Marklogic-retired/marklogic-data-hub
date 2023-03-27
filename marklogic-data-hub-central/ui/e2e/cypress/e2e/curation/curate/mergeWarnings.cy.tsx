@@ -45,6 +45,7 @@ describe("Validate Merge warnings", () => {
     advancedSettings.setTargetCollection("onMerge", "match-person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
+    cy.waitForAsyncRequest();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     cy.wait(1000);
@@ -52,6 +53,7 @@ describe("Validate Merge warnings", () => {
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.switchEditAdvanced().click();
     curatePage.saveSettings(mergeStep).click();
+    cy.waitForAsyncRequest();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the target entity type Person");
     curatePage.alertContent().eq(0).contains("Please remove target entity type from target collections");
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection match-person");
@@ -66,6 +68,7 @@ describe("Validate Merge warnings", () => {
     curatePage.mergeTargetCollection("onMerge").eq(1).should("have.text", "match-person\nPerson");
     curatePage.alertContent().should("not.exist");
     curatePage.saveSettings(mergeStep).click();
+    cy.waitForAsyncRequest();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the target entity type Person");
     curatePage.alertContent().eq(0).contains("Please remove target entity type from target collections");
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection match-person");
@@ -76,13 +79,15 @@ describe("Validate Merge warnings", () => {
     curatePage.getExistingFlowFromDropdown_OldWay("Person");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
+    cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     cy.findByTestId("onMerge-edit").click();
     curatePage.getExistingFlowFromDropdown_OldWay("match-person");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
-    cy.wait(1000);
+    cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
+    curatePage.alertContent().should("not.exist");
   });
   it("Reopen the merge settings", () => {
     toolbar.getCurateToolbarIcon().click();
