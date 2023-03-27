@@ -314,6 +314,17 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
     }
 
+    public void saveLocalFlow(JsonNode flow) {
+        File file = getFileForLocalFlow(flow.get("name").asText());
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            JSONStreamWriter writer = new JSONStreamWriter(fileOutputStream);
+            writer.write(flow);
+        } catch (Exception ex) {
+            throw new DataHubProjectException("Could not save flow to project filesystem; cause: " + ex.getMessage(), ex);
+        }
+    }
+
     public File getFileForLocalFlow(String flowName) {
         File flowsDir = hubConfig.getFlowsDir().toFile();
         if (!flowsDir.exists()) {

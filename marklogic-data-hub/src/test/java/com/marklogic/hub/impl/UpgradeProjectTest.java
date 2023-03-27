@@ -261,8 +261,8 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         JsonNode node = mapper.readTree(hubProject.getStepFile(StepDefinition.StepDefinitionType.CUSTOM, "HarmonizeProducts"));
         assertEquals("sourceModule", node.get("selectedSource").asText());
         assertNotNull(node.get("sourceModule"));
-        assertEquals("/entities/Product/harmonize/Harmonize Products/main.sjs", node.get("sourceModule").get("modulePath").asText());
-        assertEquals("main", node.get("sourceModule").get("functionName").asText());
+        assertEquals("/entities/Product/harmonize/Harmonize Products/collector.sjs", node.get("sourceModule").get("modulePath").asText());
+        assertEquals("collect", node.get("sourceModule").get("functionName").asText());
         assertNotNull(node.get("options"));
         assertEquals("Harmonize Products", node.get("options").get("flow").asText());
         assertEquals("Product", node.get("options").get("entity").asText());

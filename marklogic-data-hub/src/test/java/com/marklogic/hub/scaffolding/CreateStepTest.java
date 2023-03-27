@@ -95,7 +95,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         installOnlyReferenceModelEntities(false);
 
         //Create  a custom step
-        Pair<JsonNode, String> results = createStep("myCustom", "custom", null, "Customer");
+        Pair<JsonNode, String> results = createStep("myCustom", "custom", "myCustom", "Customer");
         JsonNode step = results.getLeft();
         assertEquals("http://example.org/Customer-0.0.1/Customer", step.get("targetEntityType").asText());
         assertFalse(step.has("entityType"), "'entityType' should be replaced with 'targetEntityType'");

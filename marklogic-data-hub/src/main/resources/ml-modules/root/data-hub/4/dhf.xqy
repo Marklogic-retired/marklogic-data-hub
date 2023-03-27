@@ -38,20 +38,7 @@ declare function dhf:run(
   $context as json:object,
   $func)
 {
-  let $label := map:get($context, "label")
-  let $_ :=
-    if (fn:exists($label)) then
-      trace:set-plugin-label($label)
-    else
-      fn:error((), "DATAHUB-CONTEXT-MISSING-LABEL", "Your context is missing a label.")
-  let $_ := trace:reset-plugin-input()
-  let $_ :=
-    let $inputs := map:get($context, "inputs")
-    for $key in map:keys($inputs)
-    return
-      trace:set-plugin-input($key, map:get($inputs, $key))
-  return
-    flow:safe-run($func)
+  flow:safe-run($func)
 };
 
 (:
@@ -211,19 +198,22 @@ declare function dhf:add-trace-input(
 declare function dhf:log-trace(
   $context as json:object)
 {
-  let $label := map:get($context, "label")
-  let $_ :=
-    if (fn:exists($label)) then
-      trace:set-plugin-label($label)
-    else
-      fn:error((), "DATAHUB-CONTEXT-MISSING-LABEL", "Your context is missing a label")
-  let $_ := trace:reset-plugin-input()
-  let $_ :=
-    let $inputs := map:get($context, "inputs")
-    for $key in map:keys($inputs)
+  if (trace:is-tracing-supported() = false()) then
+    xdmp:log(fn:concat($trace:unsupported-log-message, " ", "Trace is not logged."), "warning")
+  else
+    let $label := map:get($context, "label")
+    let $_ :=
+      if (fn:exists($label)) then
+        trace:set-plugin-label($label)
+      else
+        fn:error((), "DATAHUB-CONTEXT-MISSING-LABEL", "Your context is missing a label")
+    let $_ := trace:reset-plugin-input()
+    let $_ :=
+      let $inputs := map:get($context, "inputs")
+      for $key in map:keys($inputs)
+      return
+        trace:set-plugin-input($key, map:get($inputs, $key))
+      let $_ := trace:plugin-trace((), "PT0S")
     return
-      trace:set-plugin-input($key, map:get($inputs, $key))
-  let $_ := trace:plugin-trace((), "PT0S")
-  return
-    ()
+      ()
 };

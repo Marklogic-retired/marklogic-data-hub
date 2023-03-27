@@ -108,18 +108,18 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
      * if not null, should likely be presented to the caller
      */
     public Pair<File, String> createStepFile(String stepName, String stepType, String stepDefName, String entityType, boolean acceptSourceModule) {
-        Pair<JsonNode, String> stepPayLoadPair = getStepConfig(stepName, stepType, stepDefName, entityType, acceptSourceModule);
-        Pair<File, String> step = saveStep(stepType, stepPayLoadPair.getLeft());
-        return Pair.of(step.getLeft(), stepPayLoadPair.getRight().concat(step.getRight()));
+        String message = "";
+        JsonNode stepPayLoad = getStepConfig(stepName, stepType, stepDefName, entityType, acceptSourceModule);
+        String stepDefMessage = saveStepDefinition(stepName, stepDefName, stepType);
+        Pair<File, String> step = saveStep(stepType, stepPayLoad);
+        message = message.concat(stepDefMessage).concat(step.getRight());
+        return Pair.of(step.getLeft(), message);
     }
 
-    public Pair<JsonNode, String> getStepConfig(String stepName, String stepType, String stepDefName, String entityType, boolean acceptSourceModule) {
-        StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
+    public JsonNode getStepConfig(String stepName, String stepType, String stepDefName, String entityType, boolean acceptSourceModule) {
         StepDefinitionType stepDefType = StepDefinitionType.getStepDefinitionType(stepType);
         Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
 
-        StepDefinition stepDefinition = null;
-        StringBuilder messageBuilder = new StringBuilder();
         File stepFile = hubConfig.getHubProject().getStepFile(stepDefType, stepName);
         if (stepFile.exists()) {
             throw new IllegalArgumentException("Cannot create step; a step file already exists at: " + stepFile.getAbsolutePath() + ". Please choose a different name for your step.");
@@ -165,12 +165,26 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 }
             }
         }
+        return stepPayLoad;
+    }
 
+    public String saveStepDefinition(String stepName, String stepDefName, String stepType) {
+        return saveStepDefinition(stepName, stepDefName, stepType, false);
+    }
+
+    public String saveStepDefinition(String stepName, String stepDefName, String stepType, boolean localSave) {
+        StepDefinitionManagerImpl stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
+        StepDefinition stepDefinition = null;
+        StringBuilder messageBuilder = new StringBuilder();
         if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
             try{
                 stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
-                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs");
-                stepDefinitionManager.saveStepDefinition(stepDefinition);
+                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
+                if(localSave) {
+                    stepDefinitionManager.saveLocalStepDefinition(stepDefinition);
+                } else {
+                    stepDefinitionManager.saveStepDefinition(stepDefinition);
+                }
             }
             catch(Exception e){
                 throw new RuntimeException("Unable to write step definition to database; cause: " + e.getMessage(), e);
@@ -181,7 +195,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs" + ". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
-        return Pair.of(stepPayLoad, messageBuilder.toString());
+        return messageBuilder.toString();
     }
 
     public Pair<File, String> saveStep(String stepType, JsonNode stepPayLoad) {
@@ -201,6 +215,16 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         try {
             new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
             return Pair.of(stepFile, messageBuilder.toString());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write step to file: " + stepFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
+        }
+    }
+
+    public void saveLocalStep(String stepType, JsonNode stepPayLoad) {
+        String stepName = stepPayLoad.get("name").asText();
+        File stepFile = hubConfig.getHubProject().getStepFile(StepDefinitionType.getStepDefinitionType(stepType), stepName);
+        try {
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(stepFile, stepPayLoad);
         } catch (IOException e) {
             throw new RuntimeException("Unable to write step to file: " + stepFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
         }
