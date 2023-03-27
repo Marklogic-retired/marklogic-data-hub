@@ -37,6 +37,8 @@ declare option xdmp:mapping "false";
 (: new trace-settings are initialized for each transaction :)
 declare variable $current-trace-settings := map:map();
 
+declare variable $unsupported-log-message := fn:concat("The 4.x version of the tracing library is no longer supported and has been deprecated in Datahub ", $config:HUB-VERSION, ".");
+
 declare function trace:new-trace() as map:map
 {
   map:new((
@@ -104,10 +106,16 @@ declare %private function trace:add-completed-item($item as xs:string)
 declare function trace:set-plugin-label(
   $label as xs:string)
 {
-  trace:set-plugin-label(
-    rfc:get-trace($rfc:item-context),
-    $label
-  )
+  if (fn:empty(rfc:get-trace($rfc:item-context))) then
+    trace:set-plugin-label(
+      map:map(),
+      $label
+    )
+  else
+    trace:set-plugin-label(
+      rfc:get-trace($rfc:item-context),
+      $label
+    )
 };
 
 (:
@@ -126,12 +134,18 @@ declare function trace:get-plugin-label(
   $current-trace as map:map)
 as xs:string
 {
-  map:get($current-trace, "plugin-label")
+  if (fn:empty(map:get($current-trace, "plugin-label"))) then
+    ""
+  else
+    map:get($current-trace, "plugin-label")
 };
 
 declare function trace:reset-plugin-input()
 {
-  trace:reset-plugin-input(rfc:get-trace($rfc:item-context))
+  if(fn:empty(rfc:get-trace($rfc:item-context))) then
+    trace:reset-plugin-input(map:map())
+  else
+    trace:reset-plugin-input(rfc:get-trace($rfc:item-context))
 };
 
 declare function trace:reset-plugin-input(
@@ -175,7 +189,10 @@ declare function trace:set-plugin-input(
   $label as xs:string,
   $input)
 {
-  trace:set-plugin-input(rfc:get-trace($rfc:item-context), $label, $input)
+  if (fn:empty(rfc:get-trace($rfc:item-context))) then
+    trace:set-plugin-input(map:map(), $label, $input)
+  else
+    trace:set-plugin-input(rfc:get-trace($rfc:item-context), $label, $input)
 };
 
 declare function trace:set-plugin-input(
@@ -214,104 +231,116 @@ declare function trace:get-failed-items()
 declare function trace:write-trace(
   $item-context as map:map)
 {
-  let $identifier := rfc:get-id($item-context)
-  where $identifier instance of xs:string
-  return
-    trace:add-completed-item($identifier),
-  trace:write-error-trace($item-context)
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, " ", "Trace is not written."), "warning")
+    return object-node {}
+  else
+    let $identifier := rfc:get-id($item-context)
+    where $identifier instance of xs:string
+    return
+      trace:add-completed-item($identifier),
+    trace:write-error-trace($item-context)
 };
 
 declare %private function trace:write-error-trace(
   $item-context as map:map)
 {
-  let $current-trace := rfc:get-trace($item-context)
-  return
-    if (trace:enabled() or trace:has-errors()) then (
-      let $trace :=
-        if (rfc:is-json()) then
-          xdmp:to-json((
-            map:entry("trace",
-              map:new((
-                map:entry("jobId", rfc:get-job-id()),
-                map:entry("format", rfc:get-data-format()),
-                map:entry("traceId", map:get($current-trace, "traceId")),
-                map:entry("created", map:get($current-trace, "created")),
-                map:entry("identifier", rfc:get-id($item-context)),
-                map:entry("flowName", rfc:get-flow-name() ),
-                map:entry("flowType", rfc:get-flow-type()),
-                map:entry("hasError", trace:has-errors()),
-                let $steps := json:array()
-                let $_ :=
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, " ", "Error Trace is not written."), "warning")
+    return object-node {}
+  else
+    let $current-trace := rfc:get-trace($item-context)
+    return
+      if (trace:enabled() or trace:has-errors()) then (
+        let $trace :=
+          if (rfc:is-json()) then
+            xdmp:to-json((
+              map:entry("trace",
+                map:new((
+                  map:entry("jobId", rfc:get-job-id()),
+                  map:entry("format", rfc:get-data-format()),
+                  map:entry("traceId", map:get($current-trace, "traceId")),
+                  map:entry("created", map:get($current-trace, "created")),
+                  map:entry("identifier", rfc:get-id($item-context)),
+                  map:entry("flowName", rfc:get-flow-name() ),
+                  map:entry("flowType", rfc:get-flow-type()),
+                  map:entry("hasError", trace:has-errors()),
+                  let $steps := json:array()
+                  let $_ :=
+                    for $step in map:get($current-trace, "traceSteps")
+                    return
+                      json:array-push($steps, $step)
+                  return
+                    map:entry("steps", $steps)
+                ))
+              )
+            ))
+          else
+            document {
+              element trace {
+                element jobId { rfc:get-job-id() },
+                element format { rfc:get-data-format() },
+                element traceId { map:get($current-trace, "traceId") },
+                element created { map:get($current-trace, "created") },
+                element identifier { rfc:get-id($item-context) },
+                element flowName { rfc:get-flow-name() },
+                element flowType { rfc:get-flow-type() },
+                element hasError { trace:has-errors() },
+                element steps {
                   for $step in map:get($current-trace, "traceSteps")
                   return
-                    json:array-push($steps, $step)
-                return
-                  map:entry("steps", $steps)
-              ))
-            )
-          ))
-        else
-          document {
-            element trace {
-              element jobId { rfc:get-job-id() },
-              element format { rfc:get-data-format() },
-              element traceId { map:get($current-trace, "traceId") },
-              element created { map:get($current-trace, "created") },
-              element identifier { rfc:get-id($item-context) },
-              element flowName { rfc:get-flow-name() },
-              element flowType { rfc:get-flow-type() },
-              element hasError { trace:has-errors() },
-              element steps {
-                for $step in map:get($current-trace, "traceSteps")
-                return
-                  element step {
-                    element label { map:get($step, "label") },
-                    element input { map:get($step, "input") },
-                    element output { map:get($step, "output") },
-                    element error { map:get($step, "error") },
-                    element duration { map:get($step, "duration") },
-                    element options { map:get($step, "options") }
-                  }
+                    element step {
+                      element label { map:get($step, "label") },
+                      element input { map:get($step, "input") },
+                      element output { map:get($step, "output") },
+                      element error { map:get($step, "error") },
+                      element duration { map:get($step, "duration") },
+                      element options { map:get($step, "options") }
+                    }
+                }
               }
             }
-          }
-      return
-        xdmp:eval('
-          xquery version "1.0-ml";
+        return
+          xdmp:eval('
+            xquery version "1.0-ml";
 
-          declare option xdmp:mapping "false";
+            declare option xdmp:mapping "false";
 
-          declare variable $trace external;
-          declare variable $extension external;
+            declare variable $trace external;
+            declare variable $extension external;
 
-          xdmp:document-insert(
-            "/" || $trace/*:trace/*:traceId || $extension,
-            $trace,
-            xdmp:default-permissions(),
-            ("trace", $trace/*:trace/*:flow-type, $trace/*:trace/*:flowType)
-          )
-        ',
-        map:new((
-          map:entry("trace", $trace),
-          map:entry("extension", if (rfc:is-json()) then ".json" else ".xml")
-        )),
-        map:new((
-          map:entry("database", xdmp:database($config:TRACE-DATABASE)),
-          map:entry("commit", "auto"),
-          map:entry("update", "true"),
-          map:entry("ignoreAmps", fn:true())
-        )))
-    )
-    else ()
+            xdmp:document-insert(
+              "/" || $trace/*:trace/*:traceId || $extension,
+              $trace,
+              xdmp:default-permissions(),
+              ("trace", $trace/*:trace/*:flow-type, $trace/*:trace/*:flowType)
+            )
+          ',
+          map:new((
+            map:entry("trace", $trace),
+            map:entry("extension", if (rfc:is-json()) then ".json" else ".xml")
+          )),
+          map:new((
+            map:entry("database", xdmp:database($config:TRACE-DATABASE)),
+            map:entry("commit", "auto"),
+            map:entry("update", "true"),
+            map:entry("ignoreAmps", fn:true())
+          )))
+      )
+      else ()
 };
 
 declare function trace:sanitize-data($data)
 {
-  if ($data instance of binary()) then xs:hexBinary($data)
-  else if (fn:not(rfc:is-json())) then
-    if ($data instance of null-node()) then ()
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log($unsupported-log-message, "warning")
+    return $data
+  else
+    if ($data instance of binary()) then xs:hexBinary($data)
+    else if (fn:not(rfc:is-json())) then
+      if ($data instance of null-node()) then ()
+      else $data
     else $data
-  else $data
 };
 
 declare function trace:plugin-trace(
@@ -326,26 +355,29 @@ declare function trace:plugin-trace(
   $output,
   $duration) as empty-sequence()
 {
-  let $current-trace := rfc:get-trace($item-context)
-  let $output := trace:sanitize-data($output)
-  return
-    if (trace:enabled()) then(
-      let $new-step := map:map()
-      let $_ := (
-        map:put($new-step, "label", get-plugin-label($current-trace)),
-        trace:get-plugin-input($current-trace) ! map:put($new-step, "input", .),
-        map:put($new-step, "output", $output),
-        map:put($new-step, "duration", $duration),
-        map:put($new-step, "options", json:object(document { rfc:get-options($item-context) }/node()))
+  if (trace:is-tracing-supported() = false()) then
+    xdmp:log(fn:concat($unsupported-log-message, " ", "Plugin Trace is not logged."), "warning")
+  else
+    let $current-trace := rfc:get-trace($item-context)
+    let $output := trace:sanitize-data($output)
+    return
+      if (trace:enabled()) then(
+        let $new-step := map:map()
+        let $_ := (
+          map:put($new-step, "label", get-plugin-label($current-trace)),
+          trace:get-plugin-input($current-trace) ! map:put($new-step, "input", .),
+          map:put($new-step, "output", $output),
+          map:put($new-step, "duration", $duration),
+          map:put($new-step, "options", json:object(document { rfc:get-options($item-context) }/node()))
+        )
+        let $trace-steps := (
+          map:get($current-trace, "traceSteps"),
+          $new-step
+        )
+        return
+          map:put($current-trace, "traceSteps", $trace-steps)
       )
-      let $trace-steps := (
-        map:get($current-trace, "traceSteps"),
-        $new-step
-      )
-      return
-        map:put($current-trace, "traceSteps", $trace-steps)
-    )
-    else ()
+      else ()
 };
 
 declare function trace:error-trace(
@@ -353,32 +385,36 @@ declare function trace:error-trace(
   $error as element(error:error),
   $duration as xs:dayTimeDuration)
 {
-  let $current-trace := rfc:get-trace($item-context)
-  let $identifier := rfc:get-id($item-context)
-  let $_ := trace:increment-error-count()
-  let $_ := $identifier ! trace:add-failed-item(.)
-  return (
-    map:put($current-trace-settings, "_has_errors", fn:true()),
-    let $trace-steps := (
-      map:get($current-trace, "traceSteps"),
-      map:new((
-        map:entry("label", get-plugin-label($current-trace)),
-        map:entry("input", get-plugin-input($current-trace)),
-        map:entry("error",
-          if (rfc:is-json()) then
-            $error/err:error-to-json(.)
-          else
-            $error
-        ),
-        map:entry("duration", $duration),
-        map:entry("options", rfc:get-options($item-context))
-      ))
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, "Error Trace is not logged."), "warning")
+    return object-node {}
+  else
+    let $current-trace := rfc:get-trace($item-context)
+    let $identifier := rfc:get-id($item-context)
+    let $_ := trace:increment-error-count()
+    let $_ := $identifier ! trace:add-failed-item(.)
+    return (
+      map:put($current-trace-settings, "_has_errors", fn:true()),
+      let $trace-steps := (
+        map:get($current-trace, "traceSteps"),
+        map:new((
+          map:entry("label", get-plugin-label($current-trace)),
+          map:entry("input", get-plugin-input($current-trace)),
+          map:entry("error",
+            if (rfc:is-json()) then
+              $error/err:error-to-json(.)
+            else
+              $error
+          ),
+          map:entry("duration", $duration),
+          map:entry("options", rfc:get-options($item-context))
+        ))
+      )
+      let $_ := map:put($current-trace, "traceSteps", $trace-steps)
+      let $_ := trace:write-error-trace($item-context)
+      let $_ := map:put($current-trace-settings, "_has_errors", fn:false())
+      return ()
     )
-    let $_ := map:put($current-trace, "traceSteps", $trace-steps)
-    let $_ := trace:write-error-trace($item-context)
-    let $_ := map:put($current-trace-settings, "_has_errors", fn:false())
-    return ()
-  )
 };
 
 declare function trace:_walk_json($nodes as node()* ,$o)
@@ -575,6 +611,10 @@ declare function trace:find-traces(
   $page as xs:unsignedLong,
   $page-length as xs:unsignedLong)
 {
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, "No traces found."), "warning")
+    return object-node {}
+  else
   let $options :=
     <options xmlns="http://marklogic.com/appservices/search">
       <additional-query>{cts:collection-query("trace")}</additional-query>
@@ -606,55 +646,74 @@ declare function trace:find-traces(
 
 declare function trace:get-traces($page as xs:int, $page-length as xs:int)
 {
-  let $start := ($page - 1) * $page-length + 1
-  let $end := $start + $page-length - 1
-  let $count := xdmp:estimate(/trace)
-  let $traces :=
-    for $trace in cts:search(/trace, cts:true-query(), ("unfiltered", cts:index-order(cts:path-reference("/trace/created"), "descending")))[$start to $end]
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, "No traces found."), "warning")
+    return object-node {}
+  else
+    let $start := ($page - 1) * $page-length + 1
+    let $end := $start + $page-length - 1
+    let $count := xdmp:estimate(/trace)
+    let $traces :=
+      for $trace in cts:search(/trace, cts:true-query(), ("unfiltered", cts:index-order(cts:path-reference("/trace/created"), "descending")))[$start to $end]
+      return
+        trace:trace-to-json($trace)
     return
-      trace:trace-to-json($trace)
-  return
-    object-node {
-      "start": $start,
-      "end": $end,
-      "total": $count,
-      "page": $page,
-      "pageCount": $page-length,
-      "traces": json:to-array($traces)
-    }
+      object-node {
+        "start": $start,
+        "end": $end,
+        "total": $count,
+        "page": $page,
+        "pageCount": $page-length,
+        "traces": json:to-array($traces)
+      }
 };
 
 declare function trace:get-trace($id as xs:string)
 {
-  let $query :=
-    cts:or-query((
-      cts:path-range-query("/trace/traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
-    ))
-  return
-    trace:trace-to-json(cts:search(fn:doc(), $query)[1]/node())
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, "No trace found."), "warning")
+    return object-node {}
+  else
+    let $query :=
+      cts:or-query((
+        cts:path-range-query("/trace/traceId", "=", $id, ("collation=http://marklogic.com/collation/codepoint"))
+      ))
+    return
+      trace:trace-to-json(cts:search(fn:doc(), $query)[1]/node())
 };
 
 declare function trace:get-traceIds($q as xs:string?)
 {
-  let $query :=
-    if ($q) then
-      cts:element-value-query(xs:QName("identifier"), fn:lower-case($q) || "*", "wildcarded")
-    else ()
-  let $results :=
-    cts:value-co-occurrences(
-      cts:path-reference("/trace/traceId"),
-      cts:path-reference("/trace/identifier"),
-      (
-        "limit=10"
-      ),
-      $query)
-  let $results :=
-    for $r in $results
+  if (trace:is-tracing-supported() = false()) then
+    let $_ := xdmp:log(fn:concat($unsupported-log-message, "No traces found."), "warning")
+    return object-node {}
+  else
+    let $query :=
+      if ($q) then
+        cts:element-value-query(xs:QName("identifier"), fn:lower-case($q) || "*", "wildcarded")
+      else ()
+    let $results :=
+      cts:value-co-occurrences(
+        cts:path-reference("/trace/traceId"),
+        cts:path-reference("/trace/identifier"),
+        (
+          "limit=10"
+        ),
+        $query)
+    let $results :=
+      for $r in $results
+      return
+        object-node {
+          "traceId": fn:data($r/*:value[1]),
+          "identifier": fn:data($r/*:value[2])
+        }
     return
-      object-node {
-        "traceId": fn:data($r/*:value[1]),
-        "identifier": fn:data($r/*:value[2])
-      }
-  return
-    json:to-array($results)
+      json:to-array($results)
+};
+
+declare function trace:is-tracing-supported()
+{
+  let $hub-version := $config:HUB-VERSION
+  let $major-version := fn:head(fn:tokenize($hub-version, "\."))
+  return xs:int($major-version) le 4
 };

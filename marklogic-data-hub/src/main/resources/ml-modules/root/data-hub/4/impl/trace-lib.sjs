@@ -16,6 +16,9 @@
 'use strict';
 
 const config = require("/com.marklogic.hub/config.sjs");
+const unSupportedLogMessage = `The 4.x version of the tracing library is no longer supported and has been deprecated in Datahub ${config.HUBVERSION}.`;
+
+
 if (!this.rfc) {
   this.rfc = require("/data-hub/4/impl/run-flow-context.sjs");
 }
@@ -44,7 +47,7 @@ function isObject(value) {
 }
 
 function setCurrentTraceSettings(settings) {
-  internalContexts.currentTraceSettings = settings;
+  internalContexts.currentTraceSettings = settings ? settings : {};
 }
 
 function getCurrentTraceSettings() {
@@ -91,6 +94,11 @@ function addCompletedItem(item) {
 }
 
 function getCurrentTrace(currentTrace) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage, "warning");
+    return {};
+  }
+
   let ct = currentTrace || rfc.getTrace(rfc.getItemContext());
   if (!ct) {
     fn.error(xs.QName("MISSING_CURRENT_TRACE"));
@@ -104,7 +112,10 @@ function setPluginLabel(label, currentTrace) {
 }
 
 function getPluginLabel(currentTrace) {
-  return currentTrace.pluginLabel;
+  if(currentTrace) {
+    return currentTrace.pluginLabel;
+  }
+  return null;
 }
 
 function resetPluginInput(currentTrace) {
@@ -113,7 +124,7 @@ function resetPluginInput(currentTrace) {
 }
 
 function getPluginInput(currentTrace) {
-  let o = currentTrace.pluginInput;
+  let o = currentTrace && currentTrace.pluginInput;
   if (o) {
     if (rfc.isJson()) {
       let oo = {};
@@ -143,7 +154,6 @@ function getPluginInput(currentTrace) {
     }
     return Sequence.from(inputs);
   }
-
   return null;
 }
 
@@ -177,6 +187,10 @@ function getFailedItems() {
 }
 
 function writeTrace(itemContext) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("Error Trace is not written"), "warning");
+    return;
+  }
   let identifier = rfc.getId(itemContext);
   if (identifier) {
     addCompletedItem(identifier);
@@ -185,8 +199,15 @@ function writeTrace(itemContext) {
 }
 
 function writeErrorTrace(itemContext) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("Error Trace is not written"), "warning");
+    return;
+  }
   if (enabled() || hasErrors()) {
     let currentTrace = rfc.getTrace(itemContext);
+    if(!currentTrace) {
+      return;
+    }
     let trace = null;
     if (rfc.isJson()) {
       trace = {
@@ -218,25 +239,25 @@ function writeErrorTrace(itemContext) {
       nb.startDocument();
         nb.startElement("trace");
           nb.startElement("jobId");
-            nb.addText(rfc.getJobId().toString());
+            nb.addText(rfc.getJobId() ? rfc.getJobId().toString() : "");
           nb.endElement();
           nb.startElement("format");
-            nb.addText(rfc.getDataFormat().toString());
+            nb.addText(rfc.getDataFormat() ? rfc.getDataFormat().toString() : "");
           nb.endElement();
           nb.startElement("traceId");
-            nb.addText(currentTrace.traceId.toString());
+            nb.addText(currentTrace.traceId ? currentTrace.traceId.toString() : "");
           nb.endElement();
           nb.startElement("created");
-            nb.addText(currentTrace.created.toString());
+            nb.addText(currentTrace.created ? currentTrace.created.toString() : "");
           nb.endElement();
           nb.startElement("identifier");
-            nb.addText(rfc.getId(itemContext).toString());
+            nb.addText(rfc.getId(itemContext) ? rfc.getId(itemContext).toString() : "");
           nb.endElement();
           nb.startElement("flowName");
-            nb.addText(rfc.getFlowName().toString());
+            nb.addText(rfc.getFlowName() ? rfc.getFlowName().toString() : "");
           nb.endElement();
           nb.startElement("flowType");
-            nb.addText(rfc.getFlowType().toString());
+            nb.addText(rfc.getFlowType() ? rfc.getFlowType().toString() : "");
           nb.endElement();
           let hasErrors = false;
           nb.startElement("steps");
@@ -341,6 +362,10 @@ function sanitizeData(data) {
 }
 
 function pluginTrace(itemContext, output, duration) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("Plugin Trace is not logged"), "warning");
+    return;
+  }
   let ic = itemContext || rfc.getItemContext();
   let currentTrace = rfc.getTrace(ic);
   output = sanitizeData(output);
@@ -362,6 +387,10 @@ function pluginTrace(itemContext, output, duration) {
 }
 
 function errorTrace(itemContext, error, duration) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("Error Trace is not logged"), "warning");
+    return;
+  }
   let currentTrace = rfc.getTrace(itemContext);
   let identifier = rfc.getId(itemContext);
   incrementErrorCount();
@@ -386,15 +415,31 @@ function errorTrace(itemContext, error, duration) {
 
 
 function findTraces(q, page, pageLength) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("No traces found"), "warning");
+    return {};
+  }
   return tracelib.findTraces(q, page, pageLength);
 }
 
 function getTraces(page, pageLength) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("No traces found"), "warning");
+    return {};
+  }
   return tracelib.getTraces(page, pageLength);
 }
 
 function getTrace(id) {
+  if(!isTracingSupported()) {
+    xdmp.log(unSupportedLogMessage.concat("No trace found"), "warning");
+    return {};
+  }
   return tracelib.getTrace(id);
+}
+
+function isTracingSupported() {
+  return tracelib.isTracingSupported();
 }
 
 module.exports = {
@@ -407,14 +452,14 @@ module.exports = {
   incrementErrorCount: incrementErrorCount,
   getErrorCount: getErrorCount,
   addFailedItem: addFailedItem,
+  getFailedItems: getFailedItems,
   addCompletedItem: addCompletedItem,
+  getCompletedItems: getCompletedItems,
   setPluginLabel: setPluginLabel,
   getPluginLabel: getPluginLabel,
   resetPluginInput: resetPluginInput,
   getPluginInput: getPluginInput,
   setPluginInput: setPluginInput,
-  getCompletedItems: getCompletedItems,
-  getFailedItems: getFailedItems,
   writeTrace: writeTrace,
   writeErrorTrace: writeErrorTrace,
   pluginTrace: pluginTrace,
@@ -422,5 +467,7 @@ module.exports = {
   findTraces: findTraces,
   getTraces: getTraces,
   getTrace: getTrace,
-  isXmlNode: isXmlNode
+  isXmlNode: isXmlNode,
+  isTracingSupported: isTracingSupported,
+  unSupportedLogMessage: unSupportedLogMessage
 };

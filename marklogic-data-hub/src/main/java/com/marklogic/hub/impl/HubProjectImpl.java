@@ -27,6 +27,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.util.json.JSONStreamWriter;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
@@ -494,19 +495,21 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     private void upgradeLegacyFlows(FlowManagerImpl flowManager, File[] oldEntityDirectories) {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(flowManager.getHubConfig());
+        ObjectMapper objectMapper = new ObjectMapper();
         if(oldEntityDirectories != null) {
             for(File legacyEntityDir: oldEntityDirectories) {
                 File[] flowTypes = legacyEntityDir.listFiles(File::isDirectory);
                 if(flowTypes != null) {
-                    Flow newFlow = new FlowImpl();
                     String flowName = "dh_Upgrade_".concat(legacyEntityDir.getName()).concat("Flow");
-                    newFlow.setName(flowName);
-                    newFlow.setSteps(new HashMap<>());
-                    flowManager.saveFlow(newFlow);
-
+                    ObjectNode flow = objectMapper.createObjectNode();
+                    flow.put("name", flowName);
+                    ObjectNode steps = objectMapper.createObjectNode();
+                    flow.put("steps", steps);
+                    int stepNumber = 1;
                     for(File oldFlowType: flowTypes) {
                         File[] stepFiles = oldFlowType.listFiles(File::isDirectory);
-                        for(File stepFile: stepFiles) {
+                        for(int i=0; i<stepFiles.length; i++) {
+                            File stepFile = stepFiles[i];
                             String stepName = stepFile.getName();
                             // Step names are not allowed to have special characters
                             String newStepName = stepName.replaceAll("[^\\w\\-]", "");
@@ -525,18 +528,27 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                                 stepType = "custom";
                                 acceptSourceModule = true;
                             }
-                            JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule).getLeft();
+                            JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule);
+                            // Save StepDefinition to local file
+                            scaffolding.saveStepDefinition(newStepName, newStepName, stepType, true);
                             updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName());
-                            scaffolding.saveStep(stepType, stepPayLoad);
-                            flowManager.addStepToFlow(flowName, newStepName, stepType);
+                            // Save Step to local file
+                            scaffolding.saveLocalStep(stepType, stepPayLoad);
+                            // Add step to local Flow
+                            ObjectNode stepIdObj = objectMapper.createObjectNode();
+                            steps.put(Integer.toString(stepNumber++), stepIdObj);
+                            stepIdObj.put("stepId", newStepName.concat("-").concat(stepType));
                         }
                     }
+                    flowManager.saveLocalFlow(flow);
                 }
             }
         }
     }
 
     private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType) {
+        ObjectNode step = (ObjectNode) stepPayLoad;
+        ObjectMapper mapper = new ObjectMapper();
         Properties properties = new Properties();
         try {
             File propsFile = stepFile.listFiles((File file, String name) -> name.equals(stepName.concat(".properties")))[0];
@@ -547,20 +559,29 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             properties.put("mainModule", "main.sjs");
             properties.put("dataFormat", "json");
         }
-        ObjectNode optionsNode = new ObjectMapper().createObjectNode();
+        ObjectNode optionsNode = mapper.createObjectNode();
         optionsNode.put("flow", stepName);
         optionsNode.put("entity", "");
         optionsNode.put("dataFormat", properties.get("dataFormat").toString());
 
-        if(stepPayLoad.get("stepDefinitionType").asText().equals("custom")) {
-            mainModulePath = mainModulePath.concat("/").concat(properties.get("mainModule").toString());
-            ObjectNode sourceModuleNode = (ObjectNode) stepPayLoad.get("sourceModule");
+        if(step.get("stepDefinitionType").asText().equals("custom")) {
+            step.put("sourceDatabase", "data-hub-STAGING");
+            step.put("targetDatabase", "data-hub-FINAL");
+            step.put("sourceQueryIsModule", true);
+            mainModulePath = mainModulePath.concat("/").concat(properties.get("collectorModule").toString());
+            ObjectNode sourceModuleNode = (ObjectNode) step.get("sourceModule");
             sourceModuleNode.put("modulePath", mainModulePath);
-            sourceModuleNode.put("functionName", "main");
+            sourceModuleNode.put("functionName", "collect");
 
             optionsNode.put("entity", entityType);
+        } else {
+            step.put("targetDatabase", "data-hub-STAGING");
         }
-        ((ObjectNode)stepPayLoad).put("options", optionsNode);
+        step.put("options", optionsNode);
+
+        step.putArray("collections").add(stepPayLoad.get("name").asText()).add(entityType);
+        step.put("permissions", "data-hub-common,read,data-hub-common,update");
+        step.put("stepId", step.get("name").asText().concat("-").concat(step.get("stepDefinitionType").asText()));
     }
 
     private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {

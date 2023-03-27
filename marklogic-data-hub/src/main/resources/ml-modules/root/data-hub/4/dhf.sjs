@@ -20,9 +20,7 @@ const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 const _requireCache = {};
 
 /**
- : Runs a given function as a plugin. This method provides
- : tracing around your function. Tracing will catch uncaught
- : exceptions and log them into the traces database.
+ : Runs a given function as a plugin.
  :
  : @param context - the context for this plugin
  : @param func - the function to run
@@ -30,21 +28,6 @@ const _requireCache = {};
  */
 function run(context, func)
 {
-  let label = context.label;
-
-  if (label) {
-    tracelib.setPluginLabel(label);
-  } else {
-    fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
-  }
-
-  tracelib.resetPluginInput();
-
-  let inputs = context.inputs
-  for (let key in inputs) {
-    tracelib.setPluginInput(key, inputs[key]);
-  }
-
   return flowlib.safeRun(func)
 }
 
@@ -177,20 +160,24 @@ function addTraceInput(context, inputLabel, input) {
 }
 
 function logTrace(context) {
+  if(!tracelib.isTracingSupported()) {
+    xdmp.log(tracelib.unSupportedLogMessage.concat("Trace is not logged"), "warning");
+    return;
+  }
+
   let label = context.label;
   if (label) {
     tracelib.setPluginLabel(label);
+    tracelib.resetPluginInput();
+
+    let inputs = context.inputs;
+    for (let key in inputs) {
+      tracelib.setPluginInput(key, inputs[key]);
+    }
+    tracelib.pluginTrace(null, null, "PT0S");
   } else{
     fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
   }
-
-  tracelib.resetPluginInput();
-
-  let inputs = context.inputs;
-  for (let key in inputs) {
-    tracelib.setPluginInput(key, inputs[key]);
-  }
-  tracelib.pluginTrace(null, null, "PT0S");
 }
 
 module.exports = {

@@ -98,7 +98,6 @@ function runFlow(jobId, flow, identifier, content, options, mainFunc) {
     rfc.withContent(itemContext, c);
   }
   rfc.withOptions(itemContext, options);
-  rfc.withTrace(itemContext, tracelib.newTrace());
 
   rfc.setItemContext(itemContext);
 
@@ -503,22 +502,12 @@ function getMainFunc(main) {
   rfc.withModuleUri(moduleUri);
   rfc.withCodeFormat(main.codeFormat);
 
-  let duration = xs.dayTimeDuration("PT20S");
-  let key = MAIN_CACHE_KEY_PREFIX + moduleUri;
-
   let func = makeFunction("main", moduleUri);
-  // let func = fn.head(hul.fromFieldCacheOrEmpty(key, duration));
-  // if (!func) {
-  //   func = makeFunction("main", moduleUri);
-  //   hul.setFieldCache(key, func, duration);
-  // }
 
   return func;
 }
 
 function runMain(itemContext, func) {
-  // let func = makeFunction("main", moduleUri);
-  let before = xdmp.elapsedTime();
   let id = rfc.getId(itemContext);
   contextQueue[id] = itemContext;
 
@@ -538,8 +527,7 @@ function runMain(itemContext, func) {
     if (! ex.name.includes("DATAHUB-PLUGIN-ERROR")) {
       // this is an error in main.(sjs|xqy)
       // log the trace event for main
-      tracelib.setPluginLabel("main", rfc.getTrace(itemContext));
-      tracelib.errorTrace(itemContext, {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
+      xdmp.log(ex.message, "warning");
       throw(ex);
     }  else {
       throw(ex);
@@ -565,9 +553,7 @@ function runWriters(identifiers) {
     fn.head(xdmp.eval(
     '  let flowlib = require("/data-hub/4/impl/flow-lib.sjs"); ' +
     '  let rfc = require("/data-hub/4/impl/run-flow-context.sjs"); ' +
-    '  let tracelib = require("/data-hub/4/impl/trace-lib.sjs"); ' +
     '  rfc.setGlobalContext(rfcContext); ' +
-    '  tracelib.setCurrentTraceSettings(currentTraceSettings); ' +
     '  for (let identifier of identifiers) { ' +
     '    let itemContext = contextQueue[identifier]; ' +
     '    let writerInfo = writerQueue[identifier]; ' +
@@ -580,14 +566,12 @@ function runWriters(identifiers) {
     '        writerInfo.options ' +
     '      ); ' +
     '    } ' +
-    '  } ' +
-    '  tracelib.getCurrentTraceSettings(); ',
+    '  } ',
     {
       identifiers: identifiers,
       contextQueue: contextQueue,
       writerQueue: writerQueue,
-      rfcContext: rfc.getGlobalContext(),
-      currentTraceSettings: tracelib.getCurrentTraceSettings()
+      rfcContext: rfc.getGlobalContext()
     },
     {
       ignoreAmps: true,
@@ -595,8 +579,6 @@ function runWriters(identifiers) {
       database: rfc.getTargetDatabase(),
       transactionMode: "update-auto-commit"
     }));
-
-  tracelib.setCurrentTraceSettings(updatedSettings);
 }
 
 /**
@@ -609,43 +591,28 @@ function runWriters(identifiers) {
  : @return - the output of the writer. It varies.
  */
 function runWriter(writerFunction, itemContext, identifier, envelope, options) {
-  let before = xdmp.elapsedTime();
-  let currentTrace = rfc.getTrace(itemContext);
-  tracelib.setPluginLabel("writer", currentTrace);
-  tracelib.resetPluginInput(currentTrace);
-  tracelib.setPluginInput("envelope", envelope, currentTrace);
-  tracelib.getCurrentTraceSettings();
   let resp = null;
   try {
       // resp = xdmp.apply(writerFunction, identifier, envelope, options);
       resp = writerFunction(identifier, envelope, options);
-
-      tracelib.pluginTrace(itemContext, null, xdmp.elapsedTime().subtract(before));
-
-      // write the trace for the current identifier
-      tracelib.writeTrace(itemContext);
   }
   catch(ex) {
-    tracelib.errorTrace(itemContext, {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
+    xdmp.log(ex.message, "warning");
   }
 
   return resp;
 }
 
 function safeRun(func) {
-  let before = xdmp.elapsedTime();
   try {
     let resp = func();
-    let duration = xdmp.elapsedTime().subtract(before);
     if(!resp instanceof Document){
       resp = xdmp.describe(resp, 1000000, 1000000);
     }
-    tracelib.pluginTrace(rfc.getItemContext(), resp, duration);
     return resp;
   }
   catch(ex) {
-    tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
-    fn.error(null, "DATAHUB-PLUGIN-ERROR",  JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
+    xdmp.log(JSON.stringify(ex, Object.getOwnPropertyNames(ex)), "warning");
   }
 }
 

@@ -70,11 +70,15 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     @Override
     public void saveStepDefinition(StepDefinition stepDefinition, boolean autoIncrement) {
+        if (autoIncrement) {
+            stepDefinition.incrementVersion();
+        }
+        getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition), stepDefinition.getName());
+        saveLocalStepDefinition(stepDefinition);
+    }
+
+    public void saveLocalStepDefinition(StepDefinition stepDefinition) {
         try {
-            if (autoIncrement) {
-                stepDefinition.incrementVersion();
-            }
-            getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition), stepDefinition.getName());
             Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
             if (!(dir.toFile().mkdirs() || dir.toFile().exists())) {
                 logger.error("Unable to create directory for step definition at " + dir.toAbsolutePath());
