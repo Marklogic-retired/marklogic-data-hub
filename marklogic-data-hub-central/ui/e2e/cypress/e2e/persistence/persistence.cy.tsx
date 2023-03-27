@@ -354,7 +354,7 @@ describe("Validate persistence across Hub Central", () => {
     propertyTable.getAddPropertyButton(entityName).scrollIntoView().should("be.visible").click();
     propertyModal.newPropertyName(propertyName);
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
 

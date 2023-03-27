@@ -11,6 +11,8 @@ import explorePage from "../../support/pages/explore";
 
 describe("User without hub-central-saved-query-user role should not see saved queries drop down on zero sate page", () => {
   before(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
@@ -21,7 +23,8 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     cy.clearAllLocalStorage();
   });
   it("verifies user without hub-central-saved-query-user role can explore data", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
     browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");

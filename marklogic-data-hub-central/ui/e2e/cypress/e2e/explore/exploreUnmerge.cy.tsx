@@ -25,17 +25,21 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
 
     graphExplore.getPersonJSONacordeon().click();
     graphExplore.getMappingPerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
     graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMatchPerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
     graphExplore.getCloseModalMatchPerson().click();
     graphExplore.getRunButtonMergePerson().click();
+    cy.wait("@runResponse");
     cy.wait(8000);
-    graphExplore.getCloseModalMergePerson().click();
+    graphExplore.getCloseModalMergePerson().click({force: true});
     graphExplore.getTitleApp().click();
 
     cy.log("**Go to Explore section**");
@@ -212,13 +216,13 @@ describe("Test '/Explore' graph right panel", () => {
     // Check unmerge icon in side panel
     cy.log("** when hover unmerge icon should show a security tooltip**");
     browsePage.getUnmergeIcon().trigger("mouseover");
-    cy.findByText("Unmerge: Contact your security administrator for access.");
+    cy.findAllByText("Unmerge: Contact your security administrator for access.");
 
     // Check unmerge option in right click node
     cy.log("** when hover unmerge icon should show a security tooltip**");
     graphExplore.getUnmergeOption().should("be.visible");
     graphExplore.getUnmergeOption().trigger("mouseover");
-    cy.findByText("Unmerge: Contact your security administrator for access.");
+    cy.findAllByText("Unmerge: Contact your security administrator for access.");
   });
 
   it("Navigate to Table View and Filter Person entity", () => {

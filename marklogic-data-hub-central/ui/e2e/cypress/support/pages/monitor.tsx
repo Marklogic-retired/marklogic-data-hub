@@ -56,8 +56,8 @@ class MonitorPage {
   validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
     // filter by checking "mapping" facet
     this.getFacetCheckbox(facetType, facetName).should("be.visible").check();
-    cy.wait(1000);
-    cy.findByLabelText("facet-apply-button").click({force: true});
+    cy.wait(2000);
+    cy.get(`[id="selected-facets"] [data-testid="facet-apply-button"]`).should("be.visible").click();
 
     cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`).should("be.visible").then(($btn) => {
       let facet = $btn.next("label").text();

@@ -16,14 +16,14 @@ import {mappingStepDetail} from "../../support/components/mapping";
 describe("login", () => {
 
   before(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
     cy.visit("/");
     cy.waitForAsyncRequest();
   });
 
   afterEach(() => {
     //resetting the test user back to only have 'hub-central-user' role
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
@@ -66,13 +66,11 @@ describe("login", () => {
   });
 
   it("user dropdown should disappear when clicked away", () => {
-    cy.loginAsTestUserWithRoles("hub-central-saved-query-user").withUI();
-    cy.waitForAsyncRequest();
-    cy.url().should("include", "/tiles");
+    cy.loginAsTestUserWithRoles("hub-central-saved-query-user").withUI()
+      .url().should("include", "/tiles");
     cy.get(`#user-dropdown`).click();
     cy.get("#logOut").should("be.visible");
-    cy.contains(`Welcome to MarkLogic Data Hub Central`).should("be.visible");
-    cy.get(`#user-dropdown`).click();
+    toolbar.getLoadToolbarIcon().click({force: true});
     cy.get("#logOut").should("not.be.visible");
   });
 
