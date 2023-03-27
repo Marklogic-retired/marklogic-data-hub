@@ -78,7 +78,9 @@ describe("Validate Merge warnings", () => {
     cy.findByTestId("onMerge-edit").click();
     curatePage.getExistingFlowFromDropdown_OldWay("Person");
     advancedSettings.keepTargetCollection("onMerge");
+    cy.wait(200);
     curatePage.saveSettings(mergeStep).click();
+    cy.wait(200);
     cy.waitForAsyncRequest();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
