@@ -1,6 +1,7 @@
-const DataHub = require("/data-hub/5/datahub.sjs");
+import DataHub from "/data-hub/5/datahub.mjs";
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+
 const datahub = new DataHub();
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 
 function main(content, options) {
   let id = content.uri;
@@ -22,6 +23,6 @@ function main(content, options) {
   return content;
 }
 
-module.exports = {
+export default {
   main: main
 };

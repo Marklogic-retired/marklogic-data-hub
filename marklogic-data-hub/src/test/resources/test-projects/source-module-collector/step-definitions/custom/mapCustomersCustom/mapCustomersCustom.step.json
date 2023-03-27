@@ -4,5 +4,5 @@
   "description" : "",
   "type" : "CUSTOM",
   "version" : 1,
-  "modulePath" : "/custom-modules/custom/mapCustomersCustom/main.sjs"
+  "modulePath" : "/custom-modules/custom/mapCustomersCustom/main.mjs"
 }
