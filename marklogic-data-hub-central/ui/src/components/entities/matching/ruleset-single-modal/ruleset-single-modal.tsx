@@ -1180,7 +1180,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
                     show={isTooltipVisible.reduce ? isTooltipVisible.reduce : undefined}
                     text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>}
                     id="reduce-tooltip"
-                    placement="top"
+                    placement="right"
                   >
                     <QuestionCircleFill
                       color={themeColors.defaults.questionCircle}
