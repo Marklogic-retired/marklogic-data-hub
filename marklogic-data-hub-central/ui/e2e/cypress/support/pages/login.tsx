@@ -18,6 +18,10 @@ class LoginPage {
     cy.wait(2000);
     //cy.window().its("stompClientConnected").should("exist");
   }
+
+  clickTitle() {
+    cy.get(`[class*="Overview_title"]`).contains("Welcome to MarkLogic Data Hub Central").click();
+  }
 }
 
 const loginPage = new LoginPage();

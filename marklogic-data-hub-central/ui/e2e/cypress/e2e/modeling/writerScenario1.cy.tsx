@@ -72,8 +72,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   it("Add a Multiple Value property", () => {
     propertyModal.newPropertyName("user");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("id").click();
     propertyModal.getYesRadio("multiple").click();
@@ -84,8 +84,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getAddPropertyButton("Buyer").should("be.visible").click();
     propertyModal.newPropertyName("personNoKey");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
     propertyModal.getSubmitButton().click();
     propertyTable.verifyRelationshipIcon("personNoKey").should("exist");
   });
@@ -116,8 +116,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newId");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More string types").click();
-    propertyModal.getCascadedTypeFromDropdown("iri").click();
+    propertyModal.getTypeFromDropdown("More string types");
+    propertyModal.getCascadedTypeFromDropdown("iri");
     propertyModal.getYesRadio("identifier").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
@@ -131,7 +131,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.newPropertyName("buyer-id");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getYesRadio("identifier").click();
     confirmationModal.getIdentifierText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.Identifer);
@@ -149,8 +149,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.newPropertyName("user-id");
     propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Customer").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Customer");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
@@ -226,7 +226,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getAddPropertyButton("Order").click();
     propertyModal.newPropertyName("orderID");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").should("be.visible").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getNoRadio("identifier").click();
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
@@ -249,8 +249,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.newPropertyName("relProp");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Order").click();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Order");
     propertyModal.openForeignKeyDropdown();
     propertyModal.checkForeignKeyDropdownLength(7); // Check for -None- (1), saved (5), unsaved (1) Order properties
     propertyModal.openForeignKeyDropdown();
@@ -265,7 +265,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newID");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getNoRadio("identifier").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();

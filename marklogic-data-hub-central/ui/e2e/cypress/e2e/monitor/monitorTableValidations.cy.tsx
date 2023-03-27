@@ -18,7 +18,7 @@ describe("Monitor Tile", () => {
     cy.waitForAsyncRequest();
   });
   beforeEach(() => {
-    cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).should("be.visible").click({force: true});
+    toolbar.getMonitorToolbarIcon().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
     monitorPage.waitForMonitorTableToLoad();
   });
@@ -298,7 +298,7 @@ describe("Monitor Tile", () => {
   it("apply facet search and verify docs", () => {
     // There's a re-render.
     cy.wait(1500);
-    browsePage.getShowMoreLink("step-type").click({force: true});
+    browsePage.getShowMoreLink("step-type").click();
     monitorPage.validateAppliedFacetTableRows("step-type", 1, "mapping");
   });
 

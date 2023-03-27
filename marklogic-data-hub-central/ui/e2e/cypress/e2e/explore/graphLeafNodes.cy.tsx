@@ -148,7 +148,7 @@ describe("Leaf Nodes", () => {
   it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
     entitiesSidebar.selectBaseEntityOption("Product");
     cy.waitForAsyncRequest();
-    cy.wait(2000);
+    cy.wait(5000);
 
     graphExplore.fit();
     graphExplore.stopStabilization();
@@ -161,7 +161,7 @@ describe("Leaf Nodes", () => {
 
       //Hover to bring focus
       canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
-
+      cy.wait(1000);
       // Right click and expand the remaining records of the node
       canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
       graphView.physicsAnimationToggle();

@@ -70,7 +70,7 @@ describe("Entity Modeling: Graph View", () => {
   });
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("table");
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Patients");
     entityTypeModal.newEntityDescription("An entity for patients");
@@ -78,8 +78,8 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.getAddPropertyButton("Patients").should("be.visible").click();
     propertyModal.newPropertyName("patientID");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More number types").click();
-    propertyModal.getCascadedTypeFromDropdown("byte").click();
+    propertyModal.getTypeFromDropdown("More number types");
+    propertyModal.getCascadedTypeFromDropdown("byte");
     propertyModal.getYesRadio("identifier").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
@@ -89,20 +89,20 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("personType");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click().then(() => {
-      propertyModal.openForeignKeyDropdown();
-      propertyModal.getForeignKey("id").click();
-      propertyModal.getSubmitButton().click();
-      propertyTable.getProperty("personType").should("exist");
-    });
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
+    cy.wait(3000);
+    propertyModal.openForeignKeyDropdown();
+    propertyModal.getForeignKey("id").click();
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("personType").should("exist");
 
     //Add second property to Patients Entity, publish the changes
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More number types").click();
-    propertyModal.getCascadedTypeFromDropdown("negativeInteger").click();
+    propertyModal.getTypeFromDropdown("More number types");
+    propertyModal.getCascadedTypeFromDropdown("negativeInteger");
     propertyModal.clickCheckbox("facetable");
     propertyModal.clickCheckbox("sortable");
     propertyModal.getSubmitButton().click();

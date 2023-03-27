@@ -93,12 +93,12 @@ describe("Validate the scenarios when the steps are added in different flows", (
     propertyTable.getAddPropertyButton("Agent").should("be.visible").click();
     propertyModal.newPropertyName("Name");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getSubmitButton().click();
     propertyTable.getAddPropertyButton("Agent").should("be.visible").click();
     propertyModal.newPropertyName("ID");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("string").click();
+    propertyModal.getTypeFromDropdown("string");
     propertyModal.getSubmitButton().click();
     cy.wait(1000);
     modelPage.getPublishButton().click({force: true});
