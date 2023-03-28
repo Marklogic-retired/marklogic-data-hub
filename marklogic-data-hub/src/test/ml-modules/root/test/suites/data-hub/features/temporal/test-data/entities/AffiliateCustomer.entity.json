@@ -1,0 +1,32 @@
+{
+  "info" : {
+    "title": "AffiliateCustomer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions" : {
+    "AffiliateCustomer" : {
+      "properties" : {
+        "customerId" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "firstname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "lastname" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "primaryKey": "customerId",
+      "features": {
+        "temporal": {
+          "enabled": true,
+          "collection": "koolTest"
+        }
+      }
+    }
+  }
+}
