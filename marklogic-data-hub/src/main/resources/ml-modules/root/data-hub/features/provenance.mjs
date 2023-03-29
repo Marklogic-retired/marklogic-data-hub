@@ -18,8 +18,7 @@
 /**
  * Feature that handles the provenance of the artifacts and instances.
  */
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const provLib = mjsProxy.requireMjsModule("/data-hub/5/impl/prov.mjs");
+import provLib from "/data-hub/5/impl/prov.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 
