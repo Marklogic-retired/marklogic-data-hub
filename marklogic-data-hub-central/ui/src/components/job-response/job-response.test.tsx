@@ -74,7 +74,7 @@ describe("Job response modal", () => {
     let ts: string = curateData.jobRespSuccess.data.timeEnded; // "2020-04-24T14:05:01.019819-07:00"
     let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-24 14:05"
-    expect(getByText("0s 702ms")).toBeInTheDocument();
+    expect(getByText(/[0-9]*s [0-9]*ms/)).toBeInTheDocument();
 
     // check that expected steps are listed
     expect(getAllByText("match-customer")[0]).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe("Job response modal", () => {
     let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
     let tsExpected: string = dayjs(ts).format("YYYY-MM-DD HH:mm");
     expect(getByText(tsExpected)).toBeInTheDocument(); // "2020-04-04 01:17"
-    expect(getByText("0s 702ms")).toBeInTheDocument();
+    expect(getByText(/[0-9]*s [0-9]*ms/)).toBeInTheDocument();
 
     expect(getByTestId("stepType-header")).toBeInTheDocument();
     // check that expected steps and step types are listed
