@@ -330,6 +330,12 @@ const Flows: React.FC<Props> = ({
   const handleFlowDelete = name => {
     setDialogVisible(true);
     setFlowName(name);
+    const flowIndex = flows.findIndex(f => f.name === name);
+    if (openFlows.includes(flowIndex)) {
+      const openFlowsAux = [...openFlows];
+      let newActiveKeys = openFlowsAux.splice(flowIndex, 1);
+      setOpenFlows(newActiveKeys);
+    }
   };
 
   const handleStepDelete = (flowName, stepDetails) => {
@@ -417,7 +423,8 @@ const Flows: React.FC<Props> = ({
     //Saving in LS
     saveLocalStoragePreferences();
     const setKey = async () => {
-      await setOpenFlows(`${index}`);
+      const openFlowsAux = [...openFlows, index];
+      await setOpenFlows(openFlowsAux);
     };
     setRunningFlow(name);
     let flag = false;

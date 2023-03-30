@@ -1325,17 +1325,16 @@ const PropertyTable: React.FC<Props> = props => {
         <>
           <div className={styles.tableContainer}>
             {headerColumns.length ? (
-
               <HCTable
                 rowKey={sidePanelView ? "key" : "propertyName"}
                 rowClassName={record => {
                   let propertyName =
-                  record.hasOwnProperty("add") && record.add !== ""
-                    ? record.add
-                      .split(",")
-                      .map(item => encrypt(item))
-                      .join("-")
-                    : encrypt(record.propertyName);
+                    record.hasOwnProperty("add") && record.add !== ""
+                      ? record.add
+                        .split(",")
+                        .map(item => encrypt(item))
+                        .join("-")
+                      : encrypt(record.propertyName);
                   return "scroll-" + encrypt(entityName) + "-" + propertyName + " hc-table_row";
                 }}
                 columns={headerColumns}
@@ -1372,11 +1371,10 @@ const PropertyTable: React.FC<Props> = props => {
                   onClick={() => addPropertyButtonClicked()}
                   className={["d-block btn-lg btn btn-link", styles.buttonLink].join(" ")}
                 >
-              + Add Entity Property
+                  + Add Entity Property
                 </button>
               </div>
             )}
-
           </div>
         </>
       )}

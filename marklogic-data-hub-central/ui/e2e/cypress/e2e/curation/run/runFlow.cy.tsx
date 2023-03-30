@@ -5,6 +5,7 @@ import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 import explorePage from "../../../support/pages/explore";
+import {generateUniqueName} from "../../../support/helper";
 
 let flowName = "testPersonXML";
 
@@ -15,6 +16,8 @@ describe("Run Tile tests", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
+    toolbar.getRunToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
   });
   afterEach(() => {
@@ -27,10 +30,124 @@ describe("Run Tile tests", () => {
     cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
-  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
-    //Verify create flow and add all user-defined steps to flow via Run tile
+
+
+  // this should be unskipped once DHFPROD-10086 is fixed
+  it.skip("runs flow following the order of the cards displayed", () => {
+
+    const flowName2 = generateUniqueName("personTestingXML");
+    // create a flow with 3 steps, add load step first
     toolbar.getRunToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
+
+    runPage.createFlowButton().should("exist").click({force: true});
+    runPage.newFlowModal().should("be.visible");
+    runPage.setFlowName(flowName2);
+    loadPage.confirmationOptions("Save").click();
+    runPage.addStep(flowName2);
+    runPage.addStepToFlow("loadPersonXML");
+    runPage.verifyStepInFlow("Loading", "loadPersonXML", flowName2);
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.controlCheckedStep("#loadPersonXML");
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName2);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+    runPage.verifyFlowModalCompleted(flowName2);
+    runPage.closeFlowStatusModal(flowName2);
+
+    // add mapping step
+    runPage.addStep(flowName2);
+    runPage.addStepToFlow("mapPersonXML");
+    runPage.verifyStepInFlow("Mapping", "mapPersonXML", flowName2);
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.controlCheckedStep("#mapPersonXML");
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName2);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+    runPage.verifyFlowModalCompleted(flowName2);
+    runPage.closeFlowStatusModal(flowName2);
+
+    // add matching step
+    runPage.addStep(flowName2);
+    runPage.addStepToFlow("match-xml-person");
+    runPage.verifyStepInFlow("Matching", "match-xml-person", flowName2);
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.controlCheckedStep("#match-xml-person");
+
+    //rearrange the cards
+    runPage.getRunStep("match-xml-person", flowName2).should("exist").then(() => {
+      runPage.moveStepLeft("match-xml-person");
+    });
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName2);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+    runPage.verifyFlowModalCompleted(flowName2);
+    runPage.getModalCompletedCue(flowName2).then(() => {
+      runPage.verifyStepCardOrder(["loadPersonXML", "match-xml-person", "mapPersonXML"]);
+    });
+    runPage.closeFlowStatusModal(flowName2);
+
+    // select only load and matching steps
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.getSelectAll().parent().should("have.text", "Deselect All");
+    runPage.getSelectAll().click();
+    cy.get("#loadPersonXML").click();
+    //cy.get("#mapPersonXML").click();
+    cy.get("#match-xml-person").click();
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.controlCheckedStep("#loadPersonXML");
+    runPage.controlCheckedStep("#match-xml-person");
+    runPage.controlUncheckedStep("#mapPersonXML");
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName2);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+    runPage.verifyFlowModalCompleted(flowName2);
+    runPage.closeFlowStatusModal(flowName2);
+
+    //rearrange the cards
+    runPage.getRunStep("match-xml-person", flowName2).should("exist").then(() => {
+      runPage.moveStepRight("match-xml-person");
+    });
+    runPage.openStepsSelectDropdown(flowName2);
+    cy.get("#mapPersonXML").click();
+    runPage.openStepsSelectDropdown(flowName2);
+    runPage.controlCheckedStep("#loadPersonXML");
+    runPage.controlCheckedStep("#mapPersonXML");
+    runPage.controlCheckedStep("#match-xml-person");
+
+    cy.log("**Run flow**");
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName2);
+    cy.uploadFile("input/person.xml");
+    cy.wait("@runResponse");
+    cy.wait(3000);
+    runPage.verifyFlowModalCompleted(flowName2);
+    runPage.getModalCompletedCue(flowName2).then(() => {
+      runPage.verifyStepCardOrder(["loadPersonXML", "mapPersonXML", "match-xml-person"]);
+    });
+    runPage.closeFlowStatusModal(flowName2);
+
+    cy.deleteFlows(flowName2);
+
+  });
+  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
+    //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.getSpinner().should("not.exist");
     runPage.createFlowButton().should("exist").click({force: true});
@@ -126,6 +243,9 @@ describe("Run Tile tests", () => {
     runPage.verifyStepRunResult("match-xml-person", "success");
     runPage.verifyStepRunResult("merge-xml-person", "success");
     runPage.verifyFlowModalCompleted(flowName);
+    runPage.getModalCompletedCue(flowName).then(() => {
+      runPage.verifyStepCardOrder(["loadPersonXML", "mapPersonXML", "generate-dictionary", "match-xml-person", "merge-xml-person"]);
+    });
     runPage.closeFlowStatusModal(flowName);
 
     cy.log("**Adding new step to delete**");
@@ -414,4 +534,5 @@ describe("Run Tile tests", () => {
     runPage.getRunStep(firstStepName, firstFlowName).should("be.visible");
 
   });
+
 });

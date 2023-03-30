@@ -97,6 +97,10 @@ class RunPage {
     cy.findByLabelText(`${flowName}-completed`).should("be.visible");
   }
 
+  getModalCompletedCue(flowName: string) {
+    return cy.findByLabelText(`${flowName}-completed`);
+  }
+
   openFlowStatusModal(flowName: string) {
     cy.findByTestId(`${flowName}-StatusIcon`).click();
   }
@@ -232,6 +236,20 @@ class RunPage {
 
   getSelectAll() {
     return cy.get("[data-testid='select-all-toggle']");
+  }
+
+  getEntityStepCards(flowName: string) {
+    return cy.get(`[data-testid="${flowName}-panelContent"]`).children();
+  }
+
+  getStepsFromModal() {
+    return cy.get(`tbody`).children();
+  }
+
+  verifyStepCardOrder(stepNames: string[]) {
+    this.getStepsFromModal().each(($el, index) => {
+      cy.wrap($el).should("contain.text", stepNames[index]);
+    });
   }
 }
 
