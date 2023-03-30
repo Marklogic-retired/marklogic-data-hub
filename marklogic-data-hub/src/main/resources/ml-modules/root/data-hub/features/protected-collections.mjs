@@ -111,7 +111,7 @@ function onInstanceSave(context, model, contentArray) {
 }
 
 function featureEnabled(artifact) {
-    if (artifact.features["protectedCollections"]) {
+    if (artifact.features && artifact.features["protectedCollections"]) {
         return artifact.features["protectedCollections"].enabled ? artifact.features["protectedCollections"].enabled : false
     }
     return false;
