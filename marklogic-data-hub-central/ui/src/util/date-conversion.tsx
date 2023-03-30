@@ -1,9 +1,11 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import duration from "dayjs/plugin/duration";
 import {parse} from "iso8601-duration";
 import React from "react";
 
 dayjs.extend(relativeTime);
+dayjs.extend(duration);
 
 export const dateConverter = (date: string) => {
   return dayjs(date).format("YYYY-MM-DD HH:mm");

@@ -37,6 +37,9 @@ const JobResponse: React.FC<Props> = ({
 }) => {
   const [jobResponse, setJobResponse] = useState<any>({});
   const [timeoutId, setTimeoutId] = useState<any>();
+  const [intervalId, setIntervalId] = useState<any>();
+  const [flowRunning, setFlowRunning] = useState<any>();
+  const [timer, setTimer] = useState<any>();
   const {handleError} = useContext(UserContext);
   const {setLatestDatabase, setLatestJobFacet} = useContext(SearchContext);
   const history: any = useHistory();
@@ -46,19 +49,38 @@ const JobResponse: React.FC<Props> = ({
     if (jobId) {
       retrieveJobDoc();
     }
+    return (() => clearInterval(intervalId));
   }, [jobId]);
+
+  useEffect(() => {
+    let interval:any = 0;
+    if (flowRunning) {
+      interval = setInterval(() => {
+        setTimer(durationFromDateTime(jobResponse.timeStarted));
+      }, 100);
+      setIntervalId(interval);
+    } else {
+      if (Object.keys(jobResponse).length !== 0) {
+        const duration = durationFromDateTime(jobResponse.timeStarted);
+        setTimer(duration);
+      }
+      clearInterval(intervalId);
+    }
+  }, [flowRunning]);
 
   const retrieveJobDoc = async () => {
     try {
       clearTimeout(timeoutId);
+      clearInterval(intervalId);
       let response = await axios.get("/api/jobs/" + jobId);
       if (response.status === 200) {
         setJobResponse(response.data);
         const _canStopFlow = canStopFlow(response.data);
         setUserCanStopFlow && setUserCanStopFlow(_canStopFlow);
+        setFlowRunning(isFlowRunning(response.data));
         if (isFlowRunning(response.data)) {
           const duration = durationFromDateTime(response.data.timeStarted);
-          setJobResponse(Object.assign({}, response.data, {duration}));
+          setTimer(duration);
           setIsStepRunning(true);
           setTimeoutId(
             setTimeout(() => {
@@ -66,6 +88,8 @@ const JobResponse: React.FC<Props> = ({
             }, 3000),
           );
         } else {
+          setTimer(response.data.duration);
+          clearInterval(intervalId);
           if (setIsStepRunning) setIsStepRunning(false);
         }
       }
@@ -516,7 +540,7 @@ const JobResponse: React.FC<Props> = ({
               </div>
               <div key={"duration"}>
                 <span className={styles.descriptionLabel}>Duration:</span>
-                <strong>{renderDuration(jobResponse.duration)}</strong>
+                <strong>{renderDuration(timer)}</strong>
               </div>
             </div>
           </div>
