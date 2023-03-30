@@ -20,6 +20,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "cyCardView");
+    cy.deleteSteps("ingestion", "TestLoad");
     cy.deleteFlows("newE2eFlow1", "newE2eFlow2");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -178,6 +179,25 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName1);
   });
+
+  it("Verify Run Load step in a New Flow and use a name that already exists", () => {
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click({force: true});
+    cy.waitForAsyncRequest();
+    loadPage.addNewButton("card").click();
+    loadPage.stepNameInput().type("TestLoad");
+    loadPage.saveButton().click();
+    loadPage.runStep("TestLoad").click();
+    loadPage.newFlow().click();
+    runPage.newFlowModal().should("be.visible");
+    cy.waitForAsyncRequest();
+    runPage.setFlowName("personJSON");
+    loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
+    cy.findByTestId("flowAlreadyExists").should("exist");
+    runPage.confirmModalError().click();
+    runPage.closeModalNewFlow().click();
+  });
+
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));

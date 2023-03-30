@@ -110,6 +110,7 @@ const Run = props => {
         setIsLoading(false);
         setNewFlowName(payload.name);
       }
+      return true;
     } catch (error) {
       console.error("Error posting flow", error);
       setIsLoading(false);
@@ -118,7 +119,7 @@ const Run = props => {
         ? setErrorMessageOptions({
           isVisible: true,
           message: (
-            <p>
+            <p data-testid="flowAlreadyExists">
                 Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.
             </p>
           ),
@@ -127,6 +128,7 @@ const Run = props => {
           isVisible: true,
           message,
         });
+      return false;
     }
   };
 

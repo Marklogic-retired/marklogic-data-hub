@@ -12,7 +12,7 @@ interface Props {
   title: string;
   setNewFlow: React.Dispatch<React.SetStateAction<boolean>>;
   setAddedFlowName: React.Dispatch<React.SetStateAction<string>>;
-  createFlow: (payload: any) => void;
+  createFlow: (payload: any) => boolean;
   createAdd: boolean;
   updateFlow: (name: any, description: any, steps?: any) => Promise<void>;
   flowData: any;
@@ -107,8 +107,8 @@ const NewFlowDialog: React.FC<Props> = ({
     if (title === "Edit Flow") {
       await updateFlow(flowName, description);
     } else {
-      await createFlow(dataPayload);
-      if (createAdd && newStepToFlowOptions && newStepToFlowOptions.addingStepToFlow) {
+      const createSuccess = await createFlow(dataPayload);
+      if (createAdd && newStepToFlowOptions && newStepToFlowOptions.addingStepToFlow && createSuccess) {
         setAddedFlowName(flowName);
         await addStepToFlow(newStepToFlowOptions.newStepName, flowName, newStepToFlowOptions.stepDefinitionType);
         setOpenNewFlow(false);
