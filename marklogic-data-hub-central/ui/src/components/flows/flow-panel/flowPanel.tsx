@@ -751,7 +751,7 @@ const FlowPanel: React.FC<Props> = ({
             </Accordion.Button>
             {panelActions(flow.name, idx)}
           </Card.Header>
-          <Accordion.Body className={styles.panelContent} ref={flowRef}>
+          <Accordion.Body className={styles.panelContent} ref={flowRef} data-testid={`${flow.name}-panelContent`}>
             <div>
               {" "}
               {isFlowEmpty()
