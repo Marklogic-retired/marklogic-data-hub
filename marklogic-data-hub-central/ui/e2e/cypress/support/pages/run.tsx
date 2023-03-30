@@ -55,6 +55,14 @@ class RunPage {
     return cy.findByText("New Flow");
   }
 
+  confirmModalError() {
+    return cy.findByLabelText("Ok");
+  }
+
+  closeModalNewFlow() {
+    return cy.findByLabelText("Close");
+  }
+
   addStep(stepName: string) {
     cy.waitUntil(() => cy.findByLabelText(`addStep-${stepName}`)).click({force: true});
     cy.wait(1000);

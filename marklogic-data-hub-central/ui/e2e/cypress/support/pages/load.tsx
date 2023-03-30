@@ -67,6 +67,10 @@ class LoadPage {
     return cy.get(`[aria-label^="Name"] [aria-label="icon: caret-up"]`);
   }
 
+  newFlow() {
+    return cy.findByText("New flow");
+  }
+
 
   deleteStep(stepName: string) {
     return cy.findByTestId(`${stepName}-delete`);
