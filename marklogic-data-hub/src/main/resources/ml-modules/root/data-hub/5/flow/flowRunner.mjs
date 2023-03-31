@@ -68,9 +68,6 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       }
       else {
         addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
-        if (!(stepExecutionContext.provenanceIsEnabled())) {
-              hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
-         }
         flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
       }
     } catch (error) {
@@ -133,11 +130,11 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 
   invokeFeatureBefore(stepExecutionContext, contentArray);
   invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
-  invokeFeatureAfter(stepExecutionContext, contentArray);
+
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
-    runStepMainOnBatch(contentArray, stepExecutionContext) :
-    runStepMainOnEachItem(contentArray, stepExecutionContext);
+  runStepMainOnBatch(contentArray, stepExecutionContext) :
+  runStepMainOnEachItem(contentArray, stepExecutionContext);
 
   // If the step did not complete for any reason, then one or more errors were captured, and no output should be returned
   if (!stepExecutionContext.wasCompleted()) {
@@ -146,7 +143,6 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 
   stepExecutionContext.finalizeCollectionsAndPermissions(outputContentArray);
 
-  invokeFeatureBefore(stepExecutionContext, contentArray);
   invokeInterceptors(stepExecutionContext, outputContentArray, "beforeContentPersisted");
   invokeFeatureAfter(stepExecutionContext, contentArray);
 
