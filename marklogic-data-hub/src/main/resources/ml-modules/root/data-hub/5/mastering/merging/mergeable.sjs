@@ -591,6 +591,7 @@ class Mergeable {
   }
 
   setMergeInformation(merges, instanceXPath, output) {
+    const currentDateTime = fn.string(fn.currentDateTime());
     for (const source of normalizeToArray(output.sources)) {
       let {documentUri, dateTime, name} = source instanceof Node ? source.toObject() : source;
       // following use of fn.string is so ML 9 will compare the strings properly
@@ -599,7 +600,7 @@ class Mergeable {
       if (existingEntry) {
         existingEntry.contributions.push(instanceXPath);
       } else {
-        merges.push({ "document-uri": fn.string(documentUri), "last-merge": dateTime, name: fn.string(name), contributions: [ instanceXPath ]});
+        merges.push({ "document-uri": fn.string(documentUri), "last-merge": currentDateTime, name: fn.string(name), contributions: [ instanceXPath ]});
       }
     }
   }

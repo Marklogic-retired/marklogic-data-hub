@@ -340,6 +340,15 @@ function testBuildMergeDocumentJson() {
   assertions.push(
     test.assertTrue(fn.exists(mergedDocument.xpath("/*:envelope/*:headers/*:merge-options/*:value")), `Should have merge options. Merge document: ${xdmp.toJsonString(mergedDocument)}`)
   );
+  const mergeTimes = mergedDocument.xpath("/envelope/headers/merges/last-merge");
+  const mergeTime1 = fn.head(mergeTimes);
+  const mergeTime2 = fn.subsequence(mergeTimes, 2, 1);
+  const mergeTime3 = fn.subsequence(mergeTimes, 3, 1);
+  assertions.push(
+    test.assertEqual(4, fn.count(mergeTimes), `There should be 4 merge times. Merge times: ${xdmp.toJsonString(mergeTimes)}`),
+    test.assertEqual(mergeTime1, mergeTime2, `Merge times 1 & 2 should be equal. Merge times: ${xdmp.toJsonString(mergeTimes)}`),
+    test.assertEqual(mergeTime2, mergeTime3, `Merge times 2 & 3 should be equal. Merge times: ${xdmp.toJsonString(mergeTimes)}`)
+  );
   const name = mergedDocument.xpath("/envelope/instance/Customer/name");
   assertions.push(
     test.assertEqual(1, fn.count(name), `Name should have one property. Merge document: ${xdmp.toJsonString(mergedDocument)}`),
