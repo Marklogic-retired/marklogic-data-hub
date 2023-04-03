@@ -14,6 +14,8 @@ let qName = "";
 
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();

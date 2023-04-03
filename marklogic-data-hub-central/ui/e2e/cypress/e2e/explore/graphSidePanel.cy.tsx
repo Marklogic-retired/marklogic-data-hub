@@ -9,7 +9,9 @@ import browsePage from "../../support/pages/browse";
 const TABLE_HEADERS = ["Property", "Value"];
 
 describe("Test '/Explore' graph right panel", () => {
-  before(() => {
+  beforeEach(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.visit("/");
     cy.contains(Application.title);
 

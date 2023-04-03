@@ -76,6 +76,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
 
   it("Verify if switching between All Data and specific entities works properly", () => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.wait(6000);
     explorePage.getFinalDatabaseButton();
     cy.waitForAsyncRequest();
     entitiesSidebar.toggleEntitiesView();
@@ -163,6 +171,15 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTotalDocuments().should("be.equal", 1);
   });
   it("Switch to staging database and verify documents deployed to staging", () => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.wait(6000);
+    browsePage.getTableView().click();
     explorePage.getStagingDatabaseButton();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Client");
