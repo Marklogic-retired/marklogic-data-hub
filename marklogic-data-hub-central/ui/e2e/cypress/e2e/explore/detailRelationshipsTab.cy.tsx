@@ -7,6 +7,8 @@ import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 describe("Test graph export to png", () => {
   before(() => {
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.visit("/");
     cy.contains(Application.title);
 

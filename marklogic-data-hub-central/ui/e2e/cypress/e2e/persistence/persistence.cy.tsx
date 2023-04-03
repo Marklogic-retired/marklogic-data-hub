@@ -21,6 +21,7 @@ import multiSlider from "../../support/components/common/multi-slider";
 import propertyTable from "../../support/components/model/property-table";
 import tables from "../../support/components/common/tables";
 import browsePage from "../../support/pages/browse";
+import graphExplore from "../../support/pages/graphExplore";
 
 describe("Validate persistence across Hub Central", () => {
   let entityNamesAsc: string[] = [];
@@ -375,6 +376,35 @@ describe("Validate persistence across Hub Central", () => {
     cy.log("**Deletes the entity added by the test**");
     cy.deleteEntities([entityName]);
     cy.waitForAsyncRequest();
+  });
+
+  it("Validate persistence for search and facets on sidebar when toggling database in explore tile", () => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    LoginPage.postLogin();
+    cy.visit("/tiles/explore");
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.databaseSwitch("final");
+    graphExplore.getSearchBar().type("Adams");
+    browsePage.getApplyFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").click();
+    browsePage.getFacetItemCheckbox("collection", "Customer").click();
+    browsePage.getApplyFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.databaseSwitch("staging").click();
+    browsePage.waitForSpinnerToDisappear();
+    graphExplore.getSearchBar().should("have.value", "Adams");
+    browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
+    browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
+    browsePage.databaseSwitch("final").click();
+    browsePage.waitForSpinnerToDisappear();
+    graphExplore.getSearchBar().should("have.value", "Adams");
+    browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
+    browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
+
   });
 
 });
