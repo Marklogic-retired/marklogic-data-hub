@@ -720,7 +720,7 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
   const stepName = stepExecutionContext.flowStep.name;
   const sourceDatabase = stepExecutionContext.getSourceDatabase();
   const targetDatabase = stepExecutionContext.getTargetDatabase();
-  const entityInfo = hubES.getEntityInfoFromRecord(contentObject.value);
+  const entityInfo = contentObject.value ? hubES.getEntityInfoFromRecord(contentObject.value): null;
   let sourceProvIDs = urisToLatestProvIDs(info.derivedFrom, sourceDatabase);
   let provId = `${targetDatabase}:${contentObject.uri}#%%dateTime%%`;
   let attributes = {

@@ -18,7 +18,6 @@
 import Artifacts from '/data-hub/5/artifacts/core.mjs';
 import consts from "/data-hub/5/impl/consts.mjs";
 import FlowExecutionContext from "/data-hub/5/flow/flowExecutionContext.mjs";
-import flowProvenance from "./flowProvenance.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
