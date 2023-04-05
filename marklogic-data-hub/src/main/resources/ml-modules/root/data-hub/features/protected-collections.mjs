@@ -63,51 +63,50 @@ function onArtifactPublish (artifactType, artifactName) {
 }
 
 function onInstanceSave(context, model, contentArray) {
-    let permissions = [];
-    let collections = []
-    const stepContext = context.flowStep;
-    if (!model) {
-        return contentArray;
+  let permissions = [];
+  let collections = []
+  const stepContext = context.flowStep;
+  if (!model) {
+      return contentArray;
+  }
+
+  let flagAddCollectionsToObject = false;
+
+  const modelName = model.info.title;
+  if(featureEnabled(model.definitions[modelName])) {
+      hubUtils.hubTrace(INFO_EVENT, `Processing protected collections feature for an instance of ${modelName}`);
+
+      const modelFeature = model.definitions[modelName].features["protectedCollections"];
+      if (modelFeature.permissions) {
+          permissions = modelFeature.permissions;
+      }
+      if (modelFeature.collections) {
+          collections = modelFeature.collections;
+      }
+      flagAddCollectionsToObject = true;
+  }
+
+  if(featureEnabled(stepContext)) {
+    hubUtils.hubTrace(INFO_EVENT, `Processing protected collections feature for an instance while running ${stepContext.name}`);
+
+    const stepFeature = stepContext.features["protectedCollections"]
+    if (stepFeature.permissions) {
+      permissions = stepFeature.permissions;
     }
-
-    let flagAddCollectionsToObject = false;
-    if(featureEnabled(stepContext)) {
-        hubUtils.hubTrace(INFO_EVENT, `Processing protected collections feature for an instance while running ${stepContext.name}`);
-
-        const stepFeature = stepContext.features["protectedCollections"]
-        if (stepFeature.permissions) {
-            permissions = stepFeature.permissions;
-        }
-        if (stepFeature.collections) {
-            collections = stepFeature.collections;
-        }
-        flagAddCollectionsToObject = true;
+    if (stepFeature.collections) {
+      collections = stepFeature.collections;
     }
+    flagAddCollectionsToObject = true;
+  }
 
+  if (flagAddCollectionsToObject){
+      addCollectionsToObject(collections, permissions, contentArray);
+  }
 
-    const modelName = model.info.title;
-    if(featureEnabled(model.definitions[modelName]))
-    {
-        hubUtils.hubTrace(INFO_EVENT, `Processing protected collections feature for an instance of ${modelName}`);
+  hubUtils.hubTrace(INFO_EVENT, `Finished processing protected collections feature for an instance of ${modelName} while running ${stepContext.name}`);
 
-        const modelFeature = model.definitions[modelName].features["protectedCollections"];
-        if (modelFeature.permissions) {
-            permissions = modelFeature.permissions;
-        }
-        if (modelFeature.collections) {
-            collections = modelFeature.collections;
-        }
-        flagAddCollectionsToObject = true;
-    }
-    if (flagAddCollectionsToObject){
-
-        addCollectionsToObject(collections, permissions, contentArray);
-    }
-
-    hubUtils.hubTrace(INFO_EVENT, `Finished processing protected collections feature for an instance of ${modelName} while running ${stepContext.name}`);
-
-    //TODO verify if we should return
-    return contentArray;
+  // Returning the contentArray for testing porpouses
+  return contentArray;
 }
 
 function featureEnabled(artifact) {

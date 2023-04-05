@@ -24,7 +24,7 @@ function onArtifactPublish (artifactType, artifactName) {
 }
 
 function onBuildInstanceQuery(stepContext, model, sourceQuery) {
-    return true;
+    return sourceQuery;
 }
 
 function onInstanceSave(stepContext, model, contentObject) {
