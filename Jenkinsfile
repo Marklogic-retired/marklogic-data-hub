@@ -1077,19 +1077,19 @@ pipeline{
                 agent {label 'dhfLinuxAgent'}
                 steps{timeout(time: 3,  unit: 'HOURS'){
                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
-                   singleNodeTestOnLinux('Release','9.0-11')
-                    fullCycleSingleNodeTestOnLinux('Release', '9.0-11')
+                   singleNodeTestOnLinux('Release','10.0-9.5')
+                    fullCycleSingleNodeTestOnLinux('Release', '10.0-9.5')
                 }}}
                 post{
                    success {
                         println("End-End Tests Completed")
-                        sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Passed'
+                        sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-9.5 | Single Node | Passed'
                    }
                    unstable {
                             println("End-End Tests Failed")
                             sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
                             archiveArtifacts artifacts: 'MLLogs/**/*'
-                            sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
+                            sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-9.5 | Single Node | Failed'
                    }}
         }
 
@@ -1135,45 +1135,6 @@ pipeline{
                    unstable {
                       println("rh7_cluster_10.0-Nightly Tests Failed")
                       sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Failed'
-                  }
-                  }
-		}
-		stage('rh7_cluster_9.0-Nightly'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
-             timeout(time: 4,  unit: 'HOURS'){
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0","Latest")}
-			}}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("rh7_cluster_9.0-Nightly Completed")
-                    sendMail Email,'<h3>Tests Passed on Nigtly 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-Nightly | Cluster | Passed'
-                   }
-                   unstable {
-                      println("rh7_cluster_9.0-Nightly Failed")
-                      sendMail Email,'<h3>Some Tests Failed on Nightly 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-Nightly | Cluster | Failed'
-                  }
-                  }
-		}
-        stage('rh7_cluster_9.0-11'){
-			agent { label 'dhfLinuxAgent'}
-			steps{
-             timeout(time: 4,  unit: 'HOURS'){
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0-11","Release")}
-			}}
-			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("rh7_cluster_9.0-11 Tests Completed")
-                    sendMail Email,'<h3>Tests Passed on  9.0-11 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Cluster | Passed'
-                   }
-                   unstable {
-                      println("rh7_cluster_9.0-11 Tests Failed")
                   }
                   }
 		}
@@ -1340,26 +1301,6 @@ pipeline{
 		stage('Windows Core Parallel'){
             when { expression {return params.regressions} }
             parallel{
-        		stage('w10_SN_9.0-Nightly'){
-        			agent { label 'dhfWinagent'}
-        			steps{
-                     timeout(time: 4,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
-                    }}
-        			post{
-        				always{
-        				  	 bat 'RMDIR /S/Q xdmp'
-        				  }
-                          success {
-                            println("w12_SN_9.0-nightly Tests Completed")
-                            sendMail Email,'<h3>Tests Passed on Nigtly 9.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-Nightly | Single Node | Passed'
-                           }
-                           unstable {
-                              println("w12_SN_9.0-nightly Tests Failed")
-                              sendMail Email,'<h3>Some Tests Failed on Nightly 9.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-Nightly | Single Node | Failed'
-                          }
-                          }
-        		}
                 stage('w10_SN_11.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
@@ -1377,26 +1318,6 @@ pipeline{
                            unstable {
                               println("w12_SN_11.0-nightly Tests Failed")
                               sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-11.0-Nightly | Single Node | Failed'
-                          }
-                          }
-        		}
-        		stage('w10_SN_9.0-11'){
-        			agent { label 'dhfWinagent'}
-        			steps{
-                    timeout(time: 4,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
-        			}}
-        			post{
-        				always{
-                               bat 'RMDIR /S/Q xdmp'
-        				  }
-                          success {
-                            println("w12_SN_9.0-11 Tests Completed")
-                            sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-11 | Single Node | Passed'
-                           }
-                           unstable {
-                              println("w12_SN_9.0-11 Tests Failed")
-                              sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-9.0-11 | Single Node | Failed'
                           }
                           }
         		}

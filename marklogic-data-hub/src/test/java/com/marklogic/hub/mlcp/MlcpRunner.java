@@ -119,45 +119,17 @@ public class MlcpRunner extends ProcessRunner {
     }
 
     private String buildLoggerconfig() {
-        return "<Configuration status=\"WARN\">\n" +
-                "    <Appenders>\n" +
-                "        <!-- Console appender configuration -->\n" +
-                "        <Console name=\"Console\" target=\"SYSTEM_OUT\">\n" +
-                "            <PatternLayout pattern=\"%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n\"/>\n" +
-                "        </Console>\n" +
-                "    </Appenders>\n" +
-                "    <Loggers>\n" +
-                "        <!-- Root logger configuration -->\n" +
-                "        <Root level=\"INFO\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Root>\n" +
-                "        <!-- To enable debug for mapreduce -->\n" +
-                "        <!--\n" +
-                "        <Logger name=\"com.marklogic.mapreduce\" level=\"DEBUG\" additivity=\"false\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Logger>\n" +
-                "        -->\n" +
-                "        <!-- To enable debug for contentpump -->\n" +
-                "        <!--\n" +
-                "        <Logger name=\"com.marklogic.contentpump\" level=\"DEBUG\" additivity=\"false\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Logger>\n" +
-                "        -->\n" +
-                "        <!-- To enable debug for tree -->\n" +
-                "        <!--\n" +
-                "        <Logger name=\"com.marklogic.tree\" level=\"TRACE\" additivity=\"false\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Logger>\n" +
-                "        -->\n" +
-                "        <!-- To supress not native warn on Mac and Solaris -->\n" +
-                "        <Logger name=\"org.apache.hadoop.util.NativeCodeLoader\" level=\"ERROR\" additivity=\"false\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Logger>\n" +
-                "        <Logger name=\"org.apache.hadoop.ipc.Client\" level=\"ERROR\" additivity=\"false\">\n" +
-                "            <AppenderRef ref=\"Console\"/>\n" +
-                "        </Logger>\n" +
-                "    </Loggers>\n" +
-                "</Configuration>\n";
+        return "appender.stdout.name = stdout\n" +
+                "appender.stdout.type = Console\n" +
+                "logger.app = INFO, stdout, file\n" +
+                "\n" +
+                "# Direct log messages to stdout\n" +
+                "appender.console.type = Console\n" +
+                "appender.console.name = STDOUT\n" +
+                "appender.console.layout.type = PatternLayout\n" +
+                "appender.console.layout.pattern = %d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n\n" +
+                "appender.console.filter.threshold.type = ThresholdFilter\n" +
+                "appender.console.filter.threshold.level = info";
     }
 
     private MlcpBean makeMlcpBean() throws Exception {
@@ -207,13 +179,14 @@ public class MlcpRunner extends ProcessRunner {
             File.separator + "bin" +
             File.separator + "java";
         String classpath = System.getProperty("java.class.path");
-        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
+        Path tempDirectory = Files.createTempDirectory("mlcp-");
+        File loggerFile = tempDirectory.resolve("log4j2.properties").toFile();
         FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
-        Map<String, String> environment = new HashMap<>();
+         Map<String, String> environment = new HashMap<>();
+        classpath = classpath + ";" + loggerFile.toURI();
         environment.put("CLASSPATH", classpath);
         this.withEnvironment(environment);
         args.add(javaBin);
-        args.add("-Dlog4j2.configurationFile=" + loggerFile.toURI());
         if (classpath.endsWith(".war")) {
             args.add("-jar");
             args.add("mlcp");
