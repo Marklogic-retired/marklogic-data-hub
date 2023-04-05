@@ -15,6 +15,8 @@
  */
 'use strict';
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import featuresCore from "/data-hub/features/core.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 
 /**
  * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
@@ -41,6 +43,8 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
     } else {
       hubUtils.warn( `Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options`);
     }
+  } else {
+    sourceQuery = invokeFeatureMethods(stepDefinition, sourceQuery);
   }
 
   // This is retained only for backwards compatibility, though its existence is neither documented nor tested
@@ -53,6 +57,23 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
   return sourceQueryLimit ? `cts.uris(null, ['limit=${sourceQueryLimit}', 'score-zero'], ${sourceQuery}, 0)` : `cts.uris(null, ['score-zero'], ${sourceQuery}, 0)`;
 }
 
+function invokeFeatureMethods(stepDefinition, sourceQuery) {
+  let sourceQueryUpdated = sourceQuery;
+  let targetEntityType = stepDefinition.targetEntity || stepDefinition.targetEntityType;
+  let model = null;
+  if (targetEntityType) {
+    const modelNode = entityLib.findModelForEntityTypeId(targetEntityType);
+    model = fn.exists(modelNode) ? modelNode.toObject() : null;
+  }
+  const features = Object.keys(featuresCore.getFeatures());
+  features.forEach(feat => {
+    const funct = featuresCore.getFeatureMethod(feat, "onBuildInstanceQuery");
+    if (funct) {
+      sourceQueryUpdated = funct(stepDefinition, model, sourceQueryUpdated);
+    }
+  });
+  return sourceQueryUpdated;
+}
 
 export default {
   prepareSourceQuery
