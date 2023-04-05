@@ -20,7 +20,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:2.14.1"
     implementation "com.beust:jcommander:1.81"
     implementation 'commons-io:commons-io:2.11.0'
-    implementation "org.slf4j:slf4j-api:1.7.36"
+    implementation "org.slf4j:slf4j-api:2.0.7"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
 }
