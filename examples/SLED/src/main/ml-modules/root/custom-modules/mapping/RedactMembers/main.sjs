@@ -6,7 +6,8 @@
    (such as declareUpdate()) or by setting the value of 'stepUpdate' as true in the options and it will be
    executed in update mode.
  */
-const DataHub = require("/data-hub/5/datahub.mjs");
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const DataHub = mjsProxy.requireMjsModule("/data-hub/5/datahub.mjs");
 const rdt = require('/MarkLogic/redaction');
 
 const datahub = new DataHub();
