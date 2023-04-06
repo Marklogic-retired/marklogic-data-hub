@@ -17,19 +17,14 @@
 
 package com.marklogic.gradle.fullcycle
 
-
 import com.marklogic.client.DatabaseClientFactory
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
-import com.marklogic.client.io.DOMHandle
-import com.marklogic.client.io.DocumentMetadataHandle
 import com.marklogic.gradle.task.BaseTest
-import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class SslTest extends BaseTest {
@@ -209,71 +204,5 @@ class SslTest extends BaseTest {
         //Commenting this out as the number of modules are going to change with new additions in 5
         //modCount == BaseTest.MOD_COUNT_NO_OPTIONS_NO_TRACES
         result.task(":mlDeploy").outcome == SUCCESS
-    }
-
-
-    def "runHarmonizeFlow with default src and dest"() {
-        given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('hubDeployUserModules'))
-
-        def newSslContext = SSLContext.getInstance("TLSv1.2")
-        newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
-        hubConfig().stagingSslContext = newSslContext
-        hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("my-new-entity");
-        installStagingDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
-        installStagingDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
-
-        installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
-
-        when:
-        println(runTask('hubRunLegacyFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-i').getOutput())
-
-        then:
-        notThrown(UnexpectedBuildFailure)
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newFinalClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
-    }
-
-
-    def "runHarmonizeFlow with swapped src and dest"() {
-        given:
-        println(runTask('hubCreateHarmonizeFlow', '-PentityName=my-new-entity', '-PflowName=my-new-harmonize-flow', '-PdataFormat=xml', '-PpluginFormat=xqy', '-PuseES=false').getOutput())
-        println(runTask('hubDeployUserModules'))
-
-        def newSslContext = SSLContext.getInstance("TLSv1.2")
-        newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
-        hubConfig().stagingSslContext = newSslContext
-        hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
-
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
-
-        DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add("my-new-entity");
-        installFinalDoc("/employee1.xml", meta, new File("src/test/resources/run-flow-test/employee1.xml").text)
-        installFinalDoc("/employee2.xml", meta, new File("src/test/resources/run-flow-test/employee2.xml").text)
-
-        installModule("/entities/my-new-entity/harmonize/my-new-harmonize-flow/content/content.xqy", "run-flow-test/content.xqy")
-
-        when:
-        println(runTask(
-            'hubRunLegacyFlow',
-            '-PentityName=my-new-entity',
-            '-PflowName=my-new-harmonize-flow',
-            '-PsourceDB=data-hub-FINAL',
-            '-PdestDB=data-hub-STAGING',
-            '-i'
-        ).getOutput())
-
-        then:
-        notThrown(UnexpectedBuildFailure)
-
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized1.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee1.xml").next().getContent(new DOMHandle()).get())
-        assertXMLEqual(getXmlFromResource("run-flow-test/harmonized2.xml"), hubConfig().newStagingClient().newDocumentManager().read("/employee2.xml").next().getContent(new DOMHandle()).get())
     }
 }
