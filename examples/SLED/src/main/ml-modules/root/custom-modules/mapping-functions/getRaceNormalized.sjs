@@ -1,5 +1,6 @@
 'use strict';
-const core = require('/data-hub/5/mapping-functions/core.mjs');
+const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
+const core = mjsProxy.requireMjsModule("/data-hub/5/mapping-functions/core.mjs");
 function getRaceNormalized(race){
 race = fn.string(race);
 if (race == ""){
