@@ -1,5 +1,6 @@
 package com.marklogic.hub.ext.junit5;
 
+import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,13 +38,13 @@ public class MarkLogicUnitTestArgumentsProviderTest extends AbstractDataHubTest 
 
     @ParameterizedTest
     @ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
-    void test(TestModule testModule) {
+    void test(TestModule testModule, TestManager testManager) {
         logger.info("Found test module: " + testModule);
         testModuleCount++;
 
         // Run one module so we get test coverage of TestModuleRunner
         if ("copyJsonNodeValue.sjs".equals(testModule.getTest())) {
-            new TestModuleRunner(getHubClient().getFinalClient()).runTestModule(testModule);
+            testManager.run(testModule);
         }
     }
 }

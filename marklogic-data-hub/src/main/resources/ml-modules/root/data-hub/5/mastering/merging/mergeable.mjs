@@ -479,7 +479,12 @@ export default class Mergeable {
   }
 
   mergeStepToCompressedHex() {
-    return fn.string(xdmp.zipCreate([{ "path": "merge-options.json"}], xdmp.toJSON(this.mergeStep)));
+    if (this._zipHex === undefined) {
+      const mergeJsonNode = xdmp.toJSON(this.mergeStep);
+      const zipFile = mergeJsonNode ? xdmp.zipCreate([{"path": "merge-options.json"}], [mergeJsonNode]) : null;
+      this._zipHex = zipFile ? fn.string(xs.hexBinary(zipFile)) : null;
+    }
+    return this._zipHex;
   }
 
   mergeXmlDocuments(documentNodes, properties, id, triples) {
@@ -533,7 +538,7 @@ export default class Mergeable {
     // end headers
     nodeBuilder.endElement();
     nodeBuilder.startElement("es:triples", "http://marklogic.com/entity-services");
-    if (triples) {
+    if (fn.exists(triples)) {
       for (const tripleNode of sem.rdfSerialize(triples, ["triplexml"]).xpath("descendant-or-self::sem:triple", {sem: "http://marklogic.com/semantics"})) {
         nodeBuilder.addNode(tripleNode);
       }

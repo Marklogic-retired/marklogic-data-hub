@@ -13,8 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
 import entitySearchLib from "/data-hub/5/entities/entity-search-lib.mjs";
 
 const test = require("/test/test-helper.xqy");
@@ -66,8 +64,11 @@ function verifyMetadataForDocumentWithoutMetadata() {
     ]
   };
   entitySearchLib.addDocumentMetadataToSearchResults(response);
+  const hubMetadata = response.results[0].hubMetadata;
   return[
-      test.assertEqual(0, Object.keys(response.results[0].hubMetadata).length)
+    test.assertEqual(null, hubMetadata.lastProcessedByFlow),
+    test.assertEqual(null, hubMetadata.lastProcessedByStep),
+    test.assertEqual(null, hubMetadata.lastProcessedDateTime)
   ];
 }
 

@@ -20,7 +20,7 @@ import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
 
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance.xqy');
 const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
-
+const entitySearchXqy = require("/data-hub/5/entities/entity-search-helper.xqy");
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
  * trace logging being used. This ensures that the condition appears in logging, but it should not throw an error
@@ -271,7 +271,7 @@ function getEntitySources(doc) {
 
   if(hubUtils.isXmlNode(doc)) {
     const sources = doc.xpath("/*:envelope/*:headers/*:sources");
-    if(!fn.empty(sources)) {
+    if(fn.exists(sources)) {
       for (let srcDoc of sources) {
         const currNode = new NodeBuilder().startDocument().addNode(srcDoc).endDocument().toNode();
         sourcesArray.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
@@ -502,23 +502,34 @@ function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
   );
 }
 
+const sizes = ['B', 'KB', 'MB'];
+
+function getDocumentSize(doc) {
+  return entitySearchXqy.getDocumentSize(doc);
+}
+
+function verifyExplorableModel(entityName) {
+  if(!entityName) {
+    return true;
+  }
+  const entityModel = entityLib.findModelByEntityName(entityName);
+  if(!entityModel) {
+    return false;
+  }
+  const entityTypes = Object.keys(entityModel.definitions);
+  return entityTypes.includes(entityModel.info.title);
+}
+
 function addDocumentMetadataToSearchResults(searchResponse) {
   searchResponse.results.forEach(result => {
-    let hubMetadata = {};
     const docUri = result.uri;
-    const documentMetadata = xdmp.documentGetMetadata(docUri);
     const doc = cts.doc(docUri);
+    let hubMetadata = entitySearchXqy.getDocumentMetadata(doc);
     const sources = getEntitySources(doc);
-    if(documentMetadata) {
-      hubMetadata["lastProcessedByFlow"] = documentMetadata.datahubCreatedInFlow;
-      hubMetadata["lastProcessedByStep"] = documentMetadata.datahubCreatedByStep;
-      hubMetadata["lastProcessedDateTime"] = documentMetadata.datahubCreatedOn;
+    if (sources.length) {
+      hubMetadata.sources = sources;
     }
-
-    if(sources.length) {
-      hubMetadata["sources"] = sources;
-    }
-    result["documentSize"] = getDocumentSize(doc);
+    result.documentSize = getDocumentSize(doc);
     result["hubMetadata"] = hubMetadata;
     result["notifiedDoc"] = docUri.startsWith("/com.marklogic.smart-mastering/matcher/notifications");
     if (docUri.startsWith("/com.marklogic.smart-mastering/")) {
@@ -648,37 +659,6 @@ function findFlowsAsMap() {
     flows[flowName] = flow;
   });
   return flows;
-}
-
-function getDocumentSize(doc) {
-  const sizes = ['B', 'KB', 'MB'];
-  const documentSize = {};
-  const nodeKind = xdmp.nodeKind(doc.root);
-  let bytes = 0;
-
-  if(nodeKind === 'binary') {
-    bytes = xdmp.binarySize(fn.head(doc).root);
-  } else {
-    bytes = xdmp.binarySize(fn.head(xdmp.unquote(xdmp.quote(doc), null, "format-binary")).root)
-  }
-
-  let power = Math.floor(Math.log(bytes) / Math.log(1024));
-  power = power > 2 ? 2 : power;
-  documentSize["value"] = (bytes / Math.pow(1024, power)).toFixed(0) * 1;
-  documentSize["units"] = sizes[power];
-  return documentSize;
-}
-
-function verifyExplorableModel(entityName) {
-  if(!entityName) {
-    return true;
-  }
-  const entityModel = entityLib.findModelByEntityName(entityName);
-  if(!entityModel) {
-    return false;
-  }
-  const entityTypes = Object.keys(entityModel.definitions);
-  return entityTypes.includes(entityModel.info.title);
 }
 
 export default {

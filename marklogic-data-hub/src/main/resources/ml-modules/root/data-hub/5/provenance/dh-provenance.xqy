@@ -20,6 +20,8 @@ xquery version "1.0-ml";
 
 module namespace dhps = "http://marklogic.com/data-hub/dh-provenance-services";
 
+import module namespace ps = "http://marklogic.com/provenance-services" at "/MarkLogic/provenance.xqy";
+
 declare namespace prov = "http://www.w3.org/ns/prov#";
 declare namespace xs="http://www.w3.org/2001/XMLSchema";
 
@@ -28,6 +30,10 @@ declare private variable $user-role as xs:string := "ps-user";
 declare private variable $internal-role as xs:string := "ps-internal";
 declare private variable $ps-dir as xs:string := "/provenance/";
 
+declare function persistDataHubRecord($id as xs:string, $options as map:map) as empty-sequence() {
+  let $record := ps:provenance-record(xs:anyURI(fn:replace($id, "%%dateTime%%", fn:string($options => map:get("dateTime")))),$options)
+  return ps:provenance-record-insert($record)
+};
 
 declare function new-provenance-record($id as xs:anyURI, $options as map:map) as node() {
   let $record := map:map()
