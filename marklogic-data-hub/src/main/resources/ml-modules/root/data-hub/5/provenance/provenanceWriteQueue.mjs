@@ -17,7 +17,7 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-const ps = require("/MarkLogic/provenance.xqy");
+const dhPs = require("/data-hub/5/provenance/dh-provenance.xqy");
 
 const persistedIDs = [];
 
@@ -98,30 +98,31 @@ export default class ProvenanceWriteQueue {
     } else {
       hubUtils.hubTrace(consts.TRACE_FLOW, `No provenance records were queued, so not committing any to the jobs database`);
     }
+    const currentUser = xdmp.getCurrentUser();
+    const currentDateTime = fn.currentDateTime();
     for (let recordDetails of recordsQueue) {
       let options = recordDetails.options || {};
       let datePortion = recordDetails.id.slice(recordDetails.id.lastIndexOf("#") + 1);
       if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dateTime", datePortion)) {
         options.dateTime = datePortion;
       } else {
-        options.dateTime = String(fn.currentDateTime().add(xdmp.elapsedTime()));
+        options.dateTime = String(currentDateTime.add(xdmp.elapsedTime()));
       }
       // namespaces for user defined provenance types
       options.namespaces = provenanceNamespaces;
 
       // relations
       options.relations = options.relations || {};
-      options.relations.attributedTo = options.relations.attributedTo || xdmp.getCurrentUser();
+      options.relations.attributedTo = options.relations.attributedTo || currentUser;
 
       // attributes
       options.attributes = options.attributes || {};
 
       let metadata = recordDetails.metadata || {};
-      if (metadata)
+      if (metadata) {
         Object.assign(options.attributes, metadata)
-
-      let record = ps.provenanceRecord(fn.replace(recordDetails.id, "%%dateTime%%", options.dateTime), options);
-      ps.provenanceRecordInsert(record);
+      }
+      dhPs.persistDataHubRecord(recordDetails.id, options);
     }
     this.databaseToRecordQueue[databaseName] = [];
   }
