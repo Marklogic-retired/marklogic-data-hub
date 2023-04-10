@@ -10,6 +10,7 @@ module namespace hub-test = "http://marklogic.com/data-hub/test";
 import module namespace config = "http://marklogic.com/data-hub/config" at "/com.marklogic.hub/config.xqy";
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+import module namespace temporal = "http://marklogic.com/xdmp/temporal" at "/MarkLogic/temporal.xqy";
 
 declare namespace host = "http://marklogic.com/xdmp/status/host";
 
@@ -202,6 +203,36 @@ declare function reset-staging-and-final-databases()
   invoke-in-staging-and-final(function() {
     cts:uris((), (), cts:not-query(cts:collection-query("hub-core-artifact"))) ! xdmp:document-delete(.)
   })
+};
+
+declare function temporal-expire-docs()
+{
+  let $collections:= temporal:collections()
+  let $x := for $coll in $collections
+  let $_ := xdmp:invoke-function(cts:uris("",(),cts:collection-query($coll)) ! temporal:document-protect($coll,.,
+    <options xmlns="temporal:document-protect">
+      <duration>PT0.000S</duration>
+    </options>))
+  return()
+  return()
+};
+
+declare function temporal-delete-docs()
+{
+  let $collections:= temporal:collections()
+  let $x := for $coll in $collections
+  let $_ := temporal:collection-remove($coll)
+  return()
+  return()
+};
+
+declare function temporal-delete-collections()
+{
+  let $collections:= temporal:collections()
+  let $x := for $coll in $collections
+  let $_ := xdmp:invoke-function(cts:uris("",(),cts:collection-query($coll)) !temporal:document-wipe($coll, .))
+  return()
+  return()
 };
 
 declare function invoke-in-staging-and-final($function)

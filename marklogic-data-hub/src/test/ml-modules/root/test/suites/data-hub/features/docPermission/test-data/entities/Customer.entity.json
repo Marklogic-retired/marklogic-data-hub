@@ -21,12 +21,12 @@
         }
       },
       "primaryKey": "id",
-      "features": [{
+      "features": {
         "docPermission": {
           "enabled": true,
           "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
         }
-      }]
+      }
     }
   }
 }

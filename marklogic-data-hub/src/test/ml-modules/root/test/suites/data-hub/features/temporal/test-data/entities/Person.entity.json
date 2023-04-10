@@ -1,11 +1,11 @@
 {
   "info" : {
-    "title": "Customer",
+    "title": "Person",
     "version": "0.0.1",
     "baseUri": "http://example.org/"
   },
   "definitions" : {
-    "Customer" : {
+    "Person" : {
       "properties" : {
         "id" : {
           "datatype" : "string",
@@ -22,10 +22,9 @@
       },
       "primaryKey": "id",
       "features": {
-        "protectedCollections": {
-          "enabled": true,
-          "collections": ["myCustomerCollection"],
-          "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+        "temporal": {
+          "enabled": false,
+          "collection": "koolTest"
         }
       }
     }

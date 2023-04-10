@@ -16,6 +16,9 @@ max_line_length = 120
 [*.sjs]
 indent_size = 2
 
+[*.mjs]
+indent_size = 2
+
 [*.js]
 indent_size = 2
 

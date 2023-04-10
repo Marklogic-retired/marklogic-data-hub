@@ -353,6 +353,7 @@ void dh5Example() {
                             rm -rf $WORKSPACE$GRADLE_DIR/caches; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
+                            ./gradlew mlSetTraceEvents -Pevents=hub-core
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
                             ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true; \
                             ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true; \

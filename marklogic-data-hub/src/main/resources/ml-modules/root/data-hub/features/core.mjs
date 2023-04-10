@@ -43,25 +43,7 @@ function getFeatureMethod(featureName, featureMethod) {
   return registeredFeatures[featureName][featureMethod];
 }
 
-function invokeFeatureMethods(stepExecutionContext, contentArray, method) {
-  const flowStep = stepExecutionContext.flowStep;
-  let targetEntityType = flowStep.options.targetEntity || flowStep.options.targetEntityType;
-  let model = null;
-  if (targetEntityType) {
-    const modelNode = entityLib.findModelForEntityTypeId(targetEntityType);
-    model = fn.exists(modelNode) ? modelNode.toObject() : null;
-  }
-  const features = Object.keys(featuresCore.getFeatures());
-  features.forEach(feat => {
-    const funct = featuresCore.getFeatureMethod(feat, method);
-    if (funct) {
-      funct(stepExecutionContext, model, contentArray);
-    }
-  });
-}
-
 export default {
   getFeatures,
-  getFeatureMethod,
-  invokeFeatureMethods
+  getFeatureMethod
 };

@@ -9,20 +9,20 @@ const assertions = [];
 //Instance with protected collections
 const stepContext1 = {
   "flowStep": {
-  "stepDefinitionName": "my-protected",
-  "stepDefinitionType": "MAPPING",
-  "collections": ["noProtected"],
-  "sourceDatabase": "data-hub-FINAL",
-  "targetDatabase": "data-hub-FINAL",
-  "targetEntityType":"Person",
-  "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-  "features": [{
-    "protectedCollections": {
-      "enabled": true,
-      "collections": ["customerCollection"],
-      "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+    "stepDefinitionName": "my-protected",
+    "stepDefinitionType": "MAPPING",
+    "collections": ["noProtected"],
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL",
+    "targetEntityType":"Person",
+    "sourceQuery": "cts.collectionQuery('doesnt-matter')",
+    "features": {
+      "protectedCollections": {
+        "enabled": true,
+        "collections": ["customerCollection"],
+        "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+      }
     }
-  }]
   }
 };
 const modelCustomer = {
@@ -38,13 +38,13 @@ const modelCustomer = {
         "name": {"datatype": "string"},
         "status": {"datatype": "string"}
       },
-      "features": [{
+      "features": {
         "protectedCollections": {
           "enabled": true,
           "collections": ["myCustomerCollection"],
           "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
         }
-      }]
+      }
     }
   }
 };

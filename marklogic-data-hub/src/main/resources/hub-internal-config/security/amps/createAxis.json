@@ -1,0 +1,6 @@
+{
+  "local-name" : "createAxis",
+  "document-uri" : "/data-hub/5/temporal/hub-temporal.mjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "temporal-admin" ]
+}

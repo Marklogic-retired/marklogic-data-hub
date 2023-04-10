@@ -51,6 +51,20 @@ assertions.push(
   )
 );
 
+// Query with features enabled
+const stepContext = {features: {
+    "temporal": { "enabled" : true, "collection": "koolTest"}
+  }};
+sourceQuery = collectorLib.prepareSourceQuery(
+  {
+    sourceQuery: "cts.collectionQuery('test')"
+  }, stepContext
+);
+assertions.push(
+  test.assertEqual("cts.uris(null, ['score-zero'], cts.andQuery([cts.collectionQuery('test'),cts.collectionQuery('latest')]), 0)", sourceQuery,
+    xdmp.toJsonString(sourceQuery))
+);
+
 sourceQuery = collectorLib.prepareSourceQuery(
   {
     sourceQuery: "cts.uris(null, null, cts.trueQuery())"

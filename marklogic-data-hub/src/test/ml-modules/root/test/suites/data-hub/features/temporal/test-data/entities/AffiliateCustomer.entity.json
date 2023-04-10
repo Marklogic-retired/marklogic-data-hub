@@ -1,13 +1,13 @@
 {
   "info" : {
-    "title": "Customer",
+    "title": "AffiliateCustomer",
     "version": "0.0.1",
     "baseUri": "http://example.org/"
   },
   "definitions" : {
-    "Customer" : {
+    "AffiliateCustomer" : {
       "properties" : {
-        "id" : {
+        "customerId" : {
           "datatype" : "string",
           "collation" : "http://marklogic.com/collation/codepoint"
         },
@@ -20,12 +20,11 @@
           "collation" : "http://marklogic.com/collation/codepoint"
         }
       },
-      "primaryKey": "id",
+      "primaryKey": "customerId",
       "features": {
-        "protectedCollections": {
+        "temporal": {
           "enabled": true,
-          "collections": ["myCustomerCollection"],
-          "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+          "collection": "koolTest"
         }
       }
     }
