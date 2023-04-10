@@ -76,6 +76,27 @@ describe("Graph view side panel", () => {
     expect(getByLabelText("radio-button-collapse")).toBeInTheDocument();
   });
 
+  test("Display message when the node has no data", () => {
+    const {getByLabelText} = render(
+      <SearchContext.Provider
+        value={{...searchContextInterfaceByDefault, savedNode:
+          {isConcept: false, docUri: null, docURI: null, uri: null}}}
+      >
+        <Router>
+          <GraphExploreSidePanel
+            onCloseSidePanel={() => {}}
+            graphView={true}
+            openUnmergeCompare={false}
+            loadingCompare={""}
+            data={[]}
+            isUnmergeAvailable={jest.fn()}
+          />
+        </Router>
+      </SearchContext.Provider>,
+    );
+    expect(getByLabelText("noMappedDoc-Alert")).toBeInTheDocument();
+  });
+
   test("Render semantic concept information in the side panel", async () => {
     let semanticConceptIRI = "http://www.example.com/Category/Sneakers";
     let semanticConceptInfo = {

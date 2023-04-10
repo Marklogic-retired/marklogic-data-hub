@@ -25,6 +25,7 @@ const tooltipsConfig = {
     versionLimitedConcepts: function (versionNum) {
       return <span aria-label="concepts-version-tooltip">Concepts are limited in the current version of Marklogic <strong>{(versionNum)}</strong>. Please upgrade the Marklogic version to at least <strong>10.0-9</strong> for the full functionality.</span>
     },
+    noDataNodesMessage: "Unable to find a relevant document URI. There appears to be no mapped document supporting this expected instance of the relationship. To see real data here, please ensure that data with the matching foreign key value in this relationship has been properly mapped."
   },
   exploreSidebarQueries: {
     saveNewQuery: "Save the current query.",

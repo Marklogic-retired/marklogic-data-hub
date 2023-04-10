@@ -9,9 +9,10 @@ import {SearchContext} from "@util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "@util/record-parser";
 import TableView from "@components/table-view/table-view";
-import {HCTable, HCTooltip} from "@components/common";
+import {HCAlert, HCTable, HCTooltip} from "@components/common";
 import {fetchSemanticConceptInfo} from "@api/queries";
 import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
+import tooltipsConfig from "@config/explorer-tooltips.config";
 
 type Props = {
   onCloseSidePanel: () => void;
@@ -31,6 +32,8 @@ const INSTANCE_TITLE = (
     Instance
   </span>
 );
+
+const {exploreSidebar} = tooltipsConfig;
 
 const GraphExploreSidePanel: React.FC<Props> = props => {
   const {onCloseSidePanel, graphView} = props;
@@ -306,23 +309,35 @@ const GraphExploreSidePanel: React.FC<Props> = props => {
             />
             <Tab eventKey="record" aria-label="recordTabInSidePanel" id="recordTabInSidePanel" title={RECORD_TITLE} />
           </Tabs>
-
           {displayPanelContent()}
         </>
       ) : (
         <>
-          {conceptInstanceInfo}
-          {semanticConceptDescription && (
-            <div aria-label="instance-view">
-              <TableView
-                document={semanticConceptDescription}
-                contentType="json"
-                location={{}}
-                isEntityInstance={false}
-                isSidePanel={true}
-              />
-            </div>
+          {(!docUri && !isConcept) ? (
+            <HCAlert
+              variant="info"
+              aria-label="noMappedDoc-Alert"
+              showIcon
+            >
+              {exploreSidebar.noDataNodesMessage}
+            </HCAlert>
+          ) : (
+            <>
+              {conceptInstanceInfo}
+              {semanticConceptDescription && (
+                <div aria-label="instance-view">
+                  <TableView
+                    document={semanticConceptDescription}
+                    contentType="json"
+                    location={{}}
+                    isEntityInstance={false}
+                    isSidePanel={true}
+                  />
+                </div>
+              )}
+            </>
           )}
+
         </>
       )}
     </div>
