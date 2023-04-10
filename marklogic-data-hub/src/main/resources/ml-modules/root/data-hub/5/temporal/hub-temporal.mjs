@@ -23,7 +23,42 @@ function getTemporalCollections() {
   return temporal.collections();
 }
 
+function createIndex() {
+  xdmp.invokeFunction(function () {
+    const admin = require("/MarkLogic/admin");
+    let config = admin.getConfiguration();
+    let elementRangeIndexes = [
+      admin.databaseRangeElementIndex("dateTime", "", "systemStart", "", fn.false()),
+      admin.databaseRangeElementIndex("dateTime", "", "systemEnd", "", fn.false())]
+    elementRangeIndexes.forEach((elementRangeIndex) => {
+      try {
+        config = admin.databaseAddRangeElementIndex(config, xdmp.database(), elementRangeIndex);
+      } catch (e) {
+      }
+    });
+    admin.saveConfiguration(config);
+  },{update: "true"});
+}
+
+function createAxis() {
+  xdmp.invokeFunction(function () {
+    try {
+      temporal.axisCreate("system", cts.elementReference("systemStart", "type=dateTime"), cts.elementReference("systemEnd", "type=dateTime"));
+    } catch (e) {
+    }
+  }, {update: "true"});
+}
+
+function createCollection(temporalCollection) {
+  xdmp.invokeFunction(function () {
+    temporal.collectionCreate(temporalCollection, "system");
+  }, {update: "true"});
+}
+
 export default {
-    getTemporalCollections: import.meta.amp(getTemporalCollections)
+  getTemporalCollections: import.meta.amp(getTemporalCollections),
+  createIndex: import.meta.amp(createIndex),
+  createAxis: import.meta.amp(createAxis),
+  createCollection: import.meta.amp(createCollection)
 }
 

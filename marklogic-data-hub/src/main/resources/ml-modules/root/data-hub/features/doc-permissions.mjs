@@ -21,6 +21,7 @@
 
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import featuresUtils from "./features-util.mjs";
 
 const INFO_EVENT = consts.TRACE_CORE;
 
@@ -35,41 +36,21 @@ function onArtifactPublish(artifactType, artifactName) {
 }
 
 function onInstanceSave(context, model, contentArray) {
-    let flagAddPermissionObject = false;
     let permissions = [];
     const stepContext = context.flowStep;
     if (!model) {
         return contentArray;
     }
-    const modelName = model.info.title;
-    if(featureEnabled(model.definitions[modelName])) {
-        hubUtils.hubTrace(INFO_EVENT, `Processing doc permission feature for an instance of ${modelName}`);
-        const docPermissionObj = model.definitions[modelName].features.find(item => item['docPermission']);
-        permissions = docPermissionObj['docPermission'].permissions;
-        flagAddPermissionObject = true;
-    }
-    if(featureEnabled(stepContext)) {
-        hubUtils.hubTrace(INFO_EVENT, `Processing doc permission feature for an instance while running ${stepContext.name}`);
-        const docPermissionObj = stepContext.features.find(item => item['docPermission']);
 
-        permissions = docPermissionObj["docPermission"].permissions;
-        flagAddPermissionObject = true;
-    }
-    if (flagAddPermissionObject){
-        addPermissionsToObject(permissions, contentArray);
+    const feature = featuresUtils.getFeatureFromContext(stepContext, model, 'docPermission');
+    if(feature) {
+      const modelName = model.info.title;
+      hubUtils.hubTrace(INFO_EVENT, `Processing doc permission feature for an instance of ${modelName} while running ${stepContext.name}`);
+      permissions = feature.permissions;
+      addPermissionsToObject(permissions, contentArray);
     }
     hubUtils.hubTrace(INFO_EVENT, `Finished processing doc permission feature `);
     return contentArray;
-}
-
-function featureEnabled(artifact) {
-   if (artifact.features) {
-       const docPermissionObj = artifact.features.find(item => item['docPermission']);
-       if (docPermissionObj) {
-           return docPermissionObj['docPermission'].enabled;
-       }
-   }
-    return false;
 }
 
 function addPermissionsToObject(permissions, contentArray) {

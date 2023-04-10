@@ -14,12 +14,12 @@ const stepContext1 = {
         "targetDatabase": "data-hub-FINAL",
         "targetEntityType":"Person",
         "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-        "features": [{
+        "features": {
             "docPermission": {
                 "enabled": false,
                 "permissions": "data-hub-common-writer,update"
             }
-        }]
+        }
     }
 };
 const modelCustomer = {
@@ -35,12 +35,12 @@ const modelCustomer = {
                 "name": {"datatype": "string"},
                 "status": {"datatype": "string"}
             },
-            "features": [{
+            "features": {
                 "docPermission": {
                     "enabled": true,
                     "permissions": "data-hub-common-writer,update"
                 }
-            }]
+            }
         }
     }
 };
@@ -67,12 +67,12 @@ const stepContext2 = {
         "targetDatabase": "data-hub-FINAL",
         "targetEntityType":"Person",
         "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-        "features": [{
+        "features": {
             "docPermission": {
                 "enabled": false,
                 "permissions": "data-hub-common-writer,update"
             }
-        }]
+        }
     }
 };
 const modelCustomer2 = {
@@ -88,12 +88,12 @@ const modelCustomer2 = {
                 "name": {"datatype": "string"},
                 "status": {"datatype": "string"}
             },
-            "features": [{
+            "features": {
                 "docPermission": {
                     "enabled": false,
                     "permissions": "data-hub-common-writer,update"
                 }
-            }]
+            }
         }
     }
 };
