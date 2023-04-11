@@ -34,6 +34,14 @@ class CreateEditStepDialog {
     return cy.get(`#${id}`);
   }
 
+  getAdvancedTab() {
+    return cy.findByText("Advanced");
+  }
+
+  getBasicTab() {
+    return cy.findByText("Basic");
+  }
+
   /**
      * Set query input, depends on setSourceRadio being set to 'Query'
      * @param str

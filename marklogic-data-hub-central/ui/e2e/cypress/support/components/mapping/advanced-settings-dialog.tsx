@@ -11,7 +11,7 @@ class AdvancedSettingsDialog {
    */
   setSourceDatabase(dbName: string) {
     cy.get(`#sourceDatabase-select-wrapper`).click();
-    cy.get(`#sourceDatabase-select-MenuList [data-testid="sourceDbOptions-${dbName}"]`).scrollIntoView();
+    cy.get(`#sourceDatabase-select-MenuList [data-testid="sourceDbOptions-${dbName}"]`).click();
   }
 
   /**
