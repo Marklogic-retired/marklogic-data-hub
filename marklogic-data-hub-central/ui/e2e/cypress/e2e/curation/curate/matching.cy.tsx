@@ -9,7 +9,7 @@ import {
 import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal, compareValuesModal} from "../../../support/components/matching/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
-import {mappingStepDetail} from "../../../support/components/mapping/index";
+import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
 
 const matchStep = "matchCustTest";
 const matchStepCollection = "matchCustTestCollection";
@@ -769,6 +769,46 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("Yes");
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.findText("swim1").should("not.exist");
+
+  });
+
+  it("Check collection Typeahead request when source  database is changed", () => {
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Order");
+    curatePage.selectMatchTab("Order");
+    curatePage.addNewStep("Order").click();
+    createEditStepDialog.stepNameInput().type("testName", {timeout: 2000});
+
+    //verify typehead is requesting to final db
+    cy.intercept("POST", "api/entitySearch/facet-values?database=final").as("finalRequest1");
+    createEditStepDialog.setCollectionInput("ABC");
+    cy.wait("@finalRequest1");
+
+    //verify typehead is requesting to staging db when source DB is changed
+    createEditStepDialog.getAdvancedTab().click();
+    advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
+    createEditStepDialog.getBasicTab().click();
+    cy.intercept("POST", "api/entitySearch/facet-values?database=staging").as("stagingRequest1");
+    createEditStepDialog.setCollectionInput("D");
+    cy.wait("@stagingRequest1");
+    createEditStepDialog.saveButton("matching").click();
+
+    //verify typehead request when the step is already created
+    curatePage.editStep("testName").click();
+    cy.intercept("POST", "api/entitySearch/facet-values?database=staging").as("stagingRequest2");
+    createEditStepDialog.setCollectionInput("E");
+    cy.wait("@stagingRequest2");
+    createEditStepDialog.getAdvancedTab().click();
+    advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
+    createEditStepDialog.getBasicTab().click();
+    cy.intercept("POST", "api/entitySearch/facet-values?database=final").as("finalRequest2");
+    createEditStepDialog.setCollectionInput("F");
+    cy.wait("@finalRequest2");
+    createEditStepDialog.saveButton("matching").click();
+    createEditStepDialog.saveButton("matching").click();
+    curatePage.deleteMappingStepButton("testName").click();
+    curatePage.deleteConfirmation("Yes").click();
 
   });
 });
