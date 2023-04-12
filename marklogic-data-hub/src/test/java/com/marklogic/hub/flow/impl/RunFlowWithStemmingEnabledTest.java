@@ -53,12 +53,11 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
     private void enableAdvancedStemming(boolean stemming){
         runAsDataHubDeveloper();
         Database db = new Database(new API(getHubClient().getManageClient()), getHubClient().getDbName(DatabaseKind.STAGING));;
-        if(stemming){
-            db.setStemmedSearches("advanced");
+        String previousStemmedSearches = db.getStemmedSearches();
+        String newStemmedSearches = stemming ? "advanced": "off";
+        if (!newStemmedSearches.equals(previousStemmedSearches)) {
+            db.save();
+            getHubConfig().getAdminManager().waitForRestart();
         }
-        else {
-            db.setStemmedSearches("off");
-        }
-        db.save();
     }
 }

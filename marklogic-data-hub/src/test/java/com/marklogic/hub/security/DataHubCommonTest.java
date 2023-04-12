@@ -42,38 +42,44 @@ public class DataHubCommonTest extends AbstractSecurityTest {
     void verifyStatusPrivilege() {
         runAsTestUserWithRoles(getRoleName());
 
-        DatabaseClient client = getHubClient().getFinalClient();
-        ObjectNode serverStatus = readJsonObject(client.newServerEval().javascript("xdmp.serverStatus(xdmp.host(), xdmp.server())").evalAs(String.class));
-        assertEquals(getHubClient().getDbName(DatabaseKind.FINAL), serverStatus.get("serverName").asText(),
-            "Just verifying that the user can get server status via the 'status' privilege");
+        final DatabaseClient client = getHubClient().getFinalClient();
+        synchronized (client) {
+            ObjectNode serverStatus = readJsonObject(client.newServerEval().javascript("xdmp.serverStatus(xdmp.host(), xdmp.server())").evalAs(String.class));
+            assertEquals(getHubClient().getDbName(DatabaseKind.FINAL), serverStatus.get("serverName").asText(),
+                "Just verifying that the user can get server status via the 'status' privilege");
 
-        ObjectNode hostStatus = readJsonObject(client.newServerEval().javascript("xdmp.hostStatus(xdmp.host())").evalAs(String.class));
-        assertNotNull(hostStatus, "Verifying user can get host status via the 'status' privilege");
+            ObjectNode hostStatus = readJsonObject(client.newServerEval().javascript("xdmp.hostStatus(xdmp.host())").evalAs(String.class));
+            assertNotNull(hostStatus, "Verifying user can get host status via the 'status' privilege");
+        }
     }
 
     @Test
     void verifyCancelMyRequests() {
         runAsTestUserWithRoles(getRoleName());
 
-        DatabaseClient client = getHubClient().getFinalClient();
-        try {
-            client.newServerEval().javascript("xdmp.requestCancel(xdmp.host(), xdmp.server(), xdmp.request())").evalAs(String.class);
-            fail("Expected an error because the user canceled the request");
-        } catch (FailedRequestException ex) {
-            assertTrue(ex.getServerMessage().startsWith("XDMP-CANCELED: "),
-                "Expected the call to requestCancel to succeed since the user has the cancel-my-requests privilege; message: " + ex.getServerMessage());
+        final DatabaseClient client = getHubClient().getFinalClient();
+        synchronized (client) {
+            try {
+                client.newServerEval().javascript("xdmp.requestCancel(xdmp.host(), xdmp.server(), xdmp.request())").evalAs(String.class);
+                fail("Expected an error because the user canceled the request");
+            } catch (FailedRequestException ex) {
+                assertTrue(ex.getServerMessage().startsWith("XDMP-CANCELED: "),
+                        "Expected the call to requestCancel to succeed since the user has the cancel-my-requests privilege; message: " + ex.getServerMessage());
+            }
         }
     }
 
     @Test
     void verifySetMyRequestLimit() {
         runAsTestUserWithRoles(getRoleName());
-
-        assertDoesNotThrow(
-            () -> getHubClient().getFinalClient().newServerEval()
-                .javascript("xdmp.setRequestTimeLimit(10, xdmp.host(), xdmp.server(), xdmp.request())")
-                .evalAs(String.class),
-            "A data-hub-common user has the set-my-time-limit privilege, so this should work"
-        );
+        final DatabaseClient client = getHubClient().getFinalClient();
+        synchronized (client) {
+            assertDoesNotThrow(
+                    () -> client.newServerEval()
+                            .javascript("xdmp.setRequestTimeLimit(10, xdmp.host(), xdmp.server(), xdmp.request())")
+                            .evalAs(String.class),
+                    "A data-hub-common user has the set-my-time-limit privilege, so this should work"
+            );
+        }
     }
 }
