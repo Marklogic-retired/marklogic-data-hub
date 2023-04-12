@@ -267,6 +267,7 @@ function requireFunction(modulePath, functionName) {
     if (fn.endsWith(modulePath, ".mjs")) {
       cachedModules[modulePath] = mjsProxy.requireMjsModule(modulePath);
     } else {
+      xdmp.eval(`const lib = require("${modulePath}");`, {}, {staticCheck: true});
       cachedModules[modulePath] = require(modulePath);
     }
   }
@@ -336,7 +337,7 @@ export default {
   parsePermissions,
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
-  requireFunction,
+  requireFunction: import.meta.amp(requireFunction),
   warn,
   writeDocument,
   isNode,

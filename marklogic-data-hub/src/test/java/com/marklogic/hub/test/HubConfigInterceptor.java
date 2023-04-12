@@ -9,7 +9,6 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,9 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class HubConfigInterceptor extends LoggingObject implements MethodInterceptor {
 
-    private Map<String, HubConfigImpl> threadToHubConfigMap = new ConcurrentHashMap<>();
-    private ObjectPool<HubConfigImpl> hubConfigPool;
-    private HubConfigObjectFactory hubConfigObjectFactory;
+    private final Map<String, HubConfigImpl> threadToHubConfigMap = new ConcurrentHashMap<>();
+    private final ObjectPool<HubConfigImpl> hubConfigPool;
+    private final HubConfigObjectFactory hubConfigObjectFactory;
 
     public HubConfigInterceptor(HubConfigObjectFactory hubConfigObjectFactory) {
         this.hubConfigObjectFactory = hubConfigObjectFactory;
@@ -30,7 +29,7 @@ public class HubConfigInterceptor extends LoggingObject implements MethodInterce
         this.hubConfigPool = new GenericObjectPool<>(hubConfigObjectFactory, objectPoolConfig);
     }
 
-    public void borrowHubConfig(String threadName) {
+    public synchronized void borrowHubConfig(String threadName) {
         if (!threadToHubConfigMap.containsKey(threadName)) {
             try {
                 HubConfigImpl hubConfig = hubConfigPool.borrowObject();

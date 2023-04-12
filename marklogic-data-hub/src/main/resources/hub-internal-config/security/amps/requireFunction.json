@@ -1,0 +1,6 @@
+{
+  "local-name" : "requireFunction",
+  "document-uri" : "/data-hub/5/impl/hub-utils.mjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-admin" ]
+}

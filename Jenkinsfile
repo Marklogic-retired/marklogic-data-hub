@@ -757,7 +757,7 @@ println("Core Unit Tests Completed")
 }
 void postCoreTestsUnstable(){
 println("Unit Tests Failed")
-                      sh 'mkdir -p MLLogs;mkdir -p MLLogs/container1;docker cp  ml1.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container1/;mkdir -p MLLogs/container2;docker cp  ml2.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container2/;mkdir -p MLLogs/container3;docker cp  ml3.marklogic:/var/opt/MarkLogic/Logs/ $WORKSPACE/MLLogs/container3/;'
+                      sh 'mkdir -p MLLogs;mkdir -p MLLogs/container1;docker cp  ml1.marklogic.com:/var/opt/MarkLogic/Logs/. $WORKSPACE/MLLogs/container1/;mkdir -p MLLogs/container2;docker cp  ml2.marklogic.com:/var/opt/MarkLogic/Logs/. $WORKSPACE/MLLogs/container2/;mkdir -p MLLogs/container3;docker cp  ml3.marklogic.com:/var/opt/MarkLogic/Logs/. $WORKSPACE/MLLogs/container3/;'
                       archiveArtifacts artifacts: 'MLLogs/**/*'
                       script{
                       def email;

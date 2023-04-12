@@ -17,6 +17,7 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -112,6 +113,7 @@ public class HubTestBase extends AbstractHubTest {
         final String testId = testInfo.getDisplayName();
         final String host = getHubConfig().getHost();
         logger.info("Finishing: " + testId);
+        checkHubConfigStatus(getHubConfig());
         hubConfigInterceptor.returnHubConfig(Thread.currentThread().getName());
         logger.info("Returned HubConfig for host: " + host + "; test: " + testId);
     }
@@ -127,7 +129,16 @@ public class HubTestBase extends AbstractHubTest {
         final String testId = testInfo.getDisplayName();
         logger.info("Starting: " + testId);
         hubConfigInterceptor.borrowHubConfig(Thread.currentThread().getName());
+        checkHubConfigStatus(getHubConfig());
         logger.info("Borrowed HubConfig for host: " + getHubConfig().getHost() + "; test: " + testId);
+    }
+
+    protected void checkHubConfigStatus(HubConfig hubConfig) {
+        DatabaseClient.ConnectionResult connectionResult = hubConfig.newHubClient().getFinalClient().checkConnection();
+        String errorMessage = connectionResult.getErrorMessage();
+        if (!(connectionResult.isConnected() || errorMessage.contains("Forbidden"))) {
+            throw new RuntimeException("Can no longer connect to host " + hubConfig.getHost() + "; error message: " + errorMessage);
+        }
     }
 
     @Deprecated // since DHF 5.4.0; using this may not work when the test is run against DHS; use runAsDataHubOperator instead
