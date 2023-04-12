@@ -1,0 +1,2 @@
+﻿gender,race,firstname,middlename,lastname,suffix,dob,ssn,address1,address2,zip5,zip4,quadrant,scenarionumber,IsDependent,primaryInsuredId,primaryInsuredRelationship,scenariodesc
+Female,Hispanic,Drindy,,Day,,1/27/94,114-98-3748,744 29th St.,,20051,,NE,5,,,,"Variations in name spellings, Middle Name conflated with First name, Last name conflated with First name"

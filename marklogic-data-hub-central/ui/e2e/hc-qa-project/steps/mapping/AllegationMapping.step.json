@@ -1,0 +1,65 @@
+{
+  "collections": [
+    "Allegation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "sourceRecordScope": "instanceOnly",
+  "name": "AllegationMapping",
+  "description": "",
+  "targetEntityType": "http://marklogic.com/Allegation-0.0.1/Allegation",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "selectedSource": "query",
+  "sourceCollection": "Allegation",
+  "sourceQuery": "cts.collectionQuery([\"Allegation\"])",
+  "outputFormat": "json",
+  "retryLimit": 0,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "properties": {
+    "aboutChild": {
+      "sourcedFrom": ""
+    },
+    "allegedPerp": {
+      "sourcedFrom": ""
+    },
+    "caseId": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "childId": {
+      "sourcedFrom": "replace(PersonNumber, \"^0+\", \"\")"
+    },
+    "date": {
+      "sourcedFrom": "parseDate(InvestigationDate,\"MM/dd/yy\")"
+    },
+    "disposition": {
+      "sourcedFrom": "documentLookup(MalTreatmentDisposition,\"/referenceData/allegationDisposition.json\")"
+    },
+    "id": {
+      "sourcedFrom": "replace(AllegationId, \"^0+\", \"\")"
+    },
+    "maltreatment": {
+      "sourcedFrom": "documentLookup(MalTreatmentType,\"/referenceData/allegationType.json\")"
+    },
+    "maltreatmentDisposition": {
+      "sourcedFrom": ""
+    },
+    "perpId": {
+      "sourcedFrom": "replace(PerpPersonNumber, \"^0+\", \"\")"
+    },
+    "relationship": {
+      "sourcedFrom": "documentLookup(AllegedPerpRelationship,\"/referenceData/allegationRelationship.json\")"
+    }
+  },
+  "stepId": "AllegationMapping-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2023-03-20T23:38:32.062281Z",
+  "sourceURI": "4781823f-b16a-4235-84a3-f4c25b9e96b4.json"
+}

@@ -1,0 +1,33 @@
+{
+  "info": {
+    "title": "CaseCareProvider",
+    "draft": false,
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "CaseCareProvider": {
+      "properties": {
+        "caseId": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "careProviderId": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "careProviderName": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "description": "CaseCareProvider"
+    }
+  }
+}

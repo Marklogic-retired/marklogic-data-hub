@@ -1,0 +1,31 @@
+{
+  "name": "LoadClaims",
+  "description": "Load Claims Data",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "INGESTION",
+  "additionalCollections": [ ],
+  "headers": {
+    "sources": [
+      {
+        "name": "Claims"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "sourceQuery": "cts.collectionQuery([])",
+  "collections": [
+    "LoadClaims"
+  ],
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase": "data-hub-STAGING",
+  "targetFormat": "json",
+  "inputFilePath": "input/claims",
+  "outputURIReplacement": ".*data,''",
+  "separator": ",",
+  "sourceFormat": "csv",
+  "stepId": "LoadClaims-ingestion",
+  "lastUpdated": "2023-03-20T23:38:32.731903Z"
+}

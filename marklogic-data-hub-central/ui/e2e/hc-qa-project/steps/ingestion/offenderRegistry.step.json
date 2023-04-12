@@ -1,0 +1,25 @@
+{
+  "headers": { },
+  "collections": [
+    "offenderRegistry"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "offenderRegistry",
+  "description": "",
+  "sourceFormat": "csv",
+  "separator": ",",
+  "targetFormat": "json",
+  "sourceName": "",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "offenderRegistry-ingestion",
+  "lastUpdated": "2023-03-20T23:38:32.709899Z"
+}

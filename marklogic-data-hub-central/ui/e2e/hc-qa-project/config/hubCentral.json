@@ -1,0 +1,188 @@
+{
+  "modeling": {
+    "entities": {
+      "Member": {
+        "label": "FullName",
+        "graphX": -573,
+        "graphY": 293,
+        "color": "#c9ebc4",
+        "icon": "FaChild",
+        "propertiesOnHover": [
+          "memberID",
+          "childWelfareId",
+          "SSN"
+        ]
+      },
+      "ClaimFHIR": {
+        "label": "diagnosisDescription",
+        "graphX": -191,
+        "graphY": 311,
+        "color": "#fcc6b4",
+        "icon": "FaAnchor",
+        "propertiesOnHover": [
+          "identifier",
+          "patient"
+        ]
+      },
+      "ClaimItem": {
+        "label": "serviceDescription",
+        "graphX": 153,
+        "graphY": 308,
+        "color": "#f1eef5",
+        "icon": "FaBars",
+        "propertiesOnHover": [
+          "claimId",
+          "provider",
+          "patient"
+        ]
+      },
+      "CMSProvider": {
+        "label": "ProviderFullName",
+        "graphX": 436,
+        "graphY": 224,
+        "color": "#fff0a3",
+        "icon": "FaBriefcaseMedical",
+        "propertiesOnHover": [
+          "ProviderNPI"
+        ]
+      },
+      "HospitalAffiliation": {
+        "label": "HospitalAffiliationName",
+        "graphX": 726,
+        "graphY": 377
+      },
+      "ServiceLocation": {
+        "label": "CityLocation",
+        "graphX": 718,
+        "graphY": 40
+      },
+      "OrgAssociation": {
+        "label": "OrgLegalName",
+        "graphX": 419,
+        "graphY": -17
+      },
+      "Case": {
+        "label": "name",
+        "graphX": -379,
+        "graphY": -73,
+        "color": "#ffd0ae",
+        "icon": "FaSistrix",
+        "propertiesOnHover": [
+          "id",
+          "childId",
+          "caseOpened",
+          "caseClosed"
+        ]
+      },
+      "Episode": {
+        "label": "type",
+        "graphX": -175,
+        "graphY": -216,
+        "color": "#fff0a3",
+        "icon": "FaCreativeCommonsShare",
+        "propertiesOnHover": [
+          "caseId",
+          "dischargeReason",
+          "serviceType"
+        ]
+      },
+      "Allegation": {
+        "label": "maltreatment",
+        "graphX": -572,
+        "graphY": -237,
+        "color": "#d6d7d9",
+        "icon": "FaAcquisitionsIncorporated",
+        "propertiesOnHover": [
+          "childId",
+          "perpId",
+          "relationship"
+        ]
+      },
+      "CaseWorker": {
+        "label": "lastName",
+        "graphX": 489,
+        "graphY": 524,
+        "color": "#eeeff1",
+        "icon": "FaJenkins",
+        "propertiesOnHover": [
+          "id",
+          "firstName"
+        ]
+      },
+      "CareProvider": {
+        "label": "fullName",
+        "graphX": 317,
+        "graphY": 524,
+        "color": "#eeeff1",
+        "propertiesOnHover": [
+          "id"
+        ]
+      },
+      "Investigation": {
+        "label": "id",
+        "graphX": -87,
+        "graphY": 108,
+        "color": "#d5d3dd",
+        "icon": "FaAnchor"
+      },
+      "Offender": {
+        "graphX": 24,
+        "graphY": -167
+      },
+      "USCoreLocation": {
+        "graphX": -294,
+        "graphY": 526
+      },
+      "USCorePatient": {
+        "graphX": -96,
+        "graphY": 526
+      },
+      "USCorePractitioner": {
+        "graphX": -495,
+        "graphY": 529
+      },
+      "USCorePractitionerRole": {
+        "graphX": 112,
+        "graphY": 527
+      },
+      "CaseAdultFamily": {
+        "graphX": -281,
+        "graphY": 171,
+        "color": "#eec5d4",
+        "icon": "FaNapster",
+        "label": "AdultPersonNumber",
+        "propertiesOnHover": [
+          "ParentType"
+        ]
+      },
+      "CaseWorkerAssigned": {
+        "color": "#e1edb4",
+        "icon": "FaAddressCard",
+        "graphX": -732,
+        "graphY": 3,
+        "label": "caseWorkerName",
+        "propertiesOnHover": [
+          "caseId",
+          "caseWorkerId"
+        ]
+      },
+      "CaseCareProvider": {
+        "color": "#d9f5f0",
+        "icon": "FaClinicMedical",
+        "graphX": 67,
+        "graphY": -25,
+        "label": "careProviderName",
+        "propertiesOnHover": [
+          "caseId",
+          "careProviderId"
+        ]
+      }
+    },
+    "concepts": { },
+    "scale": 0.814397917950091,
+    "viewPosition": {
+      "x": 16.5522621685309,
+      "y": 287.021048863614
+    }
+  }
+}

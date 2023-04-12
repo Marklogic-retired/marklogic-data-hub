@@ -1,0 +1,25 @@
+{
+  "headers": { },
+  "collections": [
+    "CaseWorker"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "CaseWorker",
+  "description": "",
+  "sourceFormat": "csv",
+  "separator": ",",
+  "targetFormat": "json",
+  "sourceName": "ChildWelfareDemo",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [ ],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "CaseWorker-ingestion",
+  "lastUpdated": "2023-03-20T23:38:32.8721Z"
+}

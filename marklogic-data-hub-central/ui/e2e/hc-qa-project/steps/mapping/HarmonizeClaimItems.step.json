@@ -1,0 +1,63 @@
+{
+  "name": "HarmonizeClaimItems",
+  "description": "",
+  "customHook": {
+    "module": "/customHooks/extractClaimItems.sjs",
+    "parameters": { },
+    "user": "",
+    "runBefore": true
+  },
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "additionalCollections": [ ],
+  "sourceQuery": "cts.collectionQuery([\"LoadClaims\"])",
+  "sourceDatabase": "data-hub-STAGING",
+  "collections": [
+    "HarmonizeClaimItems",
+    "ClaimItem"
+  ],
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity": false,
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "json",
+  "targetEntityType": "http://marklogic.com/ClaimItem-0.0.1/ClaimItem",
+  "properties": {
+    "unitPrice": {
+      "sourcedFrom": "CPT_Charges"
+    },
+    "sequence": {
+      "sourcedFrom": "Sequence"
+    },
+    "hasProvider": {
+      "sourcedFrom": ""
+    },
+    "provider": {
+      "sourcedFrom": "NPI"
+    },
+    "patient": {
+      "sourcedFrom": "getHash64(PatientAccountNumber)"
+    },
+    "modifier": {
+      "sourcedFrom": "CPT_Mod1|CPT_Mod2|CPT_Mod3|CPT_Mod4"
+    },
+    "serviceDescription": {
+      "sourcedFrom": "documentLookup(CPT, '/referenceData/cptCodes.json')"
+    },
+    "claimId": {
+      "sourcedFrom": "ClaimIdentifier"
+    },
+    "productOrService": {
+      "sourcedFrom": "CPT"
+    },
+    "hasProviderIn": {
+      "sourcedFrom": "NPI"
+    }
+  },
+  "namespaces": { },
+  "selectedSource": "query",
+  "stepId": "HarmonizeClaimItems-mapping",
+  "lastUpdated": "2023-03-20T23:38:32.358808Z",
+  "uriExpression": "$URI"
+}

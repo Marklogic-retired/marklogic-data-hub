@@ -1,0 +1,11 @@
+{
+  "M": "Male",
+  "F": "Female",
+  "m": "Male",
+  "f": "Female",
+  "O": "Other",
+  "o": "Other",
+  "U": "Unknown",
+  "u": "Unknown",
+  "" : "Unknown"
+}

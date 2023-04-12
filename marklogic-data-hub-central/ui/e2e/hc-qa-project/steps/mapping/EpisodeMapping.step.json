@@ -1,0 +1,85 @@
+{
+  "collections": [
+    "Episode"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "EpisodeMapping",
+  "targetEntityType": "http://marklogic.com/Episode-0.0.1/Episode",
+  "description": "",
+  "collection": [
+    "Episode"
+  ],
+  "selectedSource": "query",
+  "sourceQuery": "cts.collectionQuery([\"Episode\"])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [
+    {
+      "path": "/custom-modules/step-interceptors/proximityAlertNewEpisode.sjs",
+      "when": "beforeContentPersisted",
+      "vars": { }
+    }
+  ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "stepId": "EpisodeMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:32.602283Z",
+  "uriExpression": "$URI",
+  "properties": {
+    "begin": {
+      "sourcedFrom": "parseDate(PlacementBeginDate,\"MM/dd/yy\")"
+    },
+    "careProvider": {
+      "sourcedFrom": "ProviderNumber"
+    },
+    "caseId": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "dischargeDate": {
+      "sourcedFrom": "parseDate(PlacementDischargeDate,\"MM/dd/yy\")"
+    },
+    "dischargeReason": {
+      "sourcedFrom": "PlacementEndReason"
+    },
+    "end": {
+      "sourcedFrom": "parseDate(PlacementEndDate,\"MM/dd/yy\")"
+    },
+    "id": {
+      "sourcedFrom": "generate-id(.)"
+    },
+    "serviceType": {
+      "sourcedFrom": "ServiceType"
+    },
+    "tfcFamily": {
+      "sourcedFrom": "TFCFamilyNumber"
+    },
+    "episodeCareProvider": {
+      "sourcedFrom": ""
+    },
+    "type": {
+      "sourcedFrom": "\"Episode\""
+    },
+    "lat": {
+      "sourcedFrom": "Lat"
+    },
+    "lon": {
+      "sourcedFrom": "Lon"
+    }
+  },
+  "namespaces": { },
+  "sourceCollection": "Episode",
+  "outputFormat": "json",
+  "retryLimit": 0,
+  "threadCount": 4,
+  "sourceURI": "c2d8ab5d-b8c6-44fd-83eb-41f022d528be.json"
+}

@@ -1,0 +1,60 @@
+{
+  "collections": [
+    "OffenderMapping",
+    "Offender"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "OffenderMapping",
+  "targetEntityType": "http://marklogic.com/Offender-0.0.1/Offender",
+  "description": "",
+  "collection": [
+    "offenderRegistry"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['offenderRegistry'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [
+    {
+      "path": "/custom-modules/step-interceptors/proximityAlertNewOffender.sjs",
+      "when": "beforeContentPersisted",
+      "vars": { }
+    }
+  ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "OffenderMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:32.454194Z",
+  "uriExpression": "concat(\"/offender/\", id, \".json\")",
+  "properties": {
+    "id": {
+      "sourcedFrom": "id"
+    },
+    "firstName": {
+      "sourcedFrom": "first_name"
+    },
+    "lastName": {
+      "sourcedFrom": "last_name"
+    },
+    "locationType": {
+      "sourcedFrom": "type"
+    },
+    "lat": {
+      "sourcedFrom": "lat"
+    },
+    "lon": {
+      "sourcedFrom": "lon"
+    }
+  },
+  "namespaces": { }
+}

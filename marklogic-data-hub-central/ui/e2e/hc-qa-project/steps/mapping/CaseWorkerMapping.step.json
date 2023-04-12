@@ -1,0 +1,41 @@
+{
+  "collections": [
+    "CaseWorker"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "sourceRecordScope": "instanceOnly",
+  "name": "CaseWorkerMapping",
+  "description": "",
+  "targetEntityType": "http://marklogic.com/CaseWorker-0.0.1/CaseWorker",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "selectedSource": "query",
+  "sourceCollection": "CaseWorker",
+  "sourceQuery": "cts.collectionQuery([\"CaseWorker\"])",
+  "outputFormat": "json",
+  "retryLimit": 0,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "properties": {
+    "firstName": {
+      "sourcedFrom": "WorkerFirstName"
+    },
+    "id": {
+      "sourcedFrom": "replace(WorkerId, \"^0+\", \"\")"
+    },
+    "lastName": {
+      "sourcedFrom": "WorkerLastName"
+    }
+  },
+  "stepId": "CaseWorkerMapping-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2023-03-20T23:38:31.860631Z",
+  "sourceURI": "222ff5df-832f-4330-a7da-a4264958a6f1.json"
+}

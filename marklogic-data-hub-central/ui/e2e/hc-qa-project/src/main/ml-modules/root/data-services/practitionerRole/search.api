@@ -1,0 +1,25 @@
+{
+  "functionName" : "search",
+  "params" : [ {
+    "name": "search",
+    "desc": "List of search terms and values",
+    "datatype" : "jsonDocument",
+    "$javaClass":"com.fasterxml.jackson.databind.JsonNode",
+    "nullable": true
+  }, {
+    "name" : "start",
+    "desc" : "Start position when results are limited. Default is 0.",
+    "datatype" : "int",
+    "nullable" : true
+  }, {
+    "name" : "limit",
+    "desc" : "Limit results to the given number. Default is 20.",
+    "datatype" : "int",
+    "nullable" : true
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass":"com.fasterxml.jackson.databind.JsonNode",
+    "desc" : ""
+  }
+}

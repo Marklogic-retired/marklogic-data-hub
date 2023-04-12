@@ -1,0 +1,16 @@
+CaseNumber,Region,LLOrg,SupervisorId,SupervisorLastName,SupervisorFirstName,CaseWorkerId,CaseWorkerLastName,CaseWorkerFirstName,Role,AssignmentStatus,AssignmentBeginDate,AssignmentEndDate,County
+55232,1,5695,,,,3390394,Bozier,Laney,60,1,10/25/18,2/25/19,32
+89036,1,5695,,,,3390394,Bozier,Laney,60,1,10/25/18,2/25/19,32
+14009,1,5695,,,,3390394,Bozier,Laney,60,1,10/25/18,2/25/19,32
+55232,1,5695,,,,3420190,Olyet,Troy,60,1,2/26/19,6/25/19,32
+89036,1,5695,,,,3420190,Olyet,Troy,60,1,2/26/19,6/25/19,32
+14009,1,5695,,,,3420190,Olyet,Troy,60,1,2/26/19,6/25/19,32
+55232,1,5695,,,,403020,Kerton,Janeen,49,1,6/26/19,8/25/19,32
+89036,1,5695,,,,403020,Kerton,Janeen,49,1,6/26/19,8/25/19,32
+14009,1,5695,,,,403020,Kerton,Janeen,49,1,6/26/19,8/25/19,32
+55232,1,5695,,,,8229892,Merioth,Blanche,49,1,8/26/19,12/25/19,32
+89036,1,5695,,,,8229892,Merioth,Blanche,49,1,8/26/19,12/25/19,32
+14009,1,5695,,,,8229892,Merioth,Blanche,49,1,8/26/19,12/25/19,32
+55232,1,5695,,,,6680101,Shawl,Katya,60,1,12/26/19,2/15/20,32
+89036,1,5695,,,,6680101,Shawl,Katya,60,1,12/26/19,2/15/20,32
+14009,1,5695,,,,6680101,Shawl,Katya,60,1,12/26/19,2/15/20,32

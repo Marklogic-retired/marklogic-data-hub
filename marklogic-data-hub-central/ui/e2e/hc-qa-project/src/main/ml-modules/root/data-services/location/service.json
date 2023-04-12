@@ -1,0 +1,6 @@
+{
+   "endpointDirectory" : "/data-services/location/",
+   "$javaClass"        : "com.marklogic.location.MLSearch",
+   "desc"              : "Searches practitioner location based on various attributes",
+   "comment"           : "Search for practitioner location with a given attribute updated: 2021-04-29."
+}

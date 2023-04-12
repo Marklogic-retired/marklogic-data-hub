@@ -1,0 +1,150 @@
+{
+  "collections": [
+    "AdultMemberMapping",
+    "Member"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "AdultMemberMapping",
+  "targetEntityType": "http://marklogic.com/Member-0.0.1/Member",
+  "description": "",
+  "collection": [
+    "Adult"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['Adult'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "AdultMemberMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:32.493949Z",
+  "properties": {
+    "SSN": {
+      "sourcedFrom": "AdultSSN"
+    },
+    "DOB": {
+      "sourcedFrom": "AdultBirthdate"
+    },
+    "DayOfDOB": {
+      "sourcedFrom": "getDayOfDOB(AdultBirthdate)"
+    },
+    "MonthOfDOB": {
+      "sourcedFrom": "getMonthOfDOB(AdultBirthdate)"
+    },
+    "YearOfDOB": {
+      "sourcedFrom": "getYearOfDOB(AdultBirthdate)"
+    },
+    "FullName": {
+      "sourcedFrom": "AdultPersonName"
+    },
+    "FirstName": {
+      "sourcedFrom": "substring-before(AdultPersonName, \" \")"
+    },
+    "LastName": {
+      "sourcedFrom": "substring-after(AdultPersonName, \" \")"
+    },
+    "Gender": {
+      "sourcedFrom": "getGenderNormalized(AdultGender)"
+    },
+    "Address1": {
+      "sourcedFrom": ""
+    },
+    "Address2": {
+      "sourcedFrom": ""
+    },
+    "DataSource": {
+      "sourcedFrom": "\"CW Adult\""
+    },
+    "FirstLastNameSorted": {
+      "sourcedFrom": ""
+    },
+    "FullAddress": {
+      "sourcedFrom": ""
+    },
+    "hasClaim": {
+      "sourcedFrom": ""
+    },
+    "hasDependent": {
+      "sourcedFrom": ""
+    },
+    "idCard": {
+      "sourcedFrom": ""
+    },
+    "IsDependent": {
+      "sourcedFrom": ""
+    },
+    "MasterPersonIndex": {
+      "sourcedFrom": ""
+    },
+    "memberID": {
+      "sourcedFrom": "replace(AdultPersonNumber, \"^0+\", \"\")"
+    },
+    "MiddleName": {
+      "sourcedFrom": ""
+    },
+    "origAddress1": {
+      "sourcedFrom": ""
+    },
+    "origQuadrant": {
+      "sourcedFrom": ""
+    },
+    "PrimaryInsuredId": {
+      "sourcedFrom": ""
+    },
+    "PrimaryInsuredRelationship": {
+      "sourcedFrom": ""
+    },
+    "Quadrant": {
+      "sourcedFrom": ""
+    },
+    "Race": {
+      "sourcedFrom": ""
+    },
+    "ScenarioDesc": {
+      "sourcedFrom": ""
+    },
+    "ScenarioNumber": {
+      "sourcedFrom": ""
+    },
+    "SourceFormat": {
+      "sourcedFrom": ""
+    },
+    "Suffix": {
+      "sourcedFrom": ""
+    },
+    "uid": {
+      "sourcedFrom": ""
+    },
+    "Uris": {
+      "sourcedFrom": ""
+    },
+    "Zip4": {
+      "sourcedFrom": ""
+    },
+    "Zip5": {
+      "sourcedFrom": ""
+    },
+    "childWelfareId": {
+      "sourcedFrom": "replace(AdultPersonNumber, \"^0+\", \"\")"
+    },
+    "involvedInCase": {
+      "sourcedFrom": ""
+    },
+    "AdultMemberIs": {
+      "sourcedFrom": "replace(AdultPersonNumber, \"^0+\", \"\")"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "concat(\"/childwelfare/Adult/\", AdultPersonNumber, \".json\")"
+}

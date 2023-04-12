@@ -1,0 +1,6 @@
+{
+   "endpointDirectory" : "/data-services/practitionerRole/",
+   "$javaClass"        : "com.marklogic.fhir.ds.PractitionerRoleSearch",
+   "desc"              : "Searches practitionerRole based on various attributes",
+   "comment"           : "Search for practitionerRole with a given attribute updated: 2021-04-29."
+}

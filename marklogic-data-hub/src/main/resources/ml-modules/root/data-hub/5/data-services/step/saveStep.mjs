@@ -53,7 +53,7 @@ let existingStep = fn.head(cts.search(cts.andQuery([
 ])));
 
 if(existingStep && throwErrorIfStepIsPresent){
-  httpUtils.throwBadRequest("A step of type '" + stepDefinitionType + "' with the name '" +  stepName +  "' already exists");
+  httpUtils.throwBadRequest(`A step of type ${stepDefinitionType} with the name ${stepName} already exists`);
 }
 
 if (existingStep) {

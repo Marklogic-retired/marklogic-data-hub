@@ -1,0 +1,54 @@
+{
+  "collections": [
+    "Investigation"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "sourceRecordScope": "instanceOnly",
+  "name": "InvestigationMapping",
+  "description": "",
+  "targetEntityType": "http://marklogic.com/Investigation-0.0.1/Investigation",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "selectedSource": "query",
+  "sourceCollection": "Investigation",
+  "sourceQuery": "cts.collectionQuery([\"Investigation\"])",
+  "outputFormat": "json",
+  "customHook": { },
+  "retryLimit": 0,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "properties": {
+    "caseId": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "cpsReportId": {
+      "sourcedFrom": "replace(CPSReportNumber, \"^0+\", \"\")"
+    },
+    "end": {
+      "sourcedFrom": "parseDate(InvestigationCompletedDate,\"MM/DD/YYYY\")"
+    },
+    "id": {
+      "sourcedFrom": "replace(InvestigationNumber, \"^0+\", \"\")"
+    },
+    "requiredEnd": {
+      "sourcedFrom": "parseDate(InvestigationRequiredCompletionDate,\"MM/DD/YYYY\")"
+    },
+    "start": {
+      "sourcedFrom": "parseDate(InvestigationStartDate,\"MM/DD/YYYY\")"
+    }
+  },
+  "stepId": "InvestigationMapping-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2023-03-20T23:38:31.633108Z",
+  "sourceURI": "4f172c21-e387-4e2d-98ab-4ac22e67ca0e.json",
+  "headers": { },
+  "interceptors": [ ],
+  "mappingParametersModulePath": ""
+}

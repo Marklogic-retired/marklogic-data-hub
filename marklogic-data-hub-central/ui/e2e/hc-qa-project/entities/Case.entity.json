@@ -1,0 +1,292 @@
+{
+  "info": {
+    "title": "Case",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/",
+    "draft": false
+  },
+  "definitions": {
+    "CasePlan": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "plan": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "date": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "CasePlacement": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "careProvider": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "start": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "CaseWorkerVisit": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "date": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "type": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "CPSReport": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "status": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "received": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "accepted": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "response": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "type": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "CourtDisposition": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "momTPR": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "dadTPR": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "courtName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "AdultFamily": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "adultId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "type": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "start": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "end": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "CaseAssignment": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "supervisorId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "workerId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "start": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "end": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "Case": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "childId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "caseOpened": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "caseClosed": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "plans": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CasePlan"
+          }
+        },
+        "cpsReports": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CPSReport"
+          }
+        },
+        "courtDisposition": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CourtDisposition"
+          }
+        },
+        "visitations": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CaseWorkerVisit"
+          }
+        },
+        "adultFamily": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/AdultFamily"
+          }
+        },
+        "assignmentHistory": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CaseAssignment"
+          }
+        },
+        "placements": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/CasePlacement"
+          }
+        },
+        "caseSupervisedBy": {
+          "datatype": "array",
+          "items": {
+            "$ref": "http://marklogic.com/CaseWorker-0.0.1/CaseWorker"
+          }
+        },
+        "AdultInvolvedInCase": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/CaseAdultFamily-0.0.1/CaseAdultFamily",
+            "joinPropertyName": "CaseNumber"
+          }
+        },
+        "hasEpisode": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/Episode-0.0.1/Episode",
+            "joinPropertyName": "caseId"
+          }
+        },
+        "hasCareProvider": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/CaseCareProvider-0.0.1/CaseCareProvider",
+            "joinPropertyName": "caseId"
+          }
+        },
+        "hasAllegation": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/Allegation-0.0.1/Allegation",
+            "joinPropertyName": "caseId"
+          }
+        },
+        "AssignedtoCaseWorker": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/CaseWorkerAssigned-0.0.1/CaseWorkerAssigned",
+            "joinPropertyName": "caseId"
+          }
+        },
+        "hasInvestigation": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://marklogic.com/Investigation-0.0.1/Investigation",
+            "joinPropertyName": "caseId"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+   "endpointDirectory" : "/data-services/patient/",
+   "$javaClass"        : "com.marklogic.patient.MLSearch",
+   "desc"              : "Searches patient based on various attributes",
+   "comment"           : "Search for patient with a given attribute updated: 2021-05-24."
+}

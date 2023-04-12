@@ -1,0 +1,81 @@
+{
+  "collections": [
+    "mapCMSProvider",
+    "CMSProvider"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": false,
+  "name": "mapCMSProvider",
+  "targetEntityType": "http://marklogic.com/CMSProvider-0.0.1/CMSProvider",
+  "description": "Map CMSProvider from CMS Provider CSV source",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['CMS-Provider.csv'])",
+  "targetDatabase": "data-hub-FINAL",
+  "properties": {
+    "GraduationYear": {
+      "sourcedFrom": "Grd_yr"
+    },
+    "MedSchoolName": {
+      "sourcedFrom": "Med_sch"
+    },
+    "PrimarySpeciality": {
+      "sourcedFrom": "getStringNormalized(pri_spec)"
+    },
+    "ProviderCredential": {
+      "sourcedFrom": "Cred"
+    },
+    "ProviderFirstName": {
+      "sourcedFrom": "getStringNormalized(frst_nm)"
+    },
+    "ProviderFullName": {
+      "sourcedFrom": "concat(getStringNormalized(frst_nm),' ',getStringNormalized(mid_nm),' ',getStringNormalized(lst_nm))"
+    },
+    "ProviderGender": {
+      "sourcedFrom": "documentLookup(gndr,\"/referenceData/genderCodes.json\")"
+    },
+    "ProviderLastName": {
+      "sourcedFrom": "getStringNormalized(lst_nm)"
+    },
+    "ProviderMiddleName": {
+      "sourcedFrom": "getStringNormalized(mid_nm)"
+    },
+    "ProviderNPI": {
+      "sourcedFrom": "NPI"
+    },
+    "ProviderSuffix": {
+      "sourcedFrom": "suff"
+    },
+    "SecondarySpecialityAll": {
+      "sourcedFrom": "getStringNormalized(sec_spec_all)"
+    },
+    "ClinicianMedicareAssignment": {
+      "sourcedFrom": "documentLookup(ind_assgn,\"/referenceData/medicareAssignmentCodes.json\")"
+    },
+    "ServiceLocationAt": {
+      "sourcedFrom": "NPI"
+    },
+    "WithHospital": {
+      "sourcedFrom": "NPI"
+    },
+    "OrgAssociation": {
+      "sourcedFrom": "NPI"
+    }
+  },
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCMSProvider-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:31.588758Z",
+  "uriExpression": "concat('/NPI/',NPI,'.json')",
+  "collection": "CMS-Provider.csv",
+  "namespaces": { }
+}

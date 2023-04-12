@@ -1,0 +1,39 @@
+{
+  "info": {
+    "title": "OrgAssociation",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "OrgAssociation": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "OrgPACIDAndNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "OrgPACID": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "OrgLegalName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "ProviderNPI": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PrimarySpeciality": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        }
+      }
+    }
+  }
+}

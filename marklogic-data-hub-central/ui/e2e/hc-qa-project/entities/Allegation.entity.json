@@ -1,0 +1,60 @@
+{
+  "info": {
+    "title": "Allegation",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "Allegation": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "caseId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "childId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "perpId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "date": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "relationship": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "maltreatment": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "disposition": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "allegedPerp": {
+          "datatype": "array",
+          "items": {
+            "$ref": "http://marklogic.com/Member-0.0.1/Member"
+          }
+        },
+        "allegationAboutChild": {
+          "datatype": "array",
+          "items": {
+            "$ref": "http://marklogic.com/Member-0.0.1/Member"
+          }
+        }
+      }
+    }
+  }
+}

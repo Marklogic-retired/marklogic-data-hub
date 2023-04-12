@@ -1,0 +1,213 @@
+{
+  "collections": [
+    "Case"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "CaseMapping",
+  "targetEntityType": "http://marklogic.com/Case-0.0.1/Case",
+  "description": "",
+  "collection": [
+    "CaseInfo"
+  ],
+  "selectedSource": "query",
+  "sourceQuery": "cts.collectionQuery([\"CaseInfo\"])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "stepId": "CaseMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:32.179989Z",
+  "properties": {
+    "aboutAdult": {
+      "sourcedFrom": "caseGetAdultFamily(CaseNumber)/AdultPersonNumber"
+    },
+    "aboutChild": {
+      "sourcedFrom": ""
+    },
+    "adultFamily": {
+      "sourcedFrom": "caseGetAdultFamily(CaseNumber)",
+      "properties": {
+        "adultId": {
+          "sourcedFrom": "replace(AdultPersonNumber, \"^0+\", \"\")"
+        },
+        "end": {
+          "sourcedFrom": "parseDate(AdultEndDate,\"MM/dd/yy\")"
+        },
+        "start": {
+          "sourcedFrom": "parseDate(AdultStartDate,\"MM/dd/yy\")"
+        },
+        "type": {
+          "sourcedFrom": "documentLookup(ParentType, \"/referenceData/adultFamilyType.json\")"
+        }
+      },
+      "targetEntityType": "#/definitions/AdultFamily"
+    },
+    "caseClosed": {
+      "sourcedFrom": "parseDate(CaseCloseDate,\"MM/dd/yy\")"
+    },
+    "caseOpened": {
+      "sourcedFrom": "parseDate(CaseOpenDate,\"MM/dd/yy\")"
+    },
+    "childId": {
+      "sourcedFrom": "replace(PersonNumber, \"^0+\", \"\")"
+    },
+    "courtDisposition": {
+      "sourcedFrom": "caseGetCourtDisposition(CaseNumber)",
+      "properties": {
+        "courtName": {
+          "sourcedFrom": "CourtName"
+        },
+        "dadTPR": {
+          "sourcedFrom": "parseDate(TPRDateforDad,\"MM/dd/yy\")"
+        },
+        "momTPR": {
+          "sourcedFrom": "parseDate(TPRDateforMom,\"MM/dd/yy\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CourtDisposition"
+    },
+    "cpsReports": {
+      "sourcedFrom": "caseGetCPSReport(CaseNumber)",
+      "properties": {
+        "accepted": {
+          "sourcedFrom": "parseDate(CPSReportAcceptedDate,\"MM/dd/yy\")"
+        },
+        "id": {
+          "sourcedFrom": "CPSReportNumber"
+        },
+        "received": {
+          "sourcedFrom": "parseDate(CPSReportReceivedDate,\"MM/dd/yy\")"
+        },
+        "response": {
+          "sourcedFrom": "documentLookup(CPSReportResponse,\"/referenceData/cpsReportResponse.json\")"
+        },
+        "status": {
+          "sourcedFrom": "documentLookup(CPSReportStatus,\"/referenceData/cpsReportStatus.json\")"
+        },
+        "type": {
+          "sourcedFrom": "documentLookup(CPSReportType,\"/referenceData/cpsReportType.json\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CPSReport"
+    },
+    "hasEpisode": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "id": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "name": {
+      "sourcedFrom": "CaseName"
+    },
+    "plans": {
+      "sourcedFrom": "caseGetCasePlan(CaseNumber)",
+      "properties": {
+        "date": {
+          "sourcedFrom": "parseDate(CasePlanDate,\"MM/dd/yy\")"
+        },
+        "plan": {
+          "sourcedFrom": "documentLookup(CasePlanGoal,\"/referenceData/casePlans.json\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CasePlan"
+    },
+    "visitations": {
+      "sourcedFrom": "caseGetVisitation(CaseNumber)",
+      "properties": {
+        "date": {
+          "sourcedFrom": "parseDate(CaseWorkerVisitDate,\"MM/dd/yy\")"
+        },
+        "type": {
+          "sourcedFrom": "documentLookup(TypeOfCaseWorkerVisit,\"/referenceData/visitationType.json\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CaseWorkerVisit"
+    },
+    "hasAllegation": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "assignedTo": {
+      "sourcedFrom": ""
+    },
+    "assignmentHistory": {
+      "sourcedFrom": "caseGetAssignmentHistory(CaseNumber)",
+      "properties": {
+        "end": {
+          "sourcedFrom": "parseDate(AssignmentEndDate,\"MM/dd/yy\")"
+        },
+        "start": {
+          "sourcedFrom": "parseDate(AssignmentBeginDate,\"MM/dd/yy\")"
+        },
+        "supervisorId": {
+          "sourcedFrom": "replace(SupervisorId, \"^0+\", \"\")"
+        },
+        "workerId": {
+          "sourcedFrom": "replace(CaseWorkerId, \"^0+\", \"\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CaseAssignment"
+    },
+    "supervisedBy": {
+      "sourcedFrom": ""
+    },
+    "caseAboutChild": {
+      "sourcedFrom": ""
+    },
+    "caseAssignedTo": {
+      "sourcedFrom": ""
+    },
+    "caseCareProvider": {
+      "sourcedFrom": ""
+    },
+    "caseHasAllegation": {
+      "sourcedFrom": ""
+    },
+    "caseHasEpisode": {
+      "sourcedFrom": ""
+    },
+    "caseSupervisedBy": {
+      "sourcedFrom": ""
+    },
+    "placements": {
+      "sourcedFrom": "caseGetPlacements(CaseNumber)",
+      "properties": {
+        "careProvider": {
+          "sourcedFrom": "ProviderNumber"
+        },
+        "start": {
+          "sourcedFrom": "parseDate(PlacementBeginDate, \"MM/dd/yy\")"
+        }
+      },
+      "targetEntityType": "#/definitions/CasePlacement"
+    },
+    "AdultInvolvedInCase": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "hasInvestigation": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "hasCareProvider": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "AssignedtoCaseWorker": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "concat(\"/childwelfare/case/\", CaseNumber, \".json\")",
+  "sourceCollection": "CaseInfo",
+  "outputFormat": "json",
+  "retryLimit": 0,
+  "threadCount": 4,
+  "sourceURI": "655ced4e-980e-4472-9430-312b46201607.json"
+}

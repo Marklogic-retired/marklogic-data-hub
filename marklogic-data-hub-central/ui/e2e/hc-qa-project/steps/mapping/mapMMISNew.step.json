@@ -1,0 +1,144 @@
+{
+  "stepId": "mapMMISNew-mapping",
+  "name": "mapMMISNew",
+  "description": "Map MMIS-New Source to Member Target Entity",
+  "customHook": { },
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "stepNumber": "2",
+  "headers": { },
+  "sourceQuery": "cts.collectionQuery([\"loadMMIS-New\"])",
+  "mapping": {
+    "name": "mapMMISNew"
+  },
+  "provenanceGranularityLevel": "coarse",
+  "validateEntity": "doNotValidate",
+  "targetDatabase": "data-hub-FINAL",
+  "collections": [
+    "mapMMISNew",
+    "Member"
+  ],
+  "sourceDatabase": "data-hub-STAGING",
+  "targetEntityType": "http://marklogic.com/Member-0.0.1/Member",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "outputFormat": "json",
+  "namespaces": { },
+  "additionalCollections": [ ],
+  "targetFormat": "json",
+  "properties": {
+    "Address1": {
+      "sourcedFrom": "checkUndefined(getAddress1Normalized(address1))"
+    },
+    "Address2": {
+      "sourcedFrom": "getAddress2Normalized(getPossibleAddress2(address1,address2))"
+    },
+    "DataSource": {
+      "sourcedFrom": "\"MMIS\""
+    },
+    "DayOfDOB": {
+      "sourcedFrom": "getDayOfDOB(dob)"
+    },
+    "DOB": {
+      "sourcedFrom": "dob"
+    },
+    "FirstLastNameSorted": {
+      "sourcedFrom": "getFirstLastNameSorted(getFirstNameNormalized(firstname),getLastNameNormalized(getPossibleLastName(firstname,lastname)))"
+    },
+    "FirstName": {
+      "sourcedFrom": "checkUndefined(getFirstNameNormalized(firstname))"
+    },
+    "FullAddress": {
+      "sourcedFrom": "concat(getAddress1Normalized(address1),', ', getAddress2Normalized(getPossibleAddress2(address1,address2)),',',getPossibleQuadrant2(address1,quadrant))"
+    },
+    "FullName": {
+      "sourcedFrom": "concat(getFirstNameNormalized(firstname),' ',getLastNameNormalized(getPossibleLastName(firstname,lastname)),' ',suffix)"
+    },
+    "Gender": {
+      "sourcedFrom": "getGenderNormalized(gender)"
+    },
+    "hasClaim": {
+      "sourcedFrom": ""
+    },
+    "hasDependent": {
+      "sourcedFrom": ""
+    },
+    "idCard": {
+      "sourcedFrom": "'/images/member-id-card.png'"
+    },
+    "IsDependent": {
+      "sourcedFrom": "IsDependent"
+    },
+    "LastName": {
+      "sourcedFrom": "checkUndefined(getLastNameNormalized(lastname))"
+    },
+    "MasterPersonIndex": {
+      "sourcedFrom": "sem:uuid-string()"
+    },
+    "memberID": {
+      "sourcedFrom": "getHash64(ssn)"
+    },
+    "MiddleName": {
+      "sourcedFrom": "middlename"
+    },
+    "MonthOfDOB": {
+      "sourcedFrom": "getMonthOfDOB(dob)"
+    },
+    "origAddress1": {
+      "sourcedFrom": "address1"
+    },
+    "origQuadrant": {
+      "sourcedFrom": "quadrant"
+    },
+    "PrimaryInsuredId": {
+      "sourcedFrom": "getHash64(primaryInsuredId)"
+    },
+    "PrimaryInsuredRelationship": {
+      "sourcedFrom": "primaryInsuredRelationship"
+    },
+    "Quadrant": {
+      "sourcedFrom": "getPossibleQuadrant2(address1,quadrant)"
+    },
+    "Race": {
+      "sourcedFrom": "checkUndefined(getRaceNormalized(race))"
+    },
+    "ScenarioDesc": {
+      "sourcedFrom": "scenariodesc"
+    },
+    "ScenarioNumber": {
+      "sourcedFrom": "concat('Scenario ',scenarionumber)"
+    },
+    "SourceFormat": {
+      "sourcedFrom": "\"CSV\""
+    },
+    "SSN": {
+      "sourcedFrom": "ssn"
+    },
+    "Suffix": {
+      "sourcedFrom": "suffix"
+    },
+    "uid": {
+      "sourcedFrom": "generate-id()"
+    },
+    "Uris": {
+      "sourcedFrom": "$URI"
+    },
+    "YearOfDOB": {
+      "sourcedFrom": "getYearOfDOB(dob)"
+    },
+    "Zip4": {
+      "sourcedFrom": "checkUndefined(zip4)"
+    },
+    "Zip5": {
+      "sourcedFrom": "getZip5Normalized(zip5)"
+    }
+  },
+  "selectedSource": "query",
+  "lastUpdated": "2023-03-20T23:38:32.399338Z",
+  "interceptors": [ ],
+  "sourceURI": "/mmis-new/member-New/960d3b47-8654-4123-b45e-81e22558089b.json",
+  "sourceCollection": "loadMMIS-New",
+  "retryLimit": 0,
+  "uriExpression": "$URI"
+}

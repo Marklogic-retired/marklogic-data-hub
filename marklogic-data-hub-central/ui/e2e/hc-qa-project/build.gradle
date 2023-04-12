@@ -35,6 +35,256 @@ dependencies {
     mlcp files("lib")
 }
 
+task createDictionaries(type: com.marklogic.gradle.task.ServerEvalTask) {
+  description 'Runs SJS to create first and last name dictionaries'
+  javascript = '''
+  declareUpdate();
+  const spell = require("/MarkLogic/spell");
+  const dict = spell.makeDictionary([]);
+  const permissions = [
+		xdmp.permission("data-hub-developer", "update"),
+		xdmp.permission("data-hub-operator", "read"),
+    xdmp.permission("data-hub-operator", "update")
+	]
+  const collections = [
+    "http://marklogic.com/xdmp/documents",
+    "http://marklogic.com/xdmp/spell"
+  ]
+  xdmp.documentInsert('/customDictionary/FirstName.json', dict, permissions, collections)
+  xdmp.documentInsert('/customDictionary/LastName.json', dict, permissions, collections)
+  '''
+}
+
+task loadImages(type: com.marklogic.gradle.task.MlcpTask) {
+  doFirst {
+    database = "data-hub-FINAL"
+    port = 8011
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  args = [
+      "-input_file_path", "$project.projectDir/input/images/",
+      "-output_collections", "binaries",
+      "-output_permissions", "data-hub-operator,read",
+      "-document_type", "binary",
+      "-output_uri_replace", ".*input,''",
+      "-modules_root", "/",
+  ]
+}
+
+task loadMMISMembers(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "Member"
+  steps = ["1"]
+  showOptions = true
+  inputFilePath = "input/Member-MMIS"
+  outputURIReplacement = ".*input/Member-MMIS,'/mmis/member'"
+}
+
+task loadNewMMISMembers(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "Member"
+  steps = ["1"]
+  showOptions = true
+  inputFilePath = "input/Member-MMIS-New"
+  outputURIReplacement = ".*input/Member-MMIS-New,'/mmis/member'"
+}
+
+task loadClaims(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "Claims"
+  steps = ["1"]
+  showOptions = true
+  inputFilePath = "input/claims"
+  outputURIReplacement = ".*input,''"
+}
+
+task loadProviders(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "CMSProvider"
+  steps = ["1"]
+  showOptions = true
+  inputFilePath = "input/CMS-Provider-Data"
+  outputURIPrefix = "/providers/"
+}
+
+task loadCaseInfo(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["1"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseInfo"
+  outputURIPrefix = "/child-welfare/caseInfo/"
+}
+
+task loadCasePlan(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["2"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CasePlan"
+  outputURIPrefix = "/child-welfare/casePlan/"
+}
+
+task loadCourtDisposition(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["3"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CourtDisposition"
+  outputURIPrefix = "/child-welfare/CourtDisposition/"
+}
+
+task loadCPSReport(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["4"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CPSReport"
+  outputURIPrefix = "/child-welfare/CPSReport/"
+}
+
+task loadVisitation(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["5"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Visitation"
+  outputURIPrefix = "/child-welfare/Visitation/"
+}
+
+task loadCaseAdultFamily(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["6"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseAdultFamily"
+  outputURIPrefix = "/child-welfare/CaseAdultFamily/"
+}
+
+task loadCaseAddress(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["7"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseAddress"
+  outputURIPrefix = "/child-welfare/CaseAddress/"
+}
+
+task loadEpisode(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["9"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Episode"
+  outputURIPrefix = "/child-welfare/Episode/"
+}
+
+task loadChild(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["11"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Child"
+  outputURIPrefix = "/child-welfare/Child/"
+}
+
+task loadAdult(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["13"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Adult"
+  outputURIPrefix = "/child-welfare/Adult/"
+}
+
+task loadAllegation(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["15"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Allegation"
+  outputURIPrefix = "/child-welfare/Allegation/"
+}
+
+task loadCaseWorker(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["17"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseWorker"
+  outputURIPrefix = "/child-welfare/CaseWorker/"
+}
+
+task loadCaseAssignment(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["18"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseAssignment"
+  outputURIPrefix = "/child-welfare/CaseAssignment/"
+}
+
+task loadCareProvider(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["20"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CareProvider"
+  outputURIPrefix = "/child-welfare/CareProvider/"
+}
+
+task loadInvestigation(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["22"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/Investigation"
+  outputURIPrefix = "/child-welfare/Investigation/"
+}
+
+task loadOffender(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["26"]
+  showOptions = true
+  inputFilePath = "input/offender-registry"
+  outputURIPrefix = "/offender-registry/"
+}
+
+task loadCaseCareProvider(type: com.marklogic.gradle.task.RunFlowTask) {
+  flowName = "ChildWelfare"
+  steps = ["28"]
+  showOptions = true
+  inputFilePath = "input/child-welfare/CaseCareProvider"
+  outputURIPrefix = "/child-welfare/CaseCareProvider/"
+}
+
+task loadInitialMESData {
+  dependsOn loadMMISMembers
+  dependsOn loadClaims
+  dependsOn loadProviders
+}
+
+task loadInitialChildWelfareData {
+  dependsOn loadCaseInfo
+  dependsOn loadCasePlan
+  dependsOn loadCourtDisposition
+  dependsOn loadCPSReport
+  dependsOn loadVisitation
+  dependsOn loadCaseAdultFamily
+  dependsOn loadEpisode
+  dependsOn loadChild
+  dependsOn loadAdult
+  dependsOn loadAllegation
+  dependsOn loadCaseWorker
+  dependsOn loadCaseAssignment
+  dependsOn loadCareProvider
+  dependsOn loadCaseCareProvider
+  dependsOn loadInvestigation
+  dependsOn loadOffender
+}
+
+task loadAllInitialData {
+  dependsOn loadInitialMESData
+  dependsOn loadInitialChildWelfareData
+}
+
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.StringHandle
+task createRedactionRules(type: com.marklogic.gradle.task.HubTask) {
+  doFirst {
+    def file = new File("input/redactionRules/redactionRules2Roles.json")
+    if (file.exists()) {
+      def meta = new DocumentMetadataHandle()
+      meta.getCollections().addAll("redactionRules");
+	  meta.getPermissions().add("rest-reader", DocumentMetadataHandle.Capability.READ);
+	  meta.getPermissions().add("data-hub-developer", DocumentMetadataHandle.Capability.UPDATE);
+      getFinalClient().newDocumentManager().write("/redactionRules2Roles.json", meta, new StringHandle(file.text))
+    }
+  }
+}
+
 task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
     classpath = configurations.mlcp
     username = project.findProperty("mlUsername")
@@ -92,4 +342,8 @@ task addDocProperties(type: com.marklogic.gradle.task.ServerEvalTask) {
                 "xdmp:document-set-properties(\"/thesaurus/nicknames.xml\", (<foo />))" +
              ")"
     }
+}
+
+ext {
+  mlAppConfig.dataConfig.databaseName = "data-hub-STAGING"
 }

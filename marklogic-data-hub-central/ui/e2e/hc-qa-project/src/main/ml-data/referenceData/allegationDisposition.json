@@ -1,0 +1,10 @@
+{
+    "01": "Substantiated",
+    "02": "Indicated",
+    "03": "Alternative Response - Victim",
+    "04": "Alternative Response - Not a Victim",
+    "05": "Unsubstantiated",
+    "07": "Closed - No Findings",
+    "88": "Other",
+    "99": "Unknown or missing"
+}

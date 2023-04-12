@@ -1,0 +1,44 @@
+{
+  "collections": [
+    "CareProvider"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "sourceRecordScope": "instanceOnly",
+  "name": "CareProviderMapping",
+  "description": "",
+  "targetEntityType": "http://marklogic.com/CareProvider-0.0.1/CareProvider",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "selectedSource": "query",
+  "sourceCollection": "CareProvider",
+  "sourceQuery": "cts.collectionQuery([\"CareProvider\"])",
+  "outputFormat": "json",
+  "retryLimit": 0,
+  "threadCount": 4,
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "properties": {
+    "firstName": {
+      "sourcedFrom": "substring-before(ProviderName, \" \")"
+    },
+    "fullName": {
+      "sourcedFrom": "ProviderName"
+    },
+    "id": {
+      "sourcedFrom": "ProviderNumber"
+    },
+    "lastName": {
+      "sourcedFrom": "substring-after(ProviderName, \" \")"
+    }
+  },
+  "stepId": "CareProviderMapping-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2023-03-20T23:38:32.101337Z",
+  "sourceURI": "5ecfa1f9-3f12-4e95-b968-29a8b3256570.json"
+}

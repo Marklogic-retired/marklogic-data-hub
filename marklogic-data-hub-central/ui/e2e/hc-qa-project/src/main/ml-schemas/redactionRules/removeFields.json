@@ -1,0 +1,10 @@
+
+{
+    "rule": {
+    "description": "Remove fields",
+    "path": "//(attachments|SSNHistory|LastNameHistory|FullAddress|FirstLastNameSorted|origAddress1|DOBHistory|DayOfDOB|MonthOfDOB|YearOfDOB)",
+    "method": {
+        "function": "conceal"
+    }
+    }
+}

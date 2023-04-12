@@ -1,0 +1,9 @@
+{
+    "rule": {
+      "description": "Remove the fullAddress which is only for SMT matching",
+      "path": "//FullAddress",
+      "method": {
+        "function": "mask-deterministic"
+      }
+    }
+  }

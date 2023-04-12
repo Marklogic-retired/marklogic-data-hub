@@ -1,0 +1,154 @@
+{
+  "collections": [
+    "ChildMemberMapping",
+    "Member"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "ChildMemberMapping",
+  "targetEntityType": "http://marklogic.com/Member-0.0.1/Member",
+  "description": "",
+  "collection": [
+    "Child"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['Child'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "ChildMemberMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:31.342437Z",
+  "properties": {
+    "SSN": {
+      "sourcedFrom": "SSN"
+    },
+    "FullName": {
+      "sourcedFrom": "PersonName"
+    },
+    "FirstName": {
+      "sourcedFrom": "substring-before(PersonName, \" \")"
+    },
+    "LastName": {
+      "sourcedFrom": "substring-after(PersonName, \" \")"
+    },
+    "Gender": {
+      "sourcedFrom": "getGenderNormalized(Gender)"
+    },
+    "DOB": {
+      "sourcedFrom": "Birthdate"
+    },
+    "Race": {
+      "sourcedFrom": ""
+    },
+    "DayOfDOB": {
+      "sourcedFrom": "getDayOfDOB(Birthdate)"
+    },
+    "MonthOfDOB": {
+      "sourcedFrom": "getMonthOfDOB(Birthdate)"
+    },
+    "YearOfDOB": {
+      "sourcedFrom": "getYearOfDOB(Birthdate)"
+    },
+    "URI": {
+      "sourcedFrom": ""
+    },
+    "Address1": {
+      "sourcedFrom": ""
+    },
+    "Address2": {
+      "sourcedFrom": ""
+    },
+    "DataSource": {
+      "sourcedFrom": "\"CW Child\""
+    },
+    "FirstLastNameSorted": {
+      "sourcedFrom": ""
+    },
+    "FullAddress": {
+      "sourcedFrom": ""
+    },
+    "hasClaim": {
+      "sourcedFrom": ""
+    },
+    "hasDependent": {
+      "sourcedFrom": ""
+    },
+    "idCard": {
+      "sourcedFrom": ""
+    },
+    "IsDependent": {
+      "sourcedFrom": ""
+    },
+    "MasterPersonIndex": {
+      "sourcedFrom": ""
+    },
+    "memberID": {
+      "sourcedFrom": "replace(PersonNumber, \"^0+\", \"\")"
+    },
+    "MiddleName": {
+      "sourcedFrom": ""
+    },
+    "origAddress1": {
+      "sourcedFrom": ""
+    },
+    "origQuadrant": {
+      "sourcedFrom": ""
+    },
+    "PrimaryInsuredId": {
+      "sourcedFrom": ""
+    },
+    "PrimaryInsuredRelationship": {
+      "sourcedFrom": ""
+    },
+    "Quadrant": {
+      "sourcedFrom": ""
+    },
+    "ScenarioDesc": {
+      "sourcedFrom": ""
+    },
+    "ScenarioNumber": {
+      "sourcedFrom": ""
+    },
+    "SourceFormat": {
+      "sourcedFrom": ""
+    },
+    "Suffix": {
+      "sourcedFrom": ""
+    },
+    "uid": {
+      "sourcedFrom": ""
+    },
+    "Uris": {
+      "sourcedFrom": ""
+    },
+    "Zip4": {
+      "sourcedFrom": ""
+    },
+    "Zip5": {
+      "sourcedFrom": ""
+    },
+    "childWelfareId": {
+      "sourcedFrom": "replace(PersonNumber, \"^0+\", \"\")"
+    },
+    "involvedInCase": {
+      "sourcedFrom": ""
+    },
+    "CaseAboutChild": {
+      "sourcedFrom": "replace(PersonNumber, \"^0+\", \"\")"
+    }
+  },
+  "namespaces": { },
+  "uriExpression": "concat(\"/childwelfare/child/\", PersonNumber, \".json\")",
+  "sourceURI": "35a3917f-3238-4af6-9fa8-040610c0a638.json"
+}

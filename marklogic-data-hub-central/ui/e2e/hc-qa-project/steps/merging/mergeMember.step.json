@@ -1,0 +1,159 @@
+{
+  "stepId": "mergeMember-merging",
+  "name": "mergeMember",
+  "description": "",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "MERGING",
+  "stepNumber": "2",
+  "stepUpdate": false,
+  "algorithms": {
+    "stdAlgorithm": {
+      "timestamp": {
+        "path": "/envelope/headers/instance/Member/lastUpdated"
+      }
+    }
+  },
+  "sourceQuery": "cts.collectionQuery([\"matchMember\", \"simpleCWMatch\"])",
+  "acceptsBatch": false,
+  "targetDatabase": "data-hub-FINAL",
+  "sourceDatabase": "data-hub-FINAL",
+  "collections": [
+    "mergeMember"
+  ],
+  "targetEntityType": "Member",
+  "permissions": "data-hub-operator,read,data-hub-operator,update",
+  "mergeStrategies": [
+    {
+      "maxSources": "",
+      "maxValues": "1",
+      "strategyName": "oldestLastUpdated",
+      "algorithmRef": "stdAlgorithm",
+      "priorityOrder": {
+        "Weight": "-10"
+      }
+    }
+  ],
+  "outputFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Gender",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "Race",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "FullAddress",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "Zip5",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "SSN",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [
+          {
+            "sourceName": "MMIS",
+            "weight": "10"
+          },
+          {
+            "sourceName": "CURAM",
+            "weight": "5"
+          }
+        ]
+      }
+    },
+    {
+      "entityPropertyPath": "DOB",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "FirstName",
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": "10",
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "LastName",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "origAddress1",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "origQuadrant",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "uid",
+      "maxValues": 1,
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    },
+    {
+      "entityPropertyPath": "MasterPersonIndex",
+      "maxValues": 1,
+      "mergeType": "custom",
+      "mergeModulePath": "/custom-modules/merging/mergeMPIN/mergeMPIN.sjs",
+      "mergeModuleNamespace": "",
+      "mergeModuleFunction": "getoldestMpin",
+      "options": { }
+    }
+  ],
+  "additionalCollections": [ ],
+  "targetFormat": "json",
+  "lastUpdated": "2023-03-20T23:38:32.913673Z",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "coarse",
+  "validateEntity": "doNotValidate",
+  "customHook": { },
+  "targetCollections": {
+    "onMerge": {
+      "add": [ ]
+    },
+    "onNoMatch": {
+      "add": [ ]
+    },
+    "onArchive": {
+      "add": [ ]
+    },
+    "onNotification": {
+      "add": [ ]
+    }
+  }
+}

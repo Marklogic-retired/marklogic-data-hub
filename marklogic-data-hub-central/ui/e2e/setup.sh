@@ -34,6 +34,18 @@ else
         ./gradlew hubDeployAsDeveloper --info --stacktrace
 fi
 
+#Initial Load Data
+./gradlew loadAllInitialData -PenvironmentName=$env --info --stacktrace
+
+# Create Redaction Rules
+./gradlew createRedactionRules -PenvironmentName=$env --info --stacktrace
+
+# Load Images
+./gradlew loadImages -PenvironmentName=$env --info --stacktrace
+
+# Create Dictionaries
+./gradlew createDictionaries -PenvironmentName=$env --info --stacktrace
+
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerWithRelatedEntitiesJSON --info --stacktrace
@@ -43,6 +55,14 @@ fi
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateClientJSON --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=officeFlow --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=productFlow --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=Member -Psteps='2' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=Claims -Psteps='2,3' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CMSProvider -Psteps='2' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CMSOrganization --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CMSServiceLocation --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CMSHospital --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=ChildWelfare -Psteps='8,10,12,14,16,19,21,23,27,29,30,31' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=ChildWelfare -Psteps='24,25' --info --stacktrace
 
 # Add document properites to records for e2e test
 ./gradlew addDocProperties -PenvironmentName=$env --info --stacktrace

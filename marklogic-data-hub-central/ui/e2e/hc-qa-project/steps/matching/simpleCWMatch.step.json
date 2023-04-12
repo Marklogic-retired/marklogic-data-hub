@@ -1,0 +1,53 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Member",
+  "sourceQuery": "cts.collectionQuery([\"Member\"])",
+  "collections": [
+    "simpleCWMatch"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "IdentityMatch",
+      "weight": 20,
+      "reduce": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "SSN",
+          "matchType": "exact",
+          "options": { }
+        },
+        {
+          "entityPropertyPath": "DOB",
+          "matchType": "exact",
+          "options": { }
+        }
+      ],
+      "rulesetType": "multiple"
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "autoMerge",
+      "action": "merge",
+      "score": 20
+    }
+  ],
+  "name": "simpleCWMatch",
+  "description": "",
+  "selectedSource": "query",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "simpleCWMatch-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2023-03-20T23:38:31.081658Z"
+}

@@ -1,0 +1,12 @@
+{
+    "rule": {
+    "description": "Mask SSN",
+    "path": "//(SSN | ClaimFHIR/patient | ClaimItem/patient)",
+    "method": {
+        "function": "redact-us-ssn"
+    },
+    "options": {
+        "level": "partial"
+    }
+    }
+}

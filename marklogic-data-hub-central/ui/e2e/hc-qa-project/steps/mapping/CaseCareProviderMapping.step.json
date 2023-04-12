@@ -1,0 +1,46 @@
+{
+  "collections": [
+    "CaseCareProviderMapping",
+    "CaseCareProvider"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "CaseCareProviderMapping",
+  "targetEntityType": "http://marklogic.com/CaseCareProvider-0.0.1/CaseCareProvider",
+  "description": "CaseCareProviderMapping",
+  "selectedSource": "query",
+  "sourceQuery": "cts.collectionQuery([\"CaseCareProvider\"])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "CaseCareProviderMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-20T23:38:31.51307Z",
+  "uriExpression": "concat(\"/caseCareProvider/case#/\",replace(CaseNumber,\"^0+\",\"\"),\"/CareProvider#/\",replace(ProviderNumber,\"^0+\",\"\"))",
+  "properties": {
+    "caseId": {
+      "sourcedFrom": "replace(CaseNumber,\"^0+\",\"\")"
+    },
+    "childId": {
+      "sourcedFrom": "replace(ProviderNumber,\"^0+\",\"\")"
+    },
+    "careProviderName": {
+      "sourcedFrom": "ProviderName"
+    },
+    "careProviderId": {
+      "sourcedFrom": "replace(ProviderNumber,\"^0+\",\"\")"
+    }
+  },
+  "namespaces": { }
+}

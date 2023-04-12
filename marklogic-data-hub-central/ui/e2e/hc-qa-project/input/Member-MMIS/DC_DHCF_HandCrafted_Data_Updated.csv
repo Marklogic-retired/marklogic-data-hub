@@ -1,0 +1,6 @@
+gender,race,firstname,middlename,lastname,suffix,dob,ssn,address1,address2,zip5,zip4,quadrant,scenarionumber,IsDependent,primaryInsuredId,primaryInsuredRelationship,scenariodesc
+Female,Hispanic,Drindy,,Day,,1/27/94,114-98-3748,744 28th Street ,,20051,,NE,5,,,,"Variations in name spellings, Middle Name conflated with First name, Last name conflated with First name"
+F,Hispanic,Drindi,M,Day,,1/27/94,114-98-3748,744 28th Street ,,20051,,,5,,,,"Variations in name spellings, Middle Name conflated with First name, Last name conflated with First name"
+F,Hispanic,Day,M,Drindy,,1/27/94,114-98-3748,744 28th Street ,,20051,2332,NE,5,,,,"Variations in name spellings, Middle Name conflated with First name, Last name conflated with First name"
+M,Hispanic,Nuno,,Day,,6/25/96,444-55-6666,744 28th Street ,,20051,,NE,9,Y,114-98-3748,SpouseOf,Dependent Relationship
+M,Hispanic,Nuno,,Day,Jr.,4/1/16,555-66-7777,744 28th Street ,,20051,,NE,9,Y,114-98-3748,ChildOf,Dependent Relationship

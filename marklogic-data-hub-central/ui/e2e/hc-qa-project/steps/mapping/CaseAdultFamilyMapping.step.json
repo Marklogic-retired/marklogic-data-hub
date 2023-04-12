@@ -1,0 +1,52 @@
+{
+  "collections": [
+    "CaseAdultFamilyMapping",
+    "CaseAdultFamily"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "CaseAdultFamilyMapping",
+  "targetEntityType": "http://marklogic.com/CaseAdultFamily-0.0.1/CaseAdultFamily",
+  "description": "",
+  "collection": [
+    "CaseAdultFamily"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['CaseAdultFamily'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "CaseAdultFamilyMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-03-22T06:35:31.859312Z",
+  "uriExpression": "$URI",
+  "properties": {
+    "CaseNumber": {
+      "sourcedFrom": "replace(CaseNumber, \"^0+\", \"\")"
+    },
+    "AdultPersonNumber": {
+      "sourcedFrom": "replace(AdultPersonNumber, \"^0+\", \"\")"
+    },
+    "ParentType": {
+      "sourcedFrom": "documentLookup(ParentType,\"/referenceData/adultFamilyType.json\")"
+    },
+    "AdultStartDate": {
+      "sourcedFrom": "parseDate(AdultStartDate,\"MM/dd/yy\")"
+    },
+    "AdultEndTime": {
+      "sourcedFrom": "parseDate(AdultEndDate,\"MM/dd/yy\")"
+    }
+  },
+  "namespaces": { }
+}

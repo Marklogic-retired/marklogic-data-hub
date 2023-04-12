@@ -1,0 +1,67 @@
+{
+  "info": {
+    "title": "Episode",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "Episode": {
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "caseId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "begin": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "end": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "dischargeDate": {
+          "datatype": "date",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "dischargeReason": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "careProvider": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "serviceType": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "tfcFamily": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "type": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "lat": {
+          "datatype": "float",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "lon": {
+          "datatype": "float",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "episodeCareProvider": {
+          "$ref": "http://marklogic.com/CareProvider-0.0.1/CareProvider"
+        }
+      }
+    }
+  }
+}

@@ -66,10 +66,10 @@ function validateArtifact(artifact) {
   const mappingWithSameNameButDifferentEntityTypeExists = cts.exists(cts.andQuery([
     cts.collectionQuery(collections[0]),
     cts.jsonPropertyValueQuery(getNameProperty(), artifact.name),
-    cts.notQuery(cts.jsonPropertyValueQuery("targetEntityType", artifact.targetEntityType))
+    cts.notQuery(cts.orQuery([cts.jsonPropertyValueQuery("targetEntityType", artifact.targetEntityType),cts.documentQuery(getArtifactUri(artifact.name))]))
   ]));
   if (mappingWithSameNameButDifferentEntityTypeExists) {
-    return new Error(`A mapping with the same name but for a different entity type already exists. Please choose a different name.`);
+    return new Error(`A mapping with the same name ${artifact.name} but for a different entity type ${artifact.targetEntityType} already exists. Please choose a different name.`);
   }
 
   return artifact;

@@ -1,0 +1,13 @@
+{
+  "name": "Member",
+  "steps": {
+    "1": {
+      "stepId": "loadMMIS-ingestion"
+    },
+    "2": {
+      "stepId": "mapMMIS-mapping"
+    }
+  },
+  "description": "Ingest and Map - MMIS and Curam Member Sources",
+  "lastUpdated": "2023-02-09T03:22:23.390649Z"
+}

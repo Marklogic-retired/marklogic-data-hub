@@ -1,0 +1,105 @@
+{
+  "name": "ChildWelfare",
+  "description": "null",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stopOnError": false,
+  "options": null,
+  "version": 0,
+  "steps": {
+    "1": {
+      "stepId": "CaseInfo-ingestion"
+    },
+    "2": {
+      "stepId": "CasePlan-ingestion"
+    },
+    "3": {
+      "stepId": "CourtDisposition-ingestion"
+    },
+    "4": {
+      "stepId": "CPSReport-ingestion"
+    },
+    "5": {
+      "stepId": "Visitation-ingestion"
+    },
+    "6": {
+      "stepId": "CaseAdultFamily-ingestion"
+    },
+    "7": {
+      "stepId": "CaseAddress-ingestion"
+    },
+    "8": {
+      "stepId": "CaseMapping-mapping"
+    },
+    "9": {
+      "stepId": "Episode-ingestion"
+    },
+    "10": {
+      "stepId": "EpisodeMapping-mapping"
+    },
+    "11": {
+      "stepId": "Child-ingestion"
+    },
+    "12": {
+      "stepId": "ChildMemberMapping-mapping"
+    },
+    "13": {
+      "stepId": "Adult-ingestion"
+    },
+    "14": {
+      "stepId": "AdultMemberMapping-mapping"
+    },
+    "15": {
+      "stepId": "Allegation-ingestion"
+    },
+    "16": {
+      "stepId": "AllegationMapping-mapping"
+    },
+    "17": {
+      "stepId": "CaseWorker-ingestion"
+    },
+    "18": {
+      "stepId": "CaseAssignment-ingestion"
+    },
+    "19": {
+      "stepId": "CaseWorkerMapping-mapping"
+    },
+    "20": {
+      "stepId": "CareProvider-ingestion"
+    },
+    "21": {
+      "stepId": "CareProviderMapping-mapping"
+    },
+    "22": {
+      "stepId": "Investigation-ingestion"
+    },
+    "23": {
+      "stepId": "InvestigationMapping-mapping"
+    },
+    "24": {
+      "stepId": "simpleCWMatch-matching"
+    },
+    "25": {
+      "stepId": "mergeMember-merging"
+    },
+    "26": {
+      "stepId": "offenderRegistry-ingestion"
+    },
+    "27": {
+      "stepId": "OffenderMapping-mapping"
+    },
+    "28": {
+      "stepId": "CaseCareProvider-ingestion"
+    },
+    "29": {
+      "stepId": "CaseWorkerAssignedMapping-mapping"
+    },
+    "30": {
+      "stepId": "CaseCareProviderMapping-mapping"
+    },
+    "31": {
+      "stepId": "CaseAdultFamilyMapping-mapping"
+    }
+  },
+  "lastUpdated": "2023-02-09T03:22:23.414884Z"
+}

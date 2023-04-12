@@ -1,0 +1,33 @@
+{
+  "info": {
+    "title": "CaseWorkerAssigned",
+    "draft": false,
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "CaseWorkerAssigned": {
+      "properties": {
+        "caseId": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "caseWorkerId": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "caseWorkerName": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "description": "CaseWorkerAssigned"
+    }
+  }
+}
