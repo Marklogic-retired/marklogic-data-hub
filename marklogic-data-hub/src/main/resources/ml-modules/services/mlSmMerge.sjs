@@ -77,6 +77,7 @@ function post(context, params, input) {
   combinedOptions.fullOutput = true;
   combinedOptions.writeStepOutput = !isPreview;
   combinedOptions.acceptsBatch = true;
+  combinedOptions.disableJobOutput = isPreview;  
   let sourceDatabase = combinedOptions.sourceDatabase || config.FINALDATABASE;
   let query = cts.documentQuery(uris);
   let content = hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
@@ -89,7 +90,7 @@ function post(context, params, input) {
     'errors': results.errors,
     'mergedURIs': uris,
     // we are using existence of previousUri here to determine the merged document
-    'mergedDocument': results.documents.filter((doc) => !!doc.previousUri)[0]
+    'mergedDocument': results.documents.filter((doc) => doc.uri.startsWith("/com.marklogic.smart-mastering/merged/"))[0]
   };
 }
 

@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.marklogic:ml-data-hub:5.8-SNAPSHOT"
+        classpath "com.marklogic:ml-data-hub:6.0-SNAPSHOT"
     }
 }
 
