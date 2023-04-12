@@ -85,19 +85,35 @@ const EntityMapTable: React.FC<Props> = props => {
 
   //Text for Context Icon
   const contextHelp = (
-    <Popover id={`popover-emt-related-help`} className={styles.popoverEntityMapTableHelp}>
-      <Popover.Body>
-        <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>
-      </Popover.Body>
-    </Popover>
+    <HCTooltip id="MappingDetailsTooltips" text={MappingDetailsTooltips.context} placement="right">
+      <QuestionCircleFill
+        aria-label="icon: question-circle"
+        color={themeColors.defaults.questionCircle}
+        size={13}
+        className={styles.questionCircle}
+        tabIndex={0}
+        onKeyDown={e => {
+          serviceNameKeyDownHandler(e, "contextIcon");
+        }}
+      />
+    </HCTooltip>
   );
+
   //Text for URI Icon
   const uriHelp = (
-    <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp} style={{minWidth: 300}}>
-      <Popover.Body>
-        <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>
-      </Popover.Body>
-    </Popover>
+    <HCTooltip id="MappingDetailsTooltips" text={MappingDetailsTooltips.uri} placement="right">
+      <QuestionCircleFill
+        aria-label="icon: question-circle"
+        color={themeColors.defaults.questionCircle}
+        size={13}
+        className={styles.questionCircle}
+        tabIndex={0}
+        onKeyDown={e => {
+          serviceNameKeyDownHandler(e, "uriIcon");
+        }}
+      />
+    </HCTooltip>
+
   );
 
   //Text for related entities help icon
@@ -147,10 +163,7 @@ const EntityMapTable: React.FC<Props> = props => {
   const [rowExpandedKeys, setRowExpandedKeys] = useState<any>([props.entityExpandedKeys]);
   const [searchedKey, setSearchedKey] = useState<string>("");
   const [filteredEntityProperties, setFilteredEntityProperties] = useState<any[]>([]);
-  const [showMultipleTooltip, setShowMultipleTooltip] = useState("");
-  const [showStructuredTooltip, setShowStructuredTooltip] = useState("");
-  const [showRelationshipTooltip, setShowRelationshipTooltip] = useState("");
-  const [showKeyTooltip, setShowKeyTooltip] = useState("");
+
 
   //For Dropdown menu
   const [propName, setPropName] = useState("");
@@ -182,8 +195,6 @@ const EntityMapTable: React.FC<Props> = props => {
 
   const xPathExpressionContainerFirstRef = useRef(null);
   const xPathExpressionContainerSecondRef = useRef(null);
-
-  const [target, setTarget] = useState(null);
   const containerRef = useRef(null);
   const [showContextPopover, setShowContextPopover] = useState(false);
   const [showUriPopover, setShowUriPopover] = useState(false);
@@ -1578,55 +1589,6 @@ const EntityMapTable: React.FC<Props> = props => {
   const toggleUriPopover = () => {
     showUriPopover ? setShowUriPopover(false) : setShowUriPopover(true);
   };
-  const handlePopoverOnClick = event => {
-    setTarget(event.target);
-    toggleContextPopover();
-  };
-
-  const handleUriPopoverOnClick = event => {
-    setTarget(event.target);
-    toggleUriPopover();
-  };
-
-  const handleShowRelationshipTooltip = name => {
-    time = delayTooltip(() => {
-      setShowRelationshipTooltip(name);
-    });
-  };
-
-  const handleLeaveRelationshipTooltip = () => {
-    setShowRelationshipTooltip("");
-  };
-
-  const handleShowForeignTooltip = name => {
-    time = delayTooltip(() => {
-      setShowKeyTooltip(name);
-    });
-  };
-
-  const handleLeaveForeignTooltip = () => {
-    setShowKeyTooltip("");
-  };
-
-  const handleShowStructuredTooltip = name => {
-    time = delayTooltip(() => {
-      setShowStructuredTooltip(name);
-    });
-  };
-
-  const handleLeaveStructuredTooltip = () => {
-    setShowStructuredTooltip("");
-  };
-
-  const handleShowMultipleTooltip = name => {
-    time = delayTooltip(() => {
-      setShowMultipleTooltip(name);
-    });
-  };
-
-  const handleLeaveMultipleTooltip = () => {
-    setShowMultipleTooltip("");
-  };
 
   const serviceNameKeyDownHandler = async (event, component) => {
     //Make selection when user presses space or enter key
@@ -1636,7 +1598,6 @@ const EntityMapTable: React.FC<Props> = props => {
       }
       if (component === "contextIcon") {
         event.preventDefault();
-        setTarget(event.target);
         toggleContextPopover();
 
         if (event.keyCode === 9) {
@@ -1652,7 +1613,6 @@ const EntityMapTable: React.FC<Props> = props => {
 
       if (component === "uriIcon") {
         event.preventDefault();
-        setTarget(event.target);
         toggleUriPopover();
       }
     }
@@ -1676,57 +1636,6 @@ const EntityMapTable: React.FC<Props> = props => {
     }
   };
 
-  const serviceIconDownHandler = async (event, type, name) => {
-    if (type === "multiple") {
-      if (event.keyCode === 13 || event.keyCode === 32) {
-        event.preventDefault();
-        if (showMultipleTooltip !== name) {
-          setShowMultipleTooltip(name);
-        } else {
-          setShowMultipleTooltip("");
-        }
-      }
-      if (event.keyCode === 9) {
-        setShowMultipleTooltip("");
-      }
-    } else if (type === "structured") {
-      if (event.keyCode === 13 || event.keyCode === 32) {
-        event.preventDefault();
-        if (showStructuredTooltip !== name) {
-          setShowStructuredTooltip(name);
-        } else {
-          setShowStructuredTooltip("");
-        }
-      }
-      if (event.keyCode === 9) {
-        setShowStructuredTooltip("");
-      }
-    } else if (type === "key") {
-      if (event.keyCode === 13 || event.keyCode === 32) {
-        event.preventDefault();
-        if (showKeyTooltip !== name) {
-          setShowKeyTooltip(name);
-        } else {
-          setShowKeyTooltip("");
-        }
-      }
-      if (event.keyCode === 9) {
-        setShowKeyTooltip("");
-      }
-    } else if (type === "relationship") {
-      if (event.keyCode === 13 || event.keyCode === 32) {
-        event.preventDefault();
-        if (showRelationshipTooltip !== name) {
-          setShowRelationshipTooltip(name);
-        } else {
-          setShowRelationshipTooltip("");
-        }
-      }
-      if (event.keyCode === 9) {
-        setShowRelationshipTooltip("");
-      }
-    }
-  };
 
   const relatedEntitiesFilter = (
     <Select
@@ -1903,6 +1812,7 @@ const EntityMapTable: React.FC<Props> = props => {
     setDeleteFromTable(true);
   };
 
+
   const deleteConfirmation = (
     <HCModal show={deleteDialogVisible} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
@@ -2029,48 +1939,29 @@ const EntityMapTable: React.FC<Props> = props => {
                 {row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
               </span>
               {row.key > 100 && row.type.includes("[ ]") && (
-                <span
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    serviceIconDownHandler(e, "multiple", text);
-                  }}
-                  onMouseEnter={() => {
-                    handleShowMultipleTooltip(text);
-                  }}
-                  onMouseLeave={() => handleLeaveMultipleTooltip()}
-                >
+                <span>
                   <HCTooltip
                     text="Multiple"
                     id="multiple-source-tooltip"
                     placement="top"
-                    show={showMultipleTooltip === text}
                   >
-                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
+                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text}  tabIndex={0}/>
                   </HCTooltip>
                 </span>
               )}
               {row.key > 100 && row.children && (
-                <span
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    serviceIconDownHandler(e, "structured", text);
-                  }}
-                  onMouseEnter={() => {
-                    handleShowStructuredTooltip(text);
-                  }}
-                  onMouseLeave={() => handleLeaveStructuredTooltip()}
-                >
+                <span>
                   <HCTooltip
                     text="Structured Type"
                     id="structure-type-tooltip"
                     placement="top"
-                    show={showStructuredTooltip === text}
                   >
                     <i>
                       <FontAwesomeIcon
                         className={styles.structuredIcon}
                         icon={faLayerGroup}
                         data-testid={"structured-" + text}
+                        tabIndex={0}
                       />
                     </i>
                   </HCTooltip>
@@ -2078,38 +1969,12 @@ const EntityMapTable: React.FC<Props> = props => {
               )}
               {row.key > 100 && row.name === "Context" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "contextIcon");
-                    }}
-                    onClick={handlePopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                    {contextHelp}
-                  </Overlay>
+                  {contextHelp}
                 </span>
               )}
               {row.key > 100 && row.name === "URI" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "uriIcon");
-                    }}
-                    onClick={handleUriPopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showUriPopover} container={containerRef}>
-                    {uriHelp}
-                  </Overlay>
+                  {uriHelp}
                 </span>
               )}
             </span>
@@ -2155,20 +2020,7 @@ const EntityMapTable: React.FC<Props> = props => {
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <span ref={containerRef} className={styles.contextPopover}>
-                      <QuestionCircleFill
-                        aria-label="icon: question-circle"
-                        color={themeColors.defaults.questionCircle}
-                        size={13}
-                        className={styles.questionCircle}
-                        tabIndex={0}
-                        onKeyDown={e => {
-                          serviceNameKeyDownHandler(e, "contextIcon");
-                        }}
-                        onClick={handlePopoverOnClick}
-                      />
-                      <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                        {contextHelp}
-                      </Overlay>
+                      {contextHelp}
                     </span>
                     <p className={styles.typeText}>{dType}</p>
                   </div>
@@ -2191,31 +2043,14 @@ const EntityMapTable: React.FC<Props> = props => {
                     data-testid={"relationship-tooltip"}
                     id={"relationshipTooltip-" + row.name}
                     placement="bottom"
-                    show={showRelationshipTooltip === row.name}
                   >
                     <div
                       className={styles.modeledRelationshipIcon}
                       data-testid={"relationship-" + row.name}
                       tabIndex={0}
-                      onKeyDown={e => {
-                        serviceIconDownHandler(e, "relationship", row.name);
-                      }}
-                      onMouseEnter={() => {
-                        handleShowRelationshipTooltip(row.name);
-                      }}
-                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
                     />
                   </HCTooltip>
-                  <span
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceIconDownHandler(e, "key", row.name);
-                    }}
-                    onMouseEnter={() => {
-                      handleShowForeignTooltip(row.name);
-                    }}
-                    onMouseLeave={() => handleLeaveForeignTooltip()}
-                  >
+                  <span>
                     <HCTooltip
                       text={ModelingTooltips.foreignKeyModeling(
                         relatedEntityName,
@@ -2224,13 +2059,13 @@ const EntityMapTable: React.FC<Props> = props => {
                       )}
                       id={"tooltip-" + row.name}
                       placement="bottom"
-                      show={showKeyTooltip === row.name}
                     >
                       <i>
                         <FontAwesomeIcon
                           className={styles.foreignKeyIcon}
                           icon={faKey}
                           data-testid={"foreign-" + row.name}
+                          tabIndex={0}
                         />
                       </i>
                     </HCTooltip>
@@ -2245,15 +2080,11 @@ const EntityMapTable: React.FC<Props> = props => {
                     data-testid={"relationship-tooltip"}
                     id={"relationshipTooltip-" + row.name}
                     placement="bottom"
-                    show={showRelationshipTooltip === row.name}
                   >
                     <span
                       className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle}
                       data-testid={"relationship-" + row.name}
-                      onMouseEnter={() => {
-                        handleShowRelationshipTooltip(row.name);
-                      }}
-                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
+                      tabIndex={0}
                     />
                   </HCTooltip>
                 </div>
@@ -2267,20 +2098,7 @@ const EntityMapTable: React.FC<Props> = props => {
               <div className={styles.typeContextContainer}>
                 <span className={styles.typeContext}>Context</span>&nbsp;
                 <span ref={containerRef} className={styles.contextPopover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "contextIcon");
-                    }}
-                    onClick={handlePopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                    {contextHelp}
-                  </Overlay>
+                  {contextHelp}
                 </span>
                 <p className={styles.typeText}>{dType}</p>
               </div>
@@ -2551,48 +2369,29 @@ const EntityMapTable: React.FC<Props> = props => {
                 {row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
               </span>
               {row.key > 100 && row.type.includes("[ ]") && (
-                <span
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    serviceIconDownHandler(e, "multiple", text);
-                  }}
-                  onMouseEnter={() => {
-                    handleShowMultipleTooltip(text);
-                  }}
-                  onMouseLeave={() => handleLeaveMultipleTooltip()}
-                >
+                <span>
                   <HCTooltip
                     text="Multiple"
                     id="multiple-source-tooltip"
                     placement="top"
-                    show={showMultipleTooltip === text}
                   >
-                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
+                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text}  tabIndex={0}/>
                   </HCTooltip>
                 </span>
               )}
               {row.key > 100 && row.children && (
-                <span
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    serviceIconDownHandler(e, "structured", text);
-                  }}
-                  onMouseEnter={() => {
-                    handleShowStructuredTooltip(text);
-                  }}
-                  onMouseLeave={() => handleLeaveStructuredTooltip()}
-                >
+                <span>
                   <HCTooltip
                     text="Structured Type"
                     id="structure-type-tooltip"
                     placement="top"
-                    show={showStructuredTooltip === text}
                   >
                     <i>
                       <FontAwesomeIcon
                         className={styles.structuredIcon}
                         icon={faLayerGroup}
                         data-testid={"structured-" + text}
+                        tabIndex={0}
                       />
                     </i>
                   </HCTooltip>
@@ -2600,38 +2399,12 @@ const EntityMapTable: React.FC<Props> = props => {
               )}
               {row.key > 100 && row.name === "Context" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "contextIcon");
-                    }}
-                    onClick={handlePopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                    {contextHelp}
-                  </Overlay>
+                  {contextHelp}
                 </span>
               )}
               {row.key > 100 && row.name === "URI" && !row.isProperty && (
                 <span ref={containerRef} className={styles.popover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "uriIcon");
-                    }}
-                    onClick={handleUriPopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showUriPopover} container={containerRef}>
-                    {uriHelp}
-                  </Overlay>
+                  {uriHelp}
                 </span>
               )}
             </span>
@@ -2677,20 +2450,7 @@ const EntityMapTable: React.FC<Props> = props => {
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
                     <span ref={containerRef} className={styles.contextPopover}>
-                      <QuestionCircleFill
-                        aria-label="icon: question-circle"
-                        color={themeColors.defaults.questionCircle}
-                        size={13}
-                        className={styles.questionCircle}
-                        tabIndex={0}
-                        onKeyDown={e => {
-                          serviceNameKeyDownHandler(e, "contextIcon");
-                        }}
-                        onClick={handlePopoverOnClick}
-                      />
-                      <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                        {contextHelp}
-                      </Overlay>
+                      {contextHelp}
                     </span>
                     <p className={styles.typeText}>{dType}</p>
                   </div>
@@ -2713,31 +2473,14 @@ const EntityMapTable: React.FC<Props> = props => {
                     data-testid={"relationship-tooltip"}
                     id={"relationshipTooltip-" + row.name}
                     placement="bottom"
-                    show={showRelationshipTooltip === row.name}
                   >
                     <div
                       className={styles.modeledRelationshipIcon}
                       data-testid={"relationship-" + row.name}
                       tabIndex={0}
-                      onKeyDown={e => {
-                        serviceIconDownHandler(e, "relationship", row.name);
-                      }}
-                      onMouseEnter={() => {
-                        handleShowRelationshipTooltip(row.name);
-                      }}
-                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
                     />
                   </HCTooltip>
-                  <span
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceIconDownHandler(e, "key", row.name);
-                    }}
-                    onMouseEnter={() => {
-                      handleShowForeignTooltip(row.name);
-                    }}
-                    onMouseLeave={() => handleLeaveForeignTooltip()}
-                  >
+                  <span>
                     <HCTooltip
                       text={ModelingTooltips.foreignKeyModeling(
                         relatedEntityName,
@@ -2746,13 +2489,13 @@ const EntityMapTable: React.FC<Props> = props => {
                       )}
                       id={"tooltip-" + row.name}
                       placement="bottom"
-                      show={showKeyTooltip === row.name}
                     >
                       <i>
                         <FontAwesomeIcon
                           className={styles.foreignKeyIcon}
                           icon={faKey}
                           data-testid={"foreign-" + row.name}
+                          tabIndex={0}
                         />
                       </i>
                     </HCTooltip>
@@ -2767,19 +2510,11 @@ const EntityMapTable: React.FC<Props> = props => {
                     data-testid={"relationship-tooltip"}
                     id={"relationshipTooltip-" + row.name}
                     placement="bottom"
-                    show={showRelationshipTooltip === row.name}
                   >
                     <span
                       className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle}
                       data-testid={"relationship-" + row.name}
                       tabIndex={0}
-                      onKeyDown={e => {
-                        serviceIconDownHandler(e, "relationship", row.name);
-                      }}
-                      onMouseEnter={() => {
-                        handleShowRelationshipTooltip(row.name);
-                      }}
-                      onMouseLeave={() => handleLeaveRelationshipTooltip()}
                     />
                   </HCTooltip>
                 </div>
@@ -2793,20 +2528,7 @@ const EntityMapTable: React.FC<Props> = props => {
               <div className={styles.typeContextContainer}>
                 <span className={styles.typeContext}>Context</span>&nbsp;
                 <span ref={containerRef} className={styles.contextPopover}>
-                  <QuestionCircleFill
-                    aria-label="icon: question-circle"
-                    color={themeColors.defaults.questionCircle}
-                    size={13}
-                    className={styles.questionCircle}
-                    tabIndex={0}
-                    onKeyDown={e => {
-                      serviceNameKeyDownHandler(e, "contextIcon");
-                    }}
-                    onClick={handlePopoverOnClick}
-                  />
-                  <Overlay target={target} placement="right" show={showContextPopover} container={containerRef}>
-                    {contextHelp}
-                  </Overlay>
+                  {contextHelp}
                 </span>
                 <p className={styles.typeText}>{dType}</p>
               </div>
