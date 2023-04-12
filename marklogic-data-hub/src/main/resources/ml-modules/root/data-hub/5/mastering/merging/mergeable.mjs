@@ -367,6 +367,7 @@ export default class Mergeable {
     const targetEntity = this.mergeStep.targetEntityType ? this.mergeStep.targetEntityType.substring(this.mergeStep.targetEntityType.lastIndexOf("/") + 1): "content";
     const targetCollections = this.mergeStep.targetCollections;
     const targetPermissions = this.mergeStep.targetPermissions;
+    const permissions = this.mergeStep.permissions;
     let eventName = null;
     switch (actionDetails.action) {
       case "merge" :
@@ -403,6 +404,11 @@ export default class Mergeable {
         if (!contentObject.context.permissions.includes(perm)) {
           contentObject.context.permissions.push(perm);
         }
+      }
+    } else if (permissions && typeof permissions === "string") {
+      let permissionsList = permissions.split(",");
+      for (let i = 0; i < permissionsList.length; i += 2) {
+        contentObject.context.permissions.push(xdmp.permission(permissionsList[i], permissionsList[i + 1]));
       }
     }
     if (targetPermissions && targetPermissions[eventName] && targetPermissions[eventName].remove) {

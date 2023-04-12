@@ -76,8 +76,6 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
         then:
         result.task(':hubMergeEntities').outcome == TaskOutcome.SUCCESS
         getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived") == 3
-        //4 auditing docs are created after manualMergeUnmerge() is called. So 4 + 1
-        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing") == 5
         runInDatabase(mergedANDMastered, HubConfig.DEFAULT_FINAL_NAME).next().getNumber() == 1
 
     }
@@ -94,8 +92,6 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         then:
         result.task(':hubRunFlow').outcome == TaskOutcome.SUCCESS
-        //4 auditing docs are created after manualMergeUnmerge() is called. Blocked merges causes it to not add auditing document
-        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing") == 4
         //1 The merged document is archived since the merges were blocked by the unmerge
         getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived") == 1
         runInDatabase(mergedANDMastered, HubConfig.DEFAULT_FINAL_NAME).next().getNumber() == 0
@@ -127,8 +123,8 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         then:
         result.task(':hubMergeEntities').outcome == TaskOutcome.SUCCESS
-        //3 original docs + 1 mastered + 1 audit
-        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "myMaster") == 5
+        //3 original docs + 1 mastered
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "myMaster") == 4
     }
 
     def manualMerge() {
@@ -138,7 +134,6 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         assertEquals(TaskOutcome.SUCCESS, result.task(':hubMergeEntities').outcome)
         assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
         //1 document with collections mastered and merged
         assertEquals(1, runInDatabase("fn:count("+query+")", HubConfig.DEFAULT_FINAL_NAME).next().getNumber())
     }
@@ -153,8 +148,6 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
         //After unmerge, the 1 merged document will be archived
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-merged"))
-        //auditing doc is created for as many unmerged documents. So 1(from merge) + 3(from unmerge)
-        assertEquals(4, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
         //3 original documents will get mastered collection
         assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-mastered"))
     }
