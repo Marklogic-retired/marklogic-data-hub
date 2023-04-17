@@ -27,6 +27,7 @@ describe("Run Tile tests", () => {
   after(() => {
     // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
     // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
+    cy.deleteFlows("testFlowCheck");
     cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
@@ -533,6 +534,52 @@ describe("Run Tile tests", () => {
     cy.intercept("/api/jobs/**").as("runResponse");
     runPage.getRunStep(firstStepName, firstFlowName).should("be.visible");
 
+  });
+
+  it("Check functionality of steps to run in this flow", () => {
+    const flowName = "testFlowCheck";
+    runPage.createFlowButton().click();
+    runPage.setFlowName(flowName);
+    runPage.editSave().click();
+    runPage.toggleExpandFlow(flowName);
+
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("ingest-orders");
+    runPage.openStepsSelectDropdown(flowName);
+    runPage.getStepToRunCheckBox("ingest-orders").should("be.checked");
+
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("map-orders");
+    runPage.openStepsSelectDropdown(flowName);
+    runPage.getStepToRunCheckBox("ingest-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("map-orders").should("be.checked");
+
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("match-person");
+    runPage.openStepsSelectDropdown(flowName);
+    runPage.getStepToRunCheckBox("ingest-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("map-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("match-person").should("be.checked");
+
+    //Only one ingestion step should be checked
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("loadClientJSON");
+    runPage.openStepsSelectDropdown(flowName);
+    runPage.getStepToRunCheckBox("ingest-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("map-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("match-person").should("be.checked");
+    runPage.getStepToRunCheckBox("loadClientJSON").should("not.be.checked");
+
+    // uncheck the selected ingestion step and add new one
+    runPage.getStepToRunCheckBox("ingest-orders").click();
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("loadOffice");
+    runPage.openStepsSelectDropdown(flowName);
+    runPage.getStepToRunCheckBox("ingest-orders").should("not.be.checked");
+    runPage.getStepToRunCheckBox("map-orders").should("be.checked");
+    runPage.getStepToRunCheckBox("match-person").should("be.checked");
+    runPage.getStepToRunCheckBox("loadClientJSON").should("not.be.checked");
+    runPage.getStepToRunCheckBox("loadOffice").should("be.checked");
   });
 
 });

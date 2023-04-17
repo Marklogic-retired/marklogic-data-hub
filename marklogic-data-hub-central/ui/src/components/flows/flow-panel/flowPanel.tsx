@@ -99,6 +99,9 @@ const FlowPanel: React.FC<Props> = ({
 }) => {
   const [showLinks, setShowLinks] = useState("");
   const [allChecked, setAllChecked] = useState<boolean>(true);
+  const [auxFirstRender, setAuxFirstRender] = useState(true);
+  const [previewsSteps, setPreviewsSteps] = useState<Step[]>([]);
+
   let loadTypeCountAux = 0;
   let originLStorage = false;
 
@@ -110,6 +113,33 @@ const FlowPanel: React.FC<Props> = ({
   const handleLoadStepInArray = arraySteps => {
     return arraySteps?.find(stepAux => stepAux?.stepDefinitionType.toLowerCase() === "ingestion");
   };
+
+  // Check if a new step was added to update SelectedSteps
+  useEffect(() => {
+    if (auxFirstRender) {
+      setAuxFirstRender(false);
+    }
+    if (previewsSteps?.length !== flow.steps.length && !auxFirstRender) {
+      if (flow.steps.length > previewsSteps?.length) {
+        let intersection = flow.steps.filter(x => {
+          return !previewsSteps.some((step) => step.stepId === x.stepId);
+        });
+        if (intersection.length > 0) {
+          if (intersection[0].stepDefinitionType.toLocaleLowerCase() === "ingestion") {
+            const anyIngestionSelected = selectedSteps.some((step) => {
+              return step.stepDefinitionType.toLocaleLowerCase() === "ingestion";
+            });
+            if (anyIngestionSelected) setSelectedSteps([...selectedSteps]);
+            if (!anyIngestionSelected) setSelectedSteps([...selectedSteps, ...intersection]);
+          } else {
+            setSelectedSteps([...selectedSteps, ...intersection]);
+          }
+        }
+      }
+    }
+    setPreviewsSteps(flow.steps);
+  }, [flow.steps]);
+
 
   const addStepsToArray = (
     step: any,
