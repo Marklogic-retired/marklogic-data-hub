@@ -51,6 +51,7 @@ describe("Validate Merge warnings", () => {
     cy.wait(1000);
     advancedSettings.setTargetCollection("onMerge", "Person", "edit", "additional");
     advancedSettings.keepTargetCollection("onMerge");
+    cy.wait(500);
     curatePage.switchEditAdvanced().click();
     curatePage.saveSettings(mergeStep).click();
     cy.waitForAsyncRequest();

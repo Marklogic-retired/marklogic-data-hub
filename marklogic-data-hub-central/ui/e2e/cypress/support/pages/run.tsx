@@ -183,6 +183,10 @@ class RunPage {
     });
   }
 
+  getStepToRunCheckBox(stepToRun:string) {
+    return cy.get(`#${stepToRun}`);
+  }
+
   getDocumentsWritten(stepName: string) {
     return cy.get(`[aria-label=${stepName}-documents-written]`).then(value => {
       return parseInt(value.first().text().replace(/,/, ""));
