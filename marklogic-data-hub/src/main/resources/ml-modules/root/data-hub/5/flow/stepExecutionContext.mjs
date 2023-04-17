@@ -20,7 +20,9 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import featuresUtil from "/data-hub/features/features-util.mjs";
 import StepDefinition from "/data-hub/5/impl/stepDefinition.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 
 /**
  * Captures state associated with the execution of a step.
@@ -414,5 +416,37 @@ export default class StepExecutionContext {
       }
     }
     return null;
+  }
+
+  getFeatures(){
+    const stepFeatures = this.flowStep.features;
+    let modelFeatures = undefined;
+    if(this.flowStep.options && this.flowStep.options.targetEntityType) {
+      const targetEntityType = this.flowStep.options.targetEntityType
+      if(targetEntityType) {
+        let targetEntityModel = entityLib.findModelForEntityTypeId(targetEntityType);
+        if (targetEntityModel) {
+            modelFeatures = targetEntityModel.toObject().definitions[targetEntityModel.toObject().info.title].features;
+        } else {
+            targetEntityModel = entityLib.findModelByEntityName(targetEntityType);
+            modelFeatures = targetEntityModel.definitions[targetEntityModel.info.title].features;
+        }
+      }
+    }
+    let features = {};
+    if (modelFeatures) {
+        Object.keys(modelFeatures).forEach(feat => {
+            features[feat] = modelFeatures[feat];
+          });
+    }
+    if (stepFeatures) {
+        Object.keys(stepFeatures).forEach(feat => {
+       features[feat] = stepFeatures[feat];
+        });
+    }
+
+    const extraFeatures = featuresUtil.getExtraFeatures();
+    features = {...features, ...extraFeatures}
+    return features;
   }
 }

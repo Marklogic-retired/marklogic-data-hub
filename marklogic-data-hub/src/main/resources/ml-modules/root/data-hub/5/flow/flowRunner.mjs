@@ -388,13 +388,14 @@ function invokeFeatureMethods(stepExecutionContext, contentArray, method) {
     const modelNode = entityLib.findModelForEntityTypeId(targetEntityType);
     model = fn.exists(modelNode) ? modelNode.toObject() : null;
   }
-  const features = Object.keys(featuresCore.getFeatures());
-  features.forEach(feat => {
+  const features = stepExecutionContext.getFeatures();
+  Object.keys(features).forEach(feat => {
     const funct = featuresCore.getFeatureMethod(feat, method);
     if (funct) {
-        funct(stepExecutionContext, model, contentArray);
+      funct(stepExecutionContext, model, contentArray);
     }
   });
+
 }
 
 function invokeFeatureBefore(stepExecutionContext, contentArray) {

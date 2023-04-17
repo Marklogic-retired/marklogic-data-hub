@@ -210,6 +210,11 @@ class EntityModel {
     primaryEntityTypeIRI() {
         return this._primaryEntityTypeIRI;
     }
+
+    getFeatures() {
+      const definition = this.entityModel.definitions[this.entityModel.info.title];
+      return definition.features;
+    }
 }
 
 module.exports = { EntityModel };
