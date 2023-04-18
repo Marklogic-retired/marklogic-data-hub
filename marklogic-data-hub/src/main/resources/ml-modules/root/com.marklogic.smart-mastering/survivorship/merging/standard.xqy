@@ -71,12 +71,16 @@ declare function merging:standard(
   let $source-priority := $property-spec/(m:source-weights|sourceWeights|priorityOrder)/(*:source|sources)
   let $time-weight := fn:head(($property-spec/priorityOrder/timeWeight ! fn:number(.), 0))
   let $length-weight := fn:head(($property-spec/(*:length/(@weight|weight)|priorityOrder/lengthWeight) ! fn:number(.),0))
-  let $condensed-properties := merging:standard-condense-properties(
-    $property-name,
-    $all-properties,
-    $property-spec
-  )
-  let $distinct-sources := ($condensed-properties ! . => map:get("sources")) union ()
+  let $properties :=
+    if ($property-spec/retainDuplicateValues = fn:true()) then
+      $all-properties
+    else
+      merging:standard-condense-properties(
+        $property-name,
+        $all-properties,
+        $property-spec
+      )
+  let $distinct-sources := ($properties ! . => map:get("sources")) union ()
   let $scores-by-dateTime := merging:score-by-dateTime($distinct-sources, $time-weight)
   let $selected-sources :=
     if (fn:exists($max-sources)) then
@@ -101,10 +105,10 @@ declare function merging:standard(
         let $max-length :=
           if ($length-weight gt 0) then
             fn:max(
-                $condensed-properties ! (. => map:get("values")) ! fn:string-length(fn:string-join(./descendant-or-self::text()," "))
+                $properties ! (. => map:get("values")) ! fn:string-length(fn:string-join(./descendant-or-self::text()," "))
             )
           else 0
-        for $property in $condensed-properties
+        for $property in $properties
         let $_trace :=
           if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
             xdmp:trace($const:TRACE-MERGE-RESULTS, 'Processing property in standard merge: ' || xdmp:to-json-string($property))

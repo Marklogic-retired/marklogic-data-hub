@@ -299,7 +299,7 @@ function isBinaryNode(value) {
 }
 
 function isTextNode(value) {
-  return value instanceof TextNode || ((isNode(value) && value.nodeKind === "text") || isDocumentNode(value) && isTextNode(value.root));
+  return value instanceof Text || ((isNode(value) && value.nodeKind === "text") || isDocumentNode(value) && isTextNode(value.root));
 }
 function isElementNode(value) {
   return value instanceof Element || (isNode(value) && value.nodeKind === "element");

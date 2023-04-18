@@ -78,7 +78,10 @@
               }
             }
           }
-        }
+        },
+        "withdrawals": [
+          100.0, 200.0
+        ]
       }
     },
     "attachments": {

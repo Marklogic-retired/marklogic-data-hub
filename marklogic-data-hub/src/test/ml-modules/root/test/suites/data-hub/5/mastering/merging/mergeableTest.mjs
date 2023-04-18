@@ -165,6 +165,27 @@ const mergeRuleStep = {
       "mergeType": "custom",
       "mergeModulePath": "/test/suites/data-hub/5/mastering/matching/test-data/mergeableInterceptors.sjs",
       "mergeModuleFunction": "customMerge",
+    },
+    {
+      "entityPropertyPath": "withdrawals",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "All",
+      "retainDuplicateValues": true,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "timeWeight": 9,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 12
+          }
+        ]
+      }
     }
   ],
   "targetCollections": {
@@ -305,6 +326,10 @@ function testMergeRuleDefinitions() {
   ];
   const mergeDocuments = hubUtils.normalizeToArray(fn.doc(["/content/CustMatchMerge1.json","/content/CustMatchMerge2.json","/content/CustMatchMerge3.json"]))
     .map(doc => ({ uri: xdmp.nodeUri(doc), value: doc}));
+  const missingDefinitions = ["name", "birthDate", "active", "withdrawals"].filter(prop => !mergeRuleDefinitions.some(mrd => mrd.name() === prop));
+  assertions.push(
+    test.assertTrue(missingDefinitions.length === 0, `There are missing definitions: ${JSON.stringify(missingDefinitions)}`)
+  );
   for (const mergeRuleDefinition of mergeRuleDefinitions) {
     let mergedProperties = mergeRuleDefinition.mergeProperties(mergeDocuments);
     if (mergeRuleDefinition.name() === "name") {
@@ -321,6 +346,10 @@ function testMergeRuleDefinitions() {
       assertions.push(
         test.assertEqual(1, mergedProperties.length, "Active should have one property."),
         test.assertTrue(mergedProperties[0].values, `Active should return true from customMerge. Merge properties: ${xdmp.describe(mergedProperties)}`)
+      );
+    }  else if (mergeRuleDefinition.name() === "withdrawals") {
+      assertions.push(
+        test.assertEqual(6, mergedProperties.length, "Withdrawals should retain all values, even if they are duplicate.")
       );
     }
   }

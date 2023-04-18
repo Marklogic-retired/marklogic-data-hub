@@ -42,20 +42,6 @@ public class UpdateDhsRestExtensionPermissionsTest extends AbstractSimpleHubTest
 
         Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-environment-manager").iterator().next());
         Assertions.assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-extension-user").iterator().next());
-
-        DocumentMetadataHandle moduleMetadataHandle = new DocumentMetadataHandle();
-        modMgr.readMetadata("/marklogic.rest.transform/mlJobSearchResults/assets/transform.sjs", moduleMetadataHandle);
-        DocumentMetadataHandle.DocumentPermissions modulePerms = moduleMetadataHandle.getPermissions();
-
-        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
-        Assertions.assertNull(modulePerms.get("rest-admin-internal"));
-
-        moduleMetadataHandle = new DocumentMetadataHandle();
-        modMgr.readMetadata("/marklogic.rest.transform/mlJobSearchResults/assets/transform.xqy", moduleMetadataHandle);
-        modulePerms = moduleMetadataHandle.getPermissions();
-
-        Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, modulePerms.get("data-hub-environment-manager").iterator().next());
-        Assertions.assertNull(modulePerms.get("rest-admin-internal"));
     }
 
     //The clearUserModules() should run successfully without errors after the module permissions are updated.

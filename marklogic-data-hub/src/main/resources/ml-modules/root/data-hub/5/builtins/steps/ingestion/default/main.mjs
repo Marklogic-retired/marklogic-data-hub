@@ -1,5 +1,6 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const sem = require("/MarkLogic/semantics.xqy");
 
 function main(content, options) {
@@ -15,10 +16,10 @@ function main(content, options) {
   }
 
   let instance = content.value.root || content.value;
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === consts.BINARY || outputFormat === consts.TEXT) {
+  if (hubUtils.isBinaryNode(instance) || outputFormat === consts.BINARY || outputFormat === consts.TEXT) {
     return content;
   }
-  else if (instance.nodeType === Node.TEXT_NODE) {
+  else if (hubUtils.isTextNode(instance)) {
     try {
       const unquoteOptions = outputFormat === consts.XML ? "format-xml" : "format-json";
       instance = fn.head(xdmp.unquote(instance, null, unquoteOptions));

@@ -154,7 +154,7 @@ export default class Mergeable {
       }))
       ];
       const uris = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
-      const tdeTriples = cts.triples(emptyArray, tripleQueryPredicates, emptyArray, "=", ctsTriplesOptions, cts.documentQuery(uris));
+      const tdeTriples = cts.triples(emptyArray, tripleQueryPredicates, emptyArray, ["=","=","="], ctsTriplesOptions, cts.documentQuery(uris));
       for (const tdeTriple of tdeTriples) {
         if (!fn.string(sem.tripleObject(tdeTriple)).startsWith("http://marklogic.com/view/")) {
           if (fn.string(sem.triplePredicate(tdeTriple)) === fn.string(rdfsIsDefinedBy)) {
