@@ -46,7 +46,7 @@ function post(context, params, input) {
   let refStepNumber = params.step || '1';
   let flow = Artifacts.getFullFlow(refFlowName, refStepNumber);
   let stepRef = flow.steps[refStepNumber];
-  if (!(stepRef.stepDefinitionType.toLowerCase() == 'mastering' || stepRef.stepDefinitionType.toLowerCase() == 'matching')) {
+  if (!(stepRef.stepDefinitionType.toLowerCase() === 'mastering' || stepRef.stepDefinitionType.toLowerCase() === 'matching')) {
     httpUtils.throwBadRequestWithArray(['Bad Request', `The step referenced must be a matching step. Step type: ${stepRef.stepDefinitionType}`]);
   }
   let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);

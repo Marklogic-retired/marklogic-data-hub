@@ -69,6 +69,7 @@ const MergeRuleDialog: React.FC<Props> = props => {
   const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
   const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
   const [handleSave, setHandleSave] = useState(false);
+  const [retainDuplicateValuesInput, toggleRetainDuplicateValues] = useState(false);
   const [displayPriorityOrderTimeline, toggleDisplayPriorityOrderTimeline] = useState(false);
   const [priorityOptions, setPriorityOptions] = useState<any>();
   const [deletePriorityName, setDeletePriorityName] = useState("");
@@ -188,6 +189,9 @@ const MergeRuleDialog: React.FC<Props> = props => {
               setRadioSourcesOptionClicked(2);
               setMaxSourcesRuleInput(mergeRule.maxSources);
             }
+          }
+          if (mergeRule.hasOwnProperty("retainDuplicateValues")) {
+            toggleRetainDuplicateValues(mergeRule.retainDuplicateValues);
           }
         }
       }
@@ -372,6 +376,7 @@ const MergeRuleDialog: React.FC<Props> = props => {
     setRadioSourcesOptionClicked(1);
     setMaxSourcesRuleInput("");
     setMaxValueRuleInput("");
+    toggleRetainDuplicateValues(false);
     setStrategyValue(undefined);
     setNamespace("");
     setFunctionValue("");
@@ -606,6 +611,7 @@ const MergeRuleDialog: React.FC<Props> = props => {
             "mergeType": "property-specific",
             "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : "All",
             "maxValues": maxValueRuleInput ? maxValueRuleInput : "All",
+            "retainDuplicateValues": retainDuplicateValuesInput,
             "priorityOrder": parsePriorityOrder(priorityOrderOptions),
           };
           onSave(newMergeRules);
@@ -684,15 +690,15 @@ const MergeRuleDialog: React.FC<Props> = props => {
     </div>
   );
 
-  const handleToggleCheck = event => {
+  const handleToggleCheck = (event, eventFunction) => {
     const {target, type, key} = event;
     if (type === "keydown") {
       if (key === "Enter") {
         target.checked = !target.checked;
-        toggleDisplayPriorityOrderTimeline(target.checked);
+        eventFunction(target.checked);
       }
     } else {
-      toggleDisplayPriorityOrderTimeline(!target.checked);
+      eventFunction(!target.checked);
     }
   };
 
@@ -1050,6 +1056,34 @@ const MergeRuleDialog: React.FC<Props> = props => {
                     </div>
                   </Col>
                 </Row>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>
+                    {"Retain Duplicate Values:"}
+                  </FormLabel>
+                  <Col className={"d-flex align-items-center"}>
+                    <FormCheck
+                      type="switch"
+                      aria-label="retain-duplicate-values-switch"
+                      defaultChecked={retainDuplicateValuesInput}
+                      onChange={({target}) => toggleRetainDuplicateValues(target.checked)}
+                      onKeyDown={e => {
+                        handleToggleCheck(e, toggleRetainDuplicateValues);
+                      }}
+                      className={styles.switchToggleRetainDuplicateValues}
+                    />
+                    <div className={"d-flex align-items-center"}>
+                      <HCTooltip text={MergeRuleTooltips.retainDuplicateValues} id="retain-dup-values-tooltip" placement="top">
+                        <QuestionCircleFill
+                          color={themeColors.defaults.questionCircle}
+                          className={styles.questionCircle}
+                          size={13}
+                          aria-label="icon: question-circle"
+                          tabIndex={0}
+                        />
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                </Row>
                 <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
                   <div>
                     <p className={styles.priorityText}>
@@ -1103,7 +1137,7 @@ const MergeRuleDialog: React.FC<Props> = props => {
                         defaultChecked={false}
                         onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)}
                         onKeyDown={e => {
-                          handleToggleCheck(e);
+                          handleToggleCheck(e, toggleDisplayPriorityOrderTimeline);
                         }}
                         className={styles.switchToggleMergeStrategy}
                       />

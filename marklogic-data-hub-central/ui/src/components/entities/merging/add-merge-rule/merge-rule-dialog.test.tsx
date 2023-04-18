@@ -136,7 +136,7 @@ describe("Merge Rule Dialog component", () => {
     expect(getByTestId("priorityOrderSlider")).toBeInTheDocument();
 
     //Verify priority Order slider tooltip
-    userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
+    userEvent.hover(getAllByLabelText("icon: question-circle")[4]);
     expect(await waitForElement(() => getByLabelText("priorityOrderTooltip"))).toBeInTheDocument();
 
     //Default Timeline is visible by default

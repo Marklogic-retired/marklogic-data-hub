@@ -48,7 +48,7 @@ try {
   mlSmMergeRest.POST(context, invalidMergeParams, emptyDocument);
   assertions.push(test.assertTrue(false, "Merge should have failed"));
 } catch (e) {
-  assertions.push(test.assertEqual("400", e.data[0], xdmp.toJsonString(e)));
+  assertions.push(test.assertEqual("400", e.data ? e.data[0]:"", xdmp.toJsonString(e)));
   assertions.push(test.assertEqual("The step referenced must be a merging step. Step type: matching", e.data[1], xdmp.toJsonString(e)));
 }
 

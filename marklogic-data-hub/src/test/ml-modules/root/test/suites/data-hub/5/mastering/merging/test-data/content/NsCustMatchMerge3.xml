@@ -57,6 +57,8 @@
                     </exAddress:zip>
                 </exAddress:Address>
             </exCustomer:billing>
+            <exCustomer:withdrawals datatype="array">100.0</exCustomer:withdrawals>
+            <exCustomer:withdrawals datatype="array">300.0</exCustomer:withdrawals>
         </exCustomer:NamespacedCustomer>
     </instance>
     <attachments/>

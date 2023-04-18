@@ -54,6 +54,13 @@
           "items": {
             "$ref": "http://example.org/Order-0.0.1/Order"
           }
+        },
+        "withdrawals": {
+          "datatype": "array",
+          "description": "Example of property where duplicate values are retained",
+          "items": {
+            "datatype": "double"
+          }
         }
       }
     },
