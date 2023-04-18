@@ -1138,6 +1138,26 @@ pipeline{
                   }
                   }
 		}
+        stage('rh7_cluster_10.0-10'){
+             agent { label 'dhfLinuxAgent'}
+             steps{
+              timeout(time: 5,  unit: 'HOURS'){
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-10","Release")}
+             }}
+             post{
+                 always{
+                     sh 'rm -rf $WORKSPACE/xdmp'
+                   }
+                           success {
+                             println("rh7_cluster_10.0-10 Tests Completed")
+                             sendMail Email,'<h3>Tests Passed on  10.0-10 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-10 | Cluster | Passed'
+                            }
+                            unstable {
+                               println("rh7_cluster_10.0-10 Tests Failed")
+                               sendMail Email,'<h3>Some Tests Failed on 10.0-10 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-10 | Cluster | Failed'
+                           }
+                           }
+         }
          stage('rh7_cluster_10.0-9.5'){
              agent { label 'dhfLinuxAgent'}
              steps{
@@ -1338,6 +1358,26 @@ pipeline{
                            unstable {
                               println("w12_cluster_10.0-9.5 Tests Failed")
                               sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-9.5 | Cluster | Failed'
+                          }
+                          }
+        		}
+                stage('w12_cluster_10.0-10'){
+        			agent { label 'dhfWinCluster'}
+        			steps{
+                    timeout(time: 4,  unit: 'HOURS'){
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){winParallel()}
+        			}}
+        			post{
+        				always{
+        				  	bat 'RMDIR /S/Q xdmp'
+        				  }
+                          success {
+                            println("w12_cluster_10.0-10 Tests Completed")
+                            sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-10 | Cluster | Passed'
+                           }
+                           unstable {
+                              println("w12_cluster_10.0-10 Tests Failed")
+                              sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-10 | Cluster | Failed'
                           }
                           }
         		}
