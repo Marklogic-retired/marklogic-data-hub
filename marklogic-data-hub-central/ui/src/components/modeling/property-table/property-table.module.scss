@@ -82,6 +82,7 @@
   content: "\e95e";
   font-family: MLCustomFont;
   font-size: 19px;
+  height: 22px;
   margin-left: -8px;
   margin-top: -3px;
   color: #57c2da;
@@ -92,6 +93,8 @@
 .modeledRelationshipIcon::before {
   content: "\e95e";
   font-family: MLCustomFont;
+  width: 20px;
+  height: 22px;
   font-size: 19px;
   margin-left: -8px;
   margin-top: -3px;
@@ -101,6 +104,7 @@
 }
 
 .relationshipTooltip {
+  margin-top: 5px !important;
   margin-left: 13px;
 }
 
@@ -113,7 +117,6 @@
 .relationshipIconContainer {
   width: 35px;
   margin-left: 16px;
-  margin-bottom: 15px;
   display: inline-block;
 }
 
