@@ -96,7 +96,6 @@ describe("Merge Notification Functionality From Explore Card View", () => {
   it("Run Match and Merge steps to generate Notification Docs", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.getFlowName("personJSON").should("be.visible");
-    runPage.toggleExpandFlow("personJSON");
     cy.log("** Run Match and Merge Steps **");
     runPage.runStep("match-person", "personJSON");
     runPage.verifyStepRunResult("match-person", "success");
