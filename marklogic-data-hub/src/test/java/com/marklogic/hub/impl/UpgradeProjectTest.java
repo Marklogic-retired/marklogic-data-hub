@@ -251,10 +251,10 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts").resolve("HarmonizeProducts.step.json").toFile().exists());
 
         // Check step definition custom modules are created
-        hubProject.getCustomModuleDir("LoadCustomers", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("LoadOrders", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("LoadProducts", StepDefinition.StepDefinitionType.INGESTION.toString());
-        hubProject.getCustomModuleDir("HarmonizeProducts", StepDefinition.StepDefinitionType.CUSTOM.toString());
+        assertNotNull(hubProject.getCustomModuleDir("LoadCustomers", StepDefinition.StepDefinitionType.INGESTION.toString()));
+        assertNotNull(hubProject.getCustomModuleDir("LoadOrders", StepDefinition.StepDefinitionType.INGESTION.toString()));
+        assertNotNull(hubProject.getCustomModuleDir("LoadProducts", StepDefinition.StepDefinitionType.INGESTION.toString()));
+        assertNotNull(hubProject.getCustomModuleDir("HarmonizeProducts", StepDefinition.StepDefinitionType.CUSTOM.toString()));
 
         // Validate source module options are added
         ObjectMapper mapper = new ObjectMapper();
@@ -267,5 +267,6 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertEquals("Harmonize Products", node.get("options").get("flow").asText());
         assertEquals("Product", node.get("options").get("entity").asText());
         assertEquals("json", node.get("options").get("dataFormat").asText());
+        assertEquals("/entities/Product/harmonize/Harmonize Products/main.sjs", node.get("options").get("mainModuleUri").asText());
     }
 }

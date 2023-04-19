@@ -563,6 +563,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         optionsNode.put("flow", stepName);
         optionsNode.put("entity", "");
         optionsNode.put("dataFormat", properties.get("dataFormat").toString());
+        optionsNode.put("mainModuleUri", mainModulePath.concat("/").concat(properties.get("mainModule").toString()));
 
         if(step.get("stepDefinitionType").asText().equals("custom")) {
             step.put("sourceDatabase", "data-hub-STAGING");
