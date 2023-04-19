@@ -86,7 +86,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             throw new IllegalArgumentException(format("A step definition already exists with the name '%s' and type '%s'", name, type));
         }
 
-        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.sjs", type.toLowerCase(), name));
+        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.%s", type.toLowerCase(), name, format));
         stepDefinitionManager.saveStepDefinition(stepDef);
         createCustomModule(name, type, format);
 
@@ -172,15 +172,15 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return saveStepDefinition(stepName, stepDefName, stepType, false);
     }
 
-    public String saveStepDefinition(String stepName, String stepDefName, String stepType, boolean localSave) {
+    public String saveStepDefinition(String stepName, String stepDefName, String stepType, boolean legacyUpgrade) {
         StepDefinitionManagerImpl stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
         StepDefinition stepDefinition = null;
         StringBuilder messageBuilder = new StringBuilder();
         if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
             try{
                 stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
-                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
-                if(localSave) {
+                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs");
+                if(legacyUpgrade) {
                     stepDefinitionManager.saveLocalStepDefinition(stepDefinition);
                 } else {
                     stepDefinitionManager.saveStepDefinition(stepDefinition);
@@ -189,7 +189,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             catch(Exception e){
                 throw new RuntimeException("Unable to write step definition to database; cause: " + e.getMessage(), e);
             }
-            createCustomModule(stepDefName, stepType);
+            createCustomModule(stepDefName, stepType, legacyUpgrade);
             messageBuilder.append(String.format("Created step definition '%s' of type '%s'.\n", stepName, stepType));
             messageBuilder.append("The module file for the step definition is available at "
                 + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs" + ". \n");
@@ -253,11 +253,19 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
     @Override
     public void createCustomModule(String stepName, String stepType) {
-        createCustomModule(stepName, stepType, "sjs");
+        createCustomModule(stepName, stepType, "mjs");
     }
 
     @Override
     public void createCustomModule(String stepName, String stepType, String format) {
+        createCustomModule(stepName, stepType, format, false);
+    }
+
+    public void createCustomModule(String stepName, String stepType, boolean legacyUpgrade) {
+        createCustomModule(stepName, stepType, "mjs", legacyUpgrade);
+    }
+
+    public void createCustomModule(String stepName, String stepType, String format, boolean legacyUpgrade) {
         Path customModuleDir = hubConfig.getHubProject().getCustomModuleDir(stepName, stepType.toLowerCase());
         customModuleDir.toFile().mkdirs();
 
@@ -265,12 +273,13 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             String moduleScaffoldingSrcFile;
             File moduleFile;
             File libFile;
+            String legacyUpgradeExt = legacyUpgrade ? "-legacy-upgrade" : "";
             String libScaffoldingSrcFile = null;
             if("sjs".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".sjs";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + legacyUpgradeExt + ".sjs";
             }
             else if("mjs".equalsIgnoreCase(format)) {
-                moduleScaffoldingSrcFile = "scaffolding/custom-module/sjs/main-" + stepType.toLowerCase() + ".mjs";
+                moduleScaffoldingSrcFile = "scaffolding/custom-module/mjs/main-" + stepType.toLowerCase() + legacyUpgradeExt + ".mjs";
             }
             else if("xqy".equalsIgnoreCase(format)) {
                 moduleScaffoldingSrcFile = "scaffolding/custom-module/xqy/main-" + stepType.toLowerCase() + ".sjs";
@@ -279,7 +288,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             else {
                 throw new RuntimeException("Invalid code format. The allowed formats are 'xqy' , 'sjs' or 'mjs'");
             }
-            moduleFile = customModuleDir.resolve("main.sjs").toFile();
+            moduleFile = customModuleDir.resolve("main.mjs").toFile();
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(moduleScaffoldingSrcFile);
             try {
                 if (logger.isInfoEnabled()) {

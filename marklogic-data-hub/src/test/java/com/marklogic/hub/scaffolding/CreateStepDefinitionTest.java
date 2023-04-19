@@ -37,8 +37,8 @@ public class CreateStepDefinitionTest extends AbstractHubCoreTest {
     private void scaffoldCustomIngestionStepDefinitionAndStep() {
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(getHubConfig());
 
-        StepDefinition stepDef = scaffolding.createStepDefinition("myIngester", "ingestion", "sjs");
-        assertEquals("/custom-modules/ingestion/myIngester/main.sjs", stepDef.getModulePath());
+        StepDefinition stepDef = scaffolding.createStepDefinition("myIngester", "ingestion", "mjs");
+        assertEquals("/custom-modules/ingestion/myIngester/main.mjs", stepDef.getModulePath());
         installUserModules(getHubConfig(), true);
 
         scaffolding.createStepFile("myIngestionStep", "ingestion", "myIngester", null);
