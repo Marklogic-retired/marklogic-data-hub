@@ -48,6 +48,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -499,6 +501,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         if(oldEntityDirectories != null) {
             for(File legacyEntityDir: oldEntityDirectories) {
                 File[] flowTypes = legacyEntityDir.listFiles(File::isDirectory);
+                Arrays.sort(flowTypes, Collections.reverseOrder());
                 if(flowTypes != null) {
                     String flowName = "dh_Upgrade_".concat(legacyEntityDir.getName()).concat("Flow");
                     ObjectNode flow = objectMapper.createObjectNode();
