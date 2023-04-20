@@ -234,6 +234,10 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_OrderFlow.flow.json").toFile().exists());
         assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_ProductFlow.flow.json").toFile().exists());
 
+        // Verify input/Load steps are created before harmonize/custom steps
+        assertEquals("LoadProducts-ingestion", flowManager.getLocalFlow("dh_Upgrade_ProductFlow").getStep("1").getStepId());
+        assertEquals("HarmonizeProducts-custom", flowManager.getLocalFlow("dh_Upgrade_ProductFlow").getStep("2").getStepId());
+
         // Check steps are created
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders.step.json").toFile().exists());
