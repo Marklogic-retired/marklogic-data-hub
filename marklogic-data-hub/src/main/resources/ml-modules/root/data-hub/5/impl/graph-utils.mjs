@@ -20,7 +20,7 @@ import consts from "/data-hub/5/impl/consts.mjs"
 import entityLib from "/data-hub/5/impl/entity-lib.mjs"
 import entitySearchLib from "/data-hub/5/entities/entity-search-lib"
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
-import {getPredicatesByModel} from "./entity-lib.mjs"
+import { getPredicatesByModel } from "./entity-lib.mjs"
 
 const sem = require("/MarkLogic/semantics.xqy");
 
@@ -33,24 +33,24 @@ const rdfTypeIri = sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
 // Alterations to rdf:type values that qualify as Concepts in Hub Central graph views go in this function.
 function getRdfConceptTypes() {
-  return [
-    sem.curieExpand("rdf:Class"),
-    sem.curieExpand("owl:Class"),
-    sem.curieExpand("skos:Concept")
-  ];
+    return [
+        sem.curieExpand("rdf:Class"),
+        sem.curieExpand("owl:Class"),
+        sem.curieExpand("skos:Concept")
+    ];
 }
 
 // Alterations to label predicates in order of priority
 function getOrderedLabelPredicates() {
-  return [
-    sem.curieExpand("skos:prefLabel"),
-    sem.curieExpand("skos:label"),
-    sem.curieExpand("rdfs:label")
-  ];
+    return [
+        sem.curieExpand("skos:prefLabel"),
+        sem.curieExpand("skos:label"),
+        sem.curieExpand("rdfs:label")
+    ];
 }
 
 function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit = 100) {
-    const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null,  rdfTypeIri, entityTypeIRIs)])).toArray();
+    const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)])).toArray();
     const relatedLimit = Math.max(1, relatedEntityTypeIRIs.length) * limit;
     const conceptLimit = Math.max(1, predicateConceptList.length) * relatedLimit;
     const results = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -119,7 +119,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
            }
   `, { docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
     if (graphTraceEnabled) {
-      xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
+        xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
     }
     return results.toArray();
 }
@@ -542,6 +542,12 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             const edgeCount = objectIRIs.reduce((total, iri) => total + getEdgeCount(iri), 0);
             objectNode.edgeCount = edgeCount;
             objectNode.hasRelationships = relatedObjHasRelationships(objectIRIs, objectEntityType, edgeCount, objectNode.isConcept);
+            if (objectHasDoc) {
+              const unmergeDetails = entitySearchLib.fetchUnmergeDetails(objectDocument, entityType);
+              objectNode.unmerge = unmergeDetails["unmerge"];
+              objectNode.unmergeUris = unmergeDetails["unmergeUris"];
+              objectNode.matchStepName = unmergeDetails["matchStepName"] ? unmergeDetails["matchStepName"] : undefined;
+            }
             nodesByID[key] = objectNode;
           }
         };
