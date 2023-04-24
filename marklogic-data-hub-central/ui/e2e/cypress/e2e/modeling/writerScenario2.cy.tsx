@@ -147,6 +147,37 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
 
+  it("changes the structured property for other structured property", () => {
+    // edits structured property
+    cy.log("Edits the structured property");
+    propertyTable.editProperty("zip-zip");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("New Property Type");
+    structuredTypeModal.newName("Testing");
+    structuredTypeModal.getAddButton().click();
+    propertyModal.getYesRadio("multiple").click();
+    propertyModal.getNoRadio("pii").click();
+    propertyModal.getSubmitButton().click();
+
+    // verifies the changes
+    cy.log("Verifies the changes");
+    propertyTable.getPropertyType("zip").should("have.text", "Testing");
+
+    // rollsback the change to the original structured property
+    cy.log("Rollsback the change to the original structured property");
+    propertyTable.editProperty("zip-zip");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Structured");
+    propertyModal.getCascadedTypeFromDropdown("Zip");
+    propertyModal.getYesRadio("multiple").click();
+    propertyModal.getNoRadio("pii").click();
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("zip-zip");
+    propertyTable.getMultipleIcon("zip").should("exist");
+    propertyTable.getPiiIcon("zip").should("not.exist");
+  });
+
   it("Add a Structured sub-property inside one of the same type (the option is disabled)", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.openPropertyDropdown();
