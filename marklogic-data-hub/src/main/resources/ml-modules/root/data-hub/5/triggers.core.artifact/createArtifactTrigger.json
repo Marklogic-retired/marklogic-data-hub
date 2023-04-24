@@ -1,0 +1,39 @@
+{
+  "name": "ml-dh-artifact-create",
+  "description": "MarkLogic hub artifact creation trigger",
+  "event": {
+    "data-event": {
+      "collection-scope": {
+        "uri": "hub-artifact"
+      },
+      "document-content": {
+        "update-kind": "create"
+      },
+      "when": "post-commit"
+    }
+  },
+  "module": "/data-hub/5/triggers/core/artifact/createArtifact.mjs",
+  "module-db": "%%mlModulesDbName%%",
+  "module-root": "/",
+  "enabled": true,
+  "recursive": true,
+  "task-priority": "normal",
+  "permission": [
+    {
+      "role-name": "%%mlFlowDeveloperRole%%",
+      "capability": "update"
+    },
+    {
+      "role-name": "%%mlFlowOperatorRole%%",
+      "capability": "read"
+    },
+    {
+      "role-name": "data-hub-developer",
+      "capability": "update"
+    },
+    {
+      "role-name": "data-hub-common",
+      "capability": "read"
+    }
+  ]
+}

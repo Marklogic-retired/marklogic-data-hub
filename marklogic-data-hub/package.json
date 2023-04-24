@@ -1,0 +1,16 @@
+{
+  "name": "marklogic-data-hub",
+  "version": "1.0.0",
+  "description": "This guide provides help with various development tasks associated with this subproject. It is intended as a companion\r to the CONTRIBUTING guide for this project, which covers some of the main tasks associated with developing this project.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^8.38.0"
+  },
+  "scripts": {
+    "backLint": "eslint . --ext .sjs,.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
