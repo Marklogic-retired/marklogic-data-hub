@@ -316,7 +316,7 @@ const PropertyTable: React.FC<Props> = props => {
             );
           }
         }
-        return renderText;
+        return <span data-testid={`${record.propertyName}-type`}>{renderText}</span>;
       },
     },
     {

@@ -110,6 +110,10 @@ class PropertyTable {
     return cy.get(`[aria-label=${entity}-linkAddButton]`);
   }
 
+  getPropertyType(property: string) {
+    return cy.get(`[data-testid="${property}-type"]`);
+  }
+
 }
 
 const propertyTable = new PropertyTable();
