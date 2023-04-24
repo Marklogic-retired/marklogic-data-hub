@@ -1,22 +1,20 @@
-import "cypress-wait-until";
-import {Application} from "../../../support/application.config";
-import {
-  toolbar
-} from "../../../support/components/common/index";
+import {advancedSettings} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
-import {advancedSettings} from "../../../support/components/common/index";
+import "cypress-wait-until";
+import {
+  toolbar
+} from "../../../support/components/common/index";
 
 const matchStep = "match-person";
 
 describe("Validate Advance Settings for hub-central-match-merge-reader role", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-match-merge-reader").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   it("Navigate to curate tab and Open Customer entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
@@ -24,6 +22,7 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
     curatePage.selectMatchTab("Person");
     cy.waitUntil(() => curatePage.addNewStep("Person"));
   });
+
   it("Validate the default Advanced settings are disabled", () => {
     loadPage.editStepInCardView(matchStep).click({force: true});
     loadPage.switchEditAdvanced().click();
@@ -38,6 +37,7 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
     advancedSettings.toggleCustomHook();
     advancedSettings.getCustomHook().should("be.disabled");
   });
+
   it("Validate the Advanced settings options are not displayed", () => {
     advancedSettings.getSourceDatabaseSelectWrapper().click({force: true});
     advancedSettings.getAdditionalCollSelectMenuList().should("not.exist");

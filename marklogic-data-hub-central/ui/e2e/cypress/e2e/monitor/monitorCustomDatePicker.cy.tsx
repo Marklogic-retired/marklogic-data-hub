@@ -1,27 +1,26 @@
-import monitorPage from "../../support/pages/monitor";
-import runPage from "../../support/pages/run";
-import loadPage from "../../support/pages/load";
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
+import monitorPage from "../../support/pages/monitor";
 import LoginPage from "../../support/pages/login";
+import loadPage from "../../support/pages/load";
+import runPage from "../../support/pages/run";
+import "cypress-wait-until";
 
 let flowName = "testPersonJSON";
 let stepName = "mapPersonJSON";
 
 describe("Monitor Tile", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.log("**Logging into the app as a developer**");
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-job-monitor").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.deleteRecordsInFinal(stepName);
     cy.deleteFlows(flowName);
@@ -29,7 +28,12 @@ describe("Monitor Tile", () => {
     cy.waitForAsyncRequest();
   });
 
-  let jobId: any; let stepType: any; let stepTypeAux: any; let stepNameAux = ""; let stepStatus = "completed";
+  let jobId: any;
+  let stepType: any;
+  let stepTypeAux: any;
+  let stepNameAux = "";
+  let stepStatus = "completed";
+
   it("Create a flow, add steps to flow and run it", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));

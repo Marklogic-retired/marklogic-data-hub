@@ -1,19 +1,19 @@
-/// <reference types="cypress"/>
-
-import {Application} from "../../support/application.config";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {entityTypeModal, entityTypeTable} from "../../support/components/model";
+import {ConfirmationType} from "../../support/types/modeling-types";
 import loginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
-import {ConfirmationType} from "../../support/types/modeling-types";
+
+const userRoles = [
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-saved-query-user"
+];
 
 describe("Entity validations ", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    loginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    loginPage.navigateToMainPage();
   });
 
   afterEach(() => {
@@ -29,7 +29,6 @@ describe("Entity validations ", () => {
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("TestEdit");
     entityTypeModal.getAddButton().click();
-
 
     cy.log("**Check error handling with wrong URI**");
     entityTypeTable.getEntity("TestEdit").click();

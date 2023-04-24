@@ -1,10 +1,9 @@
-import {Application} from "../../../support/application.config";
+import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
+import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
 import {toolbar, createEditStepDialog} from "../../../support/components/common";
+import {advancedSettings} from "../../../support/components/merging/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
-import {advancedSettings} from "../../../support/components/merging/index";
-import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
-import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
 import "cypress-wait-until";
 
 const mergeStep = "merge-test";
@@ -12,17 +11,17 @@ const mergeStep1 = "merge-person";
 
 describe("Validate Merge warnings", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("merging", "merge-test");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Navigate to curate tab and Open Person entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -30,6 +29,7 @@ describe("Validate Merge warnings", () => {
     curatePage.selectMergeTab("Person");
     cy.waitUntil(() => curatePage.addNewStep("Person"));
   });
+
   it("Creating a new merge step ", () => {
     curatePage.addNewStep("Person").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
@@ -39,6 +39,7 @@ describe("Validate Merge warnings", () => {
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
+
   it("Navigate to merge step and validate warning messages", () => {
     curatePage.editStep(mergeStep).click({force: true});
     curatePage.switchEditAdvanced().click();
@@ -60,7 +61,8 @@ describe("Validate Merge warnings", () => {
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(1).contains("Please remove source collection from target collections");
   });
-  it("Click on cancel and reopen the merge step ", () => {
+
+  it("Click on cancel and reopen the merge step", () => {
     curatePage.cancelSettings(mergeStep).click();
     cy.wait(1000);
     cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
@@ -75,6 +77,7 @@ describe("Validate Merge warnings", () => {
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(1).contains("Please remove source collection from target collections");
   });
+
   it("Remove the warnings one by one", () => {
     cy.findByTestId("onMerge-edit").click();
     curatePage.getExistingFlowFromDropdown_OldWay("Person");
@@ -92,6 +95,7 @@ describe("Validate Merge warnings", () => {
     cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
     curatePage.alertContent().should("not.exist");
   });
+
   it("Reopen the merge settings", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
@@ -110,10 +114,12 @@ describe("Validate Merge warnings", () => {
     curatePage.mergeTargetCollection("onMerge").eq(1).should("have.text", "");
     curatePage.cancelSettings(mergeStep).click();
   });
-  it("Open merging step details ", () => {
+
+  it("Open merging step details", () => {
     curatePage.openStepDetails(mergeStep1);
     cy.contains(mergeStep1);
   });
+
   it("Click on merge rule Address and validate warnings", () => {
     mergeRuleModal.mergeRuleClick("Address");
     cy.get("[name=\"maxValues\"]").first().check();
@@ -146,6 +152,7 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");*/
     mergeRuleModal.cancelButton().click();
   });
+
   it("Click on merge Strategy and validate warnings", () => {
     cy.findAllByText("retain-single-value").eq(0).click();
     mergeStrategyModal.strategyMaxScoreInput("1");
@@ -167,7 +174,8 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.alertContent().contains("Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     mergeRuleModal.cancelButton().click();
   });
-  it("Reset values ", () => {
+
+  it("Reset values", () => {
     cy.findAllByText("retain-single-value").eq(0).click();
     mergeStrategyModal.maxValue("1");
     mergeStrategyModal.strategyMaxScoreInput("0");

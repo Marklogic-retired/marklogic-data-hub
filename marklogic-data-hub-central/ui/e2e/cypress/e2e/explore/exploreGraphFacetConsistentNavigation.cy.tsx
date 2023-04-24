@@ -1,21 +1,17 @@
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
-import browsePage from "../../support/pages/browse";
-import detailPage from "../../support/pages/detail";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
+import {toolbar} from "../../support/components/common";
+import browsePage from "../../support/pages/browse";
+import detailPage from "../../support/pages/detail";
 import LoginPage from "../../support/pages/login";
 
 describe("Test navigation with facets from graph side panel to details twice", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();

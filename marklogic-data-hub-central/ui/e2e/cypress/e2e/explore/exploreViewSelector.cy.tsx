@@ -1,29 +1,22 @@
-import {Application} from "../../support/application.config";
-import browsePage from "../../support/pages/browse";
+import table from "../../support/components/common/tables";
 import {toolbar} from "../../support/components/common";
-import LoginPage from "../../support/pages/login";
 import monitorPage from "../../support/pages/monitor";
 import explorePage from "../../support/pages/explore";
-import table from "../../support/components/common/tables";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
 
-
-/**
- * NOTE: This test will involve all operations related to the views selector.
- */
 
 describe("Test '/Explore' view selector", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   it(`Validate that the 'graph' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);
     toolbar.getExploreToolbarIcon().click();
@@ -47,6 +40,7 @@ describe("Test '/Explore' view selector", () => {
     explorePage.getEntities().click();
     explorePage.getGraphVisExploreContainer().should("be.visible");
   });
+
   it(`Validate that the 'table' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section**`);
     toolbar.getExploreToolbarIcon().click();
@@ -71,7 +65,7 @@ describe("Test '/Explore' view selector", () => {
     table.getMainTableContainer().should("be.visible");
   });
 
-  it(`persist table items`, () => {
+  it(`Persist table items`, () => {
     cy.log(`**expands item**`);
     browsePage.expandItemTableView("/json/persons/last-name-dob-custom1.json");
 

@@ -1,18 +1,14 @@
-import {Application} from "../../support/application.config";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
 
 describe("Test graph export to png", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
@@ -33,7 +29,6 @@ describe("Test graph export to png", () => {
       .trigger("mouseover");
     browsePage.getExportIconTooltip().should("exist");
 
-
     cy.log("**Export button should still exist after selecting a single entity**");
     browsePage.selectBaseEntity(entity);
     browsePage.waitForSpinnerToDisappear();
@@ -45,7 +40,6 @@ describe("Test graph export to png", () => {
   });
 
   it("Validate that the export png icon appear only in graph view and can export", () => {
-
     cy.log("**Select Graph view and check that the export button exist and show the tooltip**");
     browsePage.clickGraphView();
     graphExplore.getExportPNGIcon()

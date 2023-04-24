@@ -1,28 +1,28 @@
-import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
-import loadPage from "../../../support/pages/load";
-import runPage from "../../../support/pages/run";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
 
 describe("Verify ingestion for all filetypes", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   beforeEach(() => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     cy.waitForAsyncRequest();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("ingestion", "cyZIPTest", "cyCSVTest", "cyXMTest");//'cyCSVTest', 'cyXMTest',
-    cy.deleteFlows("zipE2eFlow", "csvE2eFlow", "xmlE2eFlow");//'csvE2eFlow', 'xmlE2eFlow',
+    cy.deleteSteps("ingestion", "cyZIPTest", "cyCSVTest", "cyXMTest");
+    cy.deleteFlows("zipE2eFlow", "csvE2eFlow", "xmlE2eFlow");
     cy.resetTestUser();
   });
+
   it("Verify ingestion for csv filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyCSVTest";
     let flowName = "csvE2eFlow";
@@ -52,6 +52,7 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Verify ingestion for zip filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyZIPTest";
     let flowName = "zipE2eFlow";
@@ -78,10 +79,10 @@ describe("Verify ingestion for all filetypes", () => {
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
 
-
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Verify ingestion for xml filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyXMTest";
     let flowName = "xmlE2eFlow";

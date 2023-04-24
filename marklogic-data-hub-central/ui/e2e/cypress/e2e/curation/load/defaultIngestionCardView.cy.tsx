@@ -1,9 +1,8 @@
-import {Application} from "../../../support/application.config";
+import {advancedSettings} from "../../../support/components/common/index";
 import {toolbar} from "../../../support/components/common";
+import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-import LoginPage from "../../../support/pages/login";
-import {advancedSettings} from "../../../support/components/common/index";
 
 let stepName = "cyCardView";
 let flowName = "newE2eFlow";
@@ -12,11 +11,10 @@ let flowName2 = "newE2eFlow2";
 
 describe("Validate CRUD functionality from card view and run in a flow", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "cyCardView");
@@ -25,11 +23,13 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Verify Load tile is visible after navigation", () => {
     toolbar.getLoadToolbarIcon().click();
     cy.log("DHFPROD-8332: Every tile is getting rendered blank after navigation from Home");
     loadPage.getContainerTitle().should("be.visible");
   });
+
   it("Verify Cancel", () => {
     toolbar.getLoadToolbarIcon().click();
     loadPage.stepName("ingestion-step").should("be.visible");
@@ -47,6 +47,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.findByText(stepName).should("not.exist");
   });
+
   it("Verify Save", () => {
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
@@ -55,6 +56,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.saveButton().click();
     cy.findByText(stepName).should("be.visible");
   });
+
   it("Verify Edit", () => {
     loadPage.editStepInCardView(stepName).click();
     loadPage.stepNameInput().should("be.disabled");
@@ -63,6 +65,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
   });
+
   it("Verify Advanced Settings and Error validations", () => {
     cy.waitForAsyncRequest();
     loadPage.editStepInCardView(stepName).click();
@@ -97,6 +100,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
   });
+
   it("Cancel Add to New Flow", () => {
     loadPage.addStepToNewFlow(stepName);
     cy.waitForAsyncRequest();
@@ -106,6 +110,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     //should route user back to load page card view
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
+
   it("Verify Add to New Flow", () => {
     loadPage.addStepToNewFlow(stepName);
     cy.waitForAsyncRequest();
@@ -118,6 +123,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", stepName, flowName);
   });
+
   it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
@@ -125,6 +131,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
+
   it("Verify Run Load step in an Existing Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
@@ -136,6 +143,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.verifyStepRunResult(stepName, "failure");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Run the flow with JSON input", {defaultCommandTimeout: 120000}, () => {
     runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.json");
@@ -153,6 +161,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.isFlowNotVisible(flowName);
     cy.wait(1000);
   });
+
   it("Verify Run Load step in a New Flow", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click({force: true});
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
@@ -210,7 +219,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName1);
   });
-  it("add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
+
+  it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.addStepToNewFlow(stepName);
@@ -234,6 +244,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName1);
   });
+
   it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
@@ -241,6 +252,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
+
   it("Verify Add to Existing Flow after changing source/target format to TEXT", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("th-large").click();
     loadPage.editStepInCardView(stepName).click();

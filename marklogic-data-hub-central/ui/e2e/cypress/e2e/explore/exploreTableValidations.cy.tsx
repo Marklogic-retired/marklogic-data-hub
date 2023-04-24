@@ -1,29 +1,26 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
-import {toolbar} from "../../support/components/common";
-import LoginPage from "../../support/pages/login";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
+import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
 
 describe("Validate table and column selector in explore", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
   });
@@ -34,6 +31,7 @@ describe("Validate table and column selector in explore", () => {
     table.getTableColumns().should("be.visible");
     browsePage.getExpandable().should("be.visible");
   });
+
   it("Validate columns selector popover, draggable titles and checkable titles", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -43,6 +41,7 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getColumnSelector().should("be.visible");
     browsePage.getTreeItem(2).should("have.class", "rc-tree-treenode-draggable").should("have.class", "rc-tree-treenode-checkbox-checked");
   });
+
   it("Validate should only sort based on immediate properties (not for nested/structured types )", () => {
     browsePage.getTableView().click();
 
@@ -81,7 +80,6 @@ describe("Validate table and column selector in explore", () => {
       // validate the sorted list matches the list with the actual order (DESC)
       expect(elemsTextDESC.sort().reverse()).to.deep.eq(elemsTextDESC);
     });
-
   });
 });
 

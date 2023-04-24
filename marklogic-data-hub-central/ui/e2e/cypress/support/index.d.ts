@@ -122,6 +122,8 @@ declare namespace Cypress {
 
       revertDataModel(): Chainable<Element>
 
+      revertEntitiesChanges(): void
+
       /**
        * Save Local Storage Data
        */
@@ -138,7 +140,7 @@ declare namespace Cypress {
        * @param files file paths
        */
       deleteFiles(dataBase: string, ...files: string[]): Chainable<Element>
-
+      
       /**
        * Custom command to trigger tab out
        * @example

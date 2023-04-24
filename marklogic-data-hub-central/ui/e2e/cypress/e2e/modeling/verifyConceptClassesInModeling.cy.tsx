@@ -1,6 +1,10 @@
-/// <reference types="cypress"/>
-
+import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import graphVis from "../../support/components/model/graph-vis";
 import modelPage from "../../support/pages/model";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
+
 import {
   graphViewSidePanel,
   graphView,
@@ -8,32 +12,30 @@ import {
   relationshipModal,
   entityTypeTable
 } from "../../support/components/model/index";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
-import {Application} from "../../support/application.config";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
-import graphVis from "../../support/components/model/graph-vis";
+
+const userRoles = [
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-saved-query-user"
+];
 
 describe("Concept classes in Modeling screen", () => {
-  //Scenarios: create, edit, and save a new concept class, edit concept class description, duplicate concept class name check
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
   });
+
   it("Create and verify new concept class", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.wait(5000);
@@ -113,7 +115,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(1000);
   });
 
-  it("can edit graph edit mode and add edge relationship between entity type and concept class via drag/drop", () => {
+  it("Can edit graph edit mode and add edge relationship between entity type and concept class via drag/drop", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -174,7 +176,7 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.cancelModal();
   });
 
-  it("can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
+  it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -266,7 +268,6 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.getDisabledRelationshipTypeTooltip().should("be.visible");
 
     relationshipModal.cancelModal();
-
   });
 
   it("Delete a concept class from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {

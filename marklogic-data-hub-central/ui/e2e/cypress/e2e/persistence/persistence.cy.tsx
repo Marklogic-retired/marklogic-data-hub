@@ -1,4 +1,20 @@
+import mergingStepDetail from "../../support/components/merging/merging-step-detail";
 import {confirmationModal, toolbar} from "../../support/components/common";
+import propertyTable from "../../support/components/model/property-table";
+import multiSlider from "../../support/components/common/multi-slider";
+import {matchingStepDetail} from "../../support/components/matching";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import graphView from "../../support/components/explore/graph-view";
+import graphVis from "../../support/components/model/graph-vis";
+import tables from "../../support/components/common/tables";
+import graphExplore from "../../support/pages/graphExplore";
+import {generateUniqueName} from "../../support/helper";
+import curatePage from "../../support/pages/curate";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import modelPage from "../../support/pages/model";
+import loadPage from "../../support/pages/load";
+
 import {
   entityTypeModal,
   entityTypeTable,
@@ -6,38 +22,32 @@ import {
   propertyModal
 } from "../../support/components/model/index";
 
-import {Application} from "../../support/application.config";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
-import curatePage from "../../support/pages/curate";
-import {generateUniqueName} from "../../support/helper";
-import graphView from "../../support/components/explore/graph-view";
-import graphVis from "../../support/components/model/graph-vis";
-import loadPage from "../../support/pages/load";
-import {matchingStepDetail} from "../../support/components/matching";
-import mergingStepDetail from "../../support/components/merging/merging-step-detail";
-import modelPage from "../../support/pages/model";
-import multiSlider from "../../support/components/common/multi-slider";
-import propertyTable from "../../support/components/model/property-table";
-import tables from "../../support/components/common/tables";
-import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
+
+let entityNamesAsc: string[] = [];
+let entityNamesDesc: string[] = [];
+
+const userRoles = [
+  "hub-central-flow-writer",
+  "hub-central-match-merge-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer",
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-saved-query-user"
+];
 
 describe("Validate persistence across Hub Central", () => {
-  let entityNamesAsc: string[] = [];
-  let entityNamesDesc: string[] = [];
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-    //Setup hubCentral config for testing
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -56,7 +66,8 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => cy.findByTestId("loadTableName").click());
     cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
   });
-  it(" Explore tile: the graph view switches settings should be preserved", () => {
+
+  it("Explore tile: the graph view switches settings should be preserved", () => {
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickGraphView();
@@ -79,9 +90,8 @@ describe("Validate persistence across Hub Central", () => {
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
-
-
   });
+
   it("Go to curate tile, and validate that the accordion and tabs are kept when switching between pages", () => {
     toolbar.getCurateToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
@@ -186,8 +196,8 @@ describe("Validate persistence across Hub Central", () => {
     cy.log("Verify property is still expanded");
     propertyTable.getProperty("shipping-street").scrollIntoView();
     propertyTable.getProperty("shipping-city").scrollIntoView();
-
   });
+
   /* Skipping until the Run flow persistance functionality is restored on DHFPROD-9456 */
   it.skip("Go to run tile, expand flows and then visit another tile. When returning to the rrun tile, the expanded flows are persisted.", () => {
     // "Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted."
@@ -319,7 +329,6 @@ describe("Validate persistence across Hub Central", () => {
     mergingStepDetail.getSortIndicator("Strategy").last().scrollIntoView().click();
     mergingStepDetail.getSortDescIcon().last().should("have.class", "hc-table_activeCaret__2ugNC");
 
-
     cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
     toolbar.getLoadToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
@@ -379,10 +388,7 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Validate persistence for search and facets on sidebar when toggling database in explore tile", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
     cy.visit("/tiles/explore");
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
@@ -404,7 +410,5 @@ describe("Validate persistence across Hub Central", () => {
     graphExplore.getSearchBar().should("have.value", "Adams");
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
-
   });
-
 });

@@ -1,21 +1,17 @@
-import {Application} from "../../support/application.config";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {toolbar} from "../../support/components/common";
+import detailPage from "../../support/pages/detail";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
-import detailPage from "../../support/pages/detail";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 describe("Test graph export to png", () => {
   before(() => {
     cy.clearAllLocalStorage();
     cy.clearAllSessionStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
@@ -42,6 +38,7 @@ describe("Test graph export to png", () => {
     detailPage.getExpandBtn().should("exist").click();
     detailPage.getRelationItems().should("have.length.greaterThan", 0);
   });
+
   it("Validate there are no relationships for a record", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
@@ -57,5 +54,4 @@ describe("Test graph export to png", () => {
     cy.log("**Check Relationships tab**");
     detailPage.getRelationshipsView().should("not.exist");
   });
-
 });

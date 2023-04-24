@@ -1,19 +1,16 @@
-import {Application} from "../../../support/application.config";
 import {createEditStepDialog, toolbar} from "../../../support/components/common";
 import {generateUniqueName} from "../../../support/helper";
 import curatePage from "../../../support/pages/curate";
-import loadPage from "../../../support/pages/load";
 import loginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
 
 const matchStep = generateUniqueName("StepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongName");
 const short = generateUniqueName("short");
 
 describe("truncate long Names", () => {
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    loginPage.postLogin();
+    loginPage.navigateToMainPage();
   });
 
   it("Check default collection with a long name, text should be trimmed and with tooltip", () => {
@@ -40,7 +37,6 @@ describe("truncate long Names", () => {
       .then((result) => result[1]).trigger("mouseover");
     cy.findByRole("tooltip");
     cy.get(`[text="${matchStep}"]`);
-
   });
 
   it("Check default collection with a short name, not trimmed and with out  tooltip", () => {

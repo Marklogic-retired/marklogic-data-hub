@@ -2,6 +2,7 @@ const {defineConfig} = require("cypress");
 
 module.exports = defineConfig({
   video: true,
+  screenshotOnRunFailure: true,
   videoCompression: 20,
   viewportWidth: 1680,
   viewportHeight: 1050,

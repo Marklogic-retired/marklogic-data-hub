@@ -1,27 +1,25 @@
-import "cypress-wait-until";
-import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
+import browsePage from "../../../support/pages/browse";
+import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-import LoginPage from "../../../support/pages/login";
 
-//Utils
 import {generateUniqueName} from "../../../support/helper";
-import browsePage from "../../../support/pages/browse";
+import "cypress-wait-until";
 
-const stepName = "mapping-step";
+
 const flowName = generateUniqueName("testAddCustomStepToFlow1");
+const stepName = "mapping-step";
 const stepType = "Custom";
 
 describe("Add Custom step to a flow", () => {
+
   before(() => {
-    cy.log(Cypress.config("baseUrl"));
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.deleteRecordsInFinal(stepName);
     cy.deleteFlows(flowName);
@@ -35,7 +33,6 @@ describe("Add Custom step to a flow", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`test flow for adding custom step`);
     loadPage.confirmationOptions("Save").click();
-
   });
 
   it("Add custom step from Run tile and Run the step", {defaultCommandTimeout: 120000}, () => {
@@ -59,11 +56,9 @@ describe("Add Custom step to a flow", () => {
   it("Remove custom steps from flow", () => {
     runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
-
   });
 
   it("Add custom steps from Curate tile and Run steps", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("/api/jobs/**").as("getJobs");
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
@@ -89,10 +84,6 @@ describe("Add Custom step to a flow", () => {
 
 describe("Check spinner", () => {
   it("Check Spinner when page is loading", () => {
-    cy.log(Cypress.config("baseUrl"));
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsDeveloper().withRequest();
     cy.visit("/tiles/curate");
     cy.findByTestId("spinner");
     browsePage.waitForSpinnerToDisappear();

@@ -1,29 +1,27 @@
-import {Application} from "../../../support/application.config";
+import {generateUniqueName} from "../../../support/helper";
 import {toolbar} from "../../../support/components/common";
-import runPage from "../../../support/pages/run";
-import loadPage from "../../../support/pages/load";
+import explorePage from "../../../support/pages/explore";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
-import explorePage from "../../../support/pages/explore";
-import {generateUniqueName} from "../../../support/helper";
+import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
 
 let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
     toolbar.getRunToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
     // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
@@ -32,9 +30,8 @@ describe("Run Tile tests", () => {
     cy.resetTestUser();
   });
 
-
   // this should be unskipped once DHFPROD-10086 is fixed
-  it.skip("runs flow following the order of the cards displayed", () => {
+  it.skip("Runs flow following the order of the cards displayed", () => {
 
     const flowName2 = generateUniqueName("personTestingXML");
     // create a flow with 3 steps, add load step first
@@ -145,9 +142,9 @@ describe("Run Tile tests", () => {
     runPage.closeFlowStatusModal(flowName2);
 
     cy.deleteFlows(flowName2);
-
   });
-  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
+
+  it("Can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.getSpinner().should("not.exist");
@@ -306,13 +303,12 @@ describe("Run Tile tests", () => {
 
   it("Run map,match and merge steps for Person entity individually using xml documents ", {defaultCommandTimeout: 120000}, () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     toolbar.getRunToolbarIcon().should("be.visible").click();
-
 
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
     if (cy.get(`[data-testid="accordion-testPersonXML"].collapsed`)) {
-      runPage.toggleExpandFlow("testPersonXML");
+      runPage.toggleFlowAccordion("testPersonXML");
     }
     runPage.runStep("mapPersonXML", flowName);
     cy.wait("@runResponse");
@@ -353,9 +349,9 @@ describe("Run Tile tests", () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
 
     cy.log("**loginAsTestUserWithRoles**");
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
 
-    cy.log("**postLogin**");
+    cy.log("**navigateToMainPage**");
     toolbar.getRunToolbarIcon().click();
     runPage.openStepsSelectDropdown("testPersonXML");
 
@@ -407,7 +403,7 @@ describe("Run Tile tests", () => {
   it("Login with other user and check other step options are checked in a flow", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
 
     cy.log("**Go to Run Page**");
     toolbar.getRunToolbarIcon().click();
@@ -512,7 +508,7 @@ describe("Run Tile tests", () => {
     browsePage.getSelectedFacet("createdByJob").should("exist");
   });
 
-  it("persist open flows", {defaultCommandTimeout: 120000}, () => {
+  it("Persist open flows", {defaultCommandTimeout: 120000}, () => {
     const firstFlowName = "personJSON";
     const firstStepName = "mapPersonJSON";
 
@@ -541,7 +537,7 @@ describe("Run Tile tests", () => {
     runPage.createFlowButton().click();
     runPage.setFlowName(flowName);
     runPage.editSave().click();
-    runPage.toggleExpandFlow(flowName);
+    runPage.toggleFlowAccordion(flowName);
 
     runPage.addStep(flowName);
     runPage.addStepToFlow("ingest-orders");

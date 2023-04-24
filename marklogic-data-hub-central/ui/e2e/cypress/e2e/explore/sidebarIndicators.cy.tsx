@@ -1,15 +1,21 @@
-import {Application} from "../../support/application.config";
-import browsePage from "../../support/pages/browse";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
 
 describe("Test sidebar indicators", () => {
   before(() => {
+    cy.loginAsDeveloper().withRequest();
+  });
+
+  beforeEach(() => {
+    cy.log(`**Go to Explore section**`);
+    cy.visit("/tiles/explore");
+  });
+
+  afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
     cy.log(`**Go to Explore section**`);
@@ -17,6 +23,7 @@ describe("Test sidebar indicators", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();

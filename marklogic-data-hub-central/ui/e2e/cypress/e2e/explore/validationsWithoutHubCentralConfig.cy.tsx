@@ -1,17 +1,10 @@
-import {Application} from "../../support/application.config";
 import explorePage from "../../support/pages/explore";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
 import browsePage from "../../support/pages/browse";
+import "cypress-wait-until";
 
 describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Login into the app as developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
 
     cy.log("**Deleting hubCentralConfig file in FINAL**");
     cy.deleteFiles("FINAL", "/config/hubCentral.json");
@@ -19,13 +12,16 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     cy.log("**Deleting hubCentralConfig file in STAGING**");
     cy.deleteFiles("STAGING", "/config/hubCentral.json");
   });
+
   beforeEach(() => {
     cy.visit("/tiles/explore");
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     // Visiting Modeling so hubCentralConfig file gets created again
     cy.visit("/tiles/model");

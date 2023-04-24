@@ -1,26 +1,23 @@
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
-import {toolbar} from "../../support/components/common";
-import LoginPage from "../../support/pages/login";
-import browsePage from "../../support/pages/browse";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
+import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();

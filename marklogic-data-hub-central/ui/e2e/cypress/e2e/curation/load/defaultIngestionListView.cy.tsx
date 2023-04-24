@@ -1,9 +1,8 @@
-import {Application} from "../../../support/application.config";
+import {advancedSettings} from "../../../support/components/common/index";
 import {toolbar} from "../../../support/components/common";
+import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-import LoginPage from "../../../support/pages/login";
-import {advancedSettings} from "../../../support/components/common/index";
 
 let stepName = "cyListView";
 let flowName = "e2eFlow";
@@ -11,15 +10,15 @@ let flowName2 = "e2eFlow2";
 
 describe("Validate CRUD functionality from list view", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Verify Cancel", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
@@ -37,6 +36,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.findByText(stepName).should("not.exist");
   });
+
   it("Verify Save", () => {
     loadPage.addNewButton("list").click();
     loadPage.stepNameInput().type(stepName);
@@ -47,6 +47,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.saveButton().should("be.visible").click();
     cy.findByText(stepName).should("be.visible");
   });
+
   it("Verify Edit", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepNameInput().should("be.disabled");
@@ -55,6 +56,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.findByText("UPDATED").should("be.visible");
   });
+
   it("Verify Advanced Settings and Error validations", () => {
     loadPage.stepName(stepName).click();
     loadPage.switchEditAdvanced().click();  // Advanced tab
@@ -95,11 +97,13 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
   });
+
   it("Verify that change was saved", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepDescription("UPDATE2").should("be.visible");
     loadPage.cancelButton().click();
   });
+
   it("Open settings, change setting, switch tabs, cancel, discard changes", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepDescriptionInput().clear().type("DISCARD");
@@ -113,6 +117,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.stepDescription("DISCARD").should("not.exist");
     loadPage.cancelButton().click();
   });
+
   it("Cancel Add to New Flow", () => {
     loadPage.addStepToNewFlowListView(stepName);
     cy.waitForAsyncRequest();
@@ -121,6 +126,7 @@ describe("Validate CRUD functionality from list view", () => {
     //should route user back to load page list view
     cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
+
   // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
   // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Create a new flow and navigate back to load step", () => {
@@ -134,6 +140,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.loadView("table").click();
     cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
+
   it("Verify Run in an existing flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
@@ -155,6 +162,7 @@ describe("Validate CRUD functionality from list view", () => {
 
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Delete the flow", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
@@ -162,6 +170,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.wait(1000);
     runPage.getFlowName(flowName).should("not.exist");
   });
+
   // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
   // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Verify Run in Flow popup, create new flow and add step", {defaultCommandTimeout: 120000}, () => {
@@ -206,6 +215,7 @@ describe("Validate CRUD functionality from list view", () => {
 
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
@@ -230,6 +240,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Delete the flows and Verify Delete", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");

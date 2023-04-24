@@ -1,13 +1,10 @@
-import {Application} from "../../support/application.config";
-import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
-import explorePage from "../../support/pages/explore";
 import table from "../../support/components/common/tables";
-
+import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
 
 /**
  * NOTE: This test will involve all operations related to the specific sidebar, for now it's quiet simple
@@ -16,18 +13,14 @@ import table from "../../support/components/common/tables";
 
 describe("Test '/Explore' left sidebar", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
-    cy.loginAsDeveloper().withRequest().then(() => {
-      LoginPage.postLogin();
-    });
+    cy.loginAsDeveloper().withRequest();
   });
+
   beforeEach(() => {
     cy.log(`**Go to Explore section**`);
     cy.visit("/tiles/explore");
   });
+
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", {browser: "!firefox"}, () => {
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);

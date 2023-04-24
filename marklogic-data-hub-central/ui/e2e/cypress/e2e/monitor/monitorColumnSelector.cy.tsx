@@ -1,27 +1,24 @@
-import monitorPage from "../../support/pages/monitor";
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
+import monitorPage from "../../support/pages/monitor";
 import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
-    // cy.loginAsDeveloper().withRequest();
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   beforeEach(() => {
     cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
     monitorPage.waitForMonitorTableToLoad();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();

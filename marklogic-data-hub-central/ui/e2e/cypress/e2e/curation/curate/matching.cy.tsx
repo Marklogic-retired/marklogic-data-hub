@@ -1,15 +1,22 @@
-import "cypress-wait-until";
-import {Application} from "../../../support/application.config";
+
+import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
+import curatePage from "../../../support/pages/curate";
+import LoginPage from "../../../support/pages/login";
+import {
+  matchingStepDetail,
+  rulesetSingleModal,
+  thresholdModal,
+  rulesetMultipleModal,
+  compareValuesModal
+} from "../../../support/components/matching/index";
 import {
   toolbar,
   createEditStepDialog,
   multiSlider,
   confirmYesNo
 } from "../../../support/components/common/index";
-import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal, compareValuesModal} from "../../../support/components/matching/index";
-import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
-import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
+
+import "cypress-wait-until";
 
 const matchStep = "matchCustTest";
 const matchStepCollection = "matchCustTestCollection";
@@ -32,16 +39,16 @@ const urisDummy = ["dummy1", "dummy2"];
 
 describe("Matching", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", "matchCustTest");
     cy.resetTestUser();
   });
+
   it("Navigate to curate tab and Open Product Detail entity", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("ProductDetail").should("be.visible");
@@ -52,6 +59,7 @@ describe("Matching", () => {
     curatePage.selectMergeTab("ProductDetail");
     cy.findByLabelText("mergingNoTitleDisplay").should("be.visible");
   });
+
   it("Navigate to curate tab and Open Customer entity", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
@@ -59,6 +67,7 @@ describe("Matching", () => {
     curatePage.selectMatchTab("Customer");
     curatePage.addNewStep("Customer");
   });
+
   it("Create a new match step with a collection and review the preloaded value", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStepCollection);
@@ -81,6 +90,7 @@ describe("Matching", () => {
     mappingStepDetail.getCollectionInputValue().should("have.value", "mapCustomersWithRelatedEntitiesJSON");
     createEditStepDialog.cancelButton("matching").click();
   });
+
   it("Creating a new match step and verify the counter", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
@@ -102,11 +112,13 @@ describe("Matching", () => {
     confirmYesNo.getDiscardText().should("be.visible");
     confirmYesNo.getYesButton().click();
   });
+
   it("Check if the changes are reverted back when discarded all changes.", () => {
     curatePage.editStep(matchStep).click();
     createEditStepDialog.stepDescriptionInput().should("not.have.value", "UPDATED - match customer step example");
     createEditStepDialog.cancelButton("matching").click();
   });
+
   it("Open matching step details", () => {
     curatePage.openStepDetails(matchStep);
     cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
@@ -147,6 +159,7 @@ describe("Matching", () => {
     cy.findByText("test - merge").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("test", "merge").should("be.visible");
   });
+
   it("Edit threshold Property to Match", () => {
     multiSlider.enableEdit("threshold");
     multiSlider.thresholdEditOption("test", "merge");
@@ -157,6 +170,7 @@ describe("Matching", () => {
     cy.findByText("testing - merge").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("testing", "merge").should("be.visible");
   });
+
   it("Edit threshold Match Type", () => {
     multiSlider.thresholdEditOption("testing", "merge");
     thresholdModal.selectActionDropdown("Notify");
@@ -166,6 +180,7 @@ describe("Matching", () => {
     cy.findByText("testing - notify").should("have.length.gt", 0);
     multiSlider.getThresholdHandleNameAndType("testing", "notify").should("be.visible");
   });
+
   //TODO: Will be handled as part of DHFPROD-7815
   xit("Validating the slider tooltip", () => {
     multiSlider.getHandleName("testing").trigger("mousemove", {force: true});
@@ -173,6 +188,7 @@ describe("Matching", () => {
     multiSlider.sliderTicksHover("threshold-slider", "19.1919");
     multiSlider.sliderTooltipValue("20");
   });
+
   it("Add ruleset", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
@@ -184,6 +200,7 @@ describe("Matching", () => {
     multiSlider.getRulesetHandleNameAndType("customerId", "Exact").should("exist");
     //multiSlider.getHandleName("customerId").should("be.visible");
   });
+
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
     multiSlider.getHandleName("customerId").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
@@ -192,6 +209,7 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationHeading("testing").trigger("mousemove").should("exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("exist");
   });
+
   it("Add another ruleset", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
@@ -221,13 +239,14 @@ describe("Matching", () => {
     cy.contains("email - Exact").should("have.length.gt", 0);
     multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
   });
+
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
     multiSlider.getHandleName("email").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("email").trigger("mouseup", {force: true});
-    //Verify the possible match combinations
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email - Exact").trigger("mousemove").should("be.visible");
   });
+
   it("Add a ruleset with single structured property", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
@@ -237,15 +256,15 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
     cy.contains("shipping.street - Exact").should("have.length.gt", 0);
     multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("be.visible");
-    //multiSlider.getHandleName("shipping.street").should("be.visible");
   });
+
   xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
     multiSlider.getHandleName("shipping.street").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("shipping.street").trigger("mouseup", {force: true});
-    //Verify the possible match combinations
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "shipping.street - Exact").trigger("mousemove").should("be.visible");
   });
+
   it("Add a ruleset with multiple properties", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getMultiPropertyOption();
@@ -255,8 +274,8 @@ describe("Matching", () => {
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0);
-    //multiSlider.getHandleName("customerMultiplePropertyRuleset").should("be.visible");
   });
+
   it("Edit ruleset with multiple properties", () => {
     multiSlider.enableEdit("ruleset");
     multiSlider.ruleSetEditOptionMulti("customerMultiplePropertyRuleset");
@@ -270,6 +289,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
     cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0);
   });
+
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("shipping.street", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
@@ -279,15 +299,16 @@ describe("Matching", () => {
     multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("shipping.street", "Exact").should("not.exist");
   });
+
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("email", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("email", "Exact");
     cy.waitForAsyncRequest();
     cy.findByTestId("rulesetName-testing-email - Exact").should("have.length", 0);
-    //multiSlider.getHandleName("email").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email").should("not.exist");
   });
+
   it("Delete a ruleset with multiple properties", () => {
     multiSlider.deleteOptionMulti("customerMultiplePropertyRuleset");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
@@ -297,6 +318,7 @@ describe("Matching", () => {
     multiSlider.getHandleName("customerMultiplePropertyRuleset").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRulesetMulti("customerMultiplePropertyRuleset").should("not.exist");
   });
+
   it("Delete threshold", () => {
     multiSlider.deleteOptionThreshold("testing", "notify");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
@@ -306,6 +328,7 @@ describe("Matching", () => {
     multiSlider.getHandleName("testing").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "notify").should("not.exist");
   });
+
   it("Edit ruleset", () => {
     multiSlider.ruleSetEditOption("customerId", "Exact");
     cy.contains("Edit Match Ruleset for Single Property");
@@ -314,6 +337,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
     cy.contains("customerId - Exact").should("have.length.gt", 0);
   });
+
   it("Delete ruleset", () => {
     multiSlider.deleteOption("customerId", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
@@ -326,6 +350,7 @@ describe("Matching", () => {
     cy.visit("/tiles");
     cy.waitForAsyncRequest();
   });
+
   it("Edit test match URIs", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
@@ -340,12 +365,10 @@ describe("Matching", () => {
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
 
-    // to verify tooltips are present
     cy.findByLabelText("testUriOnlyTooltip").should("have.length.gt", 0);
     cy.findByLabelText("testUriTooltip").should("have.length.gt", 0);
     cy.findByLabelText("allDataTooltip").should("have.length.gt", 0);
 
-    // to test validation checks when user selects test among URIs only radio
     matchingStepDetail.getTestMatchUriButton();
     cy.waitForAsyncRequest();
     cy.wait(1000);
@@ -365,13 +388,12 @@ describe("Matching", () => {
     cy.findByText("At least Two URIs are required.").should("not.exist");
     cy.findByText("This URI has already been added.").should("not.exist");
 
-    // to test validation checks when user selects test with all URIs entered radio
     cy.findByLabelText("inputUriRadio").click();
     matchingStepDetail.getUriDeleteIcon().should("not.exist");
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("/test/Uri1").should("be.visible");
-    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+    matchingStepDetail.getTableHeader().should("not.be.visible");
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
     matchingStepDetail.getTestMatchUriButton();
@@ -385,11 +407,10 @@ describe("Matching", () => {
     cy.findByText("This URI has already been added.").should("be.visible");
     matchingStepDetail.getUriInputField().clear().type("/test/Uri2");
     matchingStepDetail.getAddUriIcon().click();
-    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+    matchingStepDetail.getTableHeader().should("not.be.visible");
     cy.findByText("This URI has already been added.").should("not.exist");
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
   });
-
 
   it("Show matched results for test match", () => {
     cy.visit("/tiles/curate");
@@ -399,7 +420,6 @@ describe("Matching", () => {
     curatePage.openStepDetails("match-person");
     cy.findByLabelText("inputUriRadio").scrollIntoView().click();
 
-    //adding new multiple property
     cy.log("**adding new multiple property**");
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getMultiPropertyOption();
@@ -479,7 +499,7 @@ describe("Matching", () => {
       matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[0]).should("not.exist");
       matchingStepDetail.getUriDeleteIconByDataTestId(urisDummy[1]).click();
 
-      matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+      matchingStepDetail.getTableHeader().should("not.be.visible");
       matchingStepDetail.getTestMatchUriButton();
       cy.waitForAsyncRequest();
       cy.wait(3000);
@@ -536,7 +556,7 @@ describe("Matching", () => {
         cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
         //cy.findAllByLabelText(`${compareValuesData[i].uriValue2}-cell2`).should("have.length.gt", 0);
       }
-      compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
+      compareValuesModal.getTableHeader().should("not.be.visible");
 
       // To test highlighted matched rows
       cy.log("**To test highlighted matched rows**");
@@ -584,12 +604,10 @@ describe("Matching", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
 
-    // OpenModal
     cy.wait(1000);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
 
-    // Try to save with empty fields
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.findByText("A title for this list is required.");
     cy.findByText("Values to ignore in this list are required.");
@@ -628,7 +646,7 @@ describe("Matching", () => {
     rulesetSingleModal.addValuesToListToIgnore("Word2");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
 
-    cy.findByText((content, node) => {
+    cy.findByText((_content, node) => {
       const hasText = (node) => node.textContent === "An existing list is already using the name TitleList1.";
       const nodeHasText = hasText(node);
       const childrenDontHaveText = Array.from(node.children).every(
@@ -769,7 +787,6 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("Yes");
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.findText("swim1").should("not.exist");
-
   });
 
   it("Check collection Typeahead request when source  database is changed", () => {

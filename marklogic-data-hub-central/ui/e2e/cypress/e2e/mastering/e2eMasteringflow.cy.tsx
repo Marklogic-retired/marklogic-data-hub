@@ -1,7 +1,22 @@
-import {Application} from "../../support/application.config";
+import {matchingStepDetail, rulesetMultipleModal, rulesetSingleModal, thresholdModal} from "../../support/components/matching/index";
+import {confirmationModal, createEditStepDialog, multiSlider, toolbar} from "../../support/components/common/index";
+import mergeStrategyModal from "../../support/components/merging/merge-strategy-modal";
+import mergingStepDetail from "../../support/components/merging/merging-step-detail";
+import mergeRuleModal from "../../support/components/merging/merge-rule-modal";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import curatePage from "../../support/pages/curate";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import modelPage from "../../support/pages/model";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
-import LoginPage from "../../support/pages/login";
+
+import {
+  createEditMappingDialog,
+  mappingStepDetail
+} from "../../support/components/mapping/index";
+
 import {
   entityTypeModal,
   entityTypeTable,
@@ -9,20 +24,6 @@ import {
   propertyTable,
   structuredTypeModal,
 } from "../../support/components/model/index";
-import modelPage from "../../support/pages/model";
-import {confirmationModal, createEditStepDialog, multiSlider, toolbar} from "../../support/components/common/index";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import curatePage from "../../support/pages/curate";
-import {
-  createEditMappingDialog,
-  mappingStepDetail
-} from "../../support/components/mapping/index";
-import {matchingStepDetail, rulesetMultipleModal, rulesetSingleModal, thresholdModal} from "../../support/components/matching/index";
-import mergingStepDetail from "../../support/components/merging/merging-step-detail";
-import mergeStrategyModal from "../../support/components/merging/merge-strategy-modal";
-import mergeRuleModal from "../../support/components/merging/merge-rule-modal";
-import browsePage from "../../support/pages/browse";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 const loadStepName = "loadPatient";
 const flowName = "patientFlow";
@@ -32,15 +33,15 @@ const mergeStep = "patientMerge";
 
 describe("Validate E2E Mastering Flow", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadPatient");
@@ -54,6 +55,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Create a load Step", () => {
     toolbar.getLoadToolbarIcon().click({force: true});
     cy.waitForAsyncRequest();
@@ -68,6 +70,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.saveButton().click();
     cy.findByText(loadStepName).should("be.visible");
   });
+
   it("Add load Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.addStepToNewFlow(loadStepName);
     cy.waitForAsyncRequest();
@@ -91,7 +94,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 14);
+    browsePage.totalResults.should("have.text", "14");
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("be.visible");
     cy.wait(3000);
@@ -157,6 +160,7 @@ describe("Validate E2E Mastering Flow", () => {
     confirmationModal.getSaveAllEntityText().should("not.exist");
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
+
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
@@ -171,6 +175,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => curatePage.dataPresent().scrollIntoView().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
   });
+
   it("Map source to entity", () => {
     mappingStepDetail.setXpathExpressionInput("FirstName", "FirstName");
     mappingStepDetail.setXpathExpressionInput("LastName", "LastName");
@@ -186,6 +191,7 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.goBackToCurateHomePage();
   });
+
   it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.runStepInCardView(mapStep).click();
@@ -199,11 +205,12 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
-    browsePage.getTotalDocuments().should("eq", 14);
+    browsePage.totalResults.should("have.text", "14");
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", mapStep).should("be.visible");
   });
+
   it("Create a new match step", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
@@ -218,6 +225,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
+
   xit("Add Thresholds", () => {
     curatePage.openStepDetails(matchStep);
     matchingStepDetail.addThresholdButton().click();
@@ -250,6 +258,7 @@ describe("Validate E2E Mastering Flow", () => {
     multiSlider.getHandleName("Slight Match").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
   });
+
   xit("Add Rulesets", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
@@ -315,7 +324,8 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     mappingStepDetail.goBackToCurateHomePage();
   });
-  it("Add Thresholds and rulesets by hitting API ", () => {
+
+  it("Add Thresholds and rule sets by hitting API ", () => {
     cy.request({
       method: "PUT",
       url: `/api/steps/matching/${matchStep}`,
@@ -324,6 +334,7 @@ describe("Validate E2E Mastering Flow", () => {
       console.warn(`Match Step ${matchStep}: ${JSON.stringify(response.statusText)}`);
     });
   });
+
   it("Add Match step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     //curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
@@ -333,6 +344,7 @@ describe("Validate E2E Mastering Flow", () => {
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Create a new merge step ", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
@@ -352,6 +364,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
+
   it("Add strategy", () => {
     curatePage.openStepDetails(mergeStep);
     mergingStepDetail.addStrategyButton().click();
@@ -367,7 +380,8 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => cy.findAllByText("retain-single-value").should("have.length.gt", 0));
     cy.findByText("retain-single-value").should("be.visible");
   });
-  it("add merge rules ", () => {
+
+  it("Add merge rules ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     mergeRuleModal.selectPropertyToMerge("Address");
     mergeRuleModal.selectMergeTypeDropdown("Strategy");
@@ -393,6 +407,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     mappingStepDetail.goBackToCurateHomePage();
   });
+
   it("Add Merge step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.getEntityTypePanel("Patient").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
@@ -418,7 +433,9 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("be.visible");
     cy.findByTestId("clear-sm-Patient-merged").should("be.visible");
   });
-  it.skip("Explore other collections", () => {   //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
+
+  //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
+  it.skip("Explore other collections", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     entitiesSidebar.selectEntity("All Data");
     cy.waitForModalToDisappear();

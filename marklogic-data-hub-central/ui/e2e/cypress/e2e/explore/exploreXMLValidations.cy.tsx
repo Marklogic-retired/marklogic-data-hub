@@ -1,35 +1,31 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import detailPage from "../../support/pages/detail";
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
-import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import LoginPage from "../../support/pages/login";
-import explorePage from "../../support/pages/explore";
 import table from "../../support/components/common/tables";
+import {toolbar} from "../../support/components/common";
+import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import detailPage from "../../support/pages/detail";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
+
+let facets: string[] = ["collection", "flow"];
 
 describe("xml scenario for snippet view on browse documents page", () => {
-
-  let facets: string[] = ["collection", "flow"];
-
-  //login with valid account and go to /browse page
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
   });
-  it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
+
+  it("Select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
@@ -59,7 +55,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     });
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
-  it("apply facet search and verify docs, hub/entity properties", () => {
+
+  it("Apply facet search and verify docs, hub/entity properties", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
@@ -77,7 +74,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getFacetSearchSelectionCount("collection").should("contain", "1");
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
-  it("apply facet search and clear individual grey facet", () => {
+
+  it("Apply facet search and clear individual grey facet", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
@@ -89,7 +87,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getGreySelectedFacets("mapCustomersXML").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
-  it("apply facet search and clear all grey facets", () => {
+  it("Apply facet search and clear all grey facets", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
@@ -104,6 +102,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getClearGreyFacets().click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
+
   it("Select grey facets, change page, back and verify retained state", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
@@ -158,7 +157,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
 
-  it("search for a simple text/query and verify content", () => {
+  it("Search for a simple text/query and verify content", () => {
     browsePage.getSnippetView().click({force: true});
     browsePage.search("Randolph");
     browsePage.getTotalDocuments().should("be.equal", 1);
@@ -171,7 +170,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getDocumentRecordType(0).should("exist");
     browsePage.getDocumentRecordType(0).should("be.equal", "xml");
   });
-  it.skip("verify instance view of the document", () => {
+
+  it.skip("Verify instance view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Randolph");
@@ -188,6 +188,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
 
     browsePage.getSearchText().should("be.visible");
   });
+
   it.skip("verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
@@ -199,7 +200,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
   });
-  it.skip("select Customer xml entity instances and verify table", () => {
+
+  it.skip("Select Customer xml entity instances and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -216,7 +218,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     table.getTableColumns().should("have.length", 6);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
-  it.skip("verify instance view of the document", () => {
+
+  it.skip("Verify instance view of the document", () => {
     browsePage.search("Bowman");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewInstanceIcon().click();
@@ -230,7 +233,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
   });
-  it.skip("verify source view of the document", () => {
+
+  it.skip("Verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Bowman");
@@ -242,7 +246,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
-  it.skip("verify metadata view of the document", () => {
+
+  it.skip("Verify metadata view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Bowman");
@@ -260,7 +265,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
-  it("verify record view of the XML document in non-entity detail page", () => {
+
+  it("Verify record view of the XML document in non-entity detail page", () => {
     entitiesSidebar.toggleAllDataView();
     browsePage.getSearchText().clear();
     browsePage.getApplyFacetsButton().click();
@@ -281,7 +287,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
-  it.skip("verify metadata view of the document properties", () => {
+
+  it.skip("Verify metadata view of the document properties", () => {
     entitiesSidebar.toggleAllDataView();
     browsePage.search("robert");
     browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml").click({force: true});

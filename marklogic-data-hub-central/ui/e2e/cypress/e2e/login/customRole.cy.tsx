@@ -1,14 +1,11 @@
-/// <reference types="cypress"/>
-
 import {toolbar, tiles, confirmationModal} from "../../support/components/common/index";
-import "cypress-wait-until";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import curatePage from "../../support/pages/curate";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
-import curatePage from "../../support/pages/curate";
-import {ConfirmationType} from "../../support/types/modeling-types";
+import "cypress-wait-until";
 
-describe("customRole", () => {
-
+describe("Custom Role", () => {
   before(() => {
     cy.visit("/");
     cy.waitForAsyncRequest();
@@ -22,14 +19,13 @@ describe("customRole", () => {
   });
 
   after(() => {
-    //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
 
-  it("should be able to access all tiles with hc-custom-role", () => {
-    cy.loginAsTestUserWithRoles("hc-custom-role").withUI()
-      .url().should("include", "/tiles");
+  it("Should be able to access all tiles with hc-custom-role", () => {
+    cy.loginAsTestUserWithRoles("hc-custom-role").withUI();
+    cy.url().should("include", "/tiles");
 
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitForAsyncRequest();
@@ -61,7 +57,5 @@ describe("customRole", () => {
     // cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     // cy.waitForAsyncRequest();
     // browsePage.getSelectedEntity().should("contain", "All Entities");
-
   });
-
 });

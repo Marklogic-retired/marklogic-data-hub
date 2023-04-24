@@ -1,10 +1,9 @@
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
-import graphExplore from "../../support/pages/graphExplore";
-import LoginPage from "../../support/pages/login";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import graphExplore from "../../support/pages/graphExplore";
+import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
 
 const TABLE_HEADERS = ["Property", "Value"];
 
@@ -12,13 +11,10 @@ describe("Test '/Explore' graph right panel", () => {
   beforeEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();

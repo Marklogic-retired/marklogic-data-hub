@@ -1,33 +1,39 @@
-/// <reference types="cypress"/>
-
-import {Application} from "../../../support/application.config";
+import entitiesSidebar from "../../../support/pages/entitiesSidebar";
 import {toolbar} from "../../../support/components/common";
+import curatePage from "../../../support/pages/curate";
+import browsePage from "../../../support/pages/browse";
+import modelPage from "../../../support/pages/model";
+import LoginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
   propertyModal,
   propertyTable
 } from "../../../support/components/model/index";
+
 import {
   createEditMappingDialog,
   mappingStepDetail
 } from "../../../support/components/mapping/index";
-import curatePage from "../../../support/pages/curate";
-import runPage from "../../../support/pages/run";
-import loadPage from "../../../support/pages/load";
-import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
-import "cypress-wait-until";
-import modelPage from "../../../support/pages/model";
-import entitiesSidebar from "../../../support/pages/entitiesSidebar";
+
+const userRoles = [
+  "hub-central-flow-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer",
+  "hub-central-entity-model-writer",
+  "hub-central-saved-query-user"
+];
 
 describe("Mapping", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("mapping", "mapRelation");
@@ -38,6 +44,7 @@ describe("Mapping", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Define new entity, add relationship property", {defaultCommandTimeout: 120000}, () => {
     toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
@@ -56,10 +63,10 @@ describe("Mapping", () => {
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
     cy.wait(1000);
-    //Save Changes
     cy.publishDataModel();
     propertyTable.getForeignIcon("relatedTo").should("exist");
   });
+
   it("Create new entity and check if there is no message in curate tile", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
@@ -78,6 +85,7 @@ describe("Mapping", () => {
     curatePage.toggleEntityTypeId("TestEntity");
     cy.contains("This functionality is not implemented yet.").should("not.exist");
   });
+
   it("Create new mapping in Curate", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Person").should("be.visible");
@@ -93,6 +101,7 @@ describe("Mapping", () => {
     mappingStepDetail.dataAvailable().should("be.visible");
     mappingStepDetail.entityTitle("Person").should("exist");
   });
+
   it("Verify related entities in mapping details with defaults", {defaultCommandTimeout: 120000}, () => {
     mappingStepDetail.XPathInfoIcon();
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
@@ -110,6 +119,7 @@ describe("Mapping", () => {
     mappingStepDetail.verifyFunctionTooltip("URI");
     mappingStepDetail.verifyReferenceTooltip("Person");
   });
+
   it("Add and test mapping expressions with related entities", {defaultCommandTimeout: 120000}, () => {
     mappingStepDetail.setXpathExpressionInput("id", "SSN");
     mappingStepDetail.entityTitle("Person").click(); // click outside field to auto-save
@@ -124,7 +134,7 @@ describe("Mapping", () => {
     mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
-    cy.log("**Test expresssions**");
+    cy.log("**Test expressions**");
     mappingStepDetail.testMap().should("be.enabled");
     mappingStepDetail.testMap().click({force: true});
     cy.waitForAsyncRequest();
@@ -178,7 +188,6 @@ describe("Mapping", () => {
   });
 
   it("Validate session storage is working for main table", () => {
-
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
@@ -222,7 +231,6 @@ describe("Mapping", () => {
     mappingStepDetail.expandFilterMainTable("Person");
     mappingStepDetail.verifyValueFilter("cust");
     mappingStepDetail.resetEntitySearch().click();
-
   });
 
   it("Create new flow, add mapping to flow, run mapping, verify results", () => {
@@ -251,8 +259,8 @@ describe("Mapping", () => {
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
-
   });
+
   it("Edit advanced settings for each entity", () => {
     cy.log("**Navigate to curate page**");
     cy.visit("/tiles/curate");
@@ -289,6 +297,7 @@ describe("Mapping", () => {
     mappingStepDetail.getSaveSettings("Relation").should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
+
   it("Delete related entity from mapping via filter", () => {
     cy.log("**Navigate to curate page**");
     cy.visit("/tiles/curate");
@@ -316,6 +325,7 @@ describe("Mapping", () => {
     cy.log("**Validate Related entity does not exist after deletion**");
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
+
   it("Delete related entity from mapping via close icon", () => {
     // Reselect deleted related entity
     mappingStepDetail.mapRelatedEntities("Person").invoke("attr", "aria-expanded").then(($ele) => {
@@ -332,6 +342,7 @@ describe("Mapping", () => {
     // Related entity does not exist after deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
+
   it("Reopen step and verify the deleted related entity is no longer there", () => {
     mappingStepDetail.goBackToCurateHomePage();
     curatePage.getEntityTypePanel("Person").should("be.visible");

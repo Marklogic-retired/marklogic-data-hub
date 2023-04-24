@@ -12,11 +12,10 @@ class LoginPage {
     return cy.get("#submit");
   }
 
-  postLogin() {
+  navigateToMainPage() {
+    cy.intercept("GET", "/api/models/hubCentralConfig").as("lastRequest");
     cy.visit("/tiles");
-    cy.location("pathname", {timeout: 10000}).should("include", "/tiles");
-    cy.wait(2000);
-    //cy.window().its("stompClientConnected").should("exist");
+    for (let i = 0; i < 5; i++) cy.wait("@lastRequest");
   }
 
   clickTitle() {

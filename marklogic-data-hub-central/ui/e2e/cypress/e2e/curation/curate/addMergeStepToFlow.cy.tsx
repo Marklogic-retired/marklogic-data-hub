@@ -1,14 +1,15 @@
-import "cypress-wait-until";
 import {Application} from "../../../support/application.config";
+import curatePage from "../../../support/pages/curate";
+import LoginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
 import {
   toolbar,
   createEditStepDialog,
 } from "../../../support/components/common/index";
-import curatePage from "../../../support/pages/curate";
-import loadPage from "../../../support/pages/load";
-import runPage from "../../../support/pages/run";
-import LoginPage from "../../../support/pages/login";
+
 import {generateUniqueName} from "../../../support/helper";
+import "cypress-wait-until";
 
 const mergeStep = generateUniqueName("mergeStep");
 const flowName1 = generateUniqueName("flow1");
@@ -19,7 +20,7 @@ describe("Add Merge step to a flow", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();

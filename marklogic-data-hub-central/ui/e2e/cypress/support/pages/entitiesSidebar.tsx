@@ -12,11 +12,11 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="base-option-${entity}"]`);
   }
   removeSelectedBaseEntity() {
-    cy.get(`[class="css-xb97g8"]`).first().scrollIntoView().should("be.visible").click({force: true});
+    cy.get(`[aria-label="Remove [object Object]"]`).first().scrollIntoView().should("be.visible").click({force: true});
   }
 
   removeLastSelectedBaseEntity() {
-    cy.get(`[class="css-xb97g8"]`).last().scrollIntoView().should("be.visible").click();
+    cy.get(`[aria-label="Remove [object Object]"]`).last().scrollIntoView().should("be.visible").click();
   }
 
   selectEntity(entity: string) {
@@ -141,11 +141,19 @@ class BaseEntitySidebar {
   }
 
   toggleAllDataView() {
+    cy.intercept("POST", "/api/entitySearch?database=final").as("allData");
     cy.get(`[aria-label="switch-datasource-all-data"] ~ label`).scrollIntoView().click();
+    cy.wait("@allData");
   }
 
   toggleEntitiesView() {
     cy.get(`[aria-label="switch-datasource-entities"] ~ label`).click();
+  }
+
+  toggleStagingView() {
+    cy.intercept("POST", "/api/entitySearch?database=staging").as("staging");
+    cy.get(`[aria-label="switch-database-staging"] ~ label`).scrollIntoView().click();
+    cy.wait("@staging");
   }
 
   verifyCollapsedRelatedEntityPanel() {

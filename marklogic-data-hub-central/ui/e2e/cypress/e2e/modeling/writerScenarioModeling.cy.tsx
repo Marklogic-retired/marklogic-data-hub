@@ -1,30 +1,34 @@
-/// <reference types="cypress"/>
+
+import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {ConfirmationType} from "../../support/types/modeling-types";
 import modelPage from "../../support/pages/model";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
 } from "../../support/components/model/index";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import {Application} from "../../support/application.config";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
+
+const userRoles = [
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-mapping-writer",
+  "hub-central-saved-query-user"
+];
 
 describe("Entity Modeling: Graph View", () => {
-  //Setup hubCentral config for testing
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();

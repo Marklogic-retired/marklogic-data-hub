@@ -1,0 +1,58 @@
+[
+  {
+    "entityName": "Order",
+    "modelDefinition": {
+      "Order": {
+        "required": [],
+        "properties": {
+          "address": {
+            "$ref": "#/definitions/Address"
+          },
+          "orderDetails": {
+            "datatype": "array",
+            "items": {
+              "$ref": "#/definitions/OrderDetails"
+            }
+          },
+          "shipRegion": {
+            "datatype": "array",
+            "items": {
+              "datatype": "string"
+            }
+          },
+          "shippedDate": {
+            "datatype": "dateTime"
+          }
+        },
+        "description": "",
+        "pii": []
+      },
+      "Address": {
+        "properties": {
+          "city": {
+            "datatype": "string"
+          },
+          "state": {
+            "datatype": "string"
+          }
+        }
+      },
+      "OrderDetails": {
+        "properties": {
+          "productID": {
+            "datatype": "string"
+          },
+          "unitPrice": {
+            "datatype": "double"
+          },
+          "quantity": {
+            "datatype": "integer"
+          },
+          "discount": {
+            "datatype": "float"
+          }
+        }
+      }
+    }
+  }
+]

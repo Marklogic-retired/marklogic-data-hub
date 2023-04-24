@@ -1,44 +1,37 @@
-/// <reference types="cypress"/>
-
+import {toolbar} from "../../support/components/common/index";
 import modelPage from "../../support/pages/model";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
   graphView,
   propertyTable,
 } from "../../support/components/model/index";
-import {toolbar} from "../../support/components/common/index";
-import {Application} from "../../support/application.config";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
 
 const entityName = "ProductCategory";
 
 describe("Entity Modeling: Graph View", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
     cy.log("**Logging into the app as a hub-central-entity-model-writer**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
-
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
-
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities(entityName);
   });
 
-  it("create an entity type for active the publish button", () => {
+  it("Create an entity type for active the publish button", () => {
     cy.log("**Create an entity type**");
     toolbar.getModelToolbarIcon().click({force: true});
     cy.waitForAsyncRequest();
@@ -61,15 +54,11 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("login as entity model reader role and verify that the publish button that should be disabled", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
+  it("Login as entity model reader role and verify that the publish button that should be disabled", () => {
     cy.log("**Logging into the app as a hub-central-entity-model-reader**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
-
 
     toolbar.getModelToolbarIcon().click({force: true});
     modelPage.selectView("table");

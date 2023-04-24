@@ -1,36 +1,35 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import {Application} from "../../support/application.config";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {toolbar} from "../../support/components/common/index";
-import "cypress-wait-until";
-import LoginPage from "../../support/pages/login";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
 
 describe("User without hub-central-saved-query-user role should not see saved queries drop down on zero sate page", () => {
   before(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
-  it("verifies user without hub-central-saved-query-user role can explore data", () => {
+
+  it("Verify user without hub-central-saved-query-user role can explore data", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").scrollIntoView().should("be.visible");
   });
-  it("verifies user without hub-central-saved-query-user can not save query", () => {
+
+  it("Verify user without hub-central-saved-query-user can not save query", () => {
     browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
@@ -43,7 +42,8 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     browsePage.getSaveModalIcon().should("be.visible");
     browsePage.getSaveModalIcon().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
   });
-  it("verifies user without hub-central-saved-query-user can not manage queries", () => {
+
+  it("Verify user without hub-central-saved-query-user can not manage queries", () => {
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesButton().should("be.visible");
     browsePage.getManageQueriesButton().should("not.be.enabled");

@@ -1,23 +1,23 @@
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import graphView from "../../support/components/explore/graph-view";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
-import graphView from "../../support/components/explore/graph-view";
 
 describe("Concepts", () => {
   before(() => {
-    cy.visit("/");
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
+
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
@@ -36,6 +36,7 @@ describe("Concepts", () => {
     cy.log("**Turn on concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
   });
+
   it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 200000}, () => {
     //Graph view
     cy.log("**Go to graph view**");
@@ -103,7 +104,6 @@ describe("Concepts", () => {
       expect(jeansCoordinates).to.be.undefined;
     });
 
-
     cy.log("**Verify that Related Concepts Filter in sidebar is disabled since concepts are toggled OFF**");
     entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
     entitiesSidebar.getDisabledRelatedConceptsTooltip().should("be.visible");
@@ -149,11 +149,9 @@ describe("Concepts", () => {
       canvas.click(jeansCoordinates.x, jeansCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
     });
-
   });
 
   it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 200000}, () => {
-    //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -235,7 +233,6 @@ describe("Concepts", () => {
   });
 
   it("Verify concepts reflect base entity selection", {defaultCommandTimeout: 200000}, () => {
-
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
@@ -275,6 +272,7 @@ describe("Concepts", () => {
       graphExploreSidePanel.getSidePanel().should("exist");
     });
   });
+
   it("Verify Kettle concept node should be visible again when selected in the filter", {defaultCommandTimeout: 200000}, () => {
     entitiesSidebar.getSingleConceptCheckbox("Kettle").click();
 
@@ -305,5 +303,4 @@ describe("Concepts", () => {
     graphView.getPhysicsAnimationHelpIcon().trigger("mouseover", {force: true});
     graphView.getPhysicsAnimationTooltip().should("be.visible");
   });
-
 });

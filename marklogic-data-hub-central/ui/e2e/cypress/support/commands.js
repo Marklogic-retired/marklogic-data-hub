@@ -124,7 +124,7 @@ Cypress.Commands.add("logout", () => {
   cy.request({
     request: "GET",
     url: "/api/logout"
-  }).then(response => {
+  }).then(() => {
     cy.visit("/");
   });
 });
@@ -331,6 +331,7 @@ Cypress.Commands.add("revertDataModel", () => {
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
+
 Cypress.Commands.add("typeTab", (shiftKey, ctrlKey) => {
   cy.focused().trigger("keydown", {
     keyCode: 9,
