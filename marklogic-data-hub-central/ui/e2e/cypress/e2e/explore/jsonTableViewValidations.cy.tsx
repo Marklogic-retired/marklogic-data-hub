@@ -76,9 +76,11 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getMainPanelSearchInput("Alice");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.firstTableRow.should("be.visible").and("contain.text", false);
-    browsePage.getTotalDocuments().should("be.equal", 2);
-    browsePage.getHCTableRows().should("have.length", 2);
+    browsePage.getHCTableRows().then(($row) => {
+      let length = $row.length;
+      browsePage.getTotalDocuments().should("be.equal", length);
+    });
+    browsePage.validateHCTableRows("Alice");
   });
 
   it("Verify instance view of the document without pk", () => {
@@ -89,7 +91,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Alice").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should("be.equal", 2);
+    browsePage.validateHCTableRows("Alice");
     browsePage.getFirstTableViewInstanceIcon().click();
     browsePage.waitForSpinnerToDisappear();
     detailPage.getInstanceView().should("exist");
