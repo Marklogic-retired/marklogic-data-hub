@@ -233,6 +233,7 @@ class RunPage {
   getStepFailureSummary(stepName: string) {
     return cy.get(`[data-testid="${stepName}-error-list"]`);
   }
+
   toggleFlowAccordion(flowName: string) {
     cy.get(`#${flowName} div[class^="accordion-collapse collapse"]`).then(($ele) => {
       if (!$ele.hasClass("show")) {

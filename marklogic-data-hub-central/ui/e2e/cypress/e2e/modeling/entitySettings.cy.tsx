@@ -1,19 +1,16 @@
-/// <reference types="cypress"/>
-
-import modelPage from "../../support/pages/model";
-import {graphViewSidePanel} from "../../support/components/model/index";
-import {Application} from "../../support/application.config";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
-import graphVis from "../../support/components/model/graph-vis";
-import {BaseEntityTypes} from "../../support/types/base-entity-types";
-import graphExplore from "../../support/pages/graphExplore";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
-import browsePage from "../../support/pages/browse";
-import homePage from "../../support/pages/home";
-import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import {graphViewSidePanel} from "../../support/components/model/index";
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import graphVis from "../../support/components/model/graph-vis";
+import graphExplore from "../../support/pages/graphExplore";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import modelPage from "../../support/pages/model";
+import LoginPage from "../../support/pages/login";
+import homePage from "../../support/pages/home";
+import "cypress-wait-until";
 
 //const defaultSelectLabel = "Select...";
 //const defaultSelectProperty = "Select property";
@@ -37,20 +34,17 @@ const propertiesOnHoverData = {
 };
 
 describe("Entity display settings in model tile", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-    //Setup hubCentral config for testing
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
     cy.log("**Go to graph view in model tile**");
     homePage.getModelCard().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
   });
-  it("can change entity display settings in model tile and change in explore", () => {
+
+  it("Can change entity display settings in model tile and change in explore", () => {
     //TempFix
     modelPage.selectView("table");
     modelPage.selectView("project-diagram");
@@ -133,6 +127,7 @@ describe("Entity display settings in model tile", () => {
       }
     });
   });
+
   it("Click on babyRegistry node and verify that properties on hover show up in the tooltip", () => {
     graphExplore.getGraphVisCanvas().should("exist");
     browsePage.search("3039", true, true);
@@ -164,8 +159,8 @@ describe("Entity display settings in model tile", () => {
       }
     });
   });
-  it("Check in the side bar the label of the node", () => {
 
+  it("Check in the side bar the label of the node", () => {
     cy.log("**Click on babyRegistry node to open the side panel**");
     graphExplore.getGraphVisCanvas().should("exist");
     cy.wait(3000);
@@ -179,7 +174,6 @@ describe("Entity display settings in model tile", () => {
 
     graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
     graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.ownedBy);
-
 
     cy.log("**Open Entity Display Settings modal to check the values on label and propertiesOnHover**");
     explorePage.clickExploreSettingsMenuIcon();
@@ -219,6 +213,7 @@ describe("Entity display settings in model tile", () => {
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
   });
+
   it(`Click on ${defaultEntityTypeData.name} entity to open side bar`, () => {
     graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
@@ -247,5 +242,4 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.arrivalDate);
     graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("not.contain.text", defaultEntityTypeData.properties.ownedBy);
   });
-
 });

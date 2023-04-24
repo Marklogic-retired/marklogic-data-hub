@@ -1,31 +1,30 @@
-import monitorPage from "../../support/pages/monitor";
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
-import {toolbar} from "../../support/components/common";
-import LoginPage from "../../support/pages/login";
-import browsePage from "../../support/pages/browse";
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
-import runPage from "../../support/pages/run";
 import {mappingStepDetail} from "../../support/components/mapping/index";
+import {toolbar} from "../../support/components/common";
+import monitorPage from "../../support/pages/monitor";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import runPage from "../../support/pages/run";
+import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
   });
+
   beforeEach(() => {
     toolbar.getMonitorToolbarIcon().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
     monitorPage.waitForMonitorTableToLoad();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -41,12 +40,10 @@ describe("Monitor Tile", () => {
   let firstPageTableCellsStepName1: any[] = [];
   let firstPageTableCellsStepType1: any[] = [];
   let firstPageTableCellsStatus1: any[] = [];
-  //let firstPageTableCellsEntityType1: any[] = [];
   let firstPageTableCellsDateTime1: any[] = [];
   let orginalDateTimeArr: any[] = [];
 
   it("Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time part 1", () => {
-
     cy.log("**expand table and get data column of JobId**");
     monitorPage.getTableRows().then(($els) => {
       return (
@@ -163,7 +160,6 @@ describe("Monitor Tile", () => {
   });
 
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
-
     cy.log("**check step name order DESC**");
     monitorPage.getOrderColumnMonitorTable("Step Name").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
@@ -235,7 +231,6 @@ describe("Monitor Tile", () => {
   });
 
   it("Save table settings to session storage and get it back part 1", () => {
-
     monitorPage.getCollapseAllTableRows().scrollIntoView().click({force: true});
     monitorPage.getRowByIndex(1).click({force: true});
     monitorPage.checkExpandedRow();
@@ -295,21 +290,21 @@ describe("Monitor Tile", () => {
     monitorPage.clearFacets();
   });
 
-  it("apply facet search and verify docs", () => {
+  it("Apply facet search and verify docs", () => {
     // There's a re-render.
     cy.wait(1500);
     browsePage.getShowMoreLink("step-type").click();
     monitorPage.validateAppliedFacetTableRows("step-type", 1, "mapping");
   });
 
-  it("apply facet search and clear individual grey facet", () => {
+  it("Apply facet search and clear individual grey facet", () => {
     monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
     // There's a re-render.
     cy.wait(1500);
     monitorPage.validateClearGreyFacet("step-type", 0);
   });
 
-  it("apply facet search and clear all grey facets", () => {
+  it("Apply facet search and clear all grey facets", () => {
     // There's a re-render.
     cy.wait(1000);
     monitorPage.validateGreyFacet("step-type", 0);
@@ -367,7 +362,6 @@ describe("Monitor Tile", () => {
   });
 
   it("Verify job ID link opens status modal", () => {
-
     cy.log("*** open status modal via jobs link ***");
     // There's a re-render.
     cy.wait(1000);

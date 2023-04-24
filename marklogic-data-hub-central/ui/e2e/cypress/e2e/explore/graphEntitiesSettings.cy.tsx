@@ -1,15 +1,14 @@
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
-import specificSidebar from "../../support/components/explore/specific-sidebar";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
-import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
+import specificSidebar from "../../support/components/explore/specific-sidebar";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
 
 //ToDo: Should move it to RTL test
 //const defaultSelectLabel = "Select...";
@@ -36,6 +35,7 @@ const defaultEntityTypeData = {
     HEX: "#EEEFF1",
   }
 };
+
 const propertiesOnHoverData = {
   name: "name: Adams Cole",
   email: "email: adamscole@nutralab.com",
@@ -65,14 +65,8 @@ const newEntityTypeData2 = {
 
 describe("Entity Type Settings Modal", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
 
     browsePage.waitForSpinnerToDisappear();
@@ -80,10 +74,12 @@ describe("Entity Type Settings Modal", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();

@@ -1,30 +1,26 @@
-import {Application} from "../../../support/application.config";
-import {toolbar} from "../../../support/components/common";
 import {createEditMappingDialog} from "../../../support/components/mapping/index";
-import browsePage from "../../../support/pages/browse";
+import {toolbar} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
+import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
-import "cypress-wait-until";
 
-//Utils
 import {generateUniqueName} from "../../../support/helper";
+import "cypress-wait-until";
 
 const loadStep = "loadOrderCustomHeader";
 const mapStep = generateUniqueName("mapOrder");
 
 describe("Check visibility of dropdown with search in mapping step details table", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("mapping", mapStep);
     cy.resetTestUser();
   });
-
 
   it("Create mapping step and check the visibility of the dropdowns related to source, function and reference", () => {
     toolbar.getCurateToolbarIcon().click();
@@ -36,7 +32,8 @@ describe("Check visibility of dropdown with search in mapping step details table
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
     createEditMappingDialog.saveButton().click({force: true});
-    //verify that step details automatically opens after step creation
+
+    cy.log("Verify that step details automatically opens after step creation");
     curatePage.verifyStepDetailsOpen(mapStep);
     browsePage.waitForSpinnerToDisappear();
 

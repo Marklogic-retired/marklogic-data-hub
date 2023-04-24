@@ -1,4 +1,3 @@
-import {Application} from "../../../support/application.config";
 import {toolbar, createEditStepDialog} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
@@ -8,17 +7,17 @@ const matchStep = "match-test";
 
 describe("Validate Match warnings", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", "match-test");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Navigate to curate tab and Open Customer entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -26,6 +25,7 @@ describe("Validate Match warnings", () => {
     curatePage.selectMatchTab("Person");
     cy.waitUntil(() => curatePage.addNewStep("Person"));
   });
+
   it("Creating a new match step", () => {
     curatePage.addNewStep("Person").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
@@ -35,6 +35,7 @@ describe("Validate Match warnings", () => {
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
+
   it("Navigate to match step and validate warning messages", () => {
     cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
@@ -51,6 +52,7 @@ describe("Validate Match warnings", () => {
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection mapPersonJSON");
     curatePage.alertContent().eq(1).contains("Please remove source collection from target collections");
   });
+
   it("Click on cancel and reopen the match step ", () => {
     curatePage.saveSettings(matchStep).click();
     curatePage.cancelSettings(matchStep).click();
@@ -67,6 +69,7 @@ describe("Validate Match warnings", () => {
     curatePage.alertContent().eq(1).contains("Warning: Target Collections includes the source collection mapPersonJSON");
     curatePage.alertContent().eq(1).contains("Please remove source collection from target collections");
   });
+
   it("Remove the warnings one by one", () => {
     curatePage.removeTargetCollection("Person");
     curatePage.saveSettings(matchStep).click();

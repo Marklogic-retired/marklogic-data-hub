@@ -2,6 +2,14 @@ import "cypress-wait-until";
 
 class BrowsePage {
 
+  get totalResults() {
+    return cy.get("[data-cy=total-documents]").first();
+  }
+
+  get firstTableRow() {
+    return cy.get("tr.hc-table_row");
+  }
+
   // common spinners
   // Can be moved to a common components
   getSpinner() {
@@ -780,10 +788,6 @@ class BrowsePage {
 
   getAllDataButton() {
     return cy.findByText("All Data");
-  }
-
-  get firstTableRow() {
-    return cy.get("tr.hc-table_row");
   }
 }
 

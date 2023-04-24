@@ -1,6 +1,9 @@
-/// <reference types="cypress"/>
-
+import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
@@ -8,32 +11,28 @@ import {
   graphViewSidePanel,
   propertyTable,
 } from "../../support/components/model/index";
-import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
-import {Application} from "../../support/application.config";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
 
-describe("Entity Modeling Senario 1: Writer Role", () => {
-  //Scenarios: create, edit, and save a new entity, edit entity description, duplicate entity name check, identifier modal check, can save an entity while another entity is edited, can navigate and see persisted edits, can see navigation warning when logging out with edits, can add new properties to existing Entity, can revert an entity twice, and delete shows step warning
+/* Scenarios: create, edit, and save a new entity, edit entity description, duplicate entity name check, identifier modal check,
+can save an entity while another entity is edited, can navigate and see persisted edits, can see navigation warning when logging
+out with edits, can add new properties to existing Entity, can revert an entity twice, and delete shows step warning. */
+describe("Entity Modeling Scenario 1: Writer Role", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities("Buyer");
     cy.resetTestUser();
   });
+
   it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
@@ -69,6 +68,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
     modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
   });
+
   it("Add a Multiple Value property", () => {
     propertyModal.newPropertyName("user");
     propertyModal.openPropertyDropdown();
@@ -80,6 +80,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("user").should("exist");
   });
+
   it("Add a property related to Person but no foreign key", () => {
     propertyTable.getAddPropertyButton("Buyer").should("be.visible").click();
     propertyModal.newPropertyName("personNoKey");
@@ -89,7 +90,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.verifyRelationshipIcon("personNoKey").should("exist");
   });
-  it("edit entity description then edit property name with Related Entity type", () => {
+
+  it("Edit entity description then edit property name with Related Entity type", () => {
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.clearEntityDescription();
     entityTypeModal.newEntityDescription("Description has changed");
@@ -111,6 +113,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     // entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getCancelButton().click();
   });
+
   it("Add cascaded type with identifier", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.clearPropertyName();
@@ -127,6 +130,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getMultipleIcon("newId").should("exist");
     //propertyTable.getWildcardIcon('newId').should('exist');
   });
+
   it("Add basic type with identifier, show confirmation modal", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.newPropertyName("buyer-id");
@@ -139,6 +143,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getIdentifierIcon("newId").should("not.exist");
     propertyTable.getIdentifierIcon("buyer-id").should("exist");
   });
+
   it("Edit property and change type to relationship", () => {
     propertyTable.editProperty("buyer-id");
     //check default value for properties PII and multiple
@@ -162,7 +167,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getPiiIcon("user-id").should("not.exist");
     //propertyTable.getWildcardIcon('user-id').should('not.exist');
   });
-  it("edit property name with Related Entity type", () => {
+
+  it("Edit property name with Related Entity type", () => {
     propertyTable.editProperty("user-id");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("buyer-id");
@@ -177,6 +183,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });
+
   it("Edit property name and delete the property", () => {
     propertyTable.editProperty("newId");
     propertyModal.getDeleteIcon("newId").click();
@@ -184,6 +191,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("newId").should("not.exist");
   });
+
   it("Edit a different entity", () => {
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.editProperty("nicknames");
@@ -194,10 +202,12 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getSortIcon("nicknames").should("exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
+
   it("Save new and updated entities", {defaultCommandTimeout: 120000}, () => {
     cy.publishDataModel();
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
+
   it("Validate the entity in explore page", () => {
     toolbar.getExploreToolbarIcon().click();
     cy.waitUntil(() => tiles.getExploreTile());
@@ -212,11 +222,11 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
     cy.location("pathname").should("eq", "/");
   });
+
   it("Add new property to Order entity", () => {
     cy.log("**Re-login**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-    //Setup hubCentral config for testing
+    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
 
     toolbar.getModelToolbarIcon().click();
@@ -235,14 +245,16 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getPiiIcon("orderID").should("exist");
     //propertyTable.getWildcardIcon('orderID').should('exist');
   });
+
   it("Add related property to Buyer, check Join Property menu, cancel the addition", () => {
     cy.log("**Re-login**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
+    LoginPage.navigateToMainPage();
 
     toolbar.getModelToolbarIcon().click();
+    cy.wait("@lastRequest");
+    cy.wait("@lastRequest");
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Buyer");
@@ -279,6 +291,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getFacetIcon("newID").should("exist");
     propertyTable.getSortIcon("newID").should("exist");
   });
+
   it("Show identifier confirm modal, and then show delete property confirm modal", () => {
     propertyTable.editProperty("lname");
     propertyModal.getYesRadio("identifier").click();
@@ -292,6 +305,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getCancelButton();
     propertyTable.getProperty("lname").should("exist");
   });
+
   it("Validate Show Steps and Hide Steps", () => {
     propertyTable.editProperty("fname");
     cy.waitUntil(() => propertyModal.getToggleStepsButton().should("exist")).click();
@@ -310,6 +324,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.contains("Hide Steps...").should("not.exist");
     propertyModal.getCancelButton();
   });
+
   it("Delete Entity that is used in other steps", () => {
     entityTypeTable.getDeleteEntityIcon("Person").click();
     cy.contains("Entity type is used in one or more steps.").should("be.visible");

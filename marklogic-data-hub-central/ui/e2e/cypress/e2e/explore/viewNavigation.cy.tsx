@@ -1,17 +1,15 @@
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import {Application} from "../../support/application.config";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {Application} from "../../support/application.config";
 
 describe("Navigation through all the Explore views (Table, Snippet, Graph and Details)", () => {
   before(() => {
-    cy.visit("/");
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
 
   beforeEach(() => {
@@ -124,7 +122,7 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
     graphExplore.getGraphVisCanvas().should("be.visible");

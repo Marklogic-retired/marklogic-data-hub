@@ -1,28 +1,25 @@
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 
 describe("Center node on graph", () => {
   before(() => {
-    cy.visit("/");
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
 
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
 
-  it("can center on node type in graph view", {defaultCommandTimeout: 120000}, () => {
-    //Graph view
+  it("Can center on node type in graph view", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");

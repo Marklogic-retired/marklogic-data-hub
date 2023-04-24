@@ -1,0 +1,58 @@
+[
+  {
+    "entityName": "Person",
+    "modelDefinition": {
+      "Person": {
+        "primaryKey": "id",
+        "required": [],
+        "pii": [
+          "SSN"
+        ],
+        "wordLexicon": [],
+        "properties": {
+          "id": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "fname": {
+            "datatype": "string",
+            "description": "This has a case-insensitive collation for the match queries that use range indexes",
+            "collation": "http://marklogic.com/collation//S2",
+            "facetable": true,
+            "sortable": true
+          },
+          "lname": {
+            "datatype": "string",
+            "description": "This has a case-insensitive collation for the match queries that use range indexes",
+            "collation": "http://marklogic.com/collation//S2",
+            "facetable": true,
+            "sortable": true
+          },
+          "desc": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "SSN": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "ZipCode": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "Address": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "DateOfBirth": {
+            "datatype": "date"
+          },
+          "Verified": {
+            "datatype": "boolean"
+          }
+        },
+        "description": ""
+      }
+    }
+  }
+]

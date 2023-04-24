@@ -1,27 +1,23 @@
-/// <reference types="cypress"/>
-
-import loginPage from "../../support/pages/login";
-import {Application} from "../../support/application.config";
 import {toolbar, tiles, projectInfo} from "../../support/components/common/index";
-import "cypress-wait-until";
-import loadPage from "../../support/pages/load";
-import modelPage from "../../support/pages/model";
-import runPage from "../../support/pages/run";
-import curatePage from "../../support/pages/curate";
-import explorePage from "../../support/pages/explore";
-import {generateUniqueName} from "../../support/helper";
-import browsePage from "../../support/pages/browse";
 import {mappingStepDetail} from "../../support/components/mapping";
+import {Application} from "../../support/application.config";
+import {generateUniqueName} from "../../support/helper";
+import explorePage from "../../support/pages/explore";
+import curatePage from "../../support/pages/curate";
+import browsePage from "../../support/pages/browse";
+import loginPage from "../../support/pages/login";
+import modelPage from "../../support/pages/model";
+import loadPage from "../../support/pages/load";
+import runPage from "../../support/pages/run";
+import "cypress-wait-until";
 
 describe("login", () => {
-
   before(() => {
     cy.visit("/");
     cy.waitForAsyncRequest();
   });
 
   afterEach(() => {
-    //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
     cy.waitForAsyncRequest();
     cy.clearAllSessionStorage();
@@ -29,31 +25,27 @@ describe("login", () => {
   });
 
   after(() => {
-    //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
 
-  it("greets with Data Hub Central title and footer links", () => {
+  it("Greets with Data Hub Central title and footer links", () => {
     cy.contains(Application.title);
     cy.contains("Privacy");
   });
 
-  it("should verify all the error conditions for login", () => {
-    //Verify username/password is required and login button is enabled
+  it("Should verify all the error conditions for login", () => {
     loginPage.getUsername().type("{enter}").blur();
     loginPage.getPassword().type("{enter}").blur();
     cy.contains("Username is required");
     cy.contains("Password is required");
     loginPage.getLoginButton().should("be.enabled");
 
-    //Verify invalid credentials error message
     loginPage.getUsername().type("test");
     loginPage.getPassword().type("password");
     loginPage.getLoginButton().click();
     cy.contains("The username and password combination is not recognized by MarkLogic.");
 
-    //Verify admin cannot login
     loginPage.getUsername().clear();
     loginPage.getPassword().clear();
     cy.fixture("users/admin").then(user => {
@@ -62,10 +54,9 @@ describe("login", () => {
     });
     loginPage.getLoginButton().click();
     cy.contains("User does not have the required permissions to run Data Hub.");
-
   });
 
-  it("user dropdown should disappear when clicked away", () => {
+  it("User dropdown should disappear when clicked away", () => {
     cy.loginAsTestUserWithRoles("hub-central-saved-query-user").withUI()
       .url().should("include", "/tiles");
     cy.get(`#user-dropdown`).click();
@@ -74,8 +65,7 @@ describe("login", () => {
     cy.get("#logOut").should("not.be.visible");
   });
 
-
-  it("should only enable Explorer tile for hub-central-user", () => {
+  it("Should only enable Explorer tile for hub-central-user", () => {
     cy.loginAsTestUserWithRoles("hub-central-saved-query-user").withUI()
       .url().should("include", "/tiles");
     //All tiles but Explore, should show a tooltip that says contact your administrator
@@ -94,7 +84,7 @@ describe("login", () => {
     projectInfo.getClearButton().should("be.disabled");
   });
 
-  it("should only enable Model and Explorer tile for hub-central-entity-model-reader", () => {
+  it("Should only enable Model and Explorer tile for hub-central-entity-model-reader", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withUI()
       .url().should("include", "/tiles");
     //All tiles but Explore and Model, should show a tooltip that says contact your administrator
@@ -109,8 +99,7 @@ describe("login", () => {
     modelPage.getAddButton().should("be.disabled");
   });
 
-  it("should only enable Load and Explorer tile for hub-central-load-reader", () => {
-
+  it("Should only enable Load and Explorer tile for hub-central-load-reader", () => {
     let stepName = "loadCustomersJSON";
     let flowName = "personJSON";
     cy.loginAsTestUserWithRoles("hub-central-load-reader").withUI()
@@ -144,12 +133,12 @@ describe("login", () => {
     loadPage.deleteStepDisabled(stepName).should("exist");
   });
 
-  it("should only enable Load and Explorer tile for hub-central-load-writer", () => {
+  it("Should only enable Load and Explorer tile for hub-central-load-writer", () => {
     let stepName = generateUniqueName("loadStep").substring(0, 20);
 
     cy.log("**Logging into the app as user with hub-central-load-writer role**");
     cy.loginAsTestUserWithRoles("hub-central-load-writer").withRequest();
-    loginPage.postLogin();
+    loginPage.navigateToMainPage();
 
     cy.log("**Checks that the user cant navigate to Model, Curate or Run tiles**");
     ["Model", "Curate", "Run"].forEach((tile) => {
@@ -158,6 +147,8 @@ describe("login", () => {
 
     cy.log("**Navigates to Load and adds a New Step**");
     toolbar.getLoadToolbarIcon().click();
+    cy.wait("@lastRequest");
+    cy.wait("@lastRequest");
     loadPage.addNewButton("card").should("be.visible").click();
 
     cy.log("**Writes the step name and saves changes**");
@@ -238,7 +229,7 @@ describe("login", () => {
     let entityTypeId = "Customer";
     let mapStepName = "mapCustomersJSON";
     cy.loginAsTestUserWithRoles("hub-central-mapping-reader").withRequest();
-    loginPage.postLogin();
+    loginPage.navigateToMainPage();
     //All tiles but Explore and Model, should show a tooltip that says contact your administrator
     ["Load", "Model", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
@@ -291,10 +282,9 @@ describe("login", () => {
     mappingStepDetail.getEditIcon().should("be.visible").click();
     mappingStepDetail.getCheckIcon().should("be.visible");
     mappingStepDetail.getCloseIcon().should("be.visible").click();
-
   });
 
-  it("should only enable Run and Explorer tile for hub-central-step-runner", () => {
+  it("Should only enable Run and Explorer tile for hub-central-step-runner", () => {
     const flowName = "personJSON";
     const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-step-runner").withUI()
@@ -341,7 +331,7 @@ describe("login", () => {
     explorePage.getTitleExplore().scrollIntoView().should("be.visible");
   });
 
-  it("should only enable Run and Explorer tile for hub-central-flow-writer", () => {
+  it("Should only enable Run and Explorer tile for hub-central-flow-writer", () => {
     const flowName = "personJSON";
     const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withUI()
@@ -370,7 +360,7 @@ describe("login", () => {
     cy.findByLabelText("No").click();
   });
 
-  it("should verify download of an HC project", () => {
+  it("Should verify download of an HC project", () => {
     cy.loginAsTestUserWithRoles("hub-central-downloader").withUI();
     projectInfo.getAboutProject().click();
     projectInfo.waitForInfoPageToLoad();
@@ -378,7 +368,7 @@ describe("login", () => {
     projectInfo.getDownloadProjectButton().click();
   });
 
-  it("should redirect to /tiles/explore when uri is undefined for /detail view bookmark", () => {
+  it("Should redirect to /tiles/explore when uri is undefined for /detail view bookmark", () => {
     let host = Cypress.config().baseUrl;
     cy.visit(`${host}?from=%2Ftiles%2Fexplore%2Fdetail`);
     loginPage.getUsername().type("hc-test-user");
@@ -390,7 +380,7 @@ describe("login", () => {
     // browsePage.getSelectedEntity().should("contain", "All Entities");
   });
 
-  it("should redirect a bookmark to login screen when not authenticated", () => {
+  it("Should redirect a bookmark to login screen when not authenticated", () => {
     let host = Cypress.config().baseUrl;
     //URL from bookmark
     cy.visit(`${host}?from=%2Ftiles%2Fcurate`);
@@ -404,10 +394,10 @@ describe("login", () => {
     cy.contains("No Entity Type");
   });
 
-  it("can login, navigate to modeling tile, logout, login and auto return to tile view", () => {
+  it("Can login, navigate to modeling tile, logout, login and auto return to tile view", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
       .withRequest();
-    loginPage.postLogin();
+    loginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
 
     // To verify on click operation works as expected
@@ -426,5 +416,4 @@ describe("login", () => {
       .url().should("include", "/tiles");
     cy.contains("Welcome to MarkLogic Data Hub Central");
   });
-
 });

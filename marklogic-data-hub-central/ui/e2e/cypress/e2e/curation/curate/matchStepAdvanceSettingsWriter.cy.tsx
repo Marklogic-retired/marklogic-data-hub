@@ -1,5 +1,5 @@
+import {advancedSettings} from "../../../support/components/common/index";
 import "cypress-wait-until";
-import {Application} from "../../../support/application.config";
 import {
   toolbar,
   createEditStepDialog
@@ -7,23 +7,22 @@ import {
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
-import {advancedSettings} from "../../../support/components/common/index";
 
 const matchStep = "matchCustomerTesting";
 
 describe("Validate Advance Settings for hub-central-match-merge-writer role", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-match-merge-writer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", "matchCustomerTesting");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Navigate to curate tab and Open Customer entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -31,6 +30,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     curatePage.selectMatchTab("Customer");
     cy.waitUntil(() => curatePage.addNewStep("Customer"));
   });
+
   it("Creating a new match step", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
@@ -41,6 +41,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
+
   it("Validate the default Advanced settings values", () => {
     loadPage.editStepInCardView(matchStep).click({force: true});
     loadPage.switchEditAdvanced().click();
@@ -56,6 +57,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     advancedSettings.toggleCustomHook();
     advancedSettings.getCustomHook().should("have.text", "{}");
   });
+
   it("Validate the default Advanced settings are enabled", () => {
     advancedSettings.getSourceDatabaseSelectInput().should("not.have.attr", "disabled");
     advancedSettings.getTargetDatabaseSelectInput().should("not.have.attr", "disabled");
@@ -66,6 +68,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     advancedSettings.getInterceptors().should("be.enabled");
     advancedSettings.getCustomHook().should("be.enabled");
   });
+
   it("Validate the Advanced settings options", () => {
     advancedSettings.getSourceDatabaseSelectWrapper().click();
     advancedSettings.getSourceDatabaseSelectMenuList().should("contain.text", "data-hub-STAGING");

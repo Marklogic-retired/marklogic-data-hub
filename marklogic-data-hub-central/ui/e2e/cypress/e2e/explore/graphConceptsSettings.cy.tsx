@@ -1,10 +1,8 @@
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
 import dataModelDisplaySettingsModal from "../../support/components/explore/data-model-display-settings-modal";
-import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import {BaseConcepts} from "../../support/types/base-concepts";
+import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
 
 const defaultConceptData = {
   name: BaseConcepts.SHOETYPE,
@@ -15,6 +13,7 @@ const defaultConceptData = {
     HEX: "#EEEFF1",
   }
 };
+
 // We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
 // "#F3BEBE" == "rgb(243, 190, 190)"
 // "#D1F5E8" == "rgb(238, 239, 241)"
@@ -35,14 +34,7 @@ const newConceptData = {
 
 describe("Entity Type Settings Modal", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
   });
 
@@ -79,7 +71,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getConceptIconSearchInput(defaultConceptData.name).type(newConceptData.icon);
     dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.name).find("svg").last().click();
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", newConceptData.icon);
-
 
     cy.log("**Cancel the edition and verify that the modal close**");
     dataModelDisplaySettingsModal.getModalCancelButton().click();
@@ -127,7 +118,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getConceptIconSearchInput(defaultConceptData.name).type(newConceptData.icon);
     dataModelDisplaySettingsModal.getConceptIconMenu(defaultConceptData.name).find("svg").last().click();
     dataModelDisplaySettingsModal.getConceptIconButtonWrapper(defaultConceptData.name).should("have.attr", "data-icon", newConceptData.icon);
-
 
     cy.log("**Save the changes**");
     dataModelDisplaySettingsModal.getModalSaveButton().click();

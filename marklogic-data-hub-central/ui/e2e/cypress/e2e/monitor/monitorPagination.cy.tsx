@@ -1,26 +1,13 @@
-/// <reference types="cypress"/>
-
-import {Application} from "../../support/application.config";
-import "cypress-wait-until";
-import LoginPage from "../../support/pages/login";
-import table from "../../support/components/common/tables";
-import monitor from "../../support/pages/monitor";
 import pagination from "../../support/components/common/pagination";
+import table from "../../support/components/common/tables";
 import {toolbar} from "../../support/components/common";
+import monitor from "../../support/pages/monitor";
 import runPage from "../../support/pages/run";
+import "cypress-wait-until";
 
 describe("Validate pagination for the Monitor tile", () => {
-
   before(() => {
-    cy.log("**Go to the Home Page and log into the app**");
-    cy.visit("/");
-    cy.contains(Application.title);
-
-    //Login into the app
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
-
-    cy.log("**Go to the Monitor page**");
     cy.visit("/tiles/monitor");
   });
 
@@ -30,7 +17,7 @@ describe("Validate pagination for the Monitor tile", () => {
   });
 
   it("Validate the default amount for pagination it's 20", () => {
-    cy.log("**Validate table records length it's not grather than 20**");
+    cy.log("**Validate table records length it's not greater than 20**");
     table.getTableRows().should("not.be.empty");
     table.getTableRows().should("have.length.at.most", 20);
 
@@ -59,7 +46,6 @@ describe("Validate pagination for the Monitor tile", () => {
   });
 
   it("Go to another tile and come back to make sure pagination continues set to 10", () => {
-
     table.getTableRows().should("not.be.empty");
 
     cy.log("**Go to Run page**");
@@ -71,5 +57,4 @@ describe("Validate pagination for the Monitor tile", () => {
     table.getTableRows().should("have.length.at.most", 10);
     pagination.getPaginationSizeSelected().should("have.text", "10 / page10 / page");
   });
-
 });

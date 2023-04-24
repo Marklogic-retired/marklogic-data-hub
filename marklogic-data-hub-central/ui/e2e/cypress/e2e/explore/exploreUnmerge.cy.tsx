@@ -1,12 +1,11 @@
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
-import graphExplore from "../../support/pages/graphExplore";
-import LoginPage from "../../support/pages/login";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import {compareValuesModal} from "../../support/components/matching/index";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import browsePage from "../../support/pages/browse";
+import graphExplore from "../../support/pages/graphExplore";
+import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
 
 describe("Test '/Explore' graph right panel", () => {
   beforeEach(() => {
@@ -14,14 +13,10 @@ describe("Test '/Explore' graph right panel", () => {
     cy.clearAllLocalStorage();
   });
 
-
-
   it("Validate Unmerge from nodes and table on graph view", () => {
     cy.clearAllSessionStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
@@ -45,13 +40,10 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
 
-
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
     browsePage.waitForSpinnerToDisappear();
-
-
 
     cy.log("**Verify icon dont display when node is not merged**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_70);
@@ -62,8 +54,6 @@ describe("Test '/Explore' graph right panel", () => {
       canvas.click(prodCoordinates.x, prodCoordinates.y, {force: true});
     });
     graphExplore.getUnmergeIcon().should("not.exist");
-
-
 
     cy.log("**Verify unmerged option not visible in unmerged node**");
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
@@ -111,17 +101,12 @@ describe("Test '/Explore' graph right panel", () => {
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
     });
-
     graphExplore.getUnmergeOption().should("be.visible");
-
   });
 
-
   it("Merge Icon disabled, missing permission", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsOperator().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.log("** Click notification bell icon to open modal **");
     toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
@@ -131,10 +116,8 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Merge icon disabled in all Data, missing permission", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsOperator().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     toolbar.getExploreToolbarIcon().click();
     cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
@@ -158,12 +141,9 @@ describe("Test '/Explore' graph right panel", () => {
     cy.findByText("Merge: Contact your security administrator for access.");
   });
 
-
   it("unMerge icon disabled on SnippetView/TableView and  when user doesn't have writeMatching and writeMerging rights ", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsOperator().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
 
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
@@ -197,7 +177,6 @@ describe("Test '/Explore' graph right panel", () => {
     cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
     browsePage.waitForSpinnerToDisappear();
 
-
     cy.log("**Picking up a node available to merge**");
     graphExplore.focusNode(ExploreGraphNodes.MERGED_RECORD);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.MERGED_RECORD).then((nodePositions: any) => {
@@ -226,10 +205,8 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Navigate to Table View and Filter Person entity", () => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     //Saving Local Storage to preserve session
 
     cy.log("**Go to Explore section**");

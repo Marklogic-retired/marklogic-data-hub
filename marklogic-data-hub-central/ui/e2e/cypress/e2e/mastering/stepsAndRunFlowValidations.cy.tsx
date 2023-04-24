@@ -1,22 +1,23 @@
-import {Application} from "../../support/application.config";
+import {confirmationModal, createEditStepDialog, toolbar} from "../../support/components/common/index";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import curatePage from "../../support/pages/curate";
+import browsePage from "../../support/pages/browse";
+import LoginPage from "../../support/pages/login";
+import modelPage from "../../support/pages/model";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
-import LoginPage from "../../support/pages/login";
+
 import {
   entityTypeModal,
   entityTypeTable,
   propertyModal,
   propertyTable,
 } from "../../support/components/model/index";
-import modelPage from "../../support/pages/model";
-import {confirmationModal, createEditStepDialog, toolbar} from "../../support/components/common/index";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import curatePage from "../../support/pages/curate";
+
 import {
   createEditMappingDialog,
   mappingStepDetail
 } from "../../support/components/mapping/index";
-import browsePage from "../../support/pages/browse";
 
 const loadStepName = "loadAgent";
 const flowName1 = "testFlows1";
@@ -27,19 +28,17 @@ const mapStep = "agentMap";
 const matchStep = "agentMatch";
 const mergeStep = "agentMerge";
 
-
 describe("Validate the scenarios when the steps are added in different flows", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadAgent");
@@ -53,6 +52,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Create Client load Step", () => {
     toolbar.getLoadToolbarIcon().click({force: true});
     cy.waitForAsyncRequest();
@@ -63,6 +63,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     loadPage.saveButton().click();
     cy.findByText(loadStepName).should("be.visible");
   });
+
   it("Add Client load Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.addStepToNewFlow(loadStepName);
     cy.waitForAsyncRequest();
@@ -80,6 +81,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     runPage.verifyStepRunResult(loadStepName, "success");
     runPage.closeFlowStatusModal(flowName1);
   });
+
   it("Create Client entity and Add properties", {defaultCommandTimeout: 120000}, () => {
     toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
@@ -107,6 +109,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
+
   it("Create Client mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitForAsyncRequest();
@@ -121,6 +124,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     curatePage.dataPresent().scrollIntoView().should("be.visible");
     curatePage.verifyStepDetailsOpen(mapStep);
   });
+
   it("Map source to Client entity", () => {
     mappingStepDetail.setXpathExpressionInput("Name", "Name");
     mappingStepDetail.setXpathExpressionInput("ID", "ID");
@@ -137,6 +141,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
       }
     });
   });
+
   it("Add Client map Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     curatePage.addStepToNewFlow(mapStep);
     cy.waitForAsyncRequest();
@@ -149,6 +154,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName2);
   });
+
   it("Create Client match step", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitForAsyncRequest();
@@ -164,7 +170,8 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
-  it("Add Thresholds and rulesets by hitting API ", () => {
+
+  it("Add Thresholds and rule sets by hitting API ", () => {
     cy.request({
       method: "PUT",
       url: `/api/steps/matching/${matchStep}`,
@@ -173,6 +180,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
       console.warn(`Match Step ${matchStep}: ${JSON.stringify(response.statusText)}`);
     });
   });
+
   it("Add Client match Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     curatePage.addStepToNewFlow(matchStep);
     cy.waitForAsyncRequest();
@@ -185,6 +193,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     runPage.verifyStepRunResult(matchStep, "success");
     runPage.closeFlowStatusModal(flowName3);
   });
+
   it("Create Client merge step ", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitForAsyncRequest();
@@ -205,6 +214,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
+
   it("Add Client merge Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     curatePage.addStepToNewFlow(mergeStep);
     cy.waitForAsyncRequest();

@@ -1,29 +1,34 @@
-import {Application} from "../../../support/application.config";
-import {toolbar} from "../../../support/components/common";
-import "cypress-wait-until";
-import LoginPage from "../../../support/pages/login";
-import browsePage from "../../../support/pages/browse";
-import explorePage from "../../../support/pages/explore";
-import runPage from "../../../support/pages/run";
 import {compareValuesModal} from "../../../support/components/matching";
+import {toolbar} from "../../../support/components/common";
+import explorePage from "../../../support/pages/explore";
+import browsePage from "../../../support/pages/browse";
+import LoginPage from "../../../support/pages/login";
+import runPage from "../../../support/pages/run";
+import "cypress-wait-until";
+
+const userRoles = [
+  "hub-central-flow-writer",
+  "hub-central-match-merge-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer"
+];
 
 describe("Merge Notification Functionality From Explore Card View", () => {
-
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Run Match and Merge steps to generate Notification Docs", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.getFlowName("personJSON").should("be.visible");
-    runPage.toggleExpandFlow("personJSON");
+    runPage.toggleFlowAccordion("personJSON");
     cy.log("** Run Match and Merge Steps **");
     runPage.runStep("match-person", "personJSON");
     runPage.verifyStepRunResult("match-person", "success");
@@ -34,6 +39,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
     runPage.closeFlowStatusModal("personJSON");
   });
+
   it("Check Notifications Present in Header", () => {
     toolbar.getNotificationBadgeCount().should("have.text", 2);
 
@@ -45,6 +51,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     toolbar.closeNotificationModal();
     toolbar.getNotificationTitle().should("not.exist");
   });
+
   it("Verify Merge Notification Through Table", () => {
 
     cy.log("** Click notification bell icon to open modal **");
@@ -74,6 +81,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.log("** verify merged notification is removed from notification table **");
     browsePage.getMergeRowIcon(2).should("not.exist");
   });
+
   it("Check table render or empty notifications in modal", () => {
     toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
@@ -93,9 +101,13 @@ describe("Merge Notification Functionality From Explore Card View", () => {
       toolbar.closeNotificationModal();
     });
   });
+
   it("Run Match and Merge steps to generate Notification Docs", () => {
+    cy.intercept("GET", "/api/flows/personJSON/latestJobInfo").as("personJSON");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.wait("@personJSON").wait("@personJSON");
     runPage.getFlowName("personJSON").should("be.visible");
+    runPage.toggleExpandFlow("personJSON");
     cy.log("** Run Match and Merge Steps **");
     runPage.runStep("match-person", "personJSON");
     runPage.verifyStepRunResult("match-person", "success");
@@ -106,6 +118,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);
     runPage.closeFlowStatusModal("personJSON");
   });
+
   it("Navigate to Explore tile All Data View", () => {
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();

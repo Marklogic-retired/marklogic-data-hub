@@ -1,5 +1,3 @@
-/// <reference types="cypress"/>
-
 import modelPage from "../../support/pages/model";
 import {
   entityTypeModal,
@@ -15,22 +13,24 @@ import graphVis from "../../support/components/model/graph-vis";
 import curatePage from "../../support/pages/curate";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
-import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
-describe("Entity Modeling: Graph View", () => {
+const userRoles = [
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-mapping-writer",
+  "hub-central-saved-query-user"
+];
 
+
+describe("Entity Modeling: Graph View", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    //login with valid account
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
   });
 
   beforeEach(() => {
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
   });
 
@@ -68,6 +68,7 @@ describe("Entity Modeling: Graph View", () => {
     graphViewSidePanel.getSelectedEntityHeading("AThisIsVeryLongNameHavingMoreThan20Characters").should("not.exist");
     cy.publishDataModel();
   });
+
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("table");
     modelPage.getAddButton().should("be.visible").click({force: true});
@@ -81,10 +82,8 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.getTypeFromDropdown("More number types");
     propertyModal.getCascadedTypeFromDropdown("byte");
     propertyModal.getYesRadio("identifier").click();
-    //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
     propertyTable.getIdentifierIcon("patientID").should("exist");
-    //propertyTable.getWildcardIcon('patientID').should('exist');
     propertyTable.getAddPropertyButton("Patients").should("exist");
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("personType");
@@ -117,6 +116,7 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.getFacetIcon("health").should("exist");
     propertyTable.getSortIcon("health").should("exist");
   });
+
   it("Delete an entity from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Patients");
     modelPage.scrollPageBottom();
@@ -173,7 +173,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.getModalHeader().should("not.exist");
   });
 
-  it("can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
+  it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -183,7 +183,6 @@ describe("Entity Modeling: Graph View", () => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
-
 
     relationshipModal.verifyRelationshipValue("usedBy");
     relationshipModal.verifyForeignKeyValue("email");
@@ -261,7 +260,7 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
   });
 
-  it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
+  it("Can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
@@ -363,7 +362,7 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.viewEntityInGraphView("Person");
   });
 
-  it("relationships are not present in mapping until published", () => {
+  it("Relationships are not present in mapping until published", () => {
     toolbar.getCurateToolbarIcon().click();
     confirmationModal.getNavigationWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
@@ -468,7 +467,6 @@ describe("Entity Modeling: Graph View", () => {
     graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
-
 
     confirmationModal.deleteRelationship();
     cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-yes").click());

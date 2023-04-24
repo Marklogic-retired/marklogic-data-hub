@@ -1,6 +1,8 @@
-/// <reference types="cypress"/>
-
+import {confirmationModal} from "../../support/components/common/index";
+import graphVis from "../../support/components/model/graph-vis";
 import modelPage from "../../support/pages/model";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
@@ -10,36 +12,26 @@ import {
   propertyTable,
   relationshipModal
 } from "../../support/components/model/index";
-import {confirmationModal} from "../../support/components/common/index";
-import {Application} from "../../support/application.config";
-import LoginPage from "../../support/pages/login";
-import graphVis from "../../support/components/model/graph-vis";
-import "cypress-wait-until";
 
 describe("Entity Modeling: Reader Role", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
-
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
   });
-  //login with valid account
+
   beforeEach(() => {
     cy.visit("/tiles/model");
     cy.wait(2000);
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-
   });
+
   after(() => {
-    //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
   });
-  it("can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
-    // Removed navigation tests unitl DHFPROD-6152 is resolved
+
+  it("Can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
+    // Removed navigation tests until DHFPROD-6152 is resolved
 
     // cy.waitUntil(() => entityTypeTable.getEntityLastProcessed('Person')).click();
     // tiles.getExploreTile().should('exist');
@@ -95,7 +87,7 @@ describe("Entity Modeling: Reader Role", () => {
     modelPage.verifyModelingInfo();
   });
 
-  it("can navigate to graph view from table view", () => {
+  it("Can navigate to graph view from table view", () => {
     entityTypeTable.viewEntityInGraphView("Customer");
 
     graphView.getFilterInput().should("be.visible");
@@ -158,12 +150,10 @@ describe("Entity Modeling: Reader Role", () => {
         });
     }
 
-
     modelPage.scrollPageTop();
     // To verify modeling info is rendered properly in graph view
     modelPage.clickModelingInfoIcon();
     modelPage.verifyModelingInfo();
-
 
     //To verify Pan and Zoom in buttons are rendered properly
     cy.get(".vis-zoomOut").should("be.visible");
@@ -173,6 +163,5 @@ describe("Entity Modeling: Reader Role", () => {
     cy.get(".vis-zoomExtends").should("be.visible");
     cy.get(".vis-right").should("be.visible");
     cy.get(".vis-left").should("be.visible");
-
   });
 });

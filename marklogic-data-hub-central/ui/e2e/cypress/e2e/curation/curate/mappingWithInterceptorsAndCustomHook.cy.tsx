@@ -1,4 +1,3 @@
-import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
@@ -6,7 +5,6 @@ import {
   mappingStepDetail
 } from "../../../support/components/mapping/index";
 import loadPage from "../../../support/pages/load";
-//import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
@@ -16,14 +14,18 @@ import "cypress-wait-until";
 const flowName = "orderFlow";
 const loadStep = "loadOrder";
 const mapStep = "mapOrder";
+const userRoles = ["hub-central-flow-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer"
+];
+
 
 describe("Create and verify load steps, map step and flows with interceptors & custom hook", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrder");
@@ -31,6 +33,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.deleteFlows("orderFlow");
     cy.resetTestUser();
   });
+
   it("Create and Edit load step", () => {
     toolbar.getLoadToolbarIcon().click();
     loadPage.stepName("ingestion-step").should("be.visible");
@@ -38,29 +41,25 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.saveButton().should("be.enabled");
     loadPage.stepNameInput().type(loadStep);
     loadPage.stepDescriptionInput().type("load order with interceptors");
-    //verify advanced setting modifications during creation
     loadPage.switchEditAdvanced().click();
-    // add interceptor to load step
     advancedSettingsDialog.setStepInterceptor("loadTile/orderCategoryCodeInterceptor");
 
     loadPage.confirmationOptions("Save").click({force: true});
     cy.waitForAsyncRequest();
     cy.findByText(loadStep).should("be.visible");
 
-    // Open step settings and switch to Advanced tab
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();
 
-    //interceptor should already be set during creation
     cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
     cy.get("#interceptors").should("not.be.empty");
 
-    //add customHook to load step
     advancedSettingsDialog.setCustomHook("loadTile/addPrimaryKeyHook");
 
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should("not.exist");
   });
+
   it("Verify load step with duplicate name cannot be created", () => {
     loadPage.addNewButton("card").click();
     loadPage.saveButton().should("be.enabled");
@@ -73,8 +72,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     cy.wait(1000);
   });
+
   it("Add step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("/api/jobs/**").as("getJobs");
     loadPage.addStepToNewFlow(loadStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -86,7 +85,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", loadStep, flowName);
-    //Run the ingest with JSON
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10259.json");
@@ -94,6 +92,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     runPage.verifyStepRunResult(loadStep, "success");
     runPage.closeFlowStatusModal(flowName);
   });
+
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitForAsyncRequest();
@@ -104,17 +103,15 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
-    //verify advanced setting modifications during creation
     loadPage.switchEditAdvanced().click();
-    // add interceptor to map step
     advancedSettingsDialog.setStepInterceptor("curateTile/orderDateInterceptor");
     createEditMappingDialog.saveButton().click({force: true});
     cy.waitForAsyncRequest();
     curatePage.dataPresent().should("exist");
-    //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
     browsePage.waitForSpinnerToDisappear();
   });
+
   it("Validate xpath expressions are blank by default", () => {
     curatePage.xpathExpression("orderId").should("have.value", "");
     curatePage.xpathExpression("address").should("have.value", "");
@@ -143,7 +140,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.setXpathExpressionInput("shippedDate", "ShippedDate");
     cy.findByTestId("shippedDate-mapexpression").blur();
     curatePage.dataPresent().should("exist");
-    // Test the mappings
+
     mappingStepDetail.testMap().should("be.enabled");
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Order", "orderId", "10259");
@@ -158,6 +155,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.validateMapValueP("Order", "shipRegion", "region1\nregion4\n");
     mappingStepDetail.validateMapValue("Order", "shippedDate", "1996-07-17T00:28:30");
   });
+
   it("Verify mapping step filtering for Entity table", () => {
     mappingStepDetail.searchIcon("Order").click({force: true});
     mappingStepDetail.setEntitySearch("city");
@@ -172,59 +170,47 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.searchIcon("Order").click({force: true});
     mappingStepDetail.resetEntitySearch().click();
   });
+
   it("Edit Map step", () => {
-    //Go back to curate
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
-    // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
     curatePage.dataPresent().should("exist");
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Order", "orderId", "10259");
     mappingStepDetail.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();
-    //interceptor should already be set during creation
     cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
     cy.get("#interceptors").should("not.be.empty");
-    // add customHook to mapping step
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
 
-    //verify that step details page remains opens when step settings was opened from within the step details page
     curatePage.dataPresent().should("exist");
     curatePage.verifyStepDetailsOpen(mapStep);
     cy.wait(2000);
   });
 
   it("verify Map step settings change from within map step details page", () => {
-    //Check that the source data is visible
     curatePage.dataPresent().should("exist");
     mappingStepDetail.entityData().should("exist");
-    // Open step settings and switch to Advanced tab in step settings
     mappingStepDetail.stepSettingsLink().click();
     createEditMappingDialog.getMappingDescriptionInput().should("have.value", "An order mapping with custom interceptors");
     createEditMappingDialog.setMappingDescription("Test description for Order");
     curatePage.switchEditAdvanced().click();
-    // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
-    //verify that step details is updated based on recent changes
-    // cy.waitUntil(() => mappingStepDetail.noDataAvailable().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
 
-    //Change the source Database again to see if the previous data comes back
     mappingStepDetail.stepSettingsLink().click();
     createEditMappingDialog.getMappingDescriptionInput().should("have.value", "Test description for Order");
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     curatePage.switchEditAdvanced().click();
-    // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
-    //Step source data is present now.
     curatePage.dataPresent().should("exist");
     curatePage.verifyStepDetailsOpen(mapStep);
 
@@ -241,13 +227,10 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read,data-hub-common,update");
     advancedSettingsDialog.cancelEntitySettings();
 
-    //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
   });
 
-
   it("Verify mapping step with duplicate name cannot be created", () => {
-    //Go back to curate homepage
     cy.visit("/");
     cy.waitForAsyncRequest();
     toolbar.getCurateToolbarIcon().should("be.visible").click({force: true});
@@ -257,13 +240,14 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput("test");
     createEditMappingDialog.saveButton().click({force: true});
-    //error message should be displayed instead of step details auto open
     cy.findByLabelText(`${mapStep}-details-header`).should("not.exist");
     loadPage.duplicateStepErrorMessage();
     loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-  /*  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
+});
+
+/*  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
     // link to settings and back
     curatePage.openMappingStepDetail("Order", mapStep);
     cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible")).click();
@@ -313,4 +297,3 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
   });*/
-});

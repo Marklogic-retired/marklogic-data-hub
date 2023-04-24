@@ -22,7 +22,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("select \"all entities\" and verify table default columns", () => {
+  it("Select \"all entities\" and verify table default columns", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.getClearAllFacetsButton().then(($ele) => {
@@ -52,7 +52,7 @@ describe("json scenario for table on browse documents page", () => {
     });
   });
 
-  it("select \"all entities\" and verify table", () => {
+  it("Select \"all entities\" and verify table", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     //check table rows
@@ -61,7 +61,7 @@ describe("json scenario for table on browse documents page", () => {
     table.getTableColumns().should("have.length", 5);
   });
 
-  it("select Person entity and verify table", () => {
+  it("Select Person entity and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
@@ -72,7 +72,7 @@ describe("json scenario for table on browse documents page", () => {
     table.getTableColumns().should("to.have.length.of.at.most", 10);
   });
 
-  it("search for a simple text/query and verify content", () => {
+  it("Search for a simple text/query and verify content", () => {
     entitiesSidebar.getMainPanelSearchInput("Alice");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
@@ -81,7 +81,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getHCTableRows().should("have.length", 2);
   });
 
-  it("verify instance view of the document without pk", () => {
+  it("Verify instance view of the document without pk", () => {
     cy.wait(2000);
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
@@ -112,7 +112,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
   });
 
-  it("select Product entity and long text should be trimmed and tooltip appears on hover", () => {
+  it("Select Product entity and long text should be trimmed and tooltip appears on hover", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.removeLastSelectedBaseEntity();
     entitiesSidebar.selectBaseEntityOption("Product");
@@ -122,7 +122,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.findByText("product5");
   });
 
-  it("verify instance view of the document with pk", () => {
+  it("Verify instance view of the document with pk", () => {
     entitiesSidebar.getMainPanelSearchInput("10248");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
@@ -139,7 +139,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentRecordType().should("contain", "json");
   });
 
-  it("verify source view of the document", () => {
+  it("Verify source view of the document", () => {
     explorePage.backToResults();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -210,7 +210,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
-  it.skip("search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
+  it.skip("Search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -246,7 +246,7 @@ describe("json scenario for table on browse documents page", () => {
     // browsePage.getTotalDocuments().should("be.equal", 2);
   });
 
-  it("verify hub properties grey facets are not being removed when entity properties are selected", () => {
+  it("Verify hub properties grey facets are not being removed when entity properties are selected", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -320,7 +320,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("email", "jacquelineknowles@nutralab.com").should("not.be.checked");
   });
 
-  it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+  it("Apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
     entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");

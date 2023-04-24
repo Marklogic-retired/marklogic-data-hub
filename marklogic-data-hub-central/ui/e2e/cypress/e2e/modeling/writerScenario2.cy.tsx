@@ -1,6 +1,10 @@
-/// <reference types="cypress"/>
-
+import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {ConfirmationType} from "../../support/types/modeling-types";
+import graphVis from "../../support/components/model/graph-vis";
+import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
+import "cypress-wait-until";
+
 import {
   entityTypeModal,
   entityTypeTable,
@@ -10,30 +14,30 @@ import {
   relationshipModal,
   structuredTypeModal,
 } from "../../support/components/model/index";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
-import {Application} from "../../support/application.config";
-import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
-import "cypress-wait-until";
-import graphVis from "../../support/components/model/graph-vis";
 
+const userRoles = [
+  "hub-central-entity-model-reader",
+  "hub-central-entity-model-writer",
+  "hub-central-mapping-writer",
+  "hub-central-saved-query-user"
+];
+
+/* Scenarios: can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property,
+  delete structured type, and delete entity, can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties,
+  save all entities, delete an entity with relationship warning. */
 describe("Entity Modeling: Writer Role", () => {
-  //Scenarios: can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property, delete structured type, and delete entity, can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, save all entities, delete an entity with relationship warning
-  //login with valid account
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
-
-    //Setup hubCentral config for testing
     cy.setupHubCentralConfig();
   });
+
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
   });
+
   it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
     toolbar.getModelToolbarIcon().click({force: true});
     cy.waitForAsyncRequest();
@@ -62,6 +66,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.get("[title=\"Structured: Address\"]").should("exist");
     propertyModal.getCancelButton();
   });
+
   it("Add basic property to structured type", () => {
     propertyTable.getAddPropertyToStructureType("address").should("be.visible").click();
     propertyModal.getStructuredTypeName().should("have.text", "Address");
@@ -84,6 +89,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPropertyName("street").should("exist");
     modelPage.selectView("table");
   });
+
   it("Create a property with name 'rowId' and get confirmation modal", () => {
     propertyTable.getAddPropertyButton("AddEntity").should("be.visible").click({force: true});
     propertyModal.clearPropertyName();
@@ -104,6 +110,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("rowId").should("exist");
   });
+
   it("Add structured property to structured type", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("zip");
@@ -139,14 +146,15 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
+
   it("Add a Structured sub-property inside one of the same type (the option is disabled)", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Structured");
     propertyModal.getDisabledTypeFromDropdown().should("exist");
     propertyModal.getCancelButton();
-
   });
+
   it("Add related property to structured type and test foreign key selection", () => {
     propertyTable.getAddPropertyToStructureType("address").click();
     propertyModal.newPropertyName("OrderedBy");
@@ -181,6 +189,7 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.cancelModal();
     modelPage.selectView("table");
   });
+
   it("Add properties to nested structured type", () => {
     propertyTable.getAddPropertyToStructureType("zip").click();
     propertyModal.getStructuredTypeName().should("have.text", "Address.Zip");
@@ -194,6 +203,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
   });
+
   it("Test for additional nesting of structured types", () => {
     cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
     propertyTable.getAddPropertyToStructureType("zip").click({force: true});
@@ -221,7 +231,6 @@ describe("Entity Modeling: Writer Role", () => {
     // propertyTable.getPiiIcon("fourDigit").should("exist");
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
-
 
   it("Reuse Structured type, add property to structured type and confirm it gets updated", () => {
     cy.log("**Create a new property using an existing Structured type**");
@@ -306,6 +315,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getMultipleIcon("streetAlt").should("exist");
     propertyTable.getPiiIcon("streetAlt").should("not.exist");
   });
+
   it("Rename property and change type from structured to relationship", () => {
     propertyTable.editProperty("address-address");
     propertyModal.clearPropertyName();
@@ -323,6 +333,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getIdentifierIcon("alt_address").should("not.exist");
     propertyTable.getPiiIcon("alt_address").should("not.exist");
   });
+
   it("Change relationship property to structured", () => {
     propertyTable.editProperty("alt_address");
     propertyModal.getToggleStepsButton().should("not.exist");
@@ -350,6 +361,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("exist");
   });
+
   it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
     //Structured Property
     //cy.get("[data-row-key*=\"address\"] [aria-label=\"Expand row\"]").click();

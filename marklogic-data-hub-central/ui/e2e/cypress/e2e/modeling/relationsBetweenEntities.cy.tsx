@@ -1,7 +1,5 @@
-/// <reference types="cypress"/>
-
-import graphVis from "../../support/components/model/graph-vis";
 import {graphView, relationshipModal} from "../../support/components/model";
+import graphVis from "../../support/components/model/graph-vis";
 import modelPage from "../../support/pages/model";
 
 describe(("relationBetweenEntities"), () => {
@@ -108,7 +106,6 @@ describe(("relationBetweenEntities"), () => {
       relationshipModal.getDeleteRelationshipIcon().click();
       relationshipModal.confirmDeleteRel();
     });
-
   });
 
   it("Truncate text for a long relationship name between entities", () => {
@@ -214,7 +211,5 @@ describe(("relationBetweenEntities"), () => {
       relationshipModal.getDeleteRelationshipIcon().click();
       relationshipModal.confirmDeleteRel();
     });
-
   });
-
 });

@@ -1,27 +1,28 @@
-import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
+import curatePage from "../../../support/pages/curate";
+import LoginPage from "../../../support/pages/login";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
 } from "../../../support/components/mapping/index";
-import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
+
 import "cypress-wait-until";
 
 const loadStep = "loadOrderCustomHeader";
 const mapStep = "mapParameterModule";
+const userRoles = ["hub-central-flow-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer"
+];
 
 describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
   });
-  after(() => {
-    cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("mapping", "mapParameterModule");
 
+  after(() => {
+    cy.deleteSteps("mapping", "mapParameterModule");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -51,6 +52,7 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     advancedSettingsDialog.saveButton().should("be.visible").click({force: true});
     curatePage.verifyStepDetailsOpen(mapStep);
   });
+
   it("Edit Mapping step with parameter module path", () => {
     //Go back to curate homepage
     cy.visit("/tiles/curate");

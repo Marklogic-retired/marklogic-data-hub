@@ -1,24 +1,29 @@
-import {Application} from "../../../support/application.config";
-import {toolbar} from "../../../support/components/common";
 import {advancedSettings, createEditStepDialog} from "../../../support/components/merging/index";
-import curatePage from "../../../support/pages/curate";
-import {confirmYesNo} from "../../../support/components/common/index";
-import "cypress-wait-until";
-import LoginPage from "../../../support/pages/login";
 import {mappingStepDetail} from "../../../support/components/mapping/index";
+import {confirmYesNo} from "../../../support/components/common/index";
+import {toolbar} from "../../../support/components/common";
+import curatePage from "../../../support/pages/curate";
+import LoginPage from "../../../support/pages/login";
+
+import "cypress-wait-until";
 
 const stepName = "mapping-step";
+const userRoles = [
+  "hub-central-flow-writer",
+  "hub-central-match-merge-writer",
+  "hub-central-mapping-writer",
+  "hub-central-load-writer",
+  "hub-central-custom-writer"
+];
 
-describe("Custom step settings: ", () => {
-
+describe("Custom step settings", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-custom-writer").withRequest();
-    LoginPage.postLogin();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
+    LoginPage.navigateToMainPage();
     toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
   });
+
   it("Validate step name is disabled, changes are discarded on cancel", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
@@ -77,7 +82,7 @@ describe("Custom step settings: ", () => {
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
     advancedSettings.additionalSettingsInput().should("contain.value", `"foo": "bar"`);
 
-    // delete one prop.  other prop should remain
+    cy.log("One Prop deleted. Other prop should remain");
     advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value"{}}`, {timeout: 2000});
     advancedSettings.saveSettingsButton(stepName).click();
     cy.waitForAsyncRequest();
@@ -89,11 +94,10 @@ describe("Custom step settings: ", () => {
     advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
     advancedSettings.additionalSettingsInput().should("not.contain.value", `"foo": "bar"`);
 
-    // clear all props
+    cy.log("Clear all props");
     advancedSettings.additionalSettingsInput().clear();
     advancedSettings.saveSettingsButton(stepName).click();
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(stepName);
   });
-
 });

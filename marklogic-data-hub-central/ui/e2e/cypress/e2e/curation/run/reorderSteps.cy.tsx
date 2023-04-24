@@ -1,29 +1,26 @@
-import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
-import runPage from "../../../support/pages/run";
-import loadPage from "../../../support/pages/load";
 import LoginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
 
 describe("Run Tile tests", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
-    LoginPage.postLogin();
   });
+
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
+    LoginPage.navigateToMainPage();
     toolbar.getRunToolbarIcon().click({force: true});
     runPage.getFlowName("personJSON").should("be.visible");
   });
+
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
     cy.deleteFlows("testPerson");
     cy.resetTestUser();
   });
 
-  it("can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
+  it("Can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
     cy.wait(3000);
     const flowName = "testPerson";
     //Verify create flow and add all user-defined steps to flow via Run tile
@@ -58,5 +55,4 @@ describe("Run Tile tests", () => {
     runPage.moveStepLeft("master-person");
     runPage.moveStepLeft("merge-xml-person");
   });
-
 });

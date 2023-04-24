@@ -1,11 +1,9 @@
-/// <reference types="cypress"/>
-
-import {Application} from "../../../support/application.config";
 import {createEditStepDialog, toolbar} from "../../../support/components/common";
 import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
 import curatePage from "../../../support/pages/curate";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
+
 import "cypress-wait-until";
 
 describe("Mapping validations for session storage and table filtering", () => {
@@ -13,14 +11,11 @@ describe("Mapping validations for session storage and table filtering", () => {
   let expandedRows: string[][] = [];
 
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
-    cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -40,12 +35,12 @@ describe("Mapping validations for session storage and table filtering", () => {
     cy.findAllByText("more").first().click();
     cy.findByText("less").should("be.visible");
   });
+
   it("Validate session storage is working for source table", () => {
     mappingStepDetail.expandDropdownPagination();
     mappingStepDetail.selectPagination("5 / page");
     mappingStepDetail.expandAllSourceTable();
     mappingStepDetail.verifyExpandedRows();
-    //Saving amount of expanded rows
     mappingStepDetail.getSourceDataExpandedChildRows().then((elems) => expandedRowsCount = elems.length);
     mappingStepDetail.getSourceDataExpandedChildRows().then(($els) => {
       return (
@@ -68,8 +63,8 @@ describe("Mapping validations for session storage and table filtering", () => {
     toolbar.getCurateToolbarIcon().click();
     mappingStepDetail.verifyFilter();
     mappingStepDetail.resetSourceSearch().should("be.visible").click();
-
   });
+
   it("Validate ''Expand All' and 'Collapse All' when moving through the pages", () => {
     cy.log("**Expand all and validate number of shown rows**");
     mappingStepDetail.expandAllSourceTable();
@@ -78,9 +73,7 @@ describe("Mapping validations for session storage and table filtering", () => {
 
     cy.log("**Move to another page, come back and confirm the rows are still expanded**");
     mappingStepDetail.selectPageSourceTable("2");
-    // verify expanded rows exist
     mappingStepDetail.verifyExpandedRows();
-    // Go back and validate length
     mappingStepDetail.selectPageSourceTable("1");
     mappingStepDetail.verifyExpandedRows();
     mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", expandedRowsCount);
@@ -92,13 +85,12 @@ describe("Mapping validations for session storage and table filtering", () => {
 
     cy.log("**Move to the next page, come back and confirm the rows are still collapsed**");
     mappingStepDetail.selectPageSourceTable("2");
-    // verify expanded rows exist
     mappingStepDetail.verifyExpandedRows();
-    // Go back and validate length
     mappingStepDetail.selectPageSourceTable("1");
     mappingStepDetail.verifyExpandedRows();
     mappingStepDetail.getSourceDataExpandedChildRows().should("have.length", 0);
   });
+
   it("Validate Data Source Filter persists when navigating between pages", () => {
     toolbar.getCurateToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
@@ -165,5 +157,4 @@ describe("Mapping validations for session storage and table filtering", () => {
     curatePage.deleteConfirmation("Yes").click();
 
   });
-
 });

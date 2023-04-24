@@ -1,31 +1,27 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
 import queryComponent from "../../support/components/query/manage-queries-modal";
-import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common/index";
-import "cypress-wait-until";
-import detailPage from "../../support/pages/detail";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import LoginPage from "../../support/pages/login";
-import explorePage from "../../support/pages/explore";
+import {toolbar} from "../../support/components/common/index";
 import table from "../../support/components/common/tables";
+import explorePage from "../../support/pages/explore";
+import browsePage from "../../support/pages/browse";
+import detailPage from "../../support/pages/detail";
+import LoginPage from "../../support/pages/login";
+import "cypress-wait-until";
 
 
 describe("manage queries modal scenarios, developer role", () => {
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.deleteSavedQueries();
   });
+
   after(() => {
-    //clearing all the saved queries
     cy.loginAsDeveloper().withRequest();
     cy.deleteSavedQueries();
     cy.waitForAsyncRequest();
   });
+
   it("Create Queries", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
@@ -56,7 +52,8 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueryName().type("newQuery-1");
     browsePage.getSaveQueryButton().click();
   });
-  it("manage queries, edit, apply, delete query", () => {
+
+  it("Manage queries, edit, apply, delete query", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
@@ -93,6 +90,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json").should("be.visible", {timeout: 10000}).click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
+
   it("Navigate to detail page and verify if manage query modal opens up.", () => {
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentTimestamp().should("exist");
@@ -112,7 +110,8 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
     detailPage.getInstanceView().should("exist");
   });
-  it("manage queries, edit, apply, delete query on zero state page", () => {
+
+  it("Manage queries, edit, apply, delete query on zero state page", () => {
     //edit query
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
@@ -140,7 +139,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
   });
 
-  it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
+  it("Verify manage queries modal visibility and removing query scenario on the detail page", () => {
     //create a query
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
@@ -194,7 +193,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getTotalDocuments().should("not.be.equal", 0);
   });
 
-  it("verify query selection from All Data view page, doesn't stay on card view", () => {
+  it("Verify query selection from All Data view page, doesn't stay on card view", () => {
     browsePage.getClearAllFacetsButton().click();
     //create a query first
     entitiesSidebar.openBaseEntityDropdown();
@@ -239,7 +238,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("not.exist");
   });
 
-  it("verify applying previously saved query scenario on the detail page", () => {
+  it("Verify applying previously saved query scenario on the detail page", () => {
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
@@ -289,7 +288,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "personQuery");
   });
 
-  it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
+  it("Verify editing previously saved query, updates the currently applied query name in browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();

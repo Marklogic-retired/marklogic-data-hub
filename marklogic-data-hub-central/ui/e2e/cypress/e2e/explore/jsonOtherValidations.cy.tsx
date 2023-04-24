@@ -1,26 +1,22 @@
-/// <reference types="cypress"/>
-
-import browsePage from "../../support/pages/browse";
-import {Application} from "../../support/application.config";
+import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {toolbar} from "../../support/components/common";
-import "cypress-wait-until";
+import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 import runPage from "../../support/pages/run";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {BaseEntityTypes} from "../../support/types/base-entity-types";
+import "cypress-wait-until";
 
 
 describe("Verify numeric/date facet can be applied", () => {
-  //login with valid account and go to /browse page
   before(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
   });
+
   after(() => {
     cy.resetTestUser();
   });
+
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
@@ -42,6 +38,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.getRangeFacet(3024).should("exist");
   });
+
   it("Verify clearing date range facet clears corresponding selected facet", () => {
     browsePage.getClearAllFacetsButton().should("exist");
     browsePage.getClearAllFacetsButton().click();
@@ -52,6 +49,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
   });
+
   it("Verify functionality of clear and apply facet buttons", () => {
     cy.log("**Go to explore page and click on table view**");
     cy.visit("tiles/explore");
@@ -87,6 +85,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
   });
+
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Return to main sidebar");
     entitiesSidebar.backToMainSidebar();
@@ -121,6 +120,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });
+
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
     toolbar.getExploreToolbarIcon().click();
     cy.wait(1000);

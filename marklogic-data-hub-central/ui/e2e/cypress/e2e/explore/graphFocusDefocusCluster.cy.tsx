@@ -1,21 +1,19 @@
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
-import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 
 describe("Focus Defocus clusters", () => {
   before(() => {
-    cy.visit("/");
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
+
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
-    //Graph view
+
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     browsePage.waitForSpinnerToDisappear();
@@ -24,6 +22,7 @@ describe("Focus Defocus clusters", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
@@ -44,6 +43,7 @@ describe("Focus Defocus clusters", () => {
     graphExplore.getRecordTab().click();
     graphExplore.getJsonRecordData().should("be.visible");
   });
+
   it("Right click on a node to choose focus on cluster ", () => {
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
@@ -61,6 +61,7 @@ describe("Focus Defocus clusters", () => {
 
     graphExploreSidePanel.getSidePanel().should("not.exist");
   });
+
   it("Verify Customer node is not visible in the canvas", () => {
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
@@ -74,6 +75,7 @@ describe("Focus Defocus clusters", () => {
     });
     cy.wait(2000);
   });
+
   it("Again right-click on Baby Registry node to defocus and show all records from the query", () => {
     graphExplore.focusNode(ExploreGraphNodes.BABY_REGISTRY_3039);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {

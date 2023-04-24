@@ -1,24 +1,22 @@
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
+import graphView from "../../support/components/explore/graph-view";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
+import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import graphExplore from "../../support/pages/graphExplore";
 import LoginPage from "../../support/pages/login";
-import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
-import graphView from "../../support/components/explore/graph-view";
 
 describe("Leaf Nodes", () => {
   before(() => {
-    cy.visit("/");
-
-    cy.log("**Logging into the app as a developer**");
     cy.loginAsDeveloper().withRequest();
-    LoginPage.postLogin();
+    LoginPage.navigateToMainPage();
     cy.log("**Navigate to Explore**");
     toolbar.getExploreToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   });
+
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
@@ -67,6 +65,7 @@ describe("Leaf Nodes", () => {
 
     graphExplore.fit();
   });
+
   it("Clicking Show related on '101' leaf node to expand", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
@@ -81,6 +80,7 @@ describe("Leaf Nodes", () => {
       graphView.physicsAnimationToggle();
     });
   });
+
   it("Right click and expand the remaining records of the node", () => {
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
@@ -132,6 +132,7 @@ describe("Leaf Nodes", () => {
     cy.wait(2000);
     graphView.physicsAnimationToggle();
   });
+
   it("Try opening the Product Node to make sure it's was collapsed", () => {
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
