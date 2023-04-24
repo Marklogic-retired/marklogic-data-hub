@@ -1,0 +1,54 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+      "space-in-parens": "error",
+      "no-undef": "off",
+      "no-prototype-builtins": "off",
+      "no-irregular-whitespace": "off",
+      "no-unused-vars": "off",
+      "no-console": ["error", {"allow": ["warn", "error", "debug"]}],
+      "curly": ["error", "multi-line"],
+      "arrow-spacing": "error",
+      "array-bracket-spacing": "error",
+      "block-spacing": "error",
+      "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
+      "comma-spacing": "error",
+      "computed-property-spacing": "error",
+      "func-call-spacing": "error",
+      "key-spacing": "error",
+      "keyword-spacing": "error",
+      "jsx-quotes": "error",
+      "quotes": "off",
+      "no-trailing-spaces": "error",
+      "object-curly-spacing": "error",
+      "semi": "error",
+      "space-in-parens": "error",
+      "space-before-blocks": "error",
+      "no-var": "error",
+      "indent": ["error", 2],
+      "max-len": [
+        "error",
+        {
+          "code": 120,
+          "ignoreComments": true,
+          "ignoreUrls": true,
+          "ignoreStrings": true,
+          "ignoreTemplateLiterals": true,
+          "ignoreRegExpLiterals": true
+        }
+      ]
+    },
+  "ignorePatterns": ["**/node_modules/**", "**/build/**", "**/config/**"]
+}
+
