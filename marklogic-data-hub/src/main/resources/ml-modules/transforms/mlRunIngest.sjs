@@ -1,10 +1,8 @@
 'use strict';
 
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const DataHubSingleton = mjsProxy.requireMjsModule("/data-hub/5/datahub-singleton.mjs");
+const [DataHubSingleton, httpUtils, provLib] = mjsProxy.requireMjsModules("/data-hub/5/datahub-singleton.mjs", "/data-hub/5/impl/http-utils.mjs", "/data-hub/5/impl/prov.mjs");
 const datahub = DataHubSingleton.instance();
-const httpUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/http-utils.mjs");
-const provLib = mjsProxy.requireMjsModule("/data-hub/5/impl/prov.mjs");
 
 function transform(context, params, content) {
   let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";

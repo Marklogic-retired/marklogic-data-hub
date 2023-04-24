@@ -37,7 +37,7 @@ public class DataHubArgumentsProvider extends LoggingObject implements Arguments
         newProps.setProperty("mlPassword", "password");
         hubConfig.applyProperties(newProps);
         final DatabaseClient client = hubConfig.newFinalClient();
-        TestManager testManager = new TestManager(client);
+        final TestManager testManager = new TestManager(client);
         newProps.setProperty("mlUsername", previousUsername);
         newProps.setProperty("mlPassword", previousPassword);
         hubConfig.applyProperties(newProps);

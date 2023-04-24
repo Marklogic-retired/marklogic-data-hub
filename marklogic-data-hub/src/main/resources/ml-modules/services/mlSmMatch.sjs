@@ -16,14 +16,13 @@
 'use strict';
 
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
-
 const [Artifacts, config, DataHubSingleton, httpUtils, hubUtils] = mjsProxy.requireMjsModules(
   "/data-hub/5/artifacts/core.mjs",
   "/com.marklogic.hub/config.mjs",
   "/data-hub/5/datahub-singleton.mjs",
   "/data-hub/5/impl/http-utils.mjs",
   "/data-hub/5/impl/hub-utils.mjs");
+const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
 
 function get(context, params) {
   return post(context, params, null);
