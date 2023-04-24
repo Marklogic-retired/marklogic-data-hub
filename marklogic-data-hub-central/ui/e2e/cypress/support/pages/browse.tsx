@@ -789,6 +789,12 @@ class BrowsePage {
   getAllDataButton() {
     return cy.findByText("All Data");
   }
+
+  validateHCTableRows(val: string) {
+    cy.get(".hc-table_row").each(($row) => {
+      expect($row.text()).to.contain(val);
+    });
+  }
 }
 
 const browsePage = new BrowsePage();
