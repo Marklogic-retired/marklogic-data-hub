@@ -512,9 +512,6 @@ The following libraries are all available under these terms of the MIT license
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 
-Bootstrap v3.3.1, an html, css, and javascript framework.
-Copyright (c) 2011-2014 Twitter, Inc.
-
 underscore 1.7.0, a javascript library of functional programming helpers.
 Copyright (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative
 Reporters & Editors
@@ -8841,3 +8838,4 @@ successors. We intend this dedication to be an overt act of relinquishment in pe
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 For more information, please refer to <http://unlicense.org/>
+
