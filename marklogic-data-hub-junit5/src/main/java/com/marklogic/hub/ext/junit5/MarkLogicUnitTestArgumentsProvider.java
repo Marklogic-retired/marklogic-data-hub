@@ -31,10 +31,10 @@ public class MarkLogicUnitTestArgumentsProvider implements ArgumentsProvider {
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        TestManager testManager = new TestManager(getDatabaseClient(context));
+        final TestManager testManager = new TestManager(getDatabaseClient(context));
         try {
             List<TestModule> testModules = testManager.list();
-            return Stream.of(testModules.toArray(new TestModule[]{})).map(Arguments::of);
+            return Stream.of(testModules.toArray(new TestModule[]{})).map((testModule) -> Arguments.of(testModule, testManager));
         } catch (Exception ex) {
             String message = "Could not obtain a list of marklogic-unit-test modules; " +
                 "please verify that the marklogic-unit-test library has been loaded into your modules database and " +

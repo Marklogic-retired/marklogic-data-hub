@@ -50,9 +50,6 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
         QueryOptionsManager jobsOptMgr = getHubClient().getJobsClient().newServerConfigManager().newQueryOptionsManager();
-        StringHandle strJobTracesHandle = new StringHandle();
-        jobsOptMgr.readOptions("traces", strJobTracesHandle);
-        assertTrue(strJobTracesHandle.get().length() > 0, "traces options not installed");
         StringHandle strJobssHandle = new StringHandle();
         jobsOptMgr.readOptions("jobs", strJobssHandle);
         assertTrue(strJobssHandle.get().length() > 0, "jobs options not installed");

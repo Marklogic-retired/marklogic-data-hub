@@ -13,8 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
 /**
  * This library is intended to encapsulate all logic specific to Entity Services models. As of DHF 5.2.0, this logic is
  * spread around the DH codebase. It is expected that this will gradually be refactored so that all ES-specific logic
@@ -26,17 +24,17 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-const sem = require("/MarkLogic/semantics.xqy");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
-const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
+const rdfType = sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+const entityType = sem.iri("http://marklogic.com/entity-services#EntityType");
 /**
  * @return an array of strings, one for each EntityType
  */
 function findEntityTypeIds() {
   return cts.triples(null,
-    sem.iri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    sem.iri('http://marklogic.com/entity-services#EntityType')
+    rdfType,
+    entityType
   ).toArray().map(triple => sem.tripleSubject(triple).toString());
 }
 
@@ -59,7 +57,7 @@ function findModelForEntityTypeId(entityTypeId) {
   return fn.head(cts.search(
     cts.andQuery([
       cts.collectionQuery(getModelCollection()),
-      cts.tripleRangeQuery(sem.iri(entityTypeId), sem.curieExpand("rdf:type"), sem.curieExpand("es:EntityType", semPrefixes))
+      cts.tripleRangeQuery([sem.iri(entityTypeId)], [rdfType], [entityType])
     ])));
 }
 

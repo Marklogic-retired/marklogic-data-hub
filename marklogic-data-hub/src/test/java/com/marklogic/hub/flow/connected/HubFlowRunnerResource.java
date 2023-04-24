@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow.connected;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -9,12 +10,11 @@ import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.AbstractWriteHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.flow.RunFlowResponse;
-import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class HubFlowRunnerResource extends ResourceManager {
 
@@ -28,18 +28,17 @@ public class HubFlowRunnerResource extends ResourceManager {
     }
 
     public RunFlowResponse runFlow(ObjectNode input) {
-        JsonNode json = getServices().post(new RequestParameters(), new JacksonHandle(input), new JacksonHandle()).get();
-        try {
-            return new ObjectMapper().readerFor(RunFlowResponse.class).readValue(json);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return runFlowWithHandle(new JacksonHandle(input));
     }
 
     public RunFlowResponse runFlowWithXmlInput(String xml) {
-        JsonNode json = getServices().post(new RequestParameters(), new StringHandle(xml).withFormat(Format.XML), new JacksonHandle()).get();
+        return runFlowWithHandle(new StringHandle(xml).withFormat(Format.XML));
+    }
+
+    private RunFlowResponse runFlowWithHandle(AbstractWriteHandle handle) {
+        JsonNode json = getServices().post(new RequestParameters(), handle, new JacksonHandle()).get();
         try {
-            return new ObjectMapper().readerFor(RunFlowResponse.class).readValue(json);
+            return new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readerFor(RunFlowResponse.class).readValue(json);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,11 +46,10 @@ public class HubFlowRunnerResource extends ResourceManager {
 
     public static class Input {
         private ArrayNode contentArray;
-        private ObjectMapper objectMapper;
-        private ObjectNode rootNode;
+        private final ObjectNode rootNode;
 
         public Input(String flowName) {
-            objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
             rootNode = objectMapper.createObjectNode();
             rootNode.put("flowName", flowName);
         }

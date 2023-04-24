@@ -15,9 +15,9 @@
  */
 'use strict';
 
-const json = require('/MarkLogic/json/json.xqy');
 const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const [flowApi, httpUtils] = mjsProxy.requireMjsModules("/data-hub/public/flow/flow-api.mjs", "/data-hub/5/impl/http-utils.mjs");
+const json = require('/MarkLogic/json/json.xqy');
 
 function post(context, params, input) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
