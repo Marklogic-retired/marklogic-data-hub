@@ -303,7 +303,7 @@ const AddEditRelationship: React.FC<Props> = ({
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
 
     const edge = edgeData.find(
-      edge => edge.from === definitionName && edge.label === propertyName && edge.structParent !== "",
+      edge => edge.from === definitionName && edge.predicate === propertyName && edge.structParent !== "",
     );
     if (edge) {
       updatedDefinitions[edge.structParent]["properties"][propertyName] = newProperty;

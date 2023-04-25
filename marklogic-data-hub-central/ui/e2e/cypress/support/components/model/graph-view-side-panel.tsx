@@ -125,6 +125,10 @@ class GraphViewSidePanel {
   getAddPropertyLinkButton(entity: string) {
     return cy.get(`[aria-label=${entity}-linkAddButton]`);
   }
+
+  getAddPropertyForStructuredProperties(structured: string) {
+    return cy.get(`[data-testid=add-struct-${structured}]`);
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

@@ -478,4 +478,46 @@ describe("Entity Modeling: Graph View", () => {
     });
     graphViewSidePanel.getPropertyName("purchased").should("not.exist");
   });
+
+  it("edit structured property relationship", () => {
+    toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("table");
+
+    //Creates a structured property on Customer
+    cy.log("**Creates a structured property on Customer**");
+    entityTypeTable.viewEntityInGraphView("Customer");
+    graphViewSidePanel.getAddPropertyForStructuredProperties("shipping").click();
+    propertyModal.newPropertyName("structuredPropertyTest");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Related Entity");
+    propertyModal.getCascadedTypeFromDropdown("Person");
+    propertyModal.getSubmitButton().click();
+    cy.waitForAsyncRequest();
+
+    //Edits the relationship from the graph
+    cy.log("**Edits the relationship from the graph**");
+    graphVis.getPositionOfEdgeBetween("Customer,Person").then((edgePosition: any) => {
+      cy.wait(150);
+      graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
+    });
+    relationshipModal.editRelationshipName("new-Relationship-!Name");
+    relationshipModal.confirmationOptions("Save");
+    cy.get(`[data-icon="exclamation-circle"]`).should("exist").then(() => {
+      relationshipModal.editRelationshipName("new-Relationship-1Name");
+      relationshipModal.confirmationOptions("Save");
+    });
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
+
+    //Verifies the relationship name is updated
+    cy.log("**Verifies the relationship name is updated**");
+    modelPage.selectView("table");
+    entityTypeTable.getExpandEntityIcon("Customer");
+    propertyTable.getPropertyName("new-Relationship-1Name").should("exist");
+
+    // deletes the relationship
+    cy.log("**Deletes the relationship**");
+    propertyTable.getDeletePropertyIcon("Customer-Address-shipping", "new-Relationship-1Name").scrollIntoView().click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
+  });
 });
