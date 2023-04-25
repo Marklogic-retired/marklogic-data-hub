@@ -75,8 +75,26 @@ function verifyDocumentXPathDoesNotThrowError() {
     ];
 }
 
+function testFuzzyMatches() {
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustMatchHousehold.json'), {}, xdmp.databaseName(xdmp.database()));
+    const results = match.main(content, { stepId: "matchFuzzyCustomers-matching"})[0].value;
+    let resultsNode = xdmp.toJSON(results);
+    let mergeAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "merge"]');
+    let customAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "customActions"]');
+    let notifyAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "notify"]');
+    let notifyActionObj = fn.head(notifyAction).toObject();
+    return [
+        test.assertEqual(1, fn.count(results), `A matchSummary should be returned. Results: ${results}`),
+        test.assertEqual(0, fn.count(mergeAction), `Zero merge actions should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertEqual(0, fn.count(customAction), `One custom action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertEqual(1, fn.count(notifyAction), `One notify action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertTrue(notifyActionObj.matchResults.some(match => match.matchedRulesets && match.matchedRulesets.some(ruleset => ruleset.rulesetName === "reduce for household")), `Notify action should have reduce be in the matchSummary. Results: ${xdmp.toJsonString(notifyActionObj)}`)
+    ];
+}
+
 assertions
-    .concat(testJsonMatches())
-    .concat(testNamespacedXmlMatches())
-    .concat(verifyNullsDoNotMatch())
-    .concat(verifyDocumentXPathDoesNotThrowError());
+  .concat(testJsonMatches())
+  .concat(testNamespacedXmlMatches())
+  .concat(verifyNullsDoNotMatch())
+  .concat(verifyDocumentXPathDoesNotThrowError())
+  .concat(testFuzzyMatches());

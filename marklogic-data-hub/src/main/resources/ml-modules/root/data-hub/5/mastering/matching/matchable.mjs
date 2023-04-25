@@ -1,4 +1,3 @@
-'use strict';
 import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
@@ -54,7 +53,7 @@ export function buildActionDetails(matchingDocumentSet, thresholdBucket) {
       threshold: thresholdName,
       thresholdScore,
       uris,
-      matchResults: matchingDocumentSet.map((match) => ({uri: match.uri, score: match.score || "referenceDocument"}) )
+      matchResults: matchingDocumentSet.map((match) => ({uri: match.uri, matchedRulesets: match.matchedRulesets, score: match.score || "referenceDocument"}) )
     };
   }
   return {
@@ -194,8 +193,9 @@ export class Matchable {
     }
     const matchingRulesetDefinitions = this.matchRulesetDefinitions();
     let defaultScore = 0;
+    contentObjectB.matchedRulesets = [];
     for (const matchRuleset of matchingRulesetDefinitions) {
-      const rulesetScore = matchRuleset.score(contentObjectA, contentObjectB);
+      let rulesetScore = matchRuleset.score(contentObjectA, contentObjectB);
       if (matchingDebugTraceEnabled) {
         xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Applying rule ${matchRuleset.name()} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))} with score ${rulesetScore}`);
       }
@@ -204,13 +204,15 @@ export class Matchable {
           if (matchingDebugTraceEnabled) {
             xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Decreasing score by ${rulesetScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
           }
-          defaultScore -= rulesetScore;
+          rulesetScore = -Math.abs(rulesetScore);
         } else {
           if (matchingDebugTraceEnabled) {
             xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Increasing score by ${rulesetScore}  for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
           }
-          defaultScore += rulesetScore;
+          rulesetScore = Math.abs(rulesetScore);
         }
+        defaultScore += rulesetScore;
+        contentObjectB.matchedRulesets.push({ rulesetName: matchRuleset.name(), rulesetScore});
       }
     }
     if (matchingTraceEnabled) {
@@ -508,6 +510,7 @@ class MatchRulesetDefinition {
     }
     let score = 0;
     const query = this.buildCtsQuery(contentObjectA.value);
+    const isFuzzyMatch = this.fuzzyMatch()
     if (fn.exists(query)) {
       const hashesA = this.queryHashes(contentObjectA.value);
       const hashesB = this.queryHashes(contentObjectB.value);
@@ -527,7 +530,7 @@ class MatchRulesetDefinition {
       }
       for (const hash1 of outerHash) {
         if (innerHash.has(hash1)) {
-          queryMatches = true;
+          queryMatches = isFuzzyMatch || cts.contains(contentObjectB.value, query);
           break;
         }
       }
