@@ -178,7 +178,10 @@ const MatchingStepDetail: React.FC = () => {
       setMatchingStep(matchingStepArtifact);
       handleMatchingActivity(matchingStepArtifact.name);
     } else {
-      history.push("/tiles/curate");
+      setTimeout(() => {
+        history.push("/tiles/curate");
+        setViewSettings({...storage, curate: {}, match: {}});
+      }, 300);
     }
     /*return () => {
       toggleDisplayRulesetTimeline(false);
@@ -969,9 +972,8 @@ const MatchingStepDetail: React.FC = () => {
       </HCButton>
     </div>
   );
-
   return (
-    <>
+    Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? <>
       <CustomPageHeader
         title={matchingStep.name}
         handleOnBack={() => {
@@ -980,7 +982,6 @@ const MatchingStepDetail: React.FC = () => {
         }}
       />
       <p className={styles.headerDescription}>{MatchingStepDetailText.description}</p>
-
       <div className={styles.matchingDetailContainer}>
         <div
           className={
@@ -1786,7 +1787,10 @@ const MatchingStepDetail: React.FC = () => {
         editThreshold={editThreshold}
         toggleModal={toggleShowThresholdModal}
       />
+
     </>
+      :
+      <></>
   );
 };
 
