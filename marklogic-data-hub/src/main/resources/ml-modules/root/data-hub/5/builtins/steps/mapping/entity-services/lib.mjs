@@ -402,7 +402,23 @@ function validateAndTestMapping(mapping, uri) {
     throw Error(`Unable to validate and run mapping; could not find source document with URI '${uri}'`);
   }
 
-  const sourceDocument = cts.doc(uri);
+  let sourceDocument;
+  //modify the document instance with the properly updated one if a pre-step interceptor was used
+  let newDocumentIsLoad = false;
+  if(mapping.name){
+    const updatedDocument = invokeGetDocument(mapping.name, uri);
+    if (updatedDocument && updatedDocument.format === "JSON") {
+        sourceDocument = cts.doc(uri).toObject();
+        if(sourceDocument){
+          sourceDocument = updatedDocument.data;
+          sourceDocument = xdmp.toJSON(sourceDocument);
+          newDocumentIsLoad = true;
+        }
+    }
+  }
+  if (!newDocumentIsLoad) {
+    sourceDocument = cts.doc(uri);
+  }
 
   const modulePath = mapping.mappingParametersModulePath;
   let userParameterNames = [];
@@ -427,7 +443,16 @@ function validateAndTestMapping(mapping, uri) {
   return validatedMappingsArray.length > 1 ? calculateInstanceCount(validatedAndTestedMappingWithUri, validatedMappingsArray, sourceInstance) : validatedAndTestedMappingWithUri;
 }
 
-function validateMappings(mappingsArray, userParameterNames) {
+
+
+function invokeGetDocument(stepName, uri) {
+  return fn.head(xdmp.invoke(
+      "/data-hub/data-services/mapping/getDocument.mjs",
+      {stepName: stepName, uri: uri}
+  ));
+}
+
+function validateMappings(mappingsArray, userParameterNames){
   const validatedMappingsArray = mappingsArray.map(mappingToTest => {
     return validateMapping(mappingToTest, userParameterNames);
   });

@@ -6,7 +6,7 @@ const hubTest = require("/test/data-hub-test-helper.xqy");
 const contentUri = "/content/person2.json";
 
 function verifyUriIsResolvedByMappingStep() {
-  const person = lib.invokeTestMapping(contentUri, "PersonMapping", "7").Person;
+  const person = lib.invokeTestMapping(contentUri, "PersonMapping7", "7").Person;
   return [
     test.assertEqual(contentUri, fn.string(person.nickname),
       "The nickname is mapped to the $URI variable which is expected to be populated by the mapper")
@@ -28,8 +28,8 @@ function verifyUriResolvedWhenTestingMapping() {
 }
 
 function verifyMappingContainsUriParam() {
-  const xmlMapping = hubTest.getModulesDocument("/mappings/PersonMapping/PersonMapping-7.mapping.xml");
-  const stylesheet = hubTest.getModulesDocument("/mappings/PersonMapping/PersonMapping-7.mapping.xml.xslt");
+  const xmlMapping = hubTest.getModulesDocument("/steps/mapping/PersonMapping7.step.xml");
+  const stylesheet = hubTest.getModulesDocument("/steps/mapping/PersonMapping7.step.xml.xslt");
   return [
     test.assertTrue(fn.head(xmlMapping.xpath("/*:mapping/*:param[@name = 'URI']")) != null),
     test.assertTrue(fn.head(stylesheet.xpath("/*:stylesheet/*:param[@name = 'URI']")) != null)

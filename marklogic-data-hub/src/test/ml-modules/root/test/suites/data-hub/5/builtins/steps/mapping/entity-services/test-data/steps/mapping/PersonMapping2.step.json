@@ -1,8 +1,11 @@
 {
   "lang": "zxx",
-  "name": "PersonMapping",
+  "name": "PersonMapping2",
   "description": "This intentionally has an empty expression for nickname",
   "version": 2,
+  "stepId": "PersonMapping2-mapping",
+  "stepDefinitionType": "mapping",
+  "stepDefinitionName": "default-mapping",
   "sourceContext": "/",
   "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
   "properties": {

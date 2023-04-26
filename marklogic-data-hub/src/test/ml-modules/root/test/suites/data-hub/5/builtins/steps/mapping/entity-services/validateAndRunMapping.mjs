@@ -54,7 +54,7 @@ function incorrectNumberOfFunctionArguments() {
   ];
 }
 
-function testvalidateAndTestMapping(mapURI = "/mappings/PersonMapping/PersonMapping-3.mapping.json", uri = "/content/person2.json") {
+function testvalidateAndTestMapping(mapURI = "/steps/mapping/PersonMapping.step.json", uri = "/content/person2.json") {
   let map = cts.doc(mapURI).toObject();
   let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
@@ -66,7 +66,7 @@ function testvalidateAndTestMapping(mapURI = "/mappings/PersonMapping/PersonMapp
   ];
 }
 
-function testvalidateAndTestMappingArrayValues(mapURI = "/mappings/OrdersMapping/OrdersMapping-3.mapping.json", uri = "/content/orderTest.json") {
+function testvalidateAndTestMappingArrayValues(mapURI = "/steps/mapping/OrdersMapping.step.json", uri = "/content/orderTest.json") {
   let map = cts.doc(mapURI).toObject();
   let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
@@ -91,7 +91,7 @@ function testvalidateAndTestMappingWithErrors() {
   ];
 }
 
-function testValidateAndTestMappingWithDash(mapURI = "/mappings/PersonMapping/PersonDashMapping.mapping.json", uri = "/content/person2.json") {
+function testValidateAndTestMappingWithDash(mapURI = "/steps/mapping/PersonDashMapping.step.json", uri = "/content/person2.json") {
   let map = cts.doc(mapURI).toObject();
   let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
@@ -104,16 +104,16 @@ function testValidateAndTestMappingWithDash(mapURI = "/mappings/PersonMapping/Pe
 }
 
 []
-  .concat(validMapping())
-  .concat(unrecognizedProperty())
-  .concat(missingFunctionReference())
-  .concat(incorrectNumberOfFunctionArguments())
-  .concat(testvalidateAndTestMapping())
-  .concat(testvalidateAndTestMappingArrayValues())
-  .concat(testValidateAndTestMappingWithDash())
-  .concat(testvalidateAndTestMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
-  // Test JSON to XML scenario
-  .concat(testvalidateAndTestMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
-  .concat(testvalidateAndTestMappingWithErrors())
+.concat(validMapping())
+.concat(unrecognizedProperty())
+.concat(missingFunctionReference())
+.concat(incorrectNumberOfFunctionArguments())
+.concat(testvalidateAndTestMapping())
+.concat(testvalidateAndTestMappingArrayValues())
+.concat(testValidateAndTestMappingWithDash())
+.concat(testvalidateAndTestMapping("/steps/mapping/PersonNsMapping.step.json", "/content/person-ns.xml"))
+// Test JSON to XML scenario
+.concat(testvalidateAndTestMapping("/steps/mapping/PersonMapping.step.json", "/content/json-to-xml.xml"))
+.concat(testvalidateAndTestMappingWithErrors())
 ;
 

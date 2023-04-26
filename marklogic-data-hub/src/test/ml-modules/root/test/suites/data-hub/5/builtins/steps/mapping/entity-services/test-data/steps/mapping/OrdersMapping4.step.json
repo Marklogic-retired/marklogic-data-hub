@@ -1,8 +1,11 @@
 {
   "lang": "zxx",
-  "name": "OrdersMapping",
+  "name": "OrdersMapping4",
   "description": "The structured properties are mapped to invalid properties",
   "version": 4,
+  "stepId": "OrdersMapping4-mapping",
+  "stepDefinitionType": "mapping",
+  "stepDefinitionName": "default-mapping",
   "targetEntityType": "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
   "sourceContext": "/",
   "properties": {
