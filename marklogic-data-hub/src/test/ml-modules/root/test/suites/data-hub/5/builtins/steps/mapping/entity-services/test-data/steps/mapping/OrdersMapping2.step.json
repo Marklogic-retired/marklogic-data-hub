@@ -1,8 +1,11 @@
 {
   "lang" : "zxx",
-  "name" : "OrdersMapping",
+  "name" : "OrdersMapping2",
   "description" : "Default description",
   "version" : 2,
+  "stepId": "OrdersMapping-mapping",
+  "stepDefinitionType": "mapping",
+  "stepDefinitionName": "default-mapping",
   "targetEntityType" : "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
   "sourceContext" : "/",
   "sourceURI" : "",

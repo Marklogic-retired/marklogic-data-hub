@@ -3,6 +3,9 @@
   "name": "PersonMapping",
   "description": "This intentionally has an invalid expression",
   "version": 5,
+  "stepId": "PersonMapping5-mapping",
+  "stepDefinitionType": "mapping",
+  "stepDefinitionName": "default-mapping",
   "sourceContext": "/",
   "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
   "properties": {

@@ -5,7 +5,7 @@ const hubTest = require("/test/data-hub-test-helper.xqy");
 
 // First verify that the nested object properties were processed correctly in the XML mapping template
 // Each template should have a name that is unique based on the path of the property that it references
-const mappingTemplate = hubTest.getModulesDocument("/mappings/PersonMapping/PersonMapping-6.mapping.xml");
+const mappingTemplate = hubTest.getModulesDocument("/steps/mapping/PersonMapping6.step.xml");
 const namespaces = {"m": "http://marklogic.com/entity-services/mapping"};
 const assertions = [
   test.assertEqual("mapping0-Person.name", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person']/Person/m:for-each/name/m:call-template/@name/string()", namespaces)),
@@ -17,7 +17,7 @@ const assertions = [
 
 ];
 
-const person = lib.invokeTestMapping("/content/person2.json", "PersonMapping", "6").Person;
+const person = lib.invokeTestMapping("/content/person2.json", "PersonMapping6", "6").Person;
 
 assertions.push(
   test.assertEqual("222", fn.string(person.id)),

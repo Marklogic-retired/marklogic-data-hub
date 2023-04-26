@@ -15,7 +15,7 @@ let assertions = [];
 let result = lib.invokeTestMapping("/content/person2.json", "PersonMapping", "3");
 let person = result.Person;
 assertions = assertions.concat(checkAssertions(person));
-result = lib.invokeTestMapping("/content/person3.xml", "PersonMapping", "4");
+result = lib.invokeTestMapping("/content/person3.xml", "PersonMapping4", "4");
 person = result.Person;
 assertions = assertions.concat(checkAssertions(person));
 

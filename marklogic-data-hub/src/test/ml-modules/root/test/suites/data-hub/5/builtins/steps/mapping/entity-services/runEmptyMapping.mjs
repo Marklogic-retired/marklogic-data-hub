@@ -7,7 +7,7 @@ let assertions = [];
 function runStructuredPropertyMapping () {
   let doc = fn.head(xdmp.unquote(`{"id":1,"customer":{"firstName":"Oralia"},"items":[{"name":"Voltsillam"},{"name":"Latlux"}]}`));
   let result = mapping.main({uri: '/test.json', value: doc}, {
-    mapping: {name: 'OrdersMapping', version: 4},
+    mapping: {name: 'OrdersMapping4', version: 4},
     outputFormat: 'json'
   }).value.root;
   let instance = result.envelope.instance;
