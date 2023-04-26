@@ -100,7 +100,7 @@ class RulesetSingleModal {
   }
 
   selectValuesToIgnoreInput() {
-    cy.get(`[id="valuesToIgnore"]`).click({force: true});
+    cy.get(`[id="valuesToIgnore"]`).click();
   }
 
   hoverItemPresetList(listName: string) {
@@ -124,7 +124,7 @@ class RulesetSingleModal {
   }
 
   deleteListButton(listName: string) {
-    return cy.get(`[id="delete-${listName}"]`).click({force: true});
+    return cy.get(`[id="delete-${listName}"]`).click();
   }
 
   findText(text: string) {

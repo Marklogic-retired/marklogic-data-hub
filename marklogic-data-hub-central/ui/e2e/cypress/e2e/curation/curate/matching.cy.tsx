@@ -792,7 +792,10 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
 
     rulesetSingleModal.deleteListButton("List1");
-    rulesetSingleModal.getElementByAriaLabel("confirm-deleteListValueToIgnore-close").click();
+    cy.waitForAsyncRequest();
+    cy.findAllByTestId("confirmation-modal").within(() => {
+      rulesetSingleModal.getElementByAriaLabel("Close").click();
+    });
 
     cy.log("**Creating and deleting a new list without references**");
     rulesetSingleModal.createNewList();
