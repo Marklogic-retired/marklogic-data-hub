@@ -551,6 +551,23 @@ describe("Matching", () => {
       // To test compare values for matched Uris
       cy.log("**To test compare values for matched Uris**");
       cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
+      cy.waitForAsyncRequest();
+      // Check  column Order
+      cy.get(".modal-body")
+        .within(() => {
+          cy.get("th").eq(2).within(() => {
+            cy.findAllByText("Current Document:");
+            cy.findAllByText("/json/persons/first-name-double-metaphone1.json");
+          });
+          cy.get("th").eq(3).within(() => {
+            cy.findAllByText("Current Document:");
+            cy.findAllByText("/json/persons/first-name-double-metaphone2.json");
+          });
+          cy.get("th").eq(4).within(() => {
+            cy.findAllByText("Preview:");
+          });
+        });
+
       for (let i in compareValuesData) {
         cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
         cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);

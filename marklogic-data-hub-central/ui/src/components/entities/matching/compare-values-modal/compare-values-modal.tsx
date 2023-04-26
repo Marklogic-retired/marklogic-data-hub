@@ -158,6 +158,28 @@ const CompareValuesModal: React.FC<Props> = props => {
     return parsedData;
   };
 
+  const columnTextNameGenerator = (uri:string) => {
+    let text:(string | React.ReactElement)  = "";
+    if (!props.isMerge && !props.isPreview && props.uris.length < pageSize) {
+      text = (
+        <>
+          <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
+          <div>{uri}</div>
+        </>
+      );
+    } else if (props.isMerge) {
+      text = uri;
+    } else if (props.isPreview) {
+      text = (
+        <>
+          <div style={{fontWeight: "bold"}}>{"Current Document: "}</div>
+          <div style={{fontWeight: "normal"}}>{uri}</div>
+        </>
+      );
+    }
+    return text;
+  };
+
   const columnsGenerator = (data: any[]) => {
     let columns: any[] = [
       {
@@ -196,13 +218,16 @@ const CompareValuesModal: React.FC<Props> = props => {
       key: "propertyValueInReview",
       title: cell => `${cell.value}`,
       ellipsis: true,
-      text: !props.isMerge ? (
+      text: !props.isMerge && !props.isPreview ? (
         <>
-          <div>{"Current Document: "}</div>
-          <div style={{fontWeight: 400}}>{props.originalUri}</div>
+          <div style={{fontWeight: "bold"}}>{"Current Document: "}</div>
+          <div style={{fontWeight: "normal"}}>{props.originalUri}</div>
         </>
       ) : (
-        "Preview"
+        <>
+          <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
+        </>
+
       ),
       style: property => {
         if (property?.matchedRow) {
@@ -255,7 +280,7 @@ const CompareValuesModal: React.FC<Props> = props => {
       },
     };
 
-    if (!props.isMerge) {
+    if (!props.isMerge && !props.isPreview) {
       columns.push(previewColumn);
     }
 
@@ -266,15 +291,7 @@ const CompareValuesModal: React.FC<Props> = props => {
         key: dataField,
         title: cell => `${cell.value}`,
         ellipsis: true,
-        text:
-          !props.isMerge && props.uris.length < pageSize ? (
-            <>
-              <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
-              <div>{uri}</div>
-            </>
-          ) : (
-            uri
-          ),
+        text: columnTextNameGenerator(uri),
         style: property => {
           if (property?.matchedRow) {
             return {
@@ -331,7 +348,7 @@ const CompareValuesModal: React.FC<Props> = props => {
       });
     });
 
-    if (props.isMerge) {
+    if (props.isMerge || props.isPreview) {
       columns.push(previewColumn);
     }
 
