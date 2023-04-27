@@ -61,7 +61,7 @@ public interface EntitySearchService {
 
             private EntitySearchServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/entitySearch/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/entitySearch/", servDecl);
 
                 this.req_getMinAndMaxPropertyValues = this.baseProxy.request(
                     "getMinAndMaxPropertyValues.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);

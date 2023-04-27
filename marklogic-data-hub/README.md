@@ -3,7 +3,7 @@ to the CONTRIBUTING guide for this project, which covers some of the main tasks 
 
 ## Adding new Data Services
 
-Data Services (DS) are defined in src/main/ml-modules/root/data-hub/5/data-services. You can define a new DS - or 
+Data Services (DS) are defined in src/main/ml-modules/root/data-hub/data-services. You can define a new DS - or 
 add endpoints to an existing service - by adding files to this directory.
 
 The easiest way to create a new DS is by running the following Gradle task:

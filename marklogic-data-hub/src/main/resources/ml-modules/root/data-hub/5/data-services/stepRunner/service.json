@@ -1,4 +1,0 @@
-{
-  "endpointDirectory": "/data-hub/5/data-services/stepRunner/",
-  "$javaClass": "com.marklogic.hub.dataservices.StepRunnerService"
-}

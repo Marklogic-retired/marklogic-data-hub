@@ -56,7 +56,7 @@ public interface ArtifactService {
 
             private ArtifactServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/artifacts/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/artifacts/", servDecl);
 
                 this.req_getArtifactsWithProjectPaths = this.baseProxy.request(
                     "getArtifactsWithProjectPaths.mjs", BaseProxy.ParameterValuesKind.NONE);

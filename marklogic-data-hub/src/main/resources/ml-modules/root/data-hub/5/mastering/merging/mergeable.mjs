@@ -23,7 +23,7 @@ export default class Mergeable {
       this.memoryContent = stepExecutionContext.flowExecutionContext.matchingStepContentArray;
     }
     if (mergeStep.merging) {
-      const updateMergeOptions = hubUtil.requireFunction("/data-hub/5/data-services/mastering/updateMergeOptionsLib.mjs", "updateMergeOptions");
+      const updateMergeOptions = hubUtil.requireFunction("/data-hub/data-services/mastering/updateMergeOptionsLib.mjs", "updateMergeOptions");
       this.mergeStep = updateMergeOptions(mergeStep);
     } else {
       this.mergeStep = mergeStep;

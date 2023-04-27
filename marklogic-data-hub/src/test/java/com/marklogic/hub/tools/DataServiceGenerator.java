@@ -81,7 +81,7 @@ public class DataServiceGenerator {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
 
-        final File modulesDir = new File(projectDir, "src/main/resources/ml-modules/root/data-hub/5/data-services");
+        final File modulesDir = new File(projectDir, "src/main/resources/ml-modules/root/data-hub/data-services");
         final File serviceDir = new File(modulesDir, serviceName);
         serviceDir.mkdirs();
 
@@ -89,7 +89,7 @@ public class DataServiceGenerator {
         if (!serviceFile.exists()) {
             ObjectNode service = mapper.createObjectNode();
             service.put("desc", "This service description will be included in the class comments of the generated Java class");
-            service.put("endpointDirectory", "/data-hub/5/data-services/" + serviceName + "/");
+            service.put("endpointDirectory", "/data-hub/data-services/" + serviceName + "/");
             service.put("$javaClass", "com.marklogic.hub.dataservices." + StringUtils.capitalize(serviceName) + "Service");
             System.out.println("Writing service file: " + serviceFile);
             writer.writeValue(serviceFile, service);

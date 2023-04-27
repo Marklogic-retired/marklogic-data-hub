@@ -21,7 +21,7 @@ public class ProvenanceManager {
     }
 
     public void deleteProvenanceRecords(String retainDuration, String database) {
-        String apiPath = "ml-modules/root/data-hub/5/data-services/provenance/deleteProvenance.api";
+        String apiPath = "ml-modules/root/data-hub/data-services/provenance/deleteProvenance.api";
         DatabaseKind databaseKind = DatabaseKind.valueOf(database);
         DatabaseClient client = null;
         switch (databaseKind) {
@@ -37,7 +37,7 @@ public class ProvenanceManager {
     }
 
     public void migrateProvenanceRecords() {
-        String apiPath = "ml-modules/root/data-hub/5/data-services/provenance/migrateProvenance.api";
+        String apiPath = "ml-modules/root/data-hub/data-services/provenance/migrateProvenance.api";
         ObjectNode endpointConstants = objectMapper.createObjectNode().put("batchSize", 250);
         BulkUtil.runExecCaller(hubClient.getJobsClient(), apiPath, endpointConstants, "Unable to migrate provenance, cause: ");
     }

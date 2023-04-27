@@ -3,7 +3,7 @@ const test = require("/test/test-helper.xqy");
 const assertions = [];
 
 const references = fn.head(xdmp.invoke(
-  "/data-hub/5/data-services/mapping/getReferences.mjs",
+  "/data-hub/data-services/mapping/getReferences.mjs",
   {"stepName": "mappingStep1"}
 ));
 

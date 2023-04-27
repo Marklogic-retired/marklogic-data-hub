@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/data-services/mastering/",
+  "$javaClass": "com.marklogic.hub.dataservices.MasteringService"
+}

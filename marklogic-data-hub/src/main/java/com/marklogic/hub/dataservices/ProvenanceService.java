@@ -54,7 +54,7 @@ public interface ProvenanceService {
 
             private ProvenanceServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/provenance/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/provenance/", servDecl);
 
                 this.req_getProvenanceGraph = this.baseProxy.request(
                     "getProvenanceGraph.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);

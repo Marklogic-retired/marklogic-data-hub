@@ -51,7 +51,7 @@ public interface HubCentralService {
 
             private HubCentralServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/hubCentral/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/hubCentral/", servDecl);
 
                 this.req_getAuthorities = this.baseProxy.request(
                     "getAuthorities.mjs", BaseProxy.ParameterValuesKind.NONE);

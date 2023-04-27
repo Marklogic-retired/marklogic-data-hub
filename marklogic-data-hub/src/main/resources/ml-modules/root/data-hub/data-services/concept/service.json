@@ -1,0 +1,4 @@
+{
+  "endpointDirectory" : "/data-hub/data-services/concept",
+  "$javaClass" : "com.marklogic.hub.dataservices.ConceptService"
+}

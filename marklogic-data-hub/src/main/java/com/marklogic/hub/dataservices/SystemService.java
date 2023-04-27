@@ -55,7 +55,7 @@ public interface SystemService {
 
             private SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/system/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/system/", servDecl);
 
                 this.req_getVersions = this.baseProxy.request(
                     "getVersions.mjs", BaseProxy.ParameterValuesKind.NONE);

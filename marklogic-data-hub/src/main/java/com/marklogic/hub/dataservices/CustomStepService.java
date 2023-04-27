@@ -53,7 +53,7 @@ public interface CustomStepService {
 
             private CustomStepServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/customStep/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/customStep/", servDecl);
 
                 this.req_updateCustomStep = this.baseProxy.request(
                     "updateCustomStep.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
