@@ -59,7 +59,7 @@ public interface MasteringService {
 
             private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/mastering/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/mastering/", servDecl);
 
                 this.req_calculateMergingActivity = this.baseProxy.request(
                     "calculateMergingActivity.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);

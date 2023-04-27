@@ -52,7 +52,7 @@ public interface StepRunnerService {
 
             private StepRunnerServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepRunner/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/stepRunner/", servDecl);
 
                 this.req_processBatch = this.baseProxy.request(
                     "processBatch.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);

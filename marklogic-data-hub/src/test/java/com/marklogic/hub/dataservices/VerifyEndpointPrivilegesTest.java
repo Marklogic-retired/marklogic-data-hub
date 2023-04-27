@@ -28,7 +28,7 @@ public class VerifyEndpointPrivilegesTest extends AbstractHubCoreTest {
         final Map<String, List<String>> results = new TreeMap<>();
         EvalResultIterator iter = modulesClient.newServerEval()
             .xquery("" +
-                "for $uri in cts:uri-match('/data-hub/5/data-services/**.api') " +
+                "for $uri in cts:uri-match('/data-hub/data-services/**.api') " +
                 "let $mjs-uri := fn:replace($uri, '.api', '.mjs') " +
                 "let $xquery-uri := fn:replace($uri, '.api', '.xqy') " +
                 "return if (fn:doc-available($mjs-uri)) then $mjs-uri else $xquery-uri"

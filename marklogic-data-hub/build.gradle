@@ -28,7 +28,7 @@ group = 'com.marklogic'
 
 ext {
     dataServicesGroup = "Data Services"
-    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
+    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/data-services"
 
     thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
 }
@@ -169,7 +169,7 @@ task generateDataService(type: JavaExec) {
 
 
 // Dynamically generate a task for each data-service directory, where the task can generate a Java interface for the data service
-new File("src/main/resources/ml-modules/root/data-hub/5/data-services").listFiles().each { file ->
+new File("src/main/resources/ml-modules/root/data-hub/data-services").listFiles().each { file ->
     if (file.isDirectory() && new File(file, "service.json").exists()) {
         task "generate${file.getName()}Interface"(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
             description = "Must run this from the ./marklogic-data-hub directory"

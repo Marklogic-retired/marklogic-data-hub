@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/data-services/customStep/",
+  "$javaClass": "com.marklogic.hub.dataservices.CustomStepService"
+}

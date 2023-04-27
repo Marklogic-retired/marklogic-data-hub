@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/data-services/flow/",
+  "$javaClass": "com.marklogic.hub.dataservices.FlowService"
+}

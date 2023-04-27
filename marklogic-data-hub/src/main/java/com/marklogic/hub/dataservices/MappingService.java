@@ -58,7 +58,7 @@ public interface MappingService {
 
             private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/mapping/", servDecl);
 
                 this.req_getReferences = this.baseProxy.request(
                     "getReferences.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);

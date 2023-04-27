@@ -58,7 +58,7 @@ public interface JobService {
 
             private JobServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/job/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/job/", servDecl);
 
                 this.req_startStep = this.baseProxy.request(
                     "startStep.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);

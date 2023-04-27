@@ -52,7 +52,7 @@ public interface StepDefinitionService {
 
             private StepDefinitionServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepDefinition/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/stepDefinition/", servDecl);
 
                 this.req_getStepDefinition = this.baseProxy.request(
                     "getStepDefinition.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);

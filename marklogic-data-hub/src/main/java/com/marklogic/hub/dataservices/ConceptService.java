@@ -55,7 +55,7 @@ public interface ConceptService {
 
             private ConceptServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/concept/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/concept/", servDecl);
 
                 this.req_updateDraftModelInfo = this.baseProxy.request(
                     "updateDraftConceptModelInfo.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);

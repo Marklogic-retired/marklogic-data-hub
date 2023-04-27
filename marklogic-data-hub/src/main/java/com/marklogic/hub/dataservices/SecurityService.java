@@ -52,7 +52,7 @@ public interface SecurityService {
 
             private SecurityServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/security/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/security/", servDecl);
 
                 this.req_describeRole = this.baseProxy.request(
                     "describeRole.mjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);

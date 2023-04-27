@@ -56,7 +56,7 @@ public interface StepService {
 
             private StepServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/step/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/step/", servDecl);
 
                 this.req_getReferences = this.baseProxy.request(
                     "getReferences.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);

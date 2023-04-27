@@ -63,7 +63,7 @@ public interface ModelsService {
 
             private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/models/", servDecl);
 
                 this.req_generateDatabaseProperties = this.baseProxy.request(
                     "generateDatabaseProperties.mjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);

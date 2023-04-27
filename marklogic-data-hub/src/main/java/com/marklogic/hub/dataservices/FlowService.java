@@ -60,7 +60,7 @@ public interface FlowService {
 
             private FlowServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/flow/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/flow/", servDecl);
 
                 this.req_updateFlow = this.baseProxy.request(
                     "updateFlow.mjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);

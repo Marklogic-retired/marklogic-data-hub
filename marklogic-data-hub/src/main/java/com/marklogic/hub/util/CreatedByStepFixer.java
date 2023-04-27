@@ -81,7 +81,7 @@ public class CreatedByStepFixer extends LoggingObject {
         final List<String> forestIds = new ArrayList<>();
         Arrays.stream(dmm.readForestConfig().listForests()).iterator().forEachRemaining(forest -> forestIds.add(forest.getForestId()));
 
-        final JSONWriteHandle bulkApi = hubClient.getModulesClient().newJSONDocumentManager().read("/data-hub/5/data-services/bulk/fixCreatedByStep.api", new JacksonHandle());
+        final JSONWriteHandle bulkApi = hubClient.getModulesClient().newJSONDocumentManager().read("/data-hub/data-services/bulk/fixCreatedByStep.api", new JacksonHandle());
         final ObjectMapper mapper = new ObjectMapper();
 
         int queryBatcherThreadCount = threadCount > 0 ? threadCount : forestIds.size();

@@ -12,7 +12,7 @@ public class JobManager {
     }
 
     public void deleteJobs(String retainDuration) {
-        String apiPath = "ml-modules/root/data-hub/5/data-services/bulk/deleteJobs.api";
+        String apiPath = "ml-modules/root/data-hub/data-services/bulk/deleteJobs.api";
         BulkUtil.deleteData(hubClient.getJobsClient(), apiPath, retainDuration);
     }
 }

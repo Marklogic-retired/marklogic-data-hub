@@ -1,0 +1,4 @@
+{
+  "endpointDirectory": "/data-hub/data-services/entitySearch/",
+  "$javaClass": "com.marklogic.hub.dataservices.EntitySearchService"
+}

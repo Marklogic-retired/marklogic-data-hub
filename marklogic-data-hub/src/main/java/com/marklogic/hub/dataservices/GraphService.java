@@ -23,7 +23,7 @@ public interface GraphService {
 
             private GraphServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/graph/", servDecl);
+                this.baseProxy = new BaseProxy("/data-hub/data-services/graph/", servDecl);
 
 
                 this.req_searchNodes = this.baseProxy.request(
