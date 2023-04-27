@@ -62,7 +62,7 @@ const ListModal: React.FC<Props> = props => {
   }, [props.isVisible, props.action]);
 
   const checkListNameRules = listName => {
-    const regex = /^[a-zA-Z][a-zA-Z0-9_-]*$/; // Start with a letter and detect special characters excluding "_" and "-"
+    const regex = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/; // Start with a letter or number and detect special characters excluding "_" and "-"
     return !regex.test(listName);
   };
   const onSubmit = async event => {

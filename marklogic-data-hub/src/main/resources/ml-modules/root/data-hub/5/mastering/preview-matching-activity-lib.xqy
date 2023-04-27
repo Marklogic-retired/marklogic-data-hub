@@ -25,27 +25,63 @@ declare function pma:match-within-uris($uris as xs:string*, $original-options as
   if (fn:count($uris) > 1) then
     let $uri1 := fn:head($uris)
     let $doc1 := fn:doc($uri1)
-    let $uris-query := cts:document-query(fn:tail($uris))
-    let $filter-query := if (fn:exists($options/filterQuery[*])) then
-                          cts:and-query((cts:query($options/filterQuery), $uris-query))
-                        else
-                          $uris-query
-    let $results := if ($non-matches) then
-        let $match-query := match-impl:find-document-matches-by-options($doc1, $original-options, 1, 10000, fn:min($original-options/thresholds/score ! fn:number(.)), fn:true(), $filter-query, fn:false())/match-query/schema-element(cts:query) ! cts:query(.)
-        let $exclude-uris := cts:uris((), (), $match-query)
-        let $filter-query := if (fn:exists($exclude-uris)) then cts:and-not-query($filter-query, cts:document-query($exclude-uris)) else $filter-query
-        return matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
-      else
-        matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
-    let $count := $count + fn:count($results/result)
-    let $results := pma:transform-results($results, $uri1)
-    return
-    (
-      $results,
-      if (fn:count($uris) > 2 and $count < $PMA-MAX-RESULTS) then
-        pma:match-within-uris(fn:tail($uris), $original-options, $options, $non-matches, $count)
-      else
-        ()
+    let $ignoreDoc :=
+      if ($doc1/envelope) then(
+        let $entity-def := $doc1/envelope/instance
+        let $entity-title := $entity-def/info/title
+        let $entity-def-map as map:map := $entity-def
+        let $model := map:get($entity-def-map, $entity-title)
+        return
+          some $match-rule in  $original-options/matchRulesets/matchRules
+            satisfies (
+              let $ruleProperty :=$match-rule/(@property-name|propertyName|entityPropertyPath|documentXPath)
+              let $model-prop-value := map:get($model, $ruleProperty)
+              let $exclusion-lists := $match-rule/(@property-name|propertyName|exclusionLists|documentXPath)
+              return
+                some $exc-list-name in $exclusion-lists
+                 satisfies (
+                   let $list := fn:doc(fn:concat('/exclusionLists/',fn:string($exc-list-name),'.step.json'))
+                   let $values := $list/values
+                   let $is-match-with-list := fn:string($model-prop-value) = $values
+                   return $is-match-with-list
+
+                 )
+            )
+      ) else (
+        fn:false()
+      )
+
+    return (
+     if ($ignoreDoc) then (
+       if (fn:count($uris) > 2 and $count < $PMA-MAX-RESULTS) then
+       pma:match-within-uris(fn:tail($uris), $original-options, $options, $non-matches, $count)
+       else
+       ()
+     )
+    else (
+      let $uris-query := cts:document-query(fn:tail($uris))
+      let $filter-query := if (fn:exists($options/filterQuery[*])) then
+                            cts:and-query((cts:query($options/filterQuery), $uris-query))
+                          else
+                            $uris-query
+      let $results := if ($non-matches) then
+          let $match-query := match-impl:find-document-matches-by-options($doc1, $original-options, 1, 10000, fn:min($original-options/thresholds/score ! fn:number(.)), fn:true(), $filter-query, fn:false())/match-query/schema-element(cts:query) ! cts:query(.)
+          let $exclude-uris := cts:uris((), (), $match-query)
+          let $filter-query := if (fn:exists($exclude-uris)) then cts:and-not-query($filter-query, cts:document-query($exclude-uris)) else $filter-query
+          return matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
+        else
+          matcher:find-document-matches-by-options($doc1, $options, 1, 10000, fn:true(), $filter-query)
+      let $count := $count + fn:count($results/result)
+      let $results := pma:transform-results($results, $uri1)
+
+      return(
+        $results,
+        if (fn:count($uris) > 2 and $count < $PMA-MAX-RESULTS) then
+          pma:match-within-uris(fn:tail($uris), $original-options, $options, $non-matches, $count)
+        else
+          ()
+        )
+      )
     )
   else
     ()

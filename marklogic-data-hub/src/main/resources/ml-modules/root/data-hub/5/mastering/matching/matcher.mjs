@@ -1,6 +1,7 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import core from "/data-hub/5/artifacts/core.mjs";
 
 const {populateContentObjects, getContentObject, groupQueries, optimizeCtsQueries} = common;
 
@@ -88,7 +89,24 @@ function buildMatchSummary(matchable, content) {
     if (fn.startsWith(contentObject.uri, "/com.marklogic.smart-mastering/")) {
       continue;
     }
+    const contentValue = contentObject.value;
+    let ignoreContent = false;
     for (const matchRuleset of matchRulesetDefinitions) {
+      if (contentValue.envelope && contentValue.envelope.instance && contentValue.envelope.instance.info) {
+        const valueModel = contentValue.envelope.instance[contentValue.envelope.instance.info.title];
+        for (const rule of matchRuleset.matchRules()) {
+          if (rule.exclusionLists) {
+            for (const excListName of rule.exclusionLists) {
+              const excList = core.getArtifact("exclusionList", excListName);
+              for (const name of excList.values) {
+                if (valueModel[rule.entityPropertyPath] === name) {
+                  ignoreContent = true;
+                }
+              }
+            }
+          }
+        }
+      }
       const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
       for (const queryHash of queryHashes) {
         let uriTriples = triplesByUri.get(contentObject.uri);
@@ -112,7 +130,7 @@ function buildMatchSummary(matchable, content) {
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
       }
-      if (total === 0) {
+      if (ignoreContent || total === 0) {
         break;
       }
       const maxScan = Math.min(matchable.maxScan(), total);

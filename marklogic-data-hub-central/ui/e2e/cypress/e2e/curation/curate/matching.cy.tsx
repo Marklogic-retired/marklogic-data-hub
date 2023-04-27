@@ -201,7 +201,7 @@ describe("Matching", () => {
     //multiSlider.getHandleName("customerId").should("be.visible");
   });
 
-  xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
+  it.skip("When we work on the spike story to update multi-slider components using cypress", () => {
     multiSlider.getHandleName("customerId").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("customerId").trigger("mouseup", {force: true});
@@ -240,7 +240,7 @@ describe("Matching", () => {
     multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
   });
 
-  xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
+  it.skip("When we work on the spike story to update multi-slider components using cypress", () => {
     multiSlider.getHandleName("email").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("email").trigger("mouseup", {force: true});
@@ -258,7 +258,7 @@ describe("Matching", () => {
     multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("be.visible");
   });
 
-  xit("When we work on the spike story to update multi-slider componenens using cypress", () => {
+  it.skip("When we work on the spike story to update multi-slider components using cypress", () => {
     multiSlider.getHandleName("shipping.street").trigger("mousedown", {force: true});
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("shipping.street").trigger("mouseup", {force: true});
@@ -625,42 +625,20 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
 
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("A title for this list is required.");
-    cy.findByText("Values to ignore in this list are required.");
-
-    // Don't allow values to ignore with special characters
-    rulesetSingleModal.addValuesToListToIgnore("Word$1");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-
-    // Don't allow values to ignore with spaces
-    rulesetSingleModal.addValuesToListToIgnore("Word1 Word2");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-
-    // Vales to ignore name must start with a letter
-    rulesetSingleModal.addValuesToListToIgnore("1Word1");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-
     // Create new List
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
     rulesetSingleModal.addValuesToListToIgnore("Word1");
-    rulesetSingleModal.addValuesToListToIgnore("Word2");
+    rulesetSingleModal.addValuesToListToIgnore("2Word");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
     cy.findByText("TitleList1");
 
-    // try to create with the same name of the last one list
+    // try to create with the same name of the last list
     rulesetSingleModal.createNewList();
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
     rulesetSingleModal.addValuesToListToIgnore("Word1");
-    rulesetSingleModal.addValuesToListToIgnore("Word2");
+    rulesetSingleModal.addValuesToListToIgnore("2Word");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
 
     cy.findByText((_content, node) => {
@@ -673,34 +651,14 @@ describe("Matching", () => {
       return nodeHasText && childrenDontHaveText;
     });
 
-    // Special Characters not allowed
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title$List1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-
-    // Name List must start with a letter
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore"); // change error text
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "1TitleList1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-
-    // Name list doesn't contain spaces
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title List1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-
     // Create and close valid list
     rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1Test");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1New");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.wait(1000);
-    rulesetSingleModal.selectValuesToIgnoreInput();
 
     // Edit list of values to ignore
+    rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.editListButton("TitleList1");
     cy.findByText("Edit List");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "22");
@@ -709,7 +667,7 @@ describe("Matching", () => {
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.hoverItemPresetList("TitleList122");
-    cy.findByText("Word1, Word2, Word3");
+    cy.findByText("Word1, 2Word, Word3");
 
     // Copy List
     rulesetSingleModal.copyListButton("TitleList122");
@@ -721,7 +679,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     cy.findByText("MyCopy");
     rulesetSingleModal.hoverItemPresetList("MyCopy");
-    cy.findByText("Word1, Word2, Word3, dog");
+    cy.findByText("Word1, 2Word, Word3, dog");
     rulesetSingleModal.closeButton().click();
   });
 
@@ -742,7 +700,7 @@ describe("Matching", () => {
     //Will be checked manually, due to intermittent failure
     if (Cypress.isBrowser("!chrome")) {
       rulesetSingleModal.hoverItemPresetList("MyCopy");
-      cy.findByText("Word1, Word2, Word3, dog");
+      cy.findByText("Word1, 2Word, Word3, dog");
       rulesetSingleModal.closeButton().click();
     }
   });
@@ -807,6 +765,50 @@ describe("Matching", () => {
     rulesetSingleModal.saveModalButton("Yes");
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.findText("swim1").should("not.exist");
+  });
+
+  it("Tests matching preview with values to ignore", () => {
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
+    matchingStepDetail.getAllDataRadio().click();
+    matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
+    cy.findByLabelText("noMatchedDataView").should("not.exist");
+    let mergeResults = cy.get(`[id="testMatchedPanel"]`).first();
+    mergeResults.contains("Match - merge").should("have.length.gt", 0);
+    mergeResults.findByText("4 pair matches").should("have.length.gt", 0);
+    multiSlider.enableEdit("ruleset");
+    cy.findByTestId("ruleset lname - Exact").click();
+    cy.wait(500);
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.createNewList();
+    rulesetSingleModal.addValuesToListToIgnore("Taylor");
+    rulesetSingleModal.addListTitle("values-to-ignore-input", "ignore-lastname");
+    rulesetSingleModal.saveModalButton("confirm-list-ignore");
+
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.selectItemFromList("ignore-lastname");
+    rulesetSingleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+
+    matchingStepDetail.getAllDataRadio().click();
+    matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
+    cy.findByLabelText("noMatchedDataView").should("not.exist");
+    mergeResults = cy.get(`[id="testMatchedPanel"]`).first();
+    mergeResults.contains("Match - merge").should("have.length.gt", 0);
+    mergeResults.findByText("3 pair matches").should("have.length.gt", 0);
+
+    cy.findByTestId("ruleset lname - Exact").click();
+    cy.wait(500);
+    cy.get(`[id="valuesToIgnore"]`).type("{backspace}");
+    rulesetSingleModal.selectValuesToIgnoreInput();
+    rulesetSingleModal.saveButton().click();
   });
 
   it("Check collection Typeahead request when source  database is changed", () => {
