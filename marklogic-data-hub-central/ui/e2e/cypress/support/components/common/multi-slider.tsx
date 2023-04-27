@@ -85,7 +85,7 @@ class MultiSlider {
   }
 
   enableEdit(name: string) {
-    cy.get(`[aria-label="${name}-scale-switch"]`).click({force: true});
+    cy.get(`[aria-label="${name}-scale-switch"]`).scrollIntoView().click({force: true});
   }
 
   sliderIsActive(name: string) {

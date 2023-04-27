@@ -4,6 +4,8 @@ import {getSubElements} from "@util/test-utils";
 import React from "react";
 import ListModal from "./list-modal";
 
+const errorTextNoTitle = "A title for this list is required.";
+const errorTextNoValues = "Values to ignore in this list are required.";
 const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
 
 describe("Test input validation values to ignore", () => {
@@ -27,12 +29,12 @@ describe("Test input validation values to ignore", () => {
       />,
     );
 
-    expect(screen.queryAllByText("A title for this list is required.")).toHaveLength(0);
-    expect(screen.queryAllByText("Values to ignore in this list are required.")).toHaveLength(0);
+    expect(screen.queryAllByText(errorTextNoTitle)).toHaveLength(0);
+    expect(screen.queryAllByText(errorTextNoValues)).toHaveLength(0);
 
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
-    expect(await screen.findAllByText("A title for this list is required.")).toHaveLength(1);
-    expect(await screen.findAllByText("Values to ignore in this list are required.")).toHaveLength(1);
+    expect(await screen.findAllByText(errorTextNoTitle)).toHaveLength(1);
+    expect(await screen.findAllByText(errorTextNoValues)).toHaveLength(1);
 
     fireEvent.mouseOver(screen.getByLabelText("icon: question-circle"));
     expect(
@@ -40,7 +42,7 @@ describe("Test input validation values to ignore", () => {
     ).toHaveLength(1);
   });
 
-  it("Verify that the user don't put duplicate values", async () => {
+  it("Don't allow duplicate values", async () => {
     globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
@@ -74,7 +76,94 @@ describe("Test input validation values to ignore", () => {
     ).toBeInTheDocument();
   });
 
-  it("Don't allow special characters on list of values", async () => {
+  it("Allow letters and numbers in the values", async () => {
+    globalAny.document.createRange = () => ({
+      setStart: () => {},
+      setEnd: () => {},
+      commonAncestorContainer: {
+        nodeName: "BODY",
+        ownerDocument: document,
+      },
+    });
+    render(
+      <ListModal
+        isVisible={true}
+        toggleModal={() => {}}
+        action={"A"}
+        confirmAction={() => {}}
+        checkIfExistInList={() => {
+          return false;
+        }}
+        updateListValues={() => {}}
+        listValues={["One"]}
+      />,
+    );
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
+    fireEvent.change(inputListValues, {target: {value: "ab3d"}});
+    fireEvent.click(screen.getByRole("option"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+  });
+
+  it("Allow hyphen characters in the values", async () => {
+    globalAny.document.createRange = () => ({
+      setStart: () => {},
+      setEnd: () => {},
+      commonAncestorContainer: {
+        nodeName: "BODY",
+        ownerDocument: document,
+      },
+    });
+    render(
+      <ListModal
+        isVisible={true}
+        toggleModal={() => {}}
+        action={"A"}
+        confirmAction={() => {}}
+        checkIfExistInList={() => {
+          return false;
+        }}
+        updateListValues={() => {}}
+        listValues={["One"]}
+      />,
+    );
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
+    fireEvent.change(inputListValues, {target: {value: "ab-cd"}});
+    fireEvent.click(screen.getByRole("option"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+  });
+
+  it("Allow underscore characters in the values", async () => {
+    globalAny.document.createRange = () => ({
+      setStart: () => {},
+      setEnd: () => {},
+      commonAncestorContainer: {
+        nodeName: "BODY",
+        ownerDocument: document,
+      },
+    });
+    render(
+      <ListModal
+        isVisible={true}
+        toggleModal={() => {}}
+        action={"A"}
+        confirmAction={() => {}}
+        checkIfExistInList={() => {
+          return false;
+        }}
+        updateListValues={() => {}}
+        listValues={["One"]}
+      />,
+    );
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+    const inputListValues = screen.getByPlaceholderText("Enter values to remove");
+    fireEvent.change(inputListValues, {target: {value: "a_b_cd"}});
+    fireEvent.click(screen.getByRole("option"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+  });
+
+  it("Don't allow special characters in the values", async () => {
     globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
@@ -101,9 +190,15 @@ describe("Test input validation values to ignore", () => {
     fireEvent.change(inputListValues, {target: {value: "ab$cd"}});
     fireEvent.click(screen.getByRole("option"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
+    fireEvent.change(inputListValues, {target: {value: "ab>cd"}});
+    fireEvent.click(screen.getByRole("option"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(1);
+    fireEvent.change(inputListValues, {target: {value: "ab<cd"}});
+    fireEvent.click(screen.getByRole("option"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(1);
   });
 
-  it("on list of values doesn't contain spaces", async () => {
+  it("Don't allow spaces in the values", async () => {
     globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
@@ -173,12 +268,15 @@ describe("Test input validation values to ignore", () => {
     );
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
     const inputListName = screen.getByPlaceholderText("Enter title");
-    fireEvent.change(inputListName, {target: {value: "Listt$"}});
+    fireEvent.change(inputListName, {target: {value: "List$"}});
+    fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(1);
+    fireEvent.change(inputListName, {target: {value: "List>"}});
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
   });
 
-  it("Name List Must start with a letter", () => {
+  it("Name List must start with a letter or number", () => {
     render(
       <ListModal
         isVisible={true}
@@ -195,8 +293,16 @@ describe("Test input validation values to ignore", () => {
     const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
     const inputListName = screen.getByPlaceholderText("Enter title");
-    fireEvent.change(inputListName, {target: {value: "1List"}});
+    fireEvent.change(inputListName, {target: {value: "$List"}});
     fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
+
+    fireEvent.change(inputListName, {target: {value: "List"}});
+    fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
+
+    fireEvent.change(inputListName, {target: {value: "1List"}});
+    fireEvent.click(screen.getByLabelText("confirm-list-ignore"));
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
   });
 });
