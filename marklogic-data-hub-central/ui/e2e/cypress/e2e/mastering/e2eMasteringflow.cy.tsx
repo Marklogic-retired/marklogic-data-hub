@@ -51,7 +51,8 @@ describe("Validate E2E Mastering Flow", () => {
     cy.deleteFlows(flowName);
     cy.deleteEntities("Patient");
     cy.deleteRecordsInFinal("loadPatient", "patientMap", "patientMatch", "patientMerge");
-    cy.deleteRecordsInFinal("sm-Patient-archived", "sm-Patient-mastered", "sm-Patient-merged", "sm-Patient-auditing", "sm-Patient-notification");
+    cy.deleteRecordsInFinal("sm-Patient-archived", "sm-Patient-mastered", "sm-Patient-merged", "sm-Patient-auditing", "sm-Patient-notification", "http://marklogic.com/entity-services/models/draft", "http://marklogic.com/entity-services/models");
+    cy.deleteRecordsInStaging("loadPatient", "http://marklogic.com/entity-services/models/draft", "http://marklogic.com/entity-services/models");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });

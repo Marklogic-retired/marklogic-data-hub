@@ -18,7 +18,7 @@ class EntityTypeTable {
   }
 
   getExpandEntityIcon(entityName: string) {
-    cy.get(`[data-testid="${entityName}-Entity Type-expand-icon"]`).click({force: true});
+    cy.get(`[data-testid="${entityName}-Entity Type-expand-icon"]`).scrollIntoView().should("be.visible").click({force: true});
   }
 
   sortByEntityName() {

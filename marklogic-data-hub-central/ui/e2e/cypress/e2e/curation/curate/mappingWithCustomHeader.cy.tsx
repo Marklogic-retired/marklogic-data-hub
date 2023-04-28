@@ -32,7 +32,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrderCustomHeader");
     cy.deleteSteps("mapping", "mapOrderCustomHeader");
-    cy.deleteFlows("orderCustomHeaderFlow");
+    cy.deleteFlows("orderCustomHeaderFlow", "orderE2eFlow");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -139,7 +139,12 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
 
     cy.log("**Open Order to see steps**");
-    curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
+    curatePage.getEntityTypePanel("Order").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Order");
+      }
+    });
 
     cy.log("**Cancel add to new flow**");
     curatePage.addToNewFlow("Order", mapStep);
@@ -148,7 +153,12 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Order").should("be.visible").click());
+    curatePage.getEntityTypePanel("Order").then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        curatePage.toggleEntityTypeId("Order");
+      }
+    });
 
     // TODO: Need to wait do to a second re-render. BUG: DHFPROD-9222
     cy.wait(1000);
