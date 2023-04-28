@@ -1306,7 +1306,7 @@ pipeline{
         			agent { label 'dhfWinagent'}
         			steps{
                      timeout(time: 4,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10","Latest")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
         			}}
         			post{
         				always{
@@ -1322,7 +1322,7 @@ pipeline{
                           }
                           }
         		}
-                
+
         		stage('w12_cluster_11.0-2'){
         			agent { label 'dhfWinCluster'}
         			steps{
