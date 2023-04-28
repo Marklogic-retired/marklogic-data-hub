@@ -181,6 +181,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubAddStepToFlow", group: developGroup, type: AddStepToFlowTask,
             description: "Add a step to a flow in staging and final databases and write it to your project; specify a flow name via -PflowName=YourFlowName, " +
                 "step name via -PstepName=YourStepName and a step type via -PstepType=(ingestion|mapping|custom|matching|merging|mastering)")
+        project.task("hubUpgradeLegacyFlows", group: developGroup, type: UpdateLegacyFlowsTask,
+            description: "gradle task to upgrade existing legacy flows")
         project.task("hubCreateEntity", group: developGroup, type: CreateEntityTask,
             description: "Create a new entity file in the project directory (does not deploy it to MarkLogic)")
         project.task("hubCreateFlow", group: developGroup, type: CreateFlowTask,
