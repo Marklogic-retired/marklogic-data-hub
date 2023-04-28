@@ -23,17 +23,14 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.json.JSONStreamWriter;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -468,7 +465,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     }
                 }
             }
-            upgradeLegacyFlows(flowManager, oldEntityDirectories);
+            upgradeLegacyFlows(flowManager);
         }
         File[] oldMappingsDirectories = oldMappingsDir.toFile().listFiles();
         if (oldMappingsDirectories != null) {
@@ -495,7 +492,12 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
     }
 
-    private void upgradeLegacyFlows(FlowManagerImpl flowManager, File[] oldEntityDirectories) {
+    public void upgradeLegacyFlows(FlowManagerImpl flowManager) {
+        Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
+        File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
+        if(ArrayUtils.isEmpty(oldEntityDirectories)) {
+            return;
+        }
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(flowManager.getHubConfig());
         ObjectMapper objectMapper = new ObjectMapper();
         if(oldEntityDirectories != null) {
