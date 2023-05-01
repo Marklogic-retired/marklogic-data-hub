@@ -15,26 +15,22 @@
  */
 package com.marklogic.hub.step.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.JacksonCSVSplitter;
-import com.marklogic.client.datamovement.JobTicket;
-import com.marklogic.client.datamovement.WriteBatcher;
-import com.marklogic.client.datamovement.WriteEvent;
-import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
-import com.marklogic.client.ext.util.DocumentPermissionsParser;
-import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.dataservices.IOEndpoint;
+import com.marklogic.client.dataservices.InputCaller;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.marker.BufferableHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.dataservices.BulkUtil;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
@@ -48,38 +44,40 @@ import com.marklogic.hub.step.StepStatusListener;
 import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.FileNameMap;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.UUID;
-import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class WriteStepRunner implements StepRunner {
 
@@ -98,6 +96,7 @@ public class WriteStepRunner implements StepRunner {
 
     private String step = "1";
     private static final String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+    private static final String END_LINE = "\r\n";
     private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
     private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
     private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
@@ -106,21 +105,22 @@ public class WriteStepRunner implements StepRunner {
     private HubProject hubProject;
 
     private Thread runningThread = null;
-    private DataMovementManager dataMovementManager = null;
-    private WriteBatcher writeBatcher = null;
     // setting these values to protected so their values can be tested
     protected String inputFilePath = null;
     protected String outputCollections;
     protected String outputPermissions;
     protected String outputFormat;
     protected String inputFileType;
+    protected String inputMimeType;
     protected String outputURIReplacement;
     protected String outputURIPrefix;
     protected String separator = ",";
+    protected String boundary = "===dataHubIngestion===";
     protected AtomicBoolean isStopped = new AtomicBoolean(false);
     private IngestionStepDefinitionImpl stepDef;
     private Map<String, Object> stepConfig = new HashMap<>();
-    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+
+    private final FileNameMap fileNameMap = URLConnection.getFileNameMap();
 
     public WriteStepRunner(HubClient hubClient, HubProject hubProject) {
         this.hubClient = hubClient;
@@ -217,9 +217,7 @@ public class WriteStepRunner implements StepRunner {
         if (runningThread != null) {
             runningThread.join(unit.convert(timeout, unit));
             if (runningThread.getState() != Thread.State.TERMINATED) {
-                if ( dataMovementManager != null && writeBatcher != null ) {
-                    dataMovementManager.stopJob(writeBatcher);
-                }
+                this.isStopped.set(true);
                 runningThread.interrupt();
                 throw new TimeoutException("Timeout occurred after "+timeout+" "+unit.toString());
             }
@@ -292,9 +290,6 @@ public class WriteStepRunner implements StepRunner {
     @Override
     public void stop() {
         isStopped.set(true);
-        if(writeBatcher != null) {
-            dataMovementManager.stopJob(writeBatcher);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -411,7 +406,6 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private RunStepResponse runIngester(RunStepResponse runStepResponse, Collection<String> uris) {
-        StepMetrics stepMetrics = new StepMetrics();
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
@@ -445,136 +439,52 @@ public class WriteStepRunner implements StepRunner {
                 return runStepResponse;
             }
         }
-
-        Vector<String> errorMessages = new Vector<>();
-
+        int inputCount = uris.size();
+        StepMetrics stepMetrics = new StepMetrics(inputCount, (int) Math.ceil(inputCount/(double)batchSize));
         // Optimize for Hub databases associated with Hub app servers, but allow other values
-        dataMovementManager = destinationDatabase.equals(hubClient.getDbName(DatabaseKind.FINAL)) ?
-            hubClient.getFinalClient().newDataMovementManager() :
-            hubClient.getStagingClient(destinationDatabase).newDataMovementManager();
+        DatabaseClient client = destinationDatabase.equals(hubClient.getDbName(DatabaseKind.FINAL)) ?
+            hubClient.getFinalClient() :
+            hubClient.getStagingClient();
 
-        HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
-
-        double uriSize = uris.size();
-
-        ServerTransform serverTransform = new ServerTransform("mlRunIngest");
-        serverTransform.addParameter("job-id", jobId);
-        serverTransform.addParameter("step", step);
-        serverTransform.addParameter("flow-name", flow.getName());
-        String optionString = jsonToString(combinedOptions);
-        serverTransform.addParameter("options", optionString);
-
-        writeBatcher = dataMovementManager.newWriteBatcher()
-            .withBatchSize(batchSize)
-            .withThreadCount(threadCount)
-            .withJobId(runStepResponse.getJobId())
-            .withTransform(serverTransform)
-            .onBatchSuccess(batch ->{
-                //TODO: There is one additional item returned, it has to be investigated
-                stepMetrics.getSuccessfulEvents().addAndGet(batch.getItems().length-1);
-                stepMetrics.getSuccessfulBatches().addAndGet(1);
-                logger.debug(String.format("Current SuccessfulEvents: %d - FailedEvents: %d", stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount()));
-                runStatusListener(uriSize, stepMetrics);
-                if (stepItemCompleteListeners.size() > 0) {
-                    Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
-                        stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
-                            listener.processCompletion(runStepResponse.getJobId(), e.getTargetUri());
-                        });
-                    });
-                }
-            })
-            .onBatchFailure((batch, ex) -> {
-                stepMetrics.getFailedEvents().addAndGet(batch.getItems().length-1);
-                stepMetrics.getFailedBatches().addAndGet(1);
-                runStatusListener(uriSize, stepMetrics);
-                if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                    errorMessages.add(ex.getLocalizedMessage());
-                }
-                if(stepItemFailureListeners.size() > 0) {
-                    Arrays.stream(batch.getItems()).forEach((WriteEvent e) -> {
-                        stepItemFailureListeners.forEach((StepItemFailureListener listener) -> {
-                            listener.processFailure(runStepResponse.getJobId(), e.getTargetUri());
-                        });
-                    });
-                }
-                if (stopOnFailure ) {
-                    JobTicket jobTicket = ticketWrapper.get("jobTicket");
-                    if (jobTicket != null) {
-                        dataMovementManager.stopJob(jobTicket);
-                    }
-                }
-            });
-
-        DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
-        //Apply permissions
-        if(StringUtils.isNotEmpty(outputPermissions)) {
-            try{
-                documentPermissionsParser.parsePermissions(outputPermissions, metadataHandle.getPermissions());
-            }
-            catch (Exception e){
-                throw e;
-            }
-        }
-        //Set the collections
-        if(StringUtils.isNotEmpty(outputCollections)) {
-            metadataHandle.withCollections(outputCollections.split(","));
-        }
-
-        if(flow.getName().equals("default-ingestion")) {
-            metadataHandle.withCollections("default-ingestion");
-        }
-        // Set metadata values
-        DocumentMetadataHandle.DocumentMetadataValues metadataValues = metadataHandle.getMetadataValues();
-        metadataValues.add("datahubCreatedByJob", jobId);
-        metadataValues.add("datahubCreatedInFlow", flow.getName());
-        metadataValues.add("datahubRanBySteps", flow.getStep(step).getName());
-        metadataValues.add("datahubCreatedByStep", flow.getStep(step).getName());
-        // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
-        metadataValues.add("datahubCreatedOn", new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN).format(new Date()));
-        metadataValues.add("datahubCreatedBy", hubClient.getUsername());
-        writeBatcher.withDefaultMetadata(metadataHandle);
-        Format format = null;
+        String apiPath = "ml-modules/root/data-hub/data-services/stepRunner/processIngestBatch.api";
+        ObjectNode endpointConstants = new ObjectMapper().createObjectNode();
+        endpointConstants.put("jobId", jobId);
+        endpointConstants.put("stepNumber", step);
+        endpointConstants.put("flowName", flow.getName());
+        JsonNode optionsNode = jsonToNode(combinedOptions);
+        endpointConstants.set("options", optionsNode);
+        ErrorListener errorListener = new ErrorListener(this, stepMetrics, stopOnFailure, optionsNode.path("retryLimit").asInt(0));
         switch (inputFileType.toLowerCase()) {
             case "xml":
-                format = Format.XML;
+                inputMimeType = "application/xml";
                 break;
             case "json":
-                format = Format.JSON;
-                break;
             case "csv":
-                format = Format.JSON;
+                inputMimeType = "application/json";
                 break;
             case "text":
-                format = Format.TEXT;
+                inputMimeType = "text/plain";
                 break;
             default:
-                format = Format.BINARY;
+                inputMimeType = "application/octet-stream";
         }
-        final Format fileFormat = format;
-        Spliterator itr = Spliterators.spliteratorUnknownSize(uris.iterator(), 0);
-        if(!isStopped.get()){
-            JobTicket jobTicket = dataMovementManager.startJob(writeBatcher);
-            ticketWrapper.put("jobTicket", jobTicket);
-            StreamSupport.stream(itr, true).forEach((uri) -> {
-                try {
-                    File file = new File((String) uri);
-                    addToBatcher(file, fileFormat);
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
-
         runningThread = new Thread(() -> {
-            try {
-                writeBatcher.flushAndWait();
+            InputCaller.BulkInputCaller<InputStreamHandle> bulkCaller = BulkUtil.runInputCaller(client, apiPath, endpointConstants, runStepResponse.toObjectNode(), threadCount, batchSize, errorListener);
+            AtomicLong count = new AtomicLong(0);
+            Stream<InputStreamHandle> inputHandles = uris.stream().map(uri -> toInputStreamHandleList(new File(uri))).flatMap(List::stream);
+            Collection<List<InputStreamHandle>> resultingBatches = inputHandles
+                    .collect(Collectors.groupingByConcurrent(inputStreamHandle -> count.getAndIncrement() / batchSize))
+                    .values();
+            for (List<InputStreamHandle> batch: resultingBatches) {
+                bulkCaller.acceptAll(batch.toArray(new InputStreamHandle[0]));
+                stepMetrics.getSuccessfulBatches().incrementAndGet();
+                stepMetrics.getSuccessfulEvents().addAndGet(batch.size());
+                runStatusListener(stepMetrics);
             }
-            catch (IllegalStateException e) {
-                logger.error("WriteBatcher has been stopped");
-            }
-
+            bulkCaller.awaitCompletion();
             String stepStatus;
+            stepMetrics.getSuccessfulBatches().set((long)Math.ceil(inputCount/(double) batchSize) - stepMetrics.getFailedBatchesCount());
+            stepMetrics.getSuccessfulEvents().set(inputCount - Math.min(stepMetrics.getFailedEventsCount(), inputCount));
             if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
                 stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
             } else if (isStopped.get()){
@@ -586,45 +496,39 @@ public class WriteStepRunner implements StepRunner {
             } else {
                 stepStatus = JobStatus.FAILED_PREFIX + step;
             }
-
             stepStatusListeners.forEach((StepStatusListener listener) -> {
                 listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "Ingestion completed");
             });
 
-            dataMovementManager.stopJob(writeBatcher);
-
             runStepResponse.setCounts(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
-            if (errorMessages.size() > 0) {
-                runStepResponse.withStepOutput(errorMessages);
+            if (errorListener.getThrowables().size() > 0) {
+                runStepResponse.withStepOutput(errorListener.getThrowables().stream().map(Throwable::getLocalizedMessage).collect(Collectors.toList()));
             }
 
             if (jobOutputIsEnabled()) {
                 JsonNode jobDoc = null;
                 try {
-                    jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId,  step, stepStatus, runStepResponse.toObjectNode());
-                }
-                catch (Exception e) {
+                    jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
+                } catch (Exception e) {
                     logger.error("Unable to update job document, cause: " + e.getMessage());
                 }
-                if(jobDoc != null) {
+                if (jobDoc != null) {
                     try {
-                        RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                        RunStepResponse tempResp = StepRunnerUtil.getResponse(jobDoc, step);
                         runStepResponse.setStepStartTime(tempResp.getStepStartTime());
                         runStepResponse.setStepEndTime(tempResp.getStepEndTime());
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         logger.error("Unable to update step response, cause: " + ex.getMessage());
                     }
                 }
             }
         });
-
         runningThread.start();
         return runStepResponse;
     }
 
-    private void processCsv(JacksonHandle jacksonHandle, File file) {
+    private InputStreamHandle processCsv(JacksonHandle jacksonHandle, File file) {
         ObjectMapper mapper = jacksonHandle.getMapper();
         JsonNode originalContent = jacksonHandle.get();
         ObjectNode node = mapper.createObjectNode();
@@ -639,9 +543,9 @@ public class WriteStepRunner implements StepRunner {
         }
 
         node.put("file", file.getAbsolutePath());
-        jacksonHandle.set(node);
+        InputStreamHandle inputStreamHandle = null;
         try {
-            writeBatcher.add(generateUriForCsv(file.getParent(), SystemUtils.OS_NAME.toLowerCase()), jacksonHandle);
+          inputStreamHandle = toInputStreamHandleWithInputStream(generateUriForCsv(file.getParent(), SystemUtils.OS_NAME.toLowerCase()), new ByteArrayInputStream(node.toPrettyString().getBytes(StandardCharsets.UTF_8)));
         }
         catch (IllegalStateException e) {
             logger.error("WriteBatcher has been stopped");
@@ -650,6 +554,7 @@ public class WriteStepRunner implements StepRunner {
             currentCsvFile = file.getAbsolutePath();
             ++csvFilesProcessed;
         }
+        return inputStreamHandle;
     }
 
     protected String generateUriForCsv(String parentPath, String os){
@@ -676,55 +581,86 @@ public class WriteStepRunner implements StepRunner {
         return String.format(uri +"%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID());
     }
 
-    private void addToBatcher(File file, Format fileFormat) throws IOException {
-        // Coverity is saying that the docStream is a resource leak, but the comment below this indicates that it must
-        // not be closed. Because this is for DHFPROD-3695 and we're close to releasing 5.1.0, leaving this as-is for now.
-
-        // This docStream must not be closed, or use try-resource due to WriteBatcher needing the stream open
-        FileInputStream docStream = new FileInputStream(file);
-        //note these ORs are for forward compatibility if we swap out the filecollector for another lib
-        if (inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
-            CsvSchema schema = CsvSchema.emptySchema()
-                .withHeader()
-                .withColumnSeparator(separator.charAt(0));
-            JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
-            try {
-                if (!writeBatcher.isStopped()) {
-                    Stream<JacksonHandle> contentStream = splitter.split(docStream);
-                    contentStream.forEach(jacksonHandle -> this.processCsv(jacksonHandle, file));
-                }
-            } catch (Exception e) {
-                IOUtils.closeQuietly(docStream);
-                throw new RuntimeException(e);
-            }
-        } else {
-            InputStreamHandle handle = new InputStreamHandle(docStream);
-            try {
-                handle.setFormat(fileFormat);
-                if (!writeBatcher.isStopped()) {
-                    try {
-                        String uri;
-                        if(outputURIPrefix != null){
-                            uri = getPrefixedEncodedURI(file.getName());
-                        }
-                        else {
-                            uri = file.getAbsolutePath();
-                            //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
-                            if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
-                                uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
-                            }
-                            uri = generateAndEncodeURI(outputURIReplace(uri));
-                        }
-                        writeBatcher.add(uri, handle);
-                    } catch (IllegalStateException e) {
-                        logger.error("WriteBatcher has been stopped");
-                    }
-                }
-            } catch (URISyntaxException e) {
-                IOUtils.closeQuietly(handle);
-                throw new RuntimeException(e);
-            }
+    private String fileUri(File file) throws URISyntaxException {
+        String uri;
+        if (outputURIPrefix != null){
+            uri = getPrefixedEncodedURI(file.getName());
         }
+        else {
+            uri = file.getAbsolutePath();
+            //In case of Windows, C:\\Documents\\abc.json will be converted to /c/Documents/abc.json
+            if (SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
+                uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
+            }
+            uri = generateAndEncodeURI(outputURIReplace(uri));
+        }
+        return uri;
+    }
+
+    private List<InputStreamHandle> toInputStreamHandleList(File file) {
+        List<InputStreamHandle> inputStreamHandleList = new ArrayList<>();
+        try (FileInputStream docStream = new FileInputStream(file)) {
+            //note these ORs are for forward compatibility if we swap out the filecollector for another lib
+            if (inputFileType.equalsIgnoreCase("csv") || inputFileType.equalsIgnoreCase("tsv") || inputFileType.equalsIgnoreCase("psv")) {
+                CsvSchema schema = CsvSchema.emptySchema()
+                        .withHeader()
+                        .withColumnSeparator(separator.charAt(0));
+                JacksonCSVSplitter splitter = new JacksonCSVSplitter().withCsvSchema(schema);
+                try {
+                    if (!this.isStopped.get()) {
+                        Stream<JacksonHandle> contentStream = splitter.split(docStream);
+                        contentStream.forEach(jacksonHandle -> inputStreamHandleList.add(this.processCsv(jacksonHandle, file)));
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                String mimeType = fileNameMap.getContentTypeFor(file.getName());
+                inputStreamHandleList.add(toInputStreamHandleWithInputStream(fileUri(file), docStream));
+            }
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
+        return inputStreamHandleList;
+    }
+
+    protected InputStreamHandle toInputStreamHandleWithInputStream(String uri, InputStream inputStream) {
+        Charset charset = StandardCharsets.UTF_8;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
+        writer.append("--").append(boundary).append(END_LINE);
+        writer.append("Content-Disposition: form-data; name=\"uri\"")
+                .append(END_LINE);
+        writer.append("Content-Type: text/plain; charset=").append(String.valueOf(charset)).append(
+                END_LINE);
+        writer.append(END_LINE);
+        writer.append(uri).append(END_LINE);
+        writer.append("--").append(boundary).append(END_LINE);
+        writer.append("Content-Disposition: form-data; name=\"fileName\"; filename=\"").append(uri).append("\"")
+                .append(END_LINE);
+        writer.append("Content-Type: ").append(inputMimeType)
+                .append(END_LINE);
+        writer.append("Content-Transfer-Encoding: binary").append(END_LINE);
+        writer.append(END_LINE);
+        writer.flush();
+
+        try {
+            byte[] buffer = new byte[4096];
+            int bytesRead = -1;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        writer.append(END_LINE);
+        writer.flush();
+        writer.append(END_LINE).flush();
+        writer.append("--").append(boundary).append("--").append(END_LINE);
+        writer.close();
+        return new InputStreamHandle(new ByteArrayInputStream(outputStream.toByteArray())).withFormat(Format.BINARY);
     }
 
     protected String getPrefixedEncodedURI(String filename) throws  URISyntaxException{
@@ -765,8 +701,9 @@ public class WriteStepRunner implements StepRunner {
     //percentComplete for csv files is (csvFilesProcessed/ urisCount) * 100.0
     //The number of csv files would probably be less than that of regular files, so the step status listeners are updated more frequently
     //'uris' is backed by DiskQueue whose size changes as the Collection is iterated, so size is calculated before iteration
-    protected void runStatusListener(double uriSize, StepMetrics stepMetrics) {
-        double batchCount = Math.ceil(uriSize / (double) batchSize);
+    protected void runStatusListener(StepMetrics stepMetrics) {
+        double uriSize = (double) stepMetrics.getTotalEventsCount();
+        double batchCount = (double) stepMetrics.getTotalBatchesCount();
         long totalRunBatches = stepMetrics.getSuccessfulBatchesCount() + stepMetrics.getFailedBatchesCount();
         int percentComplete;
         if("csv".equalsIgnoreCase(inputFileType)) {
@@ -789,12 +726,48 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private String jsonToString(Map map) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(objectMapper.convertValue(map, JsonNode.class));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+    private JsonNode jsonToNode(Map<String, Object> map) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(map, JsonNode.class);
+    }
+
+    static class ErrorListener implements InputCaller.BulkInputCaller.ErrorListener {
+        WriteStepRunner writeStepRunner;
+        StepMetrics stepMetrics;
+        List<Throwable> throwables = new ArrayList<>();
+        StepStatusListener[] stepStatusListeners = null;
+        int retryLimit = 0;
+        boolean stopOnFailure;
+
+        public ErrorListener(WriteStepRunner writeStepRunner, StepMetrics stepMetrics, boolean stopOnFailure, int retryLimit) {
+            this.writeStepRunner = writeStepRunner;
+            this.stepMetrics = stepMetrics;
+            this.stopOnFailure = stopOnFailure;
+            this.retryLimit = retryLimit;
+        }
+
+        public List<Throwable> getThrowables() {
+            return throwables;
+        }
+
+        public ErrorListener withStepListeners(StepStatusListener ...stepStatusListeners) {
+            this.stepStatusListeners = stepStatusListeners;
+            return this;
+        }
+
+        @Override
+        public IOEndpoint.BulkIOEndpointCaller.ErrorDisposition processError(int retryCount, Throwable throwable, IOEndpoint.CallContext callContext, BufferableHandle[] input) {
+            if (retryCount < retryLimit) {
+                return IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.RETRY;
+            }
+            stepMetrics.getFailedBatches().incrementAndGet();
+            stepMetrics.getSuccessfulBatches().decrementAndGet();
+            long failedEvents = input.length;
+            stepMetrics.getSuccessfulEvents().set(stepMetrics.getSuccessfulEventsCount() - failedEvents);
+            stepMetrics.getFailedEvents().addAndGet(failedEvents);
+            writeStepRunner.runStatusListener(stepMetrics);
+            throwables.add(throwable);
+            return stopOnFailure ? IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.STOP_ALL_CALLS: IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.SKIP_CALL;
         }
     }
 }

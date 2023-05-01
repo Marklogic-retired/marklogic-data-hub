@@ -37,6 +37,7 @@ const jobId = endpointConstants.jobId;
 // called by the Java QueryStepRunner class, which has its own logic for combining options.
 const options = endpointConstants.options.options || endpointConstants.options;
 
+
 const datahub = DataHubSingleton.instance({
   performanceMetrics: !!options.performanceMetrics
 });
@@ -65,9 +66,19 @@ const decodeData = (data) => {
 
 if (input[Symbol.iterator]) {
   for (const data of input) {
-      decodeData(data.root);
+    decodeData(data.root);
   }
 } else {
   decodeData(input.root);
 }
+
+if (options.inputFileType && options.inputFileType.toLowerCase() === "csv") {
+  options.file = content[0].value.toObject().file;
+  content.forEach(c => {
+    c.value = {root: c.value.toObject().content};
+  });
+}
+// if no target database is selected, assume the FlowRunner selected the expected DB
+options.targetDatabase = options.targetDatabase || xdmp.databaseName(xdmp.database());
+
 datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);

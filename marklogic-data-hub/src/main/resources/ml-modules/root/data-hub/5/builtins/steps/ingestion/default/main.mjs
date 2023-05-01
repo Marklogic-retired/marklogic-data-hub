@@ -18,13 +18,11 @@ function main(content, options) {
   let instance = content.value.root || content.value;
   if (hubUtils.isBinaryNode(instance) || outputFormat === consts.BINARY || outputFormat === consts.TEXT) {
     return content;
-  }
-  else if (hubUtils.isTextNode(instance)) {
+  } else if (hubUtils.isTextNode(instance)) {
     try {
       const unquoteOptions = outputFormat === consts.XML ? "format-xml" : "format-json";
       instance = fn.head(xdmp.unquote(instance, null, unquoteOptions));
-    }
-    catch (e) {
+    } catch (e) {
       let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
       throw Error(errMsg);
     }

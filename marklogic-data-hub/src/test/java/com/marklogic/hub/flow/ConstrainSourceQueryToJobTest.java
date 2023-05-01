@@ -49,8 +49,8 @@ public class ConstrainSourceQueryToJobTest extends AbstractHubCoreTest {
         // Use a user that has permission to delete these docs
         runAsAdmin();
 
-        assertEquals(3, getDocCount(HubConfig.DEFAULT_JOB_NAME, collection),
-            "Expecting 2 Job docs and 1 Batch doc");
+        assertEquals(4, getDocCount(HubConfig.DEFAULT_JOB_NAME, collection),
+            "Expecting 2 Job docs and 2 Batch docs");
 
         new DeleteCollectionsJob(collection).setConsistentSnapshot(true).run(getHubClient().getJobsClient());
 

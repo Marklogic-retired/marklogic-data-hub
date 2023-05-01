@@ -63,7 +63,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {}
                 wsr.csvFilesProcessed++;
-                wsr.runStatusListener(files.size(),stepMetrics);
+                wsr.runStatusListener(stepMetrics);
             });
         };
         csvTask.run();
@@ -80,7 +80,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
                 } catch (InterruptedException e) {}
                 stepMetrics.getSuccessfulEvents().incrementAndGet();
                 stepMetrics.getSuccessfulBatches().incrementAndGet();
-                wsr.runStatusListener(files.size(),stepMetrics);
+                wsr.runStatusListener(stepMetrics);
             });
         };
         xmlTask.run();

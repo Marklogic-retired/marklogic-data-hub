@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.dataservices.ExecCaller;
 import com.marklogic.client.dataservices.IOEndpoint;
+import com.marklogic.client.dataservices.InputCaller;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 
 import java.io.IOException;
@@ -44,6 +46,26 @@ public class BulkUtil {
             if (throwable != null) {
                 throw new RuntimeException(errorPrefix + throwable.getMessage(), throwable);
             }
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Unable to find API module " + apiPath + " on classpath; cause: " + e.getMessage(), e);
+        }
+    }
+
+    public static InputCaller.BulkInputCaller<InputStreamHandle> runInputCaller(DatabaseClient databaseClient, String apiPath, ObjectNode endpointConstants, ObjectNode endpointState, int threadCount, int batchSize, InputCaller.BulkInputCaller.ErrorListener errorListener) {
+        try (InputStreamReader apiReader = new InputStreamReader(BulkUtil.class.getClassLoader().getResourceAsStream(apiPath), StandardCharsets.UTF_8)) {
+            ObjectNode apiNode = objectMapper.readValue(apiReader, ObjectNode.class);
+            apiNode.putObject("$bulk").put("inputBatchSize", batchSize);
+            InputCaller<InputStreamHandle> caller = InputCaller.onHandles(databaseClient, new JacksonHandle(apiNode), new InputStreamHandle());
+            IOEndpoint.CallContext[] callerContexts =  new IOEndpoint.CallContext[threadCount];
+            for (int i = 0; i < threadCount; i++) {
+                callerContexts[i] = caller.newCallContext()
+                        .withEndpointConstantsAs(endpointConstants)
+                        .withEndpointState(new JacksonHandle(endpointState));
+            }
+            InputCaller.BulkInputCaller<InputStreamHandle> bulkCaller = caller.bulkCaller(callerContexts);
+            bulkCaller.setErrorListener(errorListener);
+            return bulkCaller;
         } catch (IOException e) {
             throw new RuntimeException(
                     "Unable to find API module " + apiPath + " on classpath; cause: " + e.getMessage(), e);

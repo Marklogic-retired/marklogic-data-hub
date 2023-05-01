@@ -1,12 +1,21 @@
 {
-    "functionName": "processQueryBatch",
-    "endpoint": "/data-hub/data-services/stepRunner/processQueryBatch.mjs",
-    "desc": "Use this for query steps that don't require a collector to return URIs",
+    "functionName": "processIngestBatch",
+    "endpoint": "/data-hub/data-services/stepRunner/processIngestBatch.mjs",
+    "desc": "Use this for ingestion steps that don't require a collector to return URIs",
     "params": [
         {
           "name" : "session",
           "datatype" : "session",
+          "nullable": true,
+          "multiple":false,
           "desc" : "Holds the session object"
+        },
+        {
+          "name" : "input",
+          "datatype" : "binaryDocument",
+          "multiple": true,
+          "nullable": true,
+          "desc" : "Holds input for ingestion and metadata as multipart data"
         },
         {"name":"endpointState",     "datatype":"jsonDocument", "multiple":false, "nullable":true},
         {"name":"endpointConstants", "datatype":"jsonDocument", "multiple":false, "nullable":false}
@@ -14,7 +23,7 @@
     "return": {
         "datatype": "jsonDocument",
         "multiple": false,
-        "nullable": false,
+        "nullable": true,
         "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
     }
 }
