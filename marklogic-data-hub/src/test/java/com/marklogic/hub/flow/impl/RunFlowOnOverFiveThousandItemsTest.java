@@ -2,6 +2,7 @@ package com.marklogic.hub.flow.impl;
 
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
@@ -29,6 +30,7 @@ public class RunFlowOnOverFiveThousandItemsTest extends AbstractHubCoreTest {
         assertEquals(51, stepResponse.getSuccessfulBatches(), "Assumes a default batch size of 100, so we have " +
             "51 batches with the last batch having 1 doc in it");
         assertEquals(0, stepResponse.getFailedBatches());
+        assertEquals(customerCount, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "simpleCustomStep-output"));
     }
 
     private void writeManyCustomers(int count) {

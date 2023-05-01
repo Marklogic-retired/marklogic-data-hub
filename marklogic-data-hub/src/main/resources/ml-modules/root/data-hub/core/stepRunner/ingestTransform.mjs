@@ -14,11 +14,11 @@ function transform(context, params, content) {
 
   let step = params['step'] ? xdmp.urlDecode(params['step']) : params['flow-name'] ? null : 1;
   let stepObj = flow.steps[step];
-  if(!stepObj) {
+  if (!stepObj) {
     datahub.debug.log({message: params, type: 'error'});
     httpUtils.throwNotFoundWithArray(["Not Found", "The specified step "+ step + " is missing in  " + flowName]);
   }
-  if (!stepObj.stepDefinitionType.toLowerCase() === "ingestion"){
+  if (!stepObj.stepDefinitionType.toLowerCase() === "ingestion") {
     datahub.debug.log({message: params, type: 'error'});
     httpUtils.throwBadRequestWithArray(["Invalid Step Type", "The specified step "+ step + " is not an ingestion step"]);
   }
@@ -26,7 +26,7 @@ function transform(context, params, content) {
   let jobId = params["job-id"];
   let options = params.options ? JSON.parse(params.options) : {};
 
-  if(options.inputFileType && options.inputFileType.toLowerCase() === "csv") {
+  if (options.inputFileType && options.inputFileType.toLowerCase() === "csv") {
     content = JSON.parse(content);
     options.file = content.file;
     // Wrap the JSON parsed from the CSV as a document node, as a step's main function expects content.value
@@ -60,8 +60,7 @@ function transform(context, params, content) {
     if (!doc.value) {
       datahub.debug.log({message: params, type: 'error'});
       httpUtils.throwNotFoundWithArray(["Null Content", "The content was null in the flow " + flowName + " for " + doc.uri + "."]);
-    }
-    else {
+    } else {
       docs.push(doc.value);
     }
   }

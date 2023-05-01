@@ -22,6 +22,23 @@ public class StepMetrics {
     AtomicLong failedEvents = new AtomicLong(0);
     AtomicLong successfulBatches = new AtomicLong(0);
     AtomicLong failedBatches = new AtomicLong(0);
+    final long totalEvents;
+    final long totalBatches;
+    public StepMetrics() {
+        this(0, 0);
+    }
+    public StepMetrics(long totalEvents, long totalBatches) {
+        this.totalEvents = totalEvents;
+        this.totalBatches = totalBatches;
+    }
+
+    public long getTotalEventsCount() {
+        return totalEvents;
+    }
+
+    public long getTotalBatchesCount() {
+        return totalBatches;
+    }
 
     public AtomicLong getSuccessfulEvents() {
         return successfulEvents;
