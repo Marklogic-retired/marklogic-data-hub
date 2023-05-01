@@ -1,0 +1,20 @@
+{
+    "functionName": "processQueryBatch",
+    "endpoint": "/data-hub/data-services/stepRunner/processQueryBatch.mjs",
+    "desc": "Use this for query steps that don't require a collector to return URIs",
+    "params": [
+        {
+          "name" : "session",
+          "datatype" : "session",
+          "desc" : "Holds the session object"
+        },
+        {"name":"endpointState",     "datatype":"jsonDocument", "multiple":false, "nullable":true},
+        {"name":"endpointConstants", "datatype":"jsonDocument", "multiple":false, "nullable":false}
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": false,
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

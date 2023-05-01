@@ -18,7 +18,6 @@
 import Artifacts from "/data-hub/5/artifacts/core.mjs";
 import Batch from "/data-hub/5/flow/batch.mjs";
 import defaultConfig from "/com.marklogic.hub/config.mjs"
-import flowProvenance from "/data-hub/5/flow/flowProvenance.mjs";
 import provLib from "/data-hub/5/impl/prov.mjs";
 import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
