@@ -143,9 +143,9 @@ function parsePermissions(permissionsString = "") {
   }
 }
 
-function documentToContentDescriptor(doc, options = {}) {
+function documentToContentDescriptor(doc, options = {}, uri = null) {
    return {
-      uri: xdmp.nodeUri(doc),
+      uri: uri !== null ? uri : xdmp.nodeUri(doc),
       value: doc,
       context: {
         metadata: xdmp.nodeMetadata(doc),
