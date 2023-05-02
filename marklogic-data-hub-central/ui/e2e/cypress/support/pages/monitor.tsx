@@ -87,8 +87,7 @@ class MonitorPage {
     });
   }
   validateGreyFacet(facetType: string, index: number) {
-    cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check();
-    cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
+    cy.get(`[data-testid=${facetType}-facet] input`).eq(index).check().then(($btn) => {
       let facet = $btn.val();
       cy.get("#selected-facets [data-cy=\"clear-grey-" + facet + "\"]").should("exist");
     });

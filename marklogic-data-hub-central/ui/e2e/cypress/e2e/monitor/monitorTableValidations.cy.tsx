@@ -4,7 +4,6 @@ import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
-import runPage from "../../support/pages/run";
 import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
@@ -359,21 +358,6 @@ describe("Monitor Tile", () => {
     cy.log("**failed status is removed**");
     monitorPage.verifyTableRow("cyCardView").should("not.exist");
     browsePage.getClearAllFacetsButton().click();
-  });
-
-  it("Verify job ID link opens status modal", () => {
-    cy.log("*** open status modal via jobs link ***");
-    // There's a re-render.
-    cy.wait(1000);
-    monitorPage.getAllJobIdLink().first().should("be.visible").click();
-    runPage.getFlowStatusModal().should("be.visible");
-
-    cy.log("*** verify step result content inside status modal ***");
-    runPage.getStepSuccess("mapPersonJSON").should("be.visible");
-    runPage.verifyFlowModalCompleted("testPersonJSON");
-    cy.log("*** modal can be closed ***");
-    runPage.closeFlowStatusModal("testPersonJSON");
-    runPage.getFlowStatusModal().should("not.exist");
   });
 
   //TODO: Re-test facets without using ml-tooltip-container

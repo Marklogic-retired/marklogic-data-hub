@@ -52,6 +52,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.deleteEntities("Patient");
     cy.deleteRecordsInFinal("loadPatient", "patientMap", "patientMatch", "patientMerge");
     cy.deleteRecordsInFinal("sm-Patient-archived", "sm-Patient-mastered", "sm-Patient-merged", "sm-Patient-auditing", "sm-Patient-notification");
+    cy.deleteRecordsInStaging("loadPatient");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
