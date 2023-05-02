@@ -49,11 +49,11 @@ const JobResponse: React.FC<Props> = ({
     if (jobId) {
       retrieveJobDoc();
     }
-    return (() => clearInterval(intervalId));
+    return () => clearInterval(intervalId);
   }, [jobId]);
 
   useEffect(() => {
-    let interval:any = 0;
+    let interval: any = 0;
     if (flowRunning) {
       interval = setInterval(() => {
         setTimer(durationFromDateTime(jobResponse.timeStarted));

@@ -34,7 +34,7 @@ type Props = {
   setPayload: any;
   onCancel: any;
   preloadTypeahead?: string;
-  advancedData?:any;
+  advancedData?: any;
 };
 
 const CreateEditStep: React.FC<Props> = props => {

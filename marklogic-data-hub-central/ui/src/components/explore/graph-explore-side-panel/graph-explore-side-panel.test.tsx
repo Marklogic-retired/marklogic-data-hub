@@ -79,8 +79,10 @@ describe("Graph view side panel", () => {
   test("Display message when the node has no data", () => {
     const {getByLabelText} = render(
       <SearchContext.Provider
-        value={{...searchContextInterfaceByDefault, savedNode:
-          {isConcept: false, docUri: null, docURI: null, uri: null}}}
+        value={{
+          ...searchContextInterfaceByDefault,
+          savedNode: {isConcept: false, docUri: null, docURI: null, uri: null},
+        }}
       >
         <Router>
           <GraphExploreSidePanel

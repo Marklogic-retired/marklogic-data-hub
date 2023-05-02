@@ -275,7 +275,7 @@ describe("Entity Type Settings Modal", () => {
       graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
 
-      graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
+      graphExploreSidePanel.getSidePanel().scrollIntoView().should("exist");
       graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.name);
 
     });

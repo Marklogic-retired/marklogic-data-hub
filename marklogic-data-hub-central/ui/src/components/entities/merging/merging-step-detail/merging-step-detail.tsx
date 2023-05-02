@@ -590,8 +590,8 @@ const MergingStepDetail: React.FC = () => {
     setDeleteModalVisibility(false);
   };
 
-  return (
-    Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? <>
+  return Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? (
+    <>
       <CustomPageHeader
         title={mergingStep.name}
         handleOnBack={() => {
@@ -704,8 +704,8 @@ const MergingStepDetail: React.FC = () => {
         {deleteModal}
       </div>
     </>
-      :
-      <></>
+  ) : (
+    <></>
   );
 };
 

@@ -122,11 +122,11 @@ const FlowPanel: React.FC<Props> = ({
     if (previewsSteps?.length !== flow.steps.length && !auxFirstRender) {
       if (flow.steps.length > previewsSteps?.length) {
         let intersection = flow.steps.filter(x => {
-          return !previewsSteps.some((step) => step.stepId === x.stepId);
+          return !previewsSteps.some(step => step.stepId === x.stepId);
         });
         if (intersection.length > 0) {
           if (intersection[0].stepDefinitionType.toLocaleLowerCase() === "ingestion") {
-            const anyIngestionSelected = selectedSteps.some((step) => {
+            const anyIngestionSelected = selectedSteps.some(step => {
               return step.stepDefinitionType.toLocaleLowerCase() === "ingestion";
             });
             if (anyIngestionSelected) setSelectedSteps([...selectedSteps]);
@@ -139,7 +139,6 @@ const FlowPanel: React.FC<Props> = ({
     }
     setPreviewsSteps(flow.steps);
   }, [flow.steps]);
-
 
   const addStepsToArray = (
     step: any,

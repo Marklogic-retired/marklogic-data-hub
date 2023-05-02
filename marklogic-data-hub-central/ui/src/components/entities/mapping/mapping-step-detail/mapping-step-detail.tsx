@@ -2134,8 +2134,8 @@ const MappingStepDetail: React.FC = () => {
     return paginationObject;
   };
 
-  return (
-    Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? <>
+  return Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? (
+    <>
       <CustomPageHeader
         title={
           <span
@@ -2500,8 +2500,8 @@ const MappingStepDetail: React.FC = () => {
         openStepDetails={openStepDetails}
       />
     </>
-      :
-      <></>
+  ) : (
+    <></>
   );
 };
 

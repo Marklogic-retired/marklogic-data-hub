@@ -21,7 +21,7 @@ const eventLabels = {
 
 const NAME_REGEX = new RegExp("^[^\\n ]*$");
 
-const containsOnlySpaces = (str) => {
+const containsOnlySpaces = str => {
   return str.trim().length === 0;
 };
 
@@ -132,7 +132,7 @@ const defaultTargetCollectionHeaders = [
             additionalCollectionsField.values = values.map(option => option.value);
             additionalCollectionsField.toggleRefresh();
           }}
-          isValidNewOption={(values) => containsOnlySpaces(values) ? false : true}
+          isValidNewOption={values => (containsOnlySpaces(values) ? false : true)}
           onCreateOption={values => {
             if (!NAME_REGEX.test(values)) {
               return false;
@@ -259,7 +259,7 @@ const defaultTargetCollectionHeaders = [
                 removeCollectionsField.values = removeCollectionsField.values.concat(values);
                 removeCollectionsField.toggleRefresh();
               }}
-              isValidNewOption={(values) => containsOnlySpaces(values) ? false : true}
+              isValidNewOption={values => (containsOnlySpaces(values) ? false : true)}
               aria-label={"removeColl-select-" + removeCollectionsField.event}
               options={removeCollectionsField.values.map(d => ({value: d, label: d}))}
               styles={reactSelectThemeConfig}

@@ -247,7 +247,7 @@ const Steps: React.FC<Props> = props => {
       createStepArtifact={createStep}
       updateStepArtifact={updateStep}
       preloadTypeahead={preloadTypeahead(props.stepData)}
-      advancedData ={advancedPayload}
+      advancedData={advancedPayload}
     />
   );
 
@@ -261,7 +261,7 @@ const Steps: React.FC<Props> = props => {
       createStepArtifact={createStep}
       updateStepArtifact={updateStep}
       preloadTypeahead={preloadTypeahead(props.stepData)}
-      advancedData ={advancedPayload}
+      advancedData={advancedPayload}
     />
   );
 
@@ -275,7 +275,7 @@ const Steps: React.FC<Props> = props => {
       createStepArtifact={createStep}
       updateStepArtifact={updateStep}
       preloadTypeahead={preloadTypeahead(props.stepData)}
-      advancedData ={advancedPayload}
+      advancedData={advancedPayload}
     />
   );
 
