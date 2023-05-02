@@ -243,6 +243,14 @@ Cypress.Commands.add("deleteRecordsInFinal", (...collections) => {
   });
 });
 
+Cypress.Commands.add("deleteRecordsInStaging", (...collections) => {
+  collections.forEach(collection => {
+    cy.exec(`curl -X DELETE --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
+    "${protocol}://${Cypress.env("mlHost")}:8002/v1/search?database=data-hub-STAGING&collection=${collection}"`);
+    console.warn(`DELETE RECORDS IN ${collection} COLLECTION`);
+  });
+});
+
 // Delete files
 Cypress.Commands.add("deleteFiles", (dataBase, ...files) => {
   files.forEach(filePath => {

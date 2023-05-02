@@ -298,7 +298,14 @@ class CuratePage {
   getTooltip() {
     return cy.get(".tooltip-inner");
   }
-
+  expandAccordian(entity: string) {
+    this.getEntityTypePanel(entity).then(($ele) => {
+      if ($ele.hasClass("accordion-button collapsed")) {
+        cy.log("**Toggling Entity because it was closed.**");
+        this.toggleEntityTypeId(entity);
+      }
+    });
+  }
 }
 
 const curatePage = new CuratePage();

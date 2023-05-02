@@ -39,8 +39,8 @@ describe("Graph Validations", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.visible");
-    modelPage.getPublishButton().then(($ele) => {
-      if (!$ele.hasClass("graph-view_disabledPointerEvents__XCxXM btn btn-outline-light btn-sm")) {
+    modelPage.getPublishButton().invoke("attr", "class").then($classNames => {
+      if (!$classNames.includes("graph-view_disabledPointerEvents")) {
         cy.publishDataModel();
       }
     });

@@ -383,7 +383,7 @@ describe("Merging", () => {
     createEditStepDialog.saveButton("merging").click();
 
     //verify typehead request when the step is already created
-    curatePage.editStep("testName").click();
+    curatePage.editStep("testName").should("be.visible").click({force: true});
     cy.intercept("POST", "api/entitySearch/facet-values?database=staging").as("stagingRequest2");
     createEditStepDialog.setCollectionInput("E");
     cy.wait("@stagingRequest2");
