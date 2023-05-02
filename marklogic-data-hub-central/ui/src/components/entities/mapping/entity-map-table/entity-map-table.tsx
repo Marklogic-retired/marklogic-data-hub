@@ -113,7 +113,6 @@ const EntityMapTable: React.FC<Props> = props => {
         }}
       />
     </HCTooltip>
-
   );
 
   //Text for related entities help icon
@@ -163,7 +162,6 @@ const EntityMapTable: React.FC<Props> = props => {
   const [rowExpandedKeys, setRowExpandedKeys] = useState<any>([props.entityExpandedKeys]);
   const [searchedKey, setSearchedKey] = useState<string>("");
   const [filteredEntityProperties, setFilteredEntityProperties] = useState<any[]>([]);
-
 
   //For Dropdown menu
   const [propName, setPropName] = useState("");
@@ -1636,7 +1634,6 @@ const EntityMapTable: React.FC<Props> = props => {
     }
   };
 
-
   const relatedEntitiesFilter = (
     <Select
       id={`${props.entityTypeTitle}-entities-filter-select-wrapper`}
@@ -1812,7 +1809,6 @@ const EntityMapTable: React.FC<Props> = props => {
     setDeleteFromTable(true);
   };
 
-
   const deleteConfirmation = (
     <HCModal show={deleteDialogVisible} onHide={onCancel}>
       <Modal.Header className={"bb-none"}>
@@ -1940,22 +1936,20 @@ const EntityMapTable: React.FC<Props> = props => {
               </span>
               {row.key > 100 && row.type.includes("[ ]") && (
                 <span>
-                  <HCTooltip
-                    text="Multiple"
-                    id="multiple-source-tooltip"
-                    placement="top"
-                  >
-                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text}  tabIndex={0}/>
+                  <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">
+                    <img
+                      className={styles.arrayImage}
+                      src={arrayIcon}
+                      alt={""}
+                      data-testid={"multiple-" + text}
+                      tabIndex={0}
+                    />
                   </HCTooltip>
                 </span>
               )}
               {row.key > 100 && row.children && (
                 <span>
-                  <HCTooltip
-                    text="Structured Type"
-                    id="structure-type-tooltip"
-                    placement="top"
-                  >
+                  <HCTooltip text="Structured Type" id="structure-type-tooltip" placement="top">
                     <i>
                       <FontAwesomeIcon
                         className={styles.structuredIcon}
@@ -2370,22 +2364,20 @@ const EntityMapTable: React.FC<Props> = props => {
               </span>
               {row.key > 100 && row.type.includes("[ ]") && (
                 <span>
-                  <HCTooltip
-                    text="Multiple"
-                    id="multiple-source-tooltip"
-                    placement="top"
-                  >
-                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text}  tabIndex={0}/>
+                  <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">
+                    <img
+                      className={styles.arrayImage}
+                      src={arrayIcon}
+                      alt={""}
+                      data-testid={"multiple-" + text}
+                      tabIndex={0}
+                    />
                   </HCTooltip>
                 </span>
               )}
               {row.key > 100 && row.children && (
                 <span>
-                  <HCTooltip
-                    text="Structured Type"
-                    id="structure-type-tooltip"
-                    placement="top"
-                  >
+                  <HCTooltip text="Structured Type" id="structure-type-tooltip" placement="top">
                     <i>
                       <FontAwesomeIcon
                         className={styles.structuredIcon}

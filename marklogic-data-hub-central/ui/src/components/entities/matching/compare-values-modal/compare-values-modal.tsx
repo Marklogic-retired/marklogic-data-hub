@@ -158,8 +158,8 @@ const CompareValuesModal: React.FC<Props> = props => {
     return parsedData;
   };
 
-  const columnTextNameGenerator = (uri:string) => {
-    let text:(string | React.ReactElement)  = "";
+  const columnTextNameGenerator = (uri: string) => {
+    let text: string | React.ReactElement = "";
     if (!props.isMerge && !props.isPreview && props.uris.length < pageSize) {
       text = (
         <>
@@ -218,17 +218,17 @@ const CompareValuesModal: React.FC<Props> = props => {
       key: "propertyValueInReview",
       title: cell => `${cell.value}`,
       ellipsis: true,
-      text: !props.isMerge && !props.isPreview ? (
-        <>
-          <div style={{fontWeight: "bold"}}>{"Current Document: "}</div>
-          <div style={{fontWeight: "normal"}}>{props.originalUri}</div>
-        </>
-      ) : (
-        <>
-          <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
-        </>
-
-      ),
+      text:
+        !props.isMerge && !props.isPreview ? (
+          <>
+            <div style={{fontWeight: "bold"}}>{"Current Document: "}</div>
+            <div style={{fontWeight: "normal"}}>{props.originalUri}</div>
+          </>
+        ) : (
+          <>
+            <div style={{fontWeight: "bold"}}>{"Preview: "}</div>
+          </>
+        ),
       style: property => {
         if (property?.matchedRow) {
           return {

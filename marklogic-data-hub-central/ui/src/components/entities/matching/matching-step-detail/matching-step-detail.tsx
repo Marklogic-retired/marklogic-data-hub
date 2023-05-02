@@ -972,8 +972,8 @@ const MatchingStepDetail: React.FC = () => {
       </HCButton>
     </div>
   );
-  return (
-    Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? <>
+  return Object.keys(curationOptions.activeStep.stepArtifact).length !== 0 ? (
+    <>
       <CustomPageHeader
         title={matchingStep.name}
         handleOnBack={() => {
@@ -1787,10 +1787,9 @@ const MatchingStepDetail: React.FC = () => {
         editThreshold={editThreshold}
         toggleModal={toggleShowThresholdModal}
       />
-
     </>
-      :
-      <></>
+  ) : (
+    <></>
   );
 };
 

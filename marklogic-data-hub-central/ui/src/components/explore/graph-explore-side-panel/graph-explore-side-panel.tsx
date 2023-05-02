@@ -313,12 +313,8 @@ const GraphExploreSidePanel: React.FC<Props> = props => {
         </>
       ) : (
         <>
-          {(!docUri && !isConcept) ? (
-            <HCAlert
-              variant="info"
-              aria-label="noMappedDoc-Alert"
-              showIcon
-            >
+          {!docUri && !isConcept ? (
+            <HCAlert variant="info" aria-label="noMappedDoc-Alert" showIcon>
               {exploreSidebar.noDataNodesMessage}
             </HCAlert>
           ) : (
@@ -337,7 +333,6 @@ const GraphExploreSidePanel: React.FC<Props> = props => {
               )}
             </>
           )}
-
         </>
       )}
     </div>

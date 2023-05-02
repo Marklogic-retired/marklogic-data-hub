@@ -387,7 +387,7 @@ const GraphVis: React.FC<Props> = props => {
         },
         getLabelEdge: (edgeId?: any) => {
           return network.body.data.edges.get(edgeId);
-        }
+        },
       };
     }
   }, [network]);

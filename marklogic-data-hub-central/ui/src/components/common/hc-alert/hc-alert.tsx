@@ -37,6 +37,7 @@ function HCAlert({
     <Alert
       variant={variant}
       data-testid="hc-alert-component"
+      aria-label={heading ? `${heading}` : "alert"}
       {...others}
       className={`${styles.alert} ${styles.hcAlert} ${className}`}
     >

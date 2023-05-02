@@ -62,11 +62,13 @@ describe("Leaf Nodes", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     cy.waitForAsyncRequest();
     cy.wait(2000);
-
-    graphExplore.fit();
   });
 
   it("Clicking Show related on '101' leaf node to expand", () => {
+    graphExplore.fit();
+    graphExplore.stopStabilization();
+    graphView.physicsAnimationToggle();
+    graphExplore.getGraphVisCanvas().scrollIntoView().should("be.visible");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];

@@ -257,6 +257,10 @@ class CuratePage {
     return cy.get(`[id="hc-alert-component-content"]`);
   }
 
+  alertContentAriaLabel(warning: string) {
+    return cy.get(`[aria-label="${warning}"]`);
+  }
+
   removeTargetCollection(collection: string) {
     this.getAdditionalCollSelectWrapper().get(`[aria-label="Remove ${collection}"]`).click();
   }
