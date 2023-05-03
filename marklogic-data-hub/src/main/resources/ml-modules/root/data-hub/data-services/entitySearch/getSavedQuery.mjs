@@ -20,10 +20,10 @@ xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-e
 const id = external.id;
 
 let savedQuery = cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/saved-query"),
-    cts.jsonPropertyValueQuery("owner", xdmp.getCurrentUser()),
-    cts.jsonPropertyValueQuery("id", id)]));
+  cts.jsonPropertyValueQuery("owner", xdmp.getCurrentUser()),
+  cts.jsonPropertyValueQuery("id", id)]), ["unfiltered", "score-zero", "unfaceted"]);
 
-if(fn.empty(savedQuery)) {
-    savedQuery = {};
+if (fn.empty(savedQuery)) {
+  savedQuery = {};
 }
 savedQuery;

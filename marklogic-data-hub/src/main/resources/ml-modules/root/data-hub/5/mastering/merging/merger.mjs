@@ -14,7 +14,7 @@ const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE
 function consolidateContextValues(contentObjects, contextPropertyName) {
   return contentObjects
     .map(contentObj => contentObj.context[contextPropertyName])
-    .reduce((flat, arr) => flat.concat(arr),[])
+    .reduce((flat, arr) => flat.concat(arr), [])
     .filter((val, index, arr) => index === arr.indexOf(val));
 }
 
@@ -35,45 +35,45 @@ function buildContentObjectsFromMatchSummary(
   const contentObjects = [];
   const allActionDetails = matchSummary.matchSummary.actionDetails;
   for (const uri of uris) {
-    const uriActionDetails = allActionDetails[uri] || { action: "no-action" };
+    const uriActionDetails = allActionDetails[uri] || {action: "no-action"};
     const actionType = uriActionDetails.action;
     let currentContentObject = null;
     switch (actionType) {
-      case "merge":
-        const mergeContentObjects = uriActionDetails.uris.map(uri => getContentObject(uri)).filter(contentObject => contentObject);
-        currentContentObject = {
-          uri,
-          value: mergeable.buildMergeDocument(mergeContentObjects, uri),
-          context: {
-            collections: consolidateContextValues(mergeContentObjects, "collections"),
-            permissions: consolidateContextValues(mergeContentObjects, "permissions")
-          }
+    case "merge":
+      const mergeContentObjects = uriActionDetails.uris.map(uri => getContentObject(uri)).filter(contentObject => contentObject);
+      currentContentObject = {
+        uri,
+        value: mergeable.buildMergeDocument(mergeContentObjects, uri),
+        context: {
+          collections: consolidateContextValues(mergeContentObjects, "collections"),
+          permissions: consolidateContextValues(mergeContentObjects, "permissions")
         }
-        for (const contentToArchive of mergeContentObjects) {
-          mergeable.applyDocumentContext(contentToArchive, { action: "archive"});
-          contentObjects.push(contentToArchive);
-        }
-        const auditDoc = mergeable.buildAuditDocument(uri, uriActionDetails.uris, "merge");
-        mergeable.applyDocumentContext(auditDoc, { action: "audit"});
-        contentObjects.push(auditDoc);
-        break;
-      case "notify":
-        const matchStepName = matchSummary.matchSummary.matchStepName;
-        const matchStepFlow = matchSummary.matchSummary.matchStepFlow;
-        if(uriActionDetails.uris.length > 1) {
-          currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query): uriActionDetails.uris, matchStepName, matchStepFlow);
-        }
-        break;
-      case "custom":
-        const customFunction = hubUtils.requireFunction(uriActionDetails.actionModulePath, uriActionDetails.actionModuleFunction);
-        const results = customFunction(uri, uriActionDetails.matchResults, this.mergeStep);
-        if (fn.exists(results)) {
-          contentObjects.concat(hubUtils.normalizeToArray(results));
-        }
-      case "no-action":
-        currentContentObject = getContentObject(uri);
-        break;
-      default:
+      };
+      for (const contentToArchive of mergeContentObjects) {
+        mergeable.applyDocumentContext(contentToArchive, {action: "archive"});
+        contentObjects.push(contentToArchive);
+      }
+      const auditDoc = mergeable.buildAuditDocument(uri, uriActionDetails.uris, "merge");
+      mergeable.applyDocumentContext(auditDoc, {action: "audit"});
+      contentObjects.push(auditDoc);
+      break;
+    case "notify":
+      const matchStepName = matchSummary.matchSummary.matchStepName;
+      const matchStepFlow = matchSummary.matchSummary.matchStepFlow;
+      if (uriActionDetails.uris.length > 1) {
+        currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query): uriActionDetails.uris, matchStepName, matchStepFlow);
+      }
+      break;
+    case "customActions":
+      const customFunction = hubUtils.requireFunction(uriActionDetails.actionModulePath, uriActionDetails.actionModuleFunction);
+      const results = customFunction(uri, uriActionDetails.matchResults, this.mergeStep);
+      if (fn.exists(results)) {
+        contentObjects.concat(hubUtils.normalizeToArray(results));
+      }
+    case "no-action":
+      currentContentObject = getContentObject(uri);
+      break;
+    default:
     }
     if (currentContentObject) {
       mergeable.applyDocumentContext(currentContentObject, uriActionDetails);
@@ -95,7 +95,7 @@ function manualMerge(context, params, input) {
   // make the first merge step in a flow the default
   let firstMergeStep = Object.keys(flow.steps || {}).find((stepNumber) => flow.steps[stepNumber].stepDefinitionType.toLowerCase() === "merging");
   let refStepNumber = params.step || firstMergeStep || '1';
-  let stepRef = flow.steps[refStepNumber] || {stepDefinitionType: "" };
+  let stepRef = flow.steps[refStepNumber] || {stepDefinitionType: ""};
   const isPreview = fn.string(params.preview) === "true";
 
   let uris = hubUtils.normalizeToArray(params.uri);

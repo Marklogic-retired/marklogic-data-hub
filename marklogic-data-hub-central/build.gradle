@@ -76,9 +76,9 @@ dependencies {
         exclude group: "com.squareup.okhttp3", module: "okhttp"
         exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
     }
-    // Depend on the versions that ML Java Client 5.5.0 depends on
-    implementation "com.squareup.okhttp3:okhttp:4.7.2"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
+    // Depend on the versions that ML Java Client 6.2.0 depends on
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
 
     implementation "org.apache.commons:commons-lang3:3.12.0"
 
@@ -110,7 +110,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 
     // Dependency to serialize and deserialize XML; using 2.12.4 to match Spring Boot
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.4"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.7"
 
     // Used for hosting static resources when running as an executable jar/war
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"

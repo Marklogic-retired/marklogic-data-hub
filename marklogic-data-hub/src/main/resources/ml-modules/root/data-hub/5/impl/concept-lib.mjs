@@ -73,7 +73,7 @@ function getConceptCollection() {
  * @param model
  */
 function writeDraftModel(conceptName, model) {
-   model.info.draft = true;
+  model.info.draft = true;
   writeConceptModelToDatabases(conceptName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
 }
 
@@ -122,15 +122,15 @@ function writeConceptModelToDatabases(conceptName, model, databases, isDraft = f
     if (hubUtils.isWriteTransaction() && db === xdmp.databaseName(xdmp.database())) {
       xdmp.documentInsert(uriFunction(conceptName), model, permissions, collection);
     } else {
-      hubUtils.writeDocument(uriFunction(conceptName), model, permissions, collection, db)
+      hubUtils.writeDocument(uriFunction(conceptName), model, permissions, collection, db);
     }
   });
 }
 
 function publishDraftConcepts() {
-  hubUtils.hubTrace(consts.TRACE_CONCEPT,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
-  const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_CONCEPT_COLLECTION)), xdmp.databaseName(xdmp.database()));
-  hubUtils.hubTrace(consts.TRACE_CONCEPT,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
+  hubUtils.hubTrace(consts.TRACE_CONCEPT, `publishing in database: ${xdmp.databaseName(xdmp.database())}`);
+  const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_CONCEPT_COLLECTION), ["unfiltered", "score-zero", "unfaceted"], 0), xdmp.databaseName(xdmp.database()));
+  hubUtils.hubTrace(consts.TRACE_CONCEPT, `Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
   const inMemoryModelsUpdated = {};
 
 
@@ -138,11 +138,11 @@ function publishDraftConcepts() {
     let modelObject = draftModel.toObject();
     modelObject.info.draft = false;
 
-    if(modelObject.info.draftDeleted) {
+    if (modelObject.info.draftDeleted) {
       const conceptClassName = modelObject.info.name;
-      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleting draft model: ${conceptClassName}`);
+      hubUtils.hubTrace(consts.TRACE_CONCEPT, `deleting draft model: ${conceptClassName}`);
       deleteModel(modelObject.info.name);
-      hubUtils.hubTrace(consts.TRACE_CONCEPT,`deleted draft model: ${conceptClassName}`);
+      hubUtils.hubTrace(consts.TRACE_CONCEPT, `deleted draft model: ${conceptClassName}`);
     } else {
       // if the draft changes aren't already picked up by reference updates, add them here.
       if (!inMemoryModelsUpdated[modelObject.info.name]) {
@@ -153,14 +153,14 @@ function publishDraftConcepts() {
 
   // write all the affected concepts out here
   for (const modelName in inMemoryModelsUpdated) {
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,`writing draft model: ${modelName}`);
+    hubUtils.hubTrace(consts.TRACE_CONCEPT, `writing draft model: ${modelName}`);
     writeModel(modelName, inMemoryModelsUpdated[modelName]);
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,`draft model written: ${modelName}`);
+    hubUtils.hubTrace(consts.TRACE_CONCEPT, `draft model written: ${modelName}`);
   }
   const deleteDraftsOperation = () => {
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleting draft collection");
+    hubUtils.hubTrace(consts.TRACE_CONCEPT, "deleting draft collection");
     xdmp.collectionDelete(consts.DRAFT_CONCEPT_COLLECTION);
-    hubUtils.hubTrace(consts.TRACE_CONCEPT,"deleted draft collection");
+    hubUtils.hubTrace(consts.TRACE_CONCEPT, "deleted draft collection");
   };
   const currentDatabase = xdmp.database();
   const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
@@ -178,7 +178,7 @@ function publishDraftConcepts() {
 
 
 function getConceptNames() {
-  return hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.CONCEPT_COLLECTION)), config.FINALDATABASE)
+  return hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.CONCEPT_COLLECTION), ["unfiltered", "score-zero", "unfaceted"], 0), config.FINALDATABASE)
     .toArray()
     .map(conceptNode => conceptNode.toObject().info.name);
 }
@@ -252,8 +252,8 @@ function otherModelsWithConceptReferencesRemoved(entityModelUri, referencedConce
 
       Object.keys(model.definitions)
         .forEach(definition => {
-          if(model.definitions[definition] !== undefined && model.definitions[definition].toString().length > 0) {
-            if(model.definitions[definition].relatedConcepts !== undefined && model.definitions[definition].relatedConcepts.toString().length > 0) {
+          if (model.definitions[definition] !== undefined && model.definitions[definition].toString().length > 0) {
+            if (model.definitions[definition].relatedConcepts !== undefined && model.definitions[definition].relatedConcepts.toString().length > 0) {
               const refConceptModified =  model.definitions[definition].relatedConcepts.filter(item => item["conceptClass"] !== referencedConcept);
               model.definitions[definition].relatedConcepts = refConceptModified;
               affectedModels.add(model);
@@ -275,23 +275,23 @@ function otherModelsWithConceptReferencesRemoved(entityModelUri, referencedConce
  * @returns {[]}
  */
 function entityModelsWithConceptReferenceExcludingURIs(referencedConcept, excludedURIs) {
-  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([consts.ENTITY_MODEL_COLLECTION,consts.DRAFT_ENTITY_MODEL_COLLECTION]), cts.jsonPropertyValueQuery("conceptClass",referencedConcept)]), cts.documentQuery(excludedURIs));
-  return cts.search(entityModelQuery).toArray()
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([consts.ENTITY_MODEL_COLLECTION, consts.DRAFT_ENTITY_MODEL_COLLECTION]), cts.jsonPropertyValueQuery("conceptClass", referencedConcept)]), cts.documentQuery(excludedURIs));
+  return cts.search(entityModelQuery, ["score-zero", "unfaceted"], 0).toArray();
 }
 
 function validateConceptModelDefinitions(conceptName) {
   const pattern = /^[a-zA-Z][a-zA-Z0-9\-_]*$/;
 
-    if (!pattern.test(conceptName)) {
-      httpUtils.throwBadRequest(`Invalid concept name: ${conceptName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
-    }
+  if (!pattern.test(conceptName)) {
+    httpUtils.throwBadRequest(`Invalid concept name: ${conceptName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
+  }
 
 
-    if (hent.isExplorerConstraintName(conceptName)) {
-      httpUtils.throwBadRequest(`${conceptName} is a reserved term and is not allowed as a concept name.`);
-    }
+  if (hent.isExplorerConstraintName(conceptName)) {
+    httpUtils.throwBadRequest(`${conceptName} is a reserved term and is not allowed as a concept name.`);
+  }
 
-    return conceptName;
+  return conceptName;
 
 }
 
@@ -308,7 +308,7 @@ function findConceptModelReferencesInEntities(conceptName) {
     cts.jsonPropertyValueQuery(["conceptClass"], [conceptName])
   ]);
 
-  return cts.search(stepQuery).toArray().map(step => step.toObject().name);
+  return cts.search(stepQuery, ["score-zero", "unfaceted"], 0).toArray().map(step => step.toObject().name);
 }
 
 function deleteDraftConceptModel(conceptName) {
@@ -321,20 +321,20 @@ function deleteDraftConceptModel(conceptName) {
   }
   const model = cts.doc(uri).toObject();
   model.info.draftDeleted = true;
-  writeDraftModel(conceptName, model)
+  writeDraftModel(conceptName, model);
 }
 
-function findConceptReferencesInEntities(conceptName){
+function findConceptReferencesInEntities(conceptName) {
   const affectedModels = new Set();
 
   const queries = [];
-  queries.push(cts.collectionQuery([entityLib.getDraftModelCollection(),entityLib.getModelCollection()]));
+  queries.push(cts.collectionQuery([entityLib.getDraftModelCollection(), entityLib.getModelCollection()]));
   queries.push(cts.jsonPropertyValueQuery("conceptClass", conceptName, "case-insensitive"));
 
-  const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
+  const entityModels = cts.search(cts.andQuery(queries), ["score-zero", "unfaceted"], 0).toArray().map(entityModel => entityModel.toObject());
   const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
   const entityModelsDraftWithoutRelatedConcept = cts.search(cts.andNotQuery(cts.collectionQuery([entityLib.getDraftModelCollection()]),
-    cts.jsonPropertyValueQuery("conceptClass", conceptName, "case-insensitive"))).toArray().map(entityModel =>getModelName(entityModel.toObject()));
+    cts.jsonPropertyValueQuery("conceptClass", conceptName, "case-insensitive")), ["score-zero", "unfaceted"], 0).toArray().map(entityModel => getModelName(entityModel.toObject()));
   entityModels
     .filter((model) => !entityModelsDraftWithoutRelatedConcept.includes(getModelName(model)))
     .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))

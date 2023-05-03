@@ -1,4 +1,4 @@
-/**
+(:
  Copyright (c) 2021 MarkLogic Corporation
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,26 +12,19 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- */
-'use strict';
+ :)
+xquery version "1.0-ml";
 
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const merger = mjsProxy.requireMjsModule("/data-hub/5/mastering/merging/merger.mjs");
+module namespace service = "http://marklogic.com/rest-api/resource/mlSmMatch";
 
-function get(context, params) {}
+declare function get($context as map:map, $params as map:map) as document-node()? {
+  post($context, $params, ())
+};
 
-function post(context, params, input) {
-  return merger.manualMerge(context, params, input);
-}
+declare function post($context as map:map, $params as map:map, $input as document-node()?) as document-node()? {
+  xdmp:to-json(xdmp:invoke("/data-hub/5/mastering/matching/invokeMatchPreview.mjs",
+    map:map()
+      => map:with("params", $params)
+      => map:with("input", $input)))
+};
 
-function put(context, params, input) {
-}
-
-function deleteFunction(context, params) {
-  return merger.manualUnmerge(context, params);
-}
-
-exports.GET = get;
-exports.POST =  post;
-exports.PUT = put;
-exports.DELETE =  deleteFunction;

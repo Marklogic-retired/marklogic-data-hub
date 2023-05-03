@@ -35,8 +35,8 @@ function mlGenerateFunctionMetadata(uri) {
     ]);
 
     let writeInfo = fn.head(xdmp.invokeFunction(() =>
-        hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
-      {update: "true"}));
+      hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
+    {update: "true"}));
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       xqueryLib.functionMetadataPut(uriVal + ".xml");
     } else {
@@ -50,12 +50,11 @@ function generateMetadata(uri) {
   if (uri === "/data-hub/5/mapping-functions/core-functions.xqy") {
     metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/data-hub/mapping/functions", uri);
   }
-    // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
+  // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
   // a namespace of http://marklogic.com/mapping-functions/custom
   else if (fn.endsWith(uri, ".xqy")) {
     metadataXml = xqueryLib.functionMetadataGenerateWithNamespace("http://marklogic.com/mapping-functions/custom", uri);
-  }
-  else {
+  } else {
     metadataXml = xqueryLib.functionMetadataGenerate(uri);
   }
 
@@ -85,7 +84,7 @@ function addMapNamespaceToMetadata(xml) {
 }
 
 xdmp.invokeFunction(() => {
-  for (const uri of cts.uris(null, ["concurrent", "eager"], cts.directoryQuery(["/data-hub/5/mapping-functions/", "/custom-modules/mapping-functions/"], "infinity"))) {
+  for (const uri of cts.uris(null, ["concurrent", "eager", "score-zero"], cts.directoryQuery(["/data-hub/5/mapping-functions/", "/custom-modules/mapping-functions/"], "infinity"))) {
     mlGenerateFunctionMetadata(fn.string(uri));
   }
 }, {database: xdmp.modulesDatabase(), update: "true"});

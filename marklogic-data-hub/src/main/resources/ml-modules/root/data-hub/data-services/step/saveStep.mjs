@@ -50,25 +50,23 @@ let existingStep = fn.head(cts.search(cts.andQuery([
   cts.collectionQuery("http://marklogic.com/data-hub/steps"),
   cts.jsonPropertyValueQuery("stepDefinitionType", stepDefinitionType, "case-insensitive"),
   cts.jsonPropertyValueQuery("name", stepName)
-])));
+]), ["unfiltered", "score-zero", "unfaceted"]));
 
-if(existingStep && throwErrorIfStepIsPresent){
+if (existingStep && throwErrorIfStepIsPresent) {
   httpUtils.throwBadRequest("A step of type '" + stepDefinitionType + "' with the name '" +  stepName +  "' already exists");
 }
 
 if (existingStep) {
   let updatedStep;
-  if(overwrite){
+  if (overwrite) {
     xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, the existing step will be overwritten`);
     updatedStep = stepProperties;
-  }
-  else{
+  } else {
     xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, so will update`);
     updatedStep = Object.assign(existingStep.toObject(), stepProperties);
   }
   Artifacts.setArtifact(stepDefinitionType, stepName, updatedStep);
-}
-else {
+} else {
   xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType}  does not exist, so will create`);
 
   // For now, can assume the stepDefinitionName based on the type. Can add stepDefinitionType as a parameter once we need
@@ -76,19 +74,15 @@ else {
   let stepDefinitionName;
   if ("mapping" === stepDefinitionType) {
     stepDefinitionName = "entity-services-mapping";
-  }
-  else if("matching" === stepDefinitionType){
+  } else if ("matching" === stepDefinitionType) {
     stepDefinitionName = "default-matching";
-  }
-  else if("merging" === stepDefinitionType){
+  } else if ("merging" === stepDefinitionType) {
     stepDefinitionName = "default-merging";
-  }
-  else {
+  } else {
     // if 'stepDefinitionName' is not set for ingestion step, it will be set to 'default-ingestion'
-    if ("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName){
+    if ("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName) {
       stepDefinitionName = "default-ingestion";
-    }
-    else {
+    } else {
       stepDefinitionName = stepProperties.stepDefinitionName;
     }
   }
@@ -96,16 +90,15 @@ else {
   stepProperties.stepDefinitionType = stepDefinitionType;
   stepProperties.stepId = stepProperties.stepId || stepName + "-" + stepDefinitionType;
 
-  if (!stepProperties.stepDefinitionName){
+  if (!stepProperties.stepDefinitionName) {
     throw new Error(`Missing required property 'stepDefinitionName' for step: ${stepName}`);
   }
 
-  if (stepProperties.entityType){
-    if (fn.docAvailable("/entities/"+ stepProperties.entityType +".entity.json")){
+  if (stepProperties.entityType) {
+    if (fn.docAvailable("/entities/"+ stepProperties.entityType +".entity.json")) {
       const entityTypeId = entityLib.getEntityTypeId(entityLib.findModelByEntityName(stepProperties.entityType), stepProperties.entityType);
       stepProperties.targetEntityType = entityTypeId;
-    }
-    else {
+    } else {
       stepProperties.targetEntityType = stepProperties.entityType;
     }
     delete stepProperties.entityType;
@@ -122,7 +115,7 @@ else {
       }
     });
   }
-  if (isEmptyString(stepProperties.customHook)){
+  if (isEmptyString(stepProperties.customHook)) {
     stepProperties.customHook = {};
   }
   if (isEmptyString(stepProperties.headers) || isEmptyObject(stepProperties.headers)) {
@@ -133,7 +126,7 @@ else {
       createdBy: "currentUser"
     } :{};
   }
-  if (isEmptyString(stepProperties.interceptors)){
+  if (isEmptyString(stepProperties.interceptors)) {
     stepProperties.interceptors = [];
   }
 
@@ -145,5 +138,5 @@ function isEmptyString(property) {
 }
 
 function isEmptyObject(property) {
-  return typeof stepProperties.headers === 'object' && Object.keys(stepProperties.headers).length === 0
+  return typeof stepProperties.headers === 'object' && Object.keys(stepProperties.headers).length === 0;
 }

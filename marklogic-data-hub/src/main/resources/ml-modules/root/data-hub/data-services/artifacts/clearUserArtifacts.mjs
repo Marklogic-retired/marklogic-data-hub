@@ -17,7 +17,9 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-let urisToDelete = cts.uris(null, null, cts.andQuery([cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat('http://marklogic.com/data-hub/mappings'))
-  ,cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION))])).toArray();
-urisToDelete.forEach(uri => hubUtils.deleteDocument(uri));
+let urisToDelete = cts.uris(null, ["concurrent", "score-zero"], cts.andNotQuery(cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat('http://marklogic.com/data-hub/mappings'))
+  , cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)));
+for (const uri of urisToDelete) {
+  hubUtils.deleteDocument(uri);
+}
 

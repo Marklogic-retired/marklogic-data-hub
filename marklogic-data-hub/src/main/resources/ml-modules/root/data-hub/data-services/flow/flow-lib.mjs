@@ -21,11 +21,10 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const stepMap = {};
 
-function getFlowsWithStepDetails(flowName = null){
-  if(flowName){
+function getFlowsWithStepDetails(flowName = null) {
+  if (flowName) {
     return getStepDetails(Artifacts.getArtifact("flow", flowName));
-  }
-  else {
+  } else {
     let flows = Artifacts.getArtifacts("flow");
     //stepMap is used only to get "sourceFormat" and "targetEntityType" which is not required when getting a flow with latest job info
     buildStepMap(flows);
@@ -39,10 +38,10 @@ function findStepsByIds(stepIds) {
   return cts.search(cts.andQuery([
     cts.collectionQuery("http://marklogic.com/data-hub/steps"),
     cts.jsonPropertyValueQuery("stepId", stepIds, ["case-insensitive", "unstemmed"])
-  ]));
+  ]), ["unfiltered", "score-zero", "unfaceted"]);
 }
 
-function getStepDetails(flow){
+function getStepDetails(flow) {
   const flowWithStepDetails = {name: flow.name};
   if (flow.description) {
     flowWithStepDetails.description = flow.description;
@@ -68,13 +67,12 @@ function getStepDetails(flow){
             httpUtils.throwBadRequest(`Unable to find referenced step with ID ${stepId} in flow ${flow.name}`);
           }
         }
-      }
-      else {
+      } else {
         stepDetails.stepName = step.name;
         stepDetails.stepDefinitionType = step.stepDefinitionType;
       }
       stepDetails.stepId = stepId;
-      if(step){
+      if (step) {
         stepDetails.sourceFormat = step.sourceFormat;
         // accommodating targetEntity which is still used by mastering (match/merge) for the time being
         stepDetails.targetEntityType = step.targetEntityType || step.targetEntity;
@@ -84,7 +82,7 @@ function getStepDetails(flow){
   return flowWithStepDetails;
 }
 
-function buildStepMap(flows){
+function buildStepMap(flows) {
   // Find all stepIds so we can retrieve them in one query
   const stepIds = [];
   flows.forEach(flow => {
@@ -95,10 +93,10 @@ function buildStepMap(flows){
     });
   });
 
-// Query for referenced steps, if any exist
+  // Query for referenced steps, if any exist
   const steps = stepIds.length < 1 ? [] : findStepsByIds(stepIds);
 
-// Build a map of steps for fast access
+  // Build a map of steps for fast access
   for (let step of steps) {
     step = step.toObject();
     stepMap[step.stepId] = step;
@@ -111,13 +109,13 @@ function getFlowWithLatestJobInfo(flowName) {
     flowWithStepDetails["steps"].forEach((step) => {
       const jobQueries = [];
       jobQueries.push(cts.collectionQuery('Job'));
-      jobQueries.push(cts.jsonPropertyValueQuery("flow",flowWithStepDetails.name));
-      jobQueries.push(cts.jsonPropertyValueQuery("stepName",step.stepName));
+      jobQueries.push(cts.jsonPropertyValueQuery("flow", flowWithStepDetails.name));
+      jobQueries.push(cts.jsonPropertyValueQuery("stepName", step.stepName));
       //A flow may contain same step more then once. 'status' in step response always contains step number
       // jobQueries.push(cts.jsonPropertyWordQuery("status",step.stepNumber));
 
-      let latestJob = fn.head(fn.subsequence(cts.search(cts.andQuery(jobQueries),[cts.indexOrder(cts.jsonPropertyReference("timeStarted"), "descending")]), 1, 1));
-      if(latestJob) {
+      let latestJob = fn.head(fn.subsequence(cts.search(cts.andQuery(jobQueries), [cts.indexOrder(cts.jsonPropertyReference("timeStarted"), "descending")]), 1, 1));
+      if (latestJob) {
         latestJob = latestJob.toObject();
         let stepRunResponses = latestJob.job.stepResponses;
         if (stepRunResponses && hubUtils.getObjectValues(stepRunResponses).length > 0) {

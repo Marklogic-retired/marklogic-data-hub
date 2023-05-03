@@ -146,7 +146,7 @@ public class MarkLogicVersion {
 
     private String getMarkLogicVersionString(ManageClient manageClient) {
         try {
-            return manageClient.getXml("/manage").getElementValue("/node()/c:version");
+            return manageClient.getXml("/manage/LATEST/?format=xml").getElementValue("/node()/c:version");
         }
         catch (Exception e) {
             throw new RuntimeException("Unable to get version of MarkLogic; cause: " + e.getMessage(), e);

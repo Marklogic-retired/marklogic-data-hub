@@ -21,18 +21,18 @@ const dataHub = DataHubSingleton.instance();
 const queries = [];
 queries.push(cts.collectionQuery("http://marklogic.com/data-hub/steps/custom"));
 queries.push(cts.notQuery(cts.collectionQuery(dataHub.consts.HUB_ARTIFACT_COLLECTION)));
-const artifacts = cts.search(cts.andQuery(queries)).toArray();
+const artifacts = cts.search(cts.andQuery(queries), ["unfiltered", "score-zero", "unfaceted"]).toArray();
 let artifactsWithoutEntity = [];
 artifacts.forEach(artifact => {
   artifact = artifact.toObject();
-  if(! artifact.targetEntityType) {
+  if (! artifact.targetEntityType) {
     artifactsWithoutEntity.push(artifact);
   }
 });
 const artifactsWithEntity = Artifacts.getArtifacts("custom");
-artifactsWithEntity.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+artifactsWithEntity.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1);
 const resp = {
-  "stepsWithoutEntity": artifactsWithoutEntity ,
+  "stepsWithoutEntity": artifactsWithoutEntity,
   "stepsWithEntity": artifactsWithEntity
-}
+};
 resp;

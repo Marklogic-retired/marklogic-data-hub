@@ -32,7 +32,7 @@ function main(content, options, stepExecutionContext) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/steps"),
       cts.jsonPropertyValueQuery("stepId", options.stepId, "case-insensitive")
-    ])));
+    ]), ["score-zero", "unfaceted"], 0));
     if (stepDoc) {
       options = stepDoc.toObject();
     } else {
@@ -66,7 +66,7 @@ function main(content, options, stepExecutionContext) {
       // don't process this "URIsToProcess" URI unless we are processing the last matchSummary document
       // (in URI order) that contains it
       let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1", "score-zero"],
-        cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess, ['score-function=zero'], 0), 0);
+        cts.pathRangeQuery("/matchSummary/URIsToProcess", "=", uriToProcess, ['score-function=zero'], 0), 0);
       if (lastSummaryWithURI != thisMatchSummaryURI) {
         continue;
       }
@@ -90,7 +90,7 @@ function main(content, options, stepExecutionContext) {
             positiveQuery,
             cts.rangeQuery(urisPathReference, '=', uriToProcess, ['score-function=zero'], 0)
           ),
-          ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending'), 'score-zero'],
+          ['unfiltered', cts.indexOrder(datahubCreatedOnRef, 'descending'), 'score-zero', 'unfaceted'],
           0
         ).toArray()
           // get the actionNode for the URI
@@ -123,10 +123,10 @@ function main(content, options, stepExecutionContext) {
   let results = [];
   if (urisToProcess.length) {
     results = merger.buildContentObjectsFromMatchSummary(
-        urisToProcess,
-        thisMatchSummary,
-        mergeable,
-        stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
+      urisToProcess,
+      thisMatchSummary,
+      mergeable,
+      stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
     );
   }
 

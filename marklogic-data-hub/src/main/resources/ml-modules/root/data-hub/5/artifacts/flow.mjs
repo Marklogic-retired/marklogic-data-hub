@@ -23,15 +23,15 @@ const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const requiredProperties = ['name'];
 
 function getNameProperty() {
-    return 'name';
+  return 'name';
 }
 
 function getCollections() {
-    return collections;
+  return collections;
 }
 
 function getStorageDatabases() {
-    return databases;
+  return databases;
 }
 
 function getPermissions() {
@@ -44,7 +44,7 @@ function getPermissions() {
 }
 
 function getFileExtension() {
-    return '.flow.json';
+  return '.flow.json';
 }
 
 function getDirectory() {
@@ -52,20 +52,20 @@ function getDirectory() {
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]), ["score-zero", "unfaceted"], 0);
   return fn.head(results);
 }
 
-function getArtifactUri(artifactName){
+function getArtifactUri(artifactName) {
   return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
 function validateArtifact(artifact) {
-    const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
-    if (missingProperties.length) {
-        return new Error(`Flow '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
-    }
-    return artifact;
+  const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
+  if (missingProperties.length) {
+    return new Error(`Flow '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+  }
+  return artifact;
 }
 
 export default {
@@ -78,4 +78,4 @@ export default {
   getDirectory,
   validateArtifact,
   getArtifactUri
-}
+};

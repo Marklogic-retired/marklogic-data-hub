@@ -19,6 +19,6 @@ xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-e
 
 let savedQueriesCollection = "http://marklogic.com/data-hub/saved-query";
 let savedQueries = cts.search(cts.andQuery([cts.collectionQuery(savedQueriesCollection),
-    cts.jsonPropertyValueQuery("owner", xdmp.getCurrentUser())]));
+  cts.jsonPropertyValueQuery("owner", xdmp.getCurrentUser())]), ["unfiltered", "score-zero", "unfaceted"]);
 
 savedQueries.toObject();

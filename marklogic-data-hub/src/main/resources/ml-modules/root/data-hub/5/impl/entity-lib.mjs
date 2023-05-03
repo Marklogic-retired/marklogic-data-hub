@@ -58,7 +58,7 @@ function findModelForEntityTypeId(entityTypeId) {
     cts.andQuery([
       cts.collectionQuery(getModelCollection()),
       cts.tripleRangeQuery([sem.iri(entityTypeId)], [rdfType], [entityType])
-    ])));
+    ]), ["score-zero", "unfaceted"], 0));
 }
 
 /**
@@ -156,15 +156,15 @@ function getEntityModelRelationships() {
     const references = entityModelsWithReferenceExcludingURIs(entityNameIri, []);
     references.forEach(reference => {
       reference = reference.toObject();
-      relationshipList[modelName].push(reference.info.title)
+      relationshipList[modelName].push(reference.info.title);
 
-      if(relationshipList[reference.info.title]) {
-        relationshipList[reference.info.title].push(modelName)
+      if (relationshipList[reference.info.title]) {
+        relationshipList[reference.info.title].push(modelName);
       } else {
-        relationshipList[reference.info.title] = [modelName]
+        relationshipList[reference.info.title] = [modelName];
       }
-    })
-  })
+    });
+  });
 
   return relationshipList;
 }
@@ -207,7 +207,7 @@ function getLatestJobData(entityName) {
   if (latestJob) {
     const uri = xdmp.nodeUri(latestJob);
     const response = {
-      latestJobDateTime : xdmp.documentGetMetadataValue(uri, "datahubCreatedOn")
+      latestJobDateTime: xdmp.documentGetMetadataValue(uri, "datahubCreatedOn")
     };
     let jobIds = xdmp.documentGetMetadataValue(uri, "datahubCreatedByJob");
     if (jobIds) {
@@ -249,15 +249,15 @@ function getModelCollection() {
 
 function deleteDraftModel(entityName) {
   let uri = getModelUri(entityName);
+  if (!fn.docAvailable(uri)) {
+    uri = getDraftModelUri(entityName);
     if (!fn.docAvailable(uri)) {
-      uri = getDraftModelUri(entityName);
-      if (!fn.docAvailable(uri)) {
-          return null;
-        }
+      return null;
     }
+  }
   const model = cts.doc(uri).toObject();
   model.info.draftDeleted = true;
-  writeDraftModel(entityName, model)
+  writeDraftModel(entityName, model);
 }
 
 function cleanupModelsFromHubCentralConfig(retainEntityNames) {
@@ -312,8 +312,8 @@ function findModelReferencesInSteps(entityName, entityTypeId) {
  * @returns {[]}
  */
 function entityModelsWithReferenceExcludingURIs(referencedEntity, excludedURIs) {
-  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([getModelCollection(),getDraftModelCollection()]), cts.jsonPropertyValueQuery(["$ref","relatedEntityType"],referencedEntity)]), cts.documentQuery(excludedURIs));
-  return cts.search(entityModelQuery).toArray()
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([getModelCollection(), getDraftModelCollection()]), cts.jsonPropertyValueQuery(["$ref", "relatedEntityType"], referencedEntity)]), cts.documentQuery(excludedURIs));
+  return cts.search(entityModelQuery).toArray();
 }
 
 /**
@@ -327,38 +327,38 @@ function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   const affectedModels = new Set();
   const entityModels = entityModelsWithReferenceExcludingURIs(entityTypeId, entityModelUri).map(model => model.toObject());
   const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
-    entityModels
-      .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
-      .forEach(model => {
-        const modelName = getModelName(model);
-        Object.keys(model.definitions)
-          .forEach(definition => {
-            const properties = model.definitions[definition].properties;
-            Object.keys(properties)
-              .some(property => {
-                if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
-                  affectedModels.add(modelName);
-                }
-              });
-          });
-      });
+  entityModels
+    .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
+    .forEach(model => {
+      const modelName = getModelName(model);
+      Object.keys(model.definitions)
+        .forEach(definition => {
+          const properties = model.definitions[definition].properties;
+          Object.keys(properties)
+            .some(property => {
+              if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
+                affectedModels.add(modelName);
+              }
+            });
+        });
+    });
 
   return [...affectedModels];
 }
 
-function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
+function findForeignKeyReferencesInOtherModels(entityModel, propertyName) {
   const affectedModels = new Set();
   const entityTypeId = getEntityTypeId(entityModel, entityModel.info.title);
   const queries = [];
-  queries.push(cts.collectionQuery([getDraftModelCollection(),getModelCollection()]));
+  queries.push(cts.collectionQuery([getDraftModelCollection(), getModelCollection()]));
   queries.push(cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"));
-  if(propertyName){
+  if (propertyName) {
     queries.push(cts.jsonPropertyValueQuery("joinPropertyName", propertyName, "case-insensitive"));
   }
   const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
   const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
   const entityModelsDraftWithoutRelated = cts.search(cts.andNotQuery(cts.collectionQuery([getDraftModelCollection()]),
-    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"))).toArray().map(entityModel =>getModelName(entityModel.toObject()))
+    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"))).toArray().map(entityModel => getModelName(entityModel.toObject()));
   entityModels
     .filter((model) => !entityModelsDraftWithoutRelated.includes(getModelName(model)))
     .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
@@ -419,7 +419,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   updatedModels.forEach(model => {
     databases.forEach(db => {
       const entityName = getModelName(model);
-      hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db);
     });
   });
 }
@@ -432,7 +432,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
  * @param model
  */
 function writeDraftModel(entityName, model) {
-   model.info.draft = true;
+  model.info.draft = true;
   writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
 }
 
@@ -490,7 +490,7 @@ function writeModelToDatabases(entityName, model, databases, isDraft = false) {
     if (hubUtils.isWriteTransaction() && db === xdmp.databaseName(xdmp.database())) {
       xdmp.documentInsert(uriFunction(entityName), model, permissions, collection);
     } else {
-      hubUtils.writeDocument(uriFunction(entityName), model, permissions, collection, db)
+      hubUtils.writeDocument(uriFunction(entityName), model, permissions, collection, db);
     }
   });
 }
@@ -502,18 +502,18 @@ function getEntityNames() {
 }
 
 function publishDraftModels() {
-  hubUtils.hubTrace(consts.TRACE_ENTITY,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
+  hubUtils.hubTrace(consts.TRACE_ENTITY, `publishing in database: ${xdmp.databaseName(xdmp.database())}`);
   const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION)), xdmp.databaseName(xdmp.database()));
-  hubUtils.hubTrace(consts.TRACE_ENTITY,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
+  hubUtils.hubTrace(consts.TRACE_ENTITY, `Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
   const inMemoryModelsUpdated = {};
 
   for (const draftModel of draftModels) {
     let modelObject = draftModel.toObject();
     modelObject.info.draft = false;
-    if(modelObject.info.draftDeleted) {
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model: ${modelObject.info.title}`);
+    if (modelObject.info.draftDeleted) {
+      hubUtils.hubTrace(consts.TRACE_ENTITY, `deleting draft model: ${modelObject.info.title}`);
       deleteModel(modelObject.info.title);
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model: ${modelObject.info.title}`);
+      hubUtils.hubTrace(consts.TRACE_ENTITY, `deleted draft model: ${modelObject.info.title}`);
     } else {
       // if the draft changes aren't already picked up by reference updates, add them here.
       if (!inMemoryModelsUpdated[modelObject.info.title]) {
@@ -523,14 +523,14 @@ function publishDraftModels() {
   }
   // write all the affected models out here
   for (const modelName in inMemoryModelsUpdated) {
-    hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelName}`);
+    hubUtils.hubTrace(consts.TRACE_ENTITY, `writing draft model: ${modelName}`);
     writeModel(modelName, inMemoryModelsUpdated[modelName]);
-    hubUtils.hubTrace(consts.TRACE_ENTITY,`draft model written: ${modelName}`);
+    hubUtils.hubTrace(consts.TRACE_ENTITY, `draft model written: ${modelName}`);
   }
   const deleteDraftsOperation = () => {
-    hubUtils.hubTrace(consts.TRACE_ENTITY,"deleting draft collection");
+    hubUtils.hubTrace(consts.TRACE_ENTITY, "deleting draft collection");
     xdmp.collectionDelete(consts.DRAFT_ENTITY_MODEL_COLLECTION);
-    hubUtils.hubTrace(consts.TRACE_ENTITY,"deleted draft collection");
+    hubUtils.hubTrace(consts.TRACE_ENTITY, "deleted draft collection");
   };
   const currentDatabase = xdmp.database();
   const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
@@ -567,10 +567,9 @@ function validateModelDefinitions(definitions) {
 
     if (definitions[entityName].properties) {
       Object.keys(definitions[entityName].properties).forEach(propertyName => {
-        try{
-          fn.QName('',propertyName)
-        }
-        catch(ex){
+        try {
+          fn.QName('', propertyName);
+        } catch (ex) {
           httpUtils.throwBadRequest(`Invalid property name: ${propertyName} in entity model ${entityName}; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.`);
         }
       });
@@ -603,10 +602,10 @@ export function getPredicatesByModel(model, includeConceptPredicates = false) {
     const entityNameIri = getEntityTypeId(model, definitionName);
     for (let entityPropertyName in entityProperties) {
       let entityPropertyValue = entityProperties[entityPropertyName];
-      if (entityPropertyValue["relatedEntityType"] != null){
+      if (entityPropertyValue["relatedEntityType"] != null) {
         predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
-      }else if (entityPropertyValue["items"] != null) {
-        let items = entityPropertyValue["items"]
+      } else if (entityPropertyValue["items"] != null) {
+        let items = entityPropertyValue["items"];
         if (items["relatedEntityType"] != null) {
           predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
         }
@@ -629,35 +628,35 @@ export function getPredicatesByModel(model, includeConceptPredicates = false) {
   return predicateList;
 }
 
-function getRefType(model,propertyName) {
+function getRefType(model, propertyName) {
   let refTypeReturn = "";
-    let entityProperty = model.properties[propertyName];
-      if (entityProperty["items"] == null) {
-        refTypeReturn = entityProperty["$ref"];
-      } else {
-        if (entityProperty["items"] != null) {
-          let items = entityProperty["items"]
-          if (items["$ref"] != null){
-            refTypeReturn = items["$ref"];
-          }
-        }
+  let entityProperty = model.properties[propertyName];
+  if (entityProperty["items"] == null) {
+    refTypeReturn = entityProperty["$ref"];
+  } else {
+    if (entityProperty["items"] != null) {
+      let items = entityProperty["items"];
+      if (items["$ref"] != null) {
+        refTypeReturn = items["$ref"];
       }
-      if (refTypeReturn != null) {
-        refTypeReturn = refTypeReturn.split("/").pop();
-      }
+    }
+  }
+  if (refTypeReturn != null) {
+    refTypeReturn = refTypeReturn.split("/").pop();
+  }
   return refTypeReturn;
 }
 
 function getConceptPredicatesByModel(model) {
   const conceptPredicateList = [];
   const entityName = model.info.title;
-  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
+  if (model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
     let relatedConcepts = [];
     relatedConcepts = model.definitions[entityName].relatedConcepts;
-    if(relatedConcepts !== undefined && relatedConcepts.toString().length > 0) {
-      for(let relatedConcept in relatedConcepts){
+    if (relatedConcepts !== undefined && relatedConcepts.toString().length > 0) {
+      for (let relatedConcept in relatedConcepts) {
         let entityRelatedConcept = relatedConcepts[relatedConcept];
-        if(entityRelatedConcept["predicate"] != null){
+        if (entityRelatedConcept["predicate"] != null) {
           conceptPredicateList.push(sem.iri(entityRelatedConcept["predicate"]));
         }
       }
@@ -667,11 +666,11 @@ function getConceptPredicatesByModel(model) {
 }
 
 
-function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
+function getPredicatesByModelAndBaseEntities(model, relatedEntityTypeIds) {
   const predicateList = [];
   const entityName = model.info.title;
   const entityNameIri = getEntityTypeId(model, entityName);
-  if(model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
+  if (model.definitions[entityName] !== undefined && model.definitions[entityName].toString().length > 0) {
     let entityProperties = model.definitions[entityName].properties;
     for (let entityPropertyName in entityProperties) {
       let entityPropertyValue = entityProperties[entityPropertyName];
@@ -684,7 +683,7 @@ function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
 
       } else {
         if (entityPropertyValue["items"] != null) {
-          let items = entityPropertyValue["items"]
+          let items = entityPropertyValue["items"];
           if (items["relatedEntityType"] != null) {
             let relatedEntityTypeArray = items["relatedEntityType"].split("/");
             let foreignEntity = relatedEntityTypeArray[relatedEntityTypeArray.length - 1];
@@ -707,7 +706,7 @@ function getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds) {
 }
 
 function getLabelFromHubConfigByEntityType(entityType, hubCentralConfig) {
-  if(hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType))){
+  if (hubCentralConfig != null && fn.exists(hubCentralConfig.xpath("/modeling/entities/" + entityType))) {
     return hubCentralConfig.xpath("/modeling/entities/" + entityType + "/label");
   }
   return "";
@@ -736,19 +735,19 @@ function getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralCon
   return labelsByEntityType.get(entityType);
 }
 
-function getValuesPropertiesOnHover(doc,entityType, hubCentralConfig) {
+function getValuesPropertiesOnHover(doc, entityType, hubCentralConfig) {
   let resultPropertiesOnHover = [];
   let configPropertiesOnHover = getPropertiesOnHoverFromHubConfigByEntityType(entityType, hubCentralConfig);
-  if(configPropertiesOnHover.toString().length > 0){
+  if (configPropertiesOnHover.toString().length > 0) {
     //check in the document the value of the configuration property
     for (let i = 0; i < configPropertiesOnHover.length; i++) {
       let entityPropertyName = configPropertiesOnHover[i];
-      if(!entityPropertyName.includes(".")){
+      if (!entityPropertyName.includes(".")) {
         //create an Property on hover object
         let objPropertyOnHover = new Object();
-        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName,doc,entityType);
+        objPropertyOnHover[entityPropertyName] = getValueFromProperty(entityPropertyName, doc, entityType);
         resultPropertiesOnHover.push(objPropertyOnHover);
-      }else{
+      } else {
 
         let propertyVec = entityPropertyName.split(".");
         let objPropertyOnHover = {};
@@ -756,13 +755,13 @@ function getValuesPropertiesOnHover(doc,entityType, hubCentralConfig) {
         let newPath = "";
         for (let j = 0; j < propertyVec.length; j++) {
           if (j < propertyVec.length -1) {
-            newPath  += "/*:" + propertyVec[j] + "/*:" + getRefType(entityModel,propertyVec[j]);
+            newPath  += "/*:" + propertyVec[j] + "/*:" + getRefType(entityModel, propertyVec[j]);
           } else {
             newPath  += "/*:" + propertyVec[j];
           }
 
         }
-        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName,doc,entityType, newPath);
+        objPropertyOnHover[entityPropertyName] = getValueFromPropertyPath(entityPropertyName, doc, entityType, newPath);
         resultPropertiesOnHover.push(objPropertyOnHover);
       }
     }
@@ -770,9 +769,9 @@ function getValuesPropertiesOnHover(doc,entityType, hubCentralConfig) {
   return resultPropertiesOnHover;
 }
 
-function getValueFromPropertyPath(path, doc,entityType,propertyPath) {
+function getValueFromPropertyPath(path, doc, entityType, propertyPath) {
   const propertyNode = doc.xpath(".//*:envelope/*:instance/*:"+entityType+propertyPath);
-  if(fn.exists(propertyNode)){
+  if (fn.exists(propertyNode)) {
     return fn.data(propertyNode);
   }
   return "";
@@ -790,7 +789,7 @@ function findModelAndPropertyReferencesInMappingRelatedSteps(entityName, entityT
   const stepQuery = cts.andQuery([
     cts.collectionQuery('http://marklogic.com/data-hub/steps'),
     cts.jsonPropertyValueQuery(["targetEntityType"], [entityTypeId]),
-    cts.jsonPropertyValueQuery(["relatedEntityMappingId"], [entityName+"."+propertyName+":*"],["wildcarded"])
+    cts.jsonPropertyValueQuery(["relatedEntityMappingId"], [entityName+"."+propertyName+":*"], ["wildcarded"])
   ]);
 
   return cts.search(stepQuery).toArray().map(step => step.toObject().name);
@@ -831,7 +830,7 @@ function findModelAndPropertyReferencesInMappingSteps(entityName, entityTypeId, 
   return cts.search(stepQuery).toArray().map(step => step.toObject().name);
 }
 
-export default{
+export default {
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
   findModelReferencesInSteps,

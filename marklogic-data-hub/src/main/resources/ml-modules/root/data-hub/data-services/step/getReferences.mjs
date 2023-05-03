@@ -25,8 +25,8 @@ if (!(searchProperty && referenceName)) {
   httpUtils.throwBadRequest("Must specify a search property and reference in order to get item references");
 }
 
-const stepNames = cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps"), cts.jsonPropertyValueQuery(searchProperty, referenceName)])).toArray().map(step => fn.string(step.root.name));
+const stepNames = cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps"), cts.jsonPropertyValueQuery(searchProperty, referenceName)]), ["unfiltered", "score-zero", "unfaceted"]).toArray().map(step => fn.string(step.root.name));
 
-const result = { stepNames };
+const result = {stepNames};
 
 result;

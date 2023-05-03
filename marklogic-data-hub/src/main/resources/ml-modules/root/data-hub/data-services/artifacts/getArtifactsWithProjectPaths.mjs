@@ -43,14 +43,14 @@ const userArtifactQuery = cts.andNotQuery(
   cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
 );
 
-cts.search(userArtifactQuery).toArray().forEach(artifact => {
+cts.search(userArtifactQuery, ["unfiltered", "score-zero", "unfaceted"]).toArray().forEach(artifact => {
   // The path starts with "/" will not work with windows winzip. So removing "/" from the nodeUri path
   artifactsWithProjectPaths.push({"path": xdmp.nodeUri(artifact).substr(1), "json": artifact});
 });
 
 // Need to ensure we have objects to pass to generateProtectedPathConfig
 const entityModels = [];
-for (let doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
+for (let doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION), ["unfiltered", "score-zero", "unfaceted"])) {
   entityModels.push(doc.toObject());
 }
 

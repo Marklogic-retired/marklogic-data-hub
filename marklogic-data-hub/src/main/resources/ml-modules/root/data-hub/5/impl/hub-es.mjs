@@ -30,8 +30,7 @@ const ext = require("/data-hub/extensions/entity/post-process-database-propertie
  * @param {array} entityModels
  * @returns {object} a document-node wrapping a JSON object containing the database properties
  */
-function generateDatabaseProperties(entityModels)
-{
+function generateDatabaseProperties(entityModels) {
   const dbProps = hent.dumpIndexes(entityModels);
   return ext.postProcessDatabaseProperties(dbProps);
 }
@@ -120,7 +119,8 @@ function getPropertyReferenceType(entityIRI, propertyPath) {
 
 function getEntityDefinitionFromIRI(entityIRI) {
   let model = fn.head(cts.search(
-    cts.tripleRangeQuery(sem.iri(entityIRI), sem.iri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), sem.iri('http://marklogic.com/entity-services#EntityType'), '=')
+    cts.tripleRangeQuery(sem.iri(entityIRI), sem.iri('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), sem.iri('http://marklogic.com/entity-services#EntityType'), '='),
+    ["unfiltered", "score-zero", "unfaceted"]
   ));
   if (!model) {
     throw Error('The entity model ' + entityIRI + ' does not exist');
@@ -274,7 +274,7 @@ function getEntityInfoFromRecord(record) {
   return record.envelope && record.envelope.instance && record.envelope.instance.info;
 }
 
-export default{
+export default {
   buildPathReferenceParts,
   findEntityServiceTitle,
   generateDatabaseProperties,

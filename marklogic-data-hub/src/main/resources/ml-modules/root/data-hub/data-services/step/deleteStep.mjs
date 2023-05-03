@@ -40,7 +40,7 @@ xdmp.trace(consts.TRACE_STEP, `Deleting step ${stepId}`);
 const flowsWithReferences = cts.search(cts.andQuery([
   cts.collectionQuery(consts.FLOW_COLLECTION),
   cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
-]));
+]), ["unfiltered", "score-zero", "unfaceted"]);
 
 for (let flowDoc of flowsWithReferences) {
   const flow = flowDoc.toObject();

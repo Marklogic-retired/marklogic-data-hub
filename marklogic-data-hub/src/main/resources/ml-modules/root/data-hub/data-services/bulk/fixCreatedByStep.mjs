@@ -46,7 +46,7 @@ if (endpointState.lastProcessedUri) {
 }
 
 const uris = cts.uris(
-  null, ['limit=' + batchSize],
+  null, ['limit=' + batchSize, "concurrent", "score-zero"],
   cts.andQuery(documentQueries), null, [workUnit.forestId]
 ).toArray();
 
