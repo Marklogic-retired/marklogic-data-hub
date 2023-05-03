@@ -411,4 +411,34 @@ describe("Validate persistence across Hub Central", () => {
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
   });
+
+  it("MatchingStepDetails: Retain state in 'Test and review matched entities' section when switch Tile", () => {
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
+    matchingStepDetail.getAllDataRadio().click();
+
+    toolbar.getRunToolbarIcon().click();
+    cy.waitForAsyncRequest();
+    toolbar.getCurateToolbarIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("Matched Entities");
+
+    matchingStepDetail.getAllDataURIRadio().click();
+    toolbar.getRunToolbarIcon().click();
+    cy.waitForAsyncRequest();
+    toolbar.getCurateToolbarIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("At least one URI is required.");
+
+    matchingStepDetail.getUriOnlyRadio().click();
+    toolbar.getRunToolbarIcon().click();
+    cy.waitForAsyncRequest();
+    toolbar.getCurateToolbarIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("At least Two URIs are required.");
+  });
 });
