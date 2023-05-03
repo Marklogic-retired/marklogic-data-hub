@@ -24,7 +24,7 @@ const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
 
 function matchDetailsByMergedQuery(mergedQuery) {
-  let mergedURIs = cts.uris(null, [], mergedQuery);
+  let mergedURIs = cts.uris(null, ["concurrent", "score-zero"], mergedQuery);
   let output = {};
   hubUtils.invokeFunction(
     function () {
@@ -131,13 +131,13 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
       }
     }
   }
-  return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
+  return {archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection};
 }
 
 function setCollectionDefaults(options, targetEntityType) {
   const collectionsParent = (options.matchOptions || options.mergeOptions || options);
   // provide default empty array values for collections to simplify later logic
-  collectionsParent.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},collectionsParent.collections);
+  collectionsParent.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []}, collectionsParent.collections);
   if (targetEntityType) {
     if (!(collectionsParent.targetEntity || collectionsParent.targetEntityType)) {
       collectionsParent.targetEntityType = targetEntityType;

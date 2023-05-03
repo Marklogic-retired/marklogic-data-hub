@@ -41,19 +41,17 @@ databases.forEach((database) => {
 let tasksFinished = false;
 let taskCheckCount = 0;
 do {
-  hubUtils.invokeFunction(() => {
-        const requestStatusCounts = xdmp.hosts().toArray()
-            .map((host) => { return { host, taskServerId: fn.head(xdmp.hostStatus(host)).taskServer.taskServerId}})
-            .map((taskServerInfo) => {
-              return fn.head(xdmp.serverStatus(taskServerInfo.host, taskServerInfo.taskServerId)).toObject()
-                .requestStatuses.filter((requestStatus) => requestStatus.requestText === "/data-hub/4/triggers/entity-model-trigger.xqy").length;
-            });
-        tasksFinished = fn.sum(Sequence.from(requestStatusCounts)) === 0;
-  });
+  const requestStatusCounts = xdmp.hosts().toArray()
+    .map((host) => { return {host, taskServerId: fn.head(xdmp.hostStatus(host)).taskServer.taskServerId}; })
+    .map((taskServerInfo) => {
+      return fn.head(xdmp.serverStatus(taskServerInfo.host, taskServerInfo.taskServerId)).toObject()
+        .requestStatuses.filter((requestStatus) => requestStatus.requestText === "/data-hub/4/triggers/entity-model-trigger.xqy").length;
+    });
+  tasksFinished = fn.sum(Sequence.from(requestStatusCounts)) === 0;
   if (!tasksFinished) {
-    xdmp.sleep(100);
+    xdmp.sleep(50);
   }
   taskCheckCount++;
-} while(!tasksFinished && taskCheckCount < 100);
+} while (!tasksFinished && taskCheckCount < 100);
 xdmp.trace(consts.TRACE_ENTITY, "Finished saving models");
 

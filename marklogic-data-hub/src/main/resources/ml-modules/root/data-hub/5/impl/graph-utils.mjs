@@ -16,11 +16,11 @@
 
 'use strict';
 
-import consts from "/data-hub/5/impl/consts.mjs"
-import entityLib from "/data-hub/5/impl/entity-lib.mjs"
-import entitySearchLib from "/data-hub/5/entities/entity-search-lib"
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs"
-import { getPredicatesByModel } from "./entity-lib.mjs"
+import consts from "/data-hub/5/impl/consts.mjs";
+import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import entitySearchLib from "/data-hub/5/entities/entity-search-lib";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
+import {getPredicatesByModel} from "./entity-lib.mjs";
 
 const sem = require("/MarkLogic/semantics.xqy");
 
@@ -33,27 +33,27 @@ const rdfTypeIri = sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
 // Alterations to rdf:type values that qualify as Concepts in Hub Central graph views go in this function.
 function getRdfConceptTypes() {
-    return [
-        sem.curieExpand("rdf:Class"),
-        sem.curieExpand("owl:Class"),
-        sem.curieExpand("skos:Concept")
-    ];
+  return [
+    sem.curieExpand("rdf:Class"),
+    sem.curieExpand("owl:Class"),
+    sem.curieExpand("skos:Concept")
+  ];
 }
 
 // Alterations to label predicates in order of priority
 function getOrderedLabelPredicates() {
-    return [
-        sem.curieExpand("skos:prefLabel"),
-        sem.curieExpand("skos:label"),
-        sem.curieExpand("rdfs:label")
-    ];
+  return [
+    sem.curieExpand("skos:prefLabel"),
+    sem.curieExpand("skos:label"),
+    sem.curieExpand("rdfs:label")
+  ];
 }
 
 function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit = 100) {
-    const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)])).toArray();
-    const relatedLimit = Math.max(1, relatedEntityTypeIRIs.length) * limit;
-    const conceptLimit = Math.max(1, predicateConceptList.length) * relatedLimit;
-    const results = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+  const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)])).toArray();
+  const relatedLimit = Math.max(1, relatedEntityTypeIRIs.length) * limit;
+  const conceptLimit = Math.max(1, predicateConceptList.length) * relatedLimit;
+  const results = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT * WHERE {
                  {
@@ -117,11 +117,11 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                      BIND("concept graph" AS ?origin)
                }
            }
-  `, { docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
-    if (graphTraceEnabled) {
-        xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
-    }
-    return results.toArray();
+  `, {docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
+  if (graphTraceEnabled) {
+    xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
+  }
+  return results.toArray();
 }
 
 let _allEntityIds = null;
@@ -159,7 +159,7 @@ function getEntityNodes(documentUri, predicateIRI, lastObjectIRI, limit) {
       GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
       ORDER BY ?subjectIRI
       LIMIT $limit
-`, { parentDocURI: documentUri, lastObjectIRI, matchPredicate: predicateIRI, labelIRI: getOrderedLabelPredicates(), limit }, [], cts.collectionQuery(getAllEntityIds()));
+`, {parentDocURI: documentUri, lastObjectIRI, matchPredicate: predicateIRI, labelIRI: getOrderedLabelPredicates(), limit}, [], cts.collectionQuery(getAllEntityIds()));
   if (graphTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Retrieved ${fn.count(results)} rows for document '${documentUri}' ${predicateIRI ? `with predicate '${predicateIRI}'`: ""}and limit of ${limit}`);
   }
@@ -313,13 +313,13 @@ function getEntityNodesByDocument(docURI, limit) {
 function getNodeLabel(objectIRIArr, objectUri, document) {
   let label = "";
   let configurationLabel = getLabelFromHubConfigByEntityType(objectIRIArr[objectIRIArr.length - 2]);
-  if (document && configurationLabel.length > 0){
+  if (document && configurationLabel.length > 0) {
     //getting the value of the configuration property
-    label = fn.string(getValueFromProperty(configurationLabel,document,objectIRIArr[objectIRIArr.length - 2]));
+    label = fn.string(getValueFromProperty(configurationLabel, document, objectIRIArr[objectIRIArr.length - 2]));
   }
 
   if (label.length === 0) {
-    if(fn.exists(objectUri)) {
+    if (fn.exists(objectUri)) {
       label = decodeURI(objectUri);
     } else {
       label = objectIRIArr[objectIRIArr.length - 1];
@@ -345,7 +345,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       docUriToSubjectIri[docUri] = new Set();
     }
     docUriToSubjectIri[docUri].add(iri);
-  }
+  };
   const getGroupNodeCount = (iri) => {
     if (!groupNodeCount[iri]) {
       return 0;
@@ -398,10 +398,10 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
   }
 
   let entitiesArchived = [];
-  entityTypeIds.forEach( type => {
+  entityTypeIds.forEach(type => {
     entitiesArchived.push("sm-" + type + "-archived");
-  })
-  const documents = cts.search(cts.documentQuery([...listOfURIs]), ["unfiltered", "score-zero", "unfaceted", "document"], 0);
+  });
+  const documents = cts.search(cts.documentQuery([...listOfURIs]), ["score-zero", "unfaceted", "document"], 0);
   const documentsByURI = new Map();
   const archivedURIs = new Set();
   for (const doc of documents) {
@@ -434,10 +434,10 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     const originHasDoc = fn.exists(originDoc);
     const group = originHasDoc ? subjectIri.substring(0, subjectIri.length - subjectArr[subjectArr.length - 1].length - 1): subjectIri;
     let entityType = subjectArr.length >= 2 ? subjectArr[subjectArr.length - 2]: "";
-    if(originHasDoc && entityType) {
+    if (originHasDoc && entityType) {
       newLabel = getNodeLabel(subjectArr, docUri, originDoc);
       //check if we have in central config properties on hover loaded
-      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(originDoc,entityType,hubCentralConfig);
+      resultPropertiesOnHover = entityLib.getValuesPropertiesOnHover(originDoc, entityType, hubCentralConfig);
     } else {
       newLabel = fn.string(item.predicateLabel);
     }
@@ -648,7 +648,7 @@ function getEntityTypeIRIsCounting(entityTypeIRIs, ctsQueryCustom) {
 SELECT (COUNT(DISTINCT(?docUri)) AS ?total)  WHERE {
 ?subjectIRI rdf:type $entityTypeIRIs;
     rdfs:isDefinedBy ?docUri.
-} `,{entityTypeIRIs}, [], ctsQueryCustom);
+} `, {entityTypeIRIs}, [], ctsQueryCustom);
 
   return totalCountEntityBaseEntities;
 }
@@ -660,7 +660,7 @@ function getConceptCounting(entityTypeIRIs, predicateConceptList, ctsQueryCustom
                         ?subjectIRI rdf:type $entityTypeIRIs;
                         ?predicateIRI  ?objectIRI;
                         FILTER (isIRI(?predicateIRI) && ?predicateIRI = $predicateConceptList)
-                        }`, {entityTypeIRIs,predicateConceptList}, [], ctsQueryCustom);
+                        }`, {entityTypeIRIs, predicateConceptList}, [], ctsQueryCustom);
   return totalConcepts;
 }
 
@@ -726,14 +726,14 @@ function getRelatedEntityInstancesCount(semanticConceptIRI) {
         ?subjectIRI ?p $semanticConceptIRI;
             rdf:type ?entityTypeIRI.
     }
-    GROUP BY ?entityTypeIRI`, { semanticConceptIRI }
+    GROUP BY ?entityTypeIRI`, {semanticConceptIRI}
   );
   return relatedEntityInstancesCount.toObject();
 }
 
 function describeIRI(semanticConceptIRI) {
   const description = {};
-  const describeTriples = sem.sparql(`DESCRIBE @semanticConceptIRI`, { semanticConceptIRI });
+  const describeTriples = sem.sparql(`DESCRIBE @semanticConceptIRI`, {semanticConceptIRI});
   for (const triple of describeTriples) {
     description[fn.string(sem.triplePredicate(triple))] = fn.string(sem.tripleObject(triple));
   }
@@ -754,4 +754,4 @@ export default {
   getRelatedEntityInstancesCount,
   getEntityWithConcepts,
   graphResultsToNodesAndEdges
-}
+};

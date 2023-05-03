@@ -21,14 +21,14 @@ const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', '
 const entitiesByTargetType = {};
 
 const xsltPermissions = [
-  xdmp.permission(datahub.config.FLOWOPERATORROLE,'execute'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'execute'),
-  xdmp.permission(datahub.config.FLOWOPERATORROLE,'read'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE,'read'),
-  xdmp.permission("data-hub-common",'execute'),
-  xdmp.permission("data-hub-common",'read'),
-  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'execute'),
-  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE,'read'),
+  xdmp.permission(datahub.config.FLOWOPERATORROLE, 'execute'),
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'execute'),
+  xdmp.permission(datahub.config.FLOWOPERATORROLE, 'read'),
+  xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'read'),
+  xdmp.permission("data-hub-common", 'execute'),
+  xdmp.permission("data-hub-common", 'read'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE, 'execute'),
+  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE, 'read'),
   xdmp.permission("data-hub-module-reader", "execute"),
   // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
   // actual problem is that a mapping will fail if the XML or XSLT representation of a mapping does not have this
@@ -61,18 +61,18 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   targetEntityMapping.uriExpression = mappingStep.uriExpression ? mappingStep.uriExpression : "$URI";
 
   allEntityMap.push(targetEntityMapping);
-  if(mappingStep["relatedEntityMappings"] && mappingStep["relatedEntityMappings"].length > 0){
+  if (mappingStep["relatedEntityMappings"] && mappingStep["relatedEntityMappings"].length > 0) {
     mappingStep["relatedEntityMappings"].forEach(entityMap => {
       entityMap.expressionContext = entityMap.expressionContext ? entityMap.expressionContext : "/";
       entityMap.uriExpression = entityMap.uriExpression ? entityMap.uriExpression : "hubURI('" + getEntityName(entityMap.targetEntityType) + "')";
-      allEntityMap.push(entityMap)
+      allEntityMap.push(entityMap);
     });
   }
 
   const namespaces = fetchNamespacesFromMappingStep(mappingStep);
 
   let entityTemplates = "";
-  for(let i=0; i< allEntityMap.length; i++){
+  for (let i=0; i< allEntityMap.length; i++) {
     entityTemplates += generateEntityTemplates(i, allEntityMap[i]).join('\n') + "\n";
   }
 
@@ -83,7 +83,7 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
       ${entityTemplates}
       <m:output>
       ${allEntityMap.map((entityMap, index) =>
-        `<instance:mapping${index}Instances>
+    `<instance:mapping${index}Instances>
            <m:for-each>
            <m:select>${entityMap["expressionContext"] ? entityMap["expressionContext"]: "/" }</m:select>
            <instance:entityInstance>
@@ -101,7 +101,7 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   return xdmp.unquote(xml);
 }
 
-function fetchNamespacesFromMappingStep(mappingStep){
+function fetchNamespacesFromMappingStep(mappingStep) {
   let namespaces = [];
   if (mappingStep.namespaces) {
     for (const prefix of Object.keys(mappingStep.namespaces).sort()) {
@@ -116,7 +116,7 @@ function fetchNamespacesFromMappingStep(mappingStep){
   return namespaces;
 }
 
-function getMappingNamespacesObject(mappingStep){
+function getMappingNamespacesObject(mappingStep) {
   let namespaces = {};
   if (mappingStep.namespaces) {
     for (const prefix of Object.keys(mappingStep.namespaces).sort()) {
@@ -142,8 +142,7 @@ function makeParameterElements(mappingStep, userParameterNames) {
   let elements = '<m:param name="URI"/>';
   if (userParameterNames) {
     userParameterNames.forEach(param => elements += `<m:param name="${param}"/>`);
-  }
-  else {
+  } else {
     const modulePath = mappingStep.mappingParametersModulePath;
     if (modulePath) {
       if (infoEnabled) {
@@ -260,7 +259,7 @@ function buildMapProperties(mapping, model, propertyPath, index) {
         let propLine = `<${propTag} xsi:type="xs:${dataType}"><m:val>${sourcedFrom}</m:val></${propTag}>`;
         // If a property is required but not marked as optional, it will always be added, and then entity validation
         // will not fail because the property exists with an empty string as the value.
-        propLine = `<m:optional>${propLine}</m:optional>`
+        propLine = `<m:optional>${propLine}</m:optional>`;
         propertyLines.push(propLine);
       }
     }
@@ -304,12 +303,12 @@ function getTargetEntity(targetEntityType) {
   if (!entitiesByTargetType[targetEntityType]) {
     let entityModel = entityLib.findModelForEntityTypeId(targetEntityType);
     if (fn.empty(entityModel)) {
-      entityModel = fallbackLegacyEntityLookup(targetEntityType)
+      entityModel = fallbackLegacyEntityLookup(targetEntityType);
     }
     if (entityModel && (entityModel.constructor.name === "Document" || entityModel.constructor.name === "ObjectNode")) {
       entityModel = entityModel.toObject();
     }
-    if(!entityModel) {
+    if (!entityModel) {
       datahub.debug.log({message: 'Could not find target entity type: ' + targetEntityType, type: 'error'});
       throw Error('Could not find target entity type: ' + targetEntityType);
     }
@@ -321,7 +320,7 @@ function getTargetEntity(targetEntityType) {
 function retrieveFunctionImports() {
   let customImports = [];
   let shimURIs = hubUtils.invokeFunction(function() {
-    return cts.uris(null, null, cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
+    return cts.uris(null, ["concurrent", "score-zero"], cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
   }, xdmp.databaseName(xdmp.modulesDatabase()));
   for (let uri of shimURIs) {
     customImports.push(`<m:use-functions href="${fn.string(uri).replace(/\.xslt?$/, '')}"/>`);
@@ -358,7 +357,7 @@ function buildEntityTemplate(mapping, model, propertyPath, index) {
 }
 
 function getEntityName(targetEntityType) {
-  return fn.head(fn.reverse(fn.tokenize(targetEntityType,'/')));
+  return fn.head(fn.reverse(fn.tokenize(targetEntityType, '/')));
 }
 
 function fallbackLegacyEntityLookup(targetEntityType) {
@@ -410,31 +409,31 @@ function validateAndTestMapping(mapping, uri) {
     httpUtils.throwBadRequest(`Unable to apply mapping parameters module at path '${modulePath}'; cause: ${error.message}`);
   }
 
-  const parameterMap = Object.assign({}, {"URI":uri}, userParameterMap);
+  const parameterMap = Object.assign({}, {"URI": uri}, userParameterMap);
   const sourceInstance = getSourceRecordForMapping(mapping, sourceDocument);
   const mappingsArray = createMappingsArray(mapping);
   const validatedMappingsArray = validateMappings(mappingsArray, userParameterNames);
   let validatedAndTestedMapping =  testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
   let validatedAndTestedMappingWithUri = validateAndTestUriExpressions(validatedAndTestedMapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
-  return validatedMappingsArray.length > 1 ? calculateInstanceCount(validatedAndTestedMappingWithUri, validatedMappingsArray,sourceInstance) : validatedAndTestedMappingWithUri;
+  return validatedMappingsArray.length > 1 ? calculateInstanceCount(validatedAndTestedMappingWithUri, validatedMappingsArray, sourceInstance) : validatedAndTestedMappingWithUri;
 }
 
-function validateMappings(mappingsArray, userParameterNames){
+function validateMappings(mappingsArray, userParameterNames) {
   const validatedMappingsArray = mappingsArray.map(mappingToTest => {
     return validateMapping(mappingToTest, userParameterNames);
   });
   return validatedMappingsArray;
 }
 
-function createMappingsArray(mapping){
+function createMappingsArray(mapping) {
   const mappingCount = 1 + (mapping.relatedEntityMappings ? mapping.relatedEntityMappings.length : 0);
   let mappingsArray = [];
   mapping.uriExpression = mapping.uriExpression ? mapping.uriExpression : "$URI";
   mapping.expressionContext = mapping.expressionContext ? mapping.expressionContext : "/";
   mappingsArray.push(mapping);
 
-  if(mapping.relatedEntityMappings) {
-    for(let i=0; i < mappingCount-1 ; i++){
+  if (mapping.relatedEntityMappings) {
+    for (let i=0; i < mappingCount-1 ; i++) {
       const relatedEntityMapping = mapping.relatedEntityMappings[i];
       relatedEntityMapping.namespaces = mapping.namespaces;
       relatedEntityMapping.uriExpression = relatedEntityMapping.uriExpression ? relatedEntityMapping.uriExpression : "hubURI('" + getEntityName(relatedEntityMapping.targetEntityType) + "')";
@@ -445,25 +444,24 @@ function createMappingsArray(mapping){
   return mappingsArray;
 }
 
-function testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap){
-  for(let i =0 ; i < validatedMappingsArray.length; i++){
+function testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap) {
+  for (let i =0 ; i < validatedMappingsArray.length; i++) {
     const response = testMapping(validatedMappingsArray[i], sourceInstance, userParameterNames, parameterMap);
-    if(i ==0){
+    if (i ==0) {
       mapping.properties = response.properties;
-    }
-    else{
+    } else {
       mapping.relatedEntityMappings[i-1] = response;
     }
   }
   return mapping;
 }
 
-function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap){
+function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap) {
   const namespaces = fetchNamespacesFromMappingStep(mapping);
   const functionImports = retrieveFunctionImports();
   const mappingParameters = makeParameterElements(mapping, userParameterNames);
   let uriExpressionList = [];
-  validatedMappingsArray.forEach((entityMapping, mappingIndex) =>{
+  validatedMappingsArray.forEach((entityMapping, mappingIndex) => {
     const xmlMapping = xdmp.unquote(`
     <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
       ${functionImports}
@@ -491,42 +489,37 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
       errorEvaluatingExpression = true;
     }
     try {
-      if(!response){
-        if (uriExpressionList.includes(entityMapping.uriExpression)){
+      if (!response) {
+        if (uriExpressionList.includes(entityMapping.uriExpression)) {
           response = "Mapping expression returns a duplicate Uniform Resource Identifier (URI). URIs must be unique to each entity.";
           errorEvaluatingExpression = true;
-        }
-        else {
+        } else {
           uriExpressionList.push(entityMapping.uriExpression);
           const uriString = String(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('*:uris/*:uri[1]/text()'));
           response = flowUtils.properExtensionURI(uriString, fn.lowerCase(mapping.targetFormat));
         }
       }
-    }
-    catch(e){
+    } catch (e) {
       response = hubUtils.getErrorMessage(e);
       errorEvaluatingExpression = true;
     }
-    if(!errorEvaluatingExpression && !response){
+    if (!errorEvaluatingExpression && !response) {
       errorEvaluatingExpression = true;
       response = "The URI XPath expression for the mapping evaluates to null";
     }
 
-    if(mappingIndex == 0){
+    if (mappingIndex == 0) {
       mapping.uriExpression = {};
-      if (errorEvaluatingExpression){
+      if (errorEvaluatingExpression) {
         mapping.uriExpression.errorMessage = response;
-      }
-      else{
+      } else {
         mapping.uriExpression.output = response;
       }
-    }
-    else{
+    } else {
       mapping.relatedEntityMappings[mappingIndex - 1].uriExpression = {};
-      if(errorEvaluatingExpression){
+      if (errorEvaluatingExpression) {
         mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.errorMessage = response;
-      }
-      else{
+      } else {
         mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.output = response;
       }
     }
@@ -534,13 +527,13 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
   return mapping;
 }
 
-function calculateInstanceCount(mapping, validatedMappingsArray, sourceInstance){
+function calculateInstanceCount(mapping, validatedMappingsArray, sourceInstance) {
   const namespaces = getMappingNamespacesObject(mapping);
   const sourceDocument = fn.head(xdmp.unquote(xdmp.quote(sourceInstance)));
   validatedMappingsArray.forEach((entityMapping, mappingIndex) => {
-    if(mappingIndex != 0){
+    if (mappingIndex != 0) {
       const instanceCount = fn.count(sourceDocument.xpath(entityMapping.expressionContext, namespaces));
-      if(instanceCount > 1){
+      if (instanceCount > 1) {
         mapping.relatedEntityMappings[mappingIndex - 1].expressionContext = {};
         mapping.relatedEntityMappings[mappingIndex - 1].expressionContext.output = `${instanceCount} instances (1 shown)`;
       }
@@ -629,7 +622,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
   }
 }
 
-function validateXmlMapping(xmlMapping){
+function validateXmlMapping(xmlMapping) {
   let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
   xdmp.xsltEval(stylesheet, [], {staticCheck: true});
 }
@@ -648,36 +641,33 @@ function validateXmlMapping(xmlMapping){
  * @returns
  */
 function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
-  propMapping={"targetEntityType":mapping.targetEntityType, "expressionContext": mapping.expressionContext, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties'])
-{
+  propMapping={"targetEntityType": mapping.targetEntityType, "expressionContext": mapping.expressionContext, "namespaces": mapping.namespaces, "properties": {}}, paths=['properties']) {
   Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
     let sourcedFrom = escapeXML(mappedProperty.sourcedFrom);
     paths.push(propertyName);
     //Don't run mapping if the property is unset (sourcedFrom.length==0) or if the validation returns errors
-    if(!mappedProperty.errorMessage && sourcedFrom.length > 0){
+    if (!mappedProperty.errorMessage && sourcedFrom.length > 0) {
       propMapping.expressionContext = mapping.expressionContext;
       if (mappedProperty.hasOwnProperty("targetEntityType")) {
         propMapping = addNode(propMapping, paths, mappedProperty, true);
         paths.push("properties");
         mappedProperty = testMapping(mappedProperty, sourceInstance, userParameterNames, parameterMap, propMapping, paths);
         paths.pop();
-      }
-      else {
+      } else {
         propMapping = addNode(propMapping, paths, mappedProperty,  false);
       }
     }
-    if(mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType") && sourcedFrom.length > 0){
+    if (mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType") && sourcedFrom.length > 0) {
       let resp = testMappingExpression(propMapping, propertyName, sourceInstance, userParameterNames, parameterMap);
-      if(resp && resp.output) {
+      if (resp && resp.output) {
         mappedProperty["output"] = resp.output;
-      }
-      else {
+      } else {
         mappedProperty["errorMessage"] = resp.errorMessage;
       }
     }
 
-    let propertiesPath = paths.map((p) => { return '["' +p + '"]' });
+    let propertiesPath = paths.map((p) => { return '["' +p + '"]'; });
     eval(`delete propMapping${propertiesPath.join("")}`) ;
     paths.pop();
   });
@@ -717,17 +707,15 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     multiple instances
      */
 
-    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance[1]/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
+    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance[1]/*:value/node()', {"instance": "http://marklogic.com/datahub/entityInstance"}))));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
-    if(arr.length <= 1) {
+    if (arr.length <= 1) {
       resp.output = String(fn.head(output));
-    }
-    else {
+    } else {
       resp.output = arr.map(String);
     }
-  }
-  catch(e){
+  } catch (e) {
     resp.errorMessage = mappingLib.extractErrorMessageForMappingUI(e);
   }
   return resp;
@@ -746,17 +734,16 @@ function testXmlMapping(xmlMapping, sourceInstance, parameterMap) {
   return xdmp.xsltEval(mappingXslt, inputDoc, parameterMap);
 }
 
-function addNode(obj, paths, mappedProperty, isNested ) {
+function addNode(obj, paths, mappedProperty, isNested) {
   let res=obj;
   const namespaces = res.namespaces;
   for (let i=0;i<paths.length -1;i++) {
     obj=obj[paths[i]];
   }
-  if(isNested){
-    obj[paths[paths.length -1]] = {"targetEntityType" : mappedProperty.targetEntityType, namespaces,"sourcedFrom": mappedProperty.sourcedFrom,"properties": {}};
-  }
-  else {
-   obj[paths[paths.length -1]] = {"sourcedFrom": mappedProperty.sourcedFrom};
+  if (isNested) {
+    obj[paths[paths.length -1]] = {"targetEntityType": mappedProperty.targetEntityType, namespaces, "sourcedFrom": mappedProperty.sourcedFrom, "properties": {}};
+  } else {
+    obj[paths[paths.length -1]] = {"sourcedFrom": mappedProperty.sourcedFrom};
   }
   return res;
 }
@@ -781,18 +768,18 @@ function getXQueryLib() {
 
 function getMarkLogicMappingFunctions() {
   return fn.head(hubUtils.invokeFunction(function() {
-    let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata")
-    let ns = {"m":"http://marklogic.com/entity-services/mapping"};
+    let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata");
+    let ns = {"m": "http://marklogic.com/entity-services/mapping"};
     const functionMap = new Map();
     let output = [];
 
-    for (const metaData of fnMetadata){
-      if(metaData.xpath("/m:function-defs",ns)) {
+    for (const metaData of fnMetadata) {
+      if (metaData.xpath("/m:function-defs", ns)) {
         let j = 1;
-        let fnLocation = metaData.xpath("/m:function-defs/@location",ns)
-        for (const mlFunction of metaData.xpath("/m:function-defs/m:function-def",ns )){
+        let fnLocation = metaData.xpath("/m:function-defs/@location", ns);
+        for (const mlFunction of metaData.xpath("/m:function-defs/m:function-def", ns)) {
           let funcName = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/@name", ns));
-          let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name",ns)).replace("\n",",");
+          let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name", ns)).replace("\n", ",");
           j++;
 
           let singleFunction ={};
@@ -803,7 +790,7 @@ function getMarkLogicMappingFunctions() {
         }
       }
     }
-    for (let value of functionMap.values()){
+    for (let value of functionMap.values()) {
       output.push(value);
     }
     return output;
@@ -828,7 +815,7 @@ function getFunctionsWithSignatures(xpathFunctions) {
       functionMap.set(fn, xpathFunction);
     }
   }
-  for (let value of functionMap.values()){
+  for (let value of functionMap.values()) {
     response.push(value);
   }
   return response;
@@ -859,7 +846,7 @@ function getXpathFunctionsThatDoNotWorkInMappingExpressions() {
   ];
 }
 
-function getSourceRecordForMapping(mappingStep, sourceRecord){
+function getSourceRecordForMapping(mappingStep, sourceRecord) {
   const sourceRecordInstanceOnly = mappingStep.sourceRecordScope == "entireRecord" ? false : true;
   return sourceRecordInstanceOnly ? extractInstance(sourceRecord) : sourceRecord;
 }

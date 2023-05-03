@@ -6,24 +6,24 @@ const cachedEntityByTitleAndVersion = {};
 function getModel(targetEntity, version = '0.0.1') {
   let cacheKey = `${targetEntity}:${version}`;
   if (!cachedEntityByTitleAndVersion[cacheKey]) {
-    cachedEntityByTitleAndVersion[cacheKey] = xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]))", null,
-    {
-      "database": xdmp.schemaDatabase(),
-      "ignoreAmps": true,
-      "update": 'false'
-    })
+    cachedEntityByTitleAndVersion[cacheKey] = xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]), [\"score-zero\", \"unfaceted\"])", null,
+      {
+        "database": xdmp.schemaDatabase(),
+        "ignoreAmps": true,
+        "update": 'false'
+      });
   }
   return cachedEntityByTitleAndVersion[cacheKey];
 }
 
 function getMapping(mappingName) {
-  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed','case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
+  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed', 'case-insensitive'])]), ["score-zero", "unfaceted", cts.indexOrder(cts.uriReference(), "descending")]));
 }
 
 function getMappingWithVersion(mappingName, version) {
   let cacheKey = `${mappingName}:${version}`;
   if (!cachedMappingByNameAndVersion[cacheKey]) {
-    cachedMappingByNameAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed', 'case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
+    cachedMappingByNameAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed', 'case-insensitive']), cts.jsonPropertyValueQuery('version', version)]), ["score-zero", "unfaceted"], 0));
   }
   return cachedMappingByNameAndVersion[cacheKey];
 }
@@ -32,12 +32,12 @@ function getSourceContext(sourceContext) {
   let connector = "/*:";
   let srcCtxArr;
 
-  sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1,sourceContext.length) : sourceContext;
+  sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1, sourceContext.length) : sourceContext;
   srcCtxArr = sourceContext.split("/");
   sourceContext = "";
 
   srcCtxArr.forEach(function(element) {
-    if(element.indexOf(':') === -1) {
+    if (element.indexOf(':') === -1) {
       sourceContext += connector + element;
     } else {
       sourceContext += "/" + element;
@@ -66,7 +66,7 @@ function getPath(sourceContext, connector, propertyName) {
 }
 
 function processInstance(model, mapping, content, provenance = {}) {
- return extractInstanceFromModel(model, model.info.title, mapping, content, provenance);
+  return extractInstanceFromModel(model, model.info.title, mapping, content, provenance);
 }
 
 function extractInstanceFromModel(model, modelName, mapping, content, provenance = {}) {
@@ -86,7 +86,7 @@ function extractInstanceFromModel(model, modelName, mapping, content, provenance
   if (!(content.nodeName === 'envelope' || (content.nodeKind === 'document'))) {
     content = new NodeBuilder().addNode(fn.head(content)).toNode();
   }
-  if(fn.head(content.xpath('/*:envelope'))) {
+  if (fn.head(content.xpath('/*:envelope'))) {
     let leadingXPath = '/*:envelope/*:instance';
     if (fn.count(content.xpath('/*:envelope/*:instance/(element() except *:info)')) === 1 && sourceContext === '/') {
       leadingXPath = leadingXPath + "/*";
@@ -102,78 +102,78 @@ function extractInstanceFromModel(model, modelName, mapping, content, provenance
   let properties = definition.properties;
   for (let property in properties) {
     if (properties.hasOwnProperty(property)) {
-    let prop = properties[property];
-    let dataType = prop["datatype"];
-    let valueSource = null;
-    let connector = "";
-    let xpathToSource;
-    if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
-      if(sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')){
-        connector += '/';
-      }
-      if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
-        connector += '*:';
-      }
-      xpathToSource = getPath(sourceContext, connector, mappingProperties[property].sourcedFrom);
-    } else {
-      if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
-        connector += '/';
-      }
-      if (property.indexOf(':') === -1) {
-        connector += '*:';
-      }
-      xpathToSource = getPath(sourceContext, connector, property);
-    }
-    valueSource = content.xpath(xpathToSource);
-    if (dataType !== 'array') {
-      valueSource = fn.head(valueSource);
-    }
-    let value = null;
-    if (!dataType && prop['$ref']) {
-      let refArr = String(prop['$ref']).split('/');
-      let refModelName = refArr[refArr.length - 1];
-      if (valueSource) {
-        let itemSource = new NodeBuilder();
-        itemSource.addNode(valueSource);
-        value = {refModelName: extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
+      let prop = properties[property];
+      let dataType = prop["datatype"];
+      let valueSource = null;
+      let connector = "";
+      let xpathToSource;
+      if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
+        if (sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')) {
+          connector += '/';
+        }
+        if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
+          connector += '*:';
+        }
+        xpathToSource = getPath(sourceContext, connector, mappingProperties[property].sourcedFrom);
       } else {
-        value = null;
+        if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
+          connector += '/';
+        }
+        if (property.indexOf(':') === -1) {
+          connector += '*:';
+        }
+        xpathToSource = getPath(sourceContext, connector, property);
       }
-    } else if (dataType === 'array') {
-      let items = prop['items'];
-      let itemsDatatype = items['datatype'];
-      let valueArray = [];
-      if (!itemsDatatype && items['$ref']) {
-        let refArr = String(items['$ref']).split('/');
+      valueSource = content.xpath(xpathToSource);
+      if (dataType !== 'array') {
+        valueSource = fn.head(valueSource);
+      }
+      let value = null;
+      if (!dataType && prop['$ref']) {
+        let refArr = String(prop['$ref']).split('/');
         let refModelName = refArr[refArr.length - 1];
-        for (const item of Sequence.from(valueSource)) {
-          // let's create and pass the node
+        if (valueSource) {
           let itemSource = new NodeBuilder();
-          itemSource.addNode(item);
-          valueArray.push(extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode()));
-        }
-      } else {
-        for (const val of Sequence.from(valueSource)) {
-          valueArray.push(castDataType(dataType, val.valueOf()));
-        }
-      }
-      value = valueArray;
-
-    } else {
-      if (valueSource) {
-        try {
-          value = castDataType(dataType, valueSource);
-        } catch (e) {
+          itemSource.addNode(valueSource);
+          value = {refModelName: extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode())};
+        } else {
           value = null;
         }
+      } else if (dataType === 'array') {
+        let items = prop['items'];
+        let itemsDatatype = items['datatype'];
+        let valueArray = [];
+        if (!itemsDatatype && items['$ref']) {
+          let refArr = String(items['$ref']).split('/');
+          let refModelName = refArr[refArr.length - 1];
+          for (const item of Sequence.from(valueSource)) {
+          // let's create and pass the node
+            let itemSource = new NodeBuilder();
+            itemSource.addNode(item);
+            valueArray.push(extractInstanceFromModel(model, refModelName, mapping, itemSource.toNode()));
+          }
+        } else {
+          for (const val of Sequence.from(valueSource)) {
+            valueArray.push(castDataType(dataType, val.valueOf()));
+          }
+        }
+        value = valueArray;
+
+      } else {
+        if (valueSource) {
+          try {
+            value = castDataType(dataType, valueSource);
+          } catch (e) {
+            value = null;
+          }
+        }
       }
+      if (required.indexOf(property) > -1 && !value) {
+        throw Error('The property: ' + property + ' is required property on the model: ' + modelName + ' and must have a valid value. Value was: ' + valueSource + '.');
+      }
+      provenance[xpathToSource] = {destination: property, value: xdmp.quote(value)};
+      instance[property] = value;
     }
-    if (required.indexOf(property) > -1 && !value) {
-      throw Error('The property: ' + property + ' is required property on the model: ' + modelName + ' and must have a valid value. Value was: ' + valueSource + '.');
-    }
-    provenance[xpathToSource] = { destination: property, value: xdmp.quote(value)};
-    instance[property] = value;
-  }
   }
 
   return instance;
@@ -262,4 +262,4 @@ export default {
   getMappingWithVersion,
   processInstance,
   getModel
-}
+};

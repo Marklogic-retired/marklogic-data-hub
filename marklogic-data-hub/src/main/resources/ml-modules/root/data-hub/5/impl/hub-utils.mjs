@@ -48,9 +48,9 @@ function trackUriForTransaction(docUri, databaseId) {
 function deleteDocument(docUri, database = xdmp.databaseName(xdmp.database())) {
   const dbId = xdmp.database(database);
   assertUriHasNotBeenActedOn(docUri, dbId);
- if (isWriteTransaction() && dbId === xdmp.database()) {
-   xdmp.documentDelete(docUri, {ifNotExists: "allow"});
- } else {
+  if (isWriteTransaction() && dbId === xdmp.database()) {
+    xdmp.documentDelete(docUri, {ifNotExists: "allow"});
+  } else {
     xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-single-delete.mjs', {docUri}, {
       database: dbId,
       commit: 'auto',
@@ -87,7 +87,7 @@ function warn(message) {
 /**
  * @param message {string}
  */
- function error(message, theError) {
+function error(message, theError) {
   console.error(`[Request:${xdmp.request()}] ${message}`, theError);
 }
 
@@ -97,11 +97,11 @@ function invokeFunction(queryFunction, database) {
     update: 'false',
     ignoreAmps: true,
     database: database ? xdmp.database(database) : xdmp.database()
-  })
+  });
 }
 
 function isSequence(value) {
-   return !!(value instanceof Sequence || (value && !Array.isArray(value) && typeof value.toArray === "function"));
+  return !!(value instanceof Sequence || (value && !Array.isArray(value) && typeof value.toArray === "function"));
 }
 
 function normalizeToSequence(value) {
@@ -144,16 +144,16 @@ function parsePermissions(permissionsString = "") {
 }
 
 function documentToContentDescriptor(doc, options = {}, uri = null) {
-   return {
-      uri: uri !== null ? uri : xdmp.nodeUri(doc),
-      value: doc,
-      context: {
-        metadata: xdmp.nodeMetadata(doc),
-        permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
-        // provide original collections, should a step like to read them
-        originalCollections: xdmp.nodeCollections(doc)
-      }
-    };
+  return {
+    uri: uri !== null ? uri : xdmp.nodeUri(doc),
+    value: doc,
+    context: {
+      metadata: xdmp.nodeMetadata(doc),
+      permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
+      // provide original collections, should a step like to read them
+      originalCollections: xdmp.nodeCollections(doc)
+    }
+  };
 }
 
 function documentsToContentDescriptorArray(documents, options = {}) {
@@ -167,7 +167,7 @@ function documentsToContentDescriptorArray(documents, options = {}) {
 function queryToContentDescriptorArray(query, options = {}, database) {
   return documentsToContentDescriptorArray(
     invokeFunction(function () {
-      return cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero"], 0);
+      return cts.search(query, [cts.indexOrder(cts.uriReference()), "score-zero", "unfaceted"], 0);
     }, database),
     options
   );
@@ -191,7 +191,7 @@ function writeDocument(docUri, content, permissions, collections, database = xdm
     assertUriHasNotBeenActedOn(docUri, dbId);
   }
   if (!forceDifferentTransaction && isWriteTransaction() && dbId === xdmp.database()) {
-    xdmp.documentInsert(docUri, content, {permissions: permissions, collections: normalizeToArray(collections) });
+    xdmp.documentInsert(docUri, content, {permissions: permissions, collections: normalizeToArray(collections)});
     return {
       transaction: xdmp.transaction(),
       dateTime: fn.currentDateTime()
@@ -234,26 +234,25 @@ function nodeReplace(originalNode, newNode) {
  * @param object
  * @returns  an array of a given object's property values
  */
-function getObjectValues(object){
-    let valuesArray = [];
-    for (const property in object) {
-      valuesArray.push(object[property]);
-    }
-    return valuesArray;
+function getObjectValues(object) {
+  let valuesArray = [];
+  for (const property in object) {
+    valuesArray.push(object[property]);
+  }
+  return valuesArray;
 }
 
 function evalInDatabase(script, database) {
-  return xdmp.eval(script, null, {database: xdmp.database(database)})
+  return xdmp.eval(script, null, {database: xdmp.database(database)});
 }
 
 
 function getErrorMessage(e) {
   let errorMessage = e.message;
   if (e.data != null && e.data.length > 0) {
-    if(isNaN(Number(e.data[0]))){
+    if (isNaN(Number(e.data[0]))) {
       errorMessage += ": " + e.data[0];
-    }
-    else if(e.data.length > 1){
+    } else if (e.data.length > 1) {
       errorMessage += ": " + e.data[1];
     }
   }

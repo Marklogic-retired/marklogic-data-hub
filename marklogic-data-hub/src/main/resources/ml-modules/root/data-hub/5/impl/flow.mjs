@@ -17,7 +17,7 @@
 
 import Artifacts from "/data-hub/5/artifacts/core.mjs";
 import Batch from "/data-hub/5/flow/batch.mjs";
-import defaultConfig from "/com.marklogic.hub/config.mjs"
+import defaultConfig from "/com.marklogic.hub/config.mjs";
 import provLib from "/data-hub/5/impl/prov.mjs";
 import flowRunner from "/data-hub/5/flow/flowRunner.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
@@ -93,7 +93,7 @@ export default class Flow {
 
       if (combinedOptions.sourceQueryIsScript) {
         // When the source query is a script, map each item to a content object with the "uri" property containing the item value
-        return uris.map(uri => {return {uri}});
+        return uris.map(uri => { return {uri}; });
       }
       query = cts.documentQuery(uris);
     } else {
@@ -119,7 +119,7 @@ export default class Flow {
     // TODO This duplicates knowledge of hash construction with jobs.sjs. Will clean this up in 5.5 when we can create
     // a better "utils" library that is not a class with a bunch of public functions.
     const prefixAux = flowName + "|" + fn.lowerCase(stepId) + "|finished|";
-    var prefix = prefixAux.replace(`'` , '');
+    let prefix = prefixAux.replace(`'`, '');
 
     // A map is used in this script to avoid N calls to array.includes
     const script =
@@ -158,12 +158,12 @@ export default class Flow {
   runFlow(flowName, jobId, contentArray, options, stepNumber, interceptors = []) {
     contentArray = contentArray || [];
     const theFlow = this.getFlow(flowName);
-    if(!theFlow) {
-      throw Error('The flow with the name '+flowName+' could not be found.')
+    if (!theFlow) {
+      throw Error('The flow with the name '+flowName+' could not be found.');
     }
 
     let jobDoc = jobs.getJob(jobId);
-    if(!(jobDoc || options.disableJobOutput)) {
+    if (!(jobDoc || options.disableJobOutput)) {
       jobDoc = jobs.createJob(flowName, jobId);
     }
     if (jobDoc) {
@@ -173,12 +173,12 @@ export default class Flow {
       jobId = jobDoc.jobId;
     }
 
-    if(!stepNumber) {
+    if (!stepNumber) {
       stepNumber = 1;
     }
 
     const flowStep = theFlow.steps[stepNumber];
-    if(!flowStep) {
+    if (!flowStep) {
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);

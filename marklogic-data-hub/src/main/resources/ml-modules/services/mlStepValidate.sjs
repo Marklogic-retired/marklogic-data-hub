@@ -29,12 +29,9 @@ function post(context, params, input) {
   let stepNumber = params["step"];
   if (!fn.exists(flowName)) {
     httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify a flowName"]);
-  }
-  else if(!fn.exists(stepNumber)) {
+  } else if (!fn.exists(stepNumber)) {
     httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify step number"]);
-  }
-  else {
-    let options = params["options"] ? JSON.parse(params["options"]) : {};
+  } else {
     const datahub = DataHubSingleton.instance();
     let flow = datahub.flow.getFlow(flowName);
     let stepRef = flow.steps[stepNumber];
@@ -43,29 +40,27 @@ function post(context, params, input) {
     let response, validationOutput, modPerms;
 
     let operatorRole = xdmp.role(datahub.config.FLOWOPERATORROLE).toString();
-    try{
+    try {
       modPerms = fn.head(hubUtils.invokeFunction(function () {
-        if (fn.docAvailable(modPath)){
+        if (fn.docAvailable(modPath)) {
           return xdmp.documentGetPermissions(modPath);
         }
         return httpUtils.throwBadRequest("Module " + modPath + " not found");
-      },datahub.config.MODULESDATABASE));
-    }
-    catch (ex) {
-      response =  {"valid":false, "response" : "Module " + modPath + " not found."};
+      }, datahub.config.MODULESDATABASE));
+    } catch (ex) {
+      response =  {"valid": false, "response": "Module " + modPath + " not found."};
       return response;
     }
 
-    if(!checkPermissions(modPerms, operatorRole)) {
-      response =  {"valid":false, "response" : "The 'flowOperator' role must have read and execute capability on module " + modPath};
+    if (!checkPermissions(modPerms, operatorRole)) {
+      response =  {"valid": false, "response": "The 'flowOperator' role must have read and execute capability on module " + modPath};
       return response;
     }
 
     validationOutput = staticCheck(modPath);
     if (!validationOutput) {
-      response =  {"valid":true, "response" : "Module " + modPath + " is valid."};
-    }
-    else {
+      response =  {"valid": true, "response": "Module " + modPath + " is valid."};
+    } else {
       response = {"valid": false, "response": validationOutput};
     }
     return response;
@@ -84,10 +79,7 @@ function checkPermissions(modPerms, operatorRole) {
       }
     }
   }
-  if(!(readCapability && executeCapability)) {
-    return false;
-  }
-  return true;
+  return readCapability && executeCapability;
 }
 
 function formatError(err, lineIndex = 0) {

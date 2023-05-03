@@ -18,12 +18,11 @@ const stepName = external.stepName;
 const limit = external.limit;
 let mappingStep = core.getArtifact("mapping", stepName);
 let resp = [];
-if(mappingStep.sourceQuery){
-  if(mappingStep.sourceDatabase){
-    resp = xdmp.eval("cts.uris(null, ['limit=" + limit + "'], " + mappingStep.sourceQuery + ")", null, {database: xdmp.database(mappingStep.sourceDatabase)}).toArray();
-  }
-  else {
-    resp = cts.uris(null, ['limit=' + limit], xdmp.eval(mappingStep.sourceQuery)).toArray();
+if (mappingStep.sourceQuery) {
+  if (mappingStep.sourceDatabase) {
+    resp = xdmp.eval("cts.uris(null, ['limit=" + limit + "', \"concurrent\", \"score-zero\"], " + mappingStep.sourceQuery + ")", null, {database: xdmp.database(mappingStep.sourceDatabase)}).toArray();
+  } else {
+    resp = cts.uris(null, ['limit=' + limit, "concurrent", "score-zero"], xdmp.eval(mappingStep.sourceQuery)).toArray();
   }
 }
-resp
+resp;

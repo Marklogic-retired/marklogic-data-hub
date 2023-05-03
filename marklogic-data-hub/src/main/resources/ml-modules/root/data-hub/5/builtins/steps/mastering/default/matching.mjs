@@ -46,11 +46,11 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
       continue;
     }
     // skip documents already set to be merged
-    const actionDetailQuery = cts.andQuery([cts.jsonPropertyValueQuery("uris", item.uri, "exact"),cts.jsonPropertyValueQuery("action", "merge", "exact")]);
-    const documentQuery = cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyScopeQuery("actionDetails",actionDetailQuery)]);
+    const actionDetailQuery = cts.andQuery([cts.jsonPropertyValueQuery("uris", item.uri, "exact"), cts.jsonPropertyValueQuery("action", "merge", "exact")]);
+    const documentQuery = cts.andQuery([collectionQuery, jobIdQuery, cts.jsonPropertyScopeQuery("actionDetails", actionDetailQuery)]);
     if (cts.exists(documentQuery)) {
       let falsePositive = true;
-      for (const matchedDoc of cts.search(documentQuery, ["unfiltered", "score-zero"], 0)) {
+      for (const matchedDoc of cts.search(documentQuery, ["score-zero", "unfaceted"], 0)) {
         if (cts.contains(matchedDoc.xpath("/matchSummary/actionDetails/*"), actionDetailQuery)) {
           falsePositive = false;
           xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Filtering out document covered in other match summary '${item.uri}'.`);
@@ -82,14 +82,14 @@ function main(content, options, stepExecutionContext) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/steps"),
       cts.jsonPropertyValueQuery("stepId", options.stepId, "case-insensitive")
-    ])));
+    ]), ["score-zero", "unfaceted"], 0));
     if (stepDoc) {
       options = stepDoc.toObject();
     } else {
       httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
-  const collectionInfo = masteringStepLib.checkOptions(null, options, null, [[quickStartRequiredOptionProperty,hubCentralRequiredOptionProperty]]);
+  const collectionInfo = masteringStepLib.checkOptions(null, options, null, [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]]);
   const collections = ['datahubMasteringMatchSummary'];
   let targetEntityType = options.targetEntity || options.targetEntityType;
   if (targetEntityType) {

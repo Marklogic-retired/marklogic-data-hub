@@ -41,7 +41,7 @@ function removeAllPropertiesExcept(step) {
   return step;
 }
 
-const stepsOfType = cts.search(cts.collectionQuery('http://marklogic.com/data-hub/steps')).toArray().map((step) => step.toObject());
+const stepsOfType = cts.search(cts.collectionQuery('http://marklogic.com/data-hub/steps'), ["unfiltered", "score-zero", "unfaceted"]).toArray().map((step) => step.toObject());
 for (const step of stepsOfType) {
   const stepType = step['stepDefinitionType'] ? step['stepDefinitionType'].toLowerCase() : null;
   if (response[`${stepType}Steps`]) {

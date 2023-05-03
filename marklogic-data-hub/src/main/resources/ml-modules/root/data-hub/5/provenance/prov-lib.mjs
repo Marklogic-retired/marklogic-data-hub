@@ -22,48 +22,48 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import config from "/com.marklogic.hub/config.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-function validateDeleteRequest({ retainDuration, batchSize = 100 }) {
-    if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "yearMonthDuration", retainDuration)) {
-        retainDuration = xs.yearMonthDuration(retainDuration);
-    } else if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dayTimeDuration", retainDuration)) {
-        retainDuration = xs.dayTimeDuration(retainDuration);
-    } else {
-        httpUtils.throwBadRequest(`The duration format for the retainDuration provided ("${retainDuration}") is unsupported. Format must be in either xs:yearMonthDuration or xs:dayTimeDuration format`);
-    }
-    if (retainDuration.lt(xs.dayTimeDuration('PT0S'))) {
-        httpUtils.throwBadRequest(`The retainDuration provided ("${retainDuration}") is unsupported. The retain duration must be a positive duration.`);
-    }
-    if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "unsignedInt", batchSize)) {
-        batchSize = xs.unsignedInt(batchSize);
-    } else {
-        httpUtils.throwBadRequest(`The value for the batchSize provided ("${batchSize}") is unsupported. batchSize must be an unsigned int.`);
-    }
-    return { retainDuration, batchSize };
+function validateDeleteRequest({retainDuration, batchSize = 100}) {
+  if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "yearMonthDuration", retainDuration)) {
+    retainDuration = xs.yearMonthDuration(retainDuration);
+  } else if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dayTimeDuration", retainDuration)) {
+    retainDuration = xs.dayTimeDuration(retainDuration);
+  } else {
+    httpUtils.throwBadRequest(`The duration format for the retainDuration provided ("${retainDuration}") is unsupported. Format must be in either xs:yearMonthDuration or xs:dayTimeDuration format`);
+  }
+  if (retainDuration.lt(xs.dayTimeDuration('PT0S'))) {
+    httpUtils.throwBadRequest(`The retainDuration provided ("${retainDuration}") is unsupported. The retain duration must be a positive duration.`);
+  }
+  if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "unsignedInt", batchSize)) {
+    batchSize = xs.unsignedInt(batchSize);
+  } else {
+    httpUtils.throwBadRequest(`The value for the batchSize provided ("${batchSize}") is unsupported. batchSize must be an unsigned int.`);
+  }
+  return {retainDuration, batchSize};
 }
 
 function deleteProvenance(deleteRequest, endpointState) {
-    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-provenance", "execute");
-    // update with validated request properties
-    deleteRequest = validateDeleteRequest(deleteRequest);
-    const { retainDuration, batchSize } = deleteRequest;
-    const timePruningBegins = fn.currentDateTime().subtract(retainDuration);
-    return fn.head(xdmp.invokeFunction(function() {
-        const collectionQuery = cts.collectionQuery('http://marklogic.com/provenance-services/record');
-        const timeQuery = cts.tripleRangeQuery(null, sem.iri('http://www.w3.org/ns/prov#generatedAtTime'), timePruningBegins, '<');
-        const lastRemovedUriQuery = endpointState.lastUri ? cts.rangeQuery(cts.uriReference(), '>=', endpointState.lastUri) : null;
-        const queries = [collectionQuery, timeQuery];
-        if (lastRemovedUriQuery) {
-            queries.push(lastRemovedUriQuery);
-        }
-        const finalQuery = cts.andQuery(queries);
-        let estimateCount = cts.estimate(finalQuery);
-        let lastUri = null;
-        for (let uri of cts.uris(null, [`limit=${batchSize}`], finalQuery)) {
-            xdmp.documentDelete(uri);
-            lastUri = uri;
-        }
-        return (lastUri !== null && estimateCount > batchSize) ? {lastUri} : null;
-    }, { database: xdmp.database(config.JOBDATABASE), update: 'true', commit: 'auto', ignoreAmps: false}));
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-provenance", "execute");
+  // update with validated request properties
+  deleteRequest = validateDeleteRequest(deleteRequest);
+  const {retainDuration, batchSize} = deleteRequest;
+  const timePruningBegins = fn.currentDateTime().subtract(retainDuration);
+  return fn.head(xdmp.invokeFunction(function() {
+    const collectionQuery = cts.collectionQuery('http://marklogic.com/provenance-services/record');
+    const timeQuery = cts.tripleRangeQuery(null, sem.iri('http://www.w3.org/ns/prov#generatedAtTime'), timePruningBegins, '<');
+    const lastRemovedUriQuery = endpointState.lastUri ? cts.rangeQuery(cts.uriReference(), '>=', endpointState.lastUri) : null;
+    const queries = [collectionQuery, timeQuery];
+    if (lastRemovedUriQuery) {
+      queries.push(lastRemovedUriQuery);
+    }
+    const finalQuery = cts.andQuery(queries);
+    let estimateCount = cts.estimate(finalQuery);
+    let lastUri = null;
+    for (let uri of cts.uris(null, [`limit=${batchSize}`, "concurrent", "score-zero"], finalQuery)) {
+      xdmp.documentDelete(uri);
+      lastUri = uri;
+    }
+    return (lastUri !== null && estimateCount > batchSize) ? {lastUri} : null;
+  }, {database: xdmp.database(config.JOBDATABASE), update: 'true', commit: 'auto', ignoreAmps: false}));
 }
 
 function installProvTemplates() {
@@ -268,7 +268,7 @@ function installProvTemplates() {
 
 // BEGIN document specific PROV queries
 function provIRIsToCtsQuery(provIRIs) {
-  return cts.elementAttributeValueQuery(Sequence.from([fn.QName("http://www.w3.org/ns/prov#", "activity"),fn.QName("http://www.w3.org/ns/prov#", "entity")]), fn.QName("http://www.w3.org/ns/prov#", "id"), provIRIs.map((id) => String(id)));
+  return cts.elementAttributeValueQuery(Sequence.from([fn.QName("http://www.w3.org/ns/prov#", "activity"), fn.QName("http://www.w3.org/ns/prov#", "entity")]), fn.QName("http://www.w3.org/ns/prov#", "id"), provIRIs.map((id) => String(id)));
 }
 
 /* allAssociatedProvEntities returns all the associated provenance IDs and the generation time
@@ -338,7 +338,7 @@ function allAssociatedProvEntities(documentURI, database = config.FINALDATABASE)
     const currentDatabase = xdmp.databaseName(xdmp.database());
     const isInitialQuery = database === config.STAGINGDATABASE || currentDatabase === config.FINALDATABASE;
     if (isInitialQuery) {
-      const bindings = { documentURI };
+      const bindings = {documentURI};
       return sem.sparql(documentUriSparql, bindings);
     } else {
       return sem.sparql(provIdQuery, null, null, provIRIsToCtsQuery(ancestorOrSelfProvIDs));
@@ -377,7 +377,7 @@ function sourceInformationForDocument(documentURI, database = config.FINALDATABA
               <dataSourceType> ?dataSourceType.
   }`;
   const currentDatabase = xdmp.databaseName(xdmp.database());
-  const sparqlFun = function() { return sem.sparql(sparql, { provID: allAssociatedProvIDs}) };
+  const sparqlFun = function() { return sem.sparql(sparql, {provID: allAssociatedProvIDs}); };
   let sourceInformation = config.STAGINGDATABASE === currentDatabase ? sparqlFun(): hubUtils.invokeFunction(sparqlFun, config.STAGINGDATABASE);
   return sourceInformation.toArray();
 }
@@ -539,9 +539,9 @@ ORDER BY DESC(?time)`;
       }
       if (result.wasDerivedFrom) {
         let wasDerivedFrom = fn.string(result.wasDerivedFrom);
-        activity.links.push({ to: provID, from: wasDerivedFrom, label: "derived from"});
+        activity.links.push({to: provID, from: wasDerivedFrom, label: "derived from"});
         if (!nodesByProvID[wasDerivedFrom]) {
-          nodesByProvID[wasDerivedFrom] = { id: wasDerivedFrom };
+          nodesByProvID[wasDerivedFrom] = {id: wasDerivedFrom};
         }
         activity.nodes.push(nodesByProvID[wasDerivedFrom]);
       }

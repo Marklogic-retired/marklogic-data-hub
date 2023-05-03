@@ -4,6 +4,18 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryDefinition;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stax.StAXResult;
+import javax.xml.transform.stax.StAXSource;
+import java.io.StringReader;
+
 // This is a helper class to allow custom constraints with various formats to be added to a Structured Query.
 public class RawStructuredQueryDefinitionHandler implements StructuredQueryDefinition {
     private RawStructuredQueryDefinition rawStructuredQueryDefinition;
@@ -20,6 +32,28 @@ public class RawStructuredQueryDefinitionHandler implements StructuredQueryDefin
     @Override
     public String serialize() {
         return this.rawStructuredQueryDefinition.serialize();
+    }
+
+    @Override
+    public void serialize(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
+        final String xml = this.rawStructuredQueryDefinition.serialize();
+        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        final StringReader reader = new StringReader(xml);
+        final XMLStreamReader xmlStreamReader = inputFactory.createXMLStreamReader(reader);
+        final TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer t = null;
+        try {
+            t = tf.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        final StAXSource source = new StAXSource(xmlStreamReader);
+        final StAXResult result = new StAXResult(xmlStreamWriter);
+        try {
+            t.transform(source, result);
+        } catch (TransformerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

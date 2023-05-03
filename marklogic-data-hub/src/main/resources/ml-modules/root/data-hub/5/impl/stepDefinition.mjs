@@ -29,17 +29,22 @@ export default class StepDefinition {
 
   getStepDefinitionByNameAndType(name, type = 'custom') {
     let doc = this.getStepDefinition(name, type);
-    if(doc) {
+    if (doc) {
       return doc.toObject();
     }
   }
 
-  getStepDefinition(name, type){
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, ['unstemmed','case-insensitive'])];
-    if(type){
-      query.concat(cts.jsonPropertyValueQuery('type', type, ['unstemmed','case-insensitive']));
+  getStepDefinition(name, type) {
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, ['unstemmed', 'case-insensitive'])];
+    if (type) {
+      query.concat(cts.jsonPropertyValueQuery('type', type, ['unstemmed', 'case-insensitive']));
     }
-    return cts.search(cts.andQuery(query)).toArray().find(artifact => artifact.toObject().name === name);
+    for (const def of cts.search(cts.andQuery(query), ["score-zero", "unfaceted"], 0)) {
+      if (def.toObject().name === name) {
+        return def;
+      }
+    }
+    return null;
   }
 
   makeFunction(flow, funcName, moduleUri) {
@@ -47,11 +52,10 @@ export default class StepDefinition {
     try {
       stepModule = this.retrieveModuleLibrary(moduleUri);
     } catch (e) {
-      if(e.stack && e.stack.includes("XDMP-MODNOTFOUND")){
+      if (e.stack && e.stack.includes("XDMP-MODNOTFOUND")) {
         if (e.data.join(',') == moduleUri) {
           httpUtils.throwBadRequest(`Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
-        }
-        else {
+        } else {
           httpUtils.throwBadRequest(`Unable to access module ${e.data.join(',')} in ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
         }
       }
@@ -66,12 +70,12 @@ export default class StepDefinition {
 
   retrieveModuleLibrary(moduleLibraryURI) {
     if (!cachedModules[moduleLibraryURI]) {
-        let extension = moduleLibraryURI.split(".").pop();
-        if (extension === "mjs"){
-            cachedModules[moduleLibraryURI] = mjsProxy.requireMjsModule(moduleLibraryURI);
-        }else{
-            cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
-        }
+      let extension = moduleLibraryURI.split(".").pop();
+      if (extension === "mjs") {
+        cachedModules[moduleLibraryURI] = mjsProxy.requireMjsModule(moduleLibraryURI);
+      } else {
+        cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+      }
     }
     return cachedModules[moduleLibraryURI];
   }

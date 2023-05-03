@@ -34,44 +34,44 @@ import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
 // define constants for caching expensive operations
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
-    ingestion: LoadData,
-    flow: Flow,
-    stepDefinition: StepDef,
-    mapping: Mapping,
-    matching: Matching,
-    merging: Merging,
-    mastering: Mastering,
-    custom: CustomStep,
-    exclusionList: ExclusionList,
-    model: Model
+  ingestion: LoadData,
+  flow: Flow,
+  stepDefinition: StepDef,
+  mapping: Mapping,
+  matching: Matching,
+  merging: Merging,
+  mastering: Mastering,
+  custom: CustomStep,
+  exclusionList: ExclusionList,
+  model: Model
 };
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'custom', 'matching', 'merging'];
 
 function getArtifacts(artifactType, groupByEntityType = entityServiceDrivenArtifactTypes.includes(artifactType)) {
-    const queries = [];
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+  const queries = [];
+  const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
-    const artifactCollections = artifactLibrary.getCollections();
-    if (artifactCollections != null && artifactCollections.length > 0) {
-      queries.push(cts.andQuery(artifactCollections.map(coll => cts.collectionQuery(coll))));
+  const artifactCollections = artifactLibrary.getCollections();
+  if (artifactCollections != null && artifactCollections.length > 0) {
+    queries.push(cts.andQuery(artifactCollections.map(coll => cts.collectionQuery(coll))));
+  }
+
+  if (queries.length) {
+    // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
+    queries.push(cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)));
+
+    if (groupByEntityType) {
+      return getArtifactsGroupByEntity(queries);
+    } else {
+      return cts.search(cts.andQuery(queries), ["score-zero", "unfaceted"], 0).toArray().map((artifact) => artifact.toObject());
     }
-
-    if (queries.length) {
-      // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
-      queries.push(cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)));
-
-      if (groupByEntityType) {
-        return getArtifactsGroupByEntity(queries)
-      } else {
-        return cts.search(cts.andQuery(queries)).toArray().map((artifact) => artifact.toObject());
-      }
-    }
-    return [];
+  }
+  return [];
 }
 
 function getEntityTitles() {
-  return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models")).toArray().map(e => e.xpath("//info//title"));
+  return cts.search(cts.collectionQuery("http://marklogic.com/entity-services/models"), ["score-zero", "unfaceted"], 0).toArray().map(e => e.xpath("//info//title"));
 }
 
 /**
@@ -95,14 +95,14 @@ function getArtifactsGroupByEntity(queries) {
     const entityName = model.info.title;
     const entityTypeId = entityLib.getEntityTypeId(model, entityName);
     // TODO Should use "entityName" instead of "entityType", but the UI currently expects "entityType"
-    entityNameMap[entityName] = {entityType: entityName, entityTypeId, artifacts:[]};
+    entityNameMap[entityName] = {entityType: entityName, entityTypeId, artifacts: []};
     entityNamesAndTypeIds.push(entityName, entityTypeId);
   });
 
   // Find all matching artifacts
   const artifacts = cts.search(cts.andQuery(
-    queries.concat(cts.jsonPropertyValueQuery(["targetEntityType","targetEntity"], entityNamesAndTypeIds))
-  )).toArray();
+    queries.concat(cts.jsonPropertyValueQuery(["targetEntityType", "targetEntity"], entityNamesAndTypeIds))
+  ), ["score-zero", "unfaceted"], 0).toArray();
 
   // Figure out where each artifact goes in the entityNameMap
   const artifactMap = {};
@@ -119,73 +119,73 @@ function getArtifactsGroupByEntity(queries) {
         }
       }
     }
-  })
+  });
 
   // Return an array containing an item for each primary entity type
   return Object.keys(entityNameMap).map(entityName => entityNameMap[entityName]);
 }
 
 function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+  const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
+  const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
-    const node = getArtifactNode(artifactType, artifactName, artifactVersion);
+  const node = getArtifactNode(artifactType, artifactName, artifactVersion);
 
-    for (const db of artifactLibrary.getStorageDatabases()) {
-        hubUtils.deleteDocument(xdmp.nodeUri(node), db);
-    }
-    delete cachedArtifacts[artifactKey];
-    return { success: true };
+  for (const db of artifactLibrary.getStorageDatabases()) {
+    hubUtils.deleteDocument(xdmp.nodeUri(node), db);
+  }
+  delete cachedArtifacts[artifactKey];
+  return {success: true};
 }
 
 function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
-    if (!cachedArtifacts[artifactKey]) {
-        const artifactNode = getArtifactNode(artifactType, artifactName, artifactVersion);
-        cachedArtifacts[artifactKey] = artifactNode.toObject();
-    }
-    return cachedArtifacts[artifactKey];
+  const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
+  if (!cachedArtifacts[artifactKey]) {
+    const artifactNode = getArtifactNode(artifactType, artifactName, artifactVersion);
+    cachedArtifacts[artifactKey] = artifactNode.toObject();
+  }
+  return cachedArtifacts[artifactKey];
 }
 
 function setArtifact(artifactType, artifactName, artifact, dirFileName) {
-    const artifactKey = generateArtifactKey(artifactType, artifactName);
-    let validArtifact = validateArtifact(artifactType, artifactName, artifact) || artifact;
-    if (validArtifact instanceof Error) {
-        throw new Error(`Invalid artifact with error message: ${validArtifact.message}`);
-    }
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    const artifactDatabases = artifactLibrary.getStorageDatabases();
-    const artifactNameProperty = artifactLibrary.getNameProperty ? artifactLibrary.getNameProperty(): "";
-    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact, dirFileName);
-    const artifactFileExtension = getArtifactFileExtension(artifactType);
-    const artifactPermissions = artifactLibrary.getPermissions();
-    const artifactCollections = artifactLibrary.getCollections();
-    const renamingArtifact = artifactNameProperty && artifact[artifactNameProperty] && artifactName !== artifact[artifactNameProperty];
-    let existingArtifact;
-    try {
-        existingArtifact = getArtifactNode(artifactType, artifactName);
-    } catch (e) {}
-    if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
-        artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
-    } else if (fn.exists(existingArtifact) && renamingArtifact) {
-        deleteArtifact(artifactType, artifactName);
-        artifactName = artifact[artifactNameProperty];
-    }
+  const artifactKey = generateArtifactKey(artifactType, artifactName);
+  let validArtifact = validateArtifact(artifactType, artifactName, artifact) || artifact;
+  if (validArtifact instanceof Error) {
+    throw new Error(`Invalid artifact with error message: ${validArtifact.message}`);
+  }
+  const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+  const artifactDatabases = artifactLibrary.getStorageDatabases();
+  const artifactNameProperty = artifactLibrary.getNameProperty ? artifactLibrary.getNameProperty(): "";
+  const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact, dirFileName);
+  const artifactFileExtension = getArtifactFileExtension(artifactType);
+  const artifactPermissions = artifactLibrary.getPermissions();
+  const artifactCollections = artifactLibrary.getCollections();
+  const renamingArtifact = artifactNameProperty && artifact[artifactNameProperty] && artifactName !== artifact[artifactNameProperty];
+  let existingArtifact;
+  try {
+    existingArtifact = getArtifactNode(artifactType, artifactName);
+  } catch (e) {}
+  if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
+    artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
+  } else if (fn.exists(existingArtifact) && renamingArtifact) {
+    deleteArtifact(artifactType, artifactName);
+    artifactName = artifact[artifactNameProperty];
+  }
 
-    artifact.lastUpdated = fn.string(fn.currentDateTime());
-    hubUtils.replaceLanguageWithLang(artifact);
+  artifact.lastUpdated = fn.string(fn.currentDateTime());
+  hubUtils.replaceLanguageWithLang(artifact);
 
-    for (const db of artifactDatabases) {
-        hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
-    }
-    cachedArtifacts[artifactKey] = artifact;
+  for (const db of artifactDatabases) {
+    hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
+  }
+  cachedArtifacts[artifactKey] = artifact;
 
-    return artifact;
+  return artifact;
 }
 
 function validateArtifact(artifactType, artifactName, artifact) {
-  if(!validateArtifactName(artifactName)){
-    let message = `Invalid name: '${artifactName}'; it must start with a letter and can contain letters, numbers, hyphens and underscores only.`
+  if (!validateArtifactName(artifactName)) {
+    let message = `Invalid name: '${artifactName}'; it must start with a letter and can contain letters, numbers, hyphens and underscores only.`;
     httpUtils.throwBadRequest(message);
   }
   const artifactLibrary = getArtifactTypeLibrary(artifactType);
@@ -197,33 +197,39 @@ function validateArtifact(artifactType, artifactName, artifact) {
 }
 
 function  getArtifactUri(artifactType, artifactName) {
-    const artifactLibrary = getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.getArtifactUri(artifactName);
+  const artifactLibrary = getArtifactTypeLibrary(artifactType);
+  return artifactLibrary.getArtifactUri(artifactName);
 }
 
-function validateArtifactName(artifactName){
+function validateArtifactName(artifactName) {
   const pattern = /^[a-zA-Z][a-zA-Z0-9\-_]*$/;
   return pattern.test(artifactName);
 }
 
-function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
+const cachedArtifactNodes = new Map();
 
+function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
+  const cacheKey = `${artifactType}:${artifactName}:${artifactVersion}`;
+  if (cachedArtifactNodes.has(cacheKey)) {
+    return cachedArtifactNodes.get(cacheKey);
+  }
   const artifactLibrary = getArtifactTypeLibrary(artifactType);
   const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
   if (fn.empty(node)) {
     httpUtils.throwNotFound(`${artifactType} with name '${artifactName}' not found`);
   }
+  cachedArtifactNodes.set(cacheKey, node);
   return node;
 }
 
 function getArtifactDirectory(artifactType, artifactName, artifact, artifactDirName) {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName, artifact, artifactDirName): `/${artifactType}/`;
+  const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+  return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName, artifact, artifactDirName): `/${artifactType}/`;
 }
 
 function getArtifactFileExtension(artifactType) {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.getFileExtension ? artifactLibrary.getFileExtension(): `.${artifactType}.json`;
+  const artifactLibrary =  getArtifactTypeLibrary(artifactType);
+  return artifactLibrary.getFileExtension ? artifactLibrary.getFileExtension(): `.${artifactType}.json`;
 }
 
 function getArtifactTypeLibrary(artifactType) {
@@ -235,13 +241,13 @@ function getArtifactTypeLibrary(artifactType) {
 }
 
 function generateArtifactKey(artifactType, artifactName, artifactVersion = 'latest') {
-    return `${artifactType}:${artifactName}:${artifactVersion}`;
+  return `${artifactType}:${artifactName}:${artifactVersion}`;
 }
 
 function getFullFlow(flowName, stepNumber) {
   const flow = getArtifact('flow', flowName);
   let steps = flow["steps"];
-  if(stepNumber && flow["steps"] && flow["steps"]["stepNumber"]) {
+  if (stepNumber && flow["steps"] && flow["steps"]["stepNumber"]) {
     steps = flow["steps"]["stepNumber"];
   }
   Object.keys(steps).forEach(stepNumber => {
@@ -256,11 +262,11 @@ function removeNullProperties(obj) {
   let propNames = Object.getOwnPropertyNames(obj);
   for (let i = 0; i < propNames.length; i++) {
     let propName = propNames[i];
-    if (obj[propName] === null || obj[propName] === undefined ) {
+    if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
     }
   }
-  return obj
+  return obj;
 }
 
 /**
@@ -272,7 +278,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   const stepDoc = fn.head(cts.search(cts.andQuery([
     cts.collectionQuery("http://marklogic.com/data-hub/steps"),
     cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
-  ])));
+  ]), ["score-zero", "unfaceted"], 0));
   if (!stepDoc) {
     let message = `Could not find a step with ID ${stepId}`;
     if (flowNameForError) {
@@ -342,11 +348,11 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   if (collections.length > 0) {
     referencedStep.collections = collections;
   }
-  const propsNotToBeCopiedToOptions = ["selectedSource"]
+  const propsNotToBeCopiedToOptions = ["selectedSource"];
   // Copy all remaining properties on the referenced step that are not in 'propsNotToBeCopiedToOptions' as options
   newFlowStep.options = {};
   Object.keys(referencedStep).forEach(key => {
-    if(! propsNotToBeCopiedToOptions.includes(key)) {
+    if (! propsNotToBeCopiedToOptions.includes(key)) {
       newFlowStep.options[key] = referencedStep[key];
     }
   });
@@ -355,13 +361,13 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
 }
 
 export default {
-    getArtifacts,
-    deleteArtifact,
-    getArtifact,
-    setArtifact,
-    validateArtifact,
-    getArtifactUri,
-    getFullFlow,
-    convertStepReferenceToInlineStep,
-    validateArtifactName
+  getArtifacts,
+  deleteArtifact,
+  getArtifact,
+  setArtifact,
+  validateArtifact,
+  getArtifactUri,
+  getFullFlow,
+  convertStepReferenceToInlineStep,
+  validateArtifactName
 };

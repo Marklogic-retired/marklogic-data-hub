@@ -1,19 +1,19 @@
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 
-const modelArray = fn.collection(entityLib.getModelCollection()).toArray().map(entityModel =>{
+const modelArray = fn.collection(entityLib.getModelCollection()).toArray().map(entityModel => {
   return entityModel.toObject();
 });
 const responseArray = [];
 
-function getEntitiesForUI(targetEntityName){
+function getEntitiesForUI(targetEntityName) {
   let targetEntityModel = getEntityModel(targetEntityName);
   const entityModelsReferringToTargetEntity = findEntityModelsWithPropertyThatRefersToTargetEntity(targetEntityModel, targetEntityName);
 
   //Used to avoid cyclical dependencies
   let entitiesNotToExpand = [targetEntityName];
   const targetEntityContext = {
-    "entityName" :  targetEntityName,
+    "entityName": targetEntityName,
     targetEntityName,
     "entityProperties": expandStructuredProperties(targetEntityModel, targetEntityName)
   };
@@ -21,10 +21,10 @@ function getEntitiesForUI(targetEntityName){
   entitiesNotToExpand = entitiesNotToExpand.concat(entityModelsReferringToTargetEntity.map(entityModel => entityModel.info.title));
   addRelatedMappableEntities(targetEntityContext, entitiesNotToExpand, {"mappingTitle": targetEntityName, "entityType": targetEntityName}, targetEntityName);
 
-  entityModelsReferringToTargetEntity.forEach(entityModel=>{
+  entityModelsReferringToTargetEntity.forEach(entityModel => {
     const entityName = entityModel.info.title;
     const entityContext = {
-      "entityName" :  entityName,
+      "entityName": entityName,
       targetEntityName,
       "entityProperties": expandStructuredProperties(entityModel, entityName)
     };
@@ -33,12 +33,12 @@ function getEntitiesForUI(targetEntityName){
   return responseArray;
 }
 
-function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityResponseObject, propertyPath, pathSoFar ) {
+function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityResponseObject, propertyPath, pathSoFar) {
   const entityName = entityContext.entityName;
   const targetEntityName = entityContext.targetEntityName;
   const entityProperties = entityContext.entityProperties;
 
-  if(!entityResponseObject.entityType){
+  if (!entityResponseObject.entityType) {
     entityResponseObject.entityType = entityName;
   }
   addMappableEntityToResponse(entityName, entityProperties, entityResponseObject);
@@ -49,12 +49,12 @@ function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityRe
       let relatedEntityName = relatedEntityType.substring(relatedEntityType.lastIndexOf('/') + 1);
       let joinPropertyName = null;
       if (entityPropertyValue["joinPropertyName"] != "") {
-        joinPropertyName = entityPropertyValue["joinPropertyName"] ? entityPropertyValue["joinPropertyName"] : entityPropertyValue.items["joinPropertyName"]
+        joinPropertyName = entityPropertyValue["joinPropertyName"] ? entityPropertyValue["joinPropertyName"] : entityPropertyValue.items["joinPropertyName"];
       }
-      if(relatedEntityName==targetEntityName){
-        if(joinPropertyName){
+      if (relatedEntityName==targetEntityName) {
+        if (joinPropertyName) {
           const targetEntityResponse = responseArray.find(response => response.entityType == targetEntityName);
-          if(!entityHasMultipleForeignKey(targetEntityResponse, entityName)){
+          if (!entityHasMultipleForeignKey(targetEntityResponse, entityName)) {
             const entityMappingId =  targetEntityName + "." + joinPropertyName + ":" + entityName;
             const mappingTitle = entityName + " (" + entityPropertyName + " "+ relatedEntityName + ")";
             entityResponseObject.entityMappingId = entityMappingId;
@@ -63,19 +63,18 @@ function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityRe
             pathSoFar = targetEntityName + "." + joinPropertyName;
           }
         }
-      }
-      else if(!entitiesNotToExpand.includes(relatedEntityName)){
+      } else if (!entitiesNotToExpand.includes(relatedEntityName)) {
         propertyPath += "." + entityPropertyName;
         pathSoFar = pathSoFar ?  pathSoFar + ":" + propertyPath : propertyPath;
         let relatedEntityResponseObject = createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath, pathSoFar);
-        setRelatedEntityMappings(entityResponseObject, entityPropertyName + " " + relatedEntityName, relatedEntityResponseObject.entityMappingId)
-        entitiesNotToExpand.push(relatedEntityName)
+        setRelatedEntityMappings(entityResponseObject, entityPropertyName + " " + relatedEntityName, relatedEntityResponseObject.entityMappingId);
+        entitiesNotToExpand.push(relatedEntityName);
         let relatedEntityProperties = expandStructuredProperties(getEntityModel(relatedEntityName), relatedEntityName);
         const entityContext = {
           "entityName": relatedEntityName,
           targetEntityName,
           "entityProperties": relatedEntityProperties
-        }
+        };
         addRelatedMappableEntities(entityContext, entitiesNotToExpand, relatedEntityResponseObject, relatedEntityName, pathSoFar);
         pathSoFar = pathSoFar.lastIndexOf(":") != -1 ? pathSoFar.substring(0, pathSoFar.lastIndexOf(":")) : pathSoFar;
         propertyPath = propertyPath.lastIndexOf(".") != -1 ? propertyPath.substring(0, propertyPath.lastIndexOf(".")) : propertyPath;
@@ -87,24 +86,24 @@ function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityRe
         entityName,
         targetEntityName,
         "entityProperties": entityPropertyValue["subProperties"]
-      }
+      };
       addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityResponseObject, propertyPath+ "." + entityPropertyName, pathSoFar);
       propertyPath = propertyPath.lastIndexOf(".") != -1 ? propertyPath.substring(0, propertyPath.lastIndexOf(".")) : propertyPath;
     }
   }
 }
 
-function entityHasMultipleForeignKey(targetEntityResponse, entityName ){
+function entityHasMultipleForeignKey(targetEntityResponse, entityName) {
   let relatedEntityMapping;
-  if(targetEntityResponse.relatedEntityMappings){
-    relatedEntityMapping = targetEntityResponse.relatedEntityMappings.find(relatedEntityMapping =>{
-      relatedEntityMapping.entityMappingId.substring(relatedEntityMapping.entityMappingId.lastIndexOf(":")) == entityName
+  if (targetEntityResponse.relatedEntityMappings) {
+    relatedEntityMapping = targetEntityResponse.relatedEntityMappings.find(relatedEntityMapping => {
+      relatedEntityMapping.entityMappingId.substring(relatedEntityMapping.entityMappingId.lastIndexOf(":")) == entityName;
     });
   }
   return relatedEntityMapping ? true : false;
 }
 
-function createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath, pathSoFar){
+function createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath, pathSoFar) {
   let relatedEntityResponseObject ={};
   relatedEntityResponseObject.entityMappingId = pathSoFar + ":"+ relatedEntityName;
   relatedEntityResponseObject.entityType = relatedEntityName;
@@ -112,20 +111,20 @@ function createRelatedEntityResponseObject(entityName, relatedEntityName, entity
   return relatedEntityResponseObject;
 }
 
-function setRelatedEntityMappings(responseObject, mappingLinkText, entityMappingId){
-  if(responseObject){
-    if(!responseObject.relatedEntityMappings){
+function setRelatedEntityMappings(responseObject, mappingLinkText, entityMappingId) {
+  if (responseObject) {
+    if (!responseObject.relatedEntityMappings) {
       responseObject.relatedEntityMappings = [];
     }
-    responseObject.relatedEntityMappings.push({"mappingLinkText": mappingLinkText, "entityMappingId": entityMappingId})
+    responseObject.relatedEntityMappings.push({"mappingLinkText": mappingLinkText, "entityMappingId": entityMappingId});
   }
 }
 
 //'entityProperties' have their structured properties expanded by 'expandStructuredProperties' function
-function addMappableEntityToResponse(entityName, entityProperties, entityResponseObject){
+function addMappableEntityToResponse(entityName, entityProperties, entityResponseObject) {
   const entityModel = getEntityModel(entityName);
   let expandedEntityModel = Object.assign({}, entityModel);
-  if(!entityResponseObject.entityModel){
+  if (!entityResponseObject.entityModel) {
     expandedEntityModel.definitions = {};
     expandedEntityModel.definitions[entityName] = {};
     expandedEntityModel.definitions[entityName].properties = entityProperties;
@@ -134,7 +133,7 @@ function addMappableEntityToResponse(entityName, entityProperties, entityRespons
   }
 }
 
-function getEntityModel(entityName){
+function getEntityModel(entityName) {
   const model = modelArray.find(model => model.info.title == entityName);
   if (!model) {
     throw new Error(`Cannot find referenced model: ${entityName}`);
@@ -149,20 +148,18 @@ function expandStructuredProperties(entityModel, entityName) {
   }
   let entityProperties = entityModel.definitions[entityName].properties;
 
-  for(let entityPropertyName in entityProperties){
+  for (let entityPropertyName in entityProperties) {
     let entityPropertyValue = entityProperties[entityPropertyName];
-    if(entityPropertyValue["$ref"] || (entityPropertyValue["items"] && entityPropertyValue["items"]["$ref"])){
+    if (entityPropertyValue["$ref"] || (entityPropertyValue["items"] && entityPropertyValue["items"]["$ref"])) {
       let ref = entityPropertyValue["$ref"] ? entityPropertyValue["$ref"] : entityPropertyValue["items"]["$ref"];
-      if(ref.startsWith("#/")){
+      if (ref.startsWith("#/")) {
         let subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
         entityPropertyValue["subProperties"] = expandStructuredProperties(entityModel, subEntityName);
-      }
-      else{
+      } else {
         //Remove external references as they shouldn't show up in mapping
         delete entityProperties[entityPropertyName];
       }
-    }
-    else{
+    } else {
       entityProperties[entityPropertyName] = entityPropertyValue;
     }
   }
@@ -170,10 +167,10 @@ function expandStructuredProperties(entityModel, entityName) {
 }
 
 
-function findEntityModelsWithPropertyThatRefersToTargetEntity(targetEntityModel, targetEntityName){
+function findEntityModelsWithPropertyThatRefersToTargetEntity(targetEntityModel, targetEntityName) {
   const entityTypeId = entityLib.getEntityTypeId(targetEntityModel, targetEntityName);
   const entityModelsWithPropertyThatRefersToTargetEntity = cts.search(cts.andQuery([cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION),
-    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive")])).toArray().map(entityModel =>{
+    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive")]), ["unfiltered", "score-zero", "unfaceted"]).toArray().map(entityModel => {
     return entityModel.toObject();
   });
   return entityModelsWithPropertyThatRefersToTargetEntity;

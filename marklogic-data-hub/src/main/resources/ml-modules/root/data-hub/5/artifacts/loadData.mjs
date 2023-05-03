@@ -24,41 +24,41 @@ const permissions = [xdmp.permission(consts.DATA_HUB_LOAD_DATA_WRITE_ROLE, 'upda
 const requiredProperties = ['name', 'sourceFormat', 'targetFormat'];
 
 function getNameProperty() {
-    return 'name';
+  return 'name';
 }
 
 function getCollections() {
-    return collections;
+  return collections;
 }
 
 function getStorageDatabases() {
-    return databases;
+  return databases;
 }
 
 function getPermissions() {
-    return permissions;
+  return permissions;
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]), ["score-zero", "unfaceted"], 0);
   return fn.head(results);
 }
 
-function getArtifactUri(artifactName){
+function getArtifactUri(artifactName) {
   return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
 function validateArtifact(artifact) {
-    const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
-    if (missingProperties.length) {
-        return new Error(`Ingestion step '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
-    }
-    if(artifact.hasOwnProperty('outputURIReplacement') && artifact.hasOwnProperty('outputURIPrefix')){
-      xdmp.trace(consts.TRACE_STEP, `Ingestion step ${artifact.name}'s 'outputURIReplacement' property will be unset as 'outputURIPrefix' is being set`);
-      delete artifact.outputURIReplacement;
-    }
+  const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
+  if (missingProperties.length) {
+    return new Error(`Ingestion step '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
+  }
+  if (artifact.hasOwnProperty('outputURIReplacement') && artifact.hasOwnProperty('outputURIPrefix')) {
+    xdmp.trace(consts.TRACE_STEP, `Ingestion step ${artifact.name}'s 'outputURIReplacement' property will be unset as 'outputURIPrefix' is being set`);
+    delete artifact.outputURIReplacement;
+  }
 
-    return artifact;
+  return artifact;
 }
 
 function defaultArtifact(artifactName) {

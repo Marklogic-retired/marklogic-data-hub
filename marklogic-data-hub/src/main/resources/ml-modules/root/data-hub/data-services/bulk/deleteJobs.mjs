@@ -17,7 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-jobs", "execute");
 
-import jobs from"/data-hub/5/impl/jobs.mjs";
+import jobs from "/data-hub/5/impl/jobs.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const DEFAULT_BATCH_SIZE = 250;
@@ -28,7 +28,7 @@ const endpointConstants = external.endpointConstants;
 const constants = fn.head(xdmp.fromJSON(endpointConstants));
 const retainDuration = constants.retainDuration;
 
-if(retainDuration == null || !xdmp.castableAs( "http://www.w3.org/2001/XMLSchema", "duration", retainDuration)) {
+if (retainDuration == null || !xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "duration", retainDuration)) {
   httpUtils.throwBadRequest("retainDuration must be a duration in the format of PnYnM or PnDTnHnMnS.");
 }
 
@@ -42,33 +42,33 @@ const batchSize = (constants.batchSize == null || constants.batchSize == 0)
   ? DEFAULT_BATCH_SIZE
   : constants.batchSize;
 
-const uriOptions = batchSize == null ? [] : [ `limit=${batchSize}` ];
+const uriOptions = batchSize == null ? ["concurrent", "score-zero"] : [`limit=${batchSize}`, "concurrent", "score-zero"];
 const jobQuery = cts.andQuery([
   cts.collectionQuery(['Job']),
   cts.rangeQuery(cts.jsonPropertyReference('timeEnded', ['type=dateTime']), '<', initialState.retainStart),
   // only want jobs that have finished - there can be very long running jobs
-  cts.jsonPropertyValueQuery('jobStatus', [ 'finished', 'failed' ])
+  cts.jsonPropertyValueQuery('jobStatus', ['finished', 'failed'])
 ]);
 
 const jobIds = cts.values(cts.jsonPropertyReference('jobId'), null, uriOptions, jobQuery).toArray();
 
 const batchUriQuery = cts.andQuery([
-  cts.collectionQuery([ 'Batch' ]),
+  cts.collectionQuery(['Batch']),
   cts.rangeQuery(cts.jsonPropertyReference('jobId'), '=', jobIds)
 ]);
 const batchUrisToDelete = cts.uris(null, uriOptions, batchUriQuery).toArray();
 let urisToDelete;
 let remaining;
-if(batchUrisToDelete.length > 0) {
+if (batchUrisToDelete.length > 0) {
   urisToDelete = batchUrisToDelete;
   remaining = true;
 } else {
   const remainingJobCount = cts.estimate(jobQuery);
   const jobUriQuery = cts.andQuery([
-    cts.collectionQuery([ 'Job' ]),
+    cts.collectionQuery(['Job']),
     cts.rangeQuery(cts.jsonPropertyReference('jobId'), '=', jobIds)
   ]);
-  const jobUrisToDelete = cts.uris(null, null, jobUriQuery).toArray();
+  const jobUrisToDelete = cts.uris(null, ["concurrent", "score-zero"], jobUriQuery).toArray();
   urisToDelete = jobUrisToDelete;
   remaining = remainingJobCount > jobUrisToDelete.length;
 }
@@ -77,7 +77,7 @@ jobs.deleteJobs(urisToDelete);
 
 const deleted = urisToDelete.length;
 let res = remaining
-  ? { deleted: deleted + initialState.deleted, remaining, retainStart: initialState.retainStart }
+  ? {deleted: deleted + initialState.deleted, remaining, retainStart: initialState.retainStart}
   : null;
 
 res;

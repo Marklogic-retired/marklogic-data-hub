@@ -48,17 +48,17 @@ function getDirectory() {
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]), ["score-zero", "unfaceted"], 0);
   return fn.head(results);
 }
 
-function getArtifactUri(artifactName){
+function getArtifactUri(artifactName) {
   return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
 function validateArtifact(artifact) {
   //Since custom steps are created manually, setting 'selectedSource' to 'query' if it isn't present
-  if(!artifact.selectedSource){
+  if (!artifact.selectedSource) {
     artifact.selectedSource = 'query';
   }
   const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);

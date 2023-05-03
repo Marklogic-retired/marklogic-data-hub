@@ -25,19 +25,19 @@ const permissions = [xdmp.permission(consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
 
 function getNameProperty() {
-    return 'name';
+  return 'name';
 }
 
 function getCollections() {
-    return collections;
+  return collections;
 }
 
 function getStorageDatabases() {
-    return databases;
+  return databases;
 }
 
 function getPermissions() {
-    return permissions;
+  return permissions;
 }
 
 function getFileExtension() {
@@ -49,11 +49,11 @@ function getDirectory() {
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-    const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
-    return fn.head(results);
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]), ["score-zero", "unfaceted"], 0);
+  return fn.head(results);
 }
 
-function getArtifactUri(artifactName){
+function getArtifactUri(artifactName) {
   return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
@@ -97,14 +97,14 @@ function defaultArtifact(artifactName, entityTypeId) {
 }
 
 export default {
-    getNameProperty,
-    getCollections,
-    getStorageDatabases,
-    getPermissions,
-    getArtifactNode,
-    getDirectory,
-    validateArtifact,
-    defaultArtifact,
-    getFileExtension,
-    getArtifactUri
+  getNameProperty,
+  getCollections,
+  getStorageDatabases,
+  getPermissions,
+  getArtifactNode,
+  getDirectory,
+  validateArtifact,
+  defaultArtifact,
+  getFileExtension,
+  getArtifactUri
 };

@@ -14,8 +14,8 @@ import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
 
-cts.uris(null, null, cts.collectionQuery("http://marklogic.com/data-hub/mappings")).toArray().forEach(uri => {
+for (const uri of cts.uris(null, ["concurrent", "score-zero", "eager"], cts.collectionQuery("http://marklogic.com/data-hub/mappings"))) {
   const doc = cts.doc(uri);
   // "Touch" the document to force the trigger to run
   hubUtils.nodeReplace(cts.doc(uri), doc);
-});
+}

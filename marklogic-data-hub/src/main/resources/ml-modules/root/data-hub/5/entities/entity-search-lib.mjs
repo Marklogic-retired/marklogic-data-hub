@@ -43,7 +43,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
       httpUtils.throwNotFound(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
     }
 
-    if(!verifyExplorableModel(entityName)) {
+    if (!verifyExplorableModel(entityName)) {
       httpUtils.throwNotFound(`Could not find entity properties as there is no entityTypeDefinition in entity model for name: ${entityName}`);
     }
 
@@ -56,7 +56,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
     selectedPropertyMetadata = selectedPropertyMetadata.length > 0 ? selectedPropertyMetadata : propertyMetadata.slice(0, maxDefaultProperties);
 
     searchResponse.results.forEach(result => {
-      addEntitySpecificProperties(result, entityName, entityModel, selectedPropertyMetadata)
+      addEntitySpecificProperties(result, entityName, entityModel, selectedPropertyMetadata);
     });
 
     // Remove entityName from Collection facetValues
@@ -108,12 +108,12 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
     propertyMetadata["multiple"] = (isSimpleArrayProperty || isStructuredArrayProperty) ? true : false;
     propertyMetadataObject["multiple"] = propertyMetadata["multiple"];
 
-    if(property.sortable && !(isStructuredProperty || isStructuredArrayProperty)) {
+    if (property.sortable && !(isStructuredProperty || isStructuredArrayProperty)) {
       propertyMetadata["sortable"] =  property.sortable;
       propertyMetadataObject["sortable"] = property.sortable;
     }
 
-    if(property.facetable && !(isStructuredProperty || isStructuredArrayProperty)) {
+    if (property.facetable && !(isStructuredProperty || isStructuredArrayProperty)) {
       propertyMetadata["facetable"] =  property.facetable;
       propertyMetadataObject["facetable"] = property.facetable;
     }
@@ -129,7 +129,7 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
       propertyMetadata["properties"] = metaData["allPropertiesMetadata"];
       propertyMetadataObject["properties"] = metaData["allPropertiesMetadata"];
 
-      granularPropertyMetadata = Object.assign({},granularPropertyMetadata, metaData["granularPropertyMetadata"]);
+      granularPropertyMetadata = Object.assign({}, granularPropertyMetadata, metaData["granularPropertyMetadata"]);
     }
     granularPropertyMetadata[propertyMetadataObject["propertyPath"]] = propertyMetadataObject;
     // Ensure the primary key property goes first in the array so it is selected by default
@@ -165,18 +165,18 @@ function buildSelectedPropertiesMetadata(allMetadata, selectedPropertyNames) {
     const selectedPropertyNameArray = selectedPropertyName.split(".");
     const actualSelectedPropertyName = selectedPropertyNameArray.pop();
 
-    if(selectedPropertyNameArray.length > 0) {
+    if (selectedPropertyNameArray.length > 0) {
       const parentPropertyName = selectedPropertyNameArray[0];
-      if(selectedPropertyDefinitions[parentPropertyName]) {
+      if (selectedPropertyDefinitions[parentPropertyName]) {
         selectedPropertyDefinitions[parentPropertyName] = updateSelectedPropertyMetadata(selectedPropertyName, selectedPropertyDefinitions, granularPropertyMetadata);
       } else {
         let finalMetadataProperty = buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPropertyDefinitions, granularPropertyMetadata);
-        if(Object.keys(finalMetadataProperty).length > 0) {
+        if (Object.keys(finalMetadataProperty).length > 0) {
           selectedPropertyDefinitions[parentPropertyName] = finalMetadataProperty;
         }
       }
     } else {
-      if(granularPropertyMetadata[actualSelectedPropertyName]) {
+      if (granularPropertyMetadata[actualSelectedPropertyName]) {
         selectedPropertyDefinitions[actualSelectedPropertyName] = granularPropertyMetadata[actualSelectedPropertyName];
       }
     }
@@ -198,8 +198,8 @@ function updateSelectedPropertyMetadata(selectedPropertyName, selectedPropertyDe
     propertyName = structuredPropertyPath ? structuredPropertyPath + "." + propertyName : propertyName;
     structuredPropertyPath = propertyName;
 
-    if(Array.isArray(temporaryMetadataObject)) {
-      if(temporaryMetadataObject.map(property => property.propertyPath).includes(propertyName)) {
+    if (Array.isArray(temporaryMetadataObject)) {
+      if (temporaryMetadataObject.map(property => property.propertyPath).includes(propertyName)) {
         temporaryMetadataObject = temporaryMetadataObject.find(property => property.propertyPath === propertyName)["properties"];
       } else {
         let missingProperty = granularPropertyMetadata[structuredPropertyPath];
@@ -228,7 +228,7 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
     delete metadataObject["properties"];
     selectedPropertyMetadataBuilder.push(metadataObject);
   });
-  if(granularPropertyMetadata[structuredPropertyPath + "." + actualSelectedPropertyName]) {
+  if (granularPropertyMetadata[structuredPropertyPath + "." + actualSelectedPropertyName]) {
     selectedPropertyMetadataBuilder.push(granularPropertyMetadata[structuredPropertyPath + "." + actualSelectedPropertyName]);
   } else {
     selectedPropertyMetadataBuilder = [];
@@ -238,7 +238,7 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
   let currentProperties = [];
   let finalMetadataProperty = {};
   selectedPropertyMetadataBuilder.forEach((metadataProperty) => {
-    if(currentProperties.length > 0) {
+    if (currentProperties.length > 0) {
       metadataProperty["properties"] = currentProperties;
     }
     currentProperties = [].concat(JSON.parse(JSON.stringify(metadataProperty)));
@@ -265,13 +265,13 @@ function getEntityInstanceDetails(doc) {
 
 function getEntitySources(doc) {
   let sourcesArray = [];
-  if(!doc) {
+  if (!doc) {
     return sourcesArray;
   }
 
-  if(hubUtils.isXmlNode(doc)) {
+  if (hubUtils.isXmlNode(doc)) {
     const sources = doc.xpath("/*:envelope/*:headers/*:sources");
-    if(fn.exists(sources)) {
+    if (fn.exists(sources)) {
       for (let srcDoc of sources) {
         const currNode = new NodeBuilder().startDocument().addNode(srcDoc).endDocument().toNode();
         sourcesArray.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
@@ -283,23 +283,23 @@ function getEntitySources(doc) {
     const sources = doc.toObject().envelope.headers.sources;
     sourcesArray = Array.isArray(sources) ? sources : [sources];
   }
-  return sourcesArray.length ? handleDuplicateSources("datahubSourceName",sourcesArray) : sourcesArray;
+  return sourcesArray.length ? handleDuplicateSources("datahubSourceName", sourcesArray) : sourcesArray;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
   let resultObject = {};
   resultObject.propertyPath = currentProperty.propertyPath;
 
-  if(currentProperty.datatype === "object") {
+  if (currentProperty.datatype === "object") {
     resultObject.propertyValue = [];
 
     let propertyName = currentProperty.propertyPath.split(".").pop();
-    if(!entityInstance[propertyName] || Object.keys(entityInstance[propertyName]).length == 0) {
+    if (!entityInstance[propertyName] || Object.keys(entityInstance[propertyName]).length == 0) {
       return resultObject;
     }
 
     // OR condition is to handle the merged instances where datatype is object but there are array of objects after merge
-    if(currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
+    if (currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
       entityInstance = entityInstance[propertyName].filter(instance => instance);
       entityInstance.forEach((instance) => {
         let currentPropertyValueArray = [];
@@ -322,14 +322,14 @@ function getPropertyValues(currentProperty, entityInstance) {
   } else {
     let propertyName = currentProperty.propertyPath.split(".").pop();
     resultObject.propertyValue = (entityInstance[propertyName] !== null && entityInstance[propertyName] !== undefined) ? entityInstance[propertyName] :
-        (currentProperty.multiple ? [] : "");
+      (currentProperty.multiple ? [] : "");
   }
   return resultObject;
 }
 
 // returns null to use uri
 function getPrimaryValue(entityInstance, entityDefinition) {
-  let primaryKeyData = {}
+  let primaryKeyData = {};
   if (entityDefinition.hasOwnProperty("primaryKey")) {
     let primaryKey = entityDefinition.primaryKey;
 
@@ -408,13 +408,13 @@ function addGenericEntityProperties(result) {
 
   const doc = cts.doc(result.uri);
   const entityDetails = ext.getEntityDetails(doc);
-  if(!entityDetails) {
+  if (!entityDetails) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
   }
 
   const entityName = entityDetails.entityName;
-  if(!entityName) {
+  if (!entityName) {
     console.log(`Unable to determine the entity type from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
   }
@@ -422,7 +422,7 @@ function addGenericEntityProperties(result) {
   const entityProperties = entityDetails.properties;
 
   const entityModel = entityLib.findModelByEntityName(entityName);
-  if(!entityModel) {
+  if (!entityModel) {
     console.log(`Unable to find an entity model for entity name: ${entityName}; will not add entity properties to its search result`);
     return;
   }
@@ -464,7 +464,7 @@ function fetchUnmergeDetails(doc, entityName) {
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
   result.primaryKey = null;
-  if(entityDef) {
+  if (entityDef) {
     result.primaryKey = getPrimaryValue(entityInstance, entityDef);
   }
 
@@ -473,18 +473,18 @@ function addPrimaryKeyToResult(result, entityInstance, entityDef) {
     result.primaryKey = {
       "propertyPath": "uri",
       "propertyValue": result.uri
-    }
+    };
   }
 }
 
 function removeEntityNameFromCollection(searchResponse, entityName) {
   if (searchResponse.hasOwnProperty('facets')) {
     if (searchResponse.facets.hasOwnProperty("Collection")) {
-      let updatedFacetValues = []
+      let updatedFacetValues = [];
       searchResponse.facets.Collection.facetValues.map(facet => {
         if (facet.name !== entityName) updatedFacetValues.push(facet);
-      })
-      searchResponse.facets.Collection.facetValues = updatedFacetValues
+      });
+      searchResponse.facets.Collection.facetValues = updatedFacetValues;
     }
   }
 }
@@ -492,12 +492,12 @@ function removeEntityNameFromCollection(searchResponse, entityName) {
 function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
   return Array.from(
     arrayWithDuplicates.reduce(
-        (acc, item) => (
-          item && item[propToValidate] && acc.set(item[propToValidate], item),
-          acc
-        ),
-        new Map()
-      )
+      (acc, item) => (
+        item && item[propToValidate] && acc.set(item[propToValidate], item),
+        acc
+      ),
+      new Map()
+    )
       .values()
   );
 }
@@ -509,11 +509,11 @@ function getDocumentSize(doc) {
 }
 
 function verifyExplorableModel(entityName) {
-  if(!entityName) {
+  if (!entityName) {
     return true;
   }
   const entityModel = entityLib.findModelByEntityName(entityName);
-  if(!entityModel) {
+  if (!entityModel) {
     return false;
   }
   const entityTypes = Object.keys(entityModel.definitions);
@@ -556,7 +556,7 @@ function getMatchStepFromModelName(entityName) {
   const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
   const entityModel = getEntityModel(entityName);
   const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
-  const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])])));
+  const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])]), ["score-zero", "unfaceted"], 0));
   return matchStep ? matchStep.toObject().name : undefined;
 }
 
@@ -565,7 +565,7 @@ function getRecordHistory(docUri) {
   const relations = {'associatedWith': '?', 'attributedTo': '?'};
   const provenanceRecords = prov.findProvenance(docUri, relations);
 
-  if(provenanceRecords.length) {
+  if (provenanceRecords.length) {
     const flowsMap = findFlowsAsMap();
     const stepNames = getArtifactNamesFromUris(consts.STEP_COLLECTION, '/steps', '.step.json');
     const stepDefinitionNames = getArtifactNamesFromUris(consts.STEP_DEFINITION_COLLECTION, '/step-definitions/', '.step.json');
@@ -580,7 +580,7 @@ function getRecordHistory(docUri) {
     });
   } else {
     const metadata = getRecordMetadata(docUri);
-    if(Object.keys(metadata).length) {
+    if (Object.keys(metadata).length) {
       history.push(getRecordMetadata(docUri));
     }
   }
@@ -593,17 +593,17 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
   const commonFlowNames = associatedWith.filter(artifactName => Object.keys(flowsMap).includes(artifactName.toString()));
 
   commonFlowNames.forEach(artifactName => {
-    if(provenanceRecord["provID"].toString().includes(artifactName)) {
+    if (provenanceRecord["provID"].toString().includes(artifactName)) {
       flowAndStepNames["flowName"] = artifactName;
     }
   });
 
-  if(!flowAndStepNames["flowName"]) {
+  if (!flowAndStepNames["flowName"]) {
     return flowAndStepNames;
   }
 
   for (let currentIndex=0; currentIndex<associatedWith.length-1; currentIndex++) {
-    if(associatedWith[currentIndex] === flowAndStepNames["flowName"]) {
+    if (associatedWith[currentIndex] === flowAndStepNames["flowName"]) {
       let artifactTobeRemoved =  associatedWith[currentIndex];
       associatedWith[currentIndex] = associatedWith[associatedWith.length-1];
       associatedWith[associatedWith.length-1] = artifactTobeRemoved;
@@ -616,13 +616,13 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
   const flowStepNames = Object.keys(flow["steps"]).map(step => flow["steps"][step].name);
   const commonFlowStepNames = associatedWith.filter(artifactName => flowStepNames.includes(artifactName));
   flowAndStepNames["stepName"] = commonFlowStepNames.length ? commonFlowStepNames[0] : undefined;
-  if(flowAndStepNames["stepName"]) {
+  if (flowAndStepNames["stepName"]) {
     return flowAndStepNames;
   }
 
   const commonStepNames = associatedWith.filter(artifactName => stepNames.includes(artifactName));
   flowAndStepNames["stepName"] = commonStepNames.length ? commonStepNames[0] : undefined;
-  if(commonStepNames.length == 0) {
+  if (commonStepNames.length == 0) {
     const commonStepDefinitionNames = associatedWith.filter(artifactName => stepDefinitionNames.includes(artifactName));
     flowAndStepNames["stepName"] = commonStepDefinitionNames.length ? commonStepDefinitionNames[0] : undefined;
   }
@@ -633,7 +633,7 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
 function getRecordMetadata(docUri) {
   const metadata = xdmp.documentGetMetadata(docUri);
   const currentObject = {};
-  if(metadata) {
+  if (metadata) {
     // datahubCreatedOn field captures the document/record last updated timestamp. It is not the document/record creation timestamp
     currentObject.updatedTime = metadata.datahubCreatedOn ? metadata.datahubCreatedOn : undefined;
     currentObject.flow = metadata.datahubCreatedInFlow ? metadata.datahubCreatedInFlow : undefined;
@@ -648,7 +648,7 @@ function getArtifactNamesFromUris(collection, expectedPrefix, expectedSuffix) {
   cts.uris(null, null, cts.collectionQuery(collection)).toArray().map(uri => {
     uri = uri.toString();
     if (uri.startsWith(expectedPrefix) && uri.endsWith(expectedSuffix)) {
-      artifactNames.push(uri.replace(expectedPrefix,'').replace(new RegExp(expectedSuffix + '$'), '').split("/").pop());
+      artifactNames.push(uri.replace(expectedPrefix, '').replace(new RegExp(expectedSuffix + '$'), '').split("/").pop());
     }
   });
   return artifactNames;
