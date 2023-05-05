@@ -23,6 +23,8 @@ if (!this.rfc) {
 }
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.xqy");
+let flowlibSjs = require("/data-hub/4/impl/flow-lib.sjs");
+const config = require("/com.marklogic.hub/config.sjs");
 
 const ns = {hub: "http://marklogic.com/data-hub"};
 
@@ -548,37 +550,21 @@ function queueWriter(writerFunction, identifier, envelope, options) {
   };
 }
 
-function runWriters(identifiers) {
-  let updatedSettings =
-    fn.head(xdmp.eval(
-    '  let flowlib = require("/data-hub/4/impl/flow-lib.sjs"); ' +
-    '  let rfc = require("/data-hub/4/impl/run-flow-context.sjs"); ' +
-    '  rfc.setGlobalContext(rfcContext); ' +
-    '  for (let identifier of identifiers) { ' +
-    '    let itemContext = contextQueue[identifier]; ' +
-    '    let writerInfo = writerQueue[identifier]; ' +
-    '    if (writerInfo) { ' +
-    '      flowlib.runWriter( ' +
-    '        writerInfo.writerFunction, ' +
-    '        itemContext, ' +
-    '        identifier, ' +
-    '        writerInfo.envelope, ' +
-    '        writerInfo.options ' +
-    '      ); ' +
-    '    } ' +
-    '  } ',
-    {
-      identifiers: identifiers,
-      contextQueue: contextQueue,
-      writerQueue: writerQueue,
-      rfcContext: rfc.getGlobalContext()
-    },
-    {
-      ignoreAmps: true,
-      isolation: "different-transaction",
-      database: rfc.getTargetDatabase(),
-      transactionMode: "update-auto-commit"
-    }));
+function runWriters(identifiers, targetDatabase = config.FINALDATABASE) {
+  xdmp.invokeFunction(() => {
+    for (let identifier of identifiers) {
+      let itemContext = contextQueue[identifier];
+      let writerInfo = writerQueue[identifier];
+      if (writerInfo) {
+        flowlibSjs.runWriter(writerInfo.writerFunction, itemContext, identifier, writerInfo.envelope, writerInfo.options);
+      }
+    }
+  }, {
+    ignoreAmps: true,
+    isolation: "different-transaction",
+    database: xdmp.database(targetDatabase),
+    transactionMode: "update-auto-commit"
+  });
 }
 
 /**
