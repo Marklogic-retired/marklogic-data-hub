@@ -1,7 +1,7 @@
 function main(content, options) {
   let result = {};
   let legacyOptions = options.options;
-  result["value"] = require(legacyOptions["mainModuleUri"]).main(content.uri, content.value, legacyOptions);
+  result["value"] = require(legacyOptions["mainModuleUri"]).main(content.uri, legacyOptions);
   return result;
 }
 
