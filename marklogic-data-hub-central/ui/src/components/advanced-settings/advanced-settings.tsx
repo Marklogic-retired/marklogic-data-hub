@@ -218,7 +218,7 @@ const AdvancedSettings: React.FC<Props> = props => {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
-  }, [curationOptions.activeStep.hasWarnings.length, validateCalled, validateMerge]);
+  }, [curationOptions.activeStep.hasWarnings, validateCalled, validateMerge]);
 
   //To handle closing tooltip when user clicks out anywhere in form
   useEffect(() => {
