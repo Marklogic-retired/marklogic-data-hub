@@ -11,7 +11,7 @@ class AdvancedSettings {
   }
 
   keepTargetCollection(event: string) {
-    cy.findByTestId(`${event}-keep`).click();
+    cy.findByTestId(`${event}-keep`).click({force: true});
   }
 
   keepRemovedCollections(event: string) {
