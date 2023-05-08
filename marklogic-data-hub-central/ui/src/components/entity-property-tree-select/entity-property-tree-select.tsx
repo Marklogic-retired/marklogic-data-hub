@@ -193,7 +193,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = props => {
         data-testid={finalIdentifier}
         id={finalIdentifier}
         className={styles.matchTypeSelect}
-        placeholder={<span tabIndex={0}>Select property</span>}
+        placeholder={<span>Select property</span>}
         onChange={onChange}
         treeExpandedKeys={expandedKeys}
         onTreeExpand={onTreeNodeExpand}

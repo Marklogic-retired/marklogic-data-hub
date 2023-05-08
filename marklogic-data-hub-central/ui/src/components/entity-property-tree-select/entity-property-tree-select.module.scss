@@ -11,9 +11,7 @@
 }
 
 .matchTypeSelect {
-    :focus{
-        outline: auto !important;
-    }
+
     width: 400px !important;
     border: 1px solid #d9d9d9;
     border-radius: 4px;
@@ -23,8 +21,11 @@
     }
     :focus-visible{
         opacity: 1 !important;
-        background: rgba(255, 255, 255, 0) !important;
-        border-left: 2px solid !important;
+        border: 1px solid #808cbd !important;
+        box-shadow: 0 0 0 2px rgb(91 105 175 / 20%);
+        background: rgb(255 0 0 / 0%) !important;
+        border-radius: 3px;
+        margin: -9px;
     }
 }
 
