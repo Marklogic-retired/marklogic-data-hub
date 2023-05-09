@@ -78,76 +78,32 @@
           <xsl:attribute name="name">
             <xsl:value-of select="@name"/>
           </xsl:attribute>
-          <xsl:if test="@type and @type!='' and not(matches(@type,' '))">
+          <xsl:if test="@type and @type !='' and not(matches(@type,' '))">
             <xsl:attribute name="as">
               <xsl:value-of select="this:mapTypeName(@type)"/>
             </xsl:attribute>
           </xsl:if>
         </axsl:param>
       </xsl:for-each>
-      <axdmp:javascript-call>
-        <xsl:attribute name="name">
-          <xsl:value-of select="@name"/>
-        </xsl:attribute>
-        <xsl:attribute name="href">
-          <xsl:value-of select="$location"/>
-        </xsl:attribute>
+      <xsl:variable name="name">
+        <xsl:value-of select="@name"/>
+      </xsl:variable>
+      <xsl:variable name="mapparms">
         <xsl:for-each select="mapping:parameters/mapping:parameter">
-          <axsl:with-param axdmp:dialect="1.0-ml">
-            <xsl:attribute name="name">
-              <xsl:value-of select="@name"/>
-            </xsl:attribute>
-            <xsl:attribute name="select">
-                <xsl:value-of select="concat('if (empty($', @name ,')) then null-node{} else $', @name)"/>
-            </xsl:attribute>
-          </axsl:with-param>
+          <xsl:value-of select="'=&gt;map:with(&quot;'"/>
+          <xsl:value-of select="@name"/>
+          <xsl:value-of select="'&quot;,'"/>
+          <xsl:value-of select="concat('if (empty($', @name ,')) then null-node{} else $', @name)"/>
+          <xsl:value-of select="')'"/>
         </xsl:for-each>
-        <axsl:fallback>
-          <xsl:variable name="isJSModule" as="xs:boolean">
-            <xsl:value-of select='xdmp:uri-content-type($location)="application/vnd.marklogic-js-module"'/>
-          </xsl:variable>
-          <xsl:variable name="externals" as="xs:string*">
-            <xsl:if test="number(substring-before(xdmp:version(),'.')) gt 9 and $isJSModule">
-              <xsl:for-each select="mapping:parameters/mapping:parameter">
-                <xsl:value-of select="concat('external.',@name)"/>
-              </xsl:for-each>
-            </xsl:if>
-          </xsl:variable>
-          <xsl:variable name="parms">
-            <xsl:choose>
-              <xsl:when test="number(substring-before(xdmp:version(),'.')) le 9 or not($isJSModule)">
-                <xsl:value-of select='string-join(mapping:parameters/mapping:parameter/@name,",")'/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select='string-join($externals,",")'/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="js">
-            <xsl:choose>
-              <xsl:when test="number(substring-before(xdmp:version(),'.')) le 9 or not($isJSModule)">
-                <xsl:value-of select='concat("&apos;use strict&apos;; var ext=require(&apos;",$location,"&apos;); ext.",@name,"(",$parms,");")'/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select='concat("&apos;use strict&apos;; import {",@name,"} from &apos;",$location,"&apos;; ",@name,"(",$parms,");")'/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <xsl:variable name="mapparms">
-            <xsl:for-each select="mapping:parameters/mapping:parameter">
-              <xsl:value-of select="'=&gt;map:with(&quot;'"/>
-              <xsl:value-of select="@name"/>
-              <xsl:value-of select="'&quot;,'"/>
-              <xsl:value-of select="concat('$',@name)"/>
-              <xsl:value-of select="')'"/>
-            </xsl:for-each>
-          </xsl:variable>
-          <xsl:variable name="map">
-            <xsl:value-of select="concat('map:map()',string-join($mapparms,''))"/>
-          </xsl:variable>
-          <axsl:value-of axdmp:dialect="1.0-ml" select='xdmp:javascript-eval("{$js}", {$map})'/>
-        </axsl:fallback>
-      </axdmp:javascript-call>
+      </xsl:variable>
+      <xsl:variable name="map">
+        <xsl:value-of select="concat('map:map()',string-join($mapparms,''))"/>
+      </xsl:variable>
+      <xsl:variable name="invokeLocation">
+        <xsl:value-of select="replace($location, '\.[ms]js$', '.invoke.mjs')"/>
+      </xsl:variable>
+      <axsl:sequence axdmp:dialect="1.0-ml" select='xdmp:invoke("{$invokeLocation}", map:entry("args", {$map}) =&gt; map:with("functionName", "{$name}"))'/>
     </axsl:function>
   </xsl:template>
 </xsl:stylesheet>

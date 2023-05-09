@@ -72,7 +72,7 @@ function describe(item) {
 }
 
 function tidyXML(xmlStr) {
-  return fn.head(fn.tail(xdmp.tidy(xmlStr, { inputXml: 'yes'})));
+  return fn.head(fn.tail(xdmp.tidy(xmlStr, {inputXml: 'yes'})));
 }
 
 function buildRelatedEntityMappingXML() {
@@ -103,7 +103,7 @@ let expectedCustomerTemplate = tidyXML(`
     </lastName>
     </m:optional>
   </Customer>
-</m:entity>`)
+</m:entity>`);
 
 //'index' value 0 implies mapping for the targetEntityType. 'index' > 1  mapping for relatedEntities.
 let actualCustomerTemplate = buildIndividualEntityTemplates(mappingStepObj, "Customer",  0, mappingStepObj.targetEntityType);
@@ -127,7 +127,7 @@ let expectedProductTemplate = tidyXML(`
     </productName>
     </m:optional>
   </Product>
-</m:entity>`)
+</m:entity>`);
 let actualProductTemplate = buildIndividualEntityTemplates(mappingStepObj.relatedEntityMappings[0], "Product", 1, mappingStepObj.relatedEntityMappings[0].targetEntityType);
 
 assertions.push(
@@ -160,12 +160,12 @@ let expectedOrderTemplate = tidyXML(`
     </lineItems>
     </m:for-each>
   </Order>
-</m:entity>`)
+</m:entity>`);
 let actualOrderTemplate = buildIndividualEntityTemplates(mappingStepObj.relatedEntityMappings[1], "Order", 2, mappingStepObj.relatedEntityMappings[1].targetEntityType);
 assertions.push(
   test.assertTrue(fn.deepEqual(expectedOrderTemplate, actualOrderTemplate),
     `Order entity template should build: ${describe(expectedOrderTemplate)} got: ${describe(actualOrderTemplate)}`),
-test.assertEqual("mapping2-Order", actualOrderTemplate.xpath("/m:entity/@name/string()", namespaces), "Related entity mapping is prefixed by 'mapping{num}-' where num is a number > 0")
+  test.assertEqual("mapping2-Order", actualOrderTemplate.xpath("/m:entity/@name/string()", namespaces), "Related entity mapping is prefixed by 'mapping{num}-' where num is a number > 0")
 );
 
 //The mapping for structured property should have the prefix as well
@@ -184,7 +184,7 @@ let lineItemsExpectedTemplate = tidyXML(`
     </m:optional>
   </LineItem>
 </m:entity>
-`)
+`);
 let actualLineItemsTemplate = buildIndividualEntityTemplates(mappingStepObj.relatedEntityMappings[1].properties.lineItems, "Order.lineItems", 2, mappingStepObj.relatedEntityMappings[1].targetEntityType);
 
 assertions.push(
@@ -195,7 +195,7 @@ assertions.push(
 
 let expectedFullTemplate = tidyXML(`
 <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
-   ${mappingLib.retrieveFunctionImports()}
+   <m:use-functions href='/data-hub/5/mapping-functions/core-functions.xml' />
    <m:param name="URI" />
    <m:entity name="mapping0-Customer">
       <Customer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

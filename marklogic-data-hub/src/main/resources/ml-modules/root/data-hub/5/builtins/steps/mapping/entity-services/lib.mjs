@@ -75,10 +75,9 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   for (let i=0; i< allEntityMap.length; i++) {
     entityTemplates += generateEntityTemplates(i, allEntityMap[i]).join('\n') + "\n";
   }
-
   let xml =
     `<m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
-      ${retrieveFunctionImports()}
+      ${retrieveFunctionImports(allEntityMap)}
       ${makeParameterElements(mappingStep, userParameterNames)}
       ${entityTemplates}
       <m:output>
@@ -317,13 +316,23 @@ function getTargetEntity(targetEntityType) {
   return entitiesByTargetType[targetEntityType];
 }
 
-function retrieveFunctionImports() {
+function retrieveFunctionImports(mappings = []) {
+  const stepAsString = JSON.stringify(mappings);
   let customImports = [];
   let shimURIs = hubUtils.invokeFunction(function() {
-    return cts.uris(null, ["concurrent", "score-zero"], cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
+    const uris = [];
+    const mappingFunctionLibs = cts.search(cts.collectionQuery('http://marklogic.com/entity-services/function-metadata'), ["score-zero", "unfaceted"], 0);
+    // filter out imports that aren't used by a mapping step
+    for (const mappingFunctionLib of mappingFunctionLibs) {
+      const functionNames = mappingFunctionLib.xpath("/m:function-defs/m:function-def/@name ! fn:string(.)", {m: "http://marklogic.com/entity-services/mapping"}).toArray();
+      if (functionNames.some(name => stepAsString.includes(name))) {
+        uris.push(xdmp.nodeUri(mappingFunctionLib));
+      }
+    }
+    return Sequence.from(uris);
   }, xdmp.databaseName(xdmp.modulesDatabase()));
   for (let uri of shimURIs) {
-    customImports.push(`<m:use-functions href="${fn.string(uri).replace(/\.xslt?$/, '')}"/>`);
+    customImports.push(`<m:use-functions href="${fn.string(uri)}"/>`);
   }
   return customImports.join('\n');
 }
@@ -458,7 +467,7 @@ function testMappings(mapping, validatedMappingsArray, sourceInstance, userParam
 
 function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap) {
   const namespaces = fetchNamespacesFromMappingStep(mapping);
-  const functionImports = retrieveFunctionImports();
+  const functionImports = retrieveFunctionImports(createMappingsArray(mapping));
   const mappingParameters = makeParameterElements(mapping, userParameterNames);
   let uriExpressionList = [];
   validatedMappingsArray.forEach((entityMapping, mappingIndex) => {
