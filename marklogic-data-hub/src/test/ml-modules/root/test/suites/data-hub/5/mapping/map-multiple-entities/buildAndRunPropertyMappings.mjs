@@ -4,7 +4,7 @@ const test = require("/test/test-helper.xqy");
 
 let assertions = [];
 
-function testValidJSONMapping(){
+function testValidJSONMapping() {
   let mapping = fn.head(cts.doc('/steps/mapping/mapCustomersJSON.step.json')).toObject();
   let result = esMappingLib.validateAndTestMapping(mapping, "/content/customerInfo.json");
 
@@ -45,7 +45,7 @@ function testValidJSONMapping(){
   ]);
 }
 
-function testValidXMLMapping(){
+function testValidXMLMapping() {
   let mapping = fn.head(cts.doc('/steps/mapping/mapCustomersXML.step.json')).toObject();
   let result = esMappingLib.validateAndTestMapping(mapping, "/content/customerInfo.xml");
 
@@ -83,7 +83,7 @@ function testValidXMLMapping(){
   ]);
 }
 
-function testMappingWithInvalidProperties(){
+function testMappingWithInvalidProperties() {
   let mapping = fn.head(cts.doc('/steps/mapping/mapCustomersWithInvalidExpressions.step.json')).toObject();
   let result = esMappingLib.validateAndTestMapping(mapping, "/content/customerInfo.json");
   const orderUriRegex = new RegExp('^\/Order\/[0-9a-z\-]*.json$');
@@ -94,7 +94,7 @@ function testMappingWithInvalidProperties(){
   ]);
 
   assertions = assertions.concat([
-    test.assertTrue(orderUriRegex.test(fn.string(result.relatedEntityMappings[0].uriExpression.output)), "The uri is " + fn.string(result.relatedEntityMappings[0].uriExpression.output)),
+    test.assertTrue(orderUriRegex.test(fn.string(result.relatedEntityMappings[0].uriExpression.output)), `The uri is ${fn.string(result.relatedEntityMappings[0].uriExpression.output)}. Result: ${xdmp.toJsonString(result)}`),
     test.assertEqual("Unable to find function: 'remove-dashes()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.relatedEntityMappings[0].properties.orderId.errorMessage)
 
   ]);
@@ -104,4 +104,4 @@ testValidJSONMapping();
 testValidXMLMapping();
 testMappingWithInvalidProperties();
 
-assertions
+assertions;

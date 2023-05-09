@@ -9,11 +9,11 @@ const es = require("/MarkLogic/entity-services/entity-services.xqy");
 const datahub = DataHubSingleton.instance();
 const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 function mlGenerateFunctionMetadata(uri) {
-  const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
+  const match = new RegExp('^(.*).(sjs|mjs|xqy)$').exec(uri);
 
   // The core.sjs is intended to be a pass through to support upgrades. Function Metadata is not generated so that there is no
   // overlap with the core mapping functions written in XQuery. Mappings may not behave correctly as a result
-  if (match !== null && uri !== "/data-hub/5/mapping-functions/core.mjs") {
+  if (!(match === null || uri === "/data-hub/5/mapping-functions/core.mjs" || uri === "/data-hub/5/mapping-functions/core.sjs" || uri.endsWith(".invoke.mjs"))) {
     const uriVal = match[1];
     const metadataXml = generateMetadata(uri);
 
@@ -33,9 +33,42 @@ function mlGenerateFunctionMetadata(uri) {
       // does not have this permission on it, which is expected to be on every other DHF module.
       xdmp.permission("rest-extension-user", "execute")
     ]);
-
-    let writeInfo = fn.head(xdmp.invokeFunction(() =>
-      hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE),
+    const contentType = xdmp.uriContentType(uri);
+    const isSjs = contentType === "application/vnd.marklogic-javascript";
+    const isMjs = contentType === "application/vnd.marklogic-js-module";
+    const isJavaScript = isSjs || isMjs;
+    let writeInfo = fn.head(xdmp.invokeFunction(() => {
+      if (isJavaScript) {
+        const functionNames = metadataXml.xpath("*:function-def/@name ! string(.)").toArray();
+        if (functionNames.length > 0) {
+          const importObject = `{${functionNames.join(", ")}}`;
+          const importLine = isMjs ? `import ${importObject} from "${uri}";`: `const ${importObject} = require("${uri}");\n`;
+          const functionCalls = [];
+          for (const functionDef of metadataXml.xpath("*:function-def")) {
+            const functionName = fn.string(functionDef.xpath("@name"));
+            const parameterCalls = functionDef.xpath("*:parameters/*:parameter").toArray().map(param => {
+              const name = fn.string(param.xpath("@name"));
+              return `args["${name}"]`;
+            }).join(", ");
+            functionCalls.push(`"${functionName}": (args) => {
+              return ${functionName}(${parameterCalls});
+            }`);
+          }
+          const javaScriptModule = `${importLine}
+          const call = {${functionCalls.join(", ")}};
+          
+          call[external.functionName](external.args);`;
+          const invokeUri = fn.replace(uri, "\\.[sm]js$", ".invoke.mjs");
+          hubUtils.writeDocument(
+            invokeUri,
+            new NodeBuilder().startDocument().addText(javaScriptModule).endDocument().toNode(),
+            permissions,
+            [],
+            datahub.config.MODULESDATABASE);
+        }
+      }
+      return hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
+    },
     {update: "true"}));
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       xqueryLib.functionMetadataPut(uriVal + ".xml");
@@ -80,7 +113,7 @@ function addMapNamespaceToMetadata(xml) {
       stack: e.stack
     });
   }
-  return metadata;
+  return fn.head(metadata);
 }
 
 xdmp.invokeFunction(() => {

@@ -2,18 +2,18 @@ import defaultMappingLib from "/data-hub/5/builtins/steps/mapping/default/lib.mj
 import mappingLib from "/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs";
 const test = require("/test/test-helper.xqy");
 const baseCustomerMapping = xdmp.toJSON({
-  "lang" : "zxx",
-  "name" : "CustomerXML-CustomerXMLMapping",
-  "description" : "",
-  "version" : 0,
-  "targetEntityType" : "Customer-0.0.1/Customer",
-  "sourceContext" : "/",
-  "sourceURI" : "",
+  "lang": "zxx",
+  "name": "CustomerXML-CustomerXMLMapping",
+  "description": "",
+  "version": 0,
+  "targetEntityType": "Customer-0.0.1/Customer",
+  "sourceContext": "/",
+  "sourceURI": "",
   "namespaces": {
     "ns2": "http://ns2",
     "ns1": "http://ns1"
   },
-  "properties" : {
+  "properties": {
     "ID": {
       "sourcedFrom": "string(@CustomerID)"
     },
@@ -23,7 +23,7 @@ const baseCustomerMapping = xdmp.toJSON({
     "Orders": {
       "targetEntityType": "Order-0.0.1/Order",
       "sourcedFrom": "orders/order",
-      "properties" : {
+      "properties": {
         "OrderID": {
           "sourcedFrom": "@id"
         }
@@ -32,7 +32,7 @@ const baseCustomerMapping = xdmp.toJSON({
     "Name": {
       "targetEntityType": "#/definitions/Name",
       "sourcedFrom": "customerName",
-      "properties" : {
+      "properties": {
         "FirstName": {
           "sourcedFrom": "ns1:givenName"
         },
@@ -55,22 +55,22 @@ const baseCustomerEntityModel = {
     "Customer": {
       "required": ["ID"],
       "properties": {
-        "ID": { "datatype": "string" },
-        "Date": { "datatype": "dateTime" },
+        "ID": {"datatype": "string"},
+        "Date": {"datatype": "dateTime"},
         "Name": {
           "$ref": "#definitions/Name"
         },
         "Orders": {
           "datatype": "array",
-          "items": { "$ref": "#definitions/Order" }
+          "items": {"$ref": "#definitions/Order"}
         }
       }
     },
     "Name": {
       "required": [],
       "properties": {
-        "FirstName": { "datatype": "string" },
-        "LastName": { "datatype": "string" }
+        "FirstName": {"datatype": "string"},
+        "LastName": {"datatype": "string"}
       }
     }
   }
@@ -85,7 +85,7 @@ const baseOrderEntityModel = {
     "Order": {
       "required": ["OrderID"],
       "properties": {
-        "OrderID": { "datatype": "string" }
+        "OrderID": {"datatype": "string"}
       }
     }
   }
@@ -97,14 +97,14 @@ function describe(item) {
 }
 
 function tidyXML(xmlStr) {
-  return fn.head(fn.tail(xdmp.tidy(xmlStr, { inputXml: 'yes'})));
+  return fn.head(fn.tail(xdmp.tidy(xmlStr, {inputXml: 'yes'})));
 }
 
 function applyDefOverrides(definitionName, baseModel, defOverrides) {
-  return xdmp.toJSON(Object.assign({},baseModel, {
-      "definitions": Object.assign({}, baseModel.definitions,{
-        [definitionName]: Object.assign({}, baseModel.definitions[definitionName],defOverrides)
-      })}));
+  return xdmp.toJSON(Object.assign({}, baseModel, {
+    "definitions": Object.assign({}, baseModel.definitions, {
+      [definitionName]: Object.assign({}, baseModel.definitions[definitionName], defOverrides)
+    })}));
 /*
   // This can only be used in ML 10. :(
   return xdmp.toJSON({
@@ -223,7 +223,7 @@ assertions.push(
 // Test entire build
 expectedTemplate = tidyXML(`
   <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
-    ${mappingLib.retrieveFunctionImports()}
+    ${mappingLib.retrieveFunctionImports(baseCustomerMapping.toObject())}
     <m:param name="URI"/>
     <m:entity name="mapping0-Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
