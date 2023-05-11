@@ -28,7 +28,7 @@ function main(contentSequence, options, stepExecutionContext) {
   let mapping = mappings[mappingKey];
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
-    if(isNaN(version)){
+    if (isNaN(version)) {
       throw Error('Mapping version ('+options.mapping.version+') is invalid.');
     }
     mapping = defaultLib.getMappingWithVersion(options.mapping.name, version);
@@ -40,14 +40,14 @@ function main(contentSequence, options, stepExecutionContext) {
     throw Error('You must specify a mapping name.');
   }
 
-  if(fn.empty(mapping)) {
+  if (fn.empty(mapping)) {
     let mapError = 'Could not find mapping: ' + options.mapping.name;
     if (options.mapping.version) {
       mapError += ' with version #' + options.mapping.version;
     }
     throw Error(mapError);
   }
-  let mappingURIforXML = fn.replace(xdmp.nodeUri(mapping), 'json$','xml');
+  let mappingURIforXML = fn.replace(xdmp.nodeUri(mapping), 'json$', 'xml');
   let targetEntityType = fn.string(mapping.root.targetEntityType);
   if (targetEntityType === '') {
     let errMsg = `Could not find targetEntityType in mapping: ${xdmp.nodeUri(mapping)}.`;
@@ -73,19 +73,18 @@ function main(contentSequence, options, stepExecutionContext) {
       let doc = content.value;
       const instance = lib.getSourceRecordForMapping(mappingStep, doc);
 
-      const mappingParams = Object.assign({}, {"URI":currentContentUri}, userMappingParameterMap);
+      const mappingParams = Object.assign({}, {"URI": currentContentUri}, userMappingParameterMap);
 
       // For not-yet-known reasons, catching this error and then simply rethrowing it causes the MappingTest JUnit class
       // to pass due to the "message" part of the JSON in the stepOutput containing the expected output when this is done.
       let arrayOfInstanceArrays;
       try {
-        arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});
+        arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format": outputFormat});
       } catch (e) {
         const errorMessage = mappingLibrary.extractFriendlyErrorMessage(e);
-        if(errorMessage){
+        if (errorMessage) {
           throw Error(errorMessage);
-        }
-        else{
+        } else {
           throw Error(e);
         }
       }
@@ -94,26 +93,25 @@ function main(contentSequence, options, stepExecutionContext) {
       let counter = 0;
       let contentResponse = [];
 
-      for(const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)){
+      for (const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)) {
         /* The first instance in the array is the target entity instance. 'permissions' and 'collections' for target instance
         are applied outside of main.sjs */
         let entityName ;
         let entityContext = {};
 
-        if(counter == 0){
+        if (counter == 0) {
           entityName = targetEntityName;
           entityContext = content.context;
-        }
-        else {
+        } else {
           let currentRelatedMapping = mappingStep.relatedEntityMappings[counter-1];
           entityName = lib.getEntityName(fn.string(currentRelatedMapping.targetEntityType));
           entityContext = createContextForRelatedEntityInstance(currentRelatedMapping, content);
         }
         const entityModel = entityModelMap[entityName];
 
-        for(const entityInstance of xdmp.arrayValues(instanceArray)){
+        for (const entityInstance of xdmp.arrayValues(instanceArray)) {
           let entityContent = {};
-          if(entityName == targetEntityName){
+          if (entityName == targetEntityName) {
             entityContent = Object.assign(entityContent, content);
           }
           entityContent["value"] = entityInstance.value;
@@ -145,11 +143,10 @@ function main(contentSequence, options, stepExecutionContext) {
   return outputContentArray.length == 1 ? outputContentArray[0] : outputContentArray;
 }
 
-function buildUri(entityInstance, entityName, outputFormat){
-  if (String(entityInstance.uri)){
+function buildUri(entityInstance, entityName, outputFormat) {
+  if (String(entityInstance.uri)) {
     return flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
-  }
-  else{
+  } else {
     httpUtils.throwBadRequest(`Unable to write mapped instance for entity model '${entityName}'; cause: The URI xpath expression for the mapping evaluates to null`);
   }
 }
@@ -162,7 +159,7 @@ function getUserMappingParameterMap(stepExecutionContext, contentSequence) {
   return {};
 }
 
-function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options){
+function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options) {
   // Must validate before building an envelope so that validaton errors can be added to the headers
   entityValidationLib.validateEntity(entityContent.value, options, entityModel.info);
 
@@ -174,16 +171,16 @@ function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContex
   return entityContent;
 }
 
-function createContextForRelatedEntityInstance(relatedEntityMapping, content){
+function createContextForRelatedEntityInstance(relatedEntityMapping, content) {
   let entityContext = {};
   let relatedEntityPermissions = fn.string(relatedEntityMapping.permissions);
   let relatedEntityCollections = relatedEntityMapping.collections;
-  if(relatedEntityMapping.additionalCollections){
+  if (relatedEntityMapping.additionalCollections) {
     relatedEntityCollections = relatedEntityCollections.concat(relatedEntityMapping.additionalCollections);
   }
   entityContext["permissions"] = hubUtils.parsePermissions(relatedEntityPermissions);
   entityContext["collections"] = relatedEntityCollections;
-  if(content.context && content.context.originalCollections){
+  if (content.context && content.context.originalCollections) {
     entityContext.originalCollections = content.context.originalCollections;
   }
   entityContext["useContextCollectionsOnly"] = true;
@@ -191,14 +188,14 @@ function createContextForRelatedEntityInstance(relatedEntityMapping, content){
 
 }
 
-function buildEntityModelMap(mappingStep){
+function buildEntityModelMap(mappingStep) {
   let targetEntityName = lib.getEntityName(mappingStep.targetEntityType);
   let targetEntityModel= lib.getTargetEntity(mappingStep.targetEntityType);
   entityModelMap[targetEntityName] = targetEntityModel;
-  if(mappingStep.relatedEntityMappings){
+  if (mappingStep.relatedEntityMappings) {
     mappingStep.relatedEntityMappings.forEach(relatedEntityMapping => {
       let relatedEntityName = lib.getEntityName(relatedEntityMapping.targetEntityType);
-      if(!entityModelMap[relatedEntityName]){
+      if (!entityModelMap[relatedEntityName]) {
         let relatedEntityModel= lib.getTargetEntity(relatedEntityMapping.targetEntityType);
         entityModelMap[relatedEntityName] = relatedEntityModel;
       }
@@ -261,7 +258,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
       nb.addNode(flowUtils.tripleToXml(flowUtils.normalizeTriple(triples)));
     }
     nb.endElement();
-    if(instance.nodeName === 'instance') {
+    if (instance.nodeName === 'instance') {
       nb.addNode(instance);
     } else {
       nb.startElement("instance", "http://marklogic.com/entity-services");

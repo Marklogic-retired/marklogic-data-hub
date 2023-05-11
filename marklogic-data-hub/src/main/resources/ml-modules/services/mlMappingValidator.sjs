@@ -15,12 +15,10 @@
  */
 'use strict';
 
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const esMappingLib = mjsProxy.requireMjsModule("/data-hub/5/builtins/steps/mapping/entity-services/lib.mjs");
-
 function post(context, params, input) {
   let uri = params["uri"];
-  return esMappingLib.validateAndTestMapping(input.toObject(), uri);
+  return xdmp.invoke("/data-hub/5/builtins/steps/mapping/entity-services/invokeValidateAndTestMapping.mjs", {
+    input, uri});
 }
 
 exports.POST =  post;

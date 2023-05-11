@@ -32,8 +32,8 @@ class ClearUserSchemasTest extends AbstractHubCoreTest {
             logger.info("'data-hub-operator' cannot delete user schemas");
         }
         runAsDataHubDeveloper();
-        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/entity-services/models"));
-        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/entity-services/models"));
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "ml-data-hub-xml-schema"));
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "ml-data-hub-xml-schema"));
 
         new DataHubImpl(getHubConfig()).clearUserSchemas();
 

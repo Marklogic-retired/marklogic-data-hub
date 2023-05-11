@@ -17,16 +17,8 @@
   "module-root": "/",
   "enabled": true,
   "recursive": true,
-  "task-priority": "higher",
+  "task-priority": "normal",
   "permission": [
-    {
-      "role-name": "%%mlFlowDeveloperRole%%",
-      "capability": "update"
-    },
-    {
-      "role-name": "%%mlFlowOperatorRole%%",
-      "capability": "read"
-    },
     {
       "role-name": "data-hub-developer",
       "capability": "update"

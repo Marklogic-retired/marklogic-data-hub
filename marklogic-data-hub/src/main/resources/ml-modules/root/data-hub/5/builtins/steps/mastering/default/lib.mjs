@@ -251,7 +251,7 @@ function jobReport(jobID, stepResponse, options, outputContentArray, reqOptPrope
     },
     collectionsInformation,
     matchProvenanceQuery: `// Run this against the '${options.targetDatabase || config.FINALDATABASE}' database with a privileged user
-    const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs');
+    import masteringLib from "/data-hub/5/builtins/steps/mastering/default/lib.mjs";
 
     let mergedAndNotifiedQuery = cts.andQuery([
       cts.fieldWordQuery('datahubCreatedByJob', '${jobID}'),

@@ -20,6 +20,6 @@ function buildPropertyPathReference(entityTypeId, propertyPath) {
   return cts.pathReference(`/customEnvelope/Person/${propertyPath}/value`);
 }
 
-module.exports = {
+export default {
   buildPropertyPathReference
 }

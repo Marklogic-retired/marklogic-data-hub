@@ -17,26 +17,26 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
-const ext = require("/data-hub/extensions/entity/build-property-path-reference.sjs");
+import ext from "/data-hub/extensions/entity/build-property-path-reference.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubEs from '/data-hub/5/impl/hub-es.mjs';
 
 const facetRangeSearchQuery = external.facetRangeSearchQuery;
 
-if(facetRangeSearchQuery == null) {
+if (facetRangeSearchQuery == null) {
   httpUtils.throwBadRequest("Request cannot be empty");
 }
 let queryObj = JSON.parse(facetRangeSearchQuery);
 
-if(queryObj.entityTypeId == null) {
+if (queryObj.entityTypeId == null) {
   httpUtils.throwBadRequest("Could not get min and max values, search query is missing entityTypeId property");
 }
 
-if(queryObj.propertyPath == null) {
+if (queryObj.propertyPath == null) {
   httpUtils.throwBadRequest("Could not get min and max values, search query is missing propertyPath property");
 }
 
-if(queryObj.referenceType == null) {
+if (queryObj.referenceType == null) {
   httpUtils.throwBadRequest("Could not get min and max values, search query is missing referenceType property");
 }
 
@@ -44,7 +44,7 @@ const entityTypeId = queryObj.entityTypeId;
 const propertyPath = queryObj.propertyPath;
 let referenceType = queryObj.referenceType;
 
-if(!referenceType || referenceType === "") {
+if (!referenceType || referenceType === "") {
   referenceType = hubEs.getPropertyReferenceType(entityTypeId, propertyPath);
 }
 
@@ -53,8 +53,8 @@ const query = referenceType === 'element' ?
   ext.buildPropertyPathReference(entityTypeId, propertyPath);
 
 const rangeValues = {
-  min : cts.min(query),
-  max : cts.max(query)
+  min: cts.min(query),
+  max: cts.max(query)
 };
 
-rangeValues
+rangeValues;

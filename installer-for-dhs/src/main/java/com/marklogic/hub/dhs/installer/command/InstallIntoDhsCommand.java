@@ -86,7 +86,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         commands.add(new DeployDatabaseFieldCommand());
 
         commands.add(new DeployTriggersCommand());
-        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
+        commands.add(new DeployHubTriggersCommand(hubConfig, hubConfig.getStagingTriggersDbName()));
 
         commands.add(new LoadHubModulesCommand(hubConfig));
         commands.add(new LoadHubArtifactsCommand(hubConfig));

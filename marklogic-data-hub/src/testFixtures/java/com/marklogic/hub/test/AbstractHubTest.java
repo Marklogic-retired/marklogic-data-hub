@@ -277,7 +277,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         } else {
             installUserArtifacts();
         }
-
+        getHubConfig().getAdminManager().waitForRestart();
         logger.info("Installed project from folder in classpath: " + testProjectDir + "; time: " +
             (System.currentTimeMillis() - start));
     }

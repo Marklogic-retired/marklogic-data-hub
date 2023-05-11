@@ -462,7 +462,7 @@ function writeModelToDatabases(entityName, model, databases, isDraft = false) {
     collection = consts.DRAFT_ENTITY_MODEL_COLLECTION;
     uriFunction = getDraftModelUri;
   } else {
-    collection = consts.ENTITY_MODEL_COLLECTION;
+    collection = [consts.ENTITY_MODEL_COLLECTION, "hub-artifact"];
     uriFunction = getModelUri;
   }
 

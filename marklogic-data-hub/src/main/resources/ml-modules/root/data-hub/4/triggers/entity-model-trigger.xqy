@@ -56,57 +56,10 @@ let $entity_tde_uris := xdmp:invoke-function(function() {
     cts:uri-match("/tde/" || $entity-title || "-*.tdex", (), cts:collection-query("ml-data-hub-tde"))
      }, map:entry("database", xdmp:schema-database()) => map:with("update","false"))
 
+(: build uber model with original info :)
+let $uber-model := entityTrigger:entity-validate($trgr:uri)
 return (
-  (: build uber model with original info :)
-  let $uber-model := entityTrigger:entity-validate($trgr:uri)
-  let $valid-entity-model := xdmp:to-json($uber-model)
-
-  let $schemas := es:schema-generate($uber-model)
-  let $schema-collection := "ml-data-hub-xml-schema"
-
-  let $update-mapping-transform :=
-    'const stepQuery = cts.andQuery([
-     cts.collectionQuery("http://marklogic.com/data-hub/steps"),
-     cts.jsonPropertyValueQuery(["targetEntityType", "targetEntity"], [entityName, targetEntityType]),
-     cts.jsonPropertyValueQuery("stepDefinitionType", "mapping")
-    ]);
-    let mappingStepUris = cts.search(stepQuery).toArray().map(step => fn.documentUri(step));
-    for (let uri of mappingStepUris) {
-      xdmp.invoke("/data-hub/5/triggers/mapping/mappingJSONtoXML.sjs", {uri})
-    }'
-
-  let $_ := xdmp:javascript-eval($update-mapping-transform,("entityName",$entity-title,"targetEntityType",$target-entity-type))
-
-  return (
-    xdmp:invoke-function(
-      function() {
-        if (fn:count($schemas) = 1) then
-          xdmp:document-insert(fn:replace($trgr:uri, "\.json$", ".xsd"), $schemas, $schema-permissions, $schema-collection)
-        else
-          for $schema in $schemas
-          let $uri :=
-            (: The last xs:element is expected to be the name of the entity type. Unfortunately there's not a more
-            reliable way to determine this from the output of es:schema-generate :)
-            let $entity-type-name := $schema/xs:element[fn:last()]/@name/fn:string()
-            return "/entities/" || $entity-type-name || ".entity.xsd"
-          return xdmp:document-insert($uri, $schema, $schema-permissions, $schema-collection),
-
-        xdmp:document-insert(
-          fn:replace($trgr:uri, "\.json$", ".schema.json"),
-          hent:json-schema-generate($entity-title, $uber-model),
-          $schema-permissions,
-          "ml-data-hub-json-schema"
-        ),
-
-        xdmp:document-insert(
-          $trgr:uri,
-          $valid-entity-model,
-          $schema-permissions,
-          $ENTITY-MODEL-COLLECTION
-        )
-      }, map:entry("database", xdmp:schema-database())
-    ),
-
+  $uber-model,
   (: Attempt to generate TDE :)
   if (local:should-write-tde($tde-uri) and hent:is-tde-generation-enabled($entity-def)) then
     try {
@@ -121,5 +74,4 @@ return (
       xdmp:log("Unable to generate valid TDE for entity: " || $trgr:uri || " (error: " || $err:description || ")")
     }
   else ()
-  )
 )

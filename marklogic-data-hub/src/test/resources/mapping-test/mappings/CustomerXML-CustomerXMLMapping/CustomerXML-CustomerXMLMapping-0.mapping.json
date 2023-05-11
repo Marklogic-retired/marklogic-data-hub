@@ -4,11 +4,11 @@
   "description" : "",
   "version" : 0,
   "targetEntityType" : "Customer-0.0.1/Customer",
-  "sourceContext" : "/",
+  "sourceContext" : "/envelope/instance",
   "sourceURI" : "",
   "properties" : {
     "id": {
-      "sourcedFrom": "@CustomerID"
+      "sourcedFrom": "Customer/@CustomerID"
     }
   }
 }

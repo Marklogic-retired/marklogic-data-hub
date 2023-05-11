@@ -17,5 +17,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "e
 for (const uri of cts.uris(null, ["concurrent", "score-zero", "eager"], cts.collectionQuery("http://marklogic.com/data-hub/mappings"))) {
   const doc = cts.doc(uri);
   // "Touch" the document to force the trigger to run
-  hubUtils.nodeReplace(cts.doc(uri), doc);
+  if (fn.exists(doc)) {
+    hubUtils.nodeReplace(doc, doc);
+  }
 }

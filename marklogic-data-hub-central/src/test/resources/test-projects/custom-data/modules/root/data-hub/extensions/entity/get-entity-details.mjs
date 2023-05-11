@@ -33,6 +33,6 @@ function getEntityDetails(doc) {
   return details
 }
 
-module.exports = {
+export default {
   getEntityDetails
 }

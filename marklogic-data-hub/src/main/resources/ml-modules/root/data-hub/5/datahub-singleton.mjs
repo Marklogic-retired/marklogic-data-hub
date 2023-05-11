@@ -10,5 +10,5 @@ function instance(config = {}) {
 }
 
 export default {
-    instance
+  instance
 };

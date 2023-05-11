@@ -34,6 +34,6 @@ function postProcessDatabaseProperties(databaseProperties) {
   return xdmp.toJSON(databaseProperties);
 }
 
-module.exports = {
+export default {
   postProcessDatabaseProperties
 }

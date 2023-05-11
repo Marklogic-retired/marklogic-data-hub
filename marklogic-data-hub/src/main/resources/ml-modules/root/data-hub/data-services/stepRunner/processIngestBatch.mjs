@@ -22,6 +22,15 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
 
+
+function assertQueryMode() {
+  if (fn.empty(xdmp.requestTimestamp())) {
+    throw new Error("Should be a query transaction!");
+  }
+}
+
+assertQueryMode();
+
 const input = external.input;
 const endpointConstants = fn.head(xdmp.fromJSON(external.endpointConstants));
 

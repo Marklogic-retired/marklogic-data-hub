@@ -16,10 +16,10 @@
 'use strict';
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import Perf from "/data-hub/5/impl/perf.mjs";
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 
-const cachedModules = {};
+const cachedModules = new Map();
 
 export default class StepDefinition {
 
@@ -68,16 +68,17 @@ export default class StepDefinition {
     return stepModule[funcName];
   }
 
+
   retrieveModuleLibrary(moduleLibraryURI) {
-    if (!cachedModules[moduleLibraryURI]) {
+    if (!cachedModules.has(moduleLibraryURI)) {
       let extension = moduleLibraryURI.split(".").pop();
       if (extension === "mjs") {
-        cachedModules[moduleLibraryURI] = mjsProxy.requireMjsModule(moduleLibraryURI);
+        cachedModules.set(moduleLibraryURI, hubUtils.requireMjsModule(moduleLibraryURI));
       } else {
-        cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+        cachedModules.set(moduleLibraryURI, require(moduleLibraryURI));
       }
     }
-    return cachedModules[moduleLibraryURI];
+    return cachedModules.get(moduleLibraryURI);
   }
 }
 

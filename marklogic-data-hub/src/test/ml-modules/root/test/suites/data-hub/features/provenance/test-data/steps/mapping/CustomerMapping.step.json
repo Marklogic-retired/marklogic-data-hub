@@ -1,6 +1,7 @@
 {
   "lang" : "zxx",
   "name" : "CustomerMapping",
+  "stepId": "CustomerMapping-mapping",
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
   "description" : "",

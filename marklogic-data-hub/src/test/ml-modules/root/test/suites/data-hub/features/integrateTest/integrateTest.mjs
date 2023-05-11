@@ -12,8 +12,8 @@ let assertions = [
 
 function invokeCreateArtifact(uri) {
   return fn.head(xdmp.invoke(
-    "/data-hub/5/triggers.core.artifact/createArtifact.mjs",
-      {uri:uri}
+    "/data-hub/triggers/core/artifacts/createArtifact.mjs",
+    {uri: uri}
   ));
 }
 

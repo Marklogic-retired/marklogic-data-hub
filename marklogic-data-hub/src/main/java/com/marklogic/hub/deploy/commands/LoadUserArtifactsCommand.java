@@ -201,7 +201,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             dir,
                             mappingDefModulesFinder,
                             mappingResourceToURI,
-                            buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings"),
+                            buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings", "hub-artifact"),
                             stagingMappingDocumentWriteSet,
                             finalMappingDocumentWriteSet
                         );
@@ -246,9 +246,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * @param collection
      * @return
      */
-    protected DocumentMetadataHandle buildMetadata(String permissions, String collection) {
+    protected DocumentMetadataHandle buildMetadata(String permissions, String... collection) {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
-        meta.getCollections().add(collection);
+        meta.getCollections().addAll(collection);
         documentPermissionsParser.parsePermissions(permissions, meta.getPermissions());
         return meta;
     }

@@ -14,8 +14,6 @@
  limitations under the License.
  */
 
-'use strict';
-
 /**
  * Invoked when DHF generates database properties based on entity models.
  *
@@ -26,6 +24,6 @@ function postProcessDatabaseProperties(databaseProperties) {
   return databaseProperties;
 }
 
-module.exports = {
+export default {
   postProcessDatabaseProperties
-}
+};

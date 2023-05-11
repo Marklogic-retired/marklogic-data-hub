@@ -6,10 +6,10 @@ const test = require("/test/test-helper.xqy");
 let assertions = [];
 
 
-let output = esMappingLib.buildMappingXML(cts.doc("/steps/mapping/MapDog.step.json"), []);
+let output = esMappingLib.buildMappingXML(cts.doc("/steps/mapping/MapDog.step.json").toObject(), []);
 
 assertions.push(test.assertTrue(fn.exists(output)));
-output = esMappingLib.buildMappingXML(cts.doc("/steps/mapping/MapCat.step.json"), []);
+output = esMappingLib.buildMappingXML(cts.doc("/steps/mapping/MapCat.step.json").toObject(), []);
 
 assertions.push(test.assertTrue(fn.exists(output)));
 

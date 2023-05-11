@@ -6,12 +6,7 @@ const cachedEntityByTitleAndVersion = {};
 function getModel(targetEntity, version = '0.0.1') {
   let cacheKey = `${targetEntity}:${version}`;
   if (!cachedEntityByTitleAndVersion[cacheKey]) {
-    cachedEntityByTitleAndVersion[cacheKey] = xdmp.eval("cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', '" + targetEntity + "',['case-insensitive']), cts.jsonPropertyValueQuery('version', '" + version + "',['case-insensitive'])]))]), [\"score-zero\", \"unfaceted\"])", null,
-      {
-        "database": xdmp.schemaDatabase(),
-        "ignoreAmps": true,
-        "update": 'false'
-      });
+    cachedEntityByTitleAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/entity-services/models'), cts.jsonPropertyScopeQuery('info', cts.andQuery([cts.jsonPropertyValueQuery('title', targetEntity, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version, ['case-insensitive'])]))]), ["score-zero", "unfaceted", "document"], 0));
   }
   return cachedEntityByTitleAndVersion[cacheKey];
 }
@@ -31,7 +26,7 @@ function getMappingWithVersion(mappingName, version) {
 function getSourceContext(sourceContext) {
   let connector = "/*:";
   let srcCtxArr;
-
+  sourceContext = String(sourceContext);
   sourceContext = sourceContext.startsWith("/") ? sourceContext.substring(1, sourceContext.length) : sourceContext;
   srcCtxArr = sourceContext.split("/");
   sourceContext = "";
@@ -108,13 +103,14 @@ function extractInstanceFromModel(model, modelName, mapping, content, provenance
       let connector = "";
       let xpathToSource;
       if (mappingProperties && mappingProperties.hasOwnProperty(property)) {
-        if (sourceContext[sourceContext.length-1] !== '/' &&  !mappingProperties[property].sourcedFrom.startsWith('/') && !mappingProperties[property].sourcedFrom.startsWith('[')) {
+        const sourcedFrom = String(mappingProperties[property].sourcedFrom);
+        if (sourceContext[sourceContext.length-1] !== '/' &&  !sourcedFrom.startsWith('/') && !sourcedFrom.startsWith('[')) {
           connector += '/';
         }
-        if (mappingProperties[property].sourcedFrom.indexOf(':') === -1) {
+        if (sourcedFrom.indexOf(':') === -1) {
           connector += '*:';
         }
-        xpathToSource = getPath(sourceContext, connector, mappingProperties[property].sourcedFrom);
+        xpathToSource = getPath(sourceContext, connector, sourcedFrom);
       } else {
         if (sourceContext[sourceContext.length - 1] !== '/' && !property.startsWith('/') && !property.startsWith('[')) {
           connector += '/';

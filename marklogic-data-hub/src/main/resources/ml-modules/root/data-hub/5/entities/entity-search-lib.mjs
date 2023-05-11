@@ -14,12 +14,13 @@
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
+import {getEntityModel} from "/data-hub/core/models/entities.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import prov from "/data-hub/5/impl/prov.mjs";
 import hubUtils from '/data-hub/5/impl/hub-utils.mjs';
+import ext from "/data-hub/extensions/entity/get-entity-details.mjs";
 
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance.xqy');
-const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
 const entitySearchXqy = require("/data-hub/5/entities/entity-search-helper.xqy");
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -553,7 +554,6 @@ function addDocumentMetadataToSearchResults(searchResponse) {
 }
 
 function getMatchStepFromModelName(entityName) {
-  const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
   const entityModel = getEntityModel(entityName);
   const primaryEntityTypeIRI = entityModel && entityModel.primaryEntityTypeIRI() !== entityName ? entityModel.primaryEntityTypeIRI() : entityName;
   const matchStep = fn.head(cts.search(cts.andQuery([cts.collectionQuery("http://marklogic.com/data-hub/steps/matching"), cts.jsonPropertyValueQuery("targetEntityType", [entityName, primaryEntityTypeIRI])]), ["score-zero", "unfaceted"], 0));
