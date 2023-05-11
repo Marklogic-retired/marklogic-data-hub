@@ -1,0 +1,22 @@
+{
+    "functionName": "processIngestBatch",
+    "endpoint": "/data-hub/data-services/stepRunner/processIngestBatch.mjs",
+    "desc": "Use this for cts query based steps that don't require a collector to return URIs",
+    "params": [
+        {
+          "name" : "session",
+          "datatype" : "session",
+          "nullable": true,
+          "multiple":false,
+          "desc" : "Holds the session object"
+        },
+        {"name":"endpointState",     "datatype":"jsonDocument", "multiple":false, "nullable":true},
+        {"name":"endpointConstants", "datatype":"jsonDocument", "multiple":false, "nullable":false}
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true,
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

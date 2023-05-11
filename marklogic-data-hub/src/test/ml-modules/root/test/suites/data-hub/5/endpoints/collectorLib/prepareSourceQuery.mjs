@@ -14,7 +14,7 @@ let sourceQuery = collectorLib.prepareSourceQuery(
 );
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, ['score-zero'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery('test')]), 0)",
+    "cts.uris(null, ['score-zero', 'concurrent'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery('test')]), 0)",
     sourceQuery,
     "When constrainSourceQueryToJob is set to true, and a jobId is set, then the sourceQuery is and'ed with a " +
     "query on datahubCreatedByJob (the contents of the step definition don't matter)"
@@ -30,7 +30,7 @@ options.sourceQuery = 'cts.collectionQuery("test")';
 sourceQuery = collectorLib.prepareSourceQuery(options, {});
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, ['score-zero'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery(\"test\")]), 0)",
+    "cts.uris(null, ['score-zero', 'concurrent'], cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery(\"test\")]), 0)",
     sourceQuery,
     "Just verifying that if the user's query has double quotes on it, things still work"
   )
@@ -45,7 +45,7 @@ sourceQuery = collectorLib.prepareSourceQuery(
 );
 assertions.push(
   test.assertEqual(
-    "cts.uris(null, ['score-zero'], cts.collectionQuery('test'), 0)",
+    "cts.uris(null, ['score-zero', 'concurrent'], cts.collectionQuery('test'), 0)",
     sourceQuery,
     "If no jobId is provided in the options, then the query won't be constrained by a job"
   )
@@ -53,15 +53,15 @@ assertions.push(
 
 // Query with features enabled
 const stepContext = {features: {
-    "temporal": { "enabled" : true, "collection": "koolTest"}
-  }};
+  "temporal": {"enabled": true, "collection": "koolTest"}
+}};
 sourceQuery = collectorLib.prepareSourceQuery(
   {
     sourceQuery: "cts.collectionQuery('test')"
   }, stepContext
 );
 assertions.push(
-  test.assertEqual("cts.uris(null, ['score-zero'], cts.andQuery([cts.collectionQuery('test'),cts.collectionQuery('latest')]), 0)", sourceQuery,
+  test.assertEqual("cts.uris(null, ['score-zero', 'concurrent'], cts.andQuery([cts.collectionQuery('test'),cts.collectionQuery('latest')]), 0)", sourceQuery,
     xdmp.toJsonString(sourceQuery))
 );
 
