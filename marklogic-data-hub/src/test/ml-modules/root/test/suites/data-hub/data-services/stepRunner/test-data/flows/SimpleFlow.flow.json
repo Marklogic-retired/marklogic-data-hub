@@ -1,0 +1,21 @@
+{
+  "name": "SimpleFlow",
+  "steps": {
+    "1": {
+      "name": "ingestData",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "fileLocations": {
+        "inputFilePath": "somewhere",
+        "inputFileType": "json"
+      }
+    },
+    "2":{
+      "stepId": "simpleMap-mapping"
+    }
+  }
+}

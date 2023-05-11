@@ -26,27 +26,32 @@ import entityLib from "/data-hub/5/impl/entity-lib.mjs";
  * @param stepDefinition
  * @return {string|*}
  */
-function prepareSourceQuery(combinedOptions, stepDefinition) {
+function prepareSourceQueryWithoutUris(combinedOptions, stepDefinition) {
   let sourceQuery = combinedOptions.sourceQuery;
-  let sourceQueryLimit = fn.number(combinedOptions.sourceQueryLimit);
 
   if (combinedOptions.sourceQueryIsScript) {
-    if(sourceQueryLimit){
-      hubUtils.warn( `Ignoring 'sourceQueryLimit' property as 'sourceQueryIsScript' is set to true`);
+    if (combinedOptions.sourceQueryLimit) {
+      hubUtils.warn(`Ignoring 'sourceQueryLimit' property as 'sourceQueryIsScript' is set to true`);
     }
     return fn.normalizeSpace(`${sourceQuery}`);
   }
 
-  if (true == combinedOptions.constrainSourceQueryToJob) {
+  if (true === combinedOptions.constrainSourceQueryToJob || "true" === combinedOptions.constrainSourceQueryToJob) {
     if (combinedOptions.jobId) {
       sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
     } else {
-      hubUtils.warn( `Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options`);
+      hubUtils.warn(`Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options`);
     }
-  } else {
-    sourceQuery = invokeFeatureMethods(stepDefinition, sourceQuery);
   }
+  return invokeFeatureMethods(stepDefinition, sourceQuery);
+}
 
+function prepareSourceQuery(combinedOptions, stepDefinition) {
+  let sourceQueryLimit = fn.number(combinedOptions.sourceQueryLimit);
+  let sourceQuery = prepareSourceQueryWithoutUris(combinedOptions, stepDefinition);
+  if (combinedOptions.sourceQueryIsScript) {
+    return sourceQuery;
+  }
   // This is retained only for backwards compatibility, though its existence is neither documented nor tested
   // prior to DHFPROD-4665. Prior to DHFPROD-3854, this did support cts.values, though it would not have worked had
   // someone tried to use that, since the rest of DHF was still expecting URIs to be returned, not values.
@@ -54,7 +59,7 @@ function prepareSourceQuery(combinedOptions, stepDefinition) {
     return sourceQuery;
   }
 
-  return sourceQueryLimit ? `cts.uris(null, ['limit=${sourceQueryLimit}', 'score-zero'], ${sourceQuery}, 0)` : `cts.uris(null, ['score-zero'], ${sourceQuery}, 0)`;
+  return sourceQueryLimit ? `cts.uris(null, ['limit=${sourceQueryLimit}', 'score-zero', 'concurrent'], ${sourceQuery}, 0)` : `cts.uris(null, ['score-zero', 'concurrent'], ${sourceQuery}, 0)`;
 }
 
 function invokeFeatureMethods(stepDefinition, sourceQuery) {
@@ -76,6 +81,7 @@ function invokeFeatureMethods(stepDefinition, sourceQuery) {
 }
 
 export default {
-  prepareSourceQuery
+  prepareSourceQuery,
+  prepareSourceQueryWithoutUris
 };
 
