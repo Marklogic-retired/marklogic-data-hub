@@ -2,6 +2,7 @@ import consts from "/data-hub/5/impl/consts.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
+import {getEntityModel} from "/data-hub/core/models/entities.mjs";
 
 const groupQueries = common.groupQueries;
 const optimizeCtsQueries = common.optimizeCtsQueries;
@@ -77,7 +78,6 @@ export class Matchable {
     const targetEntityType = this.matchStep.targetEntityType;
     this._genericModel = new common.GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
     if (targetEntityType) {
-      const getEntityModel = hubUtils.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
     }
     if (!this._model) {

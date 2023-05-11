@@ -15,10 +15,23 @@
  */
 'use strict';
 
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
 const urisOperatedOnByTransaction = {};
+const cachedModules = new Map();
 
-
+function requireMjsModule(modulePath) {
+  if (!cachedModules.has(modulePath)) {
+    return requireMjsModules([modulePath])[0];
+  }
+  return cachedModules.get(modulePath);
+}
+function requireMjsModules(...modulePaths) {
+  const result = fn.head(evalModule(`${modulePaths.map((mp, i) => `import mjsMod${i} from "${mp}";`).join("\n")}
+[${modulePaths.map((mp, i) => `mjsMod${i}`).join(", ")}];`));
+  for (let i = 0; i < modulePaths.length; i++) {
+    cachedModules.set(modulePaths[i], result[i]);
+  }
+  return result;
+}
 function capitalize(str) {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 }
@@ -259,18 +272,16 @@ function getErrorMessage(e) {
   return errorMessage;
 }
 
-const cachedModules = {};
-
 function requireFunction(modulePath, functionName) {
-  if (!cachedModules[modulePath]) {
+  if (!cachedModules.has(modulePath)) {
     if (fn.endsWith(modulePath, ".mjs")) {
-      cachedModules[modulePath] = mjsProxy.requireMjsModule(modulePath);
+      cachedModules.set(modulePath, requireMjsModule(modulePath));
     } else {
       xdmp.eval(`const lib = require("${modulePath}");`, {}, {staticCheck: true});
-      cachedModules[modulePath] = require(modulePath);
+      cachedModules.set(modulePath, require(modulePath));
     }
   }
-  const fun = cachedModules[modulePath][functionName];
+  const fun = cachedModules.get(modulePath)[functionName];
   if (!fun) {
     fn.error(xs.QName("XDMP-UNDFUN"), "XDMP-UNDFUN", [`${functionName}()`]);
   }
@@ -337,6 +348,8 @@ export default {
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
   requireFunction: import.meta.amp(requireFunction),
+  requireMjsModule,
+  requireMjsModules,
   warn,
   writeDocument,
   isNode,

@@ -13,11 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-'use strict';
-
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 const es = require('/MarkLogic/entity-services/entity-services');
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const hubUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-utils.mjs");
 
 /**
  * Invoked when DHF needs to get the entity type name and entity instance properties from a document, where the
@@ -40,7 +37,7 @@ function getEntityDetails(doc) {
         return {
           entityName: keys[0],
           properties: jsonInstance[keys[0]]
-        }
+        };
       }
     }
   }
@@ -88,7 +85,7 @@ function getEntityDetailsFromInstanceInfo(jsonInstance) {
     };
   } else {
     const keys = Object.keys(jsonInstance);
-    if (keys.length == 2) {
+    if (keys.length === 2) {
       const otherKey = keys.find(val => val !== "info");
       if (otherKey) {
         return {
@@ -102,6 +99,6 @@ function getEntityDetailsFromInstanceInfo(jsonInstance) {
   return null;
 }
 
-module.exports = {
+export default {
   getEntityDetails
-}
+};

@@ -1,13 +1,9 @@
 package com.marklogic.hub.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.dataservices.OutputEndpoint;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.client.impl.NodeConverter;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -44,7 +40,12 @@ public class MappingTest extends AbstractHubCoreTest {
 
     @Test
     public void testMappingStep() {
+        // Updating to use entity-services-mapping instead of default-mapping
+        getHubProject().updateStepDefinitionTypeForInlineMappingSteps(new FlowManagerImpl(getHubConfig()));
+        installUserArtifacts();
+
         runAsDataHubOperator();
+
         RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);

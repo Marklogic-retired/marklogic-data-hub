@@ -4,6 +4,7 @@
 import common from "/data-hub/5/mastering/common.mjs";
 import hubUtil from '/data-hub/5/impl/hub-utils.mjs';
 import consts from "/data-hub/5/impl/consts.mjs";
+import {getEntityModel} from "/data-hub/core/models/entities.mjs";
 
 const sem = require("/MarkLogic/semantics.xqy");
 
@@ -30,7 +31,6 @@ export default class Mergeable {
     }
     const targetEntityType = this.mergeStep.targetEntityType;
     if (targetEntityType) {
-      const getEntityModel = hubUtil.requireFunction("/data-hub/core/models/entities.sjs", "getEntityModel");
       this._model = getEntityModel(targetEntityType);
       if (this._model && this._model.primaryEntityTypeIRI() !== targetEntityType) {
         this.mergeStep.targetEntityType = this._model.primaryEntityTypeIRI();
@@ -131,7 +131,7 @@ export default class Mergeable {
     for (const topHeader of distinctHeaderNodeNames) {
       const nameString = String(topHeader);
       const prefix = fn.contains(nameString, ":") ? nameString.substring(0, nameString.indexOf(":")): "";
-      const mergeRuleDefinition = new MergeRuleDefinition(Object.assign({documentXPath: `/(es:envelope|envelope)/(es:headers|headers)/${nameString}`, namespaces: { es: "http://marklogic.com/entity-services", [prefix]: fn.namespaceUriFromQName(topHeader)}}, defaultRule), this);
+      const mergeRuleDefinition = new MergeRuleDefinition(Object.assign({documentXPath: `/(es:envelope|envelope)/(es:headers|headers)/${nameString}`, namespaces: {es: "http://marklogic.com/entity-services", [prefix]: fn.namespaceUriFromQName(topHeader)}}, defaultRule), this);
       const mergedProperties = mergeRuleDefinition.mergeProperties(contentObjects);
       const mergeXPathInformation = mergeRuleDefinition.xpathInformation();
       properties.push([mergeXPathInformation, mergedProperties]);
@@ -151,10 +151,10 @@ export default class Mergeable {
           } catch (e) {
             return Sequence.from([]);
           }
-      }))
+        }))
       ];
       const uris = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.uri);
-      const tdeTriples = cts.triples(emptyArray, tripleQueryPredicates, emptyArray, ["=","=","="], ctsTriplesOptions, cts.documentQuery(uris));
+      const tdeTriples = cts.triples(emptyArray, tripleQueryPredicates, emptyArray, ["=", "=", "="], ctsTriplesOptions, cts.documentQuery(uris));
       for (const tdeTriple of tdeTriples) {
         if (!fn.string(sem.tripleObject(tdeTriple)).startsWith("http://marklogic.com/view/")) {
           if (fn.string(sem.triplePredicate(tdeTriple)) === fn.string(rdfsIsDefinedBy)) {
@@ -226,9 +226,9 @@ export default class Mergeable {
       value: nodeBuilder.toNode(),
       context: {
         collections: [],
-        permissions: [xdmp.permission("data-hub-common","read"),xdmp.permission("data-hub-common","update")]
+        permissions: [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-common", "update")]
       }
-    }
+    };
   }
 
   /*
@@ -245,13 +245,13 @@ export default class Mergeable {
     const username = xdmp.getCurrentUser();
     const newEntityId = `${prefix}${newUri}`;
     const activityId = `${prefix}${action}-${newUri}-${xdmp.request()}`;
-    const userId = `${prefix}user-${username}`
+    const userId = `${prefix}user-${username}`;
     const nodeBuilder = new NodeBuilder();
     nodeBuilder
       .startElement("prov:document", "http://www.w3.org/ns/prov#")
-      .addAttribute("xmlns:xsd","http://www.w3.org/2001/XMLSchema")
-      .addAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance")
-      .addAttribute("xmlns:foaf","http://xmlns.com/foaf/0.1/")
+      .addAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema")
+      .addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+      .addAttribute("xmlns:foaf", "http://xmlns.com/foaf/0.1/")
       .startElement("auditing:new-uri", "http://marklogic.com/smart-mastering/auditing")
       .addText(newUri)
       .endElement();
@@ -261,7 +261,7 @@ export default class Mergeable {
       .addText(newEntityId)
       .endElement()
       .startElement("prov:type", "http://www.w3.org/ns/prov#")
-      .addAttribute("xsi:type","xsd:string")
+      .addAttribute("xsi:type", "xsd:string")
       .addText(`result record for ${action}`)
       .endElement()
       .startElement("prov:label", "http://www.w3.org/ns/prov#")
@@ -280,7 +280,7 @@ export default class Mergeable {
         .addText(contribId)
         .endElement()
         .startElement("prov:type", "http://www.w3.org/ns/prov#")
-        .addAttribute("xsi:type","xsd:string")
+        .addAttribute("xsi:type", "xsd:string")
         .addText(`contributing record for ${action}`)
         .endElement()
         .startElement("prov:label", "http://www.w3.org/ns/prov#")
@@ -304,7 +304,7 @@ export default class Mergeable {
       .startElement("prov:agent", "http://www.w3.org/ns/prov#")
       .addAttribute("prov:id", userId)
       .startElement("prov:type", "http://www.w3.org/ns/prov#")
-      .addAttribute("xsi:type","xsd:QName")
+      .addAttribute("xsi:type", "xsd:QName")
       .addText("foaf:OnlineAccount")
       .endElement()
       .startElement("foaf:accountName", "http://xmlns.com/foaf/0.1/")
@@ -352,9 +352,9 @@ export default class Mergeable {
       value: nodeBuilder.toNode(),
       context: {
         collections: [],
-        permissions: [xdmp.permission("data-hub-common","read"),xdmp.permission("data-hub-common","update")]
+        permissions: [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-common", "update")]
       }
-    }
+    };
   }
 
   /*
@@ -369,22 +369,22 @@ export default class Mergeable {
     const permissions = this.mergeStep.permissions;
     let eventName = null;
     switch (actionDetails.action) {
-      case "merge" :
-        eventName = "onMerge";
-        break;
-      case "notify":
-        eventName = "onNotification";
-        break;
-      case "archive":
-        eventName = "onArchive";
-        break;
-      case "audit":
-        eventName = "onAuditing";
-        break;
-      case "no-action":
-        eventName = "onNoMatch";
-        break;
-      default:
+    case "merge" :
+      eventName = "onMerge";
+      break;
+    case "notify":
+      eventName = "onNotification";
+      break;
+    case "archive":
+      eventName = "onArchive";
+      break;
+    case "audit":
+      eventName = "onAuditing";
+      break;
+    case "no-action":
+      eventName = "onNoMatch";
+      break;
+    default:
     }
     // set collections
     if (targetCollections && targetCollections[eventName] && targetCollections[eventName].add) {
@@ -433,25 +433,25 @@ export default class Mergeable {
   }
 
   mergeJsonDocuments(documentNodes, properties, id, triples) {
-    const newMergeDocument = { envelope: {
-        headers: {
-          id,
-          merges: [],
-          "merge-options": {
-            lang: "zxx",
-            value: this.mergeStepToCompressedHex()
-          }
-        },
-        instance: {},
-        triples
-      }
+    const newMergeDocument = {envelope: {
+      headers: {
+        id,
+        merges: [],
+        "merge-options": {
+          lang: "zxx",
+          value: this.mergeStepToCompressedHex()
+        }
+      },
+      instance: {},
+      triples
+    }
     };
     const merges = newMergeDocument.envelope.headers.merges;
     for (const property of properties) {
       const [propertyXPathInfo, propertyOutput] = property;
       if (fn.exists(propertyOutput)) {
         const instanceXPath = String(propertyXPathInfo.documentXPath);
-        const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath,propertyXPathInfo.namespaces);
+        const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath, propertyXPathInfo.namespaces);
         let placeInInstance = newMergeDocument, lastPropertyName = "", pathCount = 0;
         for (const propertyDefinition of propertyDefinitions) {
           lastPropertyName = propertyDefinition.localname;
@@ -514,7 +514,7 @@ export default class Mergeable {
 
     }
     const merges = [];
-    const sortedProperties = properties.sort((a,b)=> a[0].documentXPath.localeCompare(b[0].documentXPath));
+    const sortedProperties = properties.sort((a, b) => a[0].documentXPath.localeCompare(b[0].documentXPath));
     this.mergePropertiesIntoXML(nodeBuilder, sortedProperties, /^\/(\(es:envelope\|envelope\)|(es\:)?envelope)\/(\(es:instance\|instance\)|(es\:)?instance)\//, merges);
     // end instance
     nodeBuilder.endElement();
@@ -562,7 +562,7 @@ export default class Mergeable {
       const [propertyXPathInfo, propertyOutput] = property;
       if (fn.exists(propertyOutput)) {
         const instanceXPath = propertyXPathInfo.documentXPath.replace(prefixRegex, "");
-        const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath,propertyXPathInfo.namespaces);
+        const propertyDefinitions = common.propertyDefinitionsFromXPath(instanceXPath, propertyXPathInfo.namespaces);
         // don't want the last property definition to be included as it will come as part of addNode.
         propertyDefinitions.pop();
         // close out elements we've moved on from
@@ -612,7 +612,7 @@ export default class Mergeable {
       if (existingEntry) {
         existingEntry.contributions.push(instanceXPath);
       } else {
-        merges.push({ "document-uri": fn.string(documentUri), "last-merge": currentDateTime, name: fn.string(name), contributions: [ instanceXPath ]});
+        merges.push({"document-uri": fn.string(documentUri), "last-merge": currentDateTime, name: fn.string(name), contributions: [instanceXPath]});
       }
     }
   }
@@ -671,11 +671,11 @@ class MergeRuleDefinition {
       const dateTime = this.mergeable.lastTimestamp(documentNode) || fn.string(fn.currentDateTime());
       const datahubSourceNamesFromXML = fn.distinctValues(documentNode.xpath("./*:envelope/*:headers//(*:datahubSourceName|*:sources/*:name)"));
       const name = fn.exists(datahubSourceNamesFromXML) ? fn.head(datahubSourceNamesFromXML): xdmp.nodeMetadataValue(documentNode, "datahubSourceName");
-      let source = { documentUri, name, dateTime };
+      let source = {documentUri, name, dateTime};
       if (convertToNode) {
         source = new NodeBuilder().addNode(source).toNode();
       }
-      const properties = []
+      const properties = [];
       for (const nodeValue of nodeValues) {
         properties.push({
           sources: source,
@@ -684,7 +684,7 @@ class MergeRuleDefinition {
       }
       return properties;
     }).filter((properties) => properties)
-      .reduce((prev, curr) => prev.concat(curr), [])
+      .reduce((prev, curr) => prev.concat(curr), []);
     if (!propertiesByDocument.length) {
       return [];
     }

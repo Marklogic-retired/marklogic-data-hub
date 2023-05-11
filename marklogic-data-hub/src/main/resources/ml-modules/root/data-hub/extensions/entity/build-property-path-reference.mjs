@@ -13,10 +13,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
- 'use strict';
-
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const hubEs = mjsProxy.requireMjsModule("/data-hub/5/impl/hub-es.mjs");
+import hubEs from "/data-hub/5/impl/hub-es.mjs";
 
 /**
  * Invoked when DHF needs to build a path reference based on a given entity type and property path; the path reference
@@ -32,6 +29,6 @@ function buildPropertyPathReference(entityTypeId, propertyPath) {
   return cts.pathReference(result.pathExpression, null, result.namespaces);
 }
 
-module.exports = {
+export default {
   buildPropertyPathReference
-}
+};

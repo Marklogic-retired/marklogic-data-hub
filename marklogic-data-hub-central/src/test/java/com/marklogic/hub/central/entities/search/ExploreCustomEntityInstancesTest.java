@@ -208,7 +208,7 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         JsonNode range = entitySearchController.getFacetValuesRange(input, "final");
         String message = "Verifying that the endpoint for getting a range of values allows for a user to override " +
             "the cts.pathReference generation; by default, DHF will assume an ES envelope is used and will construct a " +
-            "property path based on that; the build-property-path-reference.sjs extension point allows a user to " +
+            "property path based on that; the build-property-path-reference.mjs extension point allows a user to " +
             "override how the path reference is constructed so it can fit a custom data format; range: " + range.toPrettyString();
         assertEquals(1990, range.get("min").asInt(), message);
         assertEquals(1991, range.get("max").asInt(), message);

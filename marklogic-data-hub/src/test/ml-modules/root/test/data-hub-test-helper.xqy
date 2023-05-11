@@ -18,7 +18,6 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("flows", "http://marklogic.com/data-hub/flow"),
   map:entry("entities", "http://marklogic.com/entity-services/models"),
   map:entry("concepts", "http://marklogic.com/data-hub/concept"),
-  map:entry("mappings", "http://marklogic.com/data-hub/mappings"),
   map:entry("steps/ingestion", ("http://marklogic.com/data-hub/steps/ingestion","http://marklogic.com/data-hub/steps")),
   map:entry("steps/mapping", ("http://marklogic.com/data-hub/mappings","http://marklogic.com/data-hub/steps/mapping","http://marklogic.com/data-hub/steps")),
   map:entry("steps/matching", ("http://marklogic.com/data-hub/steps/matching","http://marklogic.com/data-hub/steps")),
@@ -120,7 +119,8 @@ declare private function load-artifacts(
       (: Place entity instances in the correct collection for their instance :)
       if ($artifact-type eq "content") then
         $content/*:envelope/*:instance/*:info/*:title ! fn:string(.)
-      else ()
+      else
+        "hub-artifact"
     )
   (: TODO Should really use artifact library for this :)
   let $_ := invoke-in-staging-and-final(function() {

@@ -45,7 +45,7 @@ declare function extraction-template-generate(
   let $local-references :=
     if (count($entity-type-names)=1) then ()
     else local-references($model)
-  let $top-entity := top-entity($model, false())
+  let $top-entity := top-entity($model, true())
      let $top-entity-type := $model=>map:get("definitions")=>map:get($top-entity)
      let $top-primary-key-name := map:get($top-entity-type, "primaryKey")
       let $namespace-prefix := $top-entity-type=>map:get("namespacePrefix")

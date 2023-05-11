@@ -1,6 +1,7 @@
 'use strict';
 
-import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import config from "/com.marklogic.hub/config.mjs";
+import consts from "/data-hub/5/impl/consts.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
@@ -8,11 +9,10 @@ import mappingLib from "/data-hub/5/mapping/mapping-lib.mjs";
 import mappingStepLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
-const datahub = DataHubSingleton.instance();
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
-const infoEvent = datahub.consts.TRACE_MAPPING;
+const infoEvent = consts.TRACE_MAPPING;
 const infoEnabled = xdmp.traceEnabled(infoEvent);
-const debugEvent = datahub.consts.TRACE_MAPPING_DEBUG;
+const debugEvent = consts.TRACE_MAPPING_DEBUG;
 const debugEnabled = xdmp.traceEnabled(debugEvent);
 
 let xqueryLib = null;
@@ -21,15 +21,16 @@ const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', '
 const entitiesByTargetType = {};
 
 const xsltPermissions = [
-  xdmp.permission(datahub.config.FLOWOPERATORROLE, 'execute'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'execute'),
-  xdmp.permission(datahub.config.FLOWOPERATORROLE, 'read'),
-  xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'read'),
-  xdmp.permission("data-hub-common", 'execute'),
-  xdmp.permission("data-hub-common", 'read'),
-  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE, 'execute'),
-  xdmp.permission(datahub.consts.DATA_HUB_DEVELOPER_ROLE, 'read'),
-  xdmp.permission("data-hub-module-reader", "execute"),
+  xdmp.permission(consts.DATA_HUB_COMMON_ROLE, 'execute'),
+  xdmp.permission(consts.DATA_HUB_COMMON_ROLE, 'read'),
+  xdmp.permission(consts.DATA_HUB_DEVELOPER_ROLE, 'execute'),
+  xdmp.permission(consts.DATA_HUB_DEVELOPER_ROLE, 'read'),
+  xdmp.permission(consts.DATA_HUB_DEVELOPER_ROLE, 'update'),
+  xdmp.permission(consts.DATA_HUB_MAPPING_READ_ROLE, 'read'),
+  xdmp.permission(consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'),
+  xdmp.permission(consts.DATA_HUB_MODULE_READER_ROLE, 'read'),
+  xdmp.permission(consts.DATA_HUB_MODULE_WRITER_ROLE, 'update'),
+  xdmp.permission(consts.DATA_HUB_MODULE_READER_ROLE, "execute"),
   // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
   // actual problem is that a mapping will fail if the XML or XSLT representation of a mapping does not have this
   // permission on it, which is expected to be on every other DHF module
@@ -42,16 +43,15 @@ const reservedNamespaces = ['m', 'map'];
  * Build an XML mapping template in the http://marklogic.com/entity-services/mapping namespace, which can then be the
  * input to the Entity Services mappingPut function that generates an XSLT template.
  *
- * @param mappingStepDocument expected to be a document-node and not an object
+ * @param mappingStep expected to be an object
  * @param userParameterNames
  * @return {*}
  */
-function buildMappingXML(mappingStepDocument, userParameterNames) {
+function buildMappingXML(mappingStep, userParameterNames) {
   if (debugEnabled) {
     hubUtils.hubTrace(debugEvent, 'Building mapping XML');
   }
 
-  const mappingStep = mappingStepDocument.toObject();
   let allEntityMap = [];
   let targetEntityMapping = {};
 
@@ -176,20 +176,24 @@ function generateEntityTemplates(index, mappingObject) {
   const parentEntity = getTargetEntity(fn.string(mappingObject.targetEntityType));
 
   // For each mapping, build an m:entity template
-  const entityTemplates = mappings.map(objectPropertyMapping => {
+  return mappings.map(objectPropertyMapping => {
     const propertyPath = Object.keys(objectPropertyMapping)[0];
     const mapping = objectPropertyMapping[propertyPath];
     if (debugEnabled) {
       hubUtils.hubTrace(debugEvent, `Generating template for propertyPath '${propertyPath}' and entityTypeId '${mapping.targetEntityType}'`);
     }
-    const model = (mapping.targetEntityType.startsWith("#/definitions/")) ? parentEntity : getTargetEntity(fn.string(mapping.targetEntityType));
+    let model;
+    if (mapping.targetEntityType.startsWith("#/definitions/")) {
+      model = parentEntity;
+    } else {
+      model = getTargetEntity(fn.string(mapping.targetEntityType));
+    }
     const template = buildEntityTemplate(mapping, model, propertyPath, index);
     if (debugEnabled) {
       hubUtils.hubTrace(debugEvent, `Generated template: ${template}`);
     }
     return template;
   });
-  return entityTemplates;
 }
 
 /**
@@ -222,14 +226,13 @@ function buildMapProperties(mapping, model, propertyPath, index) {
   for (let prop in mapProperties) {
     if (mapProperties.hasOwnProperty(prop)) {
       if (!entityProperties.hasOwnProperty(prop)) {
-        datahub.debug.log({message: "The property '" + prop + "' is not defined by the entity model", type: "warn"});
+        hubUtils.hubTrace(debugEvent, `The property '${prop}' is not defined by the entity model`);
         continue;
       }
 
       let mapProperty = mapProperties[prop];
       let sourcedFrom = escapeXML(mapProperty.sourcedFrom);
-      if (sourcedFrom == null || sourcedFrom == undefined || sourcedFrom == "") {
-        datahub.debug.log({message: 'sourcedFrom not specified for mapping property with name "' + prop + '"; will not map', type: 'warn'});
+      if (sourcedFrom === null || sourcedFrom === undefined || sourcedFrom === "") {
         continue;
       }
 
@@ -308,7 +311,6 @@ function getTargetEntity(targetEntityType) {
       entityModel = entityModel.toObject();
     }
     if (!entityModel) {
-      datahub.debug.log({message: 'Could not find target entity type: ' + targetEntityType, type: 'error'});
       throw Error('Could not find target entity type: ' + targetEntityType);
     }
     entitiesByTargetType[targetEntityType] = entityModel;
@@ -405,15 +407,15 @@ function validateAndTestMapping(mapping, uri) {
   let sourceDocument;
   //modify the document instance with the properly updated one if a pre-step interceptor was used
   let newDocumentIsLoad = false;
-  if(mapping.name){
+  if (mapping.name) {
     const updatedDocument = invokeGetDocument(mapping.name, uri);
     if (updatedDocument && updatedDocument.format === "JSON") {
-        sourceDocument = cts.doc(uri).toObject();
-        if(sourceDocument){
-          sourceDocument = updatedDocument.data;
-          sourceDocument = xdmp.toJSON(sourceDocument);
-          newDocumentIsLoad = true;
-        }
+      sourceDocument = cts.doc(uri).toObject();
+      if (sourceDocument) {
+        sourceDocument = updatedDocument.data;
+        sourceDocument = xdmp.toJSON(sourceDocument);
+        newDocumentIsLoad = true;
+      }
     }
   }
   if (!newDocumentIsLoad) {
@@ -447,12 +449,12 @@ function validateAndTestMapping(mapping, uri) {
 
 function invokeGetDocument(stepName, uri) {
   return fn.head(xdmp.invoke(
-      "/data-hub/data-services/mapping/getDocument.mjs",
-      {stepName: stepName, uri: uri}
+    "/data-hub/data-services/mapping/getDocument.mjs",
+    {stepName: stepName, uri: uri}
   ));
 }
 
-function validateMappings(mappingsArray, userParameterNames){
+function validateMappings(mappingsArray, userParameterNames) {
   const validatedMappingsArray = mappingsArray.map(mappingToTest => {
     return validateMapping(mappingToTest, userParameterNames);
   });
@@ -645,8 +647,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
   };
 
   try {
-    const mappingDocument = fn.head(xdmp.unquote(xdmp.quote(mapping)));
-    const xmlMapping = buildMappingXML(mappingDocument, userParameterNames);
+    const xmlMapping = buildMappingXML(mapping, userParameterNames);
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
@@ -723,8 +724,7 @@ function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
 //es.nodeMapToCanonical can be used after server bug #53497 is fixed
 function testMappingExpression(mapping, propertyName, sourceInstance, userParameterNames, parameterMap) {
   let resp = {};
-  const mappingDocument = fn.head(xdmp.unquote(xdmp.quote(mapping)));
-  const xmlMapping = buildMappingXML(mappingDocument, userParameterNames);
+  const xmlMapping = buildMappingXML(mapping, userParameterNames);
 
   try {
     /*
@@ -828,7 +828,7 @@ function getMarkLogicMappingFunctions() {
       output.push(value);
     }
     return output;
-  }, datahub.config.MODULESDATABASE));
+  }, config.MODULESDATABASE));
 }
 
 function getXpathMappingFunctions() {

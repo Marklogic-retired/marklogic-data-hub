@@ -138,7 +138,7 @@ function constructSingleTemplateWithOverrides(customerDefOverrides, orderDefOver
 
 function constructEntireNestedTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
   const updatedEntities = applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides);
-  return tidyXML(xdmp.quote(mappingLib.buildMappingXML(baseCustomerMapping)));
+  return tidyXML(xdmp.quote(mappingLib.buildMappingXML(baseCustomerMapping.toObject())));
 }
 
 /*

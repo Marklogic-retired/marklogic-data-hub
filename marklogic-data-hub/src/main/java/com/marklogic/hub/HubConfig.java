@@ -569,6 +569,8 @@ public interface HubConfig {
 
     String getStagingTriggersDbName();
 
+    String getFinalTriggersDbName();
+
     AdminManager getAdminManager();
     ManageClient getManageClient();
     /**

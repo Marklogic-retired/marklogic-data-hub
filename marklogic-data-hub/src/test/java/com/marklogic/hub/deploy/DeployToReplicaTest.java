@@ -75,6 +75,7 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
         // Deploying will remove the test-specific database settings, so gotta restore them
         applyDatabasePropertiesForTests(getHubConfig());
+        getHubConfig().getAdminManager().waitForRestart();
     }
 
     @Test

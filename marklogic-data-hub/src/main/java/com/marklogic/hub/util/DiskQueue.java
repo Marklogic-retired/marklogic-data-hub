@@ -93,7 +93,8 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
      * <code>maxInMemorySize</code> elements in memory.
      */
     public DiskQueue() {
-        this(safeIntCast((Runtime.getRuntime().freeMemory() / (float) 40) * DEFAULT_REFILL_RATIO), null);
+        // 260 is the max path length in Windows and a unicode code character can be 4 bits
+        this(safeIntCast((Runtime.getRuntime().freeMemory() / (float) 130) * DEFAULT_REFILL_RATIO));
     }
 
     /**
@@ -103,7 +104,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
      * @param maxInMemorySize Maximum number of elements to keep in memory.
      */
     public DiskQueue(int maxInMemorySize) {
-        this(maxInMemorySize, null);
+        this(Math.min(Math.max(maxInMemorySize, 10000), 500000), null);
     }
 
 
@@ -344,7 +345,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
         public MemoryQueue(int capacity) {
             super();
             this.capacity = capacity;
-            queue = new ArrayDeque<>(10000);
+            queue = new ArrayDeque<>(capacity);
         }
 
         @Override

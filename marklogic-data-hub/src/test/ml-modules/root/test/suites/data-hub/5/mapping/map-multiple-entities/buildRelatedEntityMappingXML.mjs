@@ -76,7 +76,7 @@ function tidyXML(xmlStr) {
 }
 
 function buildRelatedEntityMappingXML() {
-  return tidyXML(xdmp.quote(mappingLib.buildMappingXML(mappingStep)));
+  return tidyXML(xdmp.quote(mappingLib.buildMappingXML(mappingStep.toObject())));
 }
 function buildIndividualEntityTemplates(mappingObject, propertyPath, index, targetEntityType) {
   const entityModel = mappingLib.getTargetEntity(targetEntityType);

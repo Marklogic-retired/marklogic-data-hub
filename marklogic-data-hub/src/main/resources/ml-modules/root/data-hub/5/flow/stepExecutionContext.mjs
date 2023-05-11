@@ -413,40 +413,42 @@ export default class StepExecutionContext {
           }
           xdmp.invoke(hookConfig.module, parameters, options);
         }
-      }
+      };
     }
     return null;
   }
 
-  getFeatures(){
+  getFeatures() {
     const stepFeatures = this.flowStep.features;
     let modelFeatures = undefined;
-    if(this.flowStep.options && this.flowStep.options.targetEntityType) {
-      const targetEntityType = this.flowStep.options.targetEntityType
-      if(targetEntityType) {
+    if (this.flowStep.options && this.flowStep.options.targetEntityType) {
+      const targetEntityType = this.flowStep.options.targetEntityType;
+      if (targetEntityType) {
         let targetEntityModel = entityLib.findModelForEntityTypeId(targetEntityType);
-        if (targetEntityModel) {
-            modelFeatures = targetEntityModel.toObject().definitions[targetEntityModel.toObject().info.title].features;
+        if (fn.exists(targetEntityModel)) {
+          targetEntityModel = targetEntityModel.toObject();
         } else {
-            targetEntityModel = entityLib.findModelByEntityName(targetEntityType);
-            modelFeatures = targetEntityModel.definitions[targetEntityModel.info.title].features;
+          targetEntityModel = entityLib.findModelByEntityName(targetEntityType);
+        }
+        if (targetEntityModel) {
+          modelFeatures = targetEntityModel.definitions[targetEntityModel.info.title].features;
         }
       }
     }
     let features = {};
     if (modelFeatures) {
-        Object.keys(modelFeatures).forEach(feat => {
-            features[feat] = modelFeatures[feat];
-          });
+      Object.keys(modelFeatures).forEach(feat => {
+        features[feat] = modelFeatures[feat];
+      });
     }
     if (stepFeatures) {
-        Object.keys(stepFeatures).forEach(feat => {
-       features[feat] = stepFeatures[feat];
-        });
+      Object.keys(stepFeatures).forEach(feat => {
+        features[feat] = stepFeatures[feat];
+      });
     }
 
     const extraFeatures = featuresUtil.getExtraFeatures();
-    features = {...features, ...extraFeatures}
+    features = {...features, ...extraFeatures};
     return features;
   }
 }

@@ -861,7 +861,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
     }
 
-    protected void updateStepDefinitionTypeForInlineMappingSteps(FlowManager flowManager) {
+    public void updateStepDefinitionTypeForInlineMappingSteps(FlowManager flowManager) {
         try {
             flowManager.getLocalFlows().forEach(flow -> {
                 AtomicBoolean shouldSaveFlow = new AtomicBoolean(false);

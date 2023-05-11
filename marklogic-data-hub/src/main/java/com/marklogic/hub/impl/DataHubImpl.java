@@ -55,7 +55,6 @@ import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -762,7 +761,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     private void updateTriggersCommandList(Map<String, List<Command>> commandMap) {
         List<Command> commands = commandMap.get("mlTriggerCommands");
-        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
+        commands.add(new DeployHubTriggersCommand(hubConfig, hubConfig.getStagingTriggersDbName()));
     }
 
     /**

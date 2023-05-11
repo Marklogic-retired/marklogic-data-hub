@@ -1,4 +1,4 @@
-class ContentSequence {
+export class ContentSequence {
   constructor(content, options = ["unfiltered", "score-zero", "document", "unfaceted"]) {
     if (content instanceof cts.query) {
       this.documents = cts.search(content, options, 0);
@@ -33,10 +33,10 @@ class ContentSequence {
 
   toArray() {
     if (!this.completedAnIteration) {
-      for(const c of this) {}
+      for (const c of this) {}
     }
     return this.contentArray;
   }
 }
 
-module.exports = ContentSequence;
+export default {ContentSequence} ;

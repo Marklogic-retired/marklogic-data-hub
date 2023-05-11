@@ -19,9 +19,7 @@ function requireMjsModule(modulePath) {
   return requireMjsModules(modulePath)[0];
 }
 function requireMjsModules(...modulePaths) {
-  const cleanModulePaths = modulePaths.map(mp => mp.replace(/"/g, ""));
-  return fn.head(evalModule(`${cleanModulePaths.map((mp, i) => `import mjsMod${i} from "${mp}";`).join("\n")}
-[${cleanModulePaths.map((mp, i) => `mjsMod${i}`).join(", ")}];`));
+  return fn.head(xdmp.invoke("/data-hub/core/util/invokeMjsProxy.mjs", {modulePaths}));
 }
 
 exports.requireMjsModule = requireMjsModule;

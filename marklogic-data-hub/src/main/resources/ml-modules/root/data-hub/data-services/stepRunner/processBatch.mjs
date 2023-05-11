@@ -20,6 +20,14 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
 
+function assertQueryMode() {
+  if (fn.empty(xdmp.requestTimestamp())) {
+    throw new Error("Should be a query transaction!");
+  }
+}
+
+assertQueryMode();
+
 const inputs = fn.head(xdmp.fromJSON(external.inputs));
 const legFlowLib = require("/data-hub/4/impl/flow-lib.sjs");
 
@@ -42,7 +50,7 @@ const datahub = DataHubSingleton.instance({
 
 const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
 const responseHolder = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
-if(options && options["options"] && options["options"]["isUpgradedLegacyFlow"] && options["options"]["isUpgradedLegacyFlow"] == true) {
+if (options && options["options"] && options["options"]["isUpgradedLegacyFlow"] && options["options"]["isUpgradedLegacyFlow"] == true) {
   legFlowLib.runWriters(identifiers, options["targetDatabase"]);
 }
 

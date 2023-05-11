@@ -18,32 +18,31 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
-
-const ext = require("/data-hub/extensions/entity/build-property-path-reference.sjs");
+import ext from "/data-hub/extensions/entity/build-property-path-reference.mjs";
 
 const facetValuesSearchQuery = external.facetValuesSearchQuery;
-if(facetValuesSearchQuery == null) {
+if (facetValuesSearchQuery == null) {
   httpUtils.throwBadRequest("Request cannot be empty");
 }
 let queryObj = JSON.parse(facetValuesSearchQuery);
 
-if(queryObj.entityTypeId == null) {
+if (queryObj.entityTypeId == null) {
   httpUtils.throwBadRequest("Could not get matching values, search query is missing entityTypeId property");
 }
 
-if(queryObj.propertyPath == null) {
+if (queryObj.propertyPath == null) {
   httpUtils.throwBadRequest("Could not get matching values, search query is missing propertyPath property");
 }
 
-if(queryObj.referenceType == null) {
+if (queryObj.referenceType == null) {
   httpUtils.throwBadRequest("Could not get matching values, search query is missing referenceType property");
 }
 
-if(queryObj.limit == null) {
+if (queryObj.limit == null) {
   queryObj.limit = 10;
 }
 
-if(queryObj.pattern == null) {
+if (queryObj.pattern == null) {
   queryObj.pattern = "";
 }
 
@@ -64,24 +63,24 @@ if (referenceType === "field") {
   }
 }
 
-if(referenceType === 'element') {
+if (referenceType === 'element') {
   query = cts.elementReference(propertyPath);
-} else if(referenceType === 'field') {
+} else if (referenceType === 'field') {
   query = cts.fieldReference(propertyPath);
-} else if(referenceType === 'collection') {
+} else if (referenceType === 'collection') {
   query = cts.collectionReference();
 } else {
   query = ext.buildPropertyPathReference(entityTypeId, propertyPath);
 }
 
-var facetValues = cts.valueMatch(query, pattern + "*",
-    ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
+let facetValues = cts.valueMatch(query, pattern + "*",
+  ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
 
 if (facetValues.length < limit) {
-  var moreFacetValues = cts.valueMatch(query, "?*" + pattern + "*",
-      ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
+  let moreFacetValues = cts.valueMatch(query, "?*" + pattern + "*",
+    ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
   facetValues = Array.from(
-      [...new Set([...facetValues, ...moreFacetValues])]).slice(0, limit);
+    [...new Set([...facetValues, ...moreFacetValues])]).slice(0, limit);
 }
 
 facetValues;

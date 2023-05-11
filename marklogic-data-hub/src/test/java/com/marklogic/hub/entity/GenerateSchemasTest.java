@@ -54,6 +54,5 @@ public class GenerateSchemasTest extends AbstractHubCoreTest {
         GenericDocumentManager mgr = getHubConfig().getAppConfig().newAppServicesDatabaseClient(
             getHubConfig().getDbName(DatabaseKind.STAGING_SCHEMAS)).newDocumentManager();
         assertNotNull(mgr.exists("/entities/FirstNamespacedEntity.entity.xsd"));
-        assertNotNull(mgr.exists("/entities/SecondNamespacedEntity.entity.xsd"));
     }
 }

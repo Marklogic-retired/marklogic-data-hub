@@ -159,7 +159,7 @@ function setArtifact(artifactType, artifactName, artifact, dirFileName) {
   const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact, dirFileName);
   const artifactFileExtension = getArtifactFileExtension(artifactType);
   const artifactPermissions = artifactLibrary.getPermissions();
-  const artifactCollections = artifactLibrary.getCollections();
+  const artifactCollections = ['hub-artifact'].concat(artifactLibrary.getCollections());
   const renamingArtifact = artifactNameProperty && artifact[artifactNameProperty] && artifactName !== artifact[artifactNameProperty];
   let existingArtifact;
   try {

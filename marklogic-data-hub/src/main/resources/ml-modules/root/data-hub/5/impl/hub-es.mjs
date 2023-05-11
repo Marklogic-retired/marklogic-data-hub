@@ -17,10 +17,10 @@
 'use strict';
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
 import hubUtils from "./hub-utils.mjs";
+import ext from "/data-hub/extensions/entity/post-process-database-properties.mjs";
 
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
-const ext = require("/data-hub/extensions/entity/post-process-database-properties.sjs");
 
 /**
  * Generates database properties based on the given entity models. This starts with the ES database-properties-generate
