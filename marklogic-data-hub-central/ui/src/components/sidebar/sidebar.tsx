@@ -22,6 +22,7 @@ import {HCDivider} from "@components/common";
 import {graphSearchQuery, getEntities, searchResultsQuery} from "@api/queries";
 import {exploreSidebar as exploreSidebarConfig} from "@config/explore.config";
 import {getEnvironment} from "@util/environment";
+import {CurrentProps} from "pages/Browse";
 
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
@@ -40,17 +41,13 @@ interface Props {
   cardView: boolean;
   graphView: boolean;
   setEntitySpecificPanel: (entity: any) => void;
-  currentBaseEntities: any[];
-  setCurrentBaseEntities: (entity: any[]) => void;
-  currentRelatedConcepts: Map<string, any>;
   viewConcepts: boolean;
-  setCurrentRelatedConcepts: (entity: Map<string, any>) => void;
-  currentRelatedEntities: Map<string, any>;
-  setCurrentRelatedEntities: (entity: Map<string, any>) => void;
   entityIndicatorData: any;
   entitiesWithRelatedConcepts: any;
   entityRelationships: any;
   isBackToResultsClicked?: boolean;
+  current: CurrentProps;
+  setCurrent: any;
 }
 const Sidebar: React.FC<Props> = props => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
@@ -95,6 +92,8 @@ const Sidebar: React.FC<Props> = props => {
   const [relatedConceptsValues, setRelatedConceptsValues] = useState({});
   const [checkAllRelatedConcepts, setCheckAllRelatedConcepts] = useState(true);
 
+  const {relatedConcepts, baseEntities, relatedEntities} = props.current;
+
   useEffect(() => {
     let facets = {...greyedOptions.selectedFacets};
     if (dateRangeValue && !facets["createdOnRange"]) {
@@ -120,10 +119,10 @@ const Sidebar: React.FC<Props> = props => {
     let relatedEntitiesList = new Map();
     let relatedConceptsList = new Map();
 
-    props.currentBaseEntities.forEach(base => {
+    baseEntities.forEach(base => {
       let entityName = base["name"];
       props.entityRelationships[entityName].map(entityName => {
-        const currentRelatedEntity = props.currentRelatedEntities.get(entityName);
+        const currentRelatedEntity = relatedEntities.get(entityName);
         const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
         relatedEntitiesList.set(entityName, {
           ...relEntity,
@@ -137,7 +136,7 @@ const Sidebar: React.FC<Props> = props => {
 
     if (relatedConceptsValues.hasOwnProperty("facetValues")) {
       relatedConceptsValues["facetValues"].map(obj => {
-        const currentRelatedConcept = props.currentRelatedConcepts.get(obj.name);
+        const currentRelatedConcept = relatedConcepts.get(obj.name);
         relatedConceptsList.set(obj.name, {...obj, checked: currentRelatedConcept?.checked || checkAllRelatedConcepts});
       });
     }
@@ -152,25 +151,26 @@ const Sidebar: React.FC<Props> = props => {
         return i.value;
       }),
     );
-    props.setCurrentRelatedConcepts(relatedConceptsList);
-    props.setCurrentRelatedEntities(relatedEntitiesList);
-  }, [props.currentBaseEntities, relatedConceptsValues]);
+    props.setCurrent((prevState) => (
+      {...prevState, relatedConcepts: relatedConceptsList, relatedEntities: relatedEntitiesList}
+    ));
+  }, [baseEntities, relatedConceptsValues]);
 
   useEffect(() => {
     getByDefaultCheckedFacetsLS();
-  }, [props.currentBaseEntities]);
+  }, [baseEntities]);
 
   const onSettingRelatedEntitiesCheckedList = list => {
-    setCheckAllRelatedEntities(list.length === props.currentRelatedEntities.size);
+    setCheckAllRelatedEntities(list.length === relatedEntities.size);
   };
 
   const onSettingRelatedConceptsCheckedList = list => {
-    setCheckAllRelatedConcepts(list.length === props.currentRelatedConcepts.size);
+    setCheckAllRelatedConcepts(list.length === relatedConcepts.size);
   };
 
   const onCheckAll = (checked: boolean) => {
     let relatedEntitiesList = new Map();
-    Array.from(props.currentRelatedEntities.values()).forEach(entity => {
+    Array.from(relatedEntities.values()).forEach(entity => {
       relatedEntitiesList.set(entity.name, {...entity, checked: checked});
     });
     const values = Array.from(relatedEntitiesList.values());
@@ -180,7 +180,7 @@ const Sidebar: React.FC<Props> = props => {
         return i.name;
       }),
     );
-    props.setCurrentRelatedEntities(relatedEntitiesList);
+    props.setCurrent((prevState) => ({...prevState, relatedEntities: relatedEntitiesList}));
   };
 
   const onCheckAllChanges = ({target}) => {
@@ -216,7 +216,7 @@ const Sidebar: React.FC<Props> = props => {
     } else {
       setConceptFilterTypeIds(["#"]);
     }
-    props.setCurrentRelatedConcepts(relatedConceptsList);
+    props.setCurrent((prevState) => ({...prevState, relatedConcepts: relatedConceptsList}));
   };
 
   const onCheckAllRelatedConceptsKeyDown = event => {
@@ -1017,7 +1017,7 @@ const Sidebar: React.FC<Props> = props => {
   const handleSetCurrentBaseEntities = entities => {
     setCheckAllRelatedEntities(true);
     setCheckAllRelatedConcepts(true);
-    props.setCurrentBaseEntities(entities);
+    props.setCurrent((prevState) => ({...prevState, baseEntities: entities}));
   };
 
   const handleSearchFromInput = () => {
@@ -1214,7 +1214,7 @@ const Sidebar: React.FC<Props> = props => {
                 <BaseEntitiesFacet
                   setCurrentBaseEntities={handleSetCurrentBaseEntities}
                   setEntitySpecificPanel={props.setEntitySpecificPanel}
-                  currentBaseEntities={props.currentBaseEntities}
+                  currentBaseEntities={baseEntities}
                   entityIndicatorData={props.entityIndicatorData}
                   setActiveAccordionRelatedEntities={setActiveAccordion}
                   allBaseEntities={props.entityDefArray}
@@ -1224,7 +1224,7 @@ const Sidebar: React.FC<Props> = props => {
             </Accordion.Item>
           </Accordion>
           <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
-          {props.currentRelatedEntities?.size > 0 && (
+          {relatedEntities?.size > 0 && (
             <div className={styles.relatedEntityPanel}>
               <HCTooltip
                 text={!props.graphView ? exploreSidebar.disabledRelatedEntities : ""}
@@ -1280,8 +1280,8 @@ const Sidebar: React.FC<Props> = props => {
                     </div>
                     <Accordion.Body>
                       <RelatedEntitiesFacet
-                        currentRelatedEntities={props.currentRelatedEntities}
-                        setCurrentRelatedEntities={props.setCurrentRelatedEntities}
+                        currentRelatedEntities={relatedEntities}
+                        setCurrent={props.setCurrent}
                         onSettingCheckedList={onSettingRelatedEntitiesCheckedList}
                         setEntitySpecificPanel={props.setEntitySpecificPanel}
                         setActiveRelatedEntities={setActiveRelatedEntities}
@@ -1341,7 +1341,7 @@ const Sidebar: React.FC<Props> = props => {
               <HCDivider className={"mt-0 mb-2"} style={{backgroundColor: "#ccc"}} />
             </div>
           ) : (
-            props.currentRelatedConcepts?.size > 0 && (
+            relatedConcepts?.size > 0 && (
               <div className={styles.relatedEntityPanel}>
                 <HCTooltip
                   text={
@@ -1401,8 +1401,8 @@ const Sidebar: React.FC<Props> = props => {
                       </div>
                       <Accordion.Body>
                         <RelatedConceptsFacets
-                          currentRelatedConcepts={props.currentRelatedConcepts}
-                          setCurrentRelatedConcepts={props.setCurrentRelatedConcepts}
+                          currentRelatedConcepts={relatedConcepts}
+                          setCurrent={props.setCurrent}
                           onSettingCheckedList={onSettingRelatedConceptsCheckedList}
                           setActiveRelatedConcepts={setActiveRelatedConcepts}
                           entityIndicatorData={props.entityIndicatorData}
@@ -1451,25 +1451,6 @@ const Sidebar: React.FC<Props> = props => {
               </div>
             }
           />
-          {/* <FormCheck
-          type="switch"
-          data-testid="toggleHubArtifacts"
-          defaultChecked={!props.hideDataHubArtifacts}
-          tabIndex={0}
-          onClick={handleToggleDataHubArtifacts}
-          onKeyDown={(event) => { if (event.key === "Enter") { props.setHubArtifactsVisibilityPreferences(!event.target.value); } }}
-          className={styles.switchToggleDataHubArtifacts}
-          label={
-            <div>
-              <span>Include Data Hub artifacts</span>
-              <span tabIndex={props.cardView ? 0 : undefined} onFocus={(e) => onFocusHandlerTooltip(e, "artifacts")} onBlur={(e) => onLostFocusEventHandlerTooltip(e, "artifacts")}>
-                <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom" show={isTooltipVisible.artifacts ? isTooltipVisible.artifacts : undefined}>
-                  <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
-                </HCTooltip>
-              </span>
-            </div>
-          }
-        /> */}
         </div>
       ) : (
         ""

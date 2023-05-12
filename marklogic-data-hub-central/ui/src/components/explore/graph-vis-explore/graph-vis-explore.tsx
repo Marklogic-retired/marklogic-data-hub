@@ -1334,10 +1334,12 @@ const GraphVisExplore: React.FC<Props> = props => {
     },
   };
 
+  const MemoizedGraph = React.memo(Graph);
+
   return (
     <div id="graphVisExplore">
       <div className={styles.graphContainer}>
-        <Graph graph={graphData} options={options} events={events} getNetwork={initNetworkInstance} />
+        <MemoizedGraph graph={graphData} options={options} events={events} getNetwork={initNetworkInstance} />
         {contextMenuVisible && menu()}
         <TableViewGroupNodes
           isVisible={openTableViewForGroupNodes}

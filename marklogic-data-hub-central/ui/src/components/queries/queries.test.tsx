@@ -27,7 +27,7 @@ const queryElementProperties = render(
     cardView={false}
     toggleApply={jest.fn()}
     toggleApplyClicked={jest.fn()}
-    setCurrentBaseEntities={jest.fn()}
+    setCurrent={jest.fn()}
   />,
 );
 
@@ -55,7 +55,7 @@ describe("Queries Component", () => {
         setCardView={""}
         toggleApply={jest.fn()}
         toggleApplyClicked={jest.fn()}
-        setCurrentBaseEntities={jest.fn()}
+        setCurrent={jest.fn()}
       />,
     );
     expect(getByLabelText("clear-query")).toBeInTheDocument();

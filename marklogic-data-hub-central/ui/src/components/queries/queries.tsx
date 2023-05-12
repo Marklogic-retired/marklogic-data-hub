@@ -42,7 +42,7 @@ interface Props {
   cardView: boolean;
   toggleApply: (value: boolean) => void;
   toggleApplyClicked: (value: boolean) => void;
-  setCurrentBaseEntities: (entity: any[]) => void;
+  setCurrent: any;
 }
 
 const Query: React.FC<Props> = props => {
@@ -367,7 +367,7 @@ const Query: React.FC<Props> = props => {
   };
 
   const onNoResetClick = () => {
-    const {entityDefArray, setCurrentBaseEntities} = props;
+    const {entityDefArray, setCurrent} = props;
     let options: QueryOptions = {
       searchText: "",
       entityTypeIds: [],
@@ -382,14 +382,14 @@ const Query: React.FC<Props> = props => {
       options.entityTypeIds = entitiesTitles;
     }
     applySaveQuery(options);
-    if (entityDefArray.length > 0) setCurrentBaseEntities(entityDefArray);
+    if (entityDefArray.length > 0) setCurrent((prevState) => ({...prevState, baseEntities: entityDefArray}));
     toggleResetQueryEditedConfirmation(false);
     toggleResetQueryNewConfirmation(false);
     props.setColumnSelectorTouched(false);
   };
 
   const resetIconClicked = () => {
-    const {entityDefArray, setCurrentBaseEntities} = props;
+    const {entityDefArray, setCurrent} = props;
     const resetQueryEditedConfirmation =
       props.isSavedQueryUser &&
       props.queries.length > 0 &&
@@ -420,7 +420,7 @@ const Query: React.FC<Props> = props => {
         options.entityTypeIds = entitiesTitles;
       }
       applySaveQuery(options);
-      if (entityDefArray.length > 0) setCurrentBaseEntities(entityDefArray);
+      if (entityDefArray.length > 0) setCurrent((prevState) => ({...prevState, baseEntities: entityDefArray}));
       clearAllGreyFacets();
     }
   };

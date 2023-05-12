@@ -39,6 +39,20 @@ import {getEnvironment} from "@util/environment";
 
 interface Props extends RouteComponentProps<any> {}
 
+export interface CurrentProps {
+  baseEntities: any[];
+  entitiesIcons: any[];
+  relatedEntities: Map<string, any>;
+  relatedConcepts: Map<string, any>;
+}
+
+const initialCurrent: CurrentProps = {
+  baseEntities: [],
+  entitiesIcons: [],
+  relatedEntities: new Map(),
+  relatedConcepts: new Map(),
+};
+
 const Browse: React.FC<Props> = ({location}) => {
   const componentIsMounted = useRef(true);
   const {user, handleError} = useContext(UserContext);
@@ -59,54 +73,88 @@ const Browse: React.FC<Props> = ({location}) => {
   } = useContext(SearchContext);
   const {hubCentralConfig} = useContext(HubCentralConfigContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
+
+  let state: any = location.state;
+
+
   const [data, setData] = useState<any[]>([]);
-  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [physicsAnimation, setPhysicsAnimation] = useState(true);
+  const [graphLoading, setGraphLoading] = useState(false);
+
+
+  // SIDEBAR
+
+  /* const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
-  const [currentRelatedConcepts, setCurrentRelatedConcepts] = useState<Map<string, any>>(new Map());
+  const [currentRelatedConcepts, setCurrentRelatedConcepts] = useState<Map<string, any>>(new Map()); */
+
+  const [current, setCurrent] = useState<CurrentProps>(initialCurrent);
+
   const [entityIndicatorData, setEntityIndicatorData] = useState<any>({});
   const [entityRelationships, setEntityRelationships] = useState<any>({});
-  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [totalDocuments, setTotalDocuments] = useState(0);
-  const [viewOptions, setViewOptions] = useState({
-    graphView: userPreferences.graphView ? userPreferences.graphView : false,
-    tableView: userPreferences.tableView ? userPreferences.tableView : false,
-  });
-  const [endScroll, setEndScroll] = useState(false);
+  const [viewConcepts, setViewConcepts] = useState(true);
+
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser()); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [queries, setQueries] = useState<any>([]);
+  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(userPreferences.query?.hideHubArtifacts);
+
+  const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
+
+  // ENTITY DEFINITIONS
+  const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
-  const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
-  let state: any = location.state;
-  const [cardView, setCardView] = useState(
-    state && state["isEntityInstance"] ? true : userPreferences.cardView ? true : false,
-  );
-  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(userPreferences.query?.hideHubArtifacts);
-  const [entitiesData, setEntitiesData] = useState<any[]>([]);
-  const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
-  const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
-  const [facetsSpecificPanel, setFacetsEntitySpecificPanel] = useState<any>(undefined);
-  const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
-  const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
-  const [applyClicked, toggleApplyClicked] = useState(false);
-  const [showApply, toggleApply] = useState(false);
-  const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
-  const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
+
+  //PAGINATION
+  const [totalDocuments, setTotalDocuments] = useState(0);
+
+  // VIEW OPTIONS
+  const [viewOptions, setViewOptions] = useState({
+    graphView: userPreferences.graphView ? userPreferences.graphView : false,
+    tableView: userPreferences.tableView ? userPreferences.tableView : false,
+  });
   const [selectedView, setSelectedView] = useState<ViewType>(
     viewOptions.graphView ? ViewType.graph : viewOptions.tableView ? ViewType.table : ViewType.snippet,
   );
-  const [entitiesWithRelatedConcepts, setEntitiesWithRelatedConcepts] = useState({});
-  const [viewConcepts, setViewConcepts] = useState(true);
-  const [physicsAnimation, setPhysicsAnimation] = useState(true);
-  const [graphLoading, setGraphLoading] = useState(false);
+  const [cardView, setCardView] = useState(
+    state && state["isEntityInstance"] ? true : userPreferences.cardView ? true : false,
+  ); // might be unnecessary
+
+  //////////////////////////
+  const [endScroll, setEndScroll] = useState(false);
+  const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
+  const [graphSearchData, setGraphSearchData] = useState<any>({});
+  const [graphPageInfo, setGraphPageInfo] = useState({});
+  ////////////////////////
+
+  // no definition algo
+  const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
+  const [entitiesData, setEntitiesData] = useState<any[]>([]);
+
+
+  // specific entity sidebar
+  const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
+  const [facetsSpecificPanel, setFacetsEntitySpecificPanel] = useState<any>(undefined);
+
+  const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
+  const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
+
+  const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
+  const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
+
+  // FACETS
+  const [applyClicked, toggleApplyClicked] = useState(false);
+  const [showApply, toggleApply] = useState(false);
+
+
   const conceptsSupport: boolean = getEnvironment().supportConcepts ? getEnvironment().supportConcepts : false;
 
   const searchResultDependencies = [
@@ -124,6 +172,8 @@ const Browse: React.FC<Props> = ({location}) => {
     user.error.type,
     hideDataHubArtifacts,
   ];
+
+  const MemoizedGraphViewComponent = React.memo(GraphViewExplore);
 
   const isGraphView = () => {
     const isGraph = searchOptions.nextEntityType !== "All Data" && viewOptions.graphView;
@@ -159,10 +209,8 @@ const Browse: React.FC<Props> = ({location}) => {
     setEntitySpecificPanel(entity);
     setFacetsEntitySpecificPanel(entityFacets);
     setShowEntitySpecificPanel(true);
-    if (currentBaseEntities.length > 0) {
-      setCurrentEntitiesIcons(currentBaseEntities);
-    } else {
-      setCurrentEntitiesIcons(entityDefArray);
+    if (current.baseEntities.length <= 0) {
+      setCurrent((prevState) => ({...prevState, baseEntities: entityDefArray}));
     }
   };
 
@@ -182,9 +230,6 @@ const Browse: React.FC<Props> = ({location}) => {
     setFacetsEntitySpecificPanel(undefined);
     setShowEntitySpecificPanel(false);
   };
-
-  const [graphSearchData, setGraphSearchData] = useState<any>({});
-  const [graphPageInfo, setGraphPageInfo] = useState({});
 
   useEffect(() => {
     if (entitySpecificPanel) {
@@ -226,9 +271,10 @@ const Browse: React.FC<Props> = ({location}) => {
       if (conceptFilterTypeIds.length) {
         payload["data"]["query"]["conceptsFilterTypeIds"] = searchOptions.conceptFilterTypeIds;
       }
+      // aunque haga esta llamada al back, si es la misma data, que no actualice el estado.
       const response = await graphSearchQuery(payload);
       if (componentIsMounted.current && response.data) {
-        setGraphSearchData(response.data);
+        setGraphSearchData((prevState) => ({...prevState, ...response.data}));
         let pageInfo = {
           pageLength: response.data.limit,
           total: response.data.total,
@@ -415,7 +461,7 @@ const Browse: React.FC<Props> = ({location}) => {
           setEntityDefinitionsArray(parsedEntityDef);
           setEntitiesData(modelsResponse.data);
           setEntityDefArray(entitiesWithFullProperties);
-          setCurrentBaseEntities(entitiesWithFullProperties);
+          setCurrent((prevState) => ({...prevState, baseEntities: entitiesWithFullProperties}));
         }
       } catch (error) {
         handleError(error);
@@ -427,12 +473,12 @@ const Browse: React.FC<Props> = ({location}) => {
   }, [hubCentralConfig]);
 
   useEffect(() => {
-    if (currentBaseEntities.length > 0) {
-      setCurrentEntitiesIcons(baseEntitiesSorting(currentBaseEntities));
+    if (current.baseEntities.length > 0) {
+      setCurrent((prevState) => ({...prevState, baseEntities: baseEntitiesSorting(current.baseEntities)}));
     } else {
-      setCurrentEntitiesIcons(baseEntitiesSorting(entityDefArray));
+      setCurrent((prevState) => ({...prevState, entitiesIcons: baseEntitiesSorting(entityDefArray)}));
     }
-  }, [currentBaseEntities]);
+  }, [current.baseEntities]);
 
   useEffect(() => {
     if (entitySpecificPanel) {
@@ -772,9 +818,9 @@ const Browse: React.FC<Props> = ({location}) => {
       {showEntitySpecificPanel ? (
         <HCSider placement="left" show={showMainSidebar} width="55px">
           <EntityIconsSidebar
-            currentBaseEntities={currentEntitiesIcons}
+            currentBaseEntities={current.entitiesIcons}
             onClose={closeSpecificSidebar}
-            currentRelatedEntities={currentRelatedEntities}
+            currentRelatedEntities={current.relatedEntities}
             updateSelectedEntity={onSetEntitySpecificPanel}
             graphView={viewOptions.graphView}
           />
@@ -800,7 +846,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 cardView={cardView}
                 toggleApplyClicked={toggleApplyClicked}
                 toggleApply={toggleApply}
-                setCurrentBaseEntities={setCurrentBaseEntities}
+                setCurrent={setCurrent}
               />
             </div>
             <Sidebar
@@ -818,12 +864,8 @@ const Browse: React.FC<Props> = ({location}) => {
               viewConcepts={viewConcepts}
               graphView={viewOptions.graphView}
               setEntitySpecificPanel={handleEntitySelected}
-              currentBaseEntities={currentBaseEntities}
-              setCurrentBaseEntities={setCurrentBaseEntities}
-              currentRelatedEntities={currentRelatedEntities}
-              setCurrentRelatedEntities={setCurrentRelatedEntities}
-              currentRelatedConcepts={currentRelatedConcepts}
-              setCurrentRelatedConcepts={setCurrentRelatedConcepts}
+              current={current}
+              setCurrent={setCurrent}
               entityIndicatorData={entityIndicatorData}
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
               entityRelationships={entityRelationships}
@@ -933,7 +975,7 @@ const Browse: React.FC<Props> = ({location}) => {
                         </div>
                       )}
                       <div style={{opacity: graphLoading && physicsAnimation ? 0 : 1}}>
-                        <GraphViewExplore
+                        <MemoizedGraphViewComponent
                           entityTypeInstances={graphSearchData}
                           graphView={viewOptions.graphView}
                           setViewConcepts={setViewConcepts}

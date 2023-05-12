@@ -6,6 +6,7 @@ import {entityFromJSON, entityParser} from "../../util/data-conversion";
 import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import userEvent from "@testing-library/user-event";
 import {getEnvironment} from "@util/environment";
+import {CurrentProps} from "../../pages/Browse";
 
 const entityIndicatorData = {
   max: 10,
@@ -29,6 +30,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify createdOn dropdown is rendered", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: new Map(),
+    };
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -36,10 +43,9 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -49,9 +55,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
       />,
@@ -60,6 +63,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify version disabled/enabled concepts", async () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByTestId, getByLabelText, rerender, queryByLabelText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -67,10 +76,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -80,11 +86,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={false}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
     fireEvent.mouseOver(getByTestId("related-concepts-panel"));
@@ -99,10 +104,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -112,11 +114,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
 
@@ -125,6 +126,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify createdOn dropdown is selected", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -132,10 +139,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -145,11 +149,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
     expect(getByText("Select time")).toBeInTheDocument();
@@ -160,6 +163,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify that hub properties is expanded by default", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -167,10 +176,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -180,11 +186,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
@@ -223,6 +228,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   // });
 
   test("Verify onclick is called for final/staging buttons", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -231,10 +242,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -243,11 +251,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
 
@@ -276,6 +283,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Collapse/Expand carets render properly for database and hub properties", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -284,10 +297,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -296,11 +306,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute(
@@ -329,6 +338,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Collapse/Expand carets render properly for database, entity and hub properties", async () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -337,10 +352,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         setHubArtifactsVisibilityPreferences={jest.fn()}
         hideDataHubArtifacts={false}
         graphView={true}
@@ -349,11 +361,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute(
@@ -370,6 +381,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify Include Data Hub Artifacts switch is rendered properly and user is able to toggle it", () => {
+    const auxCurrent: CurrentProps = {
+      baseEntities: [],
+      entitiesIcons: [],
+      relatedEntities: new Map(),
+      relatedConcepts: conceptsMap,
+    };
     const {getByTestId} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -381,20 +398,16 @@ describe("Sidebar createdOn face time window dropdown", () => {
         cardView={true}
         hideDataHubArtifacts={true}
         setHubArtifactsVisibilityPreferences={jest.fn()}
-        currentRelatedEntities={new Map<string, any>()}
-        currentRelatedConcepts={conceptsMap}
         viewConcepts={true}
-        setCurrentRelatedConcepts={jest.fn()}
         graphView={true}
         greyFacets={[]}
         setEntitySpecificPanel={jest.fn()}
         entitiesWithRelatedConcepts={{}}
         entityRelationships={{}}
-        setCurrentRelatedEntities={jest.fn()}
-        currentBaseEntities={[]}
-        setCurrentBaseEntities={jest.fn()}
         entityIndicatorData={entityIndicatorData}
         graphConceptsSearchSupported={true}
+        current={auxCurrent}
+        setCurrent={jest.fn()}
       />,
     );
 

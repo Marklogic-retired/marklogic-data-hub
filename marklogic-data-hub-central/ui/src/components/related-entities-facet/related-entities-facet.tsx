@@ -17,7 +17,7 @@ const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
   currentRelatedEntities: Map<string, any>;
   onSettingCheckedList: (checkAll: any) => void;
-  setCurrentRelatedEntities: (relatedEntities: Map<string, any>) => void;
+  setCurrent: any;
   setEntitySpecificPanel: (entity: any) => void;
   setActiveRelatedEntities: (boolean) => void;
   entityIndicatorData: any;
@@ -28,7 +28,7 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
   const {
     currentRelatedEntities,
     onSettingCheckedList,
-    setCurrentRelatedEntities,
+    setCurrent,
     setEntitySpecificPanel,
     entityIndicatorData,
   } = props;
@@ -84,7 +84,7 @@ const RelatedEntitiesFacet: React.FC<Props> = props => {
     const {value, checked} = event.target;
     const entity = currentRelatedEntities.get(value);
     const entitiesUpdated = currentRelatedEntities.set(value, {...entity, checked});
-    setCurrentRelatedEntities(entitiesUpdated);
+    setCurrent((prevState) => ({...prevState, relatedEntities: entitiesUpdated}));
     const values = Array.from(entitiesUpdated.values());
     const checkedValues = values.filter(({checked}) => checked);
     onSettingCheckedList(checkedValues);

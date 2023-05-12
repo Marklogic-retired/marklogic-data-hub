@@ -26,7 +26,7 @@ describe("Related Entities Facet", () => {
     const {getByLabelText} = render(
       <RelatedEntitiesFacet
         currentRelatedEntities={currentRelatedEntities}
-        setCurrentRelatedEntities={setCurrentRelatedEntities}
+        setCurrent={setCurrentRelatedEntities}
         setActiveRelatedEntities={setActiveRelatedEntities}
         setEntitySpecificPanel={setEntitySpecificPanel}
         onSettingCheckedList={() => {}}
@@ -51,7 +51,7 @@ describe("Related Entities Facet", () => {
     const {getByLabelText} = render(
       <RelatedEntitiesFacet
         currentRelatedEntities={currentRelatedEntities}
-        setCurrentRelatedEntities={setCurrentRelatedEntities}
+        setCurrent={setCurrentRelatedEntities}
         setActiveRelatedEntities={setActiveRelatedEntities}
         setEntitySpecificPanel={setEntitySpecificPanel}
         onSettingCheckedList={() => {}}

@@ -17,14 +17,14 @@ const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
   currentRelatedConcepts: Map<string, any>;
   onSettingCheckedList: (checkAll: any) => void;
-  setCurrentRelatedConcepts: (relatedConcepts: Map<string, any>) => void;
+  setCurrent: any;
   setActiveRelatedConcepts: (boolean) => void;
   entityIndicatorData: any;
 }
 
 const RelatedConceptsFacets: React.FC<Props> = props => {
   const {setConceptFilterTypeIds} = useContext(SearchContext);
-  const {currentRelatedConcepts, onSettingCheckedList, setCurrentRelatedConcepts, entityIndicatorData} = props;
+  const {currentRelatedConcepts, onSettingCheckedList, setCurrent, entityIndicatorData} = props;
   const [conceptsList, setConceptsList] = useState<any[]>([]);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [options, setOptions] = useState<any[]>([]);
@@ -74,7 +74,7 @@ const RelatedConceptsFacets: React.FC<Props> = props => {
     const {value, checked} = event.target;
     const concept = currentRelatedConcepts.get(value);
     const conceptsUpdated = currentRelatedConcepts.set(value, {...concept, checked});
-    setCurrentRelatedConcepts(conceptsUpdated);
+    setCurrent((prevState) => ({...prevState, relatedConcepts: conceptsUpdated}));
     const values = Array.from(conceptsUpdated.values());
     const checkedValues = values.filter(({checked}) => checked);
     onSettingCheckedList(checkedValues);
