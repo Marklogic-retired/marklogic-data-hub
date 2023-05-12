@@ -23,6 +23,13 @@ describe("Leaf Nodes", () => {
   });
 
   it("Verify if concepts leaf can be expanded properly. Select 'BabyRegistry' entity", () => {
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
     cy.wait(2000);
@@ -67,8 +74,11 @@ describe("Leaf Nodes", () => {
   it("Clicking Show related on '101' leaf node to expand", () => {
     graphExplore.fit();
     graphExplore.stopStabilization();
-    graphView.physicsAnimationToggle();
     graphExplore.getGraphVisCanvas().scrollIntoView().should("be.visible");
+    graphExplore.getSearchBar().type("Cynthia");
+    graphExplore.getSearchButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
@@ -131,6 +141,13 @@ describe("Leaf Nodes", () => {
     });
 
     // Wait needed for the graph to get stabilized
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
     cy.wait(2000);
     graphView.physicsAnimationToggle();
   });

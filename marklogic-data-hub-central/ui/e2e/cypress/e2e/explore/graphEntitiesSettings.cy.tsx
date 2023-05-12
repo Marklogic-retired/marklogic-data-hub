@@ -370,18 +370,8 @@ describe("Entity Type Settings Modal", () => {
       graphExplore.getGraphVisCanvas().trigger("mouseover", customer_102_nodePosition.x, customer_102_nodePosition.y);
       graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
       cy.wait(3000);
-      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y);
+      graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
+      graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.email);
     });
-    cy.wait(1000);
-
-    /* graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let customer_102_nodePosition: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
-      cy.wait(150);
-      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
-      graphExplore.getGraphVisCanvas().click(customer_102_nodePosition.x, customer_102_nodePosition.y, {force: true});
-    });
-*/
-    graphExploreSidePanel.getSidePanel().scrollIntoView().should("be.visible");
-    graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.email);
   });
 });
