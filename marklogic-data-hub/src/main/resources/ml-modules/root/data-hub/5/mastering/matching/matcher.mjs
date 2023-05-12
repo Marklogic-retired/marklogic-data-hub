@@ -3,7 +3,7 @@ import common from "/data-hub/5/mastering/common.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import core from "/data-hub/5/artifacts/core.mjs";
 
-const {populateContentObjects, getContentObject, groupQueries, optimizeCtsQueries} = common;
+const {populateContentObjects, populateExistingContentObjects, getContentObject, groupQueries, optimizeCtsQueries} = common;
 
 const getBlocksOfUris = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocksOfUris");
 
@@ -61,17 +61,17 @@ function buildMatchSummary(matchable, content) {
       } else {
         return positiveQuery;
       }
-    }
+    };
   });
   const thresholdNames = thresholdDefinitions.map(def => def.name());
   const triplesByUri = new Map();
   const hashMatchInfo = {
-      matchRulesetScores: matchRulesetDefinitions.reduce((scores, def) => {
-        scores[def.name()] = def.reduce() ? -(fn.abs(def.weight())): def.weight();
-        return scores;
-      }, {}),
-      thresholds: thresholdDefinitions.map((def) => def.raw())
-    };
+    matchRulesetScores: matchRulesetDefinitions.reduce((scores, def) => {
+      scores[def.name()] = def.reduce() ? -(fn.abs(def.weight())): def.weight();
+      return scores;
+    }, {}),
+    thresholds: thresholdDefinitions.map((def) => def.raw())
+  };
 
   matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
   const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
@@ -84,6 +84,8 @@ function buildMatchSummary(matchable, content) {
   const dataFormat = matchable.matchStep.dataFormat;
   const baselineQuery = cts.registeredQuery(cts.register(matchable.baselineQuery()));
   const uriToMerged = new Map();
+  populateExistingContentObjects(content);
+  const useFuzzyMatching = matchRulesetDefinitions.some(def => def.fuzzyMatch());
   for (const contentObject of content) {
     // We don't want to generate hashes for mastering documents.
     if (fn.startsWith(contentObject.uri, "/com.marklogic.smart-mastering/")) {
@@ -107,17 +109,19 @@ function buildMatchSummary(matchable, content) {
           }
         }
       }
-      const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
-      for (const queryHash of queryHashes) {
-        let uriTriples = triplesByUri.get(contentObject.uri);
-        if (!uriTriples) {
-          uriTriples = [];
-          triplesByUri.set(contentObject.uri, uriTriples);
+      if (useFuzzyMatching) {
+        const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
+        for (const queryHash of queryHashes) {
+          let uriTriples = triplesByUri.get(contentObject.uri);
+          if (!uriTriples) {
+            uriTriples = [];
+            triplesByUri.set(contentObject.uri, uriTriples);
+          }
+          const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
+          const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
+          inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
+          uriTriples.push(uriToHashTriple, hashToRulesetTriple);
         }
-        const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
-        const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
-        inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
-        uriTriples.push(uriToHashTriple, hashToRulesetTriple);
       }
     }
     let documentIsMerged = false;
@@ -135,13 +139,13 @@ function buildMatchSummary(matchable, content) {
       }
       const maxScan = Math.min(matchable.maxScan(), total);
       let matchingUris;
-      let uriOptions = ["score-zero", "concurrent"];
+      let uriOptions = ["score-zero", "concurrent", "item-order"];
       if (total > matchable.maxScan()) {
         const halfMaxScan = Math.ceil(maxScan / 2);
-        matchingUris = fn.distinctValues(Sequence.from([
+        matchingUris = Sequence.from([
           cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
           cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
-        ])).toArray();
+        ]).toArray();
       } else {
         matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
       }
@@ -215,7 +219,9 @@ function buildMatchSummary(matchable, content) {
       hashMatchInfo
     }
   };
-  addHashMatchesToMatchSummary(matchable, matchSummary, urisToActOn, inMemoryTriples);
+  if (useFuzzyMatching) {
+    addHashMatchesToMatchSummary(matchable, matchSummary, urisToActOn, inMemoryTriples);
+  }
   // substitute notification URIs
   for (const actionURI of Object.keys(allActionDetails)) {
     const actionDetail = allActionDetails[actionURI];
@@ -224,18 +230,20 @@ function buildMatchSummary(matchable, content) {
     }
   }
   const output = [matchSummary];
-  const fuzzyMatchEntries = triplesByUri.entries();
-  for (let fuzzyMatchEntry of fuzzyMatchEntries) {
-    output.push({
-      uri: `/matching/data-hub/fuzzy-hashes/${xdmp.hash64(fuzzyMatchEntry[0])}.json`,
-      value: {
-        triples: fuzzyMatchEntry[1]
-      },
-      context: {
-        collections: [fuzzyMatchHashesCollection],
-        permissions: [xdmp.permission(consts.DATA_HUB_COMMON_ROLE, "read"), xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, "update")]
-      }
-    });
+  if (useFuzzyMatching) {
+    const fuzzyMatchEntries = triplesByUri.entries();
+    for (let fuzzyMatchEntry of fuzzyMatchEntries) {
+      output.push({
+        uri: `/matching/data-hub/fuzzy-hashes/${xdmp.hash64(fuzzyMatchEntry[0])}.json`,
+        value: {
+          triples: fuzzyMatchEntry[1]
+        },
+        context: {
+          collections: [fuzzyMatchHashesCollection],
+          permissions: [xdmp.permission(consts.DATA_HUB_COMMON_ROLE, "read"), xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, "update")]
+        }
+      });
+    }
   }
   if (matchingTraceEnabled) {
     xdmp.trace(matchingTraceEvent, `Match summary created: ${xdmp.toJsonString(matchSummary)}`);
@@ -259,12 +267,12 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
         ?uriHash <http://marklogic.com/data-hub/mastering#belongsTo> ?matchRuleset.
         ?originalUri <http://marklogic.com/data-hub/mastering#hasMatchingHash> ?uriHash.
         FILTER (?matchingUri = $uris)
-    }`, { uris }, [], [sem.inMemoryStore(inMemoryTriples), sem.store(["document"], cts.collectionQuery(fuzzyMatchHashesCollection))]).toArray().reduce((hashMatches, triple) => {
-    let { originalUri, matchingUri, matchRuleset } = triple;
+    }`, {uris}, [], [sem.inMemoryStore(inMemoryTriples), sem.store(["document"], cts.collectionQuery(fuzzyMatchHashesCollection))]).toArray().reduce((hashMatches, triple) => {
+    let {originalUri, matchingUri, matchRuleset} = triple;
     originalUri = fn.string(originalUri), matchingUri = fn.string(matchingUri), matchRuleset = fn.string(matchRuleset);
     let currentHashMatch = hashMatches.get(originalUri);
     if (!currentHashMatch) {
-      currentHashMatch = { matches: new Map() };
+      currentHashMatch = {matches: new Map()};
       hashMatches.set(originalUri, currentHashMatch);
     }
     const uriMatches = currentHashMatch.matches;
@@ -273,12 +281,13 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
     }
     let match = uriMatches.get(matchingUri);
     if (!match) {
-      match = { matchedRulesets: [] };
+      match = {matchedRulesets: []};
       uriMatches.set(matchingUri, match);
     }
     match.matchedRulesets.push(matchRuleset);
     return hashMatches;
   }, new Map());
+  populateContentObjects(results.keys());
   for (const resultEntry of results.entries()) {
     const matchUri = resultEntry[0];
     const matches = resultEntry[1];
@@ -363,4 +372,4 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
 
 export default {
   buildMatchSummary
-}
+};

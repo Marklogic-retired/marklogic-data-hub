@@ -365,6 +365,7 @@ class MatchRulesetDefinition {
     this._id = sem.uuidString();
     this._cachedCtsQueries = new Map();
     this._cachedQueryHashes = new Map();
+    this._cachedMatchFunctionResults = new Map();
   }
 
   name() {
@@ -381,8 +382,9 @@ class MatchRulesetDefinition {
 
   _valueFunction(matchRule, model) {
     if (!matchRule._valueFunction) {
+      const pathKey = matchRule.documentXPath || matchRule.entityPropertyPath;
       matchRule._valueFunction = (documentNode) => {
-        const key = `${xdmp.nodeUri(documentNode)}:${matchRule.documentXPath || matchRule.entityPropertyPath}`;
+        const key = `${xdmp.nodeUri(documentNode)}:${pathKey}`;
         if (!cachedPropertyValues.has(key)) {
           if (matchRule.documentXPath) {
             cachedPropertyValues.set(key, documentNode.xpath(matchRule.documentXPath, matchRule.namespaces));
@@ -491,12 +493,19 @@ class MatchRulesetDefinition {
       default:
         httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
       }
-      matchRule._matchFunction = (values) => {
-        const results = matchFunction(values, passMatchRule, passMatchStep);
-        if (!results) {
-          return null;
+      const pathKey = matchRule.documentXPath || matchRule.entityPropertyPath;
+      const matchTypeKey = matchRule.matchType === "custom" ? `${matchRule.algorithmModulePath}:${matchRule.algorithmFunction}`:matchRule.matchType;
+      matchRule._matchFunction = (uri, values) => {
+        const cacheKey = `${uri}:${pathKey}:${matchTypeKey}`;
+        if (this._cachedMatchFunctionResults.has(cacheKey)) {
+          return this._cachedMatchFunctionResults.get(cacheKey);
         }
-        return propertyQueryFunction(results);
+        let results = matchFunction(values, passMatchRule, passMatchStep);
+        if (results) {
+          results = propertyQueryFunction(results);
+        }
+        this._cachedMatchFunctionResults.set(cacheKey, results);
+        return results;
       };
     }
     return matchRule._matchFunction;
@@ -514,9 +523,9 @@ class MatchRulesetDefinition {
     let score = 0;
     const query = this.buildCtsQuery(contentObjectA.value);
     const isFuzzyMatch = this.fuzzyMatch();
-    if (fn.exists(query)) {
+    if (query !== null && fn.exists(query)) {
       let queryMatches = cts.contains(contentObjectB.value, query);
-      if (!queryMatches) {
+      if (!queryMatches && isFuzzyMatch) {
         const hashesA = this.queryHashes(contentObjectA.value);
         const hashesB = this.queryHashes(contentObjectB.value);
         if (matchingDebugTraceEnabled) {
@@ -526,15 +535,12 @@ class MatchRulesetDefinition {
         }
         const outerHash = hashesA.size >= hashesB.size ? hashesA : hashesB;
         const innerHash = outerHash === hashesA ? hashesB : hashesA;
-        if (outerHash.size === 0 || innerHash.size === 0) {
-          if (matchingDebugTraceEnabled) {
-            xdmp.trace(matchingTraceEvent, `Hashes are empty, so using cts.contains.`);
-          }
-          queryMatches = cts.contains(contentObjectB.value, query);
+        if ((outerHash.size === 0 || innerHash.size === 0) && matchingDebugTraceEnabled) {
+          xdmp.trace(matchingTraceEvent, `Hashes are empty, so using cts.contains.`);
         }
         for (const hash1 of outerHash) {
           if (innerHash.has(hash1)) {
-            queryMatches = isFuzzyMatch || cts.contains(contentObjectB.value, query);
+            queryMatches = true;
             break;
           }
         }
@@ -551,7 +557,7 @@ class MatchRulesetDefinition {
           const valueFunction = this._valueFunction(matchRule, model);
           const matchFunction = this._matchFunction(matchRule, model);
           const values = valueFunction(contentObjectA.value);
-          const query = fn.exists(values) ? matchFunction(values) : null;
+          const query = (values !== null && fn.exists(values)) ? matchFunction(contentObjectA.uri, values) : null;
           if (query instanceof Function) {
             matchRuleFunctions.push(query);
           }
@@ -591,8 +597,8 @@ class MatchRulesetDefinition {
         const valueFunction = this._valueFunction(matchRule, model);
         const matchFunction = this._matchFunction(matchRule, model);
         const values = valueFunction(documentNode);
-        const query = fn.exists(values) ? matchFunction(values) : null;
-        if (fn.empty(query)) {
+        const query = fn.exists(values) ? matchFunction(uri, values) : null;
+        if (query === null || fn.empty(query)) {
           return null;
         }
         if (query instanceof cts.query) {
