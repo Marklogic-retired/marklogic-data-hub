@@ -345,6 +345,7 @@ describe("Monitor Tile", () => {
     cy.intercept("POST", "/api/jobs/stepResponses", {statusCode: 200}).as("stepResponses");
     browsePage.getApplyFacetsButton().click();
     cy.wait("@stepResponses").should("have.property", "state", "Complete");
+    cy.waitForAsyncRequest();
 
     monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
     cy.scrollTo("left", {ensureScrollable: false});

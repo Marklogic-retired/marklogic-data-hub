@@ -102,10 +102,10 @@ describe("Validate E2E Mastering Flow", () => {
     /* });*/
     //add back in using storage saving with DHFPROD-8523
     // it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Patient");
     entityTypeModal.newEntityDescription("An entity for patients");
@@ -164,16 +164,16 @@ describe("Validate E2E Mastering Flow", () => {
 
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
+    curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.toggleEntityTypeId("Patient");
-    cy.waitUntil(() => curatePage.addNewStep("Patient").click());
+    curatePage.addNewStep("Patient").click();
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setCollectionInput(loadStepName);
-    cy.waitUntil(() => cy.get(`[aria-label="${loadStepName}"]`).click({force: true}));
-    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", loadStepName)).then(() => { createEditMappingDialog.saveButton().click({force: true}); });
+    cy.get(`[aria-label="${loadStepName}"]`).should("be.visible").click({force: true});
+    cy.get(".rbt-input-main").should("be.visible").should("have.value", loadStepName).then(() => { createEditMappingDialog.saveButton().click({force: true}); });
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.dataPresent().scrollIntoView().should("be.visible"));
+    curatePage.dataPresent().scrollIntoView().should("be.visible");
     curatePage.verifyStepDetailsOpen(mapStep);
   });
 
@@ -187,8 +187,8 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.dataPresent().scrollIntoView().should("be.visible");
     mappingStepDetail.navigateUrisRight().click({force: true});
     // Test the mappings
-    cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
-    cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
+    mappingStepDetail.testMap().should("be.visible").should("be.enabled");
+    mappingStepDetail.expandEntity().should("be.visible").click();
     mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.goBackToCurateHomePage();
   });
@@ -213,16 +213,16 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create a new match step", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
     curatePage.addNewStep("Patient").should("be.visible").click();
     createEditStepDialog.stepNameInput().clear().type(matchStep);
     createEditStepDialog.stepDescriptionInput().clear().type("match patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(mapStep);
-    cy.waitUntil(() => cy.get(`[aria-label="${mapStep}"]`).click({force: true}));
-    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", mapStep)).then(() => { createEditStepDialog.saveButton("matching").click(); });
+    cy.get(`[aria-label="${mapStep}"]`).should("be.visible").click({force: true});
+    cy.get(".rbt-input-main").should("have.value", mapStep).should("be.visible").then(() => { createEditStepDialog.saveButton("matching").click(); });
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
@@ -347,8 +347,8 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create a new merge step ", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.getEntityTypePanel("Patient").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
         cy.log("**Toggling Entity because it was closed.**");
@@ -360,8 +360,8 @@ describe("Validate E2E Mastering Flow", () => {
     createEditStepDialog.stepNameInput().clear().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().clear().type("merge patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(matchStep);
-    cy.waitUntil(() => cy.get(`[aria-label="${matchStep}"]`).click({force: true}));
-    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", matchStep)).then(() => { createEditStepDialog.saveButton("merging").click(); });
+    cy.get(`[aria-label="${matchStep}"]`).should("be.visible").click({force: true});
+    cy.get(".rbt-input-main").should("be.visible").should("have.value", matchStep).then(() => { createEditStepDialog.saveButton("merging").click(); });
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
@@ -378,7 +378,7 @@ describe("Validate E2E Mastering Flow", () => {
     mergeStrategyModal.saveButton().click();
     mergeStrategyModal.getModalDialog().should("not.exist");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findAllByText("retain-single-value").should("have.length.gt", 0));
+    cy.findAllByText("retain-single-value").should("be.visible").should("have.length.gt", 0);
     cy.findByText("retain-single-value").should("be.visible");
   });
 
