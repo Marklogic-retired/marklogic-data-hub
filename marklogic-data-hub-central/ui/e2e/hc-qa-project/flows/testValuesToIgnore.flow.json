@@ -1,0 +1,18 @@
+{
+  "name": "testValuesToIgnore",
+  "steps": {
+    "1": {
+      "stepId": "loadValuesToIgnore-ingestion"
+    },
+    "2": {
+      "stepId": "mapForValuesToIgnore-mapping"
+    },
+    "3": {
+      "stepId": "matchForValuesToIgnore-matching"
+    },
+    "4": {
+      "stepId": "mergeForValuesToIgnore-merging"
+    }
+  },
+  "lastUpdated": "2023-05-10T16:19:10.8951744-05:00"
+}

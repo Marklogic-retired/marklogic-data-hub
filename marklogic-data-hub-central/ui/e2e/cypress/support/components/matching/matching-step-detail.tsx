@@ -32,6 +32,10 @@ class MatchingStepDetail {
     cy.findByLabelText("multiPropertyRulesetOption").should("be.visible").scrollIntoView().click({force: true});
   }
 
+  getRuleSetSwitch() {
+    return cy.findByLabelText("ruleset-scale-switch");
+  }
+
   getSliderDeleteText() {
     return cy.findByLabelText("delete-slider-text");
   }

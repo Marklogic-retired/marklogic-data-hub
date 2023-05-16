@@ -91,10 +91,10 @@ function buildMatchSummary(matchable, content) {
     if (fn.startsWith(contentObject.uri, "/com.marklogic.smart-mastering/")) {
       continue;
     }
-    const contentValue = contentObject.value;
+    const contentValue = contentObject.value.toObject();
     let ignoreContent = false;
     for (const matchRuleset of matchRulesetDefinitions) {
-      if (contentValue.envelope && contentValue.envelope.instance && contentValue.envelope.instance.info) {
+      if (contentValue && contentValue.envelope && contentValue.envelope.instance && contentValue.envelope.instance.info) {
         const valueModel = contentValue.envelope.instance[contentValue.envelope.instance.info.title];
         for (const rule of matchRuleset.matchRules()) {
           if (rule.exclusionLists) {
@@ -109,7 +109,7 @@ function buildMatchSummary(matchable, content) {
           }
         }
       }
-      if (useFuzzyMatching) {
+      if(!ignoreContent && useFuzzyMatching){
         const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
         for (const queryHash of queryHashes) {
           let uriTriples = triplesByUri.get(contentObject.uri);
@@ -122,7 +122,11 @@ function buildMatchSummary(matchable, content) {
           inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
           uriTriples.push(uriToHashTriple, hashToRulesetTriple);
         }
+
       }
+    }
+    if(ignoreContent) {
+      continue;
     }
     let documentIsMerged = false;
     const filterQuery = matchable.filterQuery(contentObject.value);
@@ -134,7 +138,7 @@ function buildMatchSummary(matchable, content) {
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
       }
-      if (ignoreContent || total === 0) {
+      if (total === 0) {
         break;
       }
       const maxScan = Math.min(matchable.maxScan(), total);

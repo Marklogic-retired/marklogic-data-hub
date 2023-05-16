@@ -772,7 +772,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">
                         Collections
                       </div>
-                      {/* <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" /> */}
                       <HCTable
                         pagination={true}
                         data={collections}
@@ -788,7 +787,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">
                         Permissions
                       </div>
-                      {/* <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" /> */}
                       <HCTable
                         pagination={true}
                         data={recordPermissions}
@@ -804,7 +802,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">
                         Metadata Values
                       </div>
-                      {/* <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" /> */}
                       <HCTable
                         pagination={true}
                         data={recordMetadata}

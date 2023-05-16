@@ -29,6 +29,16 @@ describe("Concepts", () => {
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    browsePage.waitForSpinnerToDisappear();
     cy.log("**Verify results number change**");
     cy.log("**Turn off concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();

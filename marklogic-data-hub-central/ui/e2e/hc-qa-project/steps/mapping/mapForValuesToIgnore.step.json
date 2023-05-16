@@ -1,0 +1,55 @@
+{
+  "collections": [
+    "mapForValuesToIgnore",
+    "Person"
+  ],
+  "additionalCollections": [],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "mapForValuesToIgnore",
+  "targetEntityType": "http://example.org/Person-0.0.1/Person",
+  "description": "",
+  "collection": [
+    "loadValuesToIgnore"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadValuesToIgnore'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "off",
+  "customHook": {},
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapForValuesToIgnore-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-05-10T13:44:53.3980056-05:00",
+  "uriExpression": "$URI",
+  "properties": {
+    "fname": {
+      "sourcedFrom": "FirstName"
+    },
+    "lname": {
+      "sourcedFrom": "LastName"
+    },
+    "SSN": {
+      "sourcedFrom": "SSN"
+    },
+    "Address": {
+      "sourcedFrom": "Address"
+    },
+    "ZipCode": {
+      "sourcedFrom": "ZipCode"
+    },
+    "Verified": {
+      "sourcedFrom": "Verified"
+    }
+  },
+  "namespaces": {}
+}

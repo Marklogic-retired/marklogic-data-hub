@@ -647,7 +647,6 @@ const LoadList: React.FC<Props> = props => {
               </HCTooltip>
             )}
             {addToFlow(row.name)}
-            {/* <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip> */}
             &nbsp;
             {props.canReadWrite ? (
               <HCTooltip text="Delete" id="delete-action-tooltip" placement="bottom">

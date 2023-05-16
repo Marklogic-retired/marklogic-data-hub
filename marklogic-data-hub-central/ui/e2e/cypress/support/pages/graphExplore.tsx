@@ -218,8 +218,6 @@ class GraphExplore {
     return cy.get(`[aria-label="apply-facets-button"]`);
   }
 
-
-
   getTitleApp() {
     return cy.get(`[aria-label="title-container"]`);
   }

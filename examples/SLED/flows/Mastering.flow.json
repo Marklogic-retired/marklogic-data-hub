@@ -11,6 +11,9 @@
       "stepId": "matchMember-matching"
     },
     "2": {
+      "stepId": "matchMemberWithIgnore-matching"
+    },
+    "3": {
       "stepId": "mergeMember-merging"
     }
   },

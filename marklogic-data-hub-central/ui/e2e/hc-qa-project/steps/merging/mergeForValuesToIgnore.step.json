@@ -1,0 +1,52 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['matchForValuesToIgnore'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "mergeForValuesToIgnore"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "lname",
+      "mergeType": "strategy",
+      "mergeStrategyName": "name"
+    }
+  ],
+  "mergeStrategies": [
+    {
+      "strategyName": "name",
+      "maxSources": "All",
+      "maxValues": "All",
+      "priorityOrder": {
+        "sources": [],
+        "timeWeight": 0
+      },
+      "default": false
+    }
+  ],
+  "targetCollections": null,
+  "name": "mergeForValuesToIgnore",
+  "description": "",
+  "collection": [
+    "matchForValuesToIgnore"
+  ],
+  "selectedSource": "collection",
+  "lastUpdatedLocation": {
+    "documentXPath": ""
+  },
+  "additionalCollections": [],
+  "headers": {},
+  "interceptors": [],
+  "customHook": {},
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "mergeForValuesToIgnore-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2023-05-10T20:13:53.5827332-05:00"
+}

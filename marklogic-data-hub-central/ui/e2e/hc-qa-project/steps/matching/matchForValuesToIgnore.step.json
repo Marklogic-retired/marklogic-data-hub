@@ -1,0 +1,52 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['mapForValuesToIgnore'])",
+  "collections": [
+    "matchForValuesToIgnore"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "lname - Exact",
+      "weight": 7,
+      "reduce": false,
+      "fuzzyMatch": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "lname",
+          "matchType": "exact",
+          "options": {},
+          "exclusionLists": []
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "lastName",
+      "action": "merge",
+      "score": 5
+    }
+  ],
+  "name": "matchForValuesToIgnore",
+  "description": "",
+  "collection": [
+    "mapForValuesToIgnore"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [],
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "off",
+  "customHook": {},
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "matchForValuesToIgnore-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2023-05-10T13:47:35.8608433-05:00"
+}

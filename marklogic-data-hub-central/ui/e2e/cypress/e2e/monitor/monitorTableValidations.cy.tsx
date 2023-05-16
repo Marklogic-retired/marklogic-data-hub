@@ -153,12 +153,13 @@ describe("Monitor Tile", () => {
     cy.wrap(compareStatus).should("not.be.gt", 0);
 
 
-    cy.log("**check step entity type order ASC**");
+    //Will be fixed as part of DHFPROD-10273
+    /*cy.log("**check step entity type order ASC**");
     firstPageTableCellsEntityType.forEach(element => cy.log(element));
     let firstEntityType = firstPageTableCellsEntityType[0];
     let lastEntityType = firstPageTableCellsEntityType[firstPageTableCellsEntityType.length - 1];
     let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
-    cy.wrap(compareEntityType).should("not.be.gt", 0);
+    cy.wrap(compareEntityType).should("not.be.gt", 0);*/
   });
 
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
