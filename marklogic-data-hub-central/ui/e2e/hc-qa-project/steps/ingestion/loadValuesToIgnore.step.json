@@ -1,0 +1,33 @@
+{
+  "headers": {
+    "sources": [
+      {
+        "name": "loadValuesToIgnore"
+      }
+    ],
+    "lastLoadedDateTime": "currentDateTime",
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadValuesToIgnore"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadValuesToIgnore",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "sourceName": "",
+  "sourceType": "",
+  "outputURIPrefix": "",
+  "additionalCollections": [],
+  "targetDatabase": "data-hub-STAGING",
+  "interceptors": [],
+  "provenanceGranularityLevel": "off",
+  "customHook": {},
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadValuesToIgnore-ingestion",
+  "lastUpdated": "2023-05-10T13:41:27.1797636-05:00"
+}

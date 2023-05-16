@@ -105,7 +105,6 @@ const Steps: React.FC<Props> = props => {
           <p data-testid={"invalid-path-error"}>
             <b>Parameter Module Path</b> not found. Please enter a valid path.
           </p>
-          {/* <p aria-label="error-text">Missing <b>getParamaterDefinitions</b> function. Please verify your module file. </p> */}
         </div>
         <div>
           <HCButton variant="primary" aria-label={"Ok"} type="submit" className={"me-2"} onClick={confirmAction}>
