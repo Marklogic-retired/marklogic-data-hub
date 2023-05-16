@@ -795,6 +795,18 @@ class BrowsePage {
       expect($row.text()).to.contain(val);
     });
   }
+
+  dontUpdateQuery() {
+    return cy.get("#query-confirmation-no-button");
+  }
+
+  alertContent() {
+    return cy.get(`[id="hc-alert-component-content"]`);
+  }
+
+  closeExportModal() {
+    return cy.findByLabelText("Cancel").click();
+  }
 }
 
 const browsePage = new BrowsePage();
