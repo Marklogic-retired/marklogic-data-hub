@@ -2,6 +2,7 @@ plugins {
     id "java-library"
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
+    id 'maven-publish'
 }
 
 group = 'com.marklogic'
@@ -35,3 +36,24 @@ shadowJar {
     }
 }
 build.dependsOn shadowJar
+
+publishing {
+    publications {
+        mainJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            if (project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
+            }
+            url publishUrl
+            allowInsecureProtocol = true
+        }
+    }
+}
+
