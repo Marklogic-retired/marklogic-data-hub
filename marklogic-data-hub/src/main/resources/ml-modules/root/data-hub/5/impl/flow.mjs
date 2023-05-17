@@ -56,7 +56,7 @@ export default class Flow {
    * @param flowName
    * @param stepNumber
    * @param options This isn't just the runtime options provided by the user; because it is expected
-   * to be called by the processBatch endpoint, which is invoked by the Java QueryStepRunner class,
+   * to be called by the processBatch endpoint, which is invoked by the Java ScriptStepRunner class,
    * this is likely already the set of combined options. But it's not guaranteed to be the same,
    * and so combinedOptions is still constructed within this function.
    * @return {*}

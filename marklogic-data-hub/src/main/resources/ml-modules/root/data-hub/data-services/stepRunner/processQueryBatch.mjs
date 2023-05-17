@@ -34,7 +34,7 @@ const stepNumber = endpointConstants.stepNumber;
 const jobId = endpointConstants.jobId;
 
 // These are not just the runtime options that a user can provide. It is expected that this is
-// called by the Java QueryStepRunner class, which has its own logic for combining options.
+// called by the Java ScriptStepRunner class, which has its own logic for combining options.
 const options = endpointConstants.options.options || endpointConstants.options;
 
 
