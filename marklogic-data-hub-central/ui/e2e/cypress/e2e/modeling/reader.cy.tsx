@@ -114,6 +114,7 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityDescription().should("be.disabled");
     graphViewSidePanel.getEntityNamespace().should("be.disabled");
     graphViewSidePanel.getEntityPrefix().should("be.disabled");
+    cy.intercept("GET", "/api/models").as("colorUpdated");
     modelPage.toggleColorSelector("Customer");
     modelPage.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
@@ -122,7 +123,7 @@ describe("Entity Modeling: Reader Role", () => {
     if (Cypress.isBrowser("firefox")) {
       graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
-
+    cy.wait("@colorUpdated");
     modelPage.openIconSelector("Customer");
     modelPage.selectIcon("Customer", "FaAccessibleIcon");
     modelPage.getIconSelected("Customer", "FaAccessibleIcon").should("exist");

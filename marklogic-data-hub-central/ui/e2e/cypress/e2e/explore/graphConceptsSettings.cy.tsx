@@ -121,10 +121,12 @@ describe("Entity Type Settings Modal", () => {
 
     cy.log("**Save the changes**");
     dataModelDisplaySettingsModal.getModalSaveButton().click();
+    cy.waitForAsyncRequest();
     dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Reopen the settings modal and check the new values**");
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
     cy.log("**Switch to concepts table clicking on the checkbox**");
     dataModelDisplaySettingsModal.getConceptRadioButtopn().click();

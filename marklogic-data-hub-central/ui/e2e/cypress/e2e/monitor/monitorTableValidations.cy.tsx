@@ -120,6 +120,7 @@ describe("Monitor Tile", () => {
   });
 
   it("Ascending order validations Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
+
     cy.log("**order original job id array**");
     firstPageTableCellsJobId.forEach(element => cy.log(element));
 
@@ -127,35 +128,37 @@ describe("Monitor Tile", () => {
     firstPageTableCellsJobIdAux.forEach(element => cy.log(element));
     let firstPageTableCellsJobIdVar = firstPageTableCellsJobId.toString().replace(/\n/g, "");
     let firstPageTableCellsJobIdAuxVar = firstPageTableCellsJobIdAux.toString().replace(/\n/g, "");
-    expect(firstPageTableCellsJobIdVar).to.deep.eq(firstPageTableCellsJobIdAuxVar);
+    cy.wrap(firstPageTableCellsJobIdVar).should("deep.equal", firstPageTableCellsJobIdAuxVar);
 
     cy.log("**check step name order ASC**");
     firstPageTableCellsStepName.forEach(element => cy.log(element));
     let firstStepName = firstPageTableCellsStepName[0];
     let lastStepName = firstPageTableCellsStepName[firstPageTableCellsStepName.length - 1];
     let compareStepName = firstStepName.toString().localeCompare(lastStepName.toString());
-    expect(compareStepName).not.to.be.gt(0);
+    cy.wrap(compareStepName).should("not.be.gt", 0);
 
     cy.log("**check step type order ASC**");
     firstPageTableCellsStepType.forEach(element => cy.log(element));
     let firstStepType = firstPageTableCellsStepType[0];
     let lastStepType = firstPageTableCellsStepType[firstPageTableCellsStepType.length - 1];
     let compareStepType = firstStepType.toString().localeCompare(lastStepType.toString());
-    expect(compareStepType).not.to.be.gt(0);
+    cy.wrap(compareStepType).should("not.be.gt", 0);
+
 
     cy.log("**check step status order ASC**");
     firstPageTableCellsStatus.forEach(element => cy.log(element));
     let firstStatus = firstPageTableCellsStatus[0];
     let lastStatus = firstPageTableCellsStatus[firstPageTableCellsStatus.length - 1];
     let compareStatus = firstStatus.toString().localeCompare(lastStatus.toString());
-    expect(compareStatus).not.to.be.gt(0);
+    cy.wrap(compareStatus).should("not.be.gt", 0);
+
 
     cy.log("**check step entity type order ASC**");
     firstPageTableCellsEntityType.forEach(element => cy.log(element));
     let firstEntityType = firstPageTableCellsEntityType[0];
     let lastEntityType = firstPageTableCellsEntityType[firstPageTableCellsEntityType.length - 1];
     let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
-    expect(compareEntityType).not.to.be.gt(0);
+    cy.wrap(compareEntityType).should("not.be.gt", 0);
   });
 
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
