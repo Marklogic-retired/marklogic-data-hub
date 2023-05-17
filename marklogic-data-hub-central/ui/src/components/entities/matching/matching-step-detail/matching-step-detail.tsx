@@ -516,7 +516,6 @@ const MatchingStepDetail: React.FC = () => {
     setUriTestMatchClicked(false);
   };
 
-
   const handleAllDataRadioClick = () => {
     testMatchedData.uris = [];
     setAllDataSelected(true);
