@@ -53,7 +53,7 @@ describe("Concept classes in Modeling screen", () => {
     graphViewSidePanel.getSelectedConceptClassHeadingInfo("test_Shoe-Style").should("exist");
     graphViewSidePanel.getConceptClassDescription().should("be.visible");
     graphViewSidePanel.getConceptClassDescription().should("have.value", "Different categories of shoe styles.");
-
+    cy.intercept("GET", "/api/models").as("colorUpdated");
     modelPage.toggleColorSelector("test_Shoe-Style");
     modelPage.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
@@ -62,7 +62,7 @@ describe("Concept classes in Modeling screen", () => {
     if (Cypress.isBrowser("firefox")) {
       graphViewSidePanel.getConceptClassColor("test_Shoe-Style").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
-
+    cy.wait("@colorUpdated");
     modelPage.openIconSelector("test_Shoe-Style");
     modelPage.selectIcon("test_Shoe-Style", "FaAccessibleIcon");
     modelPage.getIconSelected("test_Shoe-Style", "FaAccessibleIcon").should("exist");

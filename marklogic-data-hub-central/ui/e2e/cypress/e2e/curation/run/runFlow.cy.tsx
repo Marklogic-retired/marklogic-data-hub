@@ -276,7 +276,7 @@ describe("Run Tile tests", () => {
     cy.findByLabelText("Yes").click();
 
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
-    runPage.runFlow(flowName);
+    cy.get(`#runFlow-${flowName}`).should("be.visible", {timeout: 8000}).click({force: true});
     cy.uploadFile("input/person.xml");
     cy.wait("@runResponse");
     cy.wait(3000);

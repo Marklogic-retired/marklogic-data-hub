@@ -273,8 +273,9 @@ describe("Graph Validations", () => {
 
     cy.log("**Opens a-Test1 details**");
     cy.get("#switch-view-table").click({force: true});
+    cy.waitForAsyncRequest();
     entityTypeTable.viewEntityInGraphView("a-Test1");
-    graphViewSidePanel.getPropertiesTab().click();
+    graphViewSidePanel.getPropertiesTab().click({force: true});
     graphViewSidePanel.getPropertyName("relTest1-Test2").should("be.visible");
 
     cy.log("**Edit relTest1-Test2 property**");
