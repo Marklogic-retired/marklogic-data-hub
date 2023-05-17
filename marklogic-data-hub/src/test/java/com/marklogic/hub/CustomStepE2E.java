@@ -62,6 +62,11 @@ public class CustomStepE2E extends AbstractHubCoreTest {
             makeInputFilePathsAbsoluteInFlow("Admissions");
             RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
             RunStepResponse ingestionStepResp = flowResponse.getStepResponses().get("2");
+            logger.info("ingestionStepResp: " + ingestionStepResp.toString());
+            if(ingestionStepResp.getStepOutput() != null){
+                logger.info("ingestionStepResp.getStepOutput size: " + ingestionStepResp.getStepOutput().size());
+                logger.info("ingestionStepResp.getStepOutput: " + ingestionStepResp.getStepOutput().toString());
+            }
             assertEquals(false, ingestionStepResp.isSuccess());
             assertTrue(ingestionStepResp.getStepOutput().get(0).contains("Unable to run module: " + moduleUri));
         } finally {
