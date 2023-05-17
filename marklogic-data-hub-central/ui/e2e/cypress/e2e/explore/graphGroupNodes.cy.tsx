@@ -42,7 +42,7 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Validate tooltip appears when the group node it's collapsed
+      cy.log("**Validate tooltip appears when the group node it's collapsed**");
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.getTooltip().should("contain", "Group of Product records")
         .should("contain", "Click to expand 3 sample records in this group.")
@@ -56,15 +56,14 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand 3 records of the node
+      cy.log("** Right click and expand 3 records of the node**");
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
 
       graphExplore.clickExpand3RecordsFromGroupNode();
       graphExplore.stopStabilization();
-
     });
-    // Wait needed for the graph to get stabilized
+
     cy.wait(3000);
     graphView.physicsAnimationToggle();
     cy.log("**Validating the record's IDs that have been expanded in the side panel**");
@@ -75,7 +74,6 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_50];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "50");
     });
@@ -86,7 +84,6 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_60];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "60");
     });
@@ -97,13 +94,11 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_70];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "70");
 
     });
 
-    // Wait needed to stabilize the graph
     cy.wait(1000);
     cy.log("**Right click and expand the remaining records of the group node**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
@@ -111,17 +106,15 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Hover to bring focus
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
 
-      // Right click and expand the remaining records of the node
+      cy.log("** Right click and expand the remaining records of the node**");
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
       graphExplore.clickExpandAllRecordsFromGroupNode();
 
     });
 
-    // Wait needed for the graph to get stabilized
     cy.wait(1000);
     graphView.physicsAnimationToggle();
     cy.log("**Click Product node '80' to open side panel and validate productID**");
@@ -130,12 +123,10 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_80];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "80");
     });
 
-    // Wait needed for the graph to get stabilized
     cy.wait(1000);
     cy.log("**Click Product node '90' to open side panel and validate productID**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_90);
@@ -143,7 +134,6 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_90];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Open the side panel to validate the node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExploreSidePanel.getTableCellValueBySidepanelQuery("productId").should("contain", "90");
 
@@ -155,7 +145,7 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_80];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand 3 records of the node
+      cy.log("** Right click and expand 3 records of the node**");
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
 
@@ -172,7 +162,6 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Validate tooltip appears
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.getTooltip().should("contain", "Group of Product records")
         .should("contain", "Click to expand 3 sample records in this group.")
@@ -188,7 +177,6 @@ describe("Group Nodes", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand all records on a table
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true}).then(() => {
         graphExplore.getViewRecordsInTable().should("be.visible").click();
       });

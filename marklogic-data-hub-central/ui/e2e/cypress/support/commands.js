@@ -1,29 +1,3 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-//import { defaultUserPreferences as userPreference } from "../../../src/services/user-preferences"
 import loginPage from "../support/pages/login";
 import "@testing-library/cypress/add-commands";
 import "cypress-file-upload";
@@ -33,8 +7,6 @@ require("cypress-plugin-tab");
 import {confirmationModal} from "../support/components/common/index";
 import {ConfirmationType} from "../support/types/modeling-types";
 import modelPage from "../support/pages/model";
-
-//cy.fixture('users/developer.json').as('developer')
 
 let protocol = "http";
 if (Cypress.env("mlHost").indexOf("marklogicsvc") > -1) { protocol = "https"; }
@@ -57,8 +29,6 @@ Cypress.Commands.add("withUI", {prevSubject: "optional"}, (subject) => {
 Cypress.Commands.add("withRequest", {prevSubject: "optional"}, (subject) => {
   if (subject) {
     cy.wrap(subject).then(user => {
-
-      //const sessionCookieName = 'HubCentralSession';
       const username = user["user-name"];
       const password = user.password;
 
@@ -159,7 +129,6 @@ Cypress.Commands.add("uploadFile", (filePath) => {
   cy.waitUntil(() => cy.get("input[type=\"file\"]"));
   cy.get("input[type=\"file\"]").attachFile(filePath, {force: true});
   cy.waitForAsyncRequest();
-  //cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
 });
 
 Cypress.Commands.add("verifyStepRunResult", (jobStatus, stepType, stepName) => {
@@ -251,7 +220,6 @@ Cypress.Commands.add("deleteRecordsInStaging", (...collections) => {
   });
 });
 
-// Delete files
 Cypress.Commands.add("deleteFiles", (dataBase, ...files) => {
   files.forEach(filePath => {
     cy.exec(`curl -X DELETE --anyauth -u test-admin-for-data-hub-tests:password "${protocol}://${Cypress.env("mlHost")}:8002/v1/documents?database=data-hub-${dataBase}&uri=${filePath}"`);
@@ -263,10 +231,8 @@ Cypress.Commands.add("waitForAsyncRequest", () => {
   cy.window().then({
     timeout: 120000
   }, win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve)));
-
-  //cy.waitUntil(() => cy.window().then(win => win.fetch_loading > 0))
-  //cy.waitUntil(() => cy.window().then(win => win.fetch_loading === 0))
 });
+
 function setTestUserRoles(roles) {
   let role = roles.concat("hub-central-user");
   cy.writeFile("cypress/support/body.json", {"role": role});
@@ -284,11 +250,7 @@ function resetTestUser() {
   -d @cypress/support/resetUser.json ${protocol}://${Cypress.env("mlHost")}:8002/manage/v2/users/hc-test-user/properties`);
 }
 
-Cypress.on("uncaught:exception", (err, runnable) => {
-  // returning false here prevents Cypress from
-  // failing the test
-  return false;
-});
+Cypress.on("uncaught:exception", () => { return false; });
 
 Cypress.Commands.add("getAttached", selector => {
   const getElement = typeof selector === "object" ? selector : $d => $d.find(selector);
@@ -349,17 +311,14 @@ Cypress.Commands.add("typeTab", (shiftKey, ctrlKey) => {
   });
 });
 
-/**
- * These commands will save the Local Storage Data so that we can use it to preserve the session without the need to re-login before each "it" block
- */
 let LOCAL_STORAGE_MEMORY = {};
-// Save Local Storage Data
+
 Cypress.Commands.add("saveLocalStorage", () => {
   Object.keys(localStorage).forEach(key => {
     LOCAL_STORAGE_MEMORY[key] = localStorage[key];
   });
 });
-//Restore (preserve) Local Storage Data
+
 Cypress.Commands.add("restoreLocalStorage", () => {
   Cypress.Cookies.preserveOnce("HubCentralSession");
   Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {

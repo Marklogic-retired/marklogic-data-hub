@@ -150,7 +150,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     curatePage.expandAccordian("Order");
 
-    // TODO: Need to wait do to a second re-render. BUG: DHFPROD-9222
     cy.wait(1000);
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
@@ -265,7 +264,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     detailPage.getSourceView().click();
     cy.contains("accessLevel");
     cy.contains("999ABC");
-    // By default attachment is not present in detailed view of document
+
     detailPage.attachmentPresent().should("not.exist");
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));

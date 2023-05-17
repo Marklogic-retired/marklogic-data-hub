@@ -42,7 +42,7 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Verify icon dont display when node is not merged**");
@@ -148,13 +148,12 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
     graphExplore.getSearchBar().type("Jones");
     graphExplore.getSearchButton().click();
     cy.wait(6000);
 
-    // SnippetView
     browsePage.clickSnippetView();
     cy.log("** unmerge icon should be visible**");
     browsePage.getUnmergeIcon().should("have.length", 1);
@@ -162,19 +161,17 @@ describe("Test '/Explore' graph right panel", () => {
     browsePage.getUnmergeIcon().trigger("mouseover");
     cy.findByText("Unmerge: Contact your security administrator for access.");
 
-    //TableView
     browsePage.clickTableView();
     browsePage.getUnmergeIcon().should("have.length", 1);
     cy.log("** when hover unmerge icon should show a security tooltip**");
     browsePage.getUnmergeIcon().trigger("mouseover");
     cy.findByText("Unmerge: Contact your security administrator for access.");
 
-    //Graph explore
     browsePage.clickGraphView();
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Picking up a node available to merge**");
@@ -192,12 +189,10 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getUnmergeIcon().should("be.visible");
     browsePage.getUnmergeIcon().should("have.length", 1);
 
-    // Check unmerge icon in side panel
     cy.log("** when hover unmerge icon should show a security tooltip**");
     browsePage.getUnmergeIcon().trigger("mouseover");
     cy.findAllByText("Unmerge: Contact your security administrator for access.");
 
-    // Check unmerge option in right click node
     cy.log("** when hover unmerge icon should show a security tooltip**");
     graphExplore.getUnmergeOption().should("be.visible");
     graphExplore.getUnmergeOption().trigger("mouseover");
@@ -207,14 +202,13 @@ describe("Test '/Explore' graph right panel", () => {
   it("Navigate to Table View and Filter Person entity", () => {
     cy.loginAsDeveloperV2().withRequest();
     LoginPage.navigateToMainPage();
-    //Saving Local Storage to preserve session
 
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
 
     graphExplore.getSearchBar().type("Jones");

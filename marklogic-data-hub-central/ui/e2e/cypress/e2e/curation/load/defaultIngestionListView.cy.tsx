@@ -59,32 +59,32 @@ describe("Validate CRUD functionality from list view", () => {
 
   it("Verify Advanced Settings and Error validations", () => {
     loadPage.stepName(stepName).click();
-    loadPage.switchEditAdvanced().click();  // Advanced tab
+    loadPage.switchEditAdvanced().click();
     loadPage.selectTargetDB("FINAL");
     loadPage.targetCollectionInput().type("e2eTestCollection{enter}test1{enter}test2{enter}", {force: true});
     cy.findByText("Default Collections:").click();
     loadPage.defaultCollections(stepName).should("be.visible");
     loadPage.appendTargetPermissions("data-hub-common,update");
-    cy.log("click on provGranularity and choise off");
+    cy.log("**click on provGranularity and choise off**");
     advancedSettings.getProvGranularitySelectWrapper().click();
     advancedSettings.getProvGranularitySelectMenuList().find(`[data-testid="provOptions-Off"]`).click();
     loadPage.setBatchSize("200");
-    //Header JSON error
+    cy.log("**Header JSON error**");
     cy.get("#headers").clear().type("{").blur();
     loadPage.jsonValidateError().should("be.visible");
-    cy.findByTestId(`${stepName}-save-settings`).should("be.disabled"); // Errors disable save button
+    cy.findByTestId(`${stepName}-save-settings`).should("be.disabled");
     loadPage.setHeaderContent("loadTile/headerContent");
-    //Interceptors JSON error
+    cy.log("**Interceptors JSON error**");
     cy.findByText("Interceptors").click();
     cy.get("#interceptors").clear().type("[\"test\": \"fail\"]").blur();
     loadPage.jsonValidateError().should("be.visible");
-    cy.findByText("Interceptors").click(); //closing the interceptor text area
+    cy.findByText("Interceptors").click();
     loadPage.setStepInterceptor("loadTile/stepInterceptor");
-    //Custom Hook JSON error
+    cy.log("**Custom Hook JSON error**");
     cy.findByText("Custom Hook").click();
     cy.get("#customHook").clear().type("{test}", {parseSpecialCharSequences: false}).blur();
     loadPage.jsonValidateError().should("be.visible");
-    cy.findByText("Custom Hook").click(); //closing the custom hook text area
+    cy.findByText("Custom Hook").click();
     loadPage.setCustomHook("loadTile/customHook");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
@@ -111,7 +111,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByTestId(`${stepName}-cancel-settings`).click();
     cy.findByText("Discard changes?").should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    // Verify that change was NOT saved.
+    cy.log("**Verify that change was NOT saved.**");
     loadPage.stepName(stepName).click();
     loadPage.stepDescription("UPDATE2").should("be.visible");
     loadPage.stepDescription("DISCARD").should("not.exist");
@@ -123,12 +123,10 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
-    //should route user back to load page list view
+    cy.log("**should route user back to load page list view**");
     cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
 
-  // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
-  // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Create a new flow and navigate back to load step", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
@@ -149,12 +147,11 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", stepName, flowName);
 
-    //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
 
     runPage.verifyStepRunResult(stepName, "success");
 
-    //only the load step should have run and not the other steps in flow
+    cy.log("**only the load step should have run and not the other steps in flow**");
     runPage.verifyNoStepRunResult("mapPersonJSON", "success");
     runPage.verifyNoStepRunResult("match-person", "success");
     runPage.verifyNoStepRunResult("merge-person", "success");
@@ -171,16 +168,12 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.getFlowName(flowName).should("not.exist");
   });
 
-  // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
-  // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Verify Run in Flow popup, create new flow and add step", {defaultCommandTimeout: 120000}, () => {
-    // check Run in Flow popup
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
-    // Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
-    // cancel (instead of letting run)
+
     cy.findByLabelText("Cancel").click({force: true});
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.createFlowButton().click();
@@ -189,7 +182,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowDescription(`${flowName} description`);
     cy.wait(500);
     loadPage.confirmationOptions("Save").click();
-    // add step to that new flow
+
     runPage.addStep(flowName);
     runPage.addStepToFlow(stepName);
     runPage.verifyStepInFlow("Loading", stepName, flowName);
@@ -207,7 +200,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.uploadFile("input/test-1.json");
     runPage.verifyStepRunResult(stepName, "success");
 
-    //only the load step should have run and not the other steps in flow
+    cy.log("**only the load step should have run and not the other steps in flow**");
     runPage.verifyNoStepRunResult("mapPersonJSON", "success");
     runPage.verifyNoStepRunResult("match-person", "success");
     runPage.verifyNoStepRunResult("merge-person", "success");
@@ -227,7 +220,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", stepName, flowName2);
-    //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
+    cy.log("**Verify Run Load step where step exists in multiple flows, choose one to automatically run in**");
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
@@ -253,7 +246,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("not.exist");
-    //Verify Delete
+
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.deleteStep(stepName).click();

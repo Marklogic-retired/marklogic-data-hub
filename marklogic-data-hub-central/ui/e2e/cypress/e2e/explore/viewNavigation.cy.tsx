@@ -37,14 +37,12 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
   it("Switch views and validate they get updated correctly", () => {
     cy.log("**Select Table view and validate it switches correctly**");
     browsePage.clickTableView();
-    //Graph and table should not appear anymore
     graphExplore.getGraphVisCanvas().should("not.exist");
     browsePage.getSnippetViewResult().should("not.exist");
     browsePage.getTotalDocuments().should("exist").should("be.greaterThan", 25);
 
     cy.log("**Go to Snippet View**");
     browsePage.clickSnippetView();
-    //Graph and table should not appear anymore
     graphExplore.getGraphVisCanvas().should("not.exist");
     browsePage.getHCTableRows().should("not.exist");
     browsePage.getSnippetViewResult().should("be.visible");
@@ -53,7 +51,6 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
-    //Table and snippet view should not appear anymore
     browsePage.getSnippetViewResult().should("not.exist");
     browsePage.getHCTableRows().should("not.exist");
   });
@@ -99,7 +96,7 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("Remove Alert");

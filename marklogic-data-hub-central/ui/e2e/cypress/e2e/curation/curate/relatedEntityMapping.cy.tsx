@@ -77,7 +77,7 @@ describe("Mapping", () => {
     entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
     cy.wait(1000);
-    //Save Changes
+
     cy.publishDataModel();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("TestEntity")).should("be.visible");
@@ -108,13 +108,12 @@ describe("Mapping", () => {
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
     mappingStepDetail.relatedInfoIcon();
-    mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
+    mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
     mappingStepDetail.validateContextInput("Relation (relatedTo Person)", "/");
     mappingStepDetail.validateURIInput("Person", "$URI");
     mappingStepDetail.validateURIInput("Relation (relatedTo Person)", "hubURI('Relation')");
 
-    // To verify tooltips for mapping property related icons
     mappingStepDetail.verifySourceFieldTooltip("Person");
     mappingStepDetail.verifyFunctionTooltip("URI");
     mappingStepDetail.verifyReferenceTooltip("Person");
@@ -122,7 +121,7 @@ describe("Mapping", () => {
 
   it("Add and test mapping expressions with related entities", {defaultCommandTimeout: 120000}, () => {
     mappingStepDetail.setXpathExpressionInput("id", "SSN");
-    mappingStepDetail.entityTitle("Person").click(); // click outside field to auto-save
+    mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     mappingStepDetail.setXpathExpressionInput("relatedTo", "SSN");
@@ -145,7 +144,6 @@ describe("Mapping", () => {
 
   it("Switch views and return to mapping details, verify persistence of expressions", () => {
     cy.log("**Go back to curate page**");
-    // Visiting instead of clicking on curate button, to make sure Person step details are always closed.
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Person").should("be.visible");
@@ -153,7 +151,6 @@ describe("Mapping", () => {
     cy.log("**Go to Model page and select table view**");
     toolbar.getModelToolbarIcon().should("be.visible").click({force: true});
 
-    // TODO: Table view button does not work until the animation stops.
     cy.wait(5000);
 
     modelPage.selectView("table");
@@ -162,9 +159,6 @@ describe("Mapping", () => {
     cy.log("**Go back to curate page and open Person**");
     cy.visit("/tiles/curate");
     curatePage.getEntityTypePanel("Person").should("exist");
-    //There is a re-render happening sometimes at this point,
-    //so waiting for a request will not work.
-    //A hard wait of 1 sec may be needed here.
 
     cy.log("**Open Person mapping step details**");
     curatePage.getEntityTypePanel("Person").then(($ele) => {
@@ -173,7 +167,7 @@ describe("Mapping", () => {
         curatePage.toggleEntityTypeId("Person");
       }
     });
-    curatePage.openMappingStepDetail("Person", "mapRelation");//
+    curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
 
@@ -245,14 +239,13 @@ describe("Mapping", () => {
     runPage.runStep("mapRelation", "relationFlow");
     runPage.verifyStepRunResult("mapRelation", "success");
     cy.waitForAsyncRequest();
-    // Navigate to Explore
+
     runPage.explorerLink("mapRelation").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.clickTableView();
     browsePage.waitForHCTableToLoad();
 
-    // Verify Explore results
     browsePage.removeBaseEntity("Person");
     entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 13);
@@ -266,9 +259,6 @@ describe("Mapping", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Person").should("exist");
-    //There is a re-render happening sometimes at this point,
-    //so waiting for a request will not work.
-    //A hard wait of 1 sec may be needed here.
 
     cy.log("**Open step details for Person**");
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
@@ -304,9 +294,6 @@ describe("Mapping", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Person").should("exist");
-    //There is a re-render happening sometimes at this point,
-    //so waiting for a request will not work.
-    //A hard wait of 1 sec may be needed here.
 
     cy.log("**Open mapping steps for Person entity**");
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
@@ -315,42 +302,35 @@ describe("Mapping", () => {
     browsePage.waitForSpinnerToDisappear();
     mappingStepDetail.relatedFilterSelection("Person", "Relation (relatedTo Person)").should("exist");
 
-    // Related entity exists before deletion
     cy.log("**Validate related entity exists before deletion**");
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
     mappingStepDetail.relatedFilterSelectionDeleteIcon("Person", "Relation (relatedTo Person)").click({force: true});
     mappingStepDetail.deleteConfirmationButtonYes().click({force: true});
 
-    // Related does not exist after the deletion
     cy.log("**Validate Related entity does not exist after deletion**");
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
 
   it("Delete related entity from mapping via close icon", () => {
-    // Reselect deleted related entity
     mappingStepDetail.mapRelatedEntities("Person").invoke("attr", "aria-expanded").then(($ele) => {
       if ($ele === "false") {
         mappingStepDetail.relatedFilterMenu("Person");
       }
     });
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
-    mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
-    // Related entity exists before deletion
+    mappingStepDetail.entityTitle("Person").click();
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
     mappingStepDetail.relatedDeleteIcon("Relation (relatedTo Person)").scrollIntoView().click();
     mappingStepDetail.deleteConfirmationButtonYes().click({force: true});
-    // Related entity does not exist after deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
 
   it("Reopen step and verify the deleted related entity is no longer there", () => {
     mappingStepDetail.goBackToCurateHomePage();
     curatePage.getEntityTypePanel("Person").should("be.visible");
-    //curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
-    //Related entity does not exist after reopening step
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
 

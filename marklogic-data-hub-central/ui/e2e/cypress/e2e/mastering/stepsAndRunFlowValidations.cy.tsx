@@ -91,7 +91,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     entityTypeModal.newEntityName("Agent");
     entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
-    // Add properties
+
     propertyTable.getAddPropertyButton("Agent").should("be.visible").click();
     propertyModal.newPropertyName("Name");
     propertyModal.openPropertyDropdown();
@@ -226,7 +226,6 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(mergeStep, "success");
 
-    //Verify merged Data
     runPage.explorerLink(mergeStep).click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();

@@ -37,7 +37,6 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    //Verify user without hub-central-saved-query-user role can see save icon and is disabled
     entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().should("be.visible");
     browsePage.getSaveModalIcon().should("have.css", "background-color", "rgba(0, 0, 0, 0)");

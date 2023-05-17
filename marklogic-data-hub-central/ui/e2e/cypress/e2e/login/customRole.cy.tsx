@@ -52,10 +52,5 @@ describe("Custom Role", () => {
     cy.waitForAsyncRequest();
     runPage.createFlowButton().should("be.disabled");
     cy.findByText(flowName).should("be.visible");
-
-    //Revalidate below with DHFPROD-8455
-    // cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    // cy.waitForAsyncRequest();
-    // browsePage.getSelectedEntity().should("contain", "All Entities");
   });
 });

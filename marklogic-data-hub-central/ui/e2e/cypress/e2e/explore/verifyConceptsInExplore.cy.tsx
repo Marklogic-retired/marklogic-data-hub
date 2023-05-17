@@ -25,7 +25,6 @@ describe("Concepts", () => {
   });
 
   it("Validate record counts changes when toggling concepts", () => {
-    //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -48,7 +47,6 @@ describe("Concepts", () => {
   });
 
   it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 200000}, () => {
-    //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -86,7 +84,6 @@ describe("Concepts", () => {
     cy.log("**Verify Kettle concept node is not visible in the canvas anymore**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      //it should not exist because the leaf node was collapsed
       cy.log("**Kettle coordinates should not exist because it was collapsed**");
       expect(kettleCoordinates).to.be.undefined;
     });
@@ -100,7 +97,6 @@ describe("Concepts", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
-      // Right click and expand the remaining records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.clickShowRelated();
     });
@@ -109,7 +105,6 @@ describe("Concepts", () => {
 
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
       let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
-      //it should not exist because the leaf node was collapsed
       cy.log("**Jeans coordinates should not exist because toggle is off**");
       expect(jeansCoordinates).to.be.undefined;
     });
@@ -131,7 +126,6 @@ describe("Concepts", () => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.trigger("mouseover", kettleCoordinates.x, kettleCoordinates.y, {force: true});
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
@@ -142,19 +136,16 @@ describe("Concepts", () => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand the remaining records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.clickShowRelated();
     });
 
     cy.wait(4000);
-
     graphExplore.focusNode(ExploreGraphNodes.CONCEPT_JEANS);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
       let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.trigger("mouseover", jeansCoordinates.x, jeansCoordinates.y, {force: true});
       canvas.click(jeansCoordinates.x, jeansCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
@@ -181,27 +172,22 @@ describe("Concepts", () => {
     cy.log("**Confirm all concepts are being displayed**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      //it should not exist because the facet is applied only for Sneakers
       expect(kettleCoordinates).not.to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_BASKETBALLSHOES).then((nodePositions: any) => {
       let basketballShoesCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_BASKETBALLSHOES];
-      //it should not exist because the facet is applied only for Sneakers
       expect(basketballShoesCoordinates).not.to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SLOWCOOKER).then((nodePositions: any) => {
       let slowCookerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SLOWCOOKER];
-      //it should not exist because the facet is applied only for Sneakers
       expect(slowCookerCoordinates).not.to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
       let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
-      //it should not exist because the facet is applied only for Sneakers
       expect(jeansCoordinates).not.to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
       let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
-      //it should not exist because the facet is applied only for Sneakers
       expect(sneakersCoordinates).not.to.be.undefined;
     });
 
@@ -217,27 +203,22 @@ describe("Concepts", () => {
     cy.log("**Confirm no concepts are being displayed**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      //it should not exist because the facet is applied only for Sneakers
       expect(kettleCoordinates).to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_BASKETBALLSHOES).then((nodePositions: any) => {
       let basketballShoesCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_BASKETBALLSHOES];
-      //it should not exist because the facet is applied only for Sneakers
       expect(basketballShoesCoordinates).to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SLOWCOOKER).then((nodePositions: any) => {
       let slowCookerCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SLOWCOOKER];
-      //it should not exist because the facet is applied only for Sneakers
       expect(slowCookerCoordinates).to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_JEANS).then((nodePositions: any) => {
       let jeansCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_JEANS];
-      //it should not exist because the facet is applied only for Sneakers
       expect(jeansCoordinates).to.be.undefined;
     });
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_SNEAKERS).then((nodePositions: any) => {
       let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
-      //it should not exist because the facet is applied only for Sneakers
       expect(sneakersCoordinates).to.be.undefined;
     });
   });
@@ -246,17 +227,15 @@ describe("Concepts", () => {
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    cy.wait(5000); // The canvas takes some more time animating
+    cy.wait(5000);
 
     cy.log("**Verify only Product concepts are present and checked by default since they are shown**");
 
     entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
-    //concepts related to Product present
     entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("Kettle").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("Sneakers").should("be.checked");
-    //Jeans concept is not present
     entitiesSidebar.getSingleConceptCheckbox("Jeans").should("not.exist");
   });
 
@@ -265,7 +244,6 @@ describe("Concepts", () => {
     cy.wait(2000);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CONCEPT_KETTLE).then((nodePositions: any) => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
-      //it should not exist because the facet is applied only for Sneakers
       cy.log("**Kettle coordinates should not exist because it was collapsed**");
       expect(kettleCoordinates).to.be.undefined;
     });
@@ -276,7 +254,6 @@ describe("Concepts", () => {
       let sneakersCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_SNEAKERS];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.trigger("mouseover", sneakersCoordinates.x, sneakersCoordinates.y, {force: true});
       canvas.click(sneakersCoordinates.x, sneakersCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
@@ -295,7 +272,6 @@ describe("Concepts", () => {
       let kettleCoordinates: any = nodePositions[ExploreGraphNodes.CONCEPT_KETTLE];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.trigger("mouseover", kettleCoordinates.x, kettleCoordinates.y, {force: true});
       canvas.click(kettleCoordinates.x, kettleCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("exist");
@@ -303,13 +279,11 @@ describe("Concepts", () => {
   });
 
   it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 200000}, () => {
-    //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
-    //Verify if the tooltip is visible
     graphView.getPhysicsAnimationHelpIcon().trigger("mouseover", {force: true});
     graphView.getPhysicsAnimationTooltip().should("be.visible");
   });

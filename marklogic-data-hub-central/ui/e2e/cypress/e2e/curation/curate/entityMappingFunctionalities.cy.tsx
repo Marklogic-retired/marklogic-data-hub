@@ -118,20 +118,20 @@ describe("Mapping validations for session storage and table filtering", () => {
     });
   });
 
-  it("Check collection Typeahead request when source  database is changed", () => {
+  it("Check collection Typeahead request when source database is changed", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
     curatePage.addNewStep("Order").click();
     createEditStepDialog.stepNameInput().type("testName", {timeout: 2000});
 
-    //verify typehead is requesting to staging db
+    cy.log("**verify typehead is requesting to staging db**");
     cy.intercept("POST", "api/entitySearch/facet-values?database=staging").as("stagingRequest1");
     createEditStepDialog.setCollectionInput("ABC");
     cy.wait("@stagingRequest1");
 
 
-    //verify typehead is requesting to staging db when source DB is changed
+    cy.log("**verify typehead is requesting to staging db when source DB is changed**");
     createEditStepDialog.getAdvancedTab().click();
     advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
     createEditStepDialog.getBasicTab().click();
@@ -141,7 +141,7 @@ describe("Mapping validations for session storage and table filtering", () => {
     createEditStepDialog.saveButton("mapping").click();
     cy.findByLabelText("Back").click();
 
-    //verify typehead request when the step is already created
+    cy.log("**verify typehead request when the step is already created**");
     curatePage.editStep("testName").click();
     cy.intercept("POST", "api/entitySearch/facet-values?database=final").as("finalRequest2");
     createEditStepDialog.setCollectionInput("E");
@@ -155,6 +155,5 @@ describe("Mapping validations for session storage and table filtering", () => {
     createEditStepDialog.saveButton("mapping").click();
     curatePage.deleteMappingStepButton("testName").click();
     curatePage.deleteConfirmation("Yes").click();
-
   });
 });

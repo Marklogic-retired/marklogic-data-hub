@@ -80,7 +80,7 @@ describe("Validate E2E Mastering Flow", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    //Fix for Windows, if accordion it's not collapsed
+
     runPage.toggleFlowAccordion(flowName);
     cy.verifyStepAddedToFlow("Loading", loadStepName, flowName);
     runPage.runStep(loadStepName, flowName);
@@ -90,7 +90,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(loadStepName, "success");
 
-    // Verify step name appears as a collection facet in explorer
+    cy.log("** Verify step name appears as a collection facet in explorer**");
     runPage.explorerLink(loadStepName).should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -99,9 +99,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("be.visible");
     cy.wait(3000);
-    /* });*/
-    //add back in using storage saving with DHFPROD-8523
-    // it("Create a new entity and Add properties", {defaultCommandTimeout: 120000}, () => {
+
     toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -111,7 +109,7 @@ describe("Validate E2E Mastering Flow", () => {
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
-    // Add properties
+
     propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
     propertyModal.newPropertyName("FirstName");
     propertyModal.openPropertyDropdown();
@@ -151,9 +149,8 @@ describe("Validate E2E Mastering Flow", () => {
     structuredTypeModal.newName("DetailsProperty");
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
-    // });
-    // it("Save Patient entity", () => {
-    cy.wait(1000); // stall as click was happening before request completed
+
+    cy.wait(1000);
     modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
@@ -186,7 +183,7 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.setXpathExpressionInput("DateOfBirth", "DateOfBirth");
     curatePage.dataPresent().scrollIntoView().should("be.visible");
     mappingStepDetail.navigateUrisRight().click({force: true});
-    // Test the mappings
+
     mappingStepDetail.testMap().should("be.visible").should("be.enabled");
     mappingStepDetail.expandEntity().should("be.visible").click();
     mappingStepDetail.testMap().click({force: true});
@@ -200,7 +197,6 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.selectFlowToRunIn(flowName);
     runPage.verifyStepRunResult(mapStep, "success");
 
-    //Explore Mapped data
     runPage.explorerLink(mapStep).click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -227,7 +223,8 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.verifyStepNameIsVisible(matchStep);
   });
 
-  xit("Add Thresholds", () => {
+  // TODO: DHFPROD-10184
+  it.skip("Add Thresholds", () => {
     curatePage.openStepDetails(matchStep);
     matchingStepDetail.addThresholdButton().click();
     thresholdModal.setThresholdName("Match");
@@ -260,7 +257,8 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
   });
 
-  xit("Add Rulesets", () => {
+  // TODO: DHFPROD-10184
+  it.skip("Add Rulesets", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("LastName");
@@ -337,7 +335,6 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Add Match step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
-    //curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
@@ -422,7 +419,6 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.selectFlowToRunIn(flowName);
     runPage.verifyStepRunResult(mergeStep, "success");
 
-    //Verify merged Data
     runPage.explorerLink(mergeStep).click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -435,7 +431,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("clear-sm-Patient-merged").should("be.visible");
   });
 
-  //THIS FAILS UNTIL ENTITY SPECIFIC FACETS PR IS IN (DHFPROD-7950), needs to use entity specific panel facets instead entity properties panel
+  // TODO: DHFPROD-10184
   it.skip("Explore other collections", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     entitiesSidebar.selectEntity("All Data");

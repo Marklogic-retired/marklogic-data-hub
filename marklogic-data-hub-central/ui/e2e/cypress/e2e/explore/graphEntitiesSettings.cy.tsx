@@ -10,9 +10,6 @@ import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
 
-//ToDo: Should move it to RTL test
-//const defaultSelectLabel = "Select...";
-//const defaultSelectProperty = "Select property";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.CUSTOMER,
   properties: {
@@ -41,8 +38,7 @@ const propertiesOnHoverData = {
   email: "email: adamscole@nutralab.com",
   shippingStreet: "shipping > street:"
 };
-// We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
-// "#FFF0A3" == "rgb(255, 240, 163)"
+
 const newEntityTypeData = {
   label: "name",
   icon: "FaAndroid",
@@ -52,8 +48,6 @@ const newEntityTypeData = {
   }
 };
 
-// We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
-// "#FFD0AE" == "rgb(255, 208, 174)"
 const newEntityTypeData2 = {
   label: "email",
   icon: "FaAngular",
@@ -109,8 +103,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", newEntityTypeData.icon);
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    //ToDo: Should move it to RTL test
-    //dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     cy.waitForAsyncRequest();
     dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
@@ -118,8 +110,6 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    //ToDo: Should move it to RTL test
-    //dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).click();
     dataModelDisplaySettingsModal.getPropertiesOnHoverDropdownOption(
       defaultEntityTypeData.properties.name).click({force: true});
@@ -146,9 +136,6 @@ describe("Entity Type Settings Modal", () => {
       expect(Cypress._.toLower(color)).equal(Cypress._.toLower(defaultEntityTypeData.color.HEX));
     });
     dataModelDisplaySettingsModal.getEntityTypeIconButtonWrapper(defaultEntityTypeData.name).should("have.attr", "data-icon", defaultEntityTypeData.icon);
-    //ToDo: Should move it to RTL test
-    //dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
-    //dataModelDisplaySettingsModal.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
 
     cy.log("**Close the modal**");
     dataModelDisplaySettingsModal.getModalCloseButton().click();
@@ -277,7 +264,6 @@ describe("Entity Type Settings Modal", () => {
 
       graphExploreSidePanel.getSidePanel().scrollIntoView().should("exist");
       graphExploreSidePanel.getSidePanelHeading().should("contain.text", defaultEntityTypeData.propertiesValues.name);
-
     });
   });
 

@@ -12,8 +12,6 @@ import LoginPage from "../../support/pages/login";
 import homePage from "../../support/pages/home";
 import "cypress-wait-until";
 
-//const defaultSelectLabel = "Select...";
-//const defaultSelectProperty = "Select property";
 const defaultEntityTypeData = {
   name: BaseEntityTypes.BABYREGISTRY,
   properties: {
@@ -45,7 +43,6 @@ describe("Entity display settings in model tile", () => {
   });
 
   it("Can change entity display settings in model tile and change in explore", () => {
-    //TempFix
     modelPage.selectView("table");
     modelPage.selectView("project-diagram");
     cy.waitForAsyncRequest();
@@ -57,22 +54,11 @@ describe("Entity display settings in model tile", () => {
     });
     cy.wait(1000);
 
-    /**graphVis.getPositionsOfNodes(defaultEntityTypeData.name).then((nodePositions: any) => {
-      let babyRegistryCoordinates: any = nodePositions[defaultEntityTypeData.name];
-      cy.wait(200);
-      graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
-      if (Cypress.isBrowser("!firefox")) {
-        graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
-      }
-    });*/
-
     cy.log("**Change side bar tab to Entity Type**");
     graphViewSidePanel.getEntityTypeTab().scrollIntoView().click({force: true});
     graphViewSidePanel.getEntityDescription().should("be.visible");
 
     cy.log("**Verify no label are selected, select new one and check the selection**");
-    //ToDo: Should move it to RTL test
-    //graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("have.text", defaultSelectLabel);
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).then(($ele) => {
       let text = $ele.text();
       if (text === defaultEntityTypeData.properties.ownedBy) {
@@ -89,8 +75,7 @@ describe("Entity display settings in model tile", () => {
     graphViewSidePanel.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.ownedBy);
 
     cy.log("**Verify no propertiesOnHover are selected, select new one and check the selection**");
-    //ToDo: Should move it to RTL test
-    //graphViewSidePanel.getPropertiesOnHoverDropdown(defaultEntityTypeData.name).should("contain.text", defaultSelectProperty);
+
     cy.get("body").then((body) => {
       if (body.find(".rc-tree-select-selection-item-remove-icon").length > 0) {
         dataModelDisplaySettingsModal.getDropdownCloseOption().each(($button) => {

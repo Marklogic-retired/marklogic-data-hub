@@ -9,10 +9,15 @@ import "cypress-wait-until";
 let flowName = "testPersonJSON";
 let stepName = "mapPersonJSON";
 
+const userRoles = [
+  "hub-central-flow-writer",
+  "hub-central-mapping-writer",
+  "hub-central-job-monitor"
+];
+
 describe("Monitor Tile", () => {
   before(() => {
-    cy.log("**Logging into the app as a developer**");
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-job-monitor").withRequest();
+    cy.loginAsTestUserWithRoles(...userRoles).withRequest();
     LoginPage.navigateToMainPage();
   });
 

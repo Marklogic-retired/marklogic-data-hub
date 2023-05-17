@@ -31,11 +31,10 @@ describe("Monitor Tile", () => {
 
     cy.log("** Get the columns and check that are present in the table **");
     monitorPage.getColumnSelectorColumns().should("have.length.gt", 0).then($options => {
-      // convert the jQuery object into a plain array with the innerText prop
       return (
         Cypress.$.makeArray($options).map((el) => el.innerText)
       );
-    }).then((options) => { // here is the array of elements
+    }).then((options) => {
       cy.log("** Close column selector popover **");
       monitorPage.getColumnSelectorCancelButton().scrollIntoView().click({force: true});
       monitorPage.getColumnSelectorPopover().should("not.exist");

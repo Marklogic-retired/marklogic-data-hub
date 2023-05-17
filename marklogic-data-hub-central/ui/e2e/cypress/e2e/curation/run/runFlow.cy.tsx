@@ -23,18 +23,14 @@ describe("Run Tile tests", () => {
   });
 
   after(() => {
-    // Skipped since it tests functionality on DHFPROD-7187 (run selected flows)
-    // cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
     cy.deleteFlows("testFlowCheck");
     cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
 
-  // this should be unskipped once DHFPROD-10086 is fixed
+  // TODO: DHFPROD-10086
   it.skip("Runs flow following the order of the cards displayed", () => {
-
     const flowName2 = generateUniqueName("personTestingXML");
-    // create a flow with 3 steps, add load step first
     toolbar.getRunToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
 
@@ -57,7 +53,6 @@ describe("Run Tile tests", () => {
     runPage.verifyFlowModalCompleted(flowName2);
     runPage.closeFlowStatusModal(flowName2);
 
-    // add mapping step
     runPage.addStep(flowName2);
     runPage.addStepToFlow("mapPersonXML");
     runPage.verifyStepInFlow("Mapping", "mapPersonXML", flowName2);
@@ -73,14 +68,12 @@ describe("Run Tile tests", () => {
     runPage.verifyFlowModalCompleted(flowName2);
     runPage.closeFlowStatusModal(flowName2);
 
-    // add matching step
     runPage.addStep(flowName2);
     runPage.addStepToFlow("match-xml-person");
     runPage.verifyStepInFlow("Matching", "match-xml-person", flowName2);
     runPage.openStepsSelectDropdown(flowName2);
     runPage.controlCheckedStep("#match-xml-person");
 
-    //rearrange the cards
     runPage.getRunStep("match-xml-person", flowName2).should("exist").then(() => {
       runPage.moveStepLeft("match-xml-person");
     });
@@ -97,12 +90,10 @@ describe("Run Tile tests", () => {
     });
     runPage.closeFlowStatusModal(flowName2);
 
-    // select only load and matching steps
     runPage.openStepsSelectDropdown(flowName2);
     runPage.getSelectAll().parent().should("have.text", "Deselect All");
     runPage.getSelectAll().click();
     cy.get("#loadPersonXML").click();
-    //cy.get("#mapPersonXML").click();
     cy.get("#match-xml-person").click();
     runPage.openStepsSelectDropdown(flowName2);
     runPage.controlCheckedStep("#loadPersonXML");
@@ -118,7 +109,6 @@ describe("Run Tile tests", () => {
     runPage.verifyFlowModalCompleted(flowName2);
     runPage.closeFlowStatusModal(flowName2);
 
-    //rearrange the cards
     runPage.getRunStep("match-xml-person", flowName2).should("exist").then(() => {
       runPage.moveStepRight("match-xml-person");
     });
@@ -145,7 +135,6 @@ describe("Run Tile tests", () => {
   });
 
   it("Can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
-    //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.getSpinner().should("not.exist");
     runPage.createFlowButton().should("exist").click({force: true});
@@ -202,9 +191,7 @@ describe("Run Tile tests", () => {
     runPage.controlCheckedStep("#merge-xml-person");
     runPage.controlUncheckedStep("#ingest-orders");
 
-    //Verify scrolling, last step should still be visible in the flow panel
     runPage.verifyStepInFlow("Merging", "merge-xml-person", flowName);
-    //confirm the first load step is no longer visible because panel scrolled to the end
     cy.get("#testPersonXML").within(() => {
       cy.get("#testPersonXML-loadPersonXML-card").should("not.be.visible");
     });
@@ -213,9 +200,7 @@ describe("Run Tile tests", () => {
   it("Verify selected steps in run flow dropdown are executed successfully ", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Verify selected steps executed successfully**");
     cy.log("**Unclick All Steps**");
-    // cy.get("#checkAll").click();
 
-    //manually uncheck all instead of hitting checkall
     cy.get("#generate-dictionary").click();
     cy.get("#loadPersonXML").click();
     cy.get("#mapPersonXML").click();
@@ -250,7 +235,6 @@ describe("Run Tile tests", () => {
     runPage.addStep(flowName);
     runPage.addStepToFlow("map-orders");
     runPage.verifyStepInFlow("Mapping", "map-orders", flowName, true);
-    //confirm the first load step is no longer visible because panel scrolled to the end
     cy.get("#testPersonXML").within(() => {
       cy.get("#testPersonXML-loadPersonXML-card").should("not.be.visible");
     });
@@ -323,16 +307,13 @@ describe("Run Tile tests", () => {
     runPage.runStep("merge-xml-person", flowName);
     cy.wait("@runResponse");
     runPage.verifyStepRunResult("merge-xml-person", "success");
-    //Navigate to explorer tile using the explorer link
     runPage.explorerLink("merge-xml-person").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
     cy.wait(3000);
-    //Verify detail page renders with expected content
-    //Revalidate below with DHFPROD-8455
-    // browsePage.getSelectedEntity().should("contain", "Person");
+
     browsePage.getTotalDocuments().should("eq", 2, {timeout: 5000});
     browsePage.getSelectedFacet("sm-Person-merged").should("exist");
     browsePage.getSourceViewIcon().first().click();
@@ -391,8 +372,7 @@ describe("Run Tile tests", () => {
 
     cy.log("**Reload page and check the same steps previously selected**");
     cy.reload();
-    // TODO - BUG: DHFPROD-9049 - There's a re-rendering happening right after clicking on the dropdown.
-    //Waiting for an element/request will not work until this is fixed.
+
     cy.wait(3000);
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
@@ -416,7 +396,6 @@ describe("Run Tile tests", () => {
   });
 
   it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
-
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     const stepName = "mapCustomersWithRelatedEntitiesJSON";
 
@@ -442,8 +421,6 @@ describe("Run Tile tests", () => {
     browsePage.getTableView().click();
     browsePage.waitForHCTableToLoad();
 
-    //Revalidate below with DHFPROD-8455
-    // browsePage.getSelectedEntity().should("contain", "All Entities");
     cy.log("**Verify the totals results and the createdByJob facet**");
     browsePage.getTotalDocuments().should("eq", 6);
     browsePage.getSelectedFacet("createdByJob").should("exist");
@@ -557,7 +534,6 @@ describe("Run Tile tests", () => {
     runPage.getStepToRunCheckBox("map-orders").should("be.checked");
     runPage.getStepToRunCheckBox("match-person").should("be.checked");
 
-    //Only one ingestion step should be checked
     runPage.addStep(flowName);
     runPage.addStepToFlow("loadClientJSON");
     runPage.openStepsSelectDropdown(flowName);
@@ -566,7 +542,6 @@ describe("Run Tile tests", () => {
     runPage.getStepToRunCheckBox("match-person").should("be.checked");
     runPage.getStepToRunCheckBox("loadClientJSON").should("not.be.checked");
 
-    // uncheck the selected ingestion step and add new one
     runPage.getStepToRunCheckBox("ingest-orders").click();
     runPage.addStep(flowName);
     runPage.addStepToFlow("loadOffice");
@@ -577,5 +552,4 @@ describe("Run Tile tests", () => {
     runPage.getStepToRunCheckBox("loadClientJSON").should("not.be.checked");
     runPage.getStepToRunCheckBox("loadOffice").should("be.checked");
   });
-
 });

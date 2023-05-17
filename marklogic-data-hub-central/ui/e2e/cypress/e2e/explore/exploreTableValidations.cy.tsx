@@ -61,10 +61,8 @@ describe("Validate table and column selector in explore", () => {
     cy.log("**Validate the table got sorted correctly ASC**");
     let elemsText: string[] = [];
     table.getTableRows().each(($el) => {
-      // grabs the table rows, and for each one stores the first column text value on elemsText array
       elemsText.push($el.find("[class^='hc-table_tableCell']").first().text());
     }).then(() => {
-      // validate the sorted list matches the list with the actual order
       expect(elemsText.sort()).to.deep.eq(elemsText);
     });
 
@@ -74,10 +72,8 @@ describe("Validate table and column selector in explore", () => {
     cy.log("**Validate the table got sorted correctly ASC**");
     let elemsTextDESC: string[] = [];
     table.getTableRows().each(($el) => {
-      // grabs the table rows, and for each one stores the first column text value on elemsTextDESC array
       elemsTextDESC.push($el.find("[class^='hc-table_tableCell']").first().text());
     }).then(() => {
-      // validate the sorted list matches the list with the actual order (DESC)
       expect(elemsTextDESC.sort().reverse()).to.deep.eq(elemsTextDESC);
     });
   });

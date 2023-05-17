@@ -44,10 +44,9 @@ describe("Leaf Nodes", () => {
       let officeCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_301];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Hover to bring focus
       canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
 
-      // Right click and expand the remaining records of the node
+      cy.log("** Right click and expand the remaining records of the node**");
       canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
       graphView.physicsAnimationToggle();
 
@@ -58,7 +57,6 @@ describe("Leaf Nodes", () => {
   });
 
   it("Validate leaf nodes are working correctly", () => {
-    //Graph view
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -85,7 +83,6 @@ describe("Leaf Nodes", () => {
       const canvas = graphExplore.getGraphVisCanvas();
 
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
-      //Hover to bring focus
       canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
       cy.waitForAsyncRequest();
       graphExplore.stopStabilization();
@@ -106,41 +103,35 @@ describe("Leaf Nodes", () => {
       graphView.physicsAnimationToggle();
     });
   });
-  // TODO: COMMENTED SINCE WE NEED TO PERFORM A CLICK AND HOVER TO MAKE THE TOOLTIP APPEARS
-  // AND THAT COLLAPSES THE PRODUCT NODE, AND THE LEAF NODE DISAPPEARS
-  // Wait needed for the graph to get stabilized
-  /*cy.wait(2000);
-    cy.log("**Click the product node and check tooltip text to ensure it's the right node**");
+
+  // TODO: DHFPROD-10181
+  it.skip("Click the product node and check tooltip text to ensure it's the right node", () => {
+    cy.wait(2000);
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //First click and hover to focus the  node
       canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true})
-      .trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
-      //Validate tooltip
+        .trigger("mouseover", orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.getTooltip().should("contain", "Group of Product records");
-
-    });*/
+    });
+  });
 
   it("Clicking collapse all records", () => {
-    cy.wait(3000); //wait for graph to stabilize
+    cy.wait(3000);
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      // Right click and expand 3 records of the node
       canvas.rightclick(orderCoordinates.x, orderCoordinates.y, {force: true});
       graphExplore.stopStabilization();
 
       graphExplore.clickCollapseLeafNode();
       graphExplore.stopStabilization();
-
     });
 
-    // Wait needed for the graph to get stabilized
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
         cy.log("**clear all facets**");
@@ -156,7 +147,6 @@ describe("Leaf Nodes", () => {
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
-      //it should not exist because the leaf node was collapsed
       cy.log("**Coordinates should not exist because it was collapsed**");
       expect(orderCoordinates).to.be.undefined;
     });
@@ -179,10 +169,9 @@ describe("Leaf Nodes", () => {
       let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Hover to bring focus
       canvas.trigger("mouseover", officeCoordinates.x, officeCoordinates.y, {force: true});
       cy.wait(1000);
-      // Right click and expand the remaining records of the node
+
       canvas.rightclick(officeCoordinates.x, officeCoordinates.y, {force: true});
       graphView.physicsAnimationToggle();
 
@@ -199,7 +188,6 @@ describe("Leaf Nodes", () => {
       let officeCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.click(officeCoordinates.x, officeCoordinates.y, {force: true});
       cy.waitForAsyncRequest();
       cy.wait(2000);
@@ -213,10 +201,8 @@ describe("Leaf Nodes", () => {
       const canvas = graphExplore.getGraphVisCanvas();
 
       canvas.click(jeansCoordinates.x, jeansCoordinates.y, {force: true});
-      //Hover to bring focus
       canvas.trigger("mouseover", jeansCoordinates.x, jeansCoordinates.y, {force: true});
 
-      // Right click and expand the remaining records of the node
       canvas.rightclick(jeansCoordinates.x, jeansCoordinates.y, {force: true});
       cy.waitForAsyncRequest();
       graphExplore.stopStabilization();

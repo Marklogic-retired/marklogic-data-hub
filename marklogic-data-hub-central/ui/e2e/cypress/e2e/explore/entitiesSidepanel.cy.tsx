@@ -6,11 +6,6 @@ import table from "../../support/components/common/tables";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 
-/**
- * NOTE: This test will involve all operations related to the specific sidebar, for now it's quiet simple
- * (more functionality will be developed in the future)
- */
-
 describe("Test '/Explore' left sidebar", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
@@ -37,15 +32,12 @@ describe("Test '/Explore' left sidebar", () => {
     explorePage.getSearchField().should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
   });
-  /*
-     TODO: this test is commented because the entity specific search input was commented
-     */
 
-  /*   it("Validate search text and applying them over a base entities", () => {
+  // TODO: DHFPROD-10179
+  it.skip("Validate search text and applying them over a base entities", () => {
     cy.log("**Selecting Customer entity**");
     browsePage.getGraphView().click();
     entitiesSidebar.showMoreEntities().should(`be.visible`).click({force: true});
-    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
 
     cy.log("**Testing search input**");
     entitiesSidebar.getInputSearch().type("adams");
@@ -60,9 +52,9 @@ describe("Test '/Explore' left sidebar", () => {
     graphExplore.getAllNodes().then((nodes: any) => {
       expect(Object.keys(nodes).length).to.be.equals(2);
     });
-  }); */
+  });
 
-  //For now it's skip until BE is integrated and can apply facets over graph
+  // TODO: DHFPROD-10179
   it.skip("Validate facets on graph view and applying them over a base entities", () => {
     cy.log("**Testing checkbox facet**");
     entitiesSidebar.clickFacetCheckbox("Adams Cole");
@@ -79,8 +71,6 @@ describe("Test '/Explore' left sidebar", () => {
   });
 
   it("Validate facets on table view and applying them over a base entities", {browser: "!firefox"}, () => {
-    // cy.log("**Opening table view**");
-    // browsePage.getTableView().click();
     cy.log(`**Selecting 'Customer' base entity**`);
     cy.wait(8000);
     entitiesSidebar.showMoreEntities().click();
@@ -159,7 +149,7 @@ describe("Test '/Explore' left sidebar", () => {
     table.getColumnTitle(3).should("contain", "address");
     table.getColumnTitle(4).should("contain", "orderDetails");
 
-    //orderId value should be present while customerID should not
+    cy.log("**orderId value should be present while customerID should not**");
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
     browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
 
@@ -173,7 +163,7 @@ describe("Test '/Explore' left sidebar", () => {
     table.getColumnTitle(4).should("contain", "Record Type");
     table.getColumnTitle(5).should("contain", "Created");
 
-    //both Order and Customer ID's should be present in table
+    cy.log("**both Order and Customer ID's should be present in table**");
     browsePage.getTableViewCell("10248").should("have.length.gt", 0);
     browsePage.getTableViewCell("101").should("have.length.gt", 0);
 
@@ -200,7 +190,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getRelatedEntityPanel().should("be.visible");
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
     entitiesSidebar.getRelatedEntityPanel().click();
-    //related entity panel should remain collapsed
+    cy.log("**related entity panel should remain collapsed**");
     entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
 
     cy.log("**verify both Customer and Order nodes are still present in graph**");
@@ -238,7 +228,7 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getDisabledEntityTooltip().should("not.exist");
   });
 
-  //TODO: this test is commented because a refresh graph error
+  // TODO: DHFPROD-10179
   it.skip("Searching main search side panel", () => {
     cy.wait(8000);
     browsePage.getTableView().click();
@@ -287,26 +277,24 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.backToMainSidebar();
     browsePage.waitForHCTableToLoad();
   });
-  /*
-     TODO: this test is commented because the entity specific search input was commented
-     */
-  // it("Searching text on related entities", () => {
-  //   //TODO: Bug: The page renders twice, so waiting for the spinner does not work.
-  //   cy.wait(8000);
-  //   cy.log("**Selecting Order entity**");
-  //   browsePage.selectBaseEntity("Order");
-  //   browsePage.waitForSpinnerToDisappear();
-  //   entitiesSidebar.clickOnRelatedEntity("Person");
 
-  //   cy.log("**Testing search input**");
-  //   entitiesSidebar.getInputSearch().type("Alice");
-  //   entitiesSidebar.getInputSearch().should("have.value", "Alice");
-  //   entitiesSidebar.clickOnApplyFacetsButton();
+  // TODO: DHFPROD-10179
+  it.skip("Searching text on related entities", () => {
+    cy.wait(8000);
+    cy.log("**Selecting Order entity**");
+    browsePage.selectBaseEntity("Order");
+    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.clickOnRelatedEntity("Person");
 
-  //   cy.log("**Checking table rows amount shown**");
-  //   browsePage.getHCTableRows().should("have.length", 1);
-  //   entitiesSidebar.clickOnClearFacetsButton();
-  //   entitiesSidebar.getInputSearch().should("have.value", "");
-  //   browsePage.getHCTableRows().should("have.length.greaterThan", 1);
-  // });
+    cy.log("**Testing search input**");
+    entitiesSidebar.getInputSearch().type("Alice");
+    entitiesSidebar.getInputSearch().should("have.value", "Alice");
+    entitiesSidebar.clickOnApplyFacetsButton();
+
+    cy.log("**Checking table rows amount shown**");
+    browsePage.getHCTableRows().should("have.length", 1);
+    entitiesSidebar.clickOnClearFacetsButton();
+    entitiesSidebar.getInputSearch().should("have.value", "");
+    browsePage.getHCTableRows().should("have.length.greaterThan", 1);
+  });
 });

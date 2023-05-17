@@ -17,7 +17,7 @@ describe("Mapping", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("verifies privileges for hub-central-mapping-writer", () => {
+  it("Verifies privileges for hub-central-mapping-writer", () => {
     let entityTypeId = "Customer";
     let loadStep = "loadCustomersJSON";
     let mapStepName = generateUniqueName("map-").substring(0, 20);

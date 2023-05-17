@@ -12,9 +12,7 @@ describe("Custom Ingestion", () => {
     cy.waitForAsyncRequest();
   });
 
-  //Iterating array with users for different scenarios
   users.forEach(element => {
-
     if (element.includes("reader")) {
       it("Verify tooltip is showing up for reader role after mouse hover for select flow in cards", () => {
         cy.loginAsTestUserWithRoles(users[0]).withRequest();

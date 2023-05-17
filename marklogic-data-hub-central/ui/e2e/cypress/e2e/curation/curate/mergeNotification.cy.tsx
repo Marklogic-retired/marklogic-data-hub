@@ -143,7 +143,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.wait(2000);
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.getMergeIcon().should("be.visible");
-    cy.wait(8000); // Fixes an intermittent failure
+    cy.wait(8000);
     browsePage.getMergeIcon().first().click();
     compareValuesModal.getModal().should("be.visible");
 
