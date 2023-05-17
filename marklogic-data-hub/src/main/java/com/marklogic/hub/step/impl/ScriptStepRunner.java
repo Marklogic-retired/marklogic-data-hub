@@ -38,7 +38,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class QueryStepRunner extends LoggingObject implements StepRunner {
+public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
     private static final int MAX_ERROR_MESSAGES = 10;
     private Flow flow;
@@ -63,7 +63,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     private AtomicBoolean isStopped = new AtomicBoolean(false) ;
     private StepDefinition stepDef;
 
-    public QueryStepRunner(HubClient hubClient) {
+    public ScriptStepRunner(HubClient hubClient) {
         this.hubClient = hubClient;
     }
 

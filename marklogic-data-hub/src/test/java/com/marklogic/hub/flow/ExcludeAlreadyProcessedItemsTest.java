@@ -109,7 +109,7 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
         assertEquals(2, response.getStepResponses().get(stepNumber).getSuccessfulEvents(),
             "Only the two new items should have been processed since items already processed were excluded");
         assertEquals(3, response.getStepResponses().get(stepNumber).getTotalEvents(),
-            "The QueryStepRunner still thinks 3 items were processed since it sent a batch of 3 items " +
+            "The ScriptStepRunner still thinks 3 items were processed since it sent a batch of 3 items " +
                 "to the endpoint");
         verifySecondBatchDocument(flowName, stepId);
 

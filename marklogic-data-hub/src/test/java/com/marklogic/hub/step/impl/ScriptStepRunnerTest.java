@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QueryStepRunnerTest extends AbstractHubCoreTest {
+public class ScriptStepRunnerTest extends AbstractHubCoreTest {
 
     @Autowired
     StepDefinitionManagerImpl stepDefMgr;
@@ -33,16 +33,16 @@ public class QueryStepRunnerTest extends AbstractHubCoreTest {
     public void testCustomStepWithTransactions() {
         installModule("/custom-modules/custom/testTransactionsStep/main.sjs", "step-runner-transactions-test/src/main/ml-modules/root/custom-modules/custom/testTransactionsStep/main.sjs");
         installFinalDoc("/test/runThroughTransactions.json", new DocumentMetadataHandle().withCollections("runThroughSeparateTransactions").withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE), "step-runner-transactions-test/data/runThroughTransactions.json");
-        QueryStepRunner qsr = new QueryStepRunner(getHubConfig().newHubClient());
+        ScriptStepRunner ssr = new ScriptStepRunner(getHubConfig().newHubClient());
         Flow flow = flowManager.getFullFlow("testFlow");
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("1");
         StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
         Map<String, Object> runtimeOptions = new HashMap<>();
         runtimeOptions.put("disableJobOutput", Boolean.TRUE);
-        qsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withBatchSize(1).withThreadCount(1).withRuntimeOptions(runtimeOptions);
-        qsr.run();
-        qsr.awaitCompletion();
+        ssr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withBatchSize(1).withThreadCount(1).withRuntimeOptions(runtimeOptions);
+        ssr.run();
+        ssr.awaitCompletion();
         assertEquals(1, getFinalDocCount("testTransactionsStep"), "Should create 1 new document in testTransactionsStep collection");
         assertEquals(1, getFinalDocCount("separateTransaction"), "Should create 1 new document in separateTransaction collection");
     }
