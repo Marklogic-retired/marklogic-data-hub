@@ -26,7 +26,7 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("10258");
 
@@ -113,7 +113,7 @@ describe("Test '/Explore' graph right panel", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log("**Verify Graph view is default view**");
-    cy.wait(6000); //nodes need to stabilize first, "graphExplore.stopStabilization()" does not seem to work
+    cy.wait(6000);
     browsePage.waitForSpinnerToDisappear();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.clearLocalStorage();
@@ -126,7 +126,7 @@ describe("Test '/Explore' graph right panel", () => {
     cy.findByTestId("/json/persons/last-name-dob-custom1.json-detailViewIcon").click();
     cy.wait(1500);
     cy.findByLabelText("Back").click();
-    cy.wait(6000); // There was a bug when the element appears and later disappear
+    cy.wait(6000);
     cy.get("[data-cy=\"clear-loadPersonJSON\"]");
   });
 });

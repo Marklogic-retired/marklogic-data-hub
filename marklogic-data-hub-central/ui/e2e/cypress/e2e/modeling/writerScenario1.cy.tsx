@@ -12,9 +12,6 @@ import {
   propertyTable,
 } from "../../support/components/model/index";
 
-/* Scenarios: create, edit, and save a new entity, edit entity description, duplicate entity name check, identifier modal check,
-can save an entity while another entity is edited, can navigate and see persisted edits, can see navigation warning when logging
-out with edits, can add new properties to existing Entity, can revert an entity twice, and delete shows step warning. */
 describe("Entity Modeling Scenario 1: Writer Role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
@@ -46,8 +43,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");
     entityTypeModal.newEntityDescription("An entity for buyers");
-    // commenting out for entity version rollback DHFPROD-9943
-    // entityTypeModal.newEntityVersion("3.0.0");
+
     modelPage.openIconSelector("Buyer");
     modelPage.selectIcon("Buyer", "FaAccessibleIcon");
     modelPage.toggleColorSelector("Buyer");
@@ -64,7 +60,6 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     entityTypeModal.getAddButton().click();
     propertyTable.getAddPropertyButton("Buyer").should("be.visible").click();
 
-    //verify color and icon is reflected in the table
     modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
     modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
   });
@@ -95,8 +90,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.clearEntityDescription();
     entityTypeModal.newEntityDescription("Description has changed");
-    // commenting out for entity version rollback DHFPROD-9943
-    // entityTypeModal.newEntityVersion("3.0.1");
+
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should("not.exist");
     propertyTable.editProperty("user");
@@ -106,11 +100,10 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyTable.getProperty("user").should("not.exist");
     propertyTable.getProperty("username").should("exist");
     propertyTable.getMultipleIcon("username").should("exist");
-    // check edited entity description
+
     entityTypeTable.getEntity("Buyer").click();
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
-    // commenting out for entity version rollback DHFPROD-9943
-    // entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
+
     entityTypeModal.getCancelButton().click();
   });
 
@@ -124,11 +117,10 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyModal.getYesRadio("identifier").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
+
     propertyModal.getSubmitButton().click();
     propertyTable.getIdentifierIcon("newId").should("exist");
     propertyTable.getMultipleIcon("newId").should("exist");
-    //propertyTable.getWildcardIcon('newId').should('exist');
   });
 
   it("Add basic type with identifier, show confirmation modal", () => {
@@ -146,7 +138,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
 
   it("Edit property and change type to relationship", () => {
     propertyTable.editProperty("buyer-id");
-    //check default value for properties PII and multiple
+
     propertyModal.getNoRadio("pii").should("be.checked");
     propertyModal.getNoRadio("multiple").should("be.checked");
     propertyModal.getToggleStepsButton().should("not.exist");
@@ -165,7 +157,6 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyTable.getMultipleIcon("user-id").should("exist");
     propertyTable.getIdentifierIcon("user-id").should("not.exist");
     propertyTable.getPiiIcon("user-id").should("not.exist");
-    //propertyTable.getWildcardIcon('user-id').should('not.exist');
   });
 
   it("Edit property name with Related Entity type", () => {
@@ -176,10 +167,8 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     cy.wait(1000);
     propertyTable.getProperty("buyer-id").should("exist");
     propertyTable.getMultipleIcon("buyer-id").should("exist");
-    // check edited entity version description
+
     entityTypeTable.getEntity("Buyer").scrollIntoView().click();
-    // commenting out for entity version rollback DHFPROD-9943
-    // entityTypeModal.getEntityVersion().should("have.value", "3.0.1");
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });
@@ -239,11 +228,10 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyModal.getTypeFromDropdown("string");
     propertyModal.getNoRadio("identifier").click();
     propertyModal.getYesRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
+
     propertyModal.getSubmitButton().click();
     modelPage.getEntityModifiedAlert().should("exist");
     propertyTable.getPiiIcon("orderID").should("exist");
-    //propertyTable.getWildcardIcon('orderID').should('exist');
   });
 
   it("Add related property to Buyer, check Join Property menu, cancel the addition", () => {
@@ -264,14 +252,14 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyModal.getTypeFromDropdown("Related Entity");
     propertyModal.getCascadedTypeFromDropdown("Order");
     propertyModal.openForeignKeyDropdown();
-    propertyModal.checkForeignKeyDropdownLength(7); // Check for -None- (1), saved (5), unsaved (1) Order properties
+    propertyModal.checkForeignKeyDropdownLength(7);
     propertyModal.openForeignKeyDropdown();
     propertyModal.getCancelButton();
   });
 
   it("Adding property to Person entity", () => {
     entityTypeTable.getExpandEntityIcon("Person");
-    // as Person has less than 10 properties, the add property link button shouldn't be visible
+    cy.log("**as Person has less than 10 properties, the add property link button shouldn't be visible*");
     propertyTable.getLinkAddButton("Person").should("not.exist");
     propertyTable.getAddPropertyButton("Person").click();
     propertyModal.clearPropertyName();
@@ -281,13 +269,12 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyModal.getNoRadio("identifier").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();
-    //propertyModal.clickCheckbox('wildcard');
     propertyModal.clickCheckbox("facetable");
     propertyModal.clickCheckbox("sortable");
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("newID").should("exist");
     propertyTable.getPiiIcon("newID").should("exist");
-    //propertyTable.getWildcardIcon('newID').should('exist');
+
     propertyTable.getFacetIcon("newID").should("exist");
     propertyTable.getSortIcon("newID").should("exist");
   });
@@ -337,9 +324,5 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     confirmationModal.getDeleteEntityStepText().should("be.visible");
     confirmationModal.getCloseButton(ConfirmationType.DeleteEntityStepWarn).click();
     entityTypeTable.getEntity("Person").should("exist");
-    //Revert All changes
-    // modelPage.getRevertAllButton().click();
-    // confirmationModal.getYesButton(ConfirmationType.RevertAll);
-    // confirmationModal.getRevertAllEntityText().should("not.exist");
   });
 });

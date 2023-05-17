@@ -34,7 +34,7 @@ describe("Focus Defocus clusters", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
-      //Click on node to open side panel
+
       canvas.trigger("mouseover", customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
     });
@@ -50,7 +50,6 @@ describe("Focus Defocus clusters", () => {
       let babyRegistryCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.rightclick(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
       canvas.rightclick(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });
@@ -68,7 +67,6 @@ describe("Focus Defocus clusters", () => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
 
-      //Click on node to open side panel
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
       canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
       graphExploreSidePanel.getSidePanel().should("not.exist");
@@ -81,7 +79,7 @@ describe("Focus Defocus clusters", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.BABY_REGISTRY_3039).then((nodePositions: any) => {
       let babyRegistryCoordinates: any = nodePositions[ExploreGraphNodes.BABY_REGISTRY_3039];
       const canvas = graphExplore.getGraphVisCanvas();
-      //Click on node to open side panel
+
       canvas.rightclick(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
       canvas.rightclick(babyRegistryCoordinates.x, babyRegistryCoordinates.y, {force: true});
     });

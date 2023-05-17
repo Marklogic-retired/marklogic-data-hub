@@ -45,14 +45,15 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     });
   });
 
+  // TODO: DHFPROD-10182
   it.skip("Verify shadow effect upon scrolling within the snippet view", () => {
     browsePage.clickFacetView();
-    browsePage.getSnippetViewResult().should("have.css", "box-shadow", "none"); //No shadow effect in place when no scroll.
-    browsePage.getSnippetViewResult().scrollTo("center", {ensureScrollable: false}); //Scrolling within the div
-    //Checking if the shadow style is applied when scroll in effect
+    browsePage.getSnippetViewResult().should("have.css", "box-shadow", "none");
+    browsePage.getSnippetViewResult().scrollTo("center", {ensureScrollable: false});
+
     browsePage.getSnippetViewResult().should("have.css", "box-shadow", "rgb(153, 153, 153) 0px 4px 4px -4px, rgb(153, 153, 153) 0px -4px 4px -4px");
-    browsePage.getSnippetViewResult().scrollTo("bottom"); //Scrolling within the div, to the bottom of the list
-    browsePage.getSnippetViewResult().should("have.css", "box-shadow", "none"); //No shadow effect because end of scroll.
+    browsePage.getSnippetViewResult().scrollTo("bottom");
+    browsePage.getSnippetViewResult().should("have.css", "box-shadow", "none");
   });
 
   it("Verify page number persists when navigating back from detail view", () => {
@@ -160,7 +161,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     browsePage.search("Powers");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getDocumentEntityName(0).should("exist");
-    //browsePage.getDocumentId(0).should('exist');
+
     browsePage.getDocumentSnippet(0).should("exist");
     browsePage.getDocumentCreatedOn(0).should("exist");
     browsePage.getDocumentSources(0).should("exist");
@@ -229,7 +230,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     browsePage.getSourceViewIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentJSON().should("exist");
-    browsePage.backToResults();
+    explorePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });
 

@@ -23,7 +23,7 @@ describe("Run Tile tests", () => {
   it("Can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
     cy.wait(3000);
     const flowName = "testPerson";
-    //Verify create flow and add all user-defined steps to flow via Run tile
+
     runPage.createFlowButton().click({force: true});
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
@@ -45,7 +45,6 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Mastering", "master-person", flowName);
     runPage.addStep(flowName);
 
-    // Reorder steps
     runPage.moveStepRight("mapPersonXML");
     runPage.moveStepRight("mapPersonXML");
     runPage.moveStepLeft("mapPersonXML");

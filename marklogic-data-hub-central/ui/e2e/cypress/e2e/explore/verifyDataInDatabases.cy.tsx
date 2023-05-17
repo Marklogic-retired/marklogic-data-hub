@@ -40,7 +40,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.toggleAllDataView();
     browsePage.search("Adams");
-    //verify the query data for final database on explore page
+
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
@@ -103,33 +103,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
-
-    // Commenting out this test as the search endpoint will not return datahub artifacts.
-    // The test will be handle as part of DHFPROD-6670
-
-    // Verifying non-entity detail page for JSON document
     browsePage.getSearchText().clear();
-
-    // cy.waitUntil(() => browsePage.getNavigationIconForDocument("/steps/custom/mapping-step.step.json")).click();
-    // browsePage.waitForSpinnerToDisappear();
-    //
-    // detailPageNonEntity.getDocumentUri().should("contain", "/steps/custom/mapping-step.step.json");
-    // detailPageNonEntity.getSourceTable().should("exist");
-    // detailPageNonEntity.getHistoryTable().should("exist");
-    // detailPage.getDocumentJSON().should("exist");
-    // detailPageNonEntity.clickBackButton();
-    //
-    // browsePage.waitForSpinnerToDisappear();
-    // cy.waitForAsyncRequest();
-    // browsePage.getSelectedEntity().should("contain", "All Data");
-    // explorePage.getDatabaseButton("final").should("have.attr", "checked");
   });
 
   it("Verify query parameters for final database on browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.getClearFacetsButton().click();
-    //Verify if the pagination gets reset upon cliking on database buttons
+
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     browsePage.getTableView().click();

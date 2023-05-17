@@ -122,5 +122,4 @@ describe("Test '/Explore' view selector", () => {
     cy.log(`**snippet item is still spanded**`);
     browsePage.getSnippetItem("/json/persons/last-name-dob-custom1.json").should("be.visible");
   });
-
 });

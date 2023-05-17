@@ -57,7 +57,7 @@ describe("Entity Modeling: Graph View", () => {
       let longNameCoordinates: any = nodePositions["AThisIsVeryLongNameHavingMoreThan20Characters"];
       cy.wait(150);
       graphVis.getGraphVisCanvas().trigger("mouseover", longNameCoordinates.x, longNameCoordinates.y, {force: true});
-      // Node shows full name on hover
+
       cy.contains("AThisIsVeryLongNameHavingMoreThan20Characters");
     });
 
@@ -96,7 +96,6 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");
 
-    //Add second property to Patients Entity, publish the changes
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();
@@ -108,7 +107,6 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.getProperty("health").should("exist");
     propertyTable.getFacetIcon("health").should("exist");
     propertyTable.getSortIcon("health").should("exist");
-    //Save Changes
     cy.publishDataModel();
 
     propertyTable.getProperty("patientId").should("not.exist");
@@ -121,7 +119,6 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.viewEntityInGraphView("Patients");
     modelPage.scrollPageBottom();
 
-    // the graph needs to stabilize before we interact with it
     cy.wait(6000);
     cy.log("**Verify description tooltip appears on hover**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
@@ -138,7 +135,6 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedEntityHeading("Patients").should("not.exist");
     cy.wait(150);
-    //Publish the changes
     cy.publishDataModel();
   });
 
@@ -147,21 +143,19 @@ describe("Entity Modeling: Graph View", () => {
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
-    //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      // Wait extended because of the delay of the animations
       cy.wait(150);
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
     });
 
     relationshipModal.getModalHeader().should("be.visible");
 
-    //edit properties should be populated
+    cy.log("**edit properties should be populated**");
     relationshipModal.verifyRelationshipValue("ownedBy");
     relationshipModal.verifyForeignKeyValue("customerId");
     relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
 
-    //modify properties and save
+    cy.log("**modify properties and save**");
     relationshipModal.editRelationshipName("usedBy");
     relationshipModal.toggleCardinality();
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
@@ -178,7 +172,6 @@ describe("Entity Modeling: Graph View", () => {
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
-    //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
@@ -188,7 +181,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.verifyForeignKeyValue("email");
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
 
-    //reset the values
+    cy.log("**reset the values**");
     relationshipModal.editRelationshipName("ownedBy");
     relationshipModal.editForeignKey("customerId");
     relationshipModal.toggleCardinality();
@@ -202,7 +195,7 @@ describe("Entity Modeling: Graph View", () => {
     graphView.verifyEditInfoMessage().should("exist");
     cy.wait(1000);
 
-    //verify create relationship via clicking a node in edit mode
+    cy.log("**verify create relationship via clicking a node in edit mode**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("mouseover", personCoordinates.x, personCoordinates.y);
@@ -220,11 +213,11 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.verifySourceEntity("Person").should("be.visible");
     relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
 
-    //target entity node should be placeholder and user can set relationship options
+    cy.log("**target entity node should be placeholder and user can set relationship options**");
     relationshipModal.verifyTargetNode("Select target entity type*").should("be.visible");
 
     relationshipModal.targetEntityDropdown().click();
-    //verify dropdown options can be searched
+    cy.log("**verify dropdown options can be searched**");
     relationshipModal.verifyEntityOption("Customer").should("be.visible");
     relationshipModal.verifyEntityOption("Order").should("be.visible");
     relationshipModal.verifyEntityOption("Client").should("be.visible");
@@ -244,7 +237,7 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
-    //verify relationship was created and properties are present
+    cy.log("**verify relationship was created and properties are present**");
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -255,7 +248,7 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.verifyForeignKeyPlaceholder();
     propertyModal.getCancelButton();
 
-    //verify helpful icon present on the property, should show relationship icon but no foreign key
+    cy.log("**verify helpful icon present on the property, should show relationship icon but no foreign key**");
     propertyTable.verifyRelationshipIcon("purchased").should("exist");
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
   });
@@ -274,8 +267,6 @@ describe("Entity Modeling: Graph View", () => {
 
     modelPage.scrollPageBottom();
 
-    // the graph needs to stabilize before we interact with it
-    //cy.wait(6000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
@@ -285,14 +276,14 @@ describe("Entity Modeling: Graph View", () => {
       graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0, scrollBehavior: "bottom"});
     });
 
-    //relationship modal should open with proper source and target nodes in place
+    cy.log("**relationship modal should open with proper source and target nodes in place**");
     relationshipModal.verifySourceEntity("Person").should("be.visible");
     relationshipModal.verifyTargetNode("Client").should("be.visible");
 
-    //add relationship properties and save
+    cy.log("**add relationship properties and save**");
     relationshipModal.editRelationshipName("referredBy");
 
-    //open Optional line to edit foreign key field
+    cy.log("**open Optional line to edit foreign key field**");
     relationshipModal.toggleOptional();
     relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.editForeignKey("firstname");
@@ -306,13 +297,12 @@ describe("Entity Modeling: Graph View", () => {
     graphView.addNewRelationship().click({force: true});
     cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
 
-    //add second relationship
+    cy.log("**add second relationship**");
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
 
-    // the graph needs to stabilize before we interact with it
     cy.wait(5000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -323,14 +313,14 @@ describe("Entity Modeling: Graph View", () => {
       graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
     });
 
-    //relationship modal should open with proper source and target nodes in place
+    cy.log("**relationship modal should open with proper source and target nodes in place**");
     relationshipModal.verifySourceEntity("Person").should("be.visible");
     relationshipModal.verifyTargetNode("Client").should("be.visible");
 
-    //add relationship properties and save
+    cy.log("**add relationship properties and save**");
     relationshipModal.editRelationshipName("recommendedByUserHavingVeryLongName");
 
-    //open Optional line to edit foreign key field
+    cy.log("**open Optional line to edit foreign key field**");
     relationshipModal.toggleOptional();
     relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.editForeignKey("lastname");
@@ -339,12 +329,6 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
-    // TODO: this line causes failures, fix this assertion
-    //Both the relationship names must be available
-    // cy.contains("referredBy");
-    // cy.contains("recommendedByUserHav...");
-
-    //verify relationship was created and properties are present
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -355,7 +339,7 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.verifyForeignKey("firstname");
     propertyModal.getCancelButton();
 
-    //verify helpful icon present on the property, should show BOTH relationship icon and foreign key
+    cy.log("**verify helpful icon present on the property, should show BOTH relationship icon and foreign key**");
     propertyTable.verifyRelationshipIcon("referredBy").should("exist");
     propertyTable.verifyForeignKeyIcon("referredBy").should("exist");
 
@@ -373,40 +357,37 @@ describe("Entity Modeling: Graph View", () => {
     curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
-    //unpublished relationship should not show up in mapping
+    cy.log("**unpublished relationship should not show up in mapping**");
     mappingStepDetail.getMapPropertyName("Person", "purchased").should("not.exist");
     mappingStepDetail.getMapPropertyName("Person", "referredBy").should("not.exist");
 
-    //return to Model tile and publish
     toolbar.getModelToolbarIcon().click();
-    cy.wait(2500); //wait for DOM as following element becomes detached
+    cy.wait(2500);
     cy.publishDataModel();
 
     cy.log("**Verify Person relationship is visible in mapping**");
-    //verify relationship is visible in mapping
+    cy.log("**verify relationship is visible in mapping**");
     cy.log("**Go to curate and open Person**");
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
     confirmationModal.getNavigationWarnText().should("not.exist");
 
-    //There's a re-rendering so waiting for an element or a request won't work.
     cy.wait(1000);
     curatePage.getEntityTypePanel("Person").should("be.visible", {timeout: 5000}).click({force: true});
     curatePage.openStepDetails("mapPersonJSON");
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 
-    //published relationship should show up in mapping
+    cy.log("**published relationship should show up in mapping**");
     mappingStepDetail.getMapPropertyName("Person", "purchased").should("exist");
     mappingStepDetail.getMapPropertyName("Person", "referredBy").should("exist");
 
-    //both icons present in complete relationship
+    cy.log("**both icons present in complete relationship**");
     propertyTable.verifyRelationshipIcon("referredBy").should("exist");
     propertyTable.verifyForeignKeyIcon("referredBy").should("exist");
 
-    //only relationship icon present in incomplete relationship and XPATH field is disabled
+    cy.log("**only relationship icon present in incomplete relationship and XPATH field is disabled**");
     propertyTable.verifyRelationshipIcon("purchased").should("exist");
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
-
     mappingStepDetail.getXpathExpressionInput("purchased").should("not.exist");
 
   });
@@ -416,7 +397,6 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
-    // To delete a relation
     cy.wait(1000);
     graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y);
@@ -426,7 +406,6 @@ describe("Entity Modeling: Graph View", () => {
     graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
     });
-
     cy.wait(1000);
 
     graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
@@ -436,8 +415,7 @@ describe("Entity Modeling: Graph View", () => {
     confirmationModal.deleteRelationship();
     cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-no").click());
     relationshipModal.cancelModal();
-    // To verify that property is still visible
-    cy.wait(3000); //graph needs to stabilize before canvas click
+    cy.wait(3000);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
@@ -450,7 +428,6 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
-    // To delete a relation
     cy.wait(1000);
     graphVis.getPositionOfEdgeBetween("Person,Order").then((edgePosition: any) => {
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y);
@@ -470,8 +447,8 @@ describe("Entity Modeling: Graph View", () => {
 
     confirmationModal.deleteRelationship();
     cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-yes").click());
-    // To verify that property is not visible
-    cy.wait(3000); //graph needs to stabilize before canvas click
+    cy.log("** To verify that property is not visible**");
+    cy.wait(3000);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
@@ -483,7 +460,6 @@ describe("Entity Modeling: Graph View", () => {
     toolbar.getModelToolbarIcon().click();
     modelPage.selectView("table");
 
-    //Creates a structured property on Customer
     cy.log("**Creates a structured property on Customer**");
     entityTypeTable.viewEntityInGraphView("Customer");
     graphViewSidePanel.getAddPropertyForStructuredProperties("shipping").click();
@@ -494,7 +470,6 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
 
-    //Edits the relationship from the graph
     cy.log("**Edits the relationship from the graph**");
     graphVis.getPositionOfEdgeBetween("Customer,Person").then((edgePosition: any) => {
       cy.wait(150);
@@ -509,13 +484,12 @@ describe("Entity Modeling: Graph View", () => {
     cy.wait(2000);
     cy.waitForAsyncRequest();
 
-    //Verifies the relationship name is updated
     cy.log("**Verifies the relationship name is updated**");
     modelPage.selectView("table");
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getPropertyName("new-Relationship-1Name").should("exist");
 
-    // deletes the relationship
+    cy.log("** deletes the relationship**");
     cy.log("**Deletes the relationship**");
     propertyTable.getDeletePropertyIcon("Customer-Address-shipping", "new-Relationship-1Name").scrollIntoView().click();
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);

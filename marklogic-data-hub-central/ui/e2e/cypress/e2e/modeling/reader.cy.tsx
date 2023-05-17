@@ -31,25 +31,6 @@ describe("Entity Modeling: Reader Role", () => {
   });
 
   it("Can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
-    // Removed navigation tests until DHFPROD-6152 is resolved
-
-    // cy.waitUntil(() => entityTypeTable.getEntityLastProcessed('Person')).click();
-    // tiles.getExploreTile().should('exist');
-    // cy.waitUntil(() => browsePage.getSelectedEntity()).should('eq', 'Person');
-    // browsePage.getClearAllButton().should('exist');
-
-    // toolbar.getModelToolbarIcon().click();
-    // tiles.getModelTile().should('exist');
-
-    // cy.waitUntil(() => entityTypeTable.getEntityInstanceCount('Order')).click();
-    // tiles.getExploreTile().should('exist');
-    // cy.waitUntil(() => browsePage.getSelectedEntity().should('eq', 'Order'));
-    // browsePage.getClearAllButton().should('not.exist');
-
-    // cy.go('back');
-    // cy.url().should('include', '/tiles/model');
-    // tiles.getModelTile().should('exist');
-
     modelPage.getAddButton().should("be.disabled");
     entityTypeModal.getAddButton().should("not.exist");
 
@@ -72,17 +53,6 @@ describe("Entity Modeling: Reader Role", () => {
     propertyTable.getAddPropertyToStructureType("shipping").click({force: true});
     propertyModal.getStructuredTypeName().should("not.exist");
 
-    //TODO: re-test without using mltable-expand
-    // propertyTable.expandStructuredTypeIcon("shipping").click();
-    // propertyTable.expandStructuredTypeIcon("zip").scrollIntoView().click();
-
-    // propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
-    // propertyModal.getStructuredTypeName().should("not.exist");
-
-    // propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "zip-fiveDigit").click({force: true});
-    // confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
-
-    // To verify modeling info is rendered properly in table view
     modelPage.clickModelingInfoIcon();
     modelPage.verifyModelingInfo();
   });
@@ -99,17 +69,17 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
 
-    //To verify properties tab should display property table
+    cy.log("**To verify properties tab should display property table**");
     graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("type").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("delete").should("be.visible");
 
-    //To verify table is populated with Customer properties
+    cy.log("**To verify table is populated with Customer properties**");
     graphViewSidePanel.getPropertyName("customerId").should("be.visible");
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
 
-    //To verify cannot edit Entity Type tab without permissions (except color)
+    cy.log("**To verify cannot edit Entity Type tab without permissions (except color)**");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.disabled");
     graphViewSidePanel.getEntityNamespace().should("be.disabled");
@@ -131,7 +101,7 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 
-    //To verify cannot edit without permissions
+    cy.log("**To verify cannot edit without permissions**");
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       const canvas = graphVis.getGraphVisCanvas();
       const trigger = canvas.trigger("mouseover", edgePosition.x, edgePosition.y);
@@ -140,7 +110,7 @@ describe("Entity Modeling: Reader Role", () => {
 
     relationshipModal.getModalHeader().should("not.exist");
 
-    //To test graph view model png is downloaded successfully
+    cy.log("**To test graph view model png is downloaded successfully**");
     if (Cypress.isBrowser("!firefox")) {
       graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
         () => {
@@ -152,11 +122,11 @@ describe("Entity Modeling: Reader Role", () => {
     }
 
     modelPage.scrollPageTop();
-    // To verify modeling info is rendered properly in graph view
+    cy.log("** To verify modeling info is rendered properly in graph view**");
     modelPage.clickModelingInfoIcon();
     modelPage.verifyModelingInfo();
 
-    //To verify Pan and Zoom in buttons are rendered properly
+    cy.log("**To verify Pan and Zoom in buttons are rendered properly**");
     cy.get(".vis-zoomOut").should("be.visible");
     cy.get(".vis-zoomIn").should("be.visible");
     cy.get(".vis-up").should("be.visible");

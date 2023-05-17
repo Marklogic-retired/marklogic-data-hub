@@ -11,7 +11,7 @@ import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
 
-describe("login", () => {
+describe("Login", () => {
   before(() => {
     cy.visit("/");
     cy.waitForAsyncRequest();
@@ -68,7 +68,7 @@ describe("login", () => {
   it("Should only enable Explorer tile for hub-central-user", () => {
     cy.loginAsTestUserWithRoles("hub-central-saved-query-user").withUI()
       .url().should("include", "/tiles");
-    //All tiles but Explore, should show a tooltip that says contact your administrator
+
     ["Load", "Model", "Curate", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -87,7 +87,7 @@ describe("login", () => {
   it("Should only enable Model and Explorer tile for hub-central-entity-model-reader", () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withUI()
       .url().should("include", "/tiles");
-    //All tiles but Explore and Model, should show a tooltip that says contact your administrator
+
     ["Load", "Curate", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -104,7 +104,7 @@ describe("login", () => {
     let flowName = "personJSON";
     cy.loginAsTestUserWithRoles("hub-central-load-reader").withUI()
       .url().should("include", "/tiles");
-    //All tiles but Explore and Model, should show a tooltip that says contact your administrator
+
     ["Model", "Curate", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -230,7 +230,7 @@ describe("login", () => {
     let mapStepName = "mapCustomersJSON";
     cy.loginAsTestUserWithRoles("hub-central-mapping-reader").withRequest();
     loginPage.navigateToMainPage();
-    //All tiles but Explore and Model, should show a tooltip that says contact your administrator
+
     ["Load", "Model", "Run"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -289,7 +289,7 @@ describe("login", () => {
     const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-step-runner").withUI()
       .url().should("include", "/tiles");
-    //All tiles but Run and Explore, should show a tooltip that says contact your administrator
+
     ["Load", "Model", "Curate"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -336,7 +336,7 @@ describe("login", () => {
     const stepName = "mapPersonJSON";
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withUI()
       .url().should("include", "/tiles");
-    //All tiles but Run and Explore, should show a tooltip that says contact your administrator
+
     ["Load", "Model", "Curate"].forEach((tile) => {
       toolbar.getToolBarIcon(tile).should("have.attr", {style: "cursor: not-allowed"});
     });
@@ -376,15 +376,12 @@ describe("login", () => {
     loginPage.getLoginButton().click();
     cy.location("pathname").should("include", "/tiles/explore");
     tiles.getExploreTile().should("exist");
-    //Revalidate below with DHFPROD-8455
-    // browsePage.getSelectedEntity().should("contain", "All Entities");
   });
 
   it("Should redirect a bookmark to login screen when not authenticated", () => {
     let host = Cypress.config().baseUrl;
-    //URL from bookmark
     cy.visit(`${host}?from=%2Ftiles%2Fcurate`);
-    //Redirected to login
+
     loginPage.getUsername().type("hc-developer");
     loginPage.getPassword().type("password");
     loginPage.getLoginButton().click();
@@ -400,7 +397,6 @@ describe("login", () => {
     loginPage.navigateToMainPage();
     cy.waitForAsyncRequest();
 
-    // To verify on click operation works as expected
     cy.scrollTo("top");
     toolbar.getHomePageInfoIcon().should("be.visible").scrollIntoView().click({force: true});
     toolbar.getHomePageInfoPopover().should("exist");

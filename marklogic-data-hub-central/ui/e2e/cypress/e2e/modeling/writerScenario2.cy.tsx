@@ -22,9 +22,6 @@ const userRoles = [
   "hub-central-saved-query-user"
 ];
 
-/* Scenarios: can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property,
-  delete structured type, and delete entity, can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties,
-  save all entities, delete an entity with relationship warning. */
 describe("Entity Modeling: Writer Role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
@@ -79,7 +76,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("pii").click();
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
-    propertyTable.getProperty("address-street"); // DHFPROD-8325: added check for expanded structured property
+    propertyTable.getProperty("address-street");
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
     propertyTable.getPropertyName("street").should("exist");
@@ -122,7 +119,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.verifySameNamePropertyError("A property is already using the name street. A structured type cannot use the same name as an existing property.");
     structuredTypeModal.clearName();
     structuredTypeModal.newName("Zip");
-    // test namespace validation
+    cy.log("**test namespace validation**");
     structuredTypeModal.newNamespace("http://example.org/test");
     structuredTypeModal.getAddButton().click();
     structuredTypeModal.verifyPrefixNameError();
@@ -134,17 +131,16 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.newPrefix("test");
     structuredTypeModal.getAddButton().click();
     structuredTypeModal.verifyNamespaceError();
-    // reset namespace information
+    cy.log("**reset namespace information**");
     structuredTypeModal.clearNamespace();
     structuredTypeModal.clearPrefix();
     structuredTypeModal.getAddButton().click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
     propertyModal.getSubmitButton().click();
-    propertyTable.getProperty("zip-zip"); // DHFPROD-8325: added check for expanded structured property
+    propertyTable.getProperty("zip-zip");
     propertyTable.getMultipleIcon("zip").should("exist");
     propertyTable.getPiiIcon("zip").should("not.exist");
-    //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
 
   it("changes the structured property for other structured property", () => {
@@ -199,18 +195,18 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("exist");
 
-    //verify removing foreign key from relationship is possible
+    cy.log("**verify removing foreign key from relationship is possible**");
     propertyTable.editProperty("address-OrderedBy");
     cy.waitUntil(() => cy.get("#foreignKey-select-wrapper").should("be.visible"));
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("None").click();
     propertyModal.getSubmitButton().click();
     propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
-    //foreign key no longer exists
+    cy.log("**foreign key no longer exists**");
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("not.exist");
     modelPage.selectView("project-diagram");
     graphVis.getPositionOfEdgeBetween("AddEntity,Customer").then((edgePosition: any) => {
-      // Wait extended because of the delay of the animations
+
       cy.wait(150);
       modelPage.scrollPageBottom();
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true}));
@@ -230,7 +226,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getCascadedTypeFromDropdown("int");
     propertyModal.getSubmitButton().click();
     cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
-    propertyTable.getProperty("zip-fiveDigit");  // DHFPROD-8325: added check for expanded structured property
+    propertyTable.getProperty("zip-fiveDigit");
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
   });
@@ -254,13 +250,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdownCascaderRC("integer");
     propertyModal.getYesRadio("pii").click();
     propertyModal.getSubmitButton().click();
-
-    //TODO: Re-test child expansion without using ml-table selector
-
-    // propertyTable.expandExtraStructuredTypeIcon().click();
-    // propertyTable.getMultipleIcon("fourDigit").should("not.exist");
-    // propertyTable.getPiiIcon("fourDigit").should("exist");
-    //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
 
   it("Reuse Structured type, add property to structured type and confirm it gets updated", () => {
@@ -274,13 +263,10 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
 
     cy.log("**Add property to 'Extra' Structured type**");
-    //validate the structure name is correct
     propertyTable.getExpandIcon("extra2").scrollIntoView().click();
     propertyTable.getSubProperty("extra2", "fourDigit").scrollIntoView().should("be.visible");
 
     cy.log("**Open address sub-properties**");
-    //propertyTable.getExpandIcon("address").scrollIntoView().click();
-    // propertyTable.getExpandIcon("zip").scrollIntoView().click();
     propertyTable.getExpandIcon("extra").scrollIntoView().click();
 
     cy.log("**Close 'extra2' property**");
@@ -321,7 +307,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.log("**Reloading the page so the change appears");
     cy.reload();
     cy.waitForAsyncRequest();
-    // TODO: graph re-renders after reloading the page. Bug: DHFPROD-9174
+
     cy.wait(1000);
     modelPage.selectView("table");
     propertyTable.getExpandIcon("AddEntity-Entity Type").scrollIntoView().click();
@@ -373,9 +359,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("Structured");
     propertyModal.getCascadedTypeFromDropdown("Address");
     propertyModal.getSubmitButton().click();
-    // TODO DHFPROD-7711 skip since fails for Ant Design Table component
-    //propertyTable.expandStructuredTypeIcon("alt_address").click();
-    //propertyTable.getProperty("alt_address-streetAlt").should("exist");
   });
 
   it("Add foreign key with type as Related Entity", () => {
@@ -394,14 +377,6 @@ describe("Entity Modeling: Writer Role", () => {
   });
 
   it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
-    //Structured Property
-    //cy.get("[data-row-key*=\"address\"] [aria-label=\"Expand row\"]").click();
-    /*propertyTable.getDeleteStructuredPropertyIcon("AddEntity", "Address", "alt_address-streetAlt").click();
-    confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
-    cy.waitForAsyncRequest();
-    propertyTable.getProperty("streetAlt").should("not.exist");*/
-    //Property
     propertyTable.getDeletePropertyIcon("AddEntity", "alt_address").should("be.visible").click({force: true});
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
@@ -413,55 +388,11 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("not.exist");
 
-    //Save Changes
-    // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
-    // confirmationModal.getDeleteEntityText().should("exist");
-    // confirmationModal.getDeleteEntityText().should("not.exist");
-    // entityTypeTable.getEntity("AddEntity").should("not.exist");
-
-    // "Delete entity", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.getDeleteEntityIcon("AddEntity").click({force: true});
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     cy.waitForAsyncRequest();
-    // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
-    // confirmationModal.getDeleteEntityText().should("exist");
-    // confirmationModal.getDeleteEntityText().should("not.exist");
-    // entityTypeTable.getEntity("AddEntity").should("not.exist");
 
-    // it("Adding property to Order entity", () => {
-    //   entityTypeTable.getExpandEntityIcon("Order");
-    //   propertyTable.getAddPropertyButton("Order").click();
-    //   propertyModal.newPropertyName("orderID");
-    //   propertyModal.openPropertyDropdown();
-    //   propertyModal.getTypeFromDropdown("string").click();
-    //   propertyModal.getNoRadio("identifier").click();
-    //   propertyModal.getYesRadio("multiple").click();
-    //   propertyModal.getYesRadio("pii").click();
-    //   //propertyModal.clickCheckbox('wildcard');
-    //   propertyModal.getSubmitButton().click();
-    //   propertyTable.getMultipleIcon("orderID").should("exist");
-    //   propertyTable.getPiiIcon("orderID").should("exist");
-    //   //propertyTable.getWildcardIcon('orderID').should('exist');
-    //   modelPage.getEntityModifiedAlert().should("exist");
-    // });
-    // it("Adding property to Person entity", () => {
-    //   entityTypeTable.getExpandEntityIcon("Person");
-    //   propertyTable.getAddPropertyButton("Person").click();
-    //   propertyModal.newPropertyName("personID");
-    //   propertyModal.openPropertyDropdown();
-    //   propertyModal.getTypeFromDropdown("string").click();
-    //   propertyModal.getNoRadio("identifier").click();
-    //   propertyModal.getYesRadio("multiple").click();
-    //   propertyModal.getYesRadio("pii").click();
-    //   //propertyModal.clickCheckbox('wildcard');
-    //   propertyModal.getSubmitButton().click();
-    //   propertyTable.getMultipleIcon("personID").should("exist");
-    //   propertyTable.getPiiIcon("personID").should("exist");
-    //   //propertyTable.getWildcardIcon('personID').should('exist');
-    // });
-
-    // "Create Concept entity and add a property"
     modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Concept");

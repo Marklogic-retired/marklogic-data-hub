@@ -147,12 +147,6 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.saveButton();
     mergeRuleModal.alertContent().contains("Warning: The current merge settings might produce merged documents that are inconsistent with the entity type In the entity type Person, the property or properties Address allows only a single value. In every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertContent().contains("Please set max values for property to 1 on merge to avoid an invalid entity instance.");
-    //Will uncomment once DHFPROD-7452 is fixed
-    /* mergeRuleModal.selectMergeTypeDropdown("Strategy");
-    mergeRuleModal.selectStrategyName("retain-single-value");
-    mergeRuleModal.saveButton();
-    mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties DateOfBirth, ZipCode, id, SSN, lname, desc, fname allows only a single value.\nIn every merge rule for the property DateOfBirth, ZipCode, id, SSN, lname, desc, fname set Max Values or Max Sources to 1.");
-    mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");*/
     mergeRuleModal.cancelButton().click();
   });
 

@@ -19,7 +19,6 @@ const userRoles = ["hub-central-flow-writer",
   "hub-central-load-writer"
 ];
 
-
 describe("Create and verify load steps, map step and flows with interceptors & custom hook", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
@@ -219,7 +218,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read");
     advancedSettingsDialog.saveEntitySettings();
 
-    //TODO: BUG: Page re-renders
     cy.wait(2000);
     mappingStepDetail.entityData().should("exist");
     mappingStepDetail.entitySettingsLink().should("be.visible").click();
@@ -245,10 +243,9 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-});
 
-/*  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
-    // link to settings and back
+  // TODO: DHFPROD-10176
+  it.skip("Verify link to settings, Add map step to existing flow, Run the flow and explore the data", () => {
     curatePage.openMappingStepDetail("Order", mapStep);
     cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible")).click();
     mappingStepDetail.stepSettingsLink().click();
@@ -258,42 +255,39 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible"));
 
-    //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
-
-    //open the order entity panel
     curatePage.toggleEntityTypeId("Order");
 
     curatePage.openExistingFlowDropdown("Order", mapStep);
-    curatePage.getExistingFlowFromDropdown(flowName).click();
+    curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
 
     cy.waitForAsyncRequest();
-    runPage.runStep(mapStep);
+    runPage.runStep(mapStep, flowName);
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Mapping", mapStep);
-    runPage.explorerLink().click();
+    runPage.explorerLink(mapStep).click();
     browsePage.getTableViewSourceIcon().click();
     cy.contains("mappedOrderDate");
     cy.contains("categoryCode");
 
-    //Verifying the properties added by load and mapping custom hooks respectively
     cy.contains("primaryKey");
     cy.contains("uriFromCustomHook");
   });
-  it("Create a map step under another entity", () => {
-    // create mapping step
+
+  // TODO: DHFPROD-10176
+  it.skip("Create a map step under another entity", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
-    cy.waitUntil(() => curatePage.addNewStep().click());
+    cy.waitUntil(() => curatePage.addNewStep("Customer").click());
     createEditMappingDialog.setMappingName("mapCustomer");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['loadCustomersJSON'])`);
     createEditMappingDialog.saveButton().click({force: true});
     cy.waitForAsyncRequest();
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
-    //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
-  });*/
+  });
+});

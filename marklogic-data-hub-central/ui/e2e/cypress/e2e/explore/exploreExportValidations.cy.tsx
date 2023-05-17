@@ -53,7 +53,6 @@ describe("Test graph export to png", () => {
 
     cy.log("**Click on export button and check that file it's exported**");
 
-    //To test graph view model png is downloaded successfully
     if (Cypress.isBrowser("!firefox")) {
       graphExplore.getExportPNGIcon().click({force: true}).then(
         () => {

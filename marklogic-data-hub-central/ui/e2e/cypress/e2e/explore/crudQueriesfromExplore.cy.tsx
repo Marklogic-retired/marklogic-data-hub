@@ -39,10 +39,9 @@ describe("Save/manage queries scenarios, developer role", () => {
 
     entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("be.checked");
     entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("be.checked");
-    // Clear facets
+
     entitiesSidebar.getClearFacetsButton().click();
 
-    // Check checkboxes are unchecked
     entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("not.exist");
     entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("not.exist");
   });
@@ -72,7 +71,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryDescription().type("new-query description");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
-    // Creating a new query
+
     browsePage.getSelectedQuery().should("contain", "new-query");
     browsePage.getSelectedQueryDescription().should("contain", "new-query description");
     browsePage.getSaveQueryButton().should("not.exist");
@@ -127,11 +126,11 @@ describe("Save/manage queries scenarios, developer role", () => {
     });
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
-    //Refresh the browser page.
+
     cy.reload();
     cy.wait(3000);
     browsePage.waitForSpinnerToDisappear();
-    //Verify if the facets and other query related properties are intact after refreshing the browser page.
+    cy.log("**Verify if the facets and other query related properties are intact after refreshing the browser page**");
     browsePage.getSelectedQuery().should("contain", "new-query-2");
     browsePage.getSelectedQueryDescription().should("contain", "new-query-2 description");
     entitiesSidebar.openBaseEntityDropdown();
@@ -139,13 +138,13 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
 
-    // it("save more queries with duplicate query name from browse and manage queries view", () => {
+    cy.log("**save more queries with duplicate query name from browse and manage queries view**");
     cy.wait(3000);
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     entitiesSidebar.backToMainSidebar();
-    // clicking on save changes icon
+
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesFormName().clear();
@@ -153,17 +152,17 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getEditSaveChangesButton().click();
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getEditSaveChangesCancelButton().click();
-    // checking previous query name is set clicking save modal icon
+    cy.log("**checking previous query name is set clicking save modal icon**");
     browsePage.getEllipsisButton().click();
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
-    // checking previous query name is set clicking edit modal icon
+    cy.log("**checking previous query name is set clicking edit modal icon**");
     browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
-    // checking previous query name is set clicking save a copy modal icon
+    cy.log("**checking previous query name is set clicking save a copy modal icon**");
     browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
@@ -179,16 +178,16 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getEditQueryDetailButton().click();
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getEditQueryDetailCancelButton().click();
-    // checking previous query name is set clicking save modal icon
+    cy.log("**checking previous query name is set clicking save modal icon**");
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
-    // checking previous query name is set clicking edit modal icon
+    cy.log("**checking previous query name is set clicking edit modal icon");
     browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
-    // checking previous query name is set clicking save a copy modal icon
+    cy.log("**checking previous query name is set clicking save a copy modal icon");
     browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
@@ -203,16 +202,16 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueryButton().click();
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getSaveQueryCancelButton().click();
-    // checking previous query name is set clicking save modal icon
+    cy.log("**checking previous query name is set clicking save modal icon");
     browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
-    // checking previous query name is set clicking edit modal icon
+    cy.log("**checking previous query name is set clicking edit modal icon");
     browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
-    // checking previous query name is set clicking save a copy modal icon
+    cy.log("**checking previous query name is set clicking save a copy modal icon");
     browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
@@ -223,7 +222,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    //queryComponent.getEditQuery().click();
+
     cy.contains("td", "new-query-2").parent().within(() => {  cy.get(`td i[aria-label="editIcon"]`).click(); });
     queryComponent.getEditQueryName().invoke("val").then((text) => {
       if (typeof(text) === "string") qName = text;
@@ -234,14 +233,11 @@ describe("Save/manage queries scenarios, developer role", () => {
     queryComponent.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     queryComponent.getEditCancelButton().click();
     queryComponent.getManageQueryModal().find(".btn-close").click();
-    // checking previous query name is set clicking save modal icon
+
     browsePage.getSaveModalIcon().scrollIntoView().click();
-    /*browsePage.getEditSaveChangesFormName().invoke("val").then((text) => {
-      let nameVal = text;
-      expect(qName).to.contain(nameVal);
-    });*/
+
     browsePage.getEditSaveChangesCancelButton().click();
-    // checking previous query name is set clicking edit modal icon
+    cy.log("**checking previous query name is set clicking edit modal icon**");
     browsePage.getEllipsisButton().should("be.visible").click();
     browsePage.getEditQueryModalIcon().first().click();
     browsePage.getEditQueryDetailFormName().invoke("val").then((text) => {
@@ -249,7 +245,7 @@ describe("Save/manage queries scenarios, developer role", () => {
       expect(qName).to.contain(nameVal);
     });
     browsePage.getEditQueryDetailCancelButton().click();
-    // checking previous query name is set clicking save a copy modal icon
+    cy.log("**checking previous query name is set clicking save a copy modal icon**");
     browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
@@ -296,7 +292,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getClearAllFacetsButton().click();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
-    // creating query 1 with customer entity
+    cy.log("**creating query 1 with customer entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.waitForSpinnerToDisappear();
@@ -312,12 +308,12 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedQuery().should("contain", "query-1");
     browsePage.getSelectedQueryDescription().should("contain", "query-1 description");
-    // creating query 2 using save a copy
+    cy.log("**creating query 2 using save a copy**");
     browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().type("query-2");
     browsePage.getSaveQueryButton().click();
-    // Making changes to query-2 and switching to query-1
+    cy.log("**Making changes to query-2 and switching to query-1**");
     table.clickColumnTitle(2);
     browsePage.selectQuery("query-1");
     browsePage.getQueryConfirmationNoClick().click();
@@ -370,7 +366,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getSaveQueriesDropdown().should("exist");
-    //Checking if you are in person entity,select a saved query related to customer and shifting back to person
+    cy.log("**Checking if you are in person entity,select a saved query related to customer and shifting back to person**");
     browsePage.selectQuery("new-query");
     browsePage.dontUpdateQuery().click();
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -390,12 +386,10 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getHubPropertiesExpanded();
   });
 
-  // Reset query confirmation
   it("Show Reset query button, open reset confirmation", () => {
-    // Check the tooltip on inactive clear query button
     entitiesSidebar.getClearQuery().trigger("mouseover");
     entitiesSidebar.getClearQueryTooltip().should("be.visible");
-    // clicking on no doesn't create a new query and navigates to zero state
+    cy.log("**clicking on no doesn't create a new query and navigates to zero state**");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -407,7 +401,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.backToMainSidebar();
     browsePage.getSaveModalIcon().scrollIntoView().click();
-    //selecting yes will save the new query and navigates to zero state
+    cy.log("**selecting yes will save the new query and navigates to zero state**");
     browsePage.getSaveQueryName().should("be.visible");
     browsePage.getSaveQueryName().type("reset-query");
     browsePage.getSaveQueryButton().click();
@@ -423,7 +417,7 @@ describe("Save/manage queries scenarios, developer role", () => {
   });
 
   it("Show Reset query button, clicking reset confirmation when making changes to saved query", () => {
-    // Select saved query, make changes, click on reset opens a confirmation
+    cy.log("**Select saved query, make changes, click on reset opens a confirmation**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getSaveQueriesDropdown().should("exist");
@@ -431,12 +425,12 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "reset-query");
     entitiesSidebar.openBaseEntityFacets("Customer");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    // clicking on no doesn't update query and navigates to zero state
+    cy.log("**clicking on no doesn't update query and navigates to zero state**");
     entitiesSidebar.backToMainSidebar();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
-    //selecting yes will update the query and navigates to zero state
+    cy.log("**selecting yes will update the query and navigates to zero state**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.selectQuery("reset-query");
@@ -460,7 +454,6 @@ describe("Save/manage queries scenarios, developer role", () => {
   });
 
   it("Show Reset query button, verify confirmation modal displays if only selected columns changed, clicking reset icon resets to all entities", () => {
-    //verifying the confirmation modal displays if no query selected and selected columns changed
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getColumnSelectorIcon().should("be.visible");
@@ -470,25 +463,24 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getColumnSelectorApply().click({force: true});
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-
-    // Select saved query, make changes, click on reset opens a confirmation
+    cy.log("**select saved query, make changes, click on reset opens a confirmation**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     explorePage.scrollSideBarTop();
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.dontUpdateQuery().click();
-    //changing the selecte column list should trigger modal confirmation
+    cy.log("**changing the selected column list should trigger modal confirmation**");
     browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click();
     browsePage.getColumnSelector().should("be.visible");
     browsePage.selectColumnSelectorProperty("status");
     browsePage.getColumnSelectorApply().click({force: true});
     browsePage.getResetQueryButton().click({force: true});
-    //verifying the confirmation modal appearing and selection cancel
+
     browsePage.getResetConfirmationNoClick();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
-    //verify no confirmation modal after reset.
+
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     explorePage.scrollSideBarTop();
@@ -551,21 +543,21 @@ describe("Save/manage queries scenarios, developer role", () => {
 
   it("Verify selected query when switching database", () => {
     browsePage.getClearAllFacetsButton().click();
-    //apply saved query
+    cy.log("**apply saved query**");
     browsePage.selectQuery("person-query");
     browsePage.getSelectedQuery().should("contain", "person-query");
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     entitiesSidebar.openBaseEntityFacets("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
-    //switch the database
+    cy.log("**switch the database**");
     entitiesSidebar.backToMainSidebar();
     explorePage.getStagingDatabaseButton();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption("Person").should("be.visible");
     browsePage.getSaveQueriesDropdown().scrollIntoView().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
-    //Person entity is not available in stage database
+    cy.log("**Person entity is not available in stage database**");
     browsePage.getFacetItemCheckbox("lname", "Bates").should("not.exist");
     browsePage.getEditQueryModalIcon().should("not.exist");
     browsePage.getResetQueryButton().should("be.visible");

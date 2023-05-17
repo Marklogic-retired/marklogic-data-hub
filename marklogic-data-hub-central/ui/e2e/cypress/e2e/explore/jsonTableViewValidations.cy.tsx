@@ -55,9 +55,8 @@ describe("json scenario for table on browse documents page", () => {
   it("Select \"all entities\" and verify table", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    //check table rows
+
     browsePage.getHCTableRows().should("have.length", 20);
-    //check table columns
     table.getTableColumns().should("have.length", 5);
   });
 
@@ -66,9 +65,8 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
-    //check table rows. Validates the records were filtered
+
     browsePage.getHCTableRows().should("have.length.lt", 52);
-    //check table columns
     table.getTableColumns().should("to.have.length.of.at.most", 10);
   });
 
@@ -103,7 +101,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getMetadataView().should("exist");
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
-    //Verify navigating back from detail view should persist search options
+
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     explorePage.getDatabaseButton("final").should("have.attr", "checked");
@@ -169,11 +167,10 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 2);
 
-    //Refresh the browser page at Browse table view.
     cy.reload();
     browsePage.waitForSpinnerToDisappear();
 
-    //Verify if the facet, search text and view persists.
+    cy.log("**Verify if the facet, search text and view persists.**");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getAppliedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getAppliedFacets("coleadams39@nutralab.com").should("exist");
@@ -182,7 +179,6 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
-    //Navigating to detail view
     cy.waitForAsyncRequest();
     browsePage.getTableViewSourceIcon().scrollIntoView().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
@@ -192,19 +188,18 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
 
-    //Refresh the browser page at Detail view.
     cy.reload();
     browsePage.waitForSpinnerToDisappear();
-    //Verify if the detail view is intact after page refresh
+    cy.log("**Verify if the detail view is intact after page refresh**");
     detailPage.getDocumentEntity().should("contain", "Customer");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
 
-    detailPage.clickBackButton(); //Click on Back button to navigate back to the browse table view.
+    detailPage.clickBackButton();
 
     browsePage.waitForSpinnerToDisappear();
-    //Verify navigating back from detail view should persist search options
+
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
@@ -212,40 +207,28 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
+  // TODO: DHFPROD-10183
   it.skip("Search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
 
-    //TODO: re-test facet search without using ml-tooltip-container
-    //verify the popover doesn't display for the short facet name.
-    // browsePage.getFacetName("Adams Cole").trigger("mouseover");
-    // cy.wait(1000);
-    // browsePage.getTooltip("Adams Cole").should("not.exist");
-    // browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
-    // //verify the popover displays for the long facet name.
-    // browsePage.getFacetName("adamscole@nutralab.com").trigger("mouseover");
-    // cy.wait(1000);
-    // browsePage.getTooltip("adamscole\\@nutralab\\.com").should("be.exist");
+    browsePage.getFacet("Adams Cole").trigger("mouseover");
+    cy.wait(1000);
+    browsePage.getTooltip("Adams Cole").should("not.exist");
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.getFacet("adamscole@nutralab.com").trigger("mouseover");
+    cy.wait(1000);
+    browsePage.getTooltip("adamscole\\@nutralab\\.com").should("be.exist");
 
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getSelectedFacets().should("exist");
-    // TODO DHFPROD-7711 skip since fails for Ant Design components
-    // browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.clickFacetView();
-    // TODO DHFPROD-7711 skip since fails for Ant Design components
-    // browsePage.getClearFacetSearchSelection("Adams Cole").should("contain", "name: Adams Cole");
-    // browsePage.getClearFacetSearchSelection("adamscole@nutralab.com").should("exist");
     browsePage.getTotalDocuments().should("be.equal", 1);
-    // TODO DHFPROD-7711 skip since fails for Ant Design components
-    // browsePage.clickClearFacetSearchSelection("adamscole@nutralab.com");
     browsePage.clickTableView();
     browsePage.getClearAllFacetsButton().click({force: true});
-    // TODO DHFPROD-7711 skip since fails for Ant Design components
-    // browsePage.getClearFacetSearchSelection("Adams Cole").should("exist");
-    // browsePage.getTotalDocuments().should("be.equal", 2);
   });
 
   it("Verify hub properties grey facets are not being removed when entity properties are selected", () => {
@@ -298,7 +281,6 @@ describe("json scenario for table on browse documents page", () => {
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
 
-    // it("apply multiple facets, select and discard new facet, verify original facets checked", () => {
     cy.log("*apply multiple facets, select and discard new facet, verify original facets checked*");
     browsePage.getClearAllFacetsButton().click();
     cy.wait(3000);

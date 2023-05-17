@@ -1,7 +1,3 @@
-// in cypress/support/index.d.ts
-// load type definitions that come with Cypress module
-/// <reference types="cypress" />
-
 declare namespace Cypress {
     interface Chainable<Subject = any> {
       /**
@@ -127,7 +123,8 @@ declare namespace Cypress {
       revertEntitiesChanges(): void
 
       /**
-       * Save Local Storage Data
+       * Save Local Storage Data so that we can use it to preserve 
+       * the session without the need to re-login before each "it" block
        */
       saveLocalStorage(): Chainable<Element>
 

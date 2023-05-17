@@ -56,25 +56,24 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickTableView();
 
-    //verify no facets selected case.
     cy.log("**verify no facets selected case.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
-    //verify selecting facets case.
+
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
     browsePage.getApplyFacetsButton().should("not.be.disabled");
-    //verify facets applied case.
+
     browsePage.getApplyFacetsButton().click();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.checked");
     browsePage.getAppliedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
-    // verify selecting additional facets case.
+
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
@@ -102,7 +101,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
-    //verify gray facets don't persist when switching between browse and run views.
+    cy.log("**verify gray facets don't persist when switching between browse and run views.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.showMoreEntities().click({force: true});

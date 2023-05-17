@@ -54,7 +54,6 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   });
 
   it("Edit Mapping step with parameter module path", () => {
-    //Go back to curate homepage
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
 
@@ -62,7 +61,7 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
     curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
 
     cy.log("**Open step settings and switch to Advanced tab**");
-    // there's a re-render.
+
     cy.wait(1000);
     curatePage.editStep(mapStep).should("be.visible").click({force: true});
     curatePage.switchEditAdvanced().should("be.visible").click({force: true});

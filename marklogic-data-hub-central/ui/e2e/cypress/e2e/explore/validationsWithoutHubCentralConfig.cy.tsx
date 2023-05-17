@@ -23,12 +23,9 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   });
 
   after(() => {
-    // Visiting Modeling so hubCentralConfig file gets created again
-    cy.visit("/tiles/model");
+    cy.setupHubCentralConfig();
   });
 
-  // This scenario it's when you load a project for the first time, and haven't visited Model's
-  // page yet. And go directly to Explore page.
   it("Validate Data Model Display Settings when hubCentralConfig file does not exist", () => {
     cy.log("**Go to Data Model Display Settings**");
     browsePage.waitForSpinnerToDisappear();

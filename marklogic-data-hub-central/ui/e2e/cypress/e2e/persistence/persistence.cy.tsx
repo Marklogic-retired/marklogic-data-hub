@@ -203,9 +203,8 @@ describe("Validate persistence across Hub Central", () => {
     propertyTable.getProperty("shipping-city").scrollIntoView();
   });
 
-  /* Skipping until the Run flow persistance functionality is restored on DHFPROD-9456 */
-  it.skip("Go to run tile, expand flows and then visit another tile. When returning to the rrun tile, the expanded flows are persisted.", () => {
-    // "Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted."
+  // TODO: DHFPROD-10186
+  it.skip("Go to run tile, expand flows and then visit another tile. When returning to the run tile, the expanded flows are persisted.", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("body")
       .then(($body) => {
@@ -252,18 +251,18 @@ describe("Validate persistence across Hub Central", () => {
     expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesDesc.sort().reverse()));
   });
 
-  // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
-  // it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-  //   cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
-  //   curatePage.toggleEntityTypeId("Person");
-  //   curatePage.openStepDetails("mapPersonJSON");
-  //   cy.contains("Entity Type: Person");
-  //   cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-  //   cy.contains("Entity Type: Person");
-  //   cy.findByTestId("arrow-left").click();
-  // });
+  // TODO: DHFPROD-10186
+  it.skip("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.openStepDetails("mapPersonJSON");
+    cy.contains("Entity Type: Person");
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.contains("Entity Type: Person");
+    cy.findByTestId("arrow-left").click();
+  });
 
   it("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     toolbar.getCurateToolbarIcon().should("be.visible").click();

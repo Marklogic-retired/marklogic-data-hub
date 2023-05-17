@@ -155,7 +155,7 @@ describe("Merging", () => {
     cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length.gt", 0));
     cy.findByText("myFavouriteEdited").should("exist");
 
-    // To test discard changes works consistently in merge strategy dialog
+    cy.log("**To test discard changes works consistently in merge strategy dialog**");
     cy.findByText("myFavouriteEdited").click();
     mergeStrategyModal.setStrategyName("myFavouriteEditedAgain");
     mergeStrategyModal.cancelButton().click();
@@ -211,8 +211,6 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     mergeRuleModal.cancelButton().click();
     cy.waitForAsyncRequest();
-    //cy.wait(1000);
-    //cy.findByLabelText("Yes").click();
   });
 
   it("Cancel merge rule deletion", () => {
@@ -326,12 +324,10 @@ describe("Merging", () => {
     mergeRuleModal.saveButton();
     cy.wait(3000);
     cy.waitForAsyncRequest();
-    //mergeRuleModal.cancelButton().click();
-    //cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
 
-    // To test discard changes works consistently in merge rule dialog
+    cy.log("**To test discard changes works consistently in merge rule dialog**");
     cy.findByText("shipRegion").click();
     mergeRuleModal.maxValueOtherRadio().click();
     mergeRuleModal.cancelButton().click();
@@ -368,12 +364,12 @@ describe("Merging", () => {
     curatePage.addNewStep("Order").click();
     createEditStepDialog.stepNameInput().type("testName", {timeout: 2000});
 
-    //verify typehead is requesting to final db
+    cy.log("**verify typehead is requesting to final db**");
     cy.intercept("POST", "api/entitySearch/facet-values?database=final").as("finalRequest1");
     createEditStepDialog.setCollectionInput("ABC");
     cy.wait("@finalRequest1");
 
-    //verify typehead is requesting to staging db when source DB is changed
+    cy.log("**verify typehead is requesting to staging db when source DB is changed**");
     createEditStepDialog.getAdvancedTab().click();
     advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
     createEditStepDialog.getBasicTab().click();
@@ -382,7 +378,7 @@ describe("Merging", () => {
     cy.wait("@stagingRequest1");
     createEditStepDialog.saveButton("merging").click();
 
-    //verify typehead request when the step is already created
+    cy.log("**verify typehead request when the step is already created**");
     curatePage.editStep("testName").should("be.visible").click({force: true});
     cy.intercept("POST", "api/entitySearch/facet-values?database=staging").as("stagingRequest2");
     createEditStepDialog.setCollectionInput("E");
@@ -397,6 +393,5 @@ describe("Merging", () => {
     createEditStepDialog.saveButton("merging").click();
     curatePage.deleteMappingStepButton("testName").click();
     curatePage.deleteConfirmation("Yes").click();
-
   });
 });

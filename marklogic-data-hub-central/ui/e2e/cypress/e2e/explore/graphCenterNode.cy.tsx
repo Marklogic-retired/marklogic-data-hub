@@ -49,7 +49,7 @@ describe("Center node on graph", () => {
       centeredNodeX = nodePositions[ExploreGraphNodes.CUSTOMER_102].x;
       centeredNodeY = nodePositions[ExploreGraphNodes.CUSTOMER_102].y;
 
-      //Person entity coordinates should be within the center of canvas
+      cy.log("**Person entity coordinates should be within the center of canvas**");
       expect(centeredNodeX).to.be.greaterThan(700);
       expect(centeredNodeX).to.be.lessThan(800);
       expect(centeredNodeY).to.be.greaterThan(300);

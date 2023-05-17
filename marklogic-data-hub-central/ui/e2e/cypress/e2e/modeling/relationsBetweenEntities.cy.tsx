@@ -37,7 +37,7 @@ describe(("relationBetweenEntities"), () => {
   it("Check type when relationship is created", () => {
     cy.reload();
     cy.wait(3500);
-    // Add relationship
+
     graphView.getAddButton().click({force: true});
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
@@ -56,7 +56,6 @@ describe(("relationBetweenEntities"), () => {
     relationshipModal.editRelationshipName("belongTo");
     relationshipModal.addRelationshipSubmit();
 
-    // Open side panel
     cy.wait(2000);
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -65,8 +64,6 @@ describe(("relationBetweenEntities"), () => {
     });
     cy.findByText("(Client)");
     modelPage.closeSidePanel();
-
-    //open edit relationship
 
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -83,7 +80,6 @@ describe(("relationBetweenEntities"), () => {
       cy.wait(3000);
     });
 
-    //Open side panel for office
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
@@ -92,7 +88,6 @@ describe(("relationBetweenEntities"), () => {
     cy.findByText("(Client)");
     modelPage.closeSidePanel();
 
-    //Remove relationship
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
@@ -111,7 +106,7 @@ describe(("relationBetweenEntities"), () => {
   it("Truncate text for a long relationship name between entities", () => {
     cy.reload();
     cy.wait(3500);
-    // Add relationship with a long Name
+
     graphView.getAddButton().click({force: true});
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
@@ -134,12 +129,11 @@ describe(("relationBetweenEntities"), () => {
     cy.waitForAsyncRequest();
     cy.reload();
     cy.waitForAsyncRequest();
-    // Check label value of the relationship
+
     graphVis.getEdgesRelatedToaNode("Person", relationshipName).then((edgeNames:any) => {
       cy.wrap(edgeNames.label).should("equal", "ThisIsaRelationshipW...");
     });
 
-    //Remove relationship
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
@@ -158,7 +152,7 @@ describe(("relationBetweenEntities"), () => {
   it("Truncate text for a long relationship name between entity and concept", () => {
     cy.reload();
     cy.wait(3500);
-    // Add relationship with a long Name
+
     graphView.getAddButton().click({force: true});
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
@@ -182,12 +176,11 @@ describe(("relationBetweenEntities"), () => {
     cy.wait(3000);
     cy.reload();
     cy.wait(3000);
-    // Check label value of the relationship
+
     graphVis.getEdgesRelatedToaNode("Person", relationshipName).then((edgeNames:any) => {
       cy.wrap(edgeNames.label).should("equal", "LongRelationshipBetw...");
     });
 
-    //Open side panel for person
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
@@ -197,7 +190,6 @@ describe(("relationBetweenEntities"), () => {
     cy.findByText("LongRelationshipBet...").should("exist");
     modelPage.closeSidePanel();
 
-    //Remove relationship
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClothStyle: any = nodePositions["ClothStyle"];

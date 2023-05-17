@@ -41,7 +41,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(5000);
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
-    // Changed the name of the Concept in the whole class so it have _ and - to check DHFPROD-9665
+
     conceptClassModal.newConceptClassName("test_Shoe-Style");
     conceptClassModal.newConceptClassDescription("Different categories of shoe styles.");
     cy.waitUntil(() => conceptClassModal.getAddButton().click());
@@ -123,7 +123,6 @@ describe("Concept classes in Modeling screen", () => {
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
 
-    // the graph needs to stabilize before we interact with it
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let ProductCoordinates: any = nodePositions["Product"];
       let testShoeStyleCoordinates: any = nodePositions["test_Shoe-Style"];
@@ -133,14 +132,11 @@ describe("Concept classes in Modeling screen", () => {
       graphVis.getGraphVisCanvas().trigger("pointerup", testShoeStyleCoordinates.x, testShoeStyleCoordinates.y, {button: 0, scrollBehavior: "bottom"});
     });
 
-    //relationship modal should open with proper source and target nodes in place
     relationshipModal.verifySourceEntity("Product").should("be.visible");
     relationshipModal.verifyTargetNode("test_Shoe-Style").should("be.visible");
 
-    //add relationship properties and save
     relationshipModal.editRelationshipName("quarter");
 
-    //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
     relationshipModal.verifyVisibleOptionalBlock();
     cy.log("**None property should not be visible anymore**");
@@ -156,11 +152,9 @@ describe("Concept classes in Modeling screen", () => {
 
     modelPage.scrollPageBottom();
 
-    //Publish the changes (DHFPROD-9333)
     cy.log("**Publish the Data Model**");
     cy.publishDataModel();
 
-    //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Product,test_Shoe-Style").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
@@ -210,7 +204,7 @@ describe("Concept classes in Modeling screen", () => {
     graphView.verifyEditInfoMessage().should("exist");
     cy.wait(1000);
 
-    //verify create relationship via clicking a node in edit mode
+    cy.log("**verify create relationship via clicking a node in edit mode**");
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("mouseover", personCoordinates.x, personCoordinates.y);
@@ -227,7 +221,6 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.getModalHeader().should("be.visible");
     relationshipModal.verifySourceEntity("Person").should("be.visible");
 
-    //target entity node should be placeholder and user can set relationship options
     relationshipModal.verifyTargetNode("Select target entity type*").should("be.visible");
     relationshipModal.getEntityToConceptClassViewOption().should("not.be.checked");
     relationshipModal.getEntityToEntityViewOption().should("be.checked");
@@ -254,7 +247,6 @@ describe("Concept classes in Modeling screen", () => {
     modelPage.scrollPageBottom();
     cy.wait(6000);
 
-    //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Person,test_Shoe-Style").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
@@ -271,7 +263,6 @@ describe("Concept classes in Modeling screen", () => {
   });
 
   it("Delete a concept class from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
-    // the graph needs to stabilize before we interact with it
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -295,7 +286,6 @@ describe("Concept classes in Modeling screen", () => {
     modelPage.scrollPageBottom();
     cy.wait(6000);
 
-    //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Product,test_Shoe-Style").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
@@ -310,7 +300,6 @@ describe("Concept classes in Modeling screen", () => {
     cy.wait(3000);
 
     cy.log("Deleting relationship between Person and testShoeStyle");
-    //reopen modal to verify previous updates
     graphVis.getPositionOfEdgeBetween("Person,test_Shoe-Style").then((edgePosition: any) => {
       cy.wait(150);
       graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y, {force: true});
@@ -338,7 +327,6 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedConceptClassHeading("test_Shoe-Style").should("not.exist");
     cy.wait(150);
-    //Publish the changes
     cy.publishDataModel();
   });
 
@@ -373,7 +361,6 @@ describe("Concept classes in Modeling screen", () => {
     entityTypeTable.sortByNodeTypeConcept();
     entityTypeTable.getConceptClass("TestConcept").should("exist").scrollIntoView();
 
-    //verify color and icon is reflected in the table
     modelPage.getColorSelected("TestConcept", "#d5d3dd").scrollIntoView().should("exist");
     modelPage.getIconSelected("TestConcept", "FaAccessibleIcon").should("exist");
   });
@@ -384,7 +371,7 @@ describe("Concept classes in Modeling screen", () => {
     conceptClassModal.newConceptClassDescription("Description has changed");
     conceptClassModal.getAddButton().click();
     conceptClassModal.getAddButton().should("not.exist");
-    // check edited concept class description
+
     entityTypeTable.getConceptClass("TestConcept").scrollIntoView().click();
     conceptClassModal.getConceptClassDescription().should("have.value", "Description has changed");
     conceptClassModal.getCancelButton().click();

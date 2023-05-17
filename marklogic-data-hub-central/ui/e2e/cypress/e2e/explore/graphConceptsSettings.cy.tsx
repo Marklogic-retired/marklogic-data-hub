@@ -14,9 +14,6 @@ const defaultConceptData = {
   }
 };
 
-// We must have the same color in rgb and hex because the browser to apply the background changes it to rgb even if the value is passed in hex
-// "#F3BEBE" == "rgb(243, 190, 190)"
-// "#D1F5E8" == "rgb(238, 239, 241)"
 const newConceptData = {
   icon: "FaEmpire",
   color: {

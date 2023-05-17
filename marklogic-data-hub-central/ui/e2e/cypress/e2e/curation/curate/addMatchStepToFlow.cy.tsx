@@ -115,8 +115,6 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectMatchTab("Customer");
   });
 
-  // NOTE Moved testing of a adding step to a new flow and running the step to RTL unit tests
-  // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Add the Match step to new flow", {defaultCommandTimeout: 120000}, () => {
     cy.log("Create new flow");
     toolbar.getRunToolbarIcon().should("be.visible").click();

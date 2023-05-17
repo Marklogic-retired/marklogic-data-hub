@@ -87,6 +87,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getGreySelectedFacets("mapCustomersXML").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
   });
+
   it("Apply facet search and clear all grey facets", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
@@ -171,6 +172,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getDocumentRecordType(0).should("be.equal", "xml");
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Verify instance view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
@@ -189,7 +191,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
   });
 
-  it.skip("verify source view of the document", () => {
+  // TODO: DHFPROD-10180
+  it.skip("Verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Randolph");
@@ -201,6 +204,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Select Customer xml entity instances and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -212,13 +216,14 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.clickTableView();
     browsePage.getTotalDocuments().should("be.gte", 5);
-    //check table rows
+
     browsePage.getHCTableRows().should("have.length", 5);
-    //check table columns
+
     table.getTableColumns().should("have.length", 6);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Verify instance view of the document", () => {
     browsePage.search("Bowman");
     browsePage.getTotalDocuments().should("be.equal", 1);
@@ -234,6 +239,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
@@ -247,6 +253,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().clear();
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Verify metadata view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
@@ -288,6 +295,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.waitForAsyncRequest();
   });
 
+  // TODO: DHFPROD-10180
   it.skip("Verify metadata view of the document properties", () => {
     entitiesSidebar.toggleAllDataView();
     browsePage.search("robert");
