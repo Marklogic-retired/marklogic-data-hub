@@ -102,11 +102,8 @@ describe("Leaf Nodes", () => {
       graphExplore.stopStabilization();
       graphView.physicsAnimationToggle();
     });
-  });
 
-  // TODO: DHFPROD-10181
-  it.skip("Click the product node and check tooltip text to ensure it's the right node", () => {
-    cy.wait(2000);
+    cy.log("**Click the product node and check tooltip text to ensure it's the right node**");
     graphExplore.focusNode(ExploreGraphNodes.PRODUCT_GROUP);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.PRODUCT_GROUP).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.PRODUCT_GROUP];
