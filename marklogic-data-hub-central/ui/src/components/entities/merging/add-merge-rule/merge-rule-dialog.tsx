@@ -1072,7 +1072,11 @@ const MergeRuleDialog: React.FC<Props> = props => {
                       className={styles.switchToggleRetainDuplicateValues}
                     />
                     <div className={"d-flex align-items-center"}>
-                      <HCTooltip text={MergeRuleTooltips.retainDuplicateValues} id="retain-dup-values-tooltip" placement="top">
+                      <HCTooltip
+                        text={MergeRuleTooltips.retainDuplicateValues}
+                        id="retain-dup-values-tooltip"
+                        placement="top"
+                      >
                         <QuestionCircleFill
                           color={themeColors.defaults.questionCircle}
                           className={styles.questionCircle}

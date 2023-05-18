@@ -2362,16 +2362,16 @@ const MappingStepDetail: React.FC = () => {
             <div id="entityContainer" data-testid="entityContainer" className={styles.entityContainer}>
               <div className={styles.entityDetails}>
                 <span className={styles.entityTypeTitle}>
-                  <p className={styles.entityTypeText}>
-                    <span className={styles.entityIcon} />
+                  <div className={styles.entityTypeText}>
+                    <p className={styles.entityIcon} />
                     <strong
                       className={styles.entityName}
                       aria-label={`Entity-Type-${curationOptions.activeStep.entityName}`}
                     >
-                      <div>Entity Type:&nbsp;</div>
+                      <p>Entity Type:&nbsp;</p>
                       <AddTooltipWhenTextOverflow text={curationOptions.activeStep.entityName} />
                     </strong>
-                  </p>
+                  </div>
                 </span>
               </div>
               <div ref={dummyNode} />

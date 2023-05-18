@@ -2544,7 +2544,7 @@ const EntityMapTable: React.FC<Props> = props => {
             onMouseEnter={handleShowDocLinksPopover}
             onMouseLeave={() => handleMouseLeaveDocLinksPopover()}
           />
-          {xPathDocLinks}
+          {xPathDocLinks(xPathExpressionContainerSecondRef.current)}
         </span>
       ),
       dataField: "key",

@@ -143,7 +143,7 @@ const CompareValuesModal: React.FC<Props> = props => {
         hasChildren: false,
         parentKeys: [],
         propertyName: {name: property.name, matchedRow: matchedRow},
-        propertyValueInReview: {value: previewValues[property.name] || "", matchedRow: matchedRow},
+        propertyValueInReview: {value: (previewValues && previewValues[property.name]) || "", matchedRow: matchedRow},
       };
       uriInfo.forEach((uri, index) => {
         let propertyInstanceKey = `result${index + 1}Instance`;
