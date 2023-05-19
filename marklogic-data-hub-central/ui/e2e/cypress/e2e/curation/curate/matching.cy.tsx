@@ -157,12 +157,12 @@ describe("Matching", () => {
     thresholdModal.saveButton().click({force: true});
     cy.waitForAsyncRequest();
     cy.findByText("test - merge").should("have.length.gt", 0);
-    multiSlider.getThresholdHandleNameAndType("test", "merge").should("be.visible");
+    multiSlider.getThresholdDefaultHandleNameAndType("test", "merge").should("be.visible");
   });
 
   it("Edit threshold Property to Match", () => {
     multiSlider.enableEdit("threshold");
-    multiSlider.thresholdEditOption("test", "merge");
+    multiSlider.thresholdEditOptionActive("test", "merge");
     thresholdModal.clearThresholdName();
     thresholdModal.setThresholdName("testing");
     thresholdModal.saveButton().click();
@@ -172,7 +172,7 @@ describe("Matching", () => {
   });
 
   it("Edit threshold Match Type", () => {
-    multiSlider.thresholdEditOption("testing", "merge");
+    multiSlider.thresholdEditOptionActive("testing", "merge");
     thresholdModal.selectActionDropdown("Notify");
     thresholdModal.saveButton().click();
     thresholdModal.getModalDialog().should("not.exist");
@@ -197,7 +197,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.contains("customerId - Exact").should("have.length.gt", 0);
-    multiSlider.getRulesetHandleNameAndType("customerId", "Exact").should("exist");
+    multiSlider.getRulesetDefaultHandleNameAndType("customerId", "Exact").should("exist");
     //multiSlider.getHandleName("customerId").should("be.visible");
   });
 
@@ -237,7 +237,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.contains("email - Exact").should("have.length.gt", 0);
-    multiSlider.getRulesetHandleNameAndType("email", "Exact").should("exist");
+    multiSlider.getRulesetDefaultHandleNameAndType("email", "Exact").should("exist");
   });
 
   it.skip("When we work on the spike story to update multi-slider components using cypress", () => {
@@ -255,7 +255,7 @@ describe("Matching", () => {
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.contains("shipping.street - Exact").should("have.length.gt", 0);
-    multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("be.visible");
+    multiSlider.getRulesetDefaultHandleNameAndType("shipping.street", "Exact").should("be.visible");
   });
 
   it.skip("When we work on the spike story to update multi-slider components using cypress", () => {
@@ -278,7 +278,7 @@ describe("Matching", () => {
 
   it("Edit ruleset with multiple properties", () => {
     multiSlider.enableEdit("ruleset");
-    multiSlider.ruleSetEditOptionMulti("customerMultiplePropertyRuleset");
+    multiSlider.ruleSetActiveEditOptionMulti("customerMultiplePropertyRuleset");
     cy.contains("Edit Match Ruleset for Multiple Properties");
     rulesetMultipleModal.selectMatchTypeDropdown("name", "doubleMetaphone");
     rulesetMultipleModal.setDictionaryUri("name", "/dictionary/first-names.xml");
@@ -291,17 +291,17 @@ describe("Matching", () => {
   });
 
   it("Delete a ruleset", () => {
-    multiSlider.deleteOption("shipping.street", "Exact");
+    multiSlider.deleteOptionActiveRuleset("shipping.street", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("shipping.street", "Exact");
     cy.waitForAsyncRequest();
     cy.findByTestId("rulesetName-testing-shipping.street - Exact").should("have.length", 0);
-    multiSlider.getRulesetHandleNameAndType("shipping.street", "Exact").should("not.exist");
+    multiSlider.assertRulesetHandleNameAndType("shipping.street", "Exact", "not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("shipping.street", "Exact").should("not.exist");
   });
 
   it("Delete a ruleset", () => {
-    multiSlider.deleteOption("email", "Exact");
+    multiSlider.deleteOptionActiveRuleset("email", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("email", "Exact");
     cy.waitForAsyncRequest();
@@ -310,7 +310,7 @@ describe("Matching", () => {
   });
 
   it("Delete a ruleset with multiple properties", () => {
-    multiSlider.deleteOptionMulti("customerMultiplePropertyRuleset");
+    multiSlider.ruleSetActiveDeleteOptionMulti("customerMultiplePropertyRuleset");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteMulti("customerMultiplePropertyRuleset");
     cy.waitForAsyncRequest();
@@ -320,7 +320,7 @@ describe("Matching", () => {
   });
 
   it("Delete threshold", () => {
-    multiSlider.deleteOptionThreshold("testing", "notify");
+    multiSlider.deleteOptionActiveThreshold("testing", "notify");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteThreshold("testing");
     cy.waitForAsyncRequest();
@@ -330,7 +330,7 @@ describe("Matching", () => {
   });
 
   it("Edit ruleset", () => {
-    multiSlider.ruleSetEditOption("customerId", "Exact");
+    multiSlider.ruleSetEditOptionActive("customerId", "Exact");
     cy.contains("Edit Match Ruleset for Single Property");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
@@ -339,7 +339,7 @@ describe("Matching", () => {
   });
 
   it("Delete ruleset", () => {
-    multiSlider.deleteOption("customerId", "Exact");
+    multiSlider.deleteOptionActiveRuleset("customerId", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("customerId", "Exact");
     cy.waitForAsyncRequest();
@@ -593,7 +593,7 @@ describe("Matching", () => {
       cy.findAllByText("Total Score: 30").should("have.length.gt", 0);
 
       multiSlider.enableEdit("ruleset");
-      multiSlider.deleteOptionMulti("testMultipleProperty");
+      multiSlider.ruleSetActiveDeleteOptionMulti("testMultipleProperty");
       matchingStepDetail.getSliderDeleteText().should("be.visible");
       multiSlider.confirmDeleteMulti("testMultipleProperty");
       cy.waitForAsyncRequest();
@@ -739,7 +739,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
     cy.contains("id - Exact").should("have.length.gt", 0);
     cy.findByLabelText("ruleset-scale-switch").click();
-    cy.findByText("id - Exact").click();
+    multiSlider.ruleSetEditOptionActive("id", "Exact");
     cy.findByText("swim");
     cy.findByText("List1");
 
@@ -782,7 +782,7 @@ describe("Matching", () => {
     mergeResults.contains("Match - merge").should("have.length.gt", 0);
     mergeResults.findByText("4 pair matches").should("have.length.gt", 0);
     multiSlider.enableEdit("ruleset");
-    cy.findByTestId("ruleset lname - Exact").click();
+    multiSlider.ruleSetEditOptionActive("lname", "Exact");
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
@@ -804,7 +804,7 @@ describe("Matching", () => {
     mergeResults.contains("Match - merge").should("have.length.gt", 0);
     mergeResults.findByText("3 pair matches").should("have.length.gt", 0);
 
-    cy.findByTestId("ruleset lname - Exact").click();
+    multiSlider.ruleSetEditOptionActive("lname", "Exact");
     cy.wait(500);
     cy.get(`[id="valuesToIgnore"]`).type("{backspace}");
     rulesetSingleModal.selectValuesToIgnoreInput();

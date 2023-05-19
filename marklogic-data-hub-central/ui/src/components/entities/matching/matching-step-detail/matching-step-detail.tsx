@@ -158,6 +158,7 @@ const MatchingStepDetail: React.FC = () => {
           start: item.weight,
           reduce: item.reduce ? item.reduce : false,
           value: item.name + ":" + item.weight.toString(),
+          content: "hola"
         }));
         setRulesetItems(rulesetItems);
         if (matchingStepArtifact.matchRulesets.length === 0) {
@@ -169,6 +170,7 @@ const MatchingStepDetail: React.FC = () => {
           id: id,
           start: item.score,
           value: item.thresholdName + " - " + item.action + ":" + item.score.toString(),
+          content: "hola"
         }));
         setThresholdItems(thresholdItems);
         if (matchingStepArtifact.thresholds.length === 0) {

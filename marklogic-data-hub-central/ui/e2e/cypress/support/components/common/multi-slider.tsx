@@ -9,46 +9,128 @@ class MultiSlider {
   }
 
   getThresholdHandleNameAndType(name: string, type: string) {
-    return cy.findAllByTestId(`threshold ${name} - ${type}`);
+    return cy.get("[data-testid='active-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`);
+    });
+  }
+
+  getThresholdDefaultHandleNameAndType(name: string, type: string) {
+    return cy.get("[data-testid='default-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`);
+    });
   }
 
   getRulesetHandleNameAndType(name: string, type: string) {
-    return cy.findAllByTestId(`ruleset ${name} - ${type}`);
-  }
-
-  thresholdEditOption(name: string, type: string) {
-    cy.findByTestId(`threshold ${name} - ${type}`).should("be.visible").then($option => {
-      $option[0].click();
+    return cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`);
     });
   }
 
-  ruleSetEditOption(name: string, type: string) {
-    cy.findByTestId(`ruleset ${name} - ${type}`).should("be.visible").then($option => {
-      $option[0].click();
+  assertRulesetHandleNameAndType(name: string, type: string, assertion: string) {
+    return cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).should(assertion);
     });
   }
 
-  ruleSetEditOptionMulti(name: string) {
-    cy.findByTestId(`ruleset ${name}`).should("be.visible").then($option => {
-      $option[0].click();
+  getRulesetDefaultHandleNameAndType(name: string, type: string) {
+    return cy.get("[data-testid='default-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name} - ${type}`);
     });
   }
 
-  deleteOption(name: string, type: string) {
-    cy.findByTestId(`ruleset ${name} - ${type}`).click().then(() => {
-      cy.get(`[data-icon="trash-alt"]`).click();
+  thresholdEditOptionActive(name: string, type: string) {
+    cy.get("[data-testid='active-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name} - ${type}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
     });
   }
 
-  deleteOptionMulti(name: string) {
-    cy.findAllByTestId(`ruleset ${name}`).eq(0).scrollIntoView().should("be.visible").click().then(() => {
-      cy.get(`[data-icon="trash-alt"]`).click();
+  thresholdEditOptionDefault(name: string, type: string) {
+    cy.get("[data-testid='active-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
     });
   }
 
-  deleteOptionThreshold(name: string, type: string) {
-    cy.findByTestId(`threshold ${name} - ${type}`).scrollIntoView().should("be.visible").click().then(() => {
-      cy.get(`[data-icon="trash-alt"]`).click();
+  ruleSetEditOptionActive(name: string, type: string) {
+    cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name} - ${type}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
+    });
+  }
+
+  ruleSetEditOptionDefault(name: string, type: string) {
+    cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name} - ${type}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
+    });
+  }
+
+  ruleSetDefaultEditOptionMulti(name: string) {
+    cy.get("[data-testid='default-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
+    });
+  }
+
+  ruleSetActiveEditOptionMulti(name: string) {
+    cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findAllByText(`${name}`).should("be.visible").then($option => {
+        $option[0].click();
+      });
+    });
+  }
+
+  deleteOptionActiveThreshold(name: string, type: string) {
+    cy.get("[data-testid='active-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).click();
+    }).then(() => {
+      cy.get(`[aria-label="editThresholdDeleteIcon"]`).click();
+    });
+  }
+
+  deleteOptionDefaultThreshold(name: string, type: string) {
+    cy.get("[data-testid='default-threshold-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).click();
+    }).then(() => {
+      cy.get(`[aria-label="editThresholdDeleteIcon"]`).click();
+    });
+  }
+
+  deleteOptionActiveRuleset(name: string, type: string) {
+    cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).click();
+    }).then(() => {
+      cy.get(`[aria-label="editSingleRulesetDeleteIcon"]`).click();
+    });
+  }
+
+  deleteOptionDefaultRuleset(name: string, type: string) {
+    cy.get("[data-testid='default-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name} - ${type}`).click();
+    }).then(() => {
+      cy.get(`[aria-label="editSingleRulesetDeleteIcon"]`).click();
+    });
+  }
+
+  ruleSetDefaultDeleteOptionMulti(name: string) {
+    cy.get("[data-testid='default-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name}`).should("be.visible").click();
+    }).then(() => {
+      cy.get(`[aria-label="editMultipleRulesetDeleteIcon"]`).click();
+    });
+  }
+
+  ruleSetActiveDeleteOptionMulti(name: string) {
+    cy.get("[data-testid='active-ruleset-timeline']").scrollIntoView().within(() => {
+      cy.findByText(`${name}`).should("be.visible").click();
+    }).then(() => {
+      cy.get(`[aria-label="editMultipleRulesetDeleteIcon"]`).click();
     });
   }
 
