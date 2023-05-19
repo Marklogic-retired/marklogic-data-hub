@@ -16,6 +16,26 @@
     cursor: pointer;
 }
 
+.vis-item-content > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & > div{
+        display: inline-block;
+        background-color: white;
+        border-color: $info;
+        width: 22px;
+        height: 18px;
+        border-radius: 12px;
+        position: relative;
+        color: black;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left:11px;
+    }
+}
+
 .vis-item.vis-box{
     border-style: none !important;
     border-radius:8px !important;
@@ -32,20 +52,6 @@
 
 .vis-timeline.vis-bottom{
     visibility: visible!important;
-}
-
-.itemValue{
-    display: inline-block;
-    background-color: white;
-    border-color: $info;
-    width: 22px;
-    height: 18px;
-    border-radius: 12px;
-    position: relative;
-    color: black;
-    font-size: 12px;
-    font-weight: bold;
-    margin-left:11px;
 }
 
 .itemReduceValue{
