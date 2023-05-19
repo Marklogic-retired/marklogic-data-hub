@@ -270,7 +270,7 @@ class BrowsePage {
 
   // common
   getApplyFacetsButton() {
-    return cy.get("[aria-label=apply-facets-button]", {timeout: 3000});
+    return cy.get("[aria-label=apply-facets-button]");
   }
 
   // common
@@ -379,6 +379,16 @@ class BrowsePage {
   // common
   getTableView() {
     return cy.get("#tableView");
+  }
+
+  clickShowMoreLink(facet: string) {
+    cy.get("body").findByTestId(`show-more-${facet}`).then($button => {
+      if ($button.is(":visible")) {
+        cy.findByTestId(`show-more-${facet}`).click();
+      } else {
+        cy.log("Show More Link for the facet is not found");
+      }
+    });
   }
 
   // common

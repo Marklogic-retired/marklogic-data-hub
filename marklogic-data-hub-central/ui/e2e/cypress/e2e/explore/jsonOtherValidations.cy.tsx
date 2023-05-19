@@ -57,29 +57,29 @@ describe("Verify numeric/date facet can be applied", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    browsePage.getApplyFacetsButton().should("be.visible").should("be.disabled");
 
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
+    browsePage.getApplyFacetsButton().should("be.visible").should("not.be.disabled");
 
     browsePage.getApplyFacetsButton().click();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.checked");
     browsePage.getAppliedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    browsePage.getApplyFacetsButton().should("be.visible").should("be.disabled");
 
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
+    browsePage.getApplyFacetsButton().should("be.visible").should("not.be.disabled");
     browsePage.getClearAllFacetsButton().click();
     browsePage.getAppliedFacets("Adams Cole").should("not.exist");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
     browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    browsePage.getApplyFacetsButton().should("be.visible").should("be.disabled");
   });
 
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {

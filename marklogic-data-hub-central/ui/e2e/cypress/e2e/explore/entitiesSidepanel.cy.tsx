@@ -234,7 +234,7 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.getTableView().click();
     cy.log("Typing Adams in search bar and click on apply facets");
     entitiesSidebar.getMainPanelSearchInput("Adams");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.getApplyFacetsButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("Verifying the results in table view");

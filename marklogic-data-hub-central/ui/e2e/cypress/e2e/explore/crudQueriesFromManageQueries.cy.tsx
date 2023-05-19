@@ -223,6 +223,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery();
+    cy.waitForAsyncRequest();
     queryComponent.getManageQueryModal().should("not.exist");
   });
 

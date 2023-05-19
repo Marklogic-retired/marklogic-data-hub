@@ -67,7 +67,7 @@ describe("json scenario for table on browse documents page", () => {
 
   it("Search for a simple text/query and verify content", () => {
     entitiesSidebar.getMainPanelSearchInput("Bob");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.getApplyFacetsButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHCTableRows().then(($row) => {
       let length = $row.length;
@@ -121,7 +121,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.getApplyFacetsButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.totalNumberDocuments("1");
     browsePage.getTableViewInstanceIcon().click();
@@ -143,7 +143,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getMainPanelSearchInput("Adams Cole");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.getApplyFacetsButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();

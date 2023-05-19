@@ -255,7 +255,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("Verify record view of the XML document in non-entity detail page", () => {
     entitiesSidebar.toggleAllDataView();
     browsePage.getSearchText().clear();
-    browsePage.getApplyFacetsButton().click();
+    browsePage.getApplyFacetsButton().should("be.visible").click();
     browsePage.getNavigationIconForDocument("/dictionary/first-names.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getRecordView().should("exist");
