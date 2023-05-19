@@ -94,21 +94,21 @@ describe("Verify numeric/date facet can be applied", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.clickMoreLink("fname");
-    browsePage.getFacetItemCheckbox("fname", "Alice").click();
-    browsePage.getGreySelectedFacets("Alice").should("exist");
+    browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
+    browsePage.getGreySelectedFacets("Alexandra").should("exist");
     toolbar.getExploreToolbarIcon().click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.getGreySelectedFacets("Alice").should("not.exist");
+    browsePage.getGreySelectedFacets("Alexandra").should("not.exist");
     cy.log("**verify gray facets don't persist when switching between browse and run views.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.clickMoreLink("fname");
-    browsePage.getFacetItemCheckbox("fname", "Alice").click();
-    browsePage.getGreySelectedFacets("Alice").should("exist");
+    browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
+    browsePage.getGreySelectedFacets("Alexandra").should("exist");
     toolbar.getRunToolbarIcon().click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
@@ -117,7 +117,7 @@ describe("Verify numeric/date facet can be applied", () => {
     runPage.explorerLink("mapPersonJSON").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
-    browsePage.getGreySelectedFacets("Alice").should("not.exist");
+    browsePage.getGreySelectedFacets("Alexandra").should("not.exist");
   });
 
   it("Verify clearing date time range facet clears corresponding selected facet", () => {

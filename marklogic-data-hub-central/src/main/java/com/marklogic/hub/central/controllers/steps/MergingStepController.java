@@ -120,7 +120,9 @@ public class MergingStepController extends BaseController {
 
     @RequestMapping(value = "/unmerge", method = RequestMethod.PUT)
     @Secured("ROLE_readMerging")
-    public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI, @RequestParam(required = false, defaultValue = "true") Boolean retainAuditTrail, @RequestParam(required = false, defaultValue = "true") Boolean blockFutureMerges) {
+    public ResponseEntity<JsonNode> unmergeDocument(@RequestParam String mergeDocumentURI,
+                                                    @RequestParam(required = false, defaultValue = "true") boolean retainAuditTrail,
+                                                    @RequestParam(required = false, defaultValue = "true") boolean blockFutureMerges) {
         MasteringManager mgr = new MasteringManagerImpl(getHubClientConfig());
         return ResponseEntity.ok(mgr.unmerge(mergeDocumentURI, retainAuditTrail, blockFutureMerges));
     }

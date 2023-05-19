@@ -1,8 +1,6 @@
-const mjsProxy = require("/data-hub/core/util/mjsProxy.sjs");
-const DataHub = mjsProxy.requireMjsModule("/data-hub/5/datahub.mjs");
+import DataHub from  "/data-hub/5/datahub.mjs";
 const datahub = new DataHub();
-
-const flowUtils = mjsProxy.requireMjsModule("/data-hub/5/impl/flow-utils.mjs");
+import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 
 function main(content, options) {
 
@@ -23,6 +21,6 @@ function main(content, options) {
   return content;
 }
 
-module.exports = {
-  main: main
+export default {
+  main
 };

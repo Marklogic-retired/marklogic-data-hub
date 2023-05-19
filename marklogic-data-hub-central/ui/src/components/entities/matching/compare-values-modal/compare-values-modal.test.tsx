@@ -204,7 +204,7 @@ describe("Compare Values Modal component", () => {
     expect(mockUnmergeUri).toHaveBeenCalledWith(payload);
     expect(mockUnmergeUri).toHaveBeenCalledTimes(1);
 
-    //verify blockFutureMerges is false when checkboox is selected
+    //verify blockFutureMerges is false when checkbox is selected
     rerender(
       <CompareValuesModal
         {...data.compareModal}
@@ -238,6 +238,8 @@ describe("Compare Values Modal component", () => {
     };
 
     expect(mockUnmergeUri).toHaveBeenLastCalledWith(payload2);
+
+
   });
 
   test("Merge Modal renders with popup info for showing all URIs", async () => {

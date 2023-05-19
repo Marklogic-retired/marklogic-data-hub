@@ -311,6 +311,8 @@ describe("Validate persistence across Hub Central", () => {
     matchingStepDetail.getAllDataURIRadio().should("be.checked");
     matchingStepDetail.verifyURIAdded("/test/Uri1");
     matchingStepDetail.verifyURIAdded("/test/Uri2");
+    cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
 
     matchingStepDetail.getBackButton().scrollIntoView().click();

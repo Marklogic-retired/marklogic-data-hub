@@ -4,6 +4,7 @@ import monitorPage from "../../support/pages/monitor";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 
 
 describe("Test '/Explore' view selector", () => {
@@ -66,8 +67,12 @@ describe("Test '/Explore' view selector", () => {
   });
 
   it(`Persist table items`, () => {
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Person");
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("Office");
     cy.log(`**expands item**`);
-    browsePage.expandItemTableView("/json/persons/last-name-dob-custom1.json");
+    browsePage.expandItemTableView("/xml/persons/ssn-match1.xml");
 
     cy.log(`**Go to Monitor section**`);
     toolbar.getMonitorToolbarIcon().click();
@@ -78,8 +83,8 @@ describe("Test '/Explore' view selector", () => {
     browsePage.switchView("table");
     table.getMainTableContainer().should("be.visible");
 
-    cy.log(`**table view item is still spanded**`);
-    cy.findByText("Alice").should("be.visible");
+    cy.log(`**table view item is still expanded**`);
+    cy.findByText("Jane").should("be.visible");
   });
 
   it(`Validate that the 'Snippet' view is shown and stored in the user preference`, () => {
@@ -108,7 +113,7 @@ describe("Test '/Explore' view selector", () => {
 
   it(`persist snippet items`, () => {
     cy.log(`**expands item**`);
-    browsePage.expandItemSnippetView("Person", "/json/persons/last-name-dob-custom1.json");
+    browsePage.expandItemSnippetView("Person", "/xml/persons/ssn-match1.xml");
 
     cy.log(`**Go to Monitor section**`);
     toolbar.getMonitorToolbarIcon().click();
@@ -119,7 +124,7 @@ describe("Test '/Explore' view selector", () => {
     browsePage.switchView("snippet");
     browsePage.getSnippetContainer().should("be.visible");
 
-    cy.log(`**snippet item is still spanded**`);
-    browsePage.getSnippetItem("/json/persons/last-name-dob-custom1.json").should("be.visible");
+    cy.log(`**snippet item is still expanded**`);
+    browsePage.getSnippetItem("/xml/persons/ssn-match1.xml").should("be.visible");
   });
 });
