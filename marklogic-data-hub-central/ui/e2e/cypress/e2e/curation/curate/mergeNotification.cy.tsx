@@ -21,6 +21,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.deleteRecordsInFinal("master-person", "sm-Person-auditing", "match-person", "merge-person", "sm-Person-merged", "sm-Person-mastered", "sm-Person-notification", "mdm-content", "no-match", "datahubMasteringMatchSummary-Person");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -29,7 +30,11 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.toggleFlowAccordion("personJSON");
-    cy.log("** Run Match and Merge Steps **");
+    cy.log("** Run Map, Match and Merge Steps **");
+    runPage.runStep("mapPersonJSON", "personJSON");
+    runPage.verifyStepRunResult("mapPersonJSON", "success");
+    runPage.getDocumentsWritten("mapPersonJSON").should("be.greaterThan", 0);
+    runPage.closeFlowStatusModal("personJSON");
     runPage.runStep("match-person", "personJSON");
     runPage.verifyStepRunResult("match-person", "success");
     runPage.getDocumentsWritten("match-person").should("be.greaterThan", 0);
@@ -113,6 +118,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     runPage.verifyStepRunResult("match-person", "success");
     runPage.getDocumentsWritten("match-person").should("be.greaterThan", 0);
     runPage.closeFlowStatusModal("personJSON");
+    runPage.toggleFlowAccordion("personJSON");
     runPage.runStep("merge-person", "personJSON");
     runPage.verifyStepRunResult("merge-person", "success");
     runPage.getDocumentsWritten("merge-person").should("be.greaterThan", 0);

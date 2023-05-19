@@ -6,11 +6,19 @@ import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import LoginPage from "../../support/pages/login";
+import runPage from "../../support/pages/run";
 
 describe("Test '/Explore' graph right panel", () => {
   beforeEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
+  });
+
+  after(() => {
+    cy.loginAsDeveloper().withRequest();
+    cy.deleteRecordsInFinal("master-person", "sm-Person-auditing", "match-person", "merge-person", "sm-Person-merged", "sm-Person-mastered", "sm-Person-notification", "mdm-content", "no-match", "datahubMasteringMatchSummary-Person");
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
 
   it("Validate Unmerge from nodes and table on graph view", () => {
@@ -205,16 +213,11 @@ describe("Test '/Explore' graph right panel", () => {
 
     cy.log("**Go to Explore section**");
     toolbar.getExploreToolbarIcon().click();
-
-    cy.log("**Verify Graph view is default view**");
-    graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000);
-    browsePage.waitForSpinnerToDisappear();
-
+    browsePage.clickTableView();
+    cy.wait(3000);
     graphExplore.getSearchBar().type("Jones");
     graphExplore.getSearchButton().click();
-    cy.wait(6000);
-    browsePage.clickTableView();
+    cy.wait(3000);
     entitiesSidebar.getBaseEntityDropdown().click();
     entitiesSidebar.selectBaseEntityOption("Person");
     cy.log("** unmerge icon should be visible on merged records in table view**");
@@ -232,12 +235,11 @@ describe("Test '/Explore' graph right panel", () => {
     compareValuesModal.getModal().should("not.exist");
   });
 
-  it("Switch to Snippet View", () => {
+  it("Navigate to Snippet View and verify unmerge option is available", () => {
     browsePage.clickSnippetView();
     cy.log("** unmerge icon should be visible on merged records in snippet view**");
     browsePage.getUnmergeIcon().should("have.length", 1);
     browsePage.getUnmergeIcon().first().scrollIntoView().should("be.visible");
-    cy.log("** verify compare values modal when clicking unmerge icon **");
     browsePage.getUnmergeIcon().first().click();
     compareValuesModal.getModal().should("be.visible");
     compareValuesModal.getUnmergeButton().should("be.visible");
@@ -245,15 +247,67 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("** cancel button closes modal **");
     compareValuesModal.getCancelButton().click();
     compareValuesModal.getModal().should("not.exist");
+  });
 
-    cy.log("** reopen modal and submit unmerge **");
+  it("Unmerge record and validate include unmerged documents checkbox", () => {
+    cy.log("** Reopen modal and submit unmerge **");
+    browsePage.getUnmergeIcon().first().scrollIntoView().click();
+    compareValuesModal.getModal().should("be.visible");
+    compareValuesModal.getInclusionCheckbox().click();
+    compareValuesModal.getUnmergeButton().click();
+    compareValuesModal.confirmationYes().click();
+    compareValuesModal.getModal().should("not.exist");
+
+    browsePage.getUnmergeIcon().should("not.exist");
+
+    graphExplore.getRunTile().click();
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+
+    graphExplore.getPersonJSONacordeon().click();
+    graphExplore.getRunButtonMatchPerson().click();
+    cy.wait("@runResponse");
+    runPage.verifyStepRunResult("match-person", "success");
+    cy.waitForAsyncRequest();
+    graphExplore.getCloseModalMatchPerson().click();
+    graphExplore.getRunButtonMergePerson().click();
+    cy.wait("@runResponse");
+    runPage.verifyStepRunResult("merge-person", "success");
+    cy.waitForAsyncRequest();
+    graphExplore.getCloseModalMergePerson().click({force: true});
+
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.clickTableView();
+    cy.log("** Unmerge icon should be visible because of inclusion checkbox**");
+    browsePage.getUnmergeIcon().should("be.visible");
+  });
+
+  it("Unmerge record and validate document is not merged again", () => {
+    cy.log("** Reopen modal and submit unmerge **");
     browsePage.getUnmergeIcon().first().scrollIntoView().click();
     compareValuesModal.getModal().should("be.visible");
     compareValuesModal.getUnmergeButton().click();
     compareValuesModal.confirmationYes().click();
     compareValuesModal.getModal().should("not.exist");
 
-    cy.log("** confirm merged record is unmerged **");
+    browsePage.getUnmergeIcon().should("not.exist");
+
+    graphExplore.getRunTile().click();
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+
+    graphExplore.getPersonJSONacordeon().click();
+    graphExplore.getRunButtonMatchPerson().click();
+    cy.wait("@runResponse");
+    runPage.verifyStepRunResult("match-person", "success");
+    cy.waitForAsyncRequest();
+    graphExplore.getCloseModalMatchPerson().click();
+    graphExplore.getRunButtonMergePerson().click();
+    cy.wait("@runResponse");
+    runPage.verifyStepRunResult("merge-person", "success");
+    cy.waitForAsyncRequest();
+    graphExplore.getCloseModalMergePerson().click({force: true});
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.clickTableView();
+    cy.log("** Unmerge icon should not be visible because of inclusion checkbox**");
     browsePage.getUnmergeIcon().should("not.exist");
   });
 });

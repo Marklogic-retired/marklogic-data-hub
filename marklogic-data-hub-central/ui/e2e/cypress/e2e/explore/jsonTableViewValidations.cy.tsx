@@ -71,25 +71,25 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("Search for a simple text/query and verify content", () => {
-    entitiesSidebar.getMainPanelSearchInput("Alice");
+    entitiesSidebar.getMainPanelSearchInput("Bob");
     entitiesSidebar.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHCTableRows().then(($row) => {
       let length = $row.length;
       browsePage.getTotalDocuments().should("be.equal", length);
     });
-    browsePage.validateHCTableRows("Alice");
+    browsePage.validateHCTableRows("Bob");
   });
 
   it("Verify instance view of the document without pk", () => {
     cy.wait(2000);
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
-    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getFacetItemCheckbox("fname", "Bob").click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getGreySelectedFacets("Alice").should("exist");
+    browsePage.getGreySelectedFacets("Bob").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.validateHCTableRows("Alice");
+    browsePage.validateHCTableRows("Bob");
     browsePage.getFirstTableViewInstanceIcon().click();
     browsePage.waitForSpinnerToDisappear();
     detailPage.getInstanceView().should("exist");
@@ -100,13 +100,12 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentTable().should("exist");
     detailPage.getMetadataView().should("exist");
     detailPage.getMetadataView().click();
-    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
-
+    detailPage.getDocumentUri().should("contain", "/json/persons/first-name-synonym2.json");
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     explorePage.getDatabaseButton("final").should("have.attr", "checked");
-    browsePage.getClearFacetSearchSelection("Alice").should("exist");
-    browsePage.getSearchBar().should("have.value", "Alice");
+    browsePage.getClearFacetSearchSelection("Bob").should("exist");
+    browsePage.getSearchBar().should("have.value", "Bob");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();

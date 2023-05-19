@@ -109,7 +109,7 @@ function buildMatchSummary(matchable, content) {
           }
         }
       }
-      if(!ignoreContent && useFuzzyMatching){
+      if (!ignoreContent && useFuzzyMatching) {
         const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
         for (const queryHash of queryHashes) {
           let uriTriples = triplesByUri.get(contentObject.uri);
