@@ -48,6 +48,11 @@ class EntityTypeTable {
     cy.waitForAsyncRequest();
   }
 
+  viewEntityInGraphViewNotScroll(entityName: string) {
+    cy.get(`[data-testid="${entityName}-graphView-icon"]`).should("be.visible").click({force: true});
+    cy.waitForAsyncRequest();
+  }
+
   getRevertButtonTableView() {
     return cy.findByLabelText("revert-changes-table-view");
   }

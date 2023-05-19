@@ -272,10 +272,12 @@ describe("Run Tile tests", () => {
 
     cy.log("**Deleting last step added**");
     runPage.deleteStep("map-orders", flowName).click();
+    cy.intercept("DELETE", "/api/flows/testPersonXML/steps/**").as("DeleteFlow");
     runPage.deleteStepConfirmationMessage("map-orders", flowName);
     cy.findByLabelText("Yes").click();
 
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    cy.wait("@DeleteFlow");
     cy.get(`#runFlow-${flowName}`).should("be.visible", {timeout: 8000}).click({force: true});
     cy.uploadFile("input/person.xml");
     cy.wait("@runResponse");

@@ -68,7 +68,10 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.stepSourceNameInput().clear().type("patientSourceName");
     loadPage.stepSourceNameType().clear().type("patientSourceType");
     loadPage.uriPrefixInput().clear().type("/patient/");
+    cy.intercept("/api/flows").as("loadView");
     loadPage.saveButton().click();
+    cy.wait("@loadView");
+    cy.wait("@loadView");
     cy.findByText(loadStepName).should("be.visible");
   });
 

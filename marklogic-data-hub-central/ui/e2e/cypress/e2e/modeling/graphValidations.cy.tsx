@@ -272,9 +272,10 @@ describe("Graph Validations", () => {
     propertyTable.getProperty("test2-id").should("exist");
 
     cy.log("**Opens a-Test1 details**");
+    cy.intercept("/api/models/primaryEntityTypes?includeDrafts=true").as("loadTable");
     cy.get("#switch-view-table").click({force: true});
-    cy.waitForAsyncRequest();
-    entityTypeTable.viewEntityInGraphView("a-Test1");
+    cy.wait("@loadTable");
+    entityTypeTable.viewEntityInGraphViewNotScroll("a-Test1");
     graphViewSidePanel.getPropertiesTab().click({force: true});
     graphViewSidePanel.getPropertyName("relTest1-Test2").should("be.visible");
 
