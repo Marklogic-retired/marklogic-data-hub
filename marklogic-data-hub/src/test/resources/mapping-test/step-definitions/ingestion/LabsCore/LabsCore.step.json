@@ -25,7 +25,7 @@
     "user" : "",
     "runBefore" : false
   },
-  "modulePath" : "/custom-modules/ingestion/LabsCore/main.sjs",
+  "modulePath" : "/custom-modules/ingestion/LabsCore/main.mjs",
   "retryLimit" : 0,
   "batchSize" : 100,
   "threadCount" : 4,
