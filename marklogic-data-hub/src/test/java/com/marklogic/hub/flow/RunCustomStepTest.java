@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.connected.HubFlowRunnerResource;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.rest.util.Fragment;
 import org.junit.jupiter.api.BeforeEach;
@@ -105,7 +106,13 @@ public class RunCustomStepTest extends AbstractHubCoreTest {
         input += "</input>";
 
         replaceCustomStepModuleWithTemplateModifiedForXml();
-        new HubFlowRunnerResource(getHubClient().getStagingClient()).runFlowWithXmlInput(input);
+        RunFlowResponse flowResponse = new HubFlowRunnerResource(getHubClient().getStagingClient()).runFlowWithXmlInput(input);
+        RunStepResponse simpleCustomStepResp = flowResponse.getStepResponses().get("1");
+        logger.info("simpleCustomStepResp: " + simpleCustomStepResp.toString());
+        if(simpleCustomStepResp.getStepOutput() != null){
+            logger.info("simpleCustomStepResp.getStepOutput size: " + simpleCustomStepResp.getStepOutput().size());
+            logger.info("simpleCustomStepResp.getStepOutput: " + simpleCustomStepResp.getStepOutput().toString());
+        }
         verifyXmlCustomer();
     }
 
