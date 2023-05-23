@@ -4,6 +4,8 @@ import browsePage from "../../support/pages/browse";
 
 describe("Center node on graph", () => {
   before(() => {
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.loginAsDeveloper().withRequest();
     browsePage.navigate();
 

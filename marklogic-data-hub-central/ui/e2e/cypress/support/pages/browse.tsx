@@ -320,7 +320,7 @@ class BrowsePage {
       cy.findByPlaceholderText("Search").scrollIntoView().invoke("val", searchInput);
     }
     if (!withEnter) {
-      this.searchWithMagnifyingGlass().click();
+      this.searchWithMagnifyingGlass().click({force: true});
     }
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();

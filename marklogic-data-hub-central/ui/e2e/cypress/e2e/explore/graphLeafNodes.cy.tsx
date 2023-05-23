@@ -68,9 +68,12 @@ describe("Leaf Nodes", () => {
     graphExplore.stopStabilization();
     graphExplore.getGraphVisCanvas().scrollIntoView().should("be.visible");
     graphExplore.getSearchBar().type("Cynthia");
+    cy.intercept("POST", "/api/entitySearch/graph?database=final").as("Search");
     graphExplore.getSearchButton().click();
     browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    cy.wait("@Search");
+    cy.wait("@Search");
+    graphView.getPhysicsAnimationToggle().should("be.visible");
     graphExplore.focusNode(ExploreGraphNodes.OFFICE_101);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.OFFICE_101).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.OFFICE_101];
