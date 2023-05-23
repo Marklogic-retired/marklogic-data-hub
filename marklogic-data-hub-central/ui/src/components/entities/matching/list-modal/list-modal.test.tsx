@@ -6,7 +6,7 @@ import ListModal from "./list-modal";
 
 const errorTextNoTitle = "A title for this list is required.";
 const errorTextNoValues = "Values to ignore in this list are required.";
-const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
+const errorText = "Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.";
 
 describe("Test input validation values to ignore", () => {
   const globalAny: any = global;
@@ -198,7 +198,7 @@ describe("Test input validation values to ignore", () => {
     expect(screen.queryAllByText(errorText)).toHaveLength(1);
   });
 
-  it("Don't allow spaces in the values", async () => {
+  it("Allow spaces in the values", async () => {
     globalAny.document.createRange = () => ({
       setStart: () => {},
       setEnd: () => {},
@@ -224,7 +224,7 @@ describe("Test input validation values to ignore", () => {
     const inputListValues = screen.getByPlaceholderText("Enter values to remove");
     fireEvent.change(inputListValues, {target: {value: "ab cd"}});
     fireEvent.click(screen.getByRole("option"));
-    expect(screen.queryAllByText(errorText)).toHaveLength(1);
+    expect(screen.queryAllByText(errorText)).toHaveLength(0);
   });
 
   it("Don't allow List Name duplicated", () => {
@@ -290,7 +290,6 @@ describe("Test input validation values to ignore", () => {
         listValues={["One"]}
       />,
     );
-    const errorText = "Names must start with a letter and can contain letters, numbers, hyphens, and underscores.";
     expect(screen.queryAllByText(errorText)).toHaveLength(0);
     const inputListName = screen.getByPlaceholderText("Enter title");
     fireEvent.change(inputListName, {target: {value: "$List"}});
