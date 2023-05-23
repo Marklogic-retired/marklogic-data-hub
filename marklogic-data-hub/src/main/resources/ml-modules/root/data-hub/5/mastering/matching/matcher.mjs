@@ -3,7 +3,7 @@ import common from "/data-hub/5/mastering/common.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import core from "/data-hub/5/artifacts/core.mjs";
 
-const {populateContentObjects, populateExistingContentObjects, getContentObject, groupQueries, optimizeCtsQueries} = common;
+const {populateContentObjects, populateExistingContentObjects, getContentObject, releaseContentObject, groupQueries, optimizeCtsQueries} = common;
 
 const getBlocksOfUris = hubUtils.requireFunction("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy", "getBlocksOfUris");
 
@@ -125,7 +125,7 @@ function buildMatchSummary(matchable, content) {
 
       }
     }
-    if(ignoreContent) {
+    if (ignoreContent) {
       continue;
     }
     let documentIsMerged = false;
@@ -188,9 +188,11 @@ function buildMatchSummary(matchable, content) {
     for (const thresholdName of thresholdNames) {
       const matchingDocumentSet = thresholdGroups[thresholdName];
       if (matchingDocumentSet) {
-        matchingDocumentSet.unshift(contentObject);
+        const allDocsSet = [contentObject, ...matchingDocumentSet];
         const thresholdDefinition = thresholdDefinitions.find((def) => thresholdName === def.name());
-        const actionDetails = matchable.buildActionDetails(matchingDocumentSet, thresholdDefinition);
+        const actionDetails = matchable.buildActionDetails(allDocsSet, thresholdDefinition);
+        // release nodes that have been matched to reduce locking now that we're done with them
+        matchingDocumentSet.forEach((contentObject) => releaseContentObject(contentObject.uri));
         const actionURI = Object.keys(actionDetails)[0];
         actionDetails[actionURI].uris = actionDetails[actionURI].uris.map((uri) => uriToMerged.has(uri) ? uriToMerged.get(uri): uri);
         if (allActionDetails[actionURI]) {
@@ -208,6 +210,7 @@ function buildMatchSummary(matchable, content) {
     if (!documentIsMerged) {
       urisToActOn.push(contentObject.uri);
     }
+    releaseContentObject(contentObject.uri);
   }
   if (matchingDebugTraceEnabled) {
     xdmp.trace(consts.TRACE_MATCHING_DEBUG, `URIs mapped to merge URIs: ${JSON.stringify(uriToMerged, null, 2)}`);
@@ -232,6 +235,7 @@ function buildMatchSummary(matchable, content) {
     if (actionDetail.action === "notify") {
       actionDetail.uris = actionDetail.uris.map((uri) => uriToMerged.get(uri) || uri).filter((uri, index, array) => array.indexOf(uri) === index && uri !== actionURI);
     }
+    actionDetail.uris.forEach(releaseContentObject);
   }
   const output = [matchSummary];
   if (useFuzzyMatching) {
