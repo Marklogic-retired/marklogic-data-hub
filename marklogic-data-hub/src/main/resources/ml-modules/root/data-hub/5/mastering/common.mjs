@@ -33,7 +33,8 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
     scopeQueryFunction = (stepParts, query) => {
       const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
       return isScope ?
-        cts.jsonPropertyScopeQuery(stepParts, groupQueries(query, joinFunction)) : cts.jsonPropertyValueQuery(stepParts, fn.distinctValues(Sequence.from(query)));
+        cts.jsonPropertyScopeQuery(stepParts, groupQueries(query, joinFunction)) :
+        cts.jsonPropertyValueQuery(stepParts, fn.distinctValues(Sequence.from(query)));
     };
   } else {
     prefix = `element:${pathJoinString}`;
@@ -41,7 +42,8 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
       const qnames = stepParts.map((stepPart) => xdmp.QNameFromKey(stepPart));
       const isScope = hubUtils.normalizeToArray(query).some(q => q instanceof cts.query && !(q instanceof xs.string));
       return isScope ?
-        cts.elementQuery(qnames, groupQueries(query, joinFunction)): cts.elementValueQuery(qnames, fn.distinctValues(Sequence.from(query)));
+        cts.elementQuery(qnames, groupQueries(query, joinFunction)) :
+        cts.elementValueQuery(qnames, fn.distinctValues(Sequence.from(query)));
     };
   }
   const suffix = groupByKey.substring(prefix.length);
@@ -75,7 +77,9 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
       const query = groupBy[matchingPath];
       delete groupBy[matchingPath];
       if (remainingPath) {
-        return remainingPath.split(pathJoinString).reverse().reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, query);
+        return remainingPath.split(pathJoinString)
+          .reverse()
+          .reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, query);
       } else {
         return query;
       }
@@ -83,7 +87,10 @@ function consolidateScopeQueries(groupBy, groupByKey, groupByKeys, isJSON, joinF
     if (matchingDebugTraceEnabled) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Lower queries for shortest path ${shortestMatchingPath}: ${xdmp.toJsonString(lowerQueries)}`);
     }
-    query = shortestMatchingPath.substring(prefix.length).split(pathJoinString).reverse().reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, groupQueries(lowerQueries, cts.andQuery));
+    query = shortestMatchingPath.substring(prefix.length)
+      .split(pathJoinString)
+      .reverse()
+      .reduce((acc, pathPart) => pathPart ? scopeQueryFunction(pathPart.split(stepJoinString), acc) : acc, groupQueries(lowerQueries, cts.andQuery));
   }
   if (matchingDebugTraceEnabled) {
     xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Consolidated query for ${groupByKey} is ${xdmp.toJsonString(query)}`);
@@ -255,10 +262,12 @@ function populateContentObjects(uris = [], matchSummary) {
   let allURIs = [];
   for (const uri of uris) {
     if (!contentObjectsByURI.has(uri)) { allURIs.push(uri); }
-    if (allActionDetails && allActionDetails[uri]) { allURIs = allURIs.concat(allActionDetails[uri].uris.filter(u => !contentObjectsByURI.has(u))); }
+    if (allActionDetails && allActionDetails[uri]) {
+      allURIs = allURIs.concat(allActionDetails[uri].uris.filter(u => !contentObjectsByURI.has(u)));
+    }
   }
   if (allURIs.length > 0) {
-    for (const doc of fn.doc(allURIs)) {
+    for (const doc of cts.search(cts.documentQuery(allURIs), ["document", "unfiltered", "score-zero", "unfaceted"], 0)) {
       populateContentObject(doc);
     }
   }
@@ -297,6 +306,25 @@ function getContentObject(uri) {
     populateContentObject(cts.doc(uri), uri);
   }
   return contentObjectsByURI.get(uri);
+}
+
+function releaseContentObject(uri) {
+  if (contentObjectsByURI.has(uri)) {
+    const contentObject = contentObjectsByURI.get(uri);
+    releaseDatabaseNodeFromContentObject(contentObject);
+    contentObjectsByURI.delete(uri);
+  }
+}
+
+function releaseDatabaseNodeFromContentObject(contentObject) {
+  //release in database document nodes from memory to reduce locking. If in-memory nodes, retain.
+  if (contentObject.value instanceof Node && fn.exists(xdmp.nodeUri(contentObject.value))) {
+    delete contentObject.value;
+  }
+}
+
+function resetPopulatedContent() {
+  contentObjectsByURI.clear();
 }
 
 function retrieveInterceptorFunction(interceptorObj, interceptorType) {
@@ -398,6 +426,9 @@ export default {
   propertyDefinitionsFromXPath,
   populateContentObjects,
   populateExistingContentObjects,
+  releaseContentObject,
+  releaseDatabaseNodeFromContentObject,
+  resetPopulatedContent,
   addMemoryContentObjects,
   getContentObject,
   optimizeCtsQueries,

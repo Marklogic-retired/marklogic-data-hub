@@ -6,7 +6,7 @@ import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 
-const {addMemoryContentObjects, populateContentObjects, getContentObject} = common;
+const {addMemoryContentObjects, populateContentObjects, getContentObject,  releaseDatabaseNodeFromContentObject, resetPopulatedContent} = common;
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
@@ -39,7 +39,7 @@ function buildContentObjectsFromMatchSummary(
     const actionType = uriActionDetails.action;
     let currentContentObject = null;
     switch (actionType) {
-    case "merge":
+    case "merge": {
       const mergeContentObjects = uriActionDetails.uris.map(uri => getContentObject(uri)).filter(contentObject => contentObject);
       currentContentObject = {
         uri,
@@ -57,21 +57,27 @@ function buildContentObjectsFromMatchSummary(
       mergeable.applyDocumentContext(auditDoc, {action: "audit"});
       contentObjects.push(auditDoc);
       break;
-    case "notify":
+    }
+    case "notify": {
       const matchStepName = matchSummary.matchSummary.matchStepName;
       const matchStepFlow = matchSummary.matchSummary.matchStepFlow;
       if (uriActionDetails.uris.length > 1) {
-        currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query): uriActionDetails.uris, matchStepName, matchStepFlow);
+        currentContentObject = mergeable.buildNotification(uri, uriActionDetails.threshold, uriActionDetails.query ? cts.query(uriActionDetails.query) : uriActionDetails.uris, matchStepName, matchStepFlow);
       }
       break;
-    case "customActions":
+    }
+    case "customActions": {
       const customFunction = hubUtils.requireFunction(uriActionDetails.actionModulePath, uriActionDetails.actionModuleFunction);
       const results = customFunction(uri, uriActionDetails.matchResults, this.mergeStep);
       if (fn.exists(results)) {
         contentObjects.concat(hubUtils.normalizeToArray(results));
       }
+    }
+    // eslint-disable-next-line no-fallthrough
     case "no-action":
       currentContentObject = getContentObject(uri);
+      //  release the node to avoid locking
+      releaseDatabaseNodeFromContentObject(currentContentObject);
       break;
     default:
     }
@@ -80,6 +86,7 @@ function buildContentObjectsFromMatchSummary(
       contentObjects.push(currentContentObject);
     }
   }
+  resetPopulatedContent();
   return contentObjects;
 }
 

@@ -63,9 +63,7 @@ for (let content of contentArray) {
   const temporalCollection = targetCollections.concat(xdmp.documentGetCollections(content.uri))
     .find(collection => temporalCollectionMap[collection]);
 
-  if (!!content['$delete']) {
-    deleteContent(content, temporalCollection);
-  } else {
+  if (!content['$delete']) {
     const metadata = context.metadata;
     const quality = context.quality || 0;
 
@@ -84,12 +82,38 @@ for (let content of contentArray) {
         quality: quality,
         metadata
       });
+    } else if (!content.value) {
+      /* if content.value doesn't exist, we assume only metadata is being updated. This is used extensively by mastering to
+        avoid long locks on documents when we only update collections, etc.
+       */
+      if (traceEnabled) {
+        hubUtils.hubTrace(traceEvent, `Updating metadata for document ${content.uri} in database ${databaseName}`);
+      }
+      if (permissions) {
+        xdmp.documentSetPermissions(content.uri, permissions);
+      }
+      if (targetCollections) {
+        xdmp.documentSetCollections(content.uri, targetCollections);
+      }
+      if (quality || quality === 0) {
+        xdmp.documentSetQuality(content.uri, quality);
+      }
+      if (metadata) {
+        xdmp.documentSetMetadata(content.uri, metadata);
+      }
     } else {
       if (traceEnabled) {
         hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${databaseName}`);
       }
-      xdmp.documentInsert(content.uri, content.value, {permissions, collections: targetCollections, quality: quality, metadata});
+      xdmp.documentInsert(content.uri, content.value, {
+        permissions,
+        collections: targetCollections,
+        quality: quality,
+        metadata
+      });
     }
+  } else {
+    deleteContent(content, temporalCollection);
   }
 }
 
