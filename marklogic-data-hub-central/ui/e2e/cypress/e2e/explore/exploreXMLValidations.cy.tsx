@@ -11,14 +11,12 @@ let facets: string[] = ["collection", "flow"];
 
 describe("xml scenario for snippet view on browse documents page", () => {
   before(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.loginAsDeveloper().withRequest();
     explorePage.navigate();
   });
 
-  afterEach(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
-  });
 
   after(() => {
     cy.resetTestUser();
@@ -170,11 +168,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getDocumentRecordType(0).should("be.equal", "xml");
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify instance view of the document", () => {
-    browsePage.getSearchText().clear();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.search("Randolph");
+  it("Verify instance view of the document", () => {
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getInstanceViewIcon().click();
     detailPage.getInstanceView().should("exist");
@@ -185,14 +179,11 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
     explorePage.backToResults();
-
     browsePage.getSearchText().should("be.visible");
+
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify source view of the document", () => {
-    browsePage.getSearchText().clear();
-    browsePage.waitForSpinnerToDisappear();
+  it("verify source view of the document", () => {
     browsePage.search("Randolph");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getSourceViewIcon().click();
@@ -200,29 +191,29 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentXML().should("exist");
     explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
+    browsePage.getSearchText().clear();
+    browsePage.search(" ");
+    cy.waitForAsyncRequest();
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Select Customer xml entity instances and verify table", () => {
+  it("Select Customer xml entity instances and verify table", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    browsePage.getHubPropertiesExpanded();
     explorePage.scrollSideBarTop();
+    entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
+    explorePage.scrollSideBarBottom();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.clickTableView();
     browsePage.getTotalDocuments().should("be.gte", 5);
-
     browsePage.getHCTableRows().should("have.length", 5);
-
-    table.getTableColumns().should("have.length", 6);
+    table.getTableColumns().should("have.length", 13);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify instance view of the document", () => {
+  it("Verify instance view of the document", () => {
+    browsePage.getSearchText().clear();
     browsePage.search("Bowman");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewInstanceIcon().click();
@@ -237,25 +228,16 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSearchText().should("be.visible");
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify source view of the document", () => {
-    browsePage.getSearchText().clear();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.search("Bowman");
+  it("Verify source view of the document", () => {
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewSourceIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentXML().should("exist");
     explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
-    browsePage.getSearchText().clear();
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify metadata view of the document", () => {
-    browsePage.getSearchText().clear();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.search("Bowman");
+  it("Verify metadata view of the document", () => {
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewSourceIcon().click();
     detailPage.getMetadataView().click();
@@ -268,7 +250,6 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentNoPropertiesMessage().should("exist");
     explorePage.backToResults();
     browsePage.getSearchText().should("be.visible");
-    browsePage.getSearchText().clear();
   });
 
   it("Verify record view of the XML document in non-entity detail page", () => {
@@ -293,9 +274,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.waitForAsyncRequest();
   });
 
-  // TODO: DHFPROD-10180
-  it.skip("Verify metadata view of the document properties", () => {
-    entitiesSidebar.toggleAllDataView();
+  it("Verify metadata view of the document properties", () => {
     browsePage.search("robert");
     browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
