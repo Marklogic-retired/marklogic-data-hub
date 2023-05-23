@@ -1,7 +1,6 @@
 import LoginPage from "../../support/pages/login";
 import curatePage from "../../support/pages/curate";
 import graphExplore from "../../support/pages/graphExplore";
-import explorePage from "../../support/pages/explore";
 import runPage from "../../support/pages/run";
 import {rulesetSingleModal} from "../../support/components/matching";
 import browsePage from "../../support/pages/browse";
@@ -97,7 +96,7 @@ describe("Verify values to ignore feature", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.createNewList();
     rulesetSingleModal.addListTitle("values-to-ignore-input", ignoreSimpson);
-    rulesetSingleModal.addValuesToListToIgnore("Simpson");
+    rulesetSingleModal.addValuesToListToIgnore("Bouvier Simpson");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.findByText(ignoreSimpson).click({force: true});
     rulesetSingleModal.saveButton().click();
@@ -110,10 +109,6 @@ describe("Verify values to ignore feature", () => {
     cy.waitForAsyncRequest();
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
-    cy.waitForAsyncRequest();
-    explorePage.getEntities().click();
-    browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
     cy.findByText("Robert,Bob").should("not.exist");
     cy.findByText("Marge,Margot").should("not.exist");
   });

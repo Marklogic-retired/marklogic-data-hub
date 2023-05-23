@@ -65,6 +65,12 @@ const ListModal: React.FC<Props> = props => {
     const regex = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/; // Start with a letter or number and detect special characters excluding "_" and "-"
     return !regex.test(listName);
   };
+
+  const checkValuesToIgnore = valueToIgnore => {
+    const regex = /^[a-zA-Z0-9][a-zA-Z0-9_\-\s]*$/; // Start with a letter or number and detect special characters excluding "_" and "-" spaces allowed
+    return !regex.test(valueToIgnore);
+  };
+
   const onSubmit = async event => {
     resetModalValuesIgnore();
     let formError = false;
@@ -147,7 +153,7 @@ const ListModal: React.FC<Props> = props => {
       let ruleError = false;
       // Remove duplicated values
       const filteredSelections = selections.filter((item, index, arr) => {
-        if (checkListNameRules(item.label)) {
+        if (checkValuesToIgnore(item.label)) {
           ruleError = true;
           setListValuesErrorMessage({id: "stringRule", highlight: ""});
           return false;
@@ -200,7 +206,9 @@ const ListModal: React.FC<Props> = props => {
       );
       break;
     case "stringRule":
-      errorMessage = <>Names must start with a letter and can contain letters, numbers, hyphens, and underscores.</>;
+      errorMessage = <>
+        Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.
+      </>;
       break;
     case "valuesRequired":
       errorMessage = <>Values to ignore in this list are required.</>;
@@ -213,7 +221,9 @@ const ListModal: React.FC<Props> = props => {
     let errorMessage;
     switch (listNameErrorMessage.id) {
     case "stringRule":
-      errorMessage = <>Names must start with a letter and can contain letters, numbers, hyphens, and underscores.</>;
+      errorMessage = <>
+        Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.
+      </>;
       break;
     case "titleRequired":
       errorMessage = <>A title for this list is required.</>;

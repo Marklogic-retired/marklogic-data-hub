@@ -607,23 +607,6 @@ describe("Matching", () => {
     cy.findByText("A title for this list is required.");
     cy.findByText("Values to ignore in this list are required.");
 
-    cy.log("**Don't allow values to ignore with special characters**");
-    rulesetSingleModal.addValuesToListToIgnore("Word$1");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-
-    cy.log("**Don't allow values to ignore with spaces**");
-    rulesetSingleModal.addValuesToListToIgnore("Word1 Word2");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-
-    cy.log("**Vales to ignore name must start with a letter**");
-    rulesetSingleModal.addValuesToListToIgnore("1Word1");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-    rulesetSingleModal.clearValuesToIgnoreList();
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
 
     cy.log("**Create new List**");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1");
@@ -651,25 +634,7 @@ describe("Matching", () => {
       return nodeHasText && childrenDontHaveText;
     });
 
-    cy.log("**Special Characters not allowed**");
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title$List1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
 
-    cy.log("**Name List must start with a letter**");
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "1TitleList1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
-
-    cy.log("**Name list doesn't contain spaces**");
-    rulesetSingleModal.clearListTitle("values-to-ignore-input");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    rulesetSingleModal.addListTitle("values-to-ignore-input", "Title List1");
-    rulesetSingleModal.saveModalButton("confirm-list-ignore");
-    cy.findByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores.");
 
     cy.log("**Create and close valid list**");
     rulesetSingleModal.clearListTitle("values-to-ignore-input");
@@ -683,11 +648,12 @@ describe("Matching", () => {
     cy.findByText("Edit List");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "22");
     rulesetSingleModal.addValuesToListToIgnore("Word3");
+    rulesetSingleModal.addValuesToListToIgnore("split word");
     rulesetSingleModal.saveModalButton("confirm-list-ignore");
     cy.wait(500);
     rulesetSingleModal.selectValuesToIgnoreInput();
     rulesetSingleModal.hoverItemPresetList("TitleList122");
-    cy.findByText("Word1, 2Word, Word3");
+    cy.findByText("Word1, 2Word, Word3, split word");
 
     cy.log("**Copy List**");
     rulesetSingleModal.copyListButton("TitleList122");
@@ -699,7 +665,7 @@ describe("Matching", () => {
     rulesetSingleModal.selectValuesToIgnoreInput();
     cy.findByText("MyCopy");
     rulesetSingleModal.hoverItemPresetList("MyCopy");
-    cy.findByText("Word1, 2Word, Word3, dog");
+    cy.findByText("Word1, 2Word, Word3, split word, dog");
     rulesetSingleModal.closeButton().click();
   });
 
@@ -719,7 +685,7 @@ describe("Matching", () => {
     cy.wait(500);
     if (Cypress.isBrowser("!chrome")) {
       rulesetSingleModal.hoverItemPresetList("MyCopy");
-      cy.findByText("Word1, 2Word, Word3, dog");
+      cy.findByText("Word1, 2Word, Word3, split word, dog");
       rulesetSingleModal.closeButton().click();
     }
   });

@@ -477,8 +477,8 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.selectColumnSelectorProperty("status");
     browsePage.getColumnSelectorApply().click({force: true});
     browsePage.getResetQueryButton().click({force: true});
-
     browsePage.getResetConfirmationNoClick();
+    cy.waitForAsyncRequest();
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
 
     entitiesSidebar.openBaseEntityDropdown();
