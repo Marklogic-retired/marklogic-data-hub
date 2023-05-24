@@ -766,7 +766,9 @@ public class WriteStepRunner implements StepRunner {
             stepMetrics.getSuccessfulEvents().set(stepMetrics.getSuccessfulEventsCount() - failedEvents);
             stepMetrics.getFailedEvents().addAndGet(failedEvents);
             writeStepRunner.runStatusListener(stepMetrics);
-            throwables.add(throwable);
+            if(throwable != null){
+                throwables.add(throwable);
+            }
             return stopOnFailure ? IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.STOP_ALL_CALLS: IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.SKIP_CALL;
         }
     }
