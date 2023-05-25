@@ -24,6 +24,7 @@ import {themeColors} from "@config/themes.config";
 import {getViewSettings, setViewSettings} from "@util/user-context";
 import {MappingStepDetailsMessages} from "@config/messages.config";
 import {delayTooltip} from "@util/common-utils";
+import {getAppVersion} from "@util/environment";
 
 interface Props {
   setScrollRef: any;
@@ -136,7 +137,11 @@ const EntityMapTable: React.FC<Props> = props => {
           <div data-testid="relatedInfoContent">
             Map related entities by selecting them from the dropdown below. <br />
             Refer to the{" "}
-            <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">
+            <a
+              href={`https://docs.marklogic.com/datahub/${getAppVersion()}/flows/about-mapping.html`}
+              target="_blank"
+              aria-label="link-Documentation"
+            >
               documentation
             </a>{" "}
             for more details.
@@ -262,10 +267,11 @@ const EntityMapTable: React.FC<Props> = props => {
                 </li>
                 <li>
                   <a
-                    href="https://docs.marklogic.com/datahub/5.8/flows/create-custom-mapping-functions.html"
+                    href={`https://docs.marklogic.com/datahub/${getAppVersion()}/flows/create-custom-mapping-functions.html`}
                     tabIndex={showDocLinksPopover ? 0 : -1}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Custom-Functions"
                     className={styles.docLink}
                     onKeyDown={e => {
                       if (e.key === "Tab" && !e.shiftKey) {
@@ -278,10 +284,11 @@ const EntityMapTable: React.FC<Props> = props => {
                 </li>
                 <li>
                   <a
-                    href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html"
+                    href={`https://docs.marklogic.com/datahub/${getAppVersion()}/flows/dhf-mapping-functions.html`}
                     tabIndex={showDocLinksPopover ? 0 : -1}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Mapping-Functions"
                     className={styles.docLink}
                     onKeyDown={e => {
                       if (e.key === "Tab" && !e.shiftKey) {

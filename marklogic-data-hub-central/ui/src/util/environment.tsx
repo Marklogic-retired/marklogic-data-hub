@@ -39,4 +39,9 @@ export function resetEnvironment() {
   localStorage.setItem("environment", JSON.stringify(defaultEnv));
 }
 
+export function getAppVersion() {
+  const environment = getEnvironment();
+  return parseVersion(environment.dataHubVersion);
+}
+
 export default {getEnvironment, resetEnvironment};
