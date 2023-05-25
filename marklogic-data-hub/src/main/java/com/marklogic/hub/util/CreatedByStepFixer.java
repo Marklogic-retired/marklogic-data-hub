@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class CreatedByStepFixer extends LoggingObject {
 
-    private HubClient hubClient;
+    private final HubClient hubClient;
 
     // Affects the number of URIs processed by each call to the DS endpoint
     private int batchSize = 50;
@@ -50,7 +50,7 @@ public class CreatedByStepFixer extends LoggingObject {
             "cts.estimate(cts.fieldValueQuery('datahubCreatedByStep', stepDefinitionNames))";
         long count = Long.parseLong(client.newServerEval().javascript(script).evalAs(String.class));
         if (count == 0) {
-            return Pair.of(0l, null);
+            return Pair.of(0L, null);
         }
 
         script = "const stepDefinitionNames = fn.collection('http://marklogic.com/data-hub/step-definition')\n" +

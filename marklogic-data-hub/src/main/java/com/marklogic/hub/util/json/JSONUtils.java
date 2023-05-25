@@ -52,7 +52,8 @@ public class JSONUtils {
             ((ObjectNode) parent).put(key, StringUtils.trim(value.asText()));
         }
         else if (value.isArray()) {
-            for (int i = 0; i < value.size(); i++) {
+            int valueSize = value.size();
+            for (int i = 0; i < valueSize; i++) {
                 if (value.get(i).isTextual()) {
                     ((ArrayNode) parent.withArray(key)).set(i, new TextNode(StringUtils.trim(value.get(i).asText())));
                 }
@@ -75,9 +76,10 @@ public class JSONUtils {
             ((ArrayNode) parent).set(index, new TextNode(StringUtils.trim(value.asText())));
         }
         else if (value.isArray()) {
-            for (int i = 0; i < value.size(); i++) {
+            int valueSize = value.size();
+            for (int i = 0; i < valueSize; i++) {
                 if (value.get(i).isArray()) {
-                    for (int j = 0; j < value.size(); j++) {
+                    for (int j = 0; j < valueSize; j++) {
                         processArray(parent.get(j), j, value.get(j), excludeFields);
                     }
                 }

@@ -3,7 +3,6 @@ package com.marklogic.hub.deploy;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,7 @@ public class DeployAsSecurityAdminTest {
 
     @Test
     void buildCommands() {
-        List<Command> commands = new HubDeployer().buildCommandsForSecurityAdmin();
+        List<Command> commands = HubDeployer.buildCommandsForSecurityAdmin();
         assertEquals(3, commands.size());
 
         // As of 5.3.0, a data-hub-security-admin can only deploy roles, privileges and amps

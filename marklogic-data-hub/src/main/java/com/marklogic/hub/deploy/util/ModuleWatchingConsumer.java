@@ -14,8 +14,8 @@ import java.util.function.Consumer;
  */
 public class ModuleWatchingConsumer extends LoggingObject implements Consumer<Set<Resource>> {
 
-    private CommandContext commandContext;
-    private Command generateFunctionMetadataCommand;
+    private final CommandContext commandContext;
+    private final Command generateFunctionMetadataCommand;
 
     public ModuleWatchingConsumer(CommandContext commandContext, Command generateFunctionMetadataCommand) {
         this.commandContext = commandContext;

@@ -46,7 +46,7 @@ public class CreatedOnFacetHandler implements FacetHandler {
         );
     }
 
-    protected Map<String, String> computeDateRange(DocSearchQueryInfo.FacetData data, CreatedOnFacetInputs facetInputs) {
+    protected static Map<String, String> computeDateRange(DocSearchQueryInfo.FacetData data, CreatedOnFacetInputs facetInputs) {
 
         if(data.getStringValues().size() > 0) {
             facetInputs.timeRange = data.getStringValues().get(0);
@@ -82,21 +82,21 @@ public class CreatedOnFacetHandler implements FacetHandler {
         return facetInputs.dateRange;
     }
 
-    private void getTodayTimeWindow(CreatedOnFacetInputs facetInputs) {
+    private static void getTodayTimeWindow(CreatedOnFacetInputs facetInputs) {
         facetInputs.startDateTime = facetInputs.startDate.toLocalDate().atStartOfDay(facetInputs.zoneId).format(DATE_TIME_FORMAT);
         facetInputs.dateRange.put("startDateTime", facetInputs.startDateTime);
         facetInputs.endDateTime = facetInputs.endDate.plusDays(1).toLocalDate().atStartOfDay(facetInputs.zoneId).format(DATE_TIME_FORMAT);
         facetInputs.dateRange.put("endDateTime", facetInputs.endDateTime);
     }
 
-    private void getThisWeekTimeWindow(CreatedOnFacetInputs facetInputs) {
+    private static void getThisWeekTimeWindow(CreatedOnFacetInputs facetInputs) {
         facetInputs.startDateTime = facetInputs.startDate.plusDays((-1) * (facetInputs.startDate.getDayOfWeek().getValue() % 7)).format(DATE_TIME_FORMAT);
         facetInputs.dateRange.put("startDateTime", facetInputs.startDateTime);
         facetInputs.endDateTime = facetInputs.endDate.plusDays(1).toLocalDate().atStartOfDay(facetInputs.zoneId).format(DATE_TIME_FORMAT);
         facetInputs.dateRange.put("endDateTime", facetInputs.endDateTime);
     }
 
-    private void getThisMonthTimeWindow(CreatedOnFacetInputs facetInputs) {
+    private static void getThisMonthTimeWindow(CreatedOnFacetInputs facetInputs) {
         facetInputs.startDate = facetInputs.startDate.with(TemporalAdjusters.firstDayOfMonth());
         facetInputs.startDateTime = facetInputs.startDate.toLocalDate().atStartOfDay(facetInputs.zoneId).format(DATE_TIME_FORMAT);
         facetInputs.dateRange.put("startDateTime", facetInputs.startDateTime);
@@ -104,7 +104,7 @@ public class CreatedOnFacetHandler implements FacetHandler {
         facetInputs.dateRange.put("endDateTime", facetInputs.endDateTime);
     }
 
-    private void getCustomTimeWindow(DocSearchQueryInfo.FacetData data, CreatedOnFacetInputs facetInputs) {
+    private static void getCustomTimeWindow(DocSearchQueryInfo.FacetData data, CreatedOnFacetInputs facetInputs) {
         if(!data.getRangeValues().getLowerBound().isEmpty() && !data.getRangeValues().getUpperBound().isEmpty()) {
             try {
                 facetInputs.startDateTime = ZonedDateTime.parse(data.getRangeValues().getLowerBound()).format(DATE_TIME_FORMAT);

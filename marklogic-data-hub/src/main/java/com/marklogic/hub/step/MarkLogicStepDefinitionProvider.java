@@ -9,7 +9,7 @@ import com.marklogic.hub.dataservices.StepDefinitionService;
  */
 public class MarkLogicStepDefinitionProvider implements StepDefinitionProvider {
 
-    private StepDefinitionService service;
+    private final StepDefinitionService service;
 
     public MarkLogicStepDefinitionProvider(DatabaseClient databaseClient) {
         this.service = StepDefinitionService.on(databaseClient);

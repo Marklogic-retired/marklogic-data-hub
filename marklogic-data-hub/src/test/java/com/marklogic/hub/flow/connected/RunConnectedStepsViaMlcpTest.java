@@ -110,7 +110,8 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
         mlcpBean.setBatch_size(25);
         mlcpBean.setInput_file_path(projectDataDir.getAbsolutePath());
         mlcpBean.setOutput_uri_replace(".*data,'/data'");
-        mlcpBean.setTransform_module("/data-hub/5/transforms/mlcp-flow-transform.sjs");
+        mlcpBean.setTransform_namespace("DataHub");
+        mlcpBean.setTransform_module("/data-hub/transforms/mlcp-flow-transform.xqy");
         mlcpBean.setTransform_param(transformParam);
 
         // restrict_hosts is used to allow these tests to run against a DHS instance

@@ -38,7 +38,7 @@ public class CommandLineFlowInputs {
         StringBuilder runFlowString = new StringBuilder("Running flow: [" + flowName + "]");
 
         if (steps != null) {
-            runFlowString.append(", steps: " + steps);
+            runFlowString.append(", steps: ").append(steps);
         }
 
         FlowInputs flowInputs = new FlowInputs(flowName);
@@ -51,7 +51,7 @@ public class CommandLineFlowInputs {
         if (showOptions && flowOptions != null) {
             runFlowString.append("\n\tand options:");
             for (Map.Entry<String, Object> entry : flowOptions.entrySet()) {
-                runFlowString.append("\n\t\t" + entry.getKey() + " = " + entry.getValue());
+                runFlowString.append("\n\t\t").append(entry.getKey()).append(" = ").append(entry.getValue());
             }
         }
 
@@ -62,15 +62,15 @@ public class CommandLineFlowInputs {
         Map<String, Object> stepConfig = new HashMap<>();
 
         if (batchSize != null) {
-            runFlowString.append("\n\twith batch size: " + batchSize);
+            runFlowString.append("\n\twith batch size: ").append(batchSize);
             stepConfig.put("batchSize", batchSize);
         }
         if (threadCount != null) {
-            runFlowString.append("\n\twith thread count: " + threadCount);
+            runFlowString.append("\n\twith thread count: ").append(threadCount);
             stepConfig.put("threadCount", threadCount);
         }
         if (failHard) {
-            runFlowString.append("\n\t\twith fail hard: " + failHard);
+            runFlowString.append("\n\t\twith fail hard: ").append(failHard);
             stepConfig.put("stopOnFailure", failHard);
         }
 
@@ -78,28 +78,28 @@ public class CommandLineFlowInputs {
             runFlowString.append("\n\tWith File Locations Settings:");
             Map<String, String> fileLocations = new HashMap<>();
             if (inputFileType != null) {
-                runFlowString.append("\n\t\tInput File Type: " + inputFileType);
+                runFlowString.append("\n\t\tInput File Type: ").append(inputFileType);
                 fileLocations.put("inputFileType", inputFileType);
             }
             if (inputFilePath != null) {
-                runFlowString.append("\n\t\tInput File Path: " + inputFilePath);
+                runFlowString.append("\n\t\tInput File Path: ").append(inputFilePath);
                 fileLocations.put("inputFilePath", inputFilePath);
             }
 
             if (outputURIPrefix != null) {
-                runFlowString.append("\n\t\tOutput URI Prefix: " + outputURIPrefix);
+                runFlowString.append("\n\t\tOutput URI Prefix: ").append(outputURIPrefix);
                 fileLocations.put("outputURIPrefix", outputURIPrefix);
             }
 
             if (outputURIReplacement != null) {
-                runFlowString.append("\n\t\tOutput URI Replacement: " + outputURIReplacement);
+                runFlowString.append("\n\t\tOutput URI Replacement: ").append(outputURIReplacement);
                 fileLocations.put("outputURIReplacement", outputURIReplacement);
             }
             if (separator != null) {
                 if (inputFileType != null && !inputFileType.equalsIgnoreCase("csv")) {
                     throw new IllegalArgumentException("Invalid argument for file type " + inputFileType + ". When specifying a separator, the file type must be 'csv'");
                 }
-                runFlowString.append("\n\t\tSeparator: " + separator);
+                runFlowString.append("\n\t\tSeparator: ").append(separator);
                 fileLocations.put("separator", separator);
             }
 

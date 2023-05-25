@@ -6,7 +6,7 @@ import config from "/com.marklogic.hub/config.mjs";
 import consts from "/data-hub/5/impl/consts.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 
-const {addMemoryContentObjects, populateContentObjects, getContentObject,  releaseDatabaseNodeFromContentObject, resetPopulatedContent} = common;
+const {addMemoryContentObjects, populateContentObjects, getContentObject, resetPopulatedContent} = common;
 const mergingDebugTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING_DEBUG);
 const mergingTraceEnabled = xdmp.traceEnabled(consts.TRACE_MERGING) || mergingDebugTraceEnabled;
 const mergingTraceEvent = xdmp.traceEnabled(consts.TRACE_MERGING) ? consts.TRACE_MERGING : consts.TRACE_MERGING_DEBUG;
@@ -77,7 +77,7 @@ function buildContentObjectsFromMatchSummary(
     case "no-action":
       currentContentObject = getContentObject(uri);
       //  release the node to avoid locking
-      releaseDatabaseNodeFromContentObject(currentContentObject);
+      hubUtils.releaseDatabaseNodeFromContentObject(currentContentObject);
       break;
     default:
     }

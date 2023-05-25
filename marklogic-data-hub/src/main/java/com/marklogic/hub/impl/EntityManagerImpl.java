@@ -175,7 +175,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             List<JsonNode> entities = getAllEntities();
 
-            if (entities.size() > 0) {
+            if (!entities.isEmpty()) {
                 DatabaseClient databaseClient = hubConfig.newStagingClient(null);
                 try {
                     JsonNode modelArray = new ObjectMapper().valueToTree(entities);
@@ -232,7 +232,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         List<String> entityNames;
         if (entityFiles != null) {
             entityNames = Arrays.stream(entityFiles)
-                .map(file -> file.getName())
+                .map(File::getName)
                 .collect(Collectors.toList());
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -322,7 +322,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
      * @param modelFilesInProject
      * @return
      */
-    protected List<HubEntity> convertModelFilesToEntityDefinitions(List<HubEntity> modelFilesInProject) {
+    protected static List<HubEntity> convertModelFilesToEntityDefinitions(List<HubEntity> modelFilesInProject) {
         List<HubEntity> flattenedModels = new ArrayList<>();
         for (HubEntity model : modelFilesInProject) {
             Map<String, DefinitionType> map = model.getDefinitions().getDefinitions();
@@ -471,7 +471,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
      *
      * @param node
      */
-    protected void removeCollationFromEntityReferenceProperties(JsonNode node) {
+    protected static void removeCollationFromEntityReferenceProperties(JsonNode node) {
         if (node != null && node.has("definitions")) {
             JsonNode definitions = node.get("definitions");
             Iterator<String> fieldNames = definitions.fieldNames();
@@ -534,16 +534,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
 
             List<JsonNode> entities = getAllEntities();
-            if (entities.size() > 0) {
+            if (!entities.isEmpty()) {
                 ArrayNode models = mapper.createArrayNode();
-                entities.forEach(model -> models.add(model));
+                models.addAll(entities);
                 JsonNode v3ConfigAsJson = ModelsService.on(hubConfig.newStagingClient(null)).generateProtectedPathConfig(models);
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
                 int i = 0;
                 // write each path as a separate file for ml-gradle
-                Iterator<JsonNode> pathsIterator = paths.iterator();
-                while (pathsIterator.hasNext()) {
-                    JsonNode n = pathsIterator.next();
+                for (JsonNode n : paths) {
                     i++;
                     String thisPath = String.format("%02d_%s", i, HubConfig.PII_PROTECTED_PATHS_FILE);
                     File protectedPathConfig = protectedPaths.resolve(thisPath).toFile();

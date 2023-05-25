@@ -109,7 +109,7 @@ public class MasteringManagerImpl implements MasteringManager {
     }
 
     static class MergeResource extends ResourceManager {
-        private String targetDatabase;
+        private final String targetDatabase;
 
         public MergeResource(DatabaseClient srcClient, String targetDatabase) {
             super();
@@ -177,7 +177,7 @@ public class MasteringManagerImpl implements MasteringManager {
     }
 
     static class MatchResource extends ResourceManager {
-        private String targetDatabase;
+        private final String targetDatabase;
 
         public MatchResource(DatabaseClient srcClient, String targetDatabase) {
             super();

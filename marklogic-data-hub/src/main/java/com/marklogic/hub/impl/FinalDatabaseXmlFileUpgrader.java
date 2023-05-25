@@ -35,7 +35,7 @@ class FinalDatabaseXmlFileUpgrader {
      * @param fileContents
      * @return
      */
-    String updateFinalDatabaseXmlFile(String fileContents) {
+    static String updateFinalDatabaseXmlFile(String fileContents) {
         Fragment existingProps = new Fragment(fileContents);
         Fragment officialProps = readOfficialFileFromClasspath();
 
@@ -50,7 +50,7 @@ class FinalDatabaseXmlFileUpgrader {
      * @param existingProps
      * @param officialProps
      */
-    private void apply540Changes(Fragment existingProps, Fragment officialProps) {
+    private static void apply540Changes(Fragment existingProps, Fragment officialProps) {
         if (elementMissing(existingProps, ES_PATH_NAMESPACE_PATH)) {
             addEsPathNamespace(existingProps, officialProps);
         }
@@ -83,7 +83,7 @@ class FinalDatabaseXmlFileUpgrader {
      *
      * @return
      */
-    private Fragment readOfficialFileFromClasspath() {
+    private static Fragment readOfficialFileFromClasspath() {
         String path = "ml-config/database-fields/final-database.xml";
         try {
             String xml = new String(FileCopyUtils.copyToByteArray(new ClassPathResource(path).getInputStream()), StandardCharsets.UTF_8);
@@ -93,11 +93,11 @@ class FinalDatabaseXmlFileUpgrader {
         }
     }
 
-    private boolean elementMissing(Fragment props, String xpath) {
+    private static boolean elementMissing(Fragment props, String xpath) {
         return props.getElements(xpath).isEmpty();
     }
 
-    private void addEsPathNamespace(Fragment props, Fragment officialProps) {
+    private static void addEsPathNamespace(Fragment props, Fragment officialProps) {
         String namespacesPath = "/m:database-properties/m:path-namespaces";
         Element pathNamespaces = getElement(props, namespacesPath);
         if (pathNamespaces == null) {
@@ -109,23 +109,23 @@ class FinalDatabaseXmlFileUpgrader {
         }
     }
 
-    private void addField(Fragment props, Element field) {
+    private static void addField(Fragment props, Element field) {
         // fields is known to exist since the file was first added to the project in 5.2.0
         getElement(props, "/m:database-properties/m:fields").getChildren().add(field);
     }
 
-    private void addRangeFieldIndex(Fragment props, Element index) {
+    private static void addRangeFieldIndex(Fragment props, Element index) {
         // range-field-indexes is known to exist since the file was first added to the project in 5.2.0
         getElement(props, "/m:database-properties/m:range-field-indexes").getChildren().add(index);
     }
 
-    private void addRangePathIndex(Fragment props, Element index) {
+    private static void addRangePathIndex(Fragment props, Element index) {
         // range-path-indexes is known to exist since the file was first added to the project in 5.2.0
         getElement(props, "/m:database-properties/m:range-path-indexes").getChildren().add(index);
     }
 
-    private Element getElement(Fragment xml, String xpath) {
+    private static Element getElement(Fragment xml, String xpath) {
         List<Element> list = xml.getElements(xpath);
-        return list.size() > 0 ? list.get(0) : null;
+        return !list.isEmpty() ? list.get(0) : null;
     }
 }

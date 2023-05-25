@@ -18,7 +18,11 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatch;
+import com.marklogic.client.datamovement.QueryBatchException;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
@@ -27,12 +31,23 @@ import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.JobStatus;
-import com.marklogic.hub.step.*;
+import com.marklogic.hub.step.ResponseHolder;
+import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepItemCompleteListener;
+import com.marklogic.hub.step.StepItemFailureListener;
+import com.marklogic.hub.step.StepRunner;
+import com.marklogic.hub.step.StepStatusListener;
 import com.marklogic.hub.util.DiskQueue;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,15 +67,15 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
     private String step = "1";
 
-    private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
-    private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
-    private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
+    private final List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
+    private final List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
+    private final List<StepStatusListener> stepStatusListeners = new ArrayList<>();
     private Map<String, Object> stepConfig = new HashMap<>();
-    private HubClient hubClient;
+    private final HubClient hubClient;
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
-    private AtomicBoolean isStopped = new AtomicBoolean(false) ;
+    private final AtomicBoolean isStopped = new AtomicBoolean(false) ;
     private StepDefinition stepDef;
 
     public ScriptStepRunner(HubClient hubClient) {
@@ -106,7 +121,6 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public StepRunner withRuntimeOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
@@ -156,7 +170,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                     dataMovementManager.stopJob(queryBatcher);
                 }
                 runningThread.interrupt();
-                throw new TimeoutException("Timeout occurred after "+timeout+" "+unit.toString());
+                throw new TimeoutException("Timeout occurred after "+timeout+" "+ unit);
             }
         }
     }
@@ -339,7 +353,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                     stepMetrics.getSuccessfulEvents().addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
                         if (errorMessages.size() < MAX_ERROR_MESSAGES) {
-                            errorMessages.addAll(response.errors.stream().limit(MAX_ERROR_MESSAGES - errorMessages.size()).map(jsonNode -> StepRunnerUtil.jsonToString(jsonNode)).collect(Collectors.toList()));
+                            errorMessages.addAll(response.errors.stream().limit(MAX_ERROR_MESSAGES - errorMessages.size()).map(StepRunnerUtil::jsonToString).collect(Collectors.toList()));
                         }
                     }
 
@@ -378,7 +392,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                         });
                     }
 
-                    if (stepItemCompleteListeners.size() > 0) {
+                    if (!stepItemCompleteListeners.isEmpty()) {
                         response.completedItems.forEach((String item) -> {
                             stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
                                 listener.processCompletion(runStepResponse.getJobId(), item);
@@ -386,7 +400,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                         });
                     }
 
-                    if (stepItemFailureListeners.size() > 0) {
+                    if (!stepItemFailureListeners.isEmpty()) {
                         response.failedItems.forEach((String item) -> {
                             stepItemFailureListeners.forEach((StepItemFailureListener listener) -> {
                                 listener.processFailure(runStepResponse.getJobId(), item);
@@ -452,7 +466,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
             runStepResponse.setCounts(urisCount, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
-            if (errorMessages.size() > 0) {
+            if (!errorMessages.isEmpty()) {
                 runStepResponse.withStepOutput(errorMessages);
             }
             if(isFullOutput) {

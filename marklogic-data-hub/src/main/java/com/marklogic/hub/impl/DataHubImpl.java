@@ -115,6 +115,8 @@ import java.util.stream.Stream;
 @Component
 public class DataHubImpl implements DataHub, InitializingBean {
 
+    private static final Pattern xmlPattern = Pattern.compile(".xml", Pattern.LITERAL);
+    private static final Pattern modulePattern = Pattern.compile("\\.(sjs|mjs|xqy)$");
     @Autowired
     private HubConfig hubConfig;
 
@@ -175,7 +177,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * @param hubConfig hubConfig object
      * @return constructed ServerManager object
      */
-    protected ServerManager constructServerManager(HubConfig hubConfig) {
+    protected static ServerManager constructServerManager(HubConfig hubConfig) {
         AppConfig appConfig = hubConfig.getAppConfig();
         return appConfig != null ?
             new ServerManager(hubConfig.getManageClient(), appConfig.getGroupName()) :
@@ -236,19 +238,19 @@ public class DataHubImpl implements DataHub, InitializingBean {
                 Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.STAGING));
                 installInfo.setTripleIndexOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
                 installInfo.setCollectionLexiconOn(DatabaseKind.STAGING, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-                installInfo.setForestsExistent(DatabaseKind.STAGING, (f.getElements("//m:forest").size() > 0));
+                installInfo.setForestsExistent(DatabaseKind.STAGING, (!f.getElements("//m:forest").isEmpty()));
             }
 
             if (installInfo.isDbExistent(DatabaseKind.FINAL)) {
                 Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.FINAL));
                 installInfo.setTripleIndexOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:triple-index")));
                 installInfo.setCollectionLexiconOn(DatabaseKind.FINAL, Boolean.parseBoolean(f.getElementValue("//m:collection-lexicon")));
-                installInfo.setForestsExistent(DatabaseKind.FINAL, (f.getElements("//m:forest").size() > 0));
+                installInfo.setForestsExistent(DatabaseKind.FINAL, (!f.getElements("//m:forest").isEmpty()));
             }
 
             if (installInfo.isDbExistent(DatabaseKind.JOB)) {
                 Fragment f = getDatabaseManager().getPropertiesAsXml(hubConfig.getDbName(DatabaseKind.JOB));
-                installInfo.setForestsExistent(DatabaseKind.JOB, (f.getElements("//m:forest").size() > 0));
+                installInfo.setForestsExistent(DatabaseKind.JOB, (!f.getElements("//m:forest").isEmpty()));
             }
 
             logger.info(installInfo.toString());
@@ -258,7 +260,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     // this InstallInfo is used as a dummy to return DHS provisioned information
-    private InstallInfo assumedProvisionedInstallInfo(InstallInfo installInfo) {
+    private static InstallInfo assumedProvisionedInstallInfo(InstallInfo installInfo) {
         installInfo.setAppServerExistent(DatabaseKind.STAGING, true);
         installInfo.setAppServerExistent(DatabaseKind.FINAL, true);
         installInfo.setAppServerExistent(DatabaseKind.JOB, true);
@@ -357,26 +359,26 @@ public class DataHubImpl implements DataHub, InitializingBean {
         try {
             HashSet<String> dataHubOptions = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
-                dataHubOptions.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(xmlPattern.matcher(r.getFilename()).replaceAll(""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-final/options/*.xml")) {
-                dataHubOptions.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(xmlPattern.matcher(r.getFilename()).replaceAll(""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
-                dataHubOptions.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(xmlPattern.matcher(r.getFilename()).replaceAll(""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
-                dataHubOptions.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(xmlPattern.matcher(r.getFilename()).replaceAll(""));
             }
 
             HashSet<String> dataHubServices = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
-                dataHubServices.add(r.getFilename().replaceAll("\\.(sjs|mjs|xqy)$",""));
+                dataHubServices.add(modulePattern.matcher(r.getFilename()).replaceAll(""));
             }
 
             HashSet<String> dataHubTransforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                dataHubTransforms.add(r.getFilename().replaceAll("\\.(sjs|mjs|xqy)$",""));
+                dataHubTransforms.add(modulePattern.matcher(r.getFilename()).replaceAll(""));
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -586,7 +588,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      *
      * @param appConfig
      */
-    protected void disableSomeCmaUsage(AppConfig appConfig) {
+    protected static void disableSomeCmaUsage(AppConfig appConfig) {
         appConfig.getCmaConfig().setCombineRequests(false);
         appConfig.getCmaConfig().setDeployDatabases(false);
         appConfig.getCmaConfig().setDeployRoles(false);
@@ -609,8 +611,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         // Then deploy databases, utilizing a pattern for filenames when in a provisioned environment
         SimpleAppDeployer deployer = new SimpleAppDeployer(getManageClient(), getAdminManager());
         Map<String, List<Command>> commandMap = buildCommandMap();
-        List<Command> indexRelatedCommands = new ArrayList<>();
-        indexRelatedCommands.addAll(commandMap.get("mlDatabaseCommands"));
+        List<Command> indexRelatedCommands = new ArrayList<>(commandMap.get("mlDatabaseCommands"));
         deployer.setCommands(indexRelatedCommands);
         final boolean originalCreateForests = appConfig.isCreateForests();
         final Pattern originalIncludePattern = appConfig.getResourceFilenamesIncludePattern();
@@ -631,7 +632,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      *
      * @return database name pattern
      */
-    protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
+    protected static Pattern buildPatternForDatabasesToUpdateIndexesFor() {
         return Pattern.compile("(staging|final|job)-database.json");
     }
 
@@ -709,7 +710,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      *
      * @param commandMap
      */
-    private void updateSecurityCommandList(Map<String, List<Command>> commandMap) {
+    private static void updateSecurityCommandList(Map<String, List<Command>> commandMap) {
         for (Command c : commandMap.get("mlSecurityCommands")) {
             if (c instanceof DeployAmpsCommand) {
                 ((DeployAmpsCommand) c).setExecuteSortOrder(new LoadHubModulesCommand().getExecuteSortOrder() - 1);
@@ -737,7 +738,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         commandMap.put("mlDatabaseCommands", dbCommands);
     }
 
-    private void updateServerCommandList(Map<String, List<Command>> commandMap) {
+    private static void updateServerCommandList(Map<String, List<Command>> commandMap) {
         final String key = "mlServerCommands";
         List<Command> newCommands = new ArrayList<>();
         for (Command c : commandMap.get(key)) {
@@ -793,7 +794,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         commandsMap.put("mlModuleCommands", commands);
     }
 
-    private Map<Integer, String> getServerPortsInUse(ServerManager serverManager) {
+    private static Map<Integer, String> getServerPortsInUse(ServerManager serverManager) {
         Map<Integer, String> portsInUse = new HashMap<>();
         ResourcesFragment srf = serverManager.getAsXml();
         srf.getListItemNameRefs().forEach(s -> {
@@ -806,7 +807,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
     private Map<String, List<Command>> getSecurityCommands() {
         Map<String, List<Command>> commandMap = new HashMap<>();
-        List<Command> securityCommands = new ArrayList<Command>();
+        List<Command> securityCommands = new ArrayList<>();
         securityCommands.add(new CheckSecurityConfiguration(this.getHubConfig()));
         securityCommands.add(new DeployRolesCommand());
         securityCommands.add(new DeployUsersCommand());
@@ -1071,7 +1072,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Finished clearing user data; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
-  private void clearDatabaseCollection(String sourceName, DatabaseClient databaseClientToUse) {
+  private static void clearDatabaseCollection(String sourceName, DatabaseClient databaseClientToUse) {
     QueryManager qm = databaseClientToUse.newQueryManager();
     DeleteQueryDefinition def=qm.newDeleteDefinition();
     def.setCollections(sourceName);
@@ -1123,7 +1124,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * @param hubClientToUse
      * @return
      */
-    private List<DocumentWriteOperation> readUserAndHubArtifacts(HubClient hubClientToUse) {
+    private static List<DocumentWriteOperation> readUserAndHubArtifacts(HubClient hubClientToUse) {
         List<DocumentWriteOperation> docs = new ArrayList<>();
         JSONDocumentManager mgr = hubClientToUse.getStagingClient().newJSONDocumentManager();
         final String script = "import consts from '/data-hub/5/impl/consts.mjs';\n" +
@@ -1144,7 +1145,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
     private void writeUserAndHubArtifacts(JSONDocumentManager mgr, List<DocumentWriteOperation> userAndHubArtifacts, String databaseName) {
         DocumentWriteSet writeSet = mgr.newWriteSet();
-        userAndHubArtifacts.forEach(doc -> writeSet.add(doc));
+        writeSet.addAll(userAndHubArtifacts);
         logger.info("Writing user and hub artifacts to " + databaseName + "; count: " + writeSet.size());
         mgr.write(writeSet);
         logger.info("Finished writing user and hub artifacts to " + databaseName);

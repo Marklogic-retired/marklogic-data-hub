@@ -117,7 +117,7 @@ public class RunFlowResponse {
 
     @Override
     public String toString() {
-        String stepRes = ofNullable(stepResponses).orElse(new HashMap<String, RunStepResponse>()).keySet()
+        String stepRes = ofNullable(stepResponses).orElse(new HashMap<>()).keySet()
             .stream()
             .map(key -> key + "=" + stepResponses.get(key))
             .collect(Collectors.joining(", ", "{", "}"));

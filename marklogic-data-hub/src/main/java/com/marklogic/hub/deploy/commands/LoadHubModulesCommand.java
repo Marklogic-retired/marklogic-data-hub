@@ -41,6 +41,8 @@ import com.marklogic.mgmt.resource.appservers.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Map;
 import java.util.Properties;
 
@@ -162,7 +164,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), jobsClient);
         }
     }
-    
+
     private ModulesLoader newModulesLoader(CommandContext context, DatabaseClient client) {
         PropertiesModuleManager modulesManager = new PropertiesModuleManager(hubConfig.getAppConfig().getModuleTimestampsPath());
         AssetFileLoader assetFileLoader = new AssetFileLoader(client, modulesManager);
@@ -182,10 +184,15 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     protected void createCustomRewriters() {
         logger.info("Creating custom rewriters for staging and job app servers");
-        SystemService.on(hubConfig.newFinalClient(null)).createCustomRewriters();
+        try (Reader ignore = SystemService.on(hubConfig.newFinalClient(null)).createCustomRewriters()) {
+            // empty try-resource
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    protected void prepareAssetFileLoader(AssetFileLoader loader, CommandContext context) {
+    protected static void prepareAssetFileLoader(AssetFileLoader loader, CommandContext context) {
         AppConfig appConfig = context.getAppConfig();
 
         Integer batchSize = appConfig.getModulesLoaderBatchSize();
@@ -200,7 +207,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         loader.setDocumentFileReader(jarDocumentFileReader);
     }
 
-    private TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
+    private static TokenReplacer buildModuleTokenReplacer(AppConfig appConfig) {
         DefaultTokenReplacer r = new DefaultTokenReplacer();
         final Map<String, String> customTokens = appConfig.getCustomTokens();
         if (customTokens != null && !customTokens.isEmpty()) {

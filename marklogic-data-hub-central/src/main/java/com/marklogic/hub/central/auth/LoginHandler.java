@@ -74,7 +74,7 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         }
     }
 
-    private void sendUnauthorizedResponse(HttpServletResponse response) throws IOException{
+    private static void sendUnauthorizedResponse(HttpServletResponse response) throws IOException{
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("message", "User doesn't have necessary privileges to access Hub Central");
         String json = node.toString();
@@ -84,7 +84,7 @@ public class LoginHandler implements AuthenticationSuccessHandler {
         response.getWriter().write(json);
     }
 
-    private void clearAuthenticationAttributes(HttpServletRequest request) {
+    private static void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return;

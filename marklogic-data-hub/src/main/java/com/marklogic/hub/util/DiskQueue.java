@@ -28,13 +28,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.AbstractQueue;
@@ -62,17 +61,17 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
 
     // The memoryQueue represents the head of the queue. It can also be the tail,
     // if nothing has spilled over onto the disk.
-    private MemoryQueue<String> memoryQueue;
+    final MemoryQueue<String> memoryQueue;
 
-    private Iterator<String> memoryIterator;
+    Iterator<String> memoryIterator;
 
     // Percentage of memory queue used/capacity that triggers a refill from disk.
-    private float refillMemoryRatio;
+    private final float refillMemoryRatio;
 
     // Number of elements in the backing store file on disk.
-    private int fileElementCount = 0;
+    int fileElementCount = 0;
 
-    private File tempDir;
+    private final File tempDir;
 
     private BufferedWriter fileOut;
     private BufferedReader fileIn;
@@ -80,7 +79,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
     // When moving elements from disk to memory, we don't know whether the memory
     // queue has space until the offer is rejected. So rather than trying to push
     // back an element into the file, just cache it in cachedElement.
-    private String cachedElement;
+    String cachedElement;
     private File fileQueue;
     private static int safeIntCast(float f) {
         if (f > Integer.MAX_VALUE) {
@@ -183,13 +182,13 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
             fileQueue = File.createTempFile(DiskQueue.class.getSimpleName() + "-backingstore-", null, tempDir);
             fileQueue.deleteOnExit();
             LOG.log(Level.INFO, "created backing store {0}", fileQueue.getAbsolutePath());
-            fileOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileQueue), StandardCharsets.UTF_8));
+            fileOut = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileQueue.toPath()), StandardCharsets.UTF_8));
 
             // Flush output file, so there's something written when we open the input stream.
             fileOut.flush();
 
             fileIn = new BufferedReader( new InputStreamReader(
-                new FileInputStream(fileQueue), "UTF8")
+                    Files.newInputStream(fileQueue.toPath()), StandardCharsets.UTF_8)
             );
         }
     }
@@ -265,7 +264,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
         closeFile();
     }
 
-    private void loadMemoryQueue() {
+    void loadMemoryQueue() {
         // use the memory queue as our buffer, so only load it up when it's below capacity.
         if (memoryQueue.size() / (float) memoryQueue.getCapacity() >= refillMemoryRatio) {
             return;
@@ -283,12 +282,9 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
                 // been written before we start reading.
                 fileOut.flush();
 
-                int usedCount = 0;
                 while (fileElementCount > 0) {
-                    @SuppressWarnings("unchecked")
                     String nextFileElement = fileIn.readLine();
                     fileElementCount--;
-                    usedCount++;
 
                     if (!isEmpty(nextFileElement) && !memoryQueue.offer(nextFileElement)) {
                         //memory queue is full. Cache this entry and jump out
@@ -321,7 +317,6 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
             return memoryIterator.hasNext() || fileElementCount > 0 || cachedElement != null;
         }
 
-        @SuppressWarnings("unchecked")
         public String next() {
             String next = memoryIterator.next();
             if (!memoryIterator.hasNext() && (fileElementCount > 0 || cachedElement != null)) {

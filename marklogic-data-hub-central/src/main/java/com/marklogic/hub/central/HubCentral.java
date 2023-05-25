@@ -1,13 +1,11 @@
 package com.marklogic.hub.central;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.ConfiguredDatabaseClientFactory;
 import com.marklogic.client.ext.DatabaseClientConfig;
 import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.util.PropertySource;
 import org.springframework.beans.factory.InitializingBean;
@@ -52,7 +50,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     public HubConfigImpl newHubConfig(String username, String password) {
         HubConfigImpl hubConfig = new HubConfigImpl();
         DatabaseClient client = getStagingDbClient(username, password);
-        Properties primaryProperties = hubConfig.getHubPropertiesFromDb(client);
+        Properties primaryProperties = HubConfigImpl.getHubPropertiesFromDb(client);
         hubConfig.applyProperties(buildPropertySource(username, password, primaryProperties));
         return hubConfig;
     }
@@ -106,7 +104,7 @@ public class HubCentral extends LoggingObject implements InitializingBean {
         return host;
     }
 
-    public String getProjectName() {
+    public static String getProjectName() {
         return "Data Hub Project";
     }
 }

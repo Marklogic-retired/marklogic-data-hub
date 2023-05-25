@@ -26,11 +26,11 @@ public abstract class BaseController extends LoggingObject {
         return hubClientProvider.getHubClientConfig();
     }
 
-    protected ResponseEntity<Void> emptyOk() {
+    protected static ResponseEntity<Void> emptyOk() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    protected ResponseEntity<JsonNode> jsonCreated(JsonNode createdJson) {
+    protected static ResponseEntity<JsonNode> jsonCreated(JsonNode createdJson) {
         return new ResponseEntity<>(createdJson, HttpStatus.CREATED);
     }
 }

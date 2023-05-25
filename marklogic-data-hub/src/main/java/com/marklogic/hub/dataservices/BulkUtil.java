@@ -12,16 +12,17 @@ import com.marklogic.client.io.JacksonHandle;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 public class BulkUtil {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Pattern dateTimePattern = Pattern.compile("^(-?)P(?=.)((\\d*)Y)?((\\d+)M)?((\\d*)D)?(T(?=\\d)(\\d+H)?(([\\d]+)M)?(([\\d]+(?:\\.\\d+)?)S)?)?$");
 
     public static void deleteData(DatabaseClient databaseClient, String apiPath, String retainDuration) {
         // See https://stackoverflow.com/a/52645128/535924 for more information about
         // the duration regex
-        if (retainDuration == null || !retainDuration.matches(
-            "^(-?)P(?=.)((\\d*)Y)?((\\d+)M)?((\\d*)D)?(T(?=\\d)(\\d+H)?(([\\d]+)M)?(([\\d]+(?:\\.\\d+)?)S)?)?$")) {
+        if (retainDuration == null || !dateTimePattern.matcher(retainDuration).matches()) {
             throw new IllegalArgumentException(
                 "retainDuration must be a duration in the format of PnYnM or PnDTnHnMnS");
         }

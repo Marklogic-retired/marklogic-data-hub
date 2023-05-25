@@ -37,19 +37,22 @@ import org.springframework.util.Assert;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
+    private static final Pattern placeholderPattern = Pattern.compile("placeholder", Pattern.LITERAL);
     @Autowired
     HubConfig hubConfig;
 
@@ -79,7 +82,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
      * @return the new step definition
      */
     public StepDefinition createStepDefinition(String name, String type, String format) {
-        StepDefinition stepDef = StepDefinition.create(name, StepDefinition.StepDefinitionType.getStepDefinitionType(type));
+        StepDefinition stepDef = StepDefinition.create(name, StepDefinitionType.getStepDefinitionType(type));
 
         StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(this.hubConfig);
         if (stepDefinitionManager.getStepDefinition(name, stepDef.getType()) != null) {
@@ -174,8 +177,8 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
     public String saveStepDefinition(String stepName, String stepDefName, String stepType, boolean legacyUpgrade) {
         StepDefinitionManagerImpl stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
-        StepDefinition stepDefinition = null;
-        StringBuilder messageBuilder = new StringBuilder();
+        StepDefinition stepDefinition;
+        StringBuilder messageBuilder = new StringBuilder(256);
         if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
             try{
                 stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
@@ -191,8 +194,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             }
             createCustomModule(stepDefName, stepType, legacyUpgrade);
             messageBuilder.append(String.format("Created step definition '%s' of type '%s'.\n", stepName, stepType));
-            messageBuilder.append("The module file for the step definition is available at "
-                + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs" + ". \n");
+            messageBuilder.append("The module file for the step definition is available at " + "/custom-modules/").append(stepType.toLowerCase()).append("/").append(stepDefName).append("/main.mjs").append(". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
         return messageBuilder.toString();
@@ -211,7 +213,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         } catch (Exception e) {
             throw new RuntimeException("Unable to write step to database; cause: " + e.getMessage(), e);
         }
-        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. The step has been deployed to staging and final databases.");
+        messageBuilder.append("Created step '").append(stepName).append("' of type '").append(stepType).append("' with default properties. The step has been deployed to staging and final databases.");
         try {
             new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
             return Pair.of(stepFile, messageBuilder.toString());
@@ -323,7 +325,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
             try {
                 String fileContents = buildFlowFromDefaultFlow(customTokens);
-                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(flowFile), StandardCharsets.UTF_8)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(flowFile.toPath()), StandardCharsets.UTF_8)) {
                     writer.write(fileContents);
                 }
             }
@@ -334,9 +336,9 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return flowFile;
     }
 
-    protected String buildFlowFromDefaultFlow(Map<String, String> customTokens) throws IOException {
+    protected static String buildFlowFromDefaultFlow(Map<String, String> customTokens) throws IOException {
         String flowSrcFile = "scaffolding/defaultFlow.flow.json";
-        String fileContents = null;
+        String fileContents;
         try (InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile)) {
             assert inputStream != null;
             fileContents = IOUtils.toString(inputStream);
@@ -350,26 +352,27 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         return fileContents;
     }
 
-    private void writeToFile(String fileContent, File dstFile) {
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dstFile),StandardCharsets.UTF_8))) {
+    private static void writeToFile(String fileContent, File dstFile) {
+        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(dstFile.toPath()),StandardCharsets.UTF_8))) {
             bw.write(fileContent);
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getFileContent(String srcFile, String placeholder) {
+    private static String getFileContent(String srcFile, String placeholder) {
         StringBuilder output = new StringBuilder();
-        InputStream inputStream = null;
-        BufferedReader rdr = null;
+        InputStream inputStream;
+        BufferedReader rdr;
         try {
             inputStream = Scaffolding.class.getClassLoader()
                 .getResourceAsStream(srcFile);
+            assert inputStream != null;
             rdr = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-            String bufferedLine = null;
+            String bufferedLine;
             while ((bufferedLine = rdr.readLine()) != null) {
                 if(bufferedLine.contains("placeholder")) {
-                    bufferedLine = bufferedLine.replace("placeholder", placeholder);
+                    bufferedLine = placeholderPattern.matcher(bufferedLine).replaceAll(Matcher.quoteReplacement(placeholder));
                 }
                 output.append(bufferedLine);
                 output.append("\n");

@@ -18,7 +18,7 @@ public class RemoveDatabaseNameFromDatabaseFieldsPayloadTest {
         assertTrue(frag.elementExists("/node()/m:database-name"));
         assertEquals("true", frag.getElementValue("/node()/m:triple-index"));
 
-        xml = new DeployDatabaseFieldCommand.HubDatabaseManager(null).removeDatabaseNameFromXmlPayload(xml);
+        xml = DeployDatabaseFieldCommand.HubDatabaseManager.removeDatabaseNameFromXmlPayload(xml);
         frag = new Fragment(xml);
         assertFalse(frag.elementExists("/node()/m:database-name"));
         assertEquals("true", frag.getElementValue("/node()/m:triple-index"));

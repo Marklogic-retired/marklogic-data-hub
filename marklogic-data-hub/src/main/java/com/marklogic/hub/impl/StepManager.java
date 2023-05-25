@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
@@ -17,12 +15,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class StepManager extends LoggingObject {
 
-    private HubConfig hubConfig;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final HubConfig hubConfig;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public StepManager(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -36,8 +33,8 @@ public class StepManager extends LoggingObject {
 
     public ObjectNode getLocalStepAsJSON(String stepId) {
         Path stepPath = getStepsPath(stepId).resolve(getStepName(stepId) + STEP_FILE_EXTENSION);
-        String suffix = stepId.substring(stepId.lastIndexOf("-") + 1);
-        InputStream inputStream = null;
+        String suffix = stepId.substring(stepId.lastIndexOf('-') + 1);
+        InputStream inputStream;
         // first, let's check our resources
         inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/steps/" + suffix + "/" + getStepName(stepId) + STEP_FILE_EXTENSION);
         if (inputStream == null) {
@@ -71,12 +68,12 @@ public class StepManager extends LoggingObject {
     }
 
     public Path getStepsPath(String stepId) {
-        String suffix = stepId.substring(stepId.lastIndexOf("-") + 1);
+        String suffix = stepId.substring(stepId.lastIndexOf('-') + 1);
         StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(suffix);
         return hubConfig.getHubProject().getStepsPath(stepDefType);
     }
 
-    public String getStepName(String stepId) {
-        return stepId.substring(0, stepId.lastIndexOf("-"));
+    public static String getStepName(String stepId) {
+        return stepId.substring(0, stepId.lastIndexOf('-'));
     }
 }

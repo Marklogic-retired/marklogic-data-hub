@@ -17,7 +17,13 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.step.impl.*;
+import com.marklogic.hub.step.impl.CustomStepDefinitionImpl;
+import com.marklogic.hub.step.impl.IngestionStepDefinitionImpl;
+import com.marklogic.hub.step.impl.MappingStepDefinitionImpl;
+import com.marklogic.hub.step.impl.MasteringStepDefinitionImpl;
+import com.marklogic.hub.step.impl.MatchingStepDefinitionImpl;
+import com.marklogic.hub.step.impl.MergingStepDefinitionImpl;
+import com.marklogic.hub.step.impl.Step;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +39,7 @@ public interface StepDefinition {
         MERGING("merging"),
         CUSTOM("custom");
 
-        private String type;
+        private final String type;
 
         StepDefinitionType(String type) {
             this.type = type;

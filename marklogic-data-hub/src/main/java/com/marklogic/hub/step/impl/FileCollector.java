@@ -8,17 +8,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class FileCollector extends LoggingObject {
 
-    private String inputFormat;
-    private Set<String> textExts = new HashSet<>(Arrays.asList("txt"));
-    private Set<String> jsonExts = new HashSet<>(Arrays.asList("json"));
-    private Set<String> csvExts = new HashSet<>(Arrays.asList("txt", "csv", "tsv", "psv"));
-    private Set<String> xmlExts = new HashSet<>(Arrays.asList("xml", "xhtml", "html"));
-    private Map<String, Set<String>> fileFormats;
+    private final String inputFormat;
+    private final Set<String> textExts = new HashSet<>(Collections.singletonList("txt"));
+    private final Set<String> jsonExts = new HashSet<>(Collections.singletonList("json"));
+    private final Set<String> csvExts = new HashSet<>(Arrays.asList("txt", "csv", "tsv", "psv"));
+    private final Set<String> xmlExts = new HashSet<>(Arrays.asList("xml", "xhtml", "html"));
+    private final Map<String, Set<String>> fileFormats;
 
     public FileCollector(String inputFormat) {
         this.inputFormat = inputFormat.toLowerCase();
@@ -66,7 +71,7 @@ public class FileCollector extends LoggingObject {
 
         final String fileExtension = FilenameUtils.getExtension(filename).toLowerCase();
 
-        if (fileExtension.trim().length() == 0 && ("json".equals(inputFormat) || "xml".equals(inputFormat))) {
+        if (fileExtension.trim().isEmpty() && ("json".equals(inputFormat) || "xml".equals(inputFormat))) {
             return true;
         }
 

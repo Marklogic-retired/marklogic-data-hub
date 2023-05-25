@@ -33,7 +33,7 @@ public class RecordController extends BaseController {
         }
     }
 
-    protected String determineFilenameForDownload(String docUri) {
+    protected static String determineFilenameForDownload(String docUri) {
         String[] docUriArray = docUri.split("/");
         return docUriArray[docUriArray.length - 1];
     }

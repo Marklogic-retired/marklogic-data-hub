@@ -23,7 +23,7 @@ public class ProvenanceManager {
     public void deleteProvenanceRecords(String retainDuration, String database) {
         String apiPath = "ml-modules/root/data-hub/data-services/provenance/deleteProvenance.api";
         DatabaseKind databaseKind = DatabaseKind.valueOf(database);
-        DatabaseClient client = null;
+        DatabaseClient client;
         switch (databaseKind) {
             case JOB: client = hubClient.getJobsClient();
                 break;

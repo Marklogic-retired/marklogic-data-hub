@@ -2,14 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.util.stream.Stream;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.util.stream.Stream;
 
 /**
  * Provides a set of operations on the database server
@@ -45,21 +43,21 @@ public interface EntitySearchService {
      */
     static EntitySearchService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class EntitySearchServiceImpl implements EntitySearchService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_getMinAndMaxPropertyValues;
-            private BaseProxy.DBFunctionRequest req_getSavedQuery;
-            private BaseProxy.DBFunctionRequest req_deleteSavedQuery;
-            private BaseProxy.DBFunctionRequest req_saveSavedQuery;
-            private BaseProxy.DBFunctionRequest req_getSavedQueries;
-            private BaseProxy.DBFunctionRequest req_exportSearchAsCSV;
-            private BaseProxy.DBFunctionRequest req_getSemanticConceptInfo;
-            private BaseProxy.DBFunctionRequest req_getModelRelationships;
-            private BaseProxy.DBFunctionRequest req_getRecord;
-            private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
+            private final BaseProxy.DBFunctionRequest req_getMinAndMaxPropertyValues;
+            private final BaseProxy.DBFunctionRequest req_getSavedQuery;
+            private final BaseProxy.DBFunctionRequest req_deleteSavedQuery;
+            private final BaseProxy.DBFunctionRequest req_saveSavedQuery;
+            private final BaseProxy.DBFunctionRequest req_getSavedQueries;
+            private final BaseProxy.DBFunctionRequest req_exportSearchAsCSV;
+            private final BaseProxy.DBFunctionRequest req_getSemanticConceptInfo;
+            private final BaseProxy.DBFunctionRequest req_getModelRelationships;
+            private final BaseProxy.DBFunctionRequest req_getRecord;
+            private final BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
 
-            private EntitySearchServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            EntitySearchServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/entitySearch/", servDecl);
 

@@ -22,22 +22,23 @@ import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.util.ResourceUtil;
 import com.marklogic.hub.error.DataHubConfigurationException;
-import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Extends ml-app-deployer's standard command for deploying a single database and adds DHF-specific functionality.
  */
 public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
-    private HubConfig hubConfig;
-    private String databaseFilename;
-    private File databaseFile;
+    private static final Pattern databasePostfix = Pattern.compile("-database", Pattern.LITERAL);
+    private final HubConfig hubConfig;
+    private final String databaseFilename;
+    private final File databaseFile;
     private boolean mergeEntityConfigFiles = true;
     private boolean mergeExistingArrayProperties = false;
     private boolean removeSchemaAndTriggersDatabaseSettings = false;
@@ -65,7 +66,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         this.hubConfig = hubConfig;
         this.databaseFilename = databaseFilename;
         if (databaseFilename != null) {
-            this.setForestFilename(databaseFilename.replace("-database", "-forest"));
+            this.setForestFilename(databasePostfix.matcher(databaseFilename).replaceAll("-forest"));
         }
     }
 

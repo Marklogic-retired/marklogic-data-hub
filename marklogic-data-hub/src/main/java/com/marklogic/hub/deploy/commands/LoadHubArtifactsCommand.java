@@ -37,7 +37,8 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Loads hub artifacts (ootb flows and step defs). This will be deployed after triggers
@@ -54,7 +55,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
     @Autowired
     private HubConfig hubConfig;
 
-    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+    private final DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
 
     public LoadHubArtifactsCommand() {
         super();

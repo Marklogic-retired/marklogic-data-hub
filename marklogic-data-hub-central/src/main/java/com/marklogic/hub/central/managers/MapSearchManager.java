@@ -161,7 +161,7 @@ public class MapSearchManager {
         }
     }
 
-    private StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
+    private static StructuredQueryDefinition addRangeConstraint(StructuredQueryBuilder sb, String name, String value) {
         StructuredQueryDefinition sqd = null;
         if (value != null && !value.isEmpty()) {
             sqd = sb.rangeConstraint(name, StructuredQueryBuilder.Operator.EQ, value);

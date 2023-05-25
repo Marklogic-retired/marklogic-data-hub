@@ -2,13 +2,10 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.io.marker.JSONWriteHandle;
-
 import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.marker.JSONWriteHandle;
 
 /**
  * Provides a set of operations on the database server
@@ -44,17 +41,17 @@ public interface ArtifactService {
      */
     static ArtifactService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class ArtifactServiceImpl implements ArtifactService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_getArtifactsWithProjectPaths;
-            private BaseProxy.DBFunctionRequest req_setArtifact;
-            private BaseProxy.DBFunctionRequest req_deleteArtifact;
-            private BaseProxy.DBFunctionRequest req_clearUserArtifacts;
-            private BaseProxy.DBFunctionRequest req_getList;
-            private BaseProxy.DBFunctionRequest req_getArtifact;
+            private final BaseProxy.DBFunctionRequest req_getArtifactsWithProjectPaths;
+            private final BaseProxy.DBFunctionRequest req_setArtifact;
+            private final BaseProxy.DBFunctionRequest req_deleteArtifact;
+            private final BaseProxy.DBFunctionRequest req_clearUserArtifacts;
+            private final BaseProxy.DBFunctionRequest req_getList;
+            private final BaseProxy.DBFunctionRequest req_getArtifact;
 
-            private ArtifactServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            ArtifactServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/artifacts/", servDecl);
 

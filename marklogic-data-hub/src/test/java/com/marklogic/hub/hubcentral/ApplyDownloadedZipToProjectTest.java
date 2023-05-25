@@ -85,7 +85,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         modelsService.publishDraftModels();
         FlowService.on(stagingClient).deleteFlow("testFlow");
         StepDefinitionService.on(stagingClient).deleteStepDefinition("testStep");
-        new HubCentralManager().deleteHubCentralConfig(getHubClient());
+        HubCentralManager.deleteHubCentralConfig(getHubClient());
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
         AllArtifactsProject project = new AllArtifactsProject(getHubClient());

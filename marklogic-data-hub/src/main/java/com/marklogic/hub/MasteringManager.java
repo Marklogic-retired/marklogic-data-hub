@@ -31,7 +31,7 @@ public interface MasteringManager {
      * @param blockFutureMerges - ensures that the documents won't be merged together in the next mastering run, if true
      * @return - a JsonNode for the unmerge response
      */
-    public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
+    JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges);
 
     /**
      * Unmerges the set of uris from a merged document
@@ -41,7 +41,7 @@ public interface MasteringManager {
      * @param removeURIs - URIs of the merged documents that we want to unmerge
      * @return - a JsonNode for the unmerge response
      */
-    public JsonNode unmergeRecord(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges, List<String> removeURIs);
+    JsonNode unmergeRecord(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges, List<String> removeURIs);
 
     /**
      * Manually merges a set of documents
@@ -52,14 +52,14 @@ public interface MasteringManager {
      * @param options - Overrides any options for the step
      * @return - a JsonNode for the merge response
      */
-    public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
+    JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options);
 
     /**
      * Manually merges a set of documents
      * @param flowName - The name of the flow that has the merge settings
      * @return - a JsonNode for the merge response
      */
-    public JsonNode mergePreview(String flowName, List<String> uris);
+    JsonNode mergePreview(String flowName, List<String> uris);
 
     /**
      * Returns potential candidates for merging with a document
@@ -70,14 +70,14 @@ public interface MasteringManager {
      * @param options - Overrides any options for the step
      * @return - a JsonNode for the merge response
      */
-    public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
+    JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
 
     /**
      * Returns provenance information about a merged document
      * @param mergedURI - URI of the document that represents a merge
      * @return - a JsonNode with the historical information
      */
-    public JsonNode documentHistory(String mergedURI);
+    JsonNode documentHistory(String mergedURI);
 
     /**
      * Returns notifications
@@ -85,11 +85,11 @@ public interface MasteringManager {
      * @param pageLength - (optional, defaulting to 10) the number of notifications to return
      * @return - a JsonNode with the notifications
      */
-    public JsonNode notifications(int start, int pageLength);
+    JsonNode notifications(int start, int pageLength);
 
     /**
      * @param uris - notification document URIs to delete
      * @return - a JsonNode with the notifications delete response
      */
-    public JsonNode deleteNotifications(List<String> uris);
+    JsonNode deleteNotifications(List<String> uris);
 }

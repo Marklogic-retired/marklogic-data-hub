@@ -27,7 +27,7 @@ import java.io.File;
  */
 public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFactory {
 
-    private HubConfig hubConfig;
+    private final HubConfig hubConfig;
     private boolean mergeEntityConfigFiles = true;
     private boolean mergeExistingArrayProperties = false;
     private boolean removeSchemaAndTriggersDatabaseSettings = false;

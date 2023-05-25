@@ -71,7 +71,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
             "the fields and indexes created by this command.");
     }
 
-    protected String addExistingFieldsAndRangeFieldIndexes(String payload, ResourceManager dbManager) {
+    protected static String addExistingFieldsAndRangeFieldIndexes(String payload, ResourceManager dbManager) {
         Fragment newProps = new Fragment(payload);
         Fragment existingProps = dbManager.getPropertiesAsXml(newProps.getElementValue("/node()/m:database-name"));
 
@@ -82,7 +82,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
         return newProps.getPrettyXml();
     }
 
-    protected void addExistingFields(Fragment newProps, Fragment existingProps) {
+    protected static void addExistingFields(Fragment newProps, Fragment existingProps) {
         Element newFields = newProps.getInternalDoc().getRootElement().getChild("fields", MANAGE_NS);
         if (newFields != null) {
             List<String> newFieldNames = new ArrayList<>();
@@ -102,7 +102,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
         }
     }
 
-    protected void addExistingRangeFieldIndexes(Fragment newProps, Fragment existingProps) {
+    protected static void addExistingRangeFieldIndexes(Fragment newProps, Fragment existingProps) {
         Element newRangeFieldIndexes = newProps.getInternalDoc().getRootElement().getChild("range-field-indexes", MANAGE_NS);
         if (newRangeFieldIndexes != null) {
             List<String> newIndexFieldNames = new ArrayList<>();
@@ -122,7 +122,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
         }
     }
 
-    protected void addExistingRangePathIndexes(Fragment newProps, Fragment existingProps) {
+    protected static void addExistingRangePathIndexes(Fragment newProps, Fragment existingProps) {
         Element newRangePathIndexes = newProps.getInternalDoc().getRootElement().getChild("range-path-indexes", MANAGE_NS);
         if (newRangePathIndexes != null) {
             List<String> newIndexPathExpressions = new ArrayList<>();
@@ -142,7 +142,7 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
         }
     }
 
-    protected void addExistingPathNamespaces(Fragment newProps, Fragment existingProps) {
+    protected static void addExistingPathNamespaces(Fragment newProps, Fragment existingProps) {
         Element newNamespaces = newProps.getInternalDoc().getRootElement().getChild("path-namespaces", MANAGE_NS);
         if (newNamespaces != null) {
             List<String> newNamespacePrefixes = new ArrayList<>();
@@ -185,12 +185,12 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
          * @param payload
          * @return
          */
-        protected String removeDatabaseNameFromXmlPayload(String payload) {
+        protected static String removeDatabaseNameFromXmlPayload(String payload) {
             Fragment frag = new Fragment(payload);
             List<Element> elements = frag.getElements("/node()/m:database-name");
             if (elements != null) {
                 // Should only be one of these, of course
-                elements.forEach(el -> el.detach());
+                elements.forEach(Element::detach);
             }
             return new XMLOutputter().outputString(frag.getInternalDoc());
         }

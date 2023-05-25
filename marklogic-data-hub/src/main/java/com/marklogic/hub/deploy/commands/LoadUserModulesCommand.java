@@ -42,6 +42,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 
 /**
@@ -53,13 +54,16 @@ import java.nio.file.Paths;
 @Component
 public class LoadUserModulesCommand extends LoadModulesCommand {
 
+    private static final Pattern inputDirectoryPattern = Pattern.compile(".*[/\\\\]input[/\\\\].*");
+    private static final Pattern harmonizeDirectoryPattern = Pattern.compile(".*[/\\\\]harmonize[/\\\\].*");
+    private static final Pattern inputOrHarmonizePattern = Pattern.compile(".*[/\\\\](input|harmonize)[/\\\\][^/\\\\]+$");
     @Autowired
     private HubConfig hubConfig;
 
     @Autowired
     protected EntityManager entityManager;
 
-    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+    private final DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private boolean loadQueryOptions = true;
@@ -140,15 +144,15 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         return modulesLoader;
     }
 
-    boolean isInputRestDir(Path dir) {
-        return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]input[/\\\\].*");
+    static boolean isInputRestDir(Path dir) {
+        return dir.endsWith("REST") && inputDirectoryPattern.matcher(dir.toString()).matches();
     }
 
-    boolean isHarmonizeRestDir(Path dir) {
-        return dir.endsWith("REST") && dir.toString().matches(".*[/\\\\]harmonize[/\\\\].*");
+    static boolean isHarmonizeRestDir(Path dir) {
+        return dir.endsWith("REST") && harmonizeDirectoryPattern.matcher(dir.toString()).matches();
     }
 
-    boolean isFlowPropertiesFile(@NotNull Path dir) {
+    static boolean isFlowPropertiesFile(@NotNull Path dir) {
         Path dirFileName = dir.getFileName();
         Path parent = dir.getParent();
         Path parentFileName = parent != null ? parent.getFileName(): null;
@@ -158,10 +162,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         String fileNameStr = dir.getFileName().toString();
         String parentFileNameStr = parentFileName.toString();
         String parentStr = parent.toString();
-        return fileNameStr != null && parentFileNameStr != null && parentStr != null && dir.toFile().isFile() &&
-                fileNameStr.endsWith(".properties") &&
-            parentStr.matches(".*[/\\\\](input|harmonize)[/\\\\][^/\\\\]+$") &&
-                fileNameStr.equals(parentFileNameStr + ".properties");
+        return dir.toFile().isFile() && fileNameStr.endsWith(".properties") && inputOrHarmonizePattern.matcher(parentStr).matches() && fileNameStr.equals(parentFileNameStr + ".properties");
     }
 
     /**
@@ -191,15 +192,13 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = "";
         String EncodedBaseDir = userModulesPath.normalize().toAbsolutePath().toString();
-        Path startPath = userModulesPath.resolve("entities");
 
         try {
-            URLDecoder fileNameDecoder = new URLDecoder();
             //This handles the decoding of special characters in a file location path.
-            baseDir = fileNameDecoder.decode(EncodedBaseDir, StandardCharsets.UTF_8.name());
+            baseDir = URLDecoder.decode(EncodedBaseDir, StandardCharsets.UTF_8.name());
         }
         catch (Exception e){
-            e.printStackTrace();
+            logger.warn("Issue decoding directory path.", e);
         }
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
@@ -224,13 +223,13 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
             String gerProjectDir = hubConfig.getHubProject().getProjectDirString();
             String decodedFileName = null;
             try {
-                URLDecoder fileNameDecoder = new URLDecoder();
                 //This handles the decoding of special characters in a file location path
-                decodedFileName = fileNameDecoder.decode(gerProjectDir, StandardCharsets.UTF_8.name());
+                decodedFileName = URLDecoder.decode(gerProjectDir, StandardCharsets.UTF_8.name());
             }
             catch (Exception e){
-                e.printStackTrace();
+                logger.warn("Issue decoding directory path.", e);
             }
+            assert decodedFileName != null;
             Path entityConfigDir = Paths.get(decodedFileName, HubConfig.ENTITY_CONFIG_DIR);
             if (!entityConfigDir.toFile().exists()) {
                 if (!entityConfigDir.toFile().mkdirs()) {

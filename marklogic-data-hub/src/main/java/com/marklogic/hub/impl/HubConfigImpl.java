@@ -27,9 +27,9 @@ import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -40,6 +40,7 @@ import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
+import com.marklogic.mgmt.util.PropertySource;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,12 +49,17 @@ import org.springframework.util.Assert;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Extends HubConfigImpl to define all Data Hub properties, including those specific to deploying DHF.
@@ -65,6 +71,7 @@ import java.util.*;
 )
 public class HubConfigImpl extends HubClientConfig implements HubConfig
 {
+    private static final Pattern pathSeparatorPattern = Pattern.compile("/", Pattern.LITERAL);
     private HubProject hubProject;
 
     // Fields that are protected are expected to be serialized by JSON and are not expected to have public no-arg setters
@@ -224,7 +231,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
      *
      * @param propertySource
      */
-    public void applyProperties(com.marklogic.mgmt.util.PropertySource propertySource) {
+    public void applyProperties(PropertySource propertySource) {
         applyProperties(propertySource, null, null, null);
     }
 
@@ -238,7 +245,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
      * @param manageConfigToReuse
      * @param adminConfigToReuse
      */
-    public void applyProperties(com.marklogic.mgmt.util.PropertySource propertySource, AppConfig appConfigToReuse,
+    public void applyProperties(PropertySource propertySource, AppConfig appConfigToReuse,
                                 ManageConfig manageConfigToReuse, AdminConfig adminConfigToReuse) {
 
         // Ensure these are non-null before applying DHF properties, as some DHF properties may wish to modify these
@@ -247,7 +254,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.adminConfig = adminConfigToReuse != null ? adminConfigToReuse : new DefaultAdminConfigFactory(propertySource).newAdminConfig();
 
         // Apply DHF properties defined by parent class and this class
-        super.applyProperties(propertyName -> propertySource.getProperty(propertyName), manageConfigToReuse);
+        super.applyProperties(propertySource::getProperty, manageConfigToReuse);
 
         // Now update the AppConfig based on the applied DHF property values
         setAppConfig(this.appConfig, false);
@@ -258,7 +265,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         setManageClient(new ManageClient(getManageConfig()));
     }
 
-    public Properties getHubPropertiesFromDb(DatabaseClient client) {
+    public static Properties getHubPropertiesFromDb(DatabaseClient client) {
         Properties properties = new Properties();
         try {
             JsonNode dhConfig = SystemService.on(client).getDataHubConfig();
@@ -292,17 +299,11 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 name = getFinalDbName();
                 break;
             case JOB:
-                name = getJobDbName();
-                break;
             case TRACE:
                 name = getJobDbName();
                 break;
             case MODULES:
-                name = super.getModulesDbName();
-                break;
             case STAGING_MODULES:
-                name = super.getModulesDbName();
-                break;
             case FINAL_MODULES:
                 name = super.getModulesDbName();
                 break;
@@ -333,17 +334,11 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setFinalDbName(dbName);
                 break;
             case JOB:
-                setJobDbName(dbName);
-                break;
             case TRACE:
                 setJobDbName(dbName);
                 break;
             case MODULES:
-                setModulesDbName(dbName);
-                break;
             case STAGING_MODULES:
-                setModulesDbName(dbName);
-                break;
             case FINAL_MODULES:
                 setModulesDbName(dbName);
                 break;
@@ -376,9 +371,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
             case JOB:
                 name = jobHttpName;
                 break;
-            case TRACE:
-                name = jobHttpName;
-                break;
             default:
                 throw new InvalidDBOperationError(kind, "grab http name");
         }
@@ -394,8 +386,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 finalHttpName = httpName;
                 break;
             case JOB:
-                jobHttpName = httpName;
-                break;
             case TRACE:
                 jobHttpName = httpName;
                 break;
@@ -414,18 +404,12 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 forests = finalForestsPerHost;
                 break;
             case JOB:
-                forests = jobForestsPerHost;
-                break;
             case TRACE:
                 forests = jobForestsPerHost;
                 break;
             case MODULES:
-                forests = modulesForestsPerHost;
-                break;
-            case STAGING_MODULES:
-                forests = modulesForestsPerHost;
-                break;
             case FINAL_MODULES:
+            case STAGING_MODULES:
                 forests = modulesForestsPerHost;
                 break;
             case STAGING_TRIGGERS:
@@ -455,18 +439,12 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 finalForestsPerHost = forestsPerHost;
                 break;
             case JOB:
-                jobForestsPerHost = forestsPerHost;
-                break;
             case TRACE:
                 jobForestsPerHost = forestsPerHost;
                 break;
             case MODULES:
-                modulesForestsPerHost = forestsPerHost;
-                break;
-            case STAGING_MODULES:
-                modulesForestsPerHost = forestsPerHost;
-                break;
             case FINAL_MODULES:
+            case STAGING_MODULES:
                 modulesForestsPerHost = forestsPerHost;
                 break;
             case STAGING_TRIGGERS:
@@ -496,8 +474,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 port = getFinalPort();
                 break;
             case JOB:
-                port = getJobPort();
-                break;
             case TRACE:
                 port = getJobPort();
                 break;
@@ -516,8 +492,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setFinalPort(port);
                 break;
             case JOB:
-                setJobPort(port);
-                break;
             case TRACE:
                 setJobPort(port);
                 break;
@@ -534,8 +508,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 sslContext = getStagingSslContext();
                 break;
             case JOB:
-                sslContext = getJobSslContext();
-                break;
             case TRACE:
                 sslContext = getJobSslContext();
                 break;
@@ -554,8 +526,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingSslContext(sslContext);
                 break;
             case JOB:
-                setJobSslContext(sslContext);
-                break;
             case TRACE:
                 setJobSslContext(sslContext);
                 break;
@@ -574,8 +544,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 sslHostnameVerifier = getStagingSslHostnameVerifier();
                 break;
             case JOB:
-                sslHostnameVerifier = getJobSslHostnameVerifier();
-                break;
             case TRACE:
                 sslHostnameVerifier = getJobSslHostnameVerifier();
                 break;
@@ -594,8 +562,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingSslHostnameVerifier(sslHostnameVerifier);
                 break;
             case JOB:
-                setJobSslHostnameVerifier(sslHostnameVerifier);
-                break;
             case TRACE:
                 setJobSslHostnameVerifier(sslHostnameVerifier);
                 break;
@@ -617,8 +583,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 authMethod = getFinalAuthMethod();
                 break;
             case JOB:
-                authMethod = getJobAuthMethod();
-                break;
             case TRACE:
                 authMethod = getJobAuthMethod();
                 break;
@@ -637,8 +601,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setFinalAuthMethod(authMethod);
                 break;
             case JOB:
-                setJobAuthMethod(authMethod);
-                break;
             case TRACE:
                 setJobAuthMethod(authMethod);
                 break;
@@ -693,8 +655,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 simple = getStagingSimpleSsl();
                 break;
             case JOB:
-                simple = getJobSimpleSsl();
-                break;
             case TRACE:
                 simple = getJobSimpleSsl();
                 break;
@@ -713,8 +673,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingSimpleSsl(simpleSsl);
                 break;
             case JOB:
-                setJobSimpleSsl(simpleSsl);
-                break;
             case TRACE:
                 setJobSimpleSsl(simpleSsl);
                 break;
@@ -733,8 +691,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 certFile = getStagingCertFile();
                 break;
             case JOB:
-                certFile = getJobCertFile();
-                break;
             case TRACE:
                 certFile = getJobCertFile();
                 break;
@@ -753,8 +709,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingCertFile(certFile);
                 break;
             case JOB:
-                setJobCertFile(certFile);
-                break;
             case TRACE:
                 setJobCertFile(certFile);
                 break;
@@ -773,8 +727,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 certPass = getStagingCertPassword();
                 break;
             case JOB:
-                certPass = getJobCertPassword();
-                break;
             case TRACE:
                 certPass = getJobCertPassword();
                 break;
@@ -793,8 +745,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingCertPassword(certPassword);
                 break;
             case JOB:
-                setJobCertPassword(certPassword);
-                break;
             case TRACE:
                 setJobCertPassword(certPassword);
                 break;
@@ -813,8 +763,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 name = getStagingExternalName();
                 break;
             case JOB:
-                name = getJobExternalName();
-                break;
             case TRACE:
                 name = getJobExternalName();
                 break;
@@ -833,8 +781,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                 setStagingExternalName(externalName);
                 break;
             case JOB:
-                setJobExternalName(externalName);
-                break;
             case TRACE:
                 setJobExternalName(externalName);
                 break;
@@ -1023,7 +969,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
         // Add values from userProperties
         if (userProperties != null){
-            userProperties.forEach(gradleAndUserProperties::put);
+            gradleAndUserProperties.putAll(userProperties);
         }
 
         applyProperties(new SimplePropertySource(gradleAndUserProperties));
@@ -1278,7 +1224,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         // Fix default path for Windows
         String defaultPath = config.getModuleTimestampsPath();
         if (!FileSystems.getDefault().getSeparator().equals("/")) {
-            defaultPath = defaultPath.replace("/", FileSystems.getDefault().getSeparator());
+            defaultPath = pathSeparatorPattern.matcher(defaultPath).replaceAll(Matcher.quoteReplacement(FileSystems.getDefault().getSeparator()));
         }
         if (envString != null) {
             int index = defaultPath.lastIndexOf(FileSystems.getDefault().getSeparator()) + 1;
@@ -1330,15 +1276,14 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
         boolean configDirsIsSetToTheMlAppDeployerDefault = config.getConfigDirs().size() == 1 && config.getConfigDirs().get(0).getBaseDir().toString().endsWith(defaultConfigPath);
 
+        List<ConfigDir> configDirs = new ArrayList<>();
         if (configDirsIsSetToTheMlAppDeployerDefault) {
-            List<ConfigDir> configDirs = new ArrayList<>();
             configDirs.add(new ConfigDir(getHubConfigDir().toFile()));
             configDirs.add(new ConfigDir(getUserConfigDir().toFile()));
             config.setConfigDirs(configDirs);
         }
         else {
             // Need to make each custom config dir relative to the project dir
-            List<ConfigDir> configDirs = new ArrayList<>();
             for (ConfigDir configDir : config.getConfigDirs()) {
                 File f = getHubProject().getProjectDir().resolve(configDir.getBaseDir().toString()).normalize().toAbsolutePath().toFile();
                 configDirs.add(new ConfigDir(f));
@@ -1433,7 +1378,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         InputStream is;
         try {
             if (propertiesFile.exists()) {
-                is = new FileInputStream(propertiesFile);
+                is = Files.newInputStream(propertiesFile.toPath());
                 loadedProperties.load(is);
                 is.close();
             }
@@ -1502,7 +1447,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     protected void initializePropertyConsumerMap() {
         super.initializePropertyConsumerMap();
 
-        getPropertyConsumerMap().put("mlHost", prop -> setHost(prop));
+        getPropertyConsumerMap().put("mlHost", this::setHost);
         getPropertyConsumerMap().put("mlIsProvisionedEnvironment", prop -> isProvisionedEnvironment = Boolean.parseBoolean(prop));
 
         getPropertyConsumerMap().put("mlStagingAppserverName", prop -> stagingHttpName = prop);
@@ -1551,7 +1496,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         getPropertyConsumerMap().put("hubSsl", prop -> {
             if (Boolean.parseBoolean(prop)) {
                 enableSimpleSsl();
-            } else if (!Boolean.parseBoolean(prop)) {
+            } else {
                 disableSimpleSsl();
             }
         });

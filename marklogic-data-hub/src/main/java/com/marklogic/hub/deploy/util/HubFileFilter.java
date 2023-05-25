@@ -17,11 +17,14 @@ package com.marklogic.hub.deploy.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.regex.Pattern;
 
 /**
  * Simple implementation that accepts every file and ignores anything starting with ".".
  */
 public class HubFileFilter implements FileFilter {
+
+    private static final Pattern restDirectoryPattern = Pattern.compile(".*[/\\\\]REST[/\\\\].*");
 
     @Override
     public boolean accept(File f) {
@@ -32,7 +35,7 @@ public class HubFileFilter implements FileFilter {
             !f.getName().endsWith("flow.json") &&
             !f.getName().endsWith("step.json") &&
             !f.getName().equals(f.getParentFile().getName() + ".properties") &&
-            !f.toString().matches(".*[/\\\\]REST[/\\\\].*") &&
+            !restDirectoryPattern.matcher(f.toString()).matches() &&
 
             // ignore vim files ending in ~
             !f.getName().endsWith("~");

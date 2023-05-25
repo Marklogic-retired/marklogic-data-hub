@@ -31,8 +31,8 @@ import java.util.Map;
 
 public class SourceQueryCollector {
 
-    private HubClient hubClient;
-    private String sourceDatabase;
+    private final HubClient hubClient;
+    private final String sourceDatabase;
 
     /**
      * @param hubClient
@@ -81,7 +81,7 @@ public class SourceQueryCollector {
         }
     }
 
-    private DiskQueue<String> readItems(Response response) throws IOException {
+    private static DiskQueue<String> readItems(Response response) throws IOException {
         DiskQueue<String> results = new DiskQueue<>();
         try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
             String line;

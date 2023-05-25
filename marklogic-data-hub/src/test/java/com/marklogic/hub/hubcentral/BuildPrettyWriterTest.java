@@ -3,7 +3,6 @@ package com.marklogic.hub.hubcentral;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.hubcentral.HubCentralManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +11,7 @@ public class BuildPrettyWriterTest {
 
     @Test
     void test() throws Exception {
-        ObjectWriter writer = new HubCentralManager().buildPrettyWriter();
+        ObjectWriter writer = HubCentralManager.buildPrettyWriter();
 
         ObjectNode node = new ObjectMapper().createObjectNode();
         node.put("hello", "world");

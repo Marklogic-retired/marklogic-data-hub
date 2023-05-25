@@ -24,9 +24,13 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MarkLogicVersion;
-import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
 import com.marklogic.hub.deploy.commands.DeployHubQueryRolesetsCommand;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
+import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
+import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.VersionInfo;
 
@@ -72,7 +76,7 @@ public class HubDeployer extends LoggingObject {
         deployer.deploy(hubConfig.getAppConfig());
     }
 
-    public void throwExceptionIfMarkLogicVersionIsInvalid(HubConfig hubConfig) {
+    public static void throwExceptionIfMarkLogicVersionIsInvalid(HubConfig hubConfig) {
         MarkLogicVersion mlVersion = new MarkLogicVersion(hubConfig.getManageClient());
         if (!mlVersion.supportsDataHubFramework()) {
             throw new RuntimeException(String.format("Cannot proceed as this version of Data Hub does not support the detected version of MarkLogic:\n" +
@@ -138,7 +142,7 @@ public class HubDeployer extends LoggingObject {
      *
      * @param appConfig
      */
-    protected void removeHubInternalConfigFromConfigDirs(AppConfig appConfig) {
+    protected static void removeHubInternalConfigFromConfigDirs(AppConfig appConfig) {
         List<ConfigDir> safeConfigDirs = new ArrayList<>();
         appConfig.getConfigDirs().forEach(configDir -> {
             final String path = configDir.getBaseDir().getAbsolutePath();
@@ -157,7 +161,7 @@ public class HubDeployer extends LoggingObject {
      * @param hubProject
      * @param appConfig
      */
-    protected void addEntityConfigToConfigDirs(HubProject hubProject, AppConfig appConfig) {
+    protected static void addEntityConfigToConfigDirs(HubProject hubProject, AppConfig appConfig) {
         File entityConfigDir = hubProject.getEntityConfigDir().toFile();
         if (entityConfigDir.exists()) {
             File f = hubProject.getProjectDir().resolve(entityConfigDir.toString()).normalize().toAbsolutePath().toFile();
@@ -171,7 +175,7 @@ public class HubDeployer extends LoggingObject {
      *
      * @param hubConfig
      */
-    protected void setKnownValuesForDhsDeployment(HubConfig hubConfig) {
+    protected static void setKnownValuesForDhsDeployment(HubConfig hubConfig) {
         hubConfig.setHttpName(DatabaseKind.STAGING, HubConfig.DEFAULT_STAGING_NAME);
         hubConfig.setHttpName(DatabaseKind.FINAL, HubConfig.DEFAULT_FINAL_NAME);
         hubConfig.setHttpName(DatabaseKind.JOB, HubConfig.DEFAULT_JOB_NAME);
@@ -206,7 +210,7 @@ public class HubDeployer extends LoggingObject {
         }
     }
 
-    protected List<Command> buildCommandsForSecurityAdmin() {
+    protected static List<Command> buildCommandsForSecurityAdmin() {
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployPrivilegesCommand());
         commands.add(new DeployRolesCommand());
@@ -214,7 +218,7 @@ public class HubDeployer extends LoggingObject {
         return commands;
     }
 
-    protected List<Command> buildCommandsForReplica(HubConfig hubConfig) {
+    protected static List<Command> buildCommandsForReplica(HubConfig hubConfig) {
         List<Command> commands = buildCommandsForDeveloperForReplica(hubConfig);
         commands.addAll(buildCommandsForSecurityAdmin());
         return commands;
@@ -225,7 +229,7 @@ public class HubDeployer extends LoggingObject {
      * @return the list of commands for resources that a data-hub-developer can safely deploy to a replica cluster; all
      * of these commands can thus safely run against a master cluster as well
      */
-    private List<Command> buildCommandsForDeveloperForReplica(HubConfig hubConfig) {
+    private static List<Command> buildCommandsForDeveloperForReplica(HubConfig hubConfig) {
         List<Command> commands = new ArrayList<>();
 
         DeployOtherDatabasesCommand deployOtherDatabasesCommand = new DeployOtherDatabasesCommand();
@@ -256,7 +260,7 @@ public class HubDeployer extends LoggingObject {
         return commands;
     }
 
-    protected List<Command> buildCommandsForDeveloper(HubConfig hubConfig) {
+    protected static List<Command> buildCommandsForDeveloper(HubConfig hubConfig) {
         List<Command> commands = buildCommandsForDeveloperForReplica(hubConfig);
 
         commands.add(new DeployAlertConfigsCommand());
@@ -283,7 +287,7 @@ public class HubDeployer extends LoggingObject {
      *
      * @return database name pattern
      */
-    protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
+    protected static Pattern buildPatternForDatabasesToUpdateIndexesFor() {
         return Pattern.compile("(staging|final|job)-database.json");
     }
 }
