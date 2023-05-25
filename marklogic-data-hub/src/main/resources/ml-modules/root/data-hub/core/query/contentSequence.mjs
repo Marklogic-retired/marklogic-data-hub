@@ -33,7 +33,7 @@ export class ContentSequence {
 
   toArray() {
     if (!this.completedAnIteration) {
-      for (const c of this) {}
+      for (const c of this) { /* iterating over the Sequence to ensure the array is populated */ }
     }
     return this.contentArray;
   }

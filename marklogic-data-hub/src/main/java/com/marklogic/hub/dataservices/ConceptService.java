@@ -2,13 +2,10 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.io.marker.JSONWriteHandle;
-
 import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.marker.JSONWriteHandle;
 
 /**
  * Provides a set of operations on the database server
@@ -44,16 +41,16 @@ public interface ConceptService {
      */
     static ConceptService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class ConceptServiceImpl implements ConceptService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
-            private BaseProxy.DBFunctionRequest req_deleteDraftModel;
-            private BaseProxy.DBFunctionRequest req_saveConceptModels;
-            private BaseProxy.DBFunctionRequest req_createDraftModel;
-            private BaseProxy.DBFunctionRequest req_getConceptReferences;
+            private final BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
+            private final BaseProxy.DBFunctionRequest req_deleteDraftModel;
+            private final BaseProxy.DBFunctionRequest req_saveConceptModels;
+            private final BaseProxy.DBFunctionRequest req_createDraftModel;
+            private final BaseProxy.DBFunctionRequest req_getConceptReferences;
 
-            private ConceptServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            ConceptServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/concept/", servDecl);
 

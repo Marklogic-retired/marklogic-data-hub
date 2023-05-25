@@ -311,15 +311,8 @@ function getContentObject(uri) {
 function releaseContentObject(uri) {
   if (contentObjectsByURI.has(uri)) {
     const contentObject = contentObjectsByURI.get(uri);
-    releaseDatabaseNodeFromContentObject(contentObject);
+    hubUtils.releaseDatabaseNodeFromContentObject(contentObject);
     contentObjectsByURI.delete(uri);
-  }
-}
-
-function releaseDatabaseNodeFromContentObject(contentObject) {
-  //release in database document nodes from memory to reduce locking. If in-memory nodes, retain.
-  if (contentObject.value instanceof Node && fn.exists(xdmp.nodeUri(contentObject.value))) {
-    delete contentObject.value;
   }
 }
 
@@ -427,7 +420,6 @@ export default {
   populateContentObjects,
   populateExistingContentObjects,
   releaseContentObject,
-  releaseDatabaseNodeFromContentObject,
   resetPopulatedContent,
   addMemoryContentObjects,
   getContentObject,

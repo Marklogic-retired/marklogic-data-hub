@@ -119,7 +119,7 @@ public class InstallInfoImpl implements InstallInfo {
     }
 
     @Override public boolean isAppServerExistent(DatabaseKind kind) {
-        boolean exists = false;
+        boolean exists;
         switch (kind) {
             case STAGING:
                 exists = stagingAppServerExists;
@@ -154,7 +154,7 @@ public class InstallInfoImpl implements InstallInfo {
     }
 
     @Override public boolean isDbExistent(DatabaseKind kind) {
-        boolean exists = false;
+        boolean exists;
         switch (kind) {
             case STAGING:
                 exists = stagingDbExists;
@@ -207,7 +207,7 @@ public class InstallInfoImpl implements InstallInfo {
 
 
     @Override public boolean isTripleIndexOn(DatabaseKind kind) {
-        boolean on = false;
+        boolean on;
         switch (kind) {
             case STAGING:
                 on = stagingTripleIndexOn;
@@ -235,7 +235,7 @@ public class InstallInfoImpl implements InstallInfo {
     }
 
     @Override public boolean isCollectionLexiconOn(DatabaseKind kind) {
-        boolean on = false;
+        boolean on;
         switch (kind) {
             case STAGING:
                 on = stagingCollectionLexiconOn;
@@ -263,7 +263,7 @@ public class InstallInfoImpl implements InstallInfo {
     }
 
     @Override public boolean areForestsExistent(DatabaseKind kind) {
-        boolean exists = false;
+        boolean exists;
         switch (kind) {
             case STAGING:
                 exists = stagingForestsExist;

@@ -108,7 +108,7 @@ public class Versions extends LoggingObject {
         }
     }
 
-    protected String getVersionFromViaLegacyRestExtension(DatabaseClient stagingClient) {
+    protected static String getVersionFromViaLegacyRestExtension(DatabaseClient stagingClient) {
         return new LegacyHubVersionManager(stagingClient).getHubVersion();
     }
 

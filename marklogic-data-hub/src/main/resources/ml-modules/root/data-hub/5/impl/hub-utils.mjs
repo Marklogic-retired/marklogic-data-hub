@@ -243,16 +243,12 @@ function nodeReplace(originalNode, newNode) {
 }
 
 /**
- * ML 9 does not support Object.values(). This function serves as its replacement so that datahub can be supported in ML 9
+ * This function was added for ML 9 which doesn't support Object.values. ML 10 does, so proxying to Object.values now.
  * @param object
  * @returns  an array of a given object's property values
  */
 function getObjectValues(object) {
-  let valuesArray = [];
-  for (const property in object) {
-    valuesArray.push(object[property]);
-  }
-  return valuesArray;
+  return Object.values(object);
 }
 
 function evalInDatabase(script, database) {
@@ -330,6 +326,13 @@ function isArrayNode(value) {
   return value instanceof ArrayNode || (isNode(value) && value.nodeKind === "array");
 }
 
+function releaseDatabaseNodeFromContentObject(contentObject) {
+  //release in database document nodes from memory to reduce locking. If in-memory nodes, retain.
+  if (contentObject.value instanceof Node && fn.exists(xdmp.nodeUri(contentObject.value))) {
+    delete contentObject.value;
+  }
+}
+
 export default {
   capitalize,
   deleteDocument,
@@ -365,5 +368,6 @@ export default {
   isXmlNode,
   isSequence,
   isWriteTransaction,
-  nodeReplace
+  nodeReplace,
+  releaseDatabaseNodeFromContentObject
 };

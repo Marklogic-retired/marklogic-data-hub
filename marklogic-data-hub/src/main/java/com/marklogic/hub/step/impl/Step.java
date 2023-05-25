@@ -17,7 +17,6 @@
 package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -204,7 +203,7 @@ public class Step {
     public String getMappingName() {
         if (isMappingStep() && options != null) {
             Object obj = options.get("mapping");
-            if (obj != null && obj instanceof ObjectNode) {
+            if (obj instanceof ObjectNode) {
                 ObjectNode mapping = (ObjectNode)obj;
                 if (mapping.has("name")) {
                     return mapping.get("name").asText();

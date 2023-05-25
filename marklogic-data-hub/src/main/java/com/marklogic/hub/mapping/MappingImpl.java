@@ -142,7 +142,7 @@ public class MappingImpl implements Mapping {
         this.namespaces = namespaces;
     }
 
-    private ObjectNode createProperty(String name, String value) {
+    private static ObjectNode createProperty(String name, String value) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
         node.put(name, value);

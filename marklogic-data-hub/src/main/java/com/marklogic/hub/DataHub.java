@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.marklogic.hub;
 
 import com.marklogic.hub.error.ServerValidationException;

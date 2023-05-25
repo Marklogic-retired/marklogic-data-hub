@@ -16,16 +16,11 @@
  */
 package com.marklogic.hub.central.controllers;
 
-import com.fasterxml.jackson.core.sym.Name;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.ForbiddenUserException;
-import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.admin.QueryOptionsManager;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.query.DeleteQueryDefinition;
@@ -36,7 +31,6 @@ import com.marklogic.hub.central.schemas.ModelDefinitions;
 import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.deploy.util.ResourceUtil;
 import com.marklogic.hub.hubcentral.HubCentralManager;
 import com.marklogic.hub.util.QueryRolesetUtil;
@@ -50,7 +44,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.*;
 
@@ -58,7 +51,6 @@ import java.util.*;
 @RequestMapping("/api/models")
 public class ModelController extends BaseController {
     ObjectMapper objectMapper = new ObjectMapper();
-    HubCentralManager hcManager = new HubCentralManager();
 
     @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.GET)
     @ResponseBody
@@ -77,7 +69,7 @@ public class ModelController extends BaseController {
     public ResponseEntity<?> setHubCentralConfig(@RequestBody ObjectNode hubCentralConfig) {
         ObjectNode hubCentralConfigBase = getHubCentralConfigObject();
         String docUri = "/config/hubCentral.json";
-        hcManager.deployHubCentralConfig(getHubClient(), mergeObjects(hubCentralConfigBase, hubCentralConfig), docUri);
+        HubCentralManager.deployHubCentralConfig(getHubClient(), mergeObjects(hubCentralConfigBase, hubCentralConfig), docUri);
         return ResponseEntity.ok("");
     }
 
@@ -87,7 +79,7 @@ public class ModelController extends BaseController {
     // See setHubCentralConfig comment
     @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> deleteHubCentralConfig() {
-        hcManager.deleteHubCentralConfig(getHubClient());
+        HubCentralManager.deleteHubCentralConfig(getHubClient());
         return ResponseEntity.ok("");
     }
 
@@ -227,7 +219,7 @@ public class ModelController extends BaseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void deleteDraftsInDB(DatabaseClient client) {
+    private static void deleteDraftsInDB(DatabaseClient client) {
         //clearing the draft in respective databases
         QueryManager qm = client.newQueryManager();
         DeleteQueryDefinition def=qm.newDeleteDefinition();
@@ -263,9 +255,10 @@ public class ModelController extends BaseController {
 
     private void deployIndexConfig(JsonNode modelConfigNode, ManageClient manageClient) {
         try {
+
             for (String databaseName : Arrays.asList(getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL))) {
                 final ObjectNode modelBasedProperties = modelConfigNode.get("indexConfig").deepCopy();
-                final ObjectNode existingProperties = (ObjectNode)new ObjectMapper().readTree(manageClient.getJson("/manage/v2/databases/" + databaseName + "/properties"));
+                final ObjectNode existingProperties = (ObjectNode)objectMapper.readTree(manageClient.getJson("/manage/v2/databases/" + databaseName + "/properties"));
                 JsonNode mergedProperties = ResourceUtil.mergeExistingArrayProperties(modelBasedProperties, existingProperties);
                 manageClient.putJson("/manage/v2/databases/" + databaseName + "/properties", mergedProperties.toString());
             }
@@ -274,7 +267,7 @@ public class ModelController extends BaseController {
         }
     }
 
-    private void deployQueryRolesets(JsonNode modelConfigNode, ManageClient manageClient) {
+    private static void deployQueryRolesets(JsonNode modelConfigNode, ManageClient manageClient) {
         try {
             modelConfigNode.get("queryRolesets").forEach(jsonNode -> {
                 try {
@@ -290,7 +283,7 @@ public class ModelController extends BaseController {
         }
     }
 
-    private void deployProtectedPaths(JsonNode modelConfigNode, ManageClient manageClient) {
+    private static void deployProtectedPaths(JsonNode modelConfigNode, ManageClient manageClient) {
         try {
             modelConfigNode.get("protectedPaths").forEach(jsonNode -> manageClient.postJson("/manage/v2/protected-paths", jsonNode.toString()));
         }
@@ -332,7 +325,7 @@ public class ModelController extends BaseController {
         });
     }
 
-    private void writeOptions(String databaseKind, QueryOptionsManager queryOptionsManager, String optionName, String options) {
+    private static void writeOptions(String databaseKind, QueryOptionsManager queryOptionsManager, String optionName, String options) {
         try {
             queryOptionsManager.writeOptionsAs(optionName, Format.XML, options);
         } catch (Exception e) {

@@ -20,7 +20,7 @@ public class CustomExceptionHandlerTest {
         Stream.of(
             new ClientAbortException(new IOException(message)),
             new RuntimeException(new ClientAbortException(new IOException(message)))
-        ).forEach(ex -> assertTrue(handler.isClientAbortExceptionDueToBrokenPipe(ex), "Exception: " + ex));
+        ).forEach(ex -> assertTrue(CustomExceptionHandler.isClientAbortExceptionDueToBrokenPipe(ex), "Exception: " + ex));
 
         Stream.of(
             new IOException(message),
@@ -28,7 +28,7 @@ public class CustomExceptionHandlerTest {
             new ClientAbortException(new RuntimeException(message)),
             new ClientAbortException(new IOException("Not a broken pipe")),
             new RuntimeException(new ClientAbortException(new IOException(new RuntimeException(message))))
-        ).forEach(ex -> assertFalse(handler.isClientAbortExceptionDueToBrokenPipe(ex), "Exception: " + ex));
+        ).forEach(ex -> assertFalse(CustomExceptionHandler.isClientAbortExceptionDueToBrokenPipe(ex), "Exception: " + ex));
     }
 
 }

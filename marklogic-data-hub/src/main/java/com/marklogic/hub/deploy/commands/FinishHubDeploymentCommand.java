@@ -13,7 +13,7 @@ import com.marklogic.hub.impl.HubConfigImpl;
 
 public class FinishHubDeploymentCommand extends AbstractCommand {
 
-    private HubConfigImpl hubConfig;
+    private final HubConfigImpl hubConfig;
 
     public FinishHubDeploymentCommand(HubConfig hubConfig) {
         this.hubConfig = (HubConfigImpl) hubConfig;

@@ -23,6 +23,6 @@ public class BuildPatternForDatabasesToUpdateIndexesForTest {
     }
 
     private boolean matches(String filename) {
-        return dataHub.buildPatternForDatabasesToUpdateIndexesFor().matcher(filename).matches();
+        return DataHubImpl.buildPatternForDatabasesToUpdateIndexesFor().matcher(filename).matches();
     }
 }

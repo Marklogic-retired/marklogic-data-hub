@@ -2,14 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.util.stream.Stream;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.util.stream.Stream;
 
 /**
  * Provides a set of operations on the database server
@@ -45,16 +43,16 @@ public interface StepService {
      */
     static StepService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class StepServiceImpl implements StepService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_getReferences;
-            private BaseProxy.DBFunctionRequest req_getStepsByType;
-            private BaseProxy.DBFunctionRequest req_saveStep;
-            private BaseProxy.DBFunctionRequest req_deleteStep;
-            private BaseProxy.DBFunctionRequest req_getStep;
+            private final BaseProxy.DBFunctionRequest req_getReferences;
+            private final BaseProxy.DBFunctionRequest req_getStepsByType;
+            private final BaseProxy.DBFunctionRequest req_saveStep;
+            private final BaseProxy.DBFunctionRequest req_deleteStep;
+            private final BaseProxy.DBFunctionRequest req_getStep;
 
-            private StepServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            StepServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/step/", servDecl);
 

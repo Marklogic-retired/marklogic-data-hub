@@ -64,7 +64,7 @@ public class DocSearchQueryInfo {
             // rules for entity types, this isn't necessary to do; this is primarily for future-proofing in case those
             // rules were to change and allow characters like double quotes.
             builder.append(" entityType:\"")
-                .append(selectedEntityTypes.stream().collect(Collectors.joining(",")))
+                .append(String.join(",", selectedEntityTypes))
                 .append("\"");
         }
 

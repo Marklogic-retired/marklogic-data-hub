@@ -19,9 +19,9 @@ import java.util.Optional;
 
 public class StepRunnerFactory {
 
-    private HubClient hubClient;
-    private HubProject hubProject;
-    private StepDefinitionProvider stepDefinitionProvider;
+    private final HubClient hubClient;
+    private final HubProject hubProject;
+    private final StepDefinitionProvider stepDefinitionProvider;
 
     /**
      * The one difference between this and the HubClient-based constructor is that by having access to a HubProject

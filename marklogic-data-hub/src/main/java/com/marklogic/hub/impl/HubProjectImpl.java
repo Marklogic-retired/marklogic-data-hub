@@ -31,6 +31,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -47,14 +48,15 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -66,6 +68,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     public static final String MODULES_DIR = PATH_PREFIX + "ml-modules";
     public static final String USER_SCHEMAS_DIR = PATH_PREFIX + "ml-schemas";
+    private static final Pattern nonSpecialCharacterPattern = Pattern.compile("[^\\w\\-]");
 
     private String projectDirString;
     private Path projectDir;
@@ -73,7 +76,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     private Path stepDefinitionsDir;
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
-    private String[] artifactTypes = new String[]{"entities", "step-definitions", "steps"};
+    private final String[] artifactTypes = new String[]{"entities", "step-definitions", "steps"};
 
     public HubProjectImpl(){
     }
@@ -126,7 +129,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     path = this.stepDefinitionsDir.resolve("merging");
                     break;
                 default:
-                    throw new DataHubProjectException("Invalid Step type" + type.toString());
+                    throw new DataHubProjectException("Invalid Step type" + type);
             }
         }
 
@@ -366,25 +369,25 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
     }
 
-    private void writeResources(PathMatchingResourcePatternResolver resolver, String pattern, Path projectTargetPath) throws IOException {
+    private static void writeResources(PathMatchingResourcePatternResolver resolver, String pattern, Path projectTargetPath) throws IOException {
         File projectTargetDir = projectTargetPath.toFile();
         if (!(projectTargetDir.mkdirs() || projectTargetDir.exists())) {
             throw new RuntimeException("Unable to create directory at '"+ projectTargetDir.getAbsolutePath() +"'.");
         }
         for (Resource resource : resolver.getResources(pattern)) {
-            FileCopyUtils.copy(resource.getInputStream(), new FileOutputStream(projectTargetPath.resolve(resource.getFilename()).toFile()));
+            FileCopyUtils.copy(resource.getInputStream(), Files.newOutputStream(projectTargetPath.resolve(resource.getFilename()).toFile().toPath()));
         }
     }
 
-    private void makeExecutable(Path file) {
-        Set<PosixFilePermission> perms = new HashSet<>();
+    private static void makeExecutable(Path file) {
+        Set<PosixFilePermission> perms = EnumSet.noneOf(PosixFilePermission.class);
         perms.add(PosixFilePermission.OWNER_READ);
         perms.add(PosixFilePermission.OWNER_WRITE);
         perms.add(PosixFilePermission.OWNER_EXECUTE);
 
         try {
             Files.setPosixFilePermissions(file, perms);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
@@ -426,7 +429,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                         fileContents = fileContents.replace(entry.getKey(), value);
                     }
                 }
-                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(dstFile.toFile()), StandardCharsets.UTF_8)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(dstFile.toFile().toPath()), StandardCharsets.UTF_8)) {
                     writer.write(fileContents);
                 }
             }
@@ -513,23 +516,22 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     int stepNumber = 1;
                     for(File oldFlowType: flowTypes) {
                         File[] stepFiles = oldFlowType.listFiles(File::isDirectory);
-                        for(int i=0; i<stepFiles.length; i++) {
-                            File stepFile = stepFiles[i];
+                        for (File stepFile : stepFiles) {
                             String stepName = stepFile.getName();
                             // Step names are not allowed to have special characters
-                            String newStepName = stepName.replaceAll("[^\\w\\-]", "");
+                            String newStepName = nonSpecialCharacterPattern.matcher(stepName).replaceAll("");
                             newStepName = Character.isLetter(newStepName.charAt(0)) ? newStepName : "dh_".concat(newStepName);
                             String slash = "/";
                             String mainModulePath = slash
-                                .concat("entities").concat(slash)
-                                .concat(legacyEntityDir.getName()).concat(slash)
-                                .concat(oldFlowType.getName()).concat(slash)
-                                .concat(stepName);
+                                    .concat("entities").concat(slash)
+                                    .concat(legacyEntityDir.getName()).concat(slash)
+                                    .concat(oldFlowType.getName()).concat(slash)
+                                    .concat(stepName);
                             String stepType = "";
                             boolean acceptSourceModule = false;
-                            if(oldFlowType.getName().equals("input")) {
+                            if (oldFlowType.getName().equals("input")) {
                                 stepType = "ingestion";
-                            } else if(oldFlowType.getName().equals("harmonize")) {
+                            } else if (oldFlowType.getName().equals("harmonize")) {
                                 stepType = "custom";
                                 acceptSourceModule = true;
                             }
@@ -557,7 +559,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         Properties properties = new Properties();
         try {
             File propsFile = stepFile.listFiles((File file, String name) -> name.equals(stepName.concat(".properties")))[0];
-            properties.load(new FileInputStream(propsFile));
+            properties.load(Files.newInputStream(propsFile.toPath()));
         } catch (IOException e) {
             logger.warn("%s.properties file is missing in the %s directory. The dataFormat and mainModule is defaulted to json and main.sjs" +
                 "If the default values are inappropriate, change the values in steps/%s file", stepName, stepName, stepPayLoad.get("name").asText());
@@ -608,12 +610,12 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     private void convertHubCommunityProject() {
         Path conceptConnectorModelsDir = this.getProjectDir().resolve("conceptConnectorModels");
         File hubConfigFile = this.getHubCentralConfigPath().resolve("hubCentral.json").toFile();
-        JsonNode hubConfigNode = null;
+        JsonNode hubConfigNode;
         if (hubConfigFile.exists()) {
             try {
                 hubConfigNode = ObjectMapperFactory.getObjectMapper().readTree(hubConfigFile);
             } catch (Exception ex) {
-                logger.warn("Unable to parse Hub Central Config " + hubConfigFile.getName() + "; exception: " + ex.toString());
+                logger.warn("Unable to parse Hub Central Config " + hubConfigFile.getName() + "; exception: " + ex);
                 return;
             }
         } else {
@@ -719,7 +721,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                         }
                     }
                 } catch (Exception ex) {
-                    logger.warn("Unable to parse Hub Community Model " + communityModelFile.getName() + "; exception: " + ex.toString());
+                    logger.warn("Unable to parse Hub Community Model " + communityModelFile.getName() + "; exception: " + ex);
                 }
                 for (JsonNode entityNode: entityModels.values()) {
                     String title = entityNode.path("info").path("title").asText();
@@ -809,7 +811,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             filesToBeAddedToZip.forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
                 if (!fileToZip.exists()) {
-                    logger.warn(String.format("%s does not exist during project export.", fileToZip.toString()));
+                    logger.warn(String.format("%s does not exist during project export.", fileToZip));
                     return;
                 }
                 try {
@@ -835,7 +837,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return getProjectDir().toFile().getName();
     }
 
-    private void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {
+    private static void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {
         File[] files = fileToZip.listFiles();
         if(files != null) {
             for (File file : files) {
@@ -853,7 +855,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
     }
 
-    private void addFileToZip(String basePath, File fileToZip, ZipOutputStream zout) throws  IOException {
+    private static void addFileToZip(String basePath, File fileToZip, ZipOutputStream zout) throws  IOException {
         try (FileInputStream fin = new FileInputStream(fileToZip)) {
             zout.putNextEntry(new ZipEntry(basePath + fileToZip.getName()));
             IOUtils.copy(fin, zout);
@@ -908,14 +910,12 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
     }
 
-    protected boolean hasEmptyRangeElementIndexArray(ObjectNode db) {
+    protected static boolean hasEmptyRangeElementIndexArray(ObjectNode db) {
         if (db.has("range-element-index")) {
             JsonNode node = db.get("range-element-index");
             if (node instanceof ArrayNode) {
                 ArrayNode indexes = (ArrayNode)node;
-                if (indexes.size() == 0) {
-                    return true;
-                }
+                return indexes.isEmpty();
             }
         }
         return false;
@@ -1011,7 +1011,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     path = parent.resolve("merging");
                     break;
                 default:
-                    throw new DataHubProjectException("Invalid Step type" + type.toString());
+                    throw new DataHubProjectException("Invalid Step type" + type);
             }
         }
 

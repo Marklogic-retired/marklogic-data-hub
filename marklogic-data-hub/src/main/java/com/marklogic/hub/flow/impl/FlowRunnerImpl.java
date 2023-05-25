@@ -6,10 +6,11 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.JobService;
-// This is explicitly imported to avoid compile errors with Java 9 or higher, where Flow cannot be
-// distinguished from java.util.concurrent.Flow
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.RunStepResponse;
@@ -24,8 +25,25 @@ import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -42,34 +60,34 @@ public class FlowRunnerImpl implements FlowRunner {
     // Only populated when constructed with a HubClient, which implies that a HubProject is not available
     private HubClient hubClient;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(false);
-    private AtomicBoolean isJobCancelled = new AtomicBoolean(false);
-    private AtomicBoolean isJobSuccess = new AtomicBoolean(true);
-    private AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
+    final AtomicBoolean isRunning = new AtomicBoolean(false);
+    final AtomicBoolean isJobCancelled = new AtomicBoolean(false);
+    final AtomicBoolean isJobSuccess = new AtomicBoolean(true);
+    final AtomicBoolean jobStoppedOnError = new AtomicBoolean(false);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String runningJobId;
-    private Step runningStep;
-    private Flow runningFlow;
+    String runningJobId;
+    Step runningStep;
+    Flow runningFlow;
 
-    private StepRunner stepRunner;
+    StepRunner stepRunner;
 
     /*
      * Using concrete type ConcurrentHashMap instead of Map so coverity static scan does not complain about
      * "modification without proper synchronization" when we call `remove(key)` on the `stepsMap` later in the code.
      */
-    private final ConcurrentHashMap<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
-    private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
-    private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
+    final ConcurrentHashMap<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
+    final Map<String, Flow> flowMap = new ConcurrentHashMap<>();
+    final Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
 
     // TODO Hoping to combine these maps together into a single one soon
-    private Map<String, FlowContext> flowContextMap = new ConcurrentHashMap<>();
+    final Map<String, FlowContext> flowContextMap = new ConcurrentHashMap<>();
 
-    private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
+    final Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
-    private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
+    final List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
-    private ThreadPoolExecutor threadPool;
+    ThreadPoolExecutor threadPool;
 
     public FlowRunnerImpl() {
     }
@@ -240,7 +258,7 @@ public class FlowRunnerImpl implements FlowRunner {
      * @param flow
      * @param options
      */
-    protected void configureStopOnError(Flow flow, Map<String, Object> options) {
+    protected static void configureStopOnError(Flow flow, Map<String, Object> options) {
         if (options != null) {
             Object value = options.get("stopOnError");
             if (Boolean.TRUE.equals(value) || "true".equals(value)) {
@@ -249,7 +267,7 @@ public class FlowRunnerImpl implements FlowRunner {
         }
     }
 
-    private void initializeFlow(StepRunnerFactory stepRunnerFactory, String jobId) {
+    void initializeFlow(StepRunnerFactory stepRunnerFactory, String jobId) {
         //Reset the states to initial values before starting a flow run
         isRunning.set(true);
         isJobSuccess.set(true);
@@ -268,7 +286,7 @@ public class FlowRunnerImpl implements FlowRunner {
             // thread pool size needs to be at least 2, so the current step thread can kick-off the next step thread
             int maxPoolSize = Math.max(Runtime.getRuntime().availableProcessors()/2, 2);
             threadPool = new CustomPoolExecutor(2, maxPoolSize, 0L, TimeUnit.MILLISECONDS
-                , new LinkedBlockingQueue<Runnable>());
+                , new LinkedBlockingQueue<>());
         }
 
         threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId));
@@ -288,7 +306,7 @@ public class FlowRunnerImpl implements FlowRunner {
         }
     }
 
-    protected void copyJobDataToResponse(RunFlowResponse response, RunFlowResponse jobDocument) {
+    protected static void copyJobDataToResponse(RunFlowResponse response, RunFlowResponse jobDocument) {
         response.setStartTime(jobDocument.getStartTime());
         response.setEndTime(jobDocument.getEndTime());
         response.setUser(jobDocument.getUser());
@@ -298,9 +316,9 @@ public class FlowRunnerImpl implements FlowRunner {
 
     private class FlowRunnerTask implements Runnable {
 
-        private StepRunnerFactory stepRunnerFactory;
-        private String jobId;
-        private Flow flow;
+        final StepRunnerFactory stepRunnerFactory;
+        private final String jobId;
+        private final Flow flow;
         private Queue<String> stepQueue;
 
         public Queue<String> getStepQueue() {
@@ -322,7 +340,7 @@ public class FlowRunnerImpl implements FlowRunner {
             FlowContext flowContext = flowContextMap.get(jobId);
 
             Map<String, RunStepResponse> stepOutputs = new HashMap<>();
-            String stepNum = null;
+            String stepNum;
 
             final long[] currSuccessfulEvents = {0};
             final long[] currFailedEvents = {0};
@@ -424,8 +442,8 @@ public class FlowRunnerImpl implements FlowRunner {
             }
             else if (!isJobSuccess.get()) {
                     Collection<RunStepResponse> stepResps = stepOutputs.values();
-                    long failedStepCount = stepResps.stream().filter((stepResp)-> stepResp.getStatus()
-                        .contains(JobStatus.FAILED_PREFIX)).collect(Collectors.counting());
+                    long failedStepCount = stepResps.stream().filter((stepResp) -> stepResp.getStatus()
+                            .contains(JobStatus.FAILED_PREFIX)).count();
                     if(failedStepCount == stepResps.size()){
                         jobStatus = JobStatus.FAILED;
                     }

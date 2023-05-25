@@ -180,16 +180,16 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         HubProjectImpl project = new HubProjectImpl();
 
         Database db = new Database(null, "data-hub-FINAL");
-        assertFalse(project.hasEmptyRangeElementIndexArray(db.toObjectNode()),
+        assertFalse(HubProjectImpl.hasEmptyRangeElementIndexArray(db.toObjectNode()),
             "False should be returned since the range-element-index field isn't set");
 
         db.setRangeElementIndex(new ArrayList<>());
-        assertTrue(project.hasEmptyRangeElementIndexArray(db.toObjectNode()));
+        assertTrue(HubProjectImpl.hasEmptyRangeElementIndexArray(db.toObjectNode()));
 
         ElementIndex index = new ElementIndex();
         index.setLocalname("example");
         db.getRangeElementIndex().add(index);
-        assertFalse(new HubProjectImpl().hasEmptyRangeElementIndexArray(db.toObjectNode()));
+        assertFalse(HubProjectImpl.hasEmptyRangeElementIndexArray(db.toObjectNode()));
     }
 
     @Test

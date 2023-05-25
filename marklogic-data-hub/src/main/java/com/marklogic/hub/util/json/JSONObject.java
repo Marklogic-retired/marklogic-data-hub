@@ -17,10 +17,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class JSONObject {
-    private static Logger logger = LoggerFactory.getLogger(JSONObject.class);
+    private static final Logger logger = LoggerFactory.getLogger(JSONObject.class);
 
     ObjectMapper mapper;
     JsonNode json;
@@ -234,7 +239,7 @@ public class JSONObject {
      * @return integer value if present else null
      */
     public Integer getIntValue(String key) {
-        return json.get(key) == null ? null : json.get((String) key).asInt();
+        return json.get(key) == null ? null : json.get(key).asInt();
     }
 
     /**

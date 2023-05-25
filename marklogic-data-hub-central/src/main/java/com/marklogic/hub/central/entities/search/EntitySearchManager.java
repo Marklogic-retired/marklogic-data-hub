@@ -61,6 +61,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class EntitySearchManager {
 
@@ -70,10 +71,11 @@ public class EntitySearchManager {
     private static final String FILE_PREFIX = "DH_Export_";
 
     private static final Logger logger = LoggerFactory.getLogger(EntitySearchManager.class);
+    private static final Pattern lineEndPattern = Pattern.compile("\n|\r");
 
     public String QUERY_OPTIONS;
     private static Map<String, FacetHandler> facetHandlerMap;
-    private DatabaseClient searchDatabaseClient;
+    private final DatabaseClient searchDatabaseClient;
     private DatabaseClient savedQueryDatabaseClient;
 
     public EntitySearchManager(HubClient hubClient) {
@@ -225,7 +227,7 @@ public class EntitySearchManager {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
                 StringWriter writer = new StringWriter();
                 transformer.transform(new DOMSource(document), new StreamResult(writer));
-                output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+                output = lineEndPattern.matcher(writer.getBuffer().toString()).replaceAll("");
             } catch(Exception e) {
                 logger.warn("Unable to parse structured query XML", e);
             }
@@ -236,7 +238,7 @@ public class EntitySearchManager {
         return queryMgr.newRawStructuredQueryDefinition(new StringHandle(structuredQueryStr).withFormat(Format.XML), QUERY_OPTIONS);
     }
 
-    private void initializeFacetHandlerMap() {
+    private static void initializeFacetHandlerMap() {
         facetHandlerMap = new HashMap<>();
         facetHandlerMap.put(Constants.COLLECTION_CONSTRAINT_NAME, new CollectionFacetHandler());
         facetHandlerMap.put(Constants.JOB_RANGE_CONSTRAINT_NAME, new JobRangeFacetHandler());
@@ -250,7 +252,7 @@ public class EntitySearchManager {
     }
 
     public void exportByQuery(JsonNode queryDocument, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
-        if ("CSV".equals(fileType.toUpperCase())) {
+        if ("CSV".equalsIgnoreCase(fileType)) {
             prepareResponseHeader(response, CSV_CONTENT_TYPE, getFileNameForDownload(queryDocument, CSV_FILE_EXTENSION));
             exportRows(queryDocument, limit, out);
         } else {
@@ -261,7 +263,7 @@ public class EntitySearchManager {
     public void exportRows(JsonNode queryDocument, Long limit, OutputStream out) {
         QueryManager queryMgr = searchDatabaseClient.newQueryManager();
         SearchQuery searchQuery = transformToSearchQuery(queryDocument);
-        Reader export = null;
+        Reader export;
         if(searchQuery.getQuery().getEntityTypeIds().size() > 1) {
             searchQuery.setPageLength(limit != null && limit > 0 ? limit : Long.MAX_VALUE);
             String exportData = search(searchQuery, true) == null ? "" : search(searchQuery, true).get();
@@ -293,7 +295,7 @@ public class EntitySearchManager {
         return  getQueryOptions(QUERY_OPTIONS);
     }
 
-    protected SearchQuery transformToSearchQuery(JsonNode queryDocument) {
+    protected static SearchQuery transformToSearchQuery(JsonNode queryDocument) {
         SearchQuery searchQuery = Optional.of(queryDocument)
                 .map(node -> node.get("savedQuery"))
                 .map(node -> node.get("query"))
@@ -316,7 +318,7 @@ public class EntitySearchManager {
         return searchQuery;
     }
 
-    protected String getEntityTypeIdForRowExport(JsonNode queryDocument) {
+    protected static String getEntityTypeIdForRowExport(JsonNode queryDocument) {
         return Optional.of(queryDocument)
                 .map(node -> node.get("savedQuery"))
                 .map(node -> node.get("query"))
@@ -325,7 +327,7 @@ public class EntitySearchManager {
                 .orElse(null);
     }
 
-    protected List<String> getColumnNamesForRowExport(JsonNode queryDocument) {
+    protected static List<String> getColumnNamesForRowExport(JsonNode queryDocument) {
         List<String> columns = new ArrayList<>();
         Optional.of(queryDocument)
                 .map(node -> node.get("savedQuery"))
@@ -334,7 +336,7 @@ public class EntitySearchManager {
         return columns;
     }
 
-    protected List<SearchQuery.SortOrder> getSortOrderListForRowExport(JsonNode queryDocument) {
+    protected static List<SearchQuery.SortOrder> getSortOrderListForRowExport(JsonNode queryDocument) {
         List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         Optional.of(queryDocument)
@@ -353,7 +355,7 @@ public class EntitySearchManager {
     /*
      * Returns null when 'name' is missing or blank ("")
      */
-    protected String getQueryName(JsonNode queryDocument) {
+    protected static String getQueryName(JsonNode queryDocument) {
         return Optional.of(queryDocument)
                 .map(node -> node.get("savedQuery"))
                 .map(node -> node.get("name"))
@@ -380,14 +382,14 @@ public class EntitySearchManager {
         return queryOptions;
     }
 
-    private void prepareResponseHeader(HttpServletResponse response, String contentType, String fileName) {
+    private static void prepareResponseHeader(HttpServletResponse response, String contentType, String fileName) {
         response.setContentType(contentType);
         response.setHeader(
                 "Content-Disposition",
                 "attachment;filename=" + fileName);
     }
 
-    private String getFileNameForDownload(JsonNode queryDocument, String fileExtension) {
+    private static String getFileNameForDownload(JsonNode queryDocument, String fileExtension) {
         String queryInfo = getQueryName(queryDocument);
         if (queryInfo == null) {
             queryInfo = getEntityTypeIdForRowExport(queryDocument);
@@ -397,7 +399,7 @@ public class EntitySearchManager {
         return FILE_PREFIX + queryInfo + SEPARATOR + timestamp + fileExtension;
     }
 
-    private ArrayNode sortOrderToArrayNode(List<SearchQuery.SortOrder> sortOrderList) {
+    private static ArrayNode sortOrderToArrayNode(List<SearchQuery.SortOrder> sortOrderList) {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.createArrayNode();
         for (SearchQuery.SortOrder sortOrder: sortOrderList) {

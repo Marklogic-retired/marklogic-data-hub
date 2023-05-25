@@ -44,7 +44,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class HubCentralManager extends LoggingObject {
 
-    public void writeHubCentralFilesAsZip(HubClient hubClient, OutputStream outputStream) {
+    public static void writeHubCentralFilesAsZip(HubClient hubClient, OutputStream outputStream) {
         ArrayNode artifacts = (ArrayNode) ArtifactService.on(hubClient.getStagingClient()).getArtifactsWithProjectPaths();
 
         final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
@@ -79,7 +79,7 @@ public class HubCentralManager extends LoggingObject {
             projectPath = Files.createTempDirectory("");
             hubProject.createProject(projectPath.toFile().getAbsolutePath());
             HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
-            Properties dbProperties = hubConfig.getHubPropertiesFromDb(hubClient.getStagingClient());
+            Properties dbProperties = HubConfigImpl.getHubPropertiesFromDb(hubClient.getStagingClient());
             hubConfig.applyProperties(dbProperties);
             hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
@@ -96,7 +96,7 @@ public class HubCentralManager extends LoggingObject {
         }
     }
 
-    public void deployHubCentralConfig(HubClient hubClient, JsonNode config, String docUri) {
+    public static void deployHubCentralConfig(HubClient hubClient, JsonNode config, String docUri) {
         JacksonHandle handle = new JacksonHandle().with(config);
         DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
@@ -106,13 +106,13 @@ public class HubCentralManager extends LoggingObject {
         hubClient.getStagingClient().newJSONDocumentManager().write(docUri, documentMetadataHandle, handle);
     }
 
-    public void deleteHubCentralConfig(HubClient hubClient) {
+    public static void deleteHubCentralConfig(HubClient hubClient) {
         hubClient.getFinalClient().newJSONDocumentManager().delete("/config/hubCentral.json");
         hubClient.getStagingClient().newJSONDocumentManager().delete("/config/hubCentral.json");
     }
 
-    private void writeDhsGradlePropertiesFile(HubProjectImpl hubProject) {
-        try (OutputStream outputStream = new FileOutputStream(hubProject.getProjectDir().resolve("gradle-dhs.properties").toFile())) {
+    private static void writeDhsGradlePropertiesFile(HubProjectImpl hubProject) {
+        try (OutputStream outputStream = Files.newOutputStream(hubProject.getProjectDir().resolve("gradle-dhs.properties").toFile().toPath())) {
             Properties properties = new Properties();
             properties.setProperty("mlHost", "");
             properties.setProperty("mlUsername", "");
@@ -124,7 +124,7 @@ public class HubCentralManager extends LoggingObject {
         }
     }
 
-    private void writeHubCentralFilesToProject(HubProject hubProject, HubClient hubClient){
+    private static void writeHubCentralFilesToProject(HubProject hubProject, HubClient hubClient){
         ArrayNode artifacts = (ArrayNode) ArtifactService.on(hubClient.getStagingClient()).getArtifactsWithProjectPaths();
         final File projectDir = hubProject.getProjectDir().toFile();
         final ObjectWriter prettyWriter = buildPrettyWriter();
@@ -272,13 +272,13 @@ public class HubCentralManager extends LoggingObject {
         }
     }
 
-    protected ObjectWriter buildPrettyWriter() {
+    protected static ObjectWriter buildPrettyWriter() {
         ObjectMapper prettyMapper = new ObjectMapper();
         prettyMapper.enable(SerializationFeature.INDENT_OUTPUT);
         return prettyMapper.writer(new CustomPrettyPrinter());
     }
 
-    class CustomPrettyPrinter extends DefaultPrettyPrinter {
+    static class CustomPrettyPrinter extends DefaultPrettyPrinter {
         @Override
         public DefaultPrettyPrinter withSeparators(Separators separators) {
             _separators = separators;

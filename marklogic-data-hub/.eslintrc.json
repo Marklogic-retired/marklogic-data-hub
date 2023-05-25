@@ -33,7 +33,6 @@
       "no-trailing-spaces": "error",
       "object-curly-spacing": "error",
       "semi": "error",
-      "space-in-parens": "error",
       "space-before-blocks": "error",
       "no-var": "error",
       "indent": ["error", 2],

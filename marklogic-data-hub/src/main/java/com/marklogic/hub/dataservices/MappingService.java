@@ -2,13 +2,10 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-
-
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.io.marker.JSONWriteHandle;
-
 import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.marker.JSONWriteHandle;
 
 /**
  * Provides a set of operations on the database server
@@ -44,19 +41,19 @@ public interface MappingService {
      */
     static MappingService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class MappingServiceImpl implements MappingService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_getReferences;
-            private BaseProxy.DBFunctionRequest req_getEntitiesForMapping;
-            private BaseProxy.DBFunctionRequest req_testMapping;
-            private BaseProxy.DBFunctionRequest req_getDocument;
-            private BaseProxy.DBFunctionRequest req_getUris;
-            private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
-            private BaseProxy.DBFunctionRequest req_getMappingFunctions;
-            private BaseProxy.DBFunctionRequest req_generateMappingFunctions;
+            private final BaseProxy.DBFunctionRequest req_getReferences;
+            private final BaseProxy.DBFunctionRequest req_getEntitiesForMapping;
+            private final BaseProxy.DBFunctionRequest req_testMapping;
+            private final BaseProxy.DBFunctionRequest req_getDocument;
+            private final BaseProxy.DBFunctionRequest req_getUris;
+            private final BaseProxy.DBFunctionRequest req_generateMappingTransforms;
+            private final BaseProxy.DBFunctionRequest req_getMappingFunctions;
+            private final BaseProxy.DBFunctionRequest req_generateMappingFunctions;
 
-            private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/mapping/", servDecl);
 

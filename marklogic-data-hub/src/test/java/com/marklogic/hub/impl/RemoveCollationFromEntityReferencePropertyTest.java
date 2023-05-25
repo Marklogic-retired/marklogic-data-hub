@@ -35,7 +35,7 @@ public class RemoveCollationFromEntityReferencePropertyTest {
 
         JsonNode node = new ObjectMapper().readTree(entityModel);
 
-        new EntityManagerImpl().removeCollationFromEntityReferenceProperties(node);
+        EntityManagerImpl.removeCollationFromEntityReferenceProperties(node);
 
         JsonNode nameNode = node.get("definitions").get("Person").get("properties").get("name");
         assertEquals("#/definitions/Name", nameNode.get("$ref").asText());

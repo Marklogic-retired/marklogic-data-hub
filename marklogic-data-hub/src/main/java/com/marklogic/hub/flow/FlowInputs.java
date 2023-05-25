@@ -1,6 +1,9 @@
 package com.marklogic.hub.flow;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FlowInputs {
 
@@ -33,7 +36,7 @@ public class FlowInputs {
             stepConfig = new HashMap<>();
         }
         @SuppressWarnings("unchecked")
-        Map<String, Object> fileLocations = (Map)stepConfig.get("fileLocations");
+        Map<String, Object> fileLocations = (Map<String, Object>)stepConfig.get("fileLocations");
         if (fileLocations == null) {
             fileLocations = new HashMap<>();
             stepConfig.put("fileLocations", fileLocations);

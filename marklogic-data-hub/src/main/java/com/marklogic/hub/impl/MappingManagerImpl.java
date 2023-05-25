@@ -41,10 +41,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 @Component
 public class MappingManagerImpl extends LoggingObject implements MappingManager {
+    private static final Pattern versionedMappingPattern = Pattern.compile(".+\\-([0-9]+)\\.mapping\\.json");
     // Autowired still needed for gradle tasks
     @Autowired
     protected HubConfig hubConfig;
@@ -173,7 +175,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
             /*  Captures the number between that is in between "-" and  ".mapping.json"
              *  as in test-mapping-5.mapping.json would set parsedFileNameVersion to "5"
              */
-            String parsedFileNameVersion = fileName.replaceAll(".+\\-([0-9]+)\\.mapping\\.json" , "$1");
+            String parsedFileNameVersion = versionedMappingPattern.matcher(fileName).replaceAll("$1");
             int fileNameVersion = Integer.parseInt(parsedFileNameVersion);
             if( version == -1 && fileNameVersion > highestVersion){
                 highestVersion = fileNameVersion;
@@ -188,7 +190,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode node = objectMapper.readTree(fileInputStream);
                 Mapping newMap = createMappingFromJSON(node);
-                if(newMap != null && newMap.getName().length() > 0) {
+                if(newMap != null && !newMap.getName().isEmpty()) {
                     return newMap;
                 }
             } catch (IOException e) {

@@ -28,7 +28,7 @@ public abstract class AbstractStepDefinition implements StepDefinition {
     private final static int DEFAULT_BATCH_SIZE = 100;
     private final static int DEFAULT_THREAD_COUNT = 4;
 
-    private String lang;
+    private final String lang;
     private String name;
     private String description;
     private StepDefinitionType type;

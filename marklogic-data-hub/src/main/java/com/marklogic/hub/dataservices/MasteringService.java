@@ -2,14 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.util.stream.Stream;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.util.stream.Stream;
 
 /**
  * Provides a set of operations on the database server
@@ -45,19 +43,19 @@ public interface MasteringService {
      */
     static MasteringService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class MasteringServiceImpl implements MasteringService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_calculateMergingActivity;
-            private BaseProxy.DBFunctionRequest req_validateMatchingStep;
-            private BaseProxy.DBFunctionRequest req_updateMergeOptions;
-            private BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
-            private BaseProxy.DBFunctionRequest req_updateMatchOptions;
-            private BaseProxy.DBFunctionRequest req_previewMatchingActivity;
-            private BaseProxy.DBFunctionRequest req_getDefaultCollections;
-            private BaseProxy.DBFunctionRequest req_validateMergingStep;
+            private final BaseProxy.DBFunctionRequest req_calculateMergingActivity;
+            private final BaseProxy.DBFunctionRequest req_validateMatchingStep;
+            private final BaseProxy.DBFunctionRequest req_updateMergeOptions;
+            private final BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
+            private final BaseProxy.DBFunctionRequest req_updateMatchOptions;
+            private final BaseProxy.DBFunctionRequest req_previewMatchingActivity;
+            private final BaseProxy.DBFunctionRequest req_getDefaultCollections;
+            private final BaseProxy.DBFunctionRequest req_validateMergingStep;
 
-            private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/mastering/", servDecl);
 

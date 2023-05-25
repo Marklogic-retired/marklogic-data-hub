@@ -14,15 +14,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class HubCentralConverter extends LoggingObject {
 
     private static final List<String> removableIndexArrays = Arrays.asList("elementRangeIndex", "rangeIndex", "pathRangeIndex");
-    private HubConfig hubConfig;
-    private FlowConverter flowConverter;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final HubConfig hubConfig;
+    private final FlowConverter flowConverter;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public HubCentralConverter(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -135,7 +139,7 @@ public class HubCentralConverter extends LoggingObject {
             return false;
         }
         String firstLevelEntityTypeName = entityModelNode.get("info").get("title").asText();
-        entityModelNode = (ObjectNode) entityModelNode.get("definitions").get(firstLevelEntityTypeName);
+        entityModelNode = entityModelNode.get("definitions").get(firstLevelEntityTypeName);
         return entityModelNode.get("rangeIndex") != null || entityModelNode.get("elementRangeIndex") != null ||
                 entityModelNode.get("pathRangeIndex") != null;
     }
@@ -175,18 +179,14 @@ public class HubCentralConverter extends LoggingObject {
         return true;
     }
 
-    private boolean isStructuredTypeProperty(ObjectNode entityPropertyNode) {
+    private static boolean isStructuredTypeProperty(ObjectNode entityPropertyNode) {
         // check for simple structured type property or simple relationship property
         if (entityPropertyNode.get("datatype") == null && entityPropertyNode.get("$ref") != null) {
             return true;
         }
 
         // check if structured type or relationship type property with array datatype
-        if (entityPropertyNode.get("datatype") != null && entityPropertyNode.get("datatype").asText().equals("array") &&
-                entityPropertyNode.get("items") != null && entityPropertyNode.get("items").get("$ref") != null) {
-            return true;
-        }
-
-        return false;
+        return entityPropertyNode.get("datatype") != null && entityPropertyNode.get("datatype").asText().equals("array") &&
+                entityPropertyNode.get("items") != null && entityPropertyNode.get("items").get("$ref") != null;
     }
 }

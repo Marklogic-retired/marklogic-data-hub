@@ -33,7 +33,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toMap;
@@ -43,8 +49,8 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     private static final String ENTITY_FILE_EXTENSION = ".entity.json";
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private HubConfig hubConfig;
-    private Path userFinalSchemasTDEs;
+    private final HubConfig hubConfig;
+    private final Path userFinalSchemasTDEs;
 
     private String entityNames;
     @SuppressWarnings("unchecked")
@@ -253,7 +259,9 @@ class EntityServicesManager extends com.marklogic.client.ext.es.EntityServicesMa
                 "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\" at \"/data-hub/5/impl/hub-entities.xqy\";\n" +
                 "declare variable $entity-title external; \n" +
                 "hent:dump-tde(json:to-array(es:model-validate(hent:get-model($entity-title))))";
-            return client.newServerEval().xquery(xquery).addVariable("entity-title", extractEntityNameFromURI(modelUri).get()).eval().next().getString();
+            try (EvalResultIterator result = client.newServerEval().xquery(xquery).addVariable("entity-title", extractEntityNameFromURI(modelUri).get()).eval()) {
+                return result.next().getString();
+            }
         } else {
             return super.generateCode(modelUri, functionName);
         }
@@ -263,7 +271,7 @@ class EntityServicesManager extends com.marklogic.client.ext.es.EntityServicesMa
         if (filename==null || filename.trim().isEmpty()) {
             return Optional.of(null);
         }
-        int pathIndex = filename.lastIndexOf("/");
+        int pathIndex = filename.lastIndexOf('/');
         if (pathIndex >= 0) {
             filename = filename.substring(pathIndex + 1);
         }

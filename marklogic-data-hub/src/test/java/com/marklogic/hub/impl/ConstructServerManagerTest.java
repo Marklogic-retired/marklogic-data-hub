@@ -17,7 +17,7 @@ public class ConstructServerManagerTest {
         Assertions.assertNull(hubConfig.getAppConfig(),
             "The AppConfig is expected to be null on a new HubConfigImpl instance");
 
-        ServerManager mgr = dataHub.constructServerManager(hubConfig);
+        ServerManager mgr = DataHubImpl.constructServerManager(hubConfig);
         assertEquals("/manage/v2/servers/Admin/properties?group-id=Default", mgr.getPropertiesPath("Admin"),
             "With no AppConfig, the path for an app server should use the Default group");
     }
@@ -26,7 +26,7 @@ public class ConstructServerManagerTest {
     public void appConfigHasNoGroupName() {
         hubConfig.setAppConfig(new AppConfig(), true);
 
-        ServerManager mgr = dataHub.constructServerManager(hubConfig);
+        ServerManager mgr = DataHubImpl.constructServerManager(hubConfig);
         assertEquals("/manage/v2/servers/Admin/properties?group-id=Default", mgr.getPropertiesPath("Admin"),
             "If the group name isn't overridden, then the path for an app server should use the Default group");
     }
@@ -37,7 +37,7 @@ public class ConstructServerManagerTest {
         appConfig.setGroupName("CustomGroupName");
         hubConfig.setAppConfig(appConfig, true);
 
-        ServerManager mgr = dataHub.constructServerManager(hubConfig);
+        ServerManager mgr = DataHubImpl.constructServerManager(hubConfig);
         assertEquals("/manage/v2/servers/Admin/properties?group-id=CustomGroupName", mgr.getPropertiesPath("Admin"),
             "If group name is overridden on the AppConfig, then its value should be used in the path for an app server");
     }

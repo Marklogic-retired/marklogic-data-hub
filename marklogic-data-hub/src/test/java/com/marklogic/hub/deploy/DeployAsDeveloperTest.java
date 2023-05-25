@@ -22,7 +22,6 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
@@ -154,7 +153,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
     @Test
     public void verifySchemaAndTriggersDbSettingIsRemovedForHubDeployAsDeveloperCommand() {
-        List<Command> commands = new HubDeployer().buildCommandsForDeveloper(testHubConfig);
+        List<Command> commands = HubDeployer.buildCommandsForDeveloper(testHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
         DeployOtherDatabasesCommand command = (DeployOtherDatabasesCommand) commands.get(1);
         CommandContext context = newCommandContext();
@@ -194,7 +193,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         assertEquals("my-final-db", appConfig.getContentDatabaseName(), "Smoke test to verify that default names on AppConfig " +
             "were updated based on custom property values set above");
 
-        new HubDeployer().setKnownValuesForDhsDeployment(hubConfig);
+        HubDeployer.setKnownValuesForDhsDeployment(hubConfig);
 
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
         assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getHttpName(DatabaseKind.FINAL));
@@ -255,7 +254,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = new HubDeployer().buildCommandsForDeveloper(testHubConfig);
+        List<Command> commands = HubDeployer.buildCommandsForDeveloper(testHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;

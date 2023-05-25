@@ -26,11 +26,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 
 /**
  * Configures Spring Security for the central web application.
@@ -88,7 +85,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
      *
      * @return
      */
-    protected String[] getAlwaysPermittedPatterns() {
+    protected static String[] getAlwaysPermittedPatterns() {
         return new String[]{
             "/actuator/**",
             "/",

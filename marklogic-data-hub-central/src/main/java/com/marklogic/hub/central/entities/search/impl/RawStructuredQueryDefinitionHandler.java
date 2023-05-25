@@ -41,7 +41,7 @@ public class RawStructuredQueryDefinitionHandler implements StructuredQueryDefin
         final StringReader reader = new StringReader(xml);
         final XMLStreamReader xmlStreamReader = inputFactory.createXMLStreamReader(reader);
         final TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer t = null;
+        Transformer t;
         try {
             t = tf.newTransformer();
         } catch (TransformerConfigurationException e) {

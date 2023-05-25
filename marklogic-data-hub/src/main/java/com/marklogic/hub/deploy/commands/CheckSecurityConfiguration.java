@@ -7,7 +7,7 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 
 public class CheckSecurityConfiguration extends LoggingObject implements Command {
-    private HubConfig hubConfig;
+    private final HubConfig hubConfig;
     private static final String dataHubDeveloperRole = "data-hub-developer";
     private static final String dataHubOperatorRole = "data-hub-operator";
     public CheckSecurityConfiguration(HubConfig hubConfig) {

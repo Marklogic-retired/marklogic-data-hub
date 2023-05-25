@@ -118,7 +118,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    protected boolean isClientAbortExceptionDueToBrokenPipe(Exception exception) {
+    protected static boolean isClientAbortExceptionDueToBrokenPipe(Exception exception) {
         Throwable cause = exception;
         while (cause != null) {
             if (cause instanceof ClientAbortException) {
@@ -130,7 +130,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return false;
     }
 
-    private String httpStatusSuggestion(HttpStatus httpStatus) {
+    private static String httpStatusSuggestion(HttpStatus httpStatus) {
         switch (httpStatus) {
             case FORBIDDEN:
                 return "Ensure your MarkLogic user has the proper roles for this action.";

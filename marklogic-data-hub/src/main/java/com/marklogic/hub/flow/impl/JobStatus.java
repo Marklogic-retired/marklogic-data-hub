@@ -9,7 +9,7 @@ public enum JobStatus {
     STOP_ON_ERROR("stop-on-error"),
     CANCELED("canceled");
 
-    private String type;
+    private final String type;
     JobStatus(String type) {
         this.type = type;
     }

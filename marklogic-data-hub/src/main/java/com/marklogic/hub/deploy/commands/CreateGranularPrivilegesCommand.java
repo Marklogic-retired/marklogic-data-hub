@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class CreateGranularPrivilegesCommand extends LoggingObject implements Command, UndoableCommand {
 
-    private HubConfig hubConfig;
+    private final HubConfig hubConfig;
     private List<String> groupNames;
 
     /**
@@ -325,8 +325,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         final Map<String, Role> roleMap = new HashMap<>();
 
         // Iterate over each granular privilege and determine what privileges to create and which roles to update
-        granularPrivileges.keySet().forEach(actionWithId -> {
-            Privilege privilege = granularPrivileges.get(actionWithId);
+        granularPrivileges.forEach((actionWithId, privilege) -> {
 
             // If the privilege doesn't exist yet, we'll create it - but without its roles. Roles will instead specify
             // privileges. This ensures that we don't lose any existing roles associated with the existing privilege.
@@ -353,7 +352,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         });
 
         Configurations configs = new Configurations();
-        if (privilegeConfig.getPrivileges() != null && privilegeConfig.getPrivileges().size() > 0) {
+        if (privilegeConfig.getPrivileges() != null && !privilegeConfig.getPrivileges().isEmpty()) {
             configs.addConfig(privilegeConfig);
         }
         Configuration roleConfig = new Configuration();
@@ -372,7 +371,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
      * @return a map of action to name for existing privileges. This is then used to determine if the action of a
      * granular privilege that we want to save already exists
      */
-    private Map<String, String> buildExistingPrivilegeActionToNameMap(ManageClient manageClient) {
+    private static Map<String, String> buildExistingPrivilegeActionToNameMap(ManageClient manageClient) {
         ResourcesFragment allPrivileges = new PrivilegeManager(manageClient).getAsXml();
         final Map<String, String> actionToNameMap = new HashMap<>();
         Namespace securityNamespace = Namespace.getNamespace("http://marklogic.com/manage/security");
@@ -387,10 +386,10 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
     protected List<String> getGroupNamesForScheduledTaskPrivileges() {
         return (groupNames != null && !groupNames.isEmpty()) ?
             groupNames :
-            Arrays.asList(hubConfig.getAppConfig().getGroupName());
+                Collections.singletonList(hubConfig.getAppConfig().getGroupName());
     }
 
-    private Privilege newPrivilege(String name, String... roles) {
+    private static Privilege newPrivilege(String name, String... roles) {
         Privilege p = new Privilege(null, name);
         p.setKind("execute");
         for (String role : roles) {

@@ -14,14 +14,14 @@ public interface GraphService {
 
     static GraphService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class GraphServiceImpl implements GraphService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_searchNodes;
-            private BaseProxy.DBFunctionRequest req_nodeExpand;
-            private BaseProxy.DBFunctionRequest req_EntitiesWithConceptsTypes;
+            private final BaseProxy.DBFunctionRequest req_searchNodes;
+            private final BaseProxy.DBFunctionRequest req_nodeExpand;
+            private final BaseProxy.DBFunctionRequest req_EntitiesWithConceptsTypes;
 
-            private GraphServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            GraphServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/graph/", servDecl);
 

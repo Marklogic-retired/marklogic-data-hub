@@ -33,6 +33,15 @@ import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 // define constants for caching expensive operations
 const cachedFlows = {};
 
+function releaseUnusedDocuments(contentArray, outputContentArray) {
+  const outputNodeSet = new Set(outputContentArray.map(content => content.value));
+  for (const contentObject of contentArray) {
+    if (!outputNodeSet.has(contentObject.value)) {
+      hubUtils.releaseDatabaseNodeFromContentObject(contentObject);
+    }
+  }
+}
+
 export default class Flow {
 
   constructor(config) {
@@ -138,9 +147,6 @@ export default class Flow {
     ));
   }
 
-  runFlow(flowName, jobId, contentArray, options, stepNumber) {
-    runFlow(flowName, jobId, contentArray, options, stepNumber, null);
-  }
   /**
    * It's unlikely that this actually runs a "flow", unless the flow consists of one step and only one transaction is
    * needed to run the step. More likely, this is really "process a batch of items for a step".
@@ -195,12 +201,12 @@ export default class Flow {
 
     try {
       outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue);
+      releaseUnusedDocuments(contentArray, outputContentArray);
     } catch (error) {
       stepExecutionContext.addStepErrorForEntireBatch(error, batchItems);
       this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, {});
       throw error;
     }
-
     let writeTransactionInfo = {};
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {

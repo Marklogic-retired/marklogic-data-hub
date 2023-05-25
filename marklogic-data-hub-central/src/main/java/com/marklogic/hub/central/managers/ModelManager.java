@@ -23,12 +23,12 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
+import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.dataservices.ModelsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +66,9 @@ public class ModelManager {
 
         GenericDocumentManager docMgr = finalDatabaseClient.newDocumentManager();
         JacksonHandle handle = new JacksonHandle();
-        try {
-            docMgr
-                .search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0)
+        try (DocumentPage page = docMgr
+                .search(sb.collection(ENTITY_MODEL_COLLECTION_NAME), 0)) {
+            page
                 .forEach(
                     documentRecord -> {
                         documentRecord.getContent(handle);
@@ -76,9 +76,9 @@ public class ModelManager {
                     });
         } catch (MarkLogicServerException e) {
             if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
-                logger.warn(e.getLocalizedMessage());
+                logger.warn("Unable to retrieve models", e);
             } else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
-                logger.error(e.getLocalizedMessage());
+                logger.error("Unable to retrieve models", e);
             }
             throw e;
         } catch (Exception e) {

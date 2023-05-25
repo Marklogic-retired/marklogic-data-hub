@@ -37,7 +37,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -134,7 +139,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
             }
             JsonNode node = JSONObject.readInput(inputStream);
             StepDefinition newStep = createStepDefinitionFromJSON(node);
-            if (newStep != null && newStep.getName().length() > 0) {
+            if (newStep != null && !newStep.getName().isEmpty()) {
                 return newStep;
             }
         }
@@ -164,8 +169,8 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     @Override
     public StepDefinition createStepDefinitionFromJSON(JsonNode json) {
-        String stepDefName = null;
-        String stepDefType = null;
+        String stepDefName;
+        String stepDefType;
         if(json.get("name") !=null && !json.get("name").isNull()) {
             stepDefName = json.get("name").asText();
         }
@@ -190,7 +195,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         return step;
     }
 
-    private Path resolvePath(Path path, String more) {
+    private static Path resolvePath(Path path, String more) {
         return path.resolve(more);
     }
 

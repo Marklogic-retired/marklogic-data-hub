@@ -31,10 +31,10 @@ public class DownloadRecordTest extends AbstractMvcTest {
     @Test
     void determineFilenameForDownloadUnitTest() {
         RecordController controller = new RecordController();
-        assertEquals("example.json", controller.determineFilenameForDownload("/example.json"));
-        assertEquals("example.json", controller.determineFilenameForDownload("test/example.json"));
-        assertEquals("example.json", controller.determineFilenameForDownload("/hello/test/example.json"));
-        assertEquals("example.json", controller.determineFilenameForDownload("example.json"));
+        assertEquals("example.json", RecordController.determineFilenameForDownload("/example.json"));
+        assertEquals("example.json", RecordController.determineFilenameForDownload("test/example.json"));
+        assertEquals("example.json", RecordController.determineFilenameForDownload("/hello/test/example.json"));
+        assertEquals("example.json", RecordController.determineFilenameForDownload("example.json"));
     }
 
     @Test

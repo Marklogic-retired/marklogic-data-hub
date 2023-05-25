@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class JSONStreamWriter {
-    private static Logger logger = LoggerFactory.getLogger(JSONStreamWriter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JSONStreamWriter.class);
 
     final OutputStream out;
 

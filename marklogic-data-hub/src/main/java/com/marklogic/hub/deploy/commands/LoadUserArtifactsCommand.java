@@ -63,10 +63,11 @@ import java.util.regex.Pattern;
 @Component
 public class LoadUserArtifactsCommand extends AbstractCommand {
 
+    private static final Pattern stepExtension = Pattern.compile(".step.json", Pattern.LITERAL);
     @Autowired
-    private HubConfig hubConfig;
+    HubConfig hubConfig;
 
-    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
+    private final DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ObjectMapper objectMapper;
     private TokenReplacer tokenReplacer;
 
@@ -86,7 +87,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         this.hubConfig = hubConfig;
     }
 
-    boolean isArtifactDir(Path dir, Path startPath) {
+    static boolean isArtifactDir(Path dir, Path startPath) {
         String dirStr = dir.toString();
         String startPathStr = Pattern.quote(startPath.toString());
         String regex = startPathStr + "[/\\\\][^/\\\\]+$";
@@ -146,7 +147,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 throw new RuntimeException("Unable to read model file: " + r.getFilename() + "; cause: " + e.getMessage(), e);
             }
         });
-        if (modelsArray.size() > 0) {
+        if (!modelsArray.isEmpty()) {
             ModelsService.on(hubClient.getStagingClient()).saveModels(modelsArray);
             clearExpandedTreeCache(hubClient);
         }
@@ -213,19 +214,19 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 }
             });
 
-            if (stagingMappingDocumentWriteSet.size() > 0) {
+            if (!stagingMappingDocumentWriteSet.isEmpty()) {
                 stagingDocMgr.write(stagingMappingDocumentWriteSet);
                 finalDocMgr.write(finalMappingDocumentWriteSet);
             }
         }
     }
 
-    private void executeWalk(
-        Path dir,
-        ModulesFinder modulesFinder,
-        ResourceToURI resourceToURI,
-        DocumentMetadataHandle metadata,
-        DocumentWriteSet... writeSets
+    void executeWalk(
+            Path dir,
+            ModulesFinder modulesFinder,
+            ResourceToURI resourceToURI,
+            DocumentMetadataHandle metadata,
+            DocumentWriteSet... writeSets
     ) throws IOException {
         Modules modules = modulesFinder.findModules(dir.toString());
         for (Resource r : modules.getAssets()) {
@@ -351,14 +352,14 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     private void loadHubCentralConfig(HubClient hubClient) {
         final Path configPath = hubConfig.getHubProject().getHubCentralConfigPath();
         if (configPath.toFile().exists()) {
-            File[] configFiles = configPath.toFile().listFiles(f -> f.isFile());
+            File[] configFiles = configPath.toFile().listFiles(File::isFile);
             if (configFiles == null) {
                 return;
             }
             for (File file : configFiles) {
                 JsonNode hubCentralConfig = readArtifact(file);
                 String docUri = "/config/".concat(file.getName());
-                new HubCentralManager().deployHubCentralConfig(hubClient, hubCentralConfig, docUri);
+                HubCentralManager.deployHubCentralConfig(hubClient, hubCentralConfig, docUri);
             }
         }
     }
@@ -376,7 +377,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
         }
 
-        if (conceptsArray.size() > 0) {
+        if (!conceptsArray.isEmpty()) {
             ConceptService.on(hubClient.getStagingClient()).saveConceptModels(conceptsArray);
             clearExpandedTreeCache(hubClient);
         }
@@ -411,7 +412,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                             }
                             final String stepDefName = stepDef.get("name").asText();
                             logger.info(format("Loading step definition with type '%s' and name '%s'", stepDefType, stepDefName));
-                            service.setArtifact("stepDefinition", stepDefName, stepDef, stepDefFileName.replace(".step.json",""));
+                            service.setArtifact("stepDefinition", stepDefName, stepDef, stepExtension.matcher(stepDefFileName).replaceAll(""));
                         } else {
                             logger.warn(format("Found step definition directory '%s', but did not find expected " +
                                 "step definition file: '%s'", defDir.getAbsolutePath(), stepDefFile.getName()));
@@ -470,7 +471,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         this.objectMapper = objectMapper;
     }
 
-    abstract class ResourceToURI {
+    abstract static class ResourceToURI {
         public abstract String toURI(Resource r) throws IOException;
     }
 }

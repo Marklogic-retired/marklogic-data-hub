@@ -25,7 +25,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.*;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -44,15 +48,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
 public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
+    private static final Pattern flowExtension = Pattern.compile("(.+)\\.flow\\.json");
     @Autowired
     private HubConfig hubConfig;
 
@@ -119,7 +133,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         JsonNode node = getLocalFlowAsJSON(flowName);
         if(node != null) {
             Flow newFlow = createFlowFromJSON(node);
-            if (newFlow != null && newFlow.getName().length() > 0) {
+            if (newFlow != null && !newFlow.getName().isEmpty()) {
                 return newFlow;
             } else {
                 throw new DataHubProjectException(flowName + " is not a valid flow");
@@ -130,7 +144,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     public ObjectNode getLocalFlowAsJSON(String flowName) {
         Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
-        InputStream inputStream = null;
+        InputStream inputStream;
         // first, let's check our resources
         inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/flows/" + flowName + FLOW_FILE_EXTENSION);
         if (inputStream == null) {
@@ -181,7 +195,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
             }
             flows.add(flow);
         }
-        Collections.sort(flows, (a, b) -> a.getName().compareTo(b.getName()));
+        flows.sort(Comparator.comparing(Flow::getName));
         return flows;
     }
 
@@ -195,7 +209,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
         List<File> files = (List<File>) FileUtils.listFiles(flowsDir, new String[]{"flow.json"}, false);
         List<String> flowNames = files.stream()
-            .map(f -> f.getName().replaceAll("(.+)\\.flow\\.json", "$1"))
+            .map(f -> flowExtension.matcher(f.getName()).replaceAll("$1"))
             .collect(Collectors.toList());
 
         return flowNames;
@@ -221,7 +235,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public Flow createFlowFromJSON(String json) {
-        JsonNode node = null;
+        JsonNode node;
         try {
             node = JSONObject.readInput(json);
         } catch (JsonParseException e) {
@@ -371,10 +385,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public boolean isFlowExisted(String flowName) {
         File flowFile = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
-        if (flowFile.exists()) {
-            return true;
-        }
-        return false;
+        return flowFile.exists();
     }
 
     protected ArtifactService getArtifactService() {

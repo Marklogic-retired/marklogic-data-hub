@@ -23,7 +23,7 @@ import com.marklogic.hub.impl.EntityManagerImpl;
 
 public class DeployQueryOptionsCommand extends AbstractCommand {
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public DeployQueryOptionsCommand(HubConfig hubConfig) {
         this.entityManager = new EntityManagerImpl(hubConfig);

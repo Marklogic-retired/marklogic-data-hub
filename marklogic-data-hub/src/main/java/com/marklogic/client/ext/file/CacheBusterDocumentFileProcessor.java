@@ -53,9 +53,9 @@ public class CacheBusterDocumentFileProcessor extends LoggingObject implements D
                 Resource resource = documentFile.getResource();
                 String comment = "";
                 if (FilenameUtil.isJavascriptFile(resource.getFilename())) {
-                    comment = "// cache buster: " + UUID.randomUUID().toString() + "\n";
+                    comment = "// cache buster: " + UUID.randomUUID() + "\n";
                 } else if (FilenameUtil.isXqueryFile(resource.getFilename())) {
-                    comment = "(: cache buster: " + UUID.randomUUID().toString() + " :)\n";
+                    comment = "(: cache buster: " + UUID.randomUUID() + " :)\n";
                 }
 
                 text = comment + text;

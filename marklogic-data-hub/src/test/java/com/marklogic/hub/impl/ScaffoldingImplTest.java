@@ -24,7 +24,7 @@ public class ScaffoldingImplTest {
 
     @Test
     public void buildFlowFromDefaultFlow() throws Exception {
-        String flow = new ScaffoldingImpl().buildFlowFromDefaultFlow(customTokens);
+        String flow = ScaffoldingImpl.buildFlowFromDefaultFlow(customTokens);
         JsonNode json = new ObjectMapper().readTree(flow);
 
         assertEquals("my-flow", json.get("name").asText());

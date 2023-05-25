@@ -9,7 +9,7 @@ import com.marklogic.rest.util.JsonNodeUtil;
  */
 public abstract class ResourceUtil {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Given a set of properties to save, this will update each array property in that set with the items from the

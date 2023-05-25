@@ -18,7 +18,6 @@ package com.marklogic.hub.step;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
-import java.util.Map;
 
 public class ResponseHolder {
     public String jobId;
@@ -34,7 +33,7 @@ public class ResponseHolder {
         int failedSize = failedItems != null ? failedItems.size() : 0;
         int errorSize = errors != null ? errors.size() : 0;
         int documentsSize = documents != null ? documents.size() : 0;
-        return String.format("{jobId: %d, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}",
+        return String.format("{jobId: %s, totalCount: %d, errorCount: %d, completedItems: %d, failedItems: %d, errors: %d, documents: %d}",
             jobId, totalCount, errorCount, completedSize, failedSize, errorSize, documentsSize);
     }
 }

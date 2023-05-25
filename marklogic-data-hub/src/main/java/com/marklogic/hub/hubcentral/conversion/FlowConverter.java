@@ -29,7 +29,11 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.hub.*;
+import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.dataservices.MasteringService;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.FlowManagerImpl;
@@ -57,11 +61,11 @@ import java.util.stream.Stream;
  */
 public class FlowConverter extends LoggingObject {
 
-    private MappingManager mappingManager;
-    private FlowManager flowManager;
-    private StepManager stepManager;
-    private HubConfig hubConfig;
-    private ObjectMapper mapper = new ObjectMapper();
+    private final MappingManager mappingManager;
+    private final FlowManager flowManager;
+    private final StepManager stepManager;
+    private final HubConfig hubConfig;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     public FlowConverter(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -157,7 +161,7 @@ public class FlowConverter extends LoggingObject {
                 // Look for stepId, indicating a previously converted step.
                 if (stepNode.has("stepId")) {
                     String stepId = stepNode.get("stepId").asText();
-                    String stepDefTypeStr = stepId.substring(stepId.lastIndexOf("-") + 1).toLowerCase();
+                    String stepDefTypeStr = stepId.substring(stepId.lastIndexOf('-') + 1).toLowerCase();
                     StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefTypeStr);
 
                     // Need to convert match steps to new model, if they have not been already
@@ -241,14 +245,14 @@ public class FlowConverter extends LoggingObject {
                 File stepFile = targetDir.resolve(stepFileName).toFile();
                 logger.info(format("Creating step artifact '%s'", stepFile.toString()));
                 if (stepFile.exists()) {
-                    String msg = "Step artifact '" + stepFile.toString() + "' already exists. The step artifact will be written to ";
+                    String msg = "Step artifact '" + stepFile + "' already exists. The step artifact will be written to ";
                     // Update step artifact with new name
                     stepName = flowName + "-" + stepName;
                     newStepArtifact.put("name", stepName);
                     // Update the filename
                     stepFileName = flowName + "-" + stepFileName;
                     stepFile = targetDir.resolve(stepFileName).toFile();
-                    logger.warn(msg + stepFile.toString());
+                    logger.warn(msg + stepFile);
                     stepId = flowName + "-" + stepId;
                     // Update the stepId in the flow
                     stepsNode.set(entry.getKey(), nodeFactory.objectNode().put("stepId", stepId));
@@ -296,7 +300,7 @@ public class FlowConverter extends LoggingObject {
         logger.warn("The conversion process ensures that steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
     }
 
-    protected String getStepName(ObjectNode stepNode) {
+    protected static String getStepName(ObjectNode stepNode) {
         String stepName;
         if (stepNode.has("name")) {
             stepName = stepNode.get("name").asText();
@@ -309,7 +313,7 @@ public class FlowConverter extends LoggingObject {
 
     protected Mapping getMappingArtifact(String flowName, JsonNode inlineStep) {
         Mapping mapping = null;
-        JsonNode mappingNode = (JsonNode) inlineStep.get("options").get("mapping");
+        JsonNode mappingNode = inlineStep.get("options").get("mapping");
         if (mappingNode != null) {
             if (!mappingNode.has("name")) {
                 logger.warn(format("Unable to convert mapping in flow '%s' because it does not have a 'name' property"));
@@ -384,10 +388,7 @@ public class FlowConverter extends LoggingObject {
         // Remove customHook if module isn't set
         if (stepArtifact.has("customHook")) {
             JsonNode hook = stepArtifact.get("customHook");
-            boolean removeHook = false;
-            if (!hook.has("module")) {
-                removeHook = true;
-            }
+            boolean removeHook = !hook.has("module");
             if (hook.has("module") && StringUtils.isEmpty(hook.get("module").asText().trim())) {
                 removeHook = true;
             }
@@ -442,7 +443,7 @@ public class FlowConverter extends LoggingObject {
         return stepArtifact;
     }
 
-    private boolean stepDefTypeEqual(StepDefinitionType type, JsonNode node) {
+    private static boolean stepDefTypeEqual(StepDefinitionType type, JsonNode node) {
         if (node == null)
             return false;
 
@@ -507,8 +508,8 @@ public class FlowConverter extends LoggingObject {
      * @param targetEntityType
      * @return
      */
-    protected String getEntityNameFromEntityType(String targetEntityType) {
-        int index = targetEntityType.lastIndexOf("/");
+    protected static String getEntityNameFromEntityType(String targetEntityType) {
+        int index = targetEntityType.lastIndexOf('/');
         return index > -1 ? targetEntityType.substring(index + 1) : targetEntityType;
     }
 

@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StreamUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -76,12 +77,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WriteStepRunner implements StepRunner {
 
     private static final int MAX_ERROR_MESSAGES = 10;
+    private static final Pattern percentPattern = Pattern.compile("%", Pattern.LITERAL);
     private Flow flow;
     private int batchSize;
     private int threadCount;
@@ -97,12 +100,12 @@ public class WriteStepRunner implements StepRunner {
     private String step = "1";
     private static final String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private static final String END_LINE = "\r\n";
-    private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
-    private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
-    private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
+    private final List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
+    private final List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
+    private final List<StepStatusListener> stepStatusListeners = new ArrayList<>();
 
-    private HubClient hubClient;
-    private HubProject hubProject;
+    private final HubClient hubClient;
+    private final HubProject hubProject;
 
     private Thread runningThread = null;
     // setting these values to protected so their values can be tested
@@ -171,7 +174,6 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public StepRunner withRuntimeOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
@@ -219,7 +221,7 @@ public class WriteStepRunner implements StepRunner {
             if (runningThread.getState() != Thread.State.TERMINATED) {
                 this.isStopped.set(true);
                 runningThread.interrupt();
-                throw new TimeoutException("Timeout occurred after "+timeout+" "+unit.toString());
+                throw new TimeoutException("Timeout occurred after "+timeout+" "+ unit);
             }
         }
     }
@@ -294,7 +296,7 @@ public class WriteStepRunner implements StepRunner {
 
     @SuppressWarnings("unchecked")
     protected void loadStepRunnerParameters(){
-        JsonNode comboOptions = null;
+        JsonNode comboOptions;
         try {
             comboOptions = JSONObject.readInput(JSONObject.writeValueAsString(combinedOptions));
         } catch (IOException e) {
@@ -410,8 +412,8 @@ public class WriteStepRunner implements StepRunner {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0, 0, "starting step execution");
         });
 
-        if (uris == null || uris.size() == 0 ) {
-            JsonNode jobDoc = null;
+        if (uris == null || uris.isEmpty()) {
+            JsonNode jobDoc;
             final String stepStatus;
             if(isStopped.get()) {
                 stepStatus = JobStatus.CANCELED_PREFIX + step;
@@ -475,8 +477,9 @@ public class WriteStepRunner implements StepRunner {
             Collection<List<InputStreamHandle>> resultingBatches = inputHandles
                     .collect(Collectors.groupingByConcurrent(inputStreamHandle -> count.getAndIncrement() / batchSize))
                     .values();
+            InputStreamHandle[] handleArray = new InputStreamHandle[0];
             for (List<InputStreamHandle> batch: resultingBatches) {
-                bulkCaller.acceptAll(batch.toArray(new InputStreamHandle[0]));
+                bulkCaller.acceptAll(batch.toArray(handleArray));
                 stepMetrics.getSuccessfulBatches().incrementAndGet();
                 stepMetrics.getSuccessfulEvents().addAndGet(batch.size());
                 runStatusListener(stepMetrics);
@@ -502,8 +505,14 @@ public class WriteStepRunner implements StepRunner {
 
             runStepResponse.setCounts(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
-            if (errorListener.getThrowables().size() > 0) {
-                runStepResponse.withStepOutput(errorListener.getThrowables().stream().map(Throwable::getLocalizedMessage).collect(Collectors.toList()));
+            if (!errorListener.getThrowables().isEmpty()) {
+                runStepResponse.withStepOutput(
+                        errorListener
+                                .getThrowables().stream()
+                                .map(Throwable::toString)
+                                .collect(Collectors.toList())
+                );
+                errorListener.getThrowables().clear();
             }
 
             if (jobOutputIsEnabled()) {
@@ -561,7 +570,7 @@ public class WriteStepRunner implements StepRunner {
         String uri;
         if(outputURIPrefix != null){
             try {
-                uri = generateAndEncodeURI(outputURIPrefix).replace("%", "%%");
+                uri = percentPattern.matcher(generateAndEncodeURI(outputURIPrefix)).replaceAll("%%");
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -572,7 +581,7 @@ public class WriteStepRunner implements StepRunner {
                 uri = "/" + FilenameUtils.separatorsToUnix(StringUtils.replaceOnce(uri, ":", ""));
             }
             try {
-                uri =  generateAndEncodeURI(outputURIReplace(uri)).replace("%", "%%");
+                uri = percentPattern.matcher(generateAndEncodeURI(outputURIReplace(uri))).replaceAll("%%");
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -645,12 +654,7 @@ public class WriteStepRunner implements StepRunner {
         writer.flush();
 
         try {
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
+            StreamUtils.copy(inputStream, outputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -664,10 +668,10 @@ public class WriteStepRunner implements StepRunner {
     }
 
     protected String getPrefixedEncodedURI(String filename) throws  URISyntaxException{
-        return generateAndEncodeURI(new StringBuilder().append(outputURIPrefix).append(filename).toString());
+        return generateAndEncodeURI(outputURIPrefix + filename);
     }
 
-    private String generateAndEncodeURI(String path) throws  URISyntaxException {
+    private static String generateAndEncodeURI(String path) throws  URISyntaxException {
         URI uri = new URI(null, null, null, 0, path, null, null);
         return uri.toString();
     }
@@ -680,8 +684,9 @@ public class WriteStepRunner implements StepRunner {
                 throw new IllegalArgumentException(
                     "Invalid argument for URI replacement: " + outputURIReplacement);
             }
+            int replaceLength = replace.length;
             // Replacement string is expected to be in ''
-            for (int i = 0; i < replace.length - 1; i++) {
+            for (int i = 0; i < replaceLength - 1; i++) {
                 String replacement = replace[++i].trim();
                 if (!replacement.startsWith("'") ||
                     !replacement.endsWith("'")) {
@@ -689,7 +694,7 @@ public class WriteStepRunner implements StepRunner {
                         "Invalid argument for URI replacement: " + outputURIReplacement);
                 }
             }
-            for (int i = 0; i < replace.length - 1; i += 2) {
+            for (int i = 0; i < replaceLength - 1; i += 2) {
                 String replacement = replace[i + 1].trim();
                 replacement = replacement.substring(1, replacement.length() - 1);
                 uri = uri.replaceAll(replace[i], replacement);
@@ -726,7 +731,7 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private JsonNode jsonToNode(Map<String, Object> map) {
+    private static JsonNode jsonToNode(Map<String, Object> map) {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(map, JsonNode.class);
     }
@@ -734,9 +739,9 @@ public class WriteStepRunner implements StepRunner {
     static class ErrorListener implements InputCaller.BulkInputCaller.ErrorListener {
         WriteStepRunner writeStepRunner;
         StepMetrics stepMetrics;
-        List<Throwable> throwables = new ArrayList<>();
+        final static List<Throwable> throwables = new ArrayList<>();
         StepStatusListener[] stepStatusListeners = null;
-        int retryLimit = 0;
+        int retryLimit;
         boolean stopOnFailure;
 
         public ErrorListener(WriteStepRunner writeStepRunner, StepMetrics stepMetrics, boolean stopOnFailure, int retryLimit) {
@@ -766,7 +771,7 @@ public class WriteStepRunner implements StepRunner {
             stepMetrics.getSuccessfulEvents().set(stepMetrics.getSuccessfulEventsCount() - failedEvents);
             stepMetrics.getFailedEvents().addAndGet(failedEvents);
             writeStepRunner.runStatusListener(stepMetrics);
-            if(throwable != null){
+            if (throwable != null){
                 throwables.add(throwable);
             }
             return stopOnFailure ? IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.STOP_ALL_CALLS: IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.SKIP_CALL;

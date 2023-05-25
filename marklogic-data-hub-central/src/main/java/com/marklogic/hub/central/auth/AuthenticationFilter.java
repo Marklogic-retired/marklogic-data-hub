@@ -56,7 +56,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
     }
 
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        if (!request.getMethod().toUpperCase().equals("POST")) {
+        if (!request.getMethod().equalsIgnoreCase("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }
 

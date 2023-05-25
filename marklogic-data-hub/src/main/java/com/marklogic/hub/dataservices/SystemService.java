@@ -2,14 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.io.Reader;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.io.Reader;
 
 /**
  * Provides a set of operations on the database server
@@ -45,15 +43,15 @@ public interface SystemService {
      */
     static SystemService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class SystemServiceImpl implements SystemService {
-            private DatabaseClient dbClient;
-            private BaseProxy baseProxy;
+            private final DatabaseClient dbClient;
+            private final BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_getVersions;
-            private BaseProxy.DBFunctionRequest req_createCustomRewriters;
-            private BaseProxy.DBFunctionRequest req_finishHubDeployment;
-            private BaseProxy.DBFunctionRequest req_getDataHubConfig;
+            private final BaseProxy.DBFunctionRequest req_getVersions;
+            private final BaseProxy.DBFunctionRequest req_createCustomRewriters;
+            private final BaseProxy.DBFunctionRequest req_finishHubDeployment;
+            private final BaseProxy.DBFunctionRequest req_getDataHubConfig;
 
-            private SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/system/", servDecl);
 

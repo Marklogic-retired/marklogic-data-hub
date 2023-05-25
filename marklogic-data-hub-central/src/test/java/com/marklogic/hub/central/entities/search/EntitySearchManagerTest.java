@@ -168,7 +168,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         JsonNode queryDocument = new ObjectMapper().readTree(json);
         List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1");
 
-        List<String> actualCols = new EntitySearchManager(getHubClient()).getColumnNamesForRowExport(queryDocument);
+        List<String> actualCols = EntitySearchManager.getColumnNamesForRowExport(queryDocument);
 
         assertEquals(expectedCols, actualCols);
     }
@@ -191,7 +191,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
             "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
-        String actualQueryName = new EntitySearchManager(getHubClient()).getQueryName(queryDocument);
+        String actualQueryName = EntitySearchManager.getQueryName(queryDocument);
 
         assertEquals(expectedQueryName, actualQueryName);
     }
@@ -214,7 +214,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         String expectedEntityTypeId = "Entity-1";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
-        String actualEntityTypeId = new EntitySearchManager(getHubClient()).getEntityTypeIdForRowExport(queryDocument);
+        String actualEntityTypeId = EntitySearchManager.getEntityTypeIdForRowExport(queryDocument);
 
         assertEquals(expectedEntityTypeId, actualEntityTypeId);
     }
