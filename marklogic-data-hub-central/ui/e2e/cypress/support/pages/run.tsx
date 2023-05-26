@@ -262,6 +262,10 @@ class RunPage {
     return cy.get(`tbody`).children();
   }
 
+  verifyStepNotPresent(flowName:string, stepName:string) {
+    cy.get(`#${flowName}-${stepName}-card`).should("not.exist");
+  }
+
   verifyStepCardOrder(stepNames: string[]) {
     this.getStepsFromModal().each(($el, index) => {
       cy.wrap($el).should("contain.text", stepNames[index]);
