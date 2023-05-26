@@ -297,4 +297,33 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.getInputSearch().should("have.value", "");
     browsePage.getHCTableRows().should("have.length.greaterThan", 1);
   });
+
+  it("Verify that if we select any base entity, the related entities check is selected with all the related entities", () => {
+    browsePage.getGraphView().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    cy.log("**Selecting All entities**");
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    cy.waitForAsyncRequest();
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    cy.waitForAsyncRequest();
+    entitiesSidebar.toggleRelatedEntityPanel();
+    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntityCheckbox("Customer").should("be.checked").then(() => {
+      entitiesSidebar.getRelatedEntityCheckbox("Customer").click();
+      entitiesSidebar.getRelatedEntityCheckbox("Customer").should("not.be.checked");
+    });
+
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    cy.waitForAsyncRequest();
+    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.selectBaseEntityOption("Office");
+    cy.waitForAsyncRequest();
+    entitiesSidebar.toggleRelatedEntityPanel();
+    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntityCheckbox("Customer").should("be.checked");
+  });
 });
