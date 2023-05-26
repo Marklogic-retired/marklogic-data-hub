@@ -175,6 +175,8 @@ const PropertyModal: React.FC<Props> = props => {
             >
               <span>{definition.name}</span>
             </HCTooltip>
+          ) : definition.name.length > 30 ? (
+            definition.name.substring(0, 30) + "..."
           ) : (
             definition.name
           ),
@@ -1064,7 +1066,12 @@ const PropertyModal: React.FC<Props> = props => {
                         if (label[0] === "Related Entity") {
                           return "Relationship: " + label[label.length - 1];
                         } else if (label[0] === "Structured") {
-                          return "Structured: " + selectedOption[selectedOption.length - 1].value;
+                          return (
+                            "Structured: " +
+                            ((selectedOption[selectedOption.length - 1].value as string).length > 30
+                              ? (selectedOption[selectedOption.length - 1].value as string).substring(0, 30) + "..."
+                              : selectedOption[selectedOption.length - 1].value)
+                          );
                         } else {
                           return label[label.length - 1];
                         }

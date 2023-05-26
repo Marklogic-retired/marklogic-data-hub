@@ -2,6 +2,7 @@ import React from "react";
 import {Modal} from "react-bootstrap";
 import {HCButton, HCModal} from "@components/common";
 import styles from "./flows.module.scss";
+import {AddTooltipWhenTextOverflow} from "@util/AddTooltipWhenTextOverflow";
 
 export const deleteConfirmationModal = (isVisible: boolean, flowName: string, onOk, onCancel, itemType = "flow?") => {
   return (
@@ -11,7 +12,8 @@ export const deleteConfirmationModal = (isVisible: boolean, flowName: string, on
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4 ${styles.confirmationText}`}>
-          Are you sure you want to delete the <strong>{flowName}</strong> {itemType}
+          Are you sure you want to delete the{" "}
+          <strong><AddTooltipWhenTextOverflow text={flowName} /></strong> {itemType}
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
@@ -41,8 +43,8 @@ export const deleteStepConfirmationModal = (
       </Modal.Header>
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4 ${styles.confirmationText}`}>
-          Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong>{" "}
-          flow?
+          Are you sure you want to remove the <strong>{stepName}</strong> step from the{" "}
+          <strong><AddTooltipWhenTextOverflow text={flowName} /></strong> flow?
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
@@ -75,12 +77,14 @@ export const addStepConfirmationModal = (
         <div className={`mb-4 ${styles.confirmationText}`}>
           {isStepInFlow(stepName, flowName) ? (
             <p>
-              The step <b>{stepName}</b> is already in the flow <b>{flowName}</b>. Would you like to add another
-              instance?
+              The step <b>{stepName}</b> is already in the flow{" "}
+              <b>{flowName.length > 40 ? flowName.substring(0, 40) + "..." : flowName}</b>. Would you like to add
+              another instance?
             </p>
           ) : (
             <p>
-              Are you sure you want to add step <b>{stepName}</b> to flow <b>{flowName}</b>?
+              Are you sure you want to add step <b>{stepName}</b> to flow{" "}
+              <b><AddTooltipWhenTextOverflow text={flowName} /></b>?
             </p>
           )}
         </div>
@@ -112,7 +116,8 @@ export const addExistingStepConfirmationModal = (isVisible: boolean, stepName, f
         <div className={`mb-4 ${styles.confirmationText}`}>
           {
             <p>
-              The step <b>{stepName}</b> is already in the flow <b>{flowName}</b>.
+              The step <b>{stepName}</b> is already in the flow{" "}
+              <b><AddTooltipWhenTextOverflow text={flowName} /></b>.
             </p>
           }
         </div>

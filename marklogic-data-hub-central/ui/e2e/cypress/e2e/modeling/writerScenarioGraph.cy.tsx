@@ -492,7 +492,6 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getPropertyName("new-Relationship-1Name").should("exist");
 
-    cy.log("** deletes the relationship**");
     cy.log("**Deletes the relationship**");
     propertyTable.getDeletePropertyIcon("Customer-Address-shipping", "new-Relationship-1Name").scrollIntoView().click();
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);

@@ -170,7 +170,13 @@ const PropertyTable: React.FC<Props> = props => {
                 editPropertyShowModal(record.propertyName, record);
               }}
             >
-              <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="top">
+              <HCTooltip text={
+                <span data-testid={`${record.propertyName}-tooltipTitle`}>
+                  {record.propertyName.length > 15 ? record.propertyName : ""}
+                  {record.propertyName.length > 15 ? <br /> : ""}
+                  {ModelingTooltips.entityPropertyName}
+                </span>
+              } id={`property-${text}-tooltip`} placement="top">
                 <span
                   tabIndex={0}
                   onKeyDown={event => {
@@ -183,7 +189,18 @@ const PropertyTable: React.FC<Props> = props => {
                     record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""
                   }`}
                 >
-                  <AddTooltipWhenTextOverflow text={record.propertyName} />
+                  <span data-testid={`${record.propertyName}-title`}>
+                    {record.propertyName.length > 15 ? (
+                      <>
+                        {record.propertyName.substring(0, 15)}
+                        <span className="text-primary">...</span>
+                      </>
+                    ) : (
+                      record.propertyName
+                    )}
+                  </span>
+                  {/* commenting out for now until we can figure out how to make this work. Issue number: DHFPROD-10287
+                <AddTooltipWhenTextOverflow text={record.propertyName} /> */}
                 </span>
               </HCTooltip>
               {record.multiple === record.propertyName && (

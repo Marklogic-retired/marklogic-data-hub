@@ -103,7 +103,7 @@ class PropertyTable {
   }
 
   getPropertyName(property: string) {
-    return cy.findByText(property);
+    return cy.findByTestId(`${property}-title`);
   }
 
   getLinkAddButton(entity: string) {
