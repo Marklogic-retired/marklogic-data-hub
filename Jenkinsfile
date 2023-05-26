@@ -277,7 +277,7 @@ void Tests(){
         cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
 
         props = readProperties file:'data-hub/pipeline.properties';
-        copyRPM 'Release','10.0-10'
+        copyRPM 'Latest','10.0'
         def mlHubHosts=setupMLDockerNodes 3
         sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost='+mlHubHosts
         junit '**/TEST-*.xml'

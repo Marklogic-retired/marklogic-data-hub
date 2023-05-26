@@ -35,7 +35,6 @@ public class CustomStepE2E extends AbstractHubCoreTest {
 
     @Test
     void runStepWithoutMainModule() {
-        try {
             runInModules("xdmp:document-delete(\"/custom-modules/ingestion/LabsCore/main.mjs\")");
             makeInputFilePathsAbsoluteInFlow("Admissions");
             RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
@@ -47,15 +46,11 @@ public class CustomStepE2E extends AbstractHubCoreTest {
             }
             assertEquals(false, ingestionStepResp.isSuccess());
             //TODO re-visit here why ingestionStepResp.getStepOutput().get(0).contains is giving null pointer
-            assertTrue(ingestionStepResp.getStepOutput().toString().contains("Unable to access module: /custom-modules/ingestion/LabsCore/main.mjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."));
-        } finally {
-            reloadLabsCoreModule();
-        }
+            assertTrue(ingestionStepResp.getStepOutput().toString().contains("Unable to access module: /custom-modules/ingestion/LabsCore/main.mjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."), "ingestionStepResp.getStepOutput(): " + ingestionStepResp.getStepOutput());
     }
 
     @Test
     void runMainWithCompilationError() {
-        try {
             String module = getResource(resourceName);
             //This is done to introduce a compilation error in the sjs module.
             StringHandle handle = new StringHandle(module.replaceFirst("options", "options{}"));
@@ -70,16 +65,7 @@ public class CustomStepE2E extends AbstractHubCoreTest {
             }
             assertEquals(false, ingestionStepResp.isSuccess());
             //TODO re-visit here why ingestionStepResp.getStepOutput().get(0).contains is giving null pointer
-            assertTrue(ingestionStepResp.getStepOutput().toString().contains("Unable to run module: " + moduleUri));
-        } finally {
-            reloadLabsCoreModule();
+            assertTrue(ingestionStepResp.getStepOutput().toString().contains("Unable to run module: " + moduleUri), "ingestionStepResp.getStepOutput(): " + ingestionStepResp.getStepOutput());
         }
-    }
-
-    // This is done so that other tests taht depend on this module aren't affected when we break it
-    private void reloadLabsCoreModule() {
-        getHubClient().getModulesClient().newTextDocumentManager().write(moduleUri, buildMetadataWithModulePermissions(),
-            new StringHandle(getResource(resourceName)));
-    }
 
 }

@@ -502,7 +502,10 @@ public class WriteStepRunner implements StepRunner {
 
             runStepResponse.setCounts(stepMetrics.getSuccessfulEventsCount() + stepMetrics.getFailedEventsCount(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
+            logger.info("WriteStepRunner line 505: " + runStepResponse.toString());
             if (errorListener.getThrowables().size() > 0) {
+                logger.info("errorListener.getThrowables().size(): " + errorListener.getThrowables().size());
+                errorListener.getThrowables().forEach(e -> logger.info(e.toString()));
                 runStepResponse.withStepOutput(errorListener.getThrowables().stream().map(Throwable::getLocalizedMessage).collect(Collectors.toList()));
             }
 
