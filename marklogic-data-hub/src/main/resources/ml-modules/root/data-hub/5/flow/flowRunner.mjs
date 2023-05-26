@@ -127,9 +127,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
     hookRunner.runHook(contentArray);
   }
 
-  invokeFeatureBefore(stepExecutionContext, contentArray);
   invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
-
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
   runStepMainOnBatch(contentArray, stepExecutionContext) :
@@ -143,7 +141,6 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
   stepExecutionContext.finalizeCollectionsAndPermissions(outputContentArray);
 
   invokeInterceptors(stepExecutionContext, outputContentArray, "beforeContentPersisted");
-  invokeFeatureAfter(stepExecutionContext, contentArray);
 
   if (hookRunner && !hookRunner.runBefore) {
     hookRunner.runHook(outputContentArray);
@@ -352,6 +349,10 @@ function copyContentObject(contentObject) {
  * @param {string} whenValue only interceptors with a "when" value of this will be run
  */
 function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
+  //we want to call our features before the interceptors runs
+  if(whenValue === "beforeMain"){
+    invokeFeatureBefore(stepExecutionContext, contentArray);
+  }
   const flowStep = stepExecutionContext.flowStep;
   if (flowStep.interceptors) {
     let currentInterceptor = null;
@@ -377,6 +378,9 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
       hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor on ${stepExecutionContext.describe()}; path: ${currentInterceptor.path}; error: ${error.message}`);
       throw error;
     }
+  }
+  if(whenValue === "beforeContentPersisted"){
+    invokeFeatureAfter(stepExecutionContext, contentArray);
   }
 }
 
