@@ -1,25 +1,23 @@
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common";
 import detailPage from "../../support/pages/detail";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
+import explorePage from "../../support/pages/explore";
 
 describe("Test graph export to png", () => {
   before(() => {
     cy.clearAllLocalStorage();
     cy.clearAllSessionStorage();
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
   });
 
-  afterEach(() => {
+  after(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
 
   it("Validate existing relationships for a record", () => {
     cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
@@ -41,7 +39,7 @@ describe("Test graph export to png", () => {
 
   it("Validate there are no relationships for a record", () => {
     cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();

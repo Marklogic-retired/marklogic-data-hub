@@ -1,7 +1,5 @@
-import {toolbar} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 
@@ -17,7 +15,7 @@ describe("Add Custom step to a flow", () => {
 
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    runPage.navigate();
   });
 
   after(() => {
@@ -26,7 +24,6 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Create new flow", () => {
-    toolbar.getRunToolbarIcon().should("be.visible").click();
     runPage.createFlowButton().click();
 
     cy.findByText("New Flow").should("be.visible");
@@ -37,16 +34,16 @@ describe("Add Custom step to a flow", () => {
 
   it("Add custom step from Run tile and Run the step", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Expand flow and add step**");
-    toolbar.getRunToolbarIcon().should("be.visible").click({force: true});
+    runPage.navigate();
     runPage.expandFlow(flowName);
 
     runPage.addStep(flowName);
     runPage.addStepToFlow(stepName);
 
     runPage.verifyStepInFlow(stepType, stepName, flowName);
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    runPage.expandFlow(flowName);
+    runPage.navigate();
 
+    runPage.expandFlow(flowName);
     runPage.runStep(stepName, flowName);
 
     runPage.verifyStepRunResult(stepName, "success");
@@ -59,7 +56,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Add custom steps from Curate tile and Run steps", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
@@ -68,15 +65,13 @@ describe("Add Custom step to a flow", () => {
     curatePage.getExistingFlowFromDropdown(stepName, flowName).scrollIntoView().click({force: true});
     curatePage.confirmAddStepToFlow(stepName, flowName);
 
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
     runPage.expandFlow(flowName);
-
     runPage.verifyStepInFlow(stepType, stepName, flowName);
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+
+    runPage.navigate();
     runPage.expandFlow(flowName);
-
     runPage.runStep(stepName, flowName);
-
     runPage.verifyStepRunResult(stepName, "success");
     runPage.closeFlowStatusModal(flowName);
   });

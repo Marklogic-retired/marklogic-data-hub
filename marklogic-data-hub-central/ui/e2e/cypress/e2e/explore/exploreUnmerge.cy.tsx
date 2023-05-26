@@ -5,7 +5,7 @@ import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
+import homePage from "../../support/pages/home";
 import runPage from "../../support/pages/run";
 
 describe("Test '/Explore' graph right panel", () => {
@@ -22,9 +22,8 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Validate Unmerge from nodes and table on graph view", () => {
-    cy.clearAllSessionStorage();
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
 
     cy.log("** Merge Person **");
     graphExplore.getRunTile().click();
@@ -46,7 +45,7 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getTitleApp().click();
 
     cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -114,7 +113,7 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("Merge Icon disabled, missing permission", () => {
     cy.loginAsOperator().withRequest();
-    LoginPage.navigateToMainPage();
+    homePage.navigate();
     cy.log("** Click notification bell icon to open modal **");
     toolbar.getHomePageNotificationIcon().click({force: true});
     toolbar.getNotificationTitle().should("be.visible");
@@ -125,10 +124,9 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("Merge icon disabled in all Data, missing permission", () => {
     cy.loginAsOperator().withRequest();
-    LoginPage.navigateToMainPage();
-    toolbar.getExploreToolbarIcon().click();
-    cy.wait(8000);
-    browsePage.waitForSpinnerToDisappear();
+    cy.visit("tiles/explore");
+    cy.waitForAsyncRequest();
+
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
         cy.log("**clear all facets**");
@@ -151,10 +149,9 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("unMerge icon disabled on SnippetView/TableView and  when user doesn't have writeMatching and writeMerging rights ", () => {
     cy.loginAsOperator().withRequest();
-    LoginPage.navigateToMainPage();
+    cy.visit("tiles/explore");
+    cy.waitForAsyncRequest();
 
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
@@ -209,10 +206,9 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("Navigate to Table View and Filter Person entity", () => {
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.navigateToMainPage();
+    cy.visit("tiles/explore");
+    cy.waitForAsyncRequest();
 
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
     browsePage.clickTableView();
     cy.wait(3000);
     graphExplore.getSearchBar().type("Jones");

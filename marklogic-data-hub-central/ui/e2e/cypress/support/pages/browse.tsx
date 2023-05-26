@@ -1,5 +1,5 @@
+import explorePage from "./explore";
 import "cypress-wait-until";
-
 class BrowsePage {
 
   get totalResults() {
@@ -806,6 +806,10 @@ class BrowsePage {
 
   closeExportModal() {
     return cy.findByLabelText("Cancel").click();
+  }
+
+  navigate() {
+    explorePage.navigate();
   }
 }
 

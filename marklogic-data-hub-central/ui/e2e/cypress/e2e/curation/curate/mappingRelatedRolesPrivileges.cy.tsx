@@ -28,7 +28,7 @@ describe("Mapping", () => {
     });
 
     cy.log("**Navigates to Curate and opens EntityTypeId name**");
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyMatchingTab(entityTypeId, "not.exist");
 
@@ -86,13 +86,13 @@ describe("Mapping", () => {
 
   it("Data hub operator cannot add mapping steps to a flow", () => {
     let stepName = "map-orders";
+
     cy.log("**Login as an operator**");
     cy.loginAsOperator().withRequest();
-    loginPage.navigateToMainPage();
 
     cy.log("**Go to Curate Tile**");
-    toolbar.getCurateToolbarIcon().click();
-    curatePage.getEntityTypePanel("Order").should("be.visible");
+    cy.visit("/tiles/curate");
+    cy.waitForAsyncRequest();
 
     cy.log("**Open Order to see steps**");
     curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});

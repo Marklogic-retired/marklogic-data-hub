@@ -1,8 +1,7 @@
-import {confirmationModal, createEditStepDialog, toolbar} from "../../support/components/common/index";
+import {confirmationModal, createEditStepDialog} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import curatePage from "../../support/pages/curate";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
@@ -31,7 +30,7 @@ const mergeStep = "agentMerge";
 describe("Validate the scenarios when the steps are added in different flows", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    loadPage.navigate();
   });
 
   afterEach(() => {
@@ -54,8 +53,6 @@ describe("Validate the scenarios when the steps are added in different flows", (
   });
 
   it("Create Client load Step", () => {
-    toolbar.getLoadToolbarIcon().click({force: true});
-    cy.waitForAsyncRequest();
     loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
@@ -83,7 +80,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
   });
 
   it("Create Client entity and Add properties", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getModelToolbarIcon().should("be.visible").click();
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().click();
@@ -105,13 +102,10 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.wait(1000);
     modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    toolbar.getModelToolbarIcon().should("be.visible");
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
   });
 
   it("Create Client mapping step", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     cy.waitForAsyncRequest();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.toggleEntityTypeId("Agent");
@@ -156,8 +150,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
   });
 
   it("Create Client match step", () => {
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitForAsyncRequest();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.toggleEntityTypeId("Agent");
     curatePage.selectMatchTab("Agent");
@@ -195,8 +188,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
   });
 
   it("Create Client merge step ", () => {
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitForAsyncRequest();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Agent").should("be.visible");
     curatePage.getEntityTypePanel("Agent").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {

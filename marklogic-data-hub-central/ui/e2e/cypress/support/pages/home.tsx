@@ -37,6 +37,13 @@ class HomePage {
   getTileCloseButton() {
     return cy.get(`[class*="tiles_close"]`);
   }
+
+  navigate() {
+    cy.intercept("/api/models/hubCentralConfig").as("homePage");
+    cy.visit("/tiles");
+    cy.waitForAsyncRequest();
+    cy.wait("@homePage").wait("@homePage").wait("@homePage").wait("@homePage").wait("@homePage");
+  }
 }
 
 const homePage = new HomePage();

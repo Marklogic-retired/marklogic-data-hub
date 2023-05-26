@@ -1,23 +1,21 @@
-import LoginPage from "../../support/pages/login";
-import curatePage from "../../support/pages/curate";
-import graphExplore from "../../support/pages/graphExplore";
-import runPage from "../../support/pages/run";
-import {rulesetSingleModal} from "../../support/components/matching";
-import browsePage from "../../support/pages/browse";
 import matchingStepDetail from "../../support/components/matching/matching-step-detail";
+import {rulesetSingleModal} from "../../support/components/matching";
+import graphExplore from "../../support/pages/graphExplore";
 import {generateRandomString} from "../../support/helper";
+import curatePage from "../../support/pages/curate";
+import browsePage from "../../support/pages/browse";
+import runPage from "../../support/pages/run";
 
 
 const ignoreGonzales = generateRandomString("ignoreGonzales", 3);
 const ignoreSimpson  = generateRandomString("ignoreSimpson", 3);
 
 describe("Verify values to ignore feature", () => {
-
   before(() => {
     cy.clearAllLocalStorage();
     cy.clearAllSessionStorage();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.navigateToMainPage();
+    runPage.navigate();
   });
 
   after(() => {
@@ -30,9 +28,6 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Should merge when values do not match", () => {
-    cy.visit("/tiles/run");
-    cy.waitForAsyncRequest();
-
     runPage.toggleExpandFlow("testValuesToIgnore");
     runPage.getRunFlowButton("testValuesToIgnore").click();
     cy.uploadFile("input/valuesToIgnore/values-to-ignore1.json");
@@ -50,10 +45,8 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Should not merge when values do match with one list", () => {
-    cy.visit("/tiles/curate");
-    cy.waitForAsyncRequest();
-
-    // create a new values to ignore list
+    cy.log("create a new values to ignore list");
+    curatePage.navigate();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("matchForValuesToIgnore");
@@ -86,7 +79,6 @@ describe("Verify values to ignore feature", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
 
-    // create a new values to ignore list
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("matchForValuesToIgnore");
@@ -101,7 +93,7 @@ describe("Verify values to ignore feature", () => {
     cy.findByText(ignoreSimpson).click({force: true});
     rulesetSingleModal.saveButton().click();
 
-    // Run match and merge
+    cy.log("Run match and merge");
     graphExplore.getRunTile().click();
     cy.waitForAsyncRequest();
     runPage.toggleExpandFlow("testValuesToIgnore");

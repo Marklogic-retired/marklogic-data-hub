@@ -1,19 +1,11 @@
-import {toolbar} from "../../../support/components/common";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 
 describe("Verify ingestion for all filetypes", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    LoginPage.navigateToMainPage();
-  });
-
-  beforeEach(() => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
-    cy.waitForAsyncRequest();
+    loadPage.navigate();
   });
 
   after(() => {
@@ -56,6 +48,8 @@ describe("Verify ingestion for all filetypes", () => {
   it("Verify ingestion for zip filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyZIPTest";
     let flowName = "zipE2eFlow";
+
+    loadPage.navigate();
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
@@ -86,6 +80,8 @@ describe("Verify ingestion for all filetypes", () => {
   it("Verify ingestion for xml filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyXMTest";
     let flowName = "xmlE2eFlow";
+
+    loadPage.navigate();
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);

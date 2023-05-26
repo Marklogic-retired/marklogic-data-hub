@@ -1,8 +1,6 @@
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
 
@@ -10,7 +8,7 @@ import "cypress-wait-until";
 describe("Verify numeric/date facet can be applied", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
-    LoginPage.navigateToMainPage();
+    browsePage.navigate();
   });
 
   after(() => {
@@ -18,7 +16,6 @@ describe("Verify numeric/date facet can be applied", () => {
   });
 
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -96,7 +93,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
     browsePage.getGreySelectedFacets("Alexandra").should("exist");
-    toolbar.getExploreToolbarIcon().click();
+    browsePage.navigate();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -109,7 +106,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
     browsePage.getGreySelectedFacets("Alexandra").should("exist");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
     runPage.runStep("mapPersonJSON", "personJSON");
@@ -121,7 +118,7 @@ describe("Verify numeric/date facet can be applied", () => {
   });
 
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
-    toolbar.getExploreToolbarIcon().click();
+    browsePage.navigate();
     cy.wait(1000);
     entitiesSidebar.removeSelectedBaseEntity();
     entitiesSidebar.selectBaseEntityOption("Client");

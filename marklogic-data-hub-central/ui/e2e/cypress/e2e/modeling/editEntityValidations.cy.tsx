@@ -1,7 +1,6 @@
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {entityTypeModal, entityTypeTable} from "../../support/components/model";
 import {ConfirmationType} from "../../support/types/modeling-types";
-import loginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 
 const userRoles = [
@@ -13,7 +12,7 @@ const userRoles = [
 describe("Entity validations ", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    loginPage.navigateToMainPage();
+    modelPage.navigate();
   });
 
   afterEach(() => {
@@ -22,7 +21,6 @@ describe("Entity validations ", () => {
   });
 
   it("Check Namespace URI and prefix", () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().click();

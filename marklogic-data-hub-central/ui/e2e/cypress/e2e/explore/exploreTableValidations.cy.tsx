@@ -1,16 +1,13 @@
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Validate table and column selector in explore", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.navigate();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();

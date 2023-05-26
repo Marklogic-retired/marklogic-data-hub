@@ -1,15 +1,16 @@
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import LoginPage from "../../support/pages/login";
+import {toolbar} from "../../support/components/common";
+import homePage from "../../support/pages/home";
 
 describe("Test navigation with facets from graph side panel to details twice", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    homePage.navigate();
+    toolbar.getExploreToolbarIcon().click();
   });
 
   afterEach(() => {
@@ -18,11 +19,10 @@ describe("Test navigation with facets from graph side panel to details twice", (
   });
 
   it("Validate that with aplied facet can navigate from snipet view to graph and details from right side go back, repeat last one without fail", () => {
-    cy.log("**Go to Explore section?**");
-    toolbar.getExploreToolbarIcon().click();
-
     cy.log("**Verify loading indicator in the graph**");
     graphExplore.getGraphLoader().should("be.visible");
+    cy.waitForAsyncRequest();
+
     cy.log("**Select Graph view**");
     browsePage.clickGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");

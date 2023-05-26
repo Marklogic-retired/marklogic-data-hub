@@ -5,8 +5,11 @@ import modelPage from "../../support/pages/model";
 describe(("relationBetweenEntities"), () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.visit("/tiles/model");
-    cy.wait(2000);
+  });
+
+  beforeEach(() => {
+    cy.visit("tiles/model");
+    cy.waitForAsyncRequest();
   });
 
   const coordinatesMiddleRect = (x1:number, y1:number, x2:number, y2:number) => {
@@ -35,10 +38,7 @@ describe(("relationBetweenEntities"), () => {
   });
 
   it("Check type when relationship is created", () => {
-    cy.reload();
-    cy.wait(3500);
-
-    graphView.getAddButton().click({force: true});
+    graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
@@ -49,7 +49,7 @@ describe(("relationBetweenEntities"), () => {
       graphVis.getGraphVisCanvas()
         .trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0})
         .trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true})
-        .trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+        .trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true});
     });
     relationshipModal.verifySourceEntity("Person").should("be.visible");
     relationshipModal.verifyTargetNode("Client").should("be.visible");
@@ -104,10 +104,7 @@ describe(("relationBetweenEntities"), () => {
   });
 
   it("Truncate text for a long relationship name between entities", () => {
-    cy.reload();
-    cy.wait(3500);
-
-    graphView.getAddButton().click({force: true});
+    graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
@@ -118,7 +115,7 @@ describe(("relationBetweenEntities"), () => {
       graphVis.getGraphVisCanvas()
         .trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0})
         .trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true})
-        .trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+        .trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true});
     });
     relationshipModal.verifySourceEntity("Person").should("be.visible");
     relationshipModal.verifyTargetNode("Client").should("be.visible");
@@ -150,10 +147,7 @@ describe(("relationBetweenEntities"), () => {
   });
 
   it("Truncate text for a long relationship name between entity and concept", () => {
-    cy.reload();
-    cy.wait(3500);
-
-    graphView.getAddButton().click({force: true});
+    graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
@@ -174,9 +168,7 @@ describe(("relationBetweenEntities"), () => {
     relationshipModal.editRelationshipName(relationshipName);
     relationshipModal.addRelationshipSubmit();
     cy.wait(3000);
-    cy.reload();
-    cy.wait(3000);
-
+    modelPage.navigate();
     graphVis.getEdgesRelatedToaNode("Person", relationshipName).then((edgeNames:any) => {
       cy.wrap(edgeNames.label).should("equal", "LongRelationshipBetw...");
     });

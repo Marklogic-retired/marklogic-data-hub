@@ -2,19 +2,16 @@ import {generateUniqueName} from "../../../support/helper";
 import {toolbar} from "../../../support/components/common";
 import explorePage from "../../../support/pages/explore";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
+import curatePage from "../../../support/pages/curate";
 
 let flowName = "testPersonXML";
 
 describe("Run Tile tests", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    cy.waitForAsyncRequest();
+    runPage.navigate();
   });
 
   afterEach(() => {
@@ -31,8 +28,7 @@ describe("Run Tile tests", () => {
   // TODO: DHFPROD-10086
   it.skip("Runs flow following the order of the cards displayed", () => {
     const flowName2 = generateUniqueName("personTestingXML");
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    cy.waitForAsyncRequest();
+    runPage.navigate();
 
     runPage.createFlowButton().should("exist").click({force: true});
     runPage.newFlowModal().should("be.visible");
@@ -289,8 +285,7 @@ describe("Run Tile tests", () => {
 
   it("Run map,match and merge steps for Person entity individually using xml documents ", {defaultCommandTimeout: 120000}, () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.navigateToMainPage();
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
 
     cy.intercept("GET", "/api/jobs/**").as("runResponse");
     if (cy.get(`[data-testid="accordion-testPersonXML"].collapsed`)) {
@@ -330,12 +325,8 @@ describe("Run Tile tests", () => {
   it("Execute certain steps in a flow and control that it is being saved to local storage for a user ", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
-
-    cy.log("**loginAsTestUserWithRoles**");
-    LoginPage.navigateToMainPage();
-
-    cy.log("**navigateToMainPage**");
-    toolbar.getRunToolbarIcon().click();
+    cy.visit("/");
+    runPage.navigate();
     runPage.openStepsSelectDropdown("testPersonXML");
 
     cy.log("**Change selected steps**");
@@ -364,7 +355,7 @@ describe("Run Tile tests", () => {
     runPage.closeFlowStatusModal(flowName);
 
     cy.log("**Change page and return to check the same steps previously selected**");
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     toolbar.getRunToolbarIcon().click({force: true});
     runPage.openStepsSelectDropdown("testPersonXML");
     runPage.controlUncheckedStep("#loadPersonXML");
@@ -384,11 +375,8 @@ describe("Run Tile tests", () => {
 
   it("Login with other user and check other step options are checked in a flow", {defaultCommandTimeout: 120000}, () => {
     cy.logout();
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
-    LoginPage.navigateToMainPage();
-
-    cy.log("**Go to Run Page**");
-    toolbar.getRunToolbarIcon().click();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();    cy.visit("/");
+    runPage.navigate();
 
     cy.log("**Check others steps for this user are selected**");
     runPage.openStepsSelectDropdown("testPersonXML");
@@ -397,12 +385,12 @@ describe("Run Tile tests", () => {
     runPage.controlCheckedStep("#match-xml-person");
   });
 
-  it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
+  it("Show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
     const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     const stepName = "mapCustomersWithRelatedEntitiesJSON";
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("runResponse");
 
@@ -435,7 +423,7 @@ describe("Run Tile tests", () => {
     const secondStepName = "mapCustomersWithRelatedEntitiesJSON";
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("runResponse");
 
@@ -461,7 +449,7 @@ describe("Run Tile tests", () => {
     browsePage.getSelectedFacet("createdByJob").should("exist");
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("runResponse");
 
@@ -492,7 +480,7 @@ describe("Run Tile tests", () => {
     const firstStepName = "mapPersonJSON";
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("runResponse");
 
@@ -500,11 +488,11 @@ describe("Run Tile tests", () => {
     runPage.expandFlow(firstFlowName);
 
     cy.log("**Navigate to explorer tile using the explorer link**");
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     cy.waitForAsyncRequest();
 
     cy.log("**Navigate to run tile and check visibility of the personJSON flow**");
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     cy.intercept("/api/jobs/**").as("runResponse");
     runPage.getRunStep(firstStepName, firstFlowName).should("be.visible");

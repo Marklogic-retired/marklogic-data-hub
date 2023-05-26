@@ -1,10 +1,8 @@
 import queryComponent from "../../support/components/query/manage-queries-modal";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common/index";
 import table from "../../support/components/common/tables";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 let qName = "";
@@ -14,10 +12,9 @@ describe("Save/manage queries scenarios, developer role", () => {
     cy.clearAllLocalStorage();
     cy.clearAllSessionStorage();
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
     cy.runStep("personJSON", "mapPersonJSON");
     cy.waitForAsyncRequest();
-    cy.deleteSavedQueries();
+    explorePage.navigate();
   });
 
   after(() => {
@@ -27,7 +24,6 @@ describe("Save/manage queries scenarios, developer role", () => {
   });
 
   it("Verifies selected popover facets are unselected with the clear selection button", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.wait(4000);
     entitiesSidebar.toggleAllDataView();
     entitiesSidebar.toggleStagingView();
@@ -47,7 +43,7 @@ describe("Save/manage queries scenarios, developer role", () => {
   });
 
   it("Apply facet search,open save modal, save new query", () => {
-    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    explorePage.navigate();
     browsePage.databaseSwitch("final").click();
     explorePage.getEntities().click();
     browsePage.clickTableView();

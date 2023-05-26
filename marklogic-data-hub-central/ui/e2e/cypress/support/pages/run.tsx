@@ -1,3 +1,6 @@
+import {toolbar} from "../components/common";
+import homePage from "./home";
+
 class RunPage {
 
   private flowBodyContainer = ".accordion-collapse";
@@ -263,6 +266,16 @@ class RunPage {
     this.getStepsFromModal().each(($el, index) => {
       cy.wrap($el).should("contain.text", stepNames[index]);
     });
+  }
+
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
   }
 }
 

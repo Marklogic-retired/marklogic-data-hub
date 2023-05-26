@@ -1,4 +1,6 @@
+import {toolbar} from "../components/common";
 import "cypress-wait-until";
+import homePage from "./home";
 class MonitorPage {
   getMonitorContainer() {
     return cy.get(`#monitorContent`);
@@ -26,9 +28,6 @@ class MonitorPage {
     return cy.findAllByTestId("jobId-link");
   }
 
-  waitForMonitorTableToLoad() {
-    cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
-  }
   clickPaginationItem(index: number) {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click({force: true});
   }
@@ -261,6 +260,15 @@ class MonitorPage {
     return cy.get(className);
   }
 
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getMonitorToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
+  }
 }
 const monitorPage = new MonitorPage();
 export default monitorPage;

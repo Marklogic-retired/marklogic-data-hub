@@ -1,8 +1,8 @@
-import {createEditStepDialog, toolbar} from "../../../support/components/common";
+import {createEditStepDialog} from "../../../support/components/common";
 import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
 import curatePage from "../../../support/pages/curate";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
+import loadPage from "../../../support/pages/load";
 
 import "cypress-wait-until";
 
@@ -12,7 +12,7 @@ describe("Mapping validations for session storage and table filtering", () => {
 
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -21,7 +21,6 @@ describe("Mapping validations for session storage and table filtering", () => {
   });
 
   it("Verify 'more'/'less' functionality on filtering by name for structured properties", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     mappingStepDetail.customerEntity().click();
     mappingStepDetail.getEditStepSettingsButton("mapCustomersJSON").click();
     mappingStepDetail.getCollectionInputValue().should("have.value", "loadCustomersJSON");
@@ -50,8 +49,8 @@ describe("Mapping validations for session storage and table filtering", () => {
     });
 
     cy.log("**Go to another page and back**");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
+    loadPage.navigate();
+    curatePage.navigate();
 
     mappingStepDetail.verifyExpandedRows();
     mappingStepDetail.verifyContent("5 / page");
@@ -59,8 +58,8 @@ describe("Mapping validations for session storage and table filtering", () => {
     mappingStepDetail.addFilter("ship");
 
     cy.log("**Go to another page and back**");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
+    loadPage.navigate();
+    curatePage.navigate();
     mappingStepDetail.verifyFilter();
     mappingStepDetail.resetSourceSearch().should("be.visible").click();
   });
@@ -92,8 +91,7 @@ describe("Mapping validations for session storage and table filtering", () => {
   });
 
   it("Validate Data Source Filter persists when navigating between pages", () => {
-    toolbar.getCurateToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     mappingStepDetail.expandAllSourceTable();
     mappingStepDetail.getSourceDataExpandedRows().should("be.visible");
 

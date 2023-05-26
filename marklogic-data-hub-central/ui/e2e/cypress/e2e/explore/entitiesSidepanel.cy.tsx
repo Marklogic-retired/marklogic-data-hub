@@ -13,7 +13,7 @@ describe("Test '/Explore' left sidebar", () => {
 
   beforeEach(() => {
     cy.log(`**Go to Explore section**`);
-    cy.visit("/tiles/explore");
+    explorePage.navigate();
   });
 
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", {browser: "!firefox"}, () => {

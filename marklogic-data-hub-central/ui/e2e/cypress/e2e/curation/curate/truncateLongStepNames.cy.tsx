@@ -1,20 +1,18 @@
-import {createEditStepDialog, toolbar} from "../../../support/components/common";
+import {createEditStepDialog} from "../../../support/components/common";
 import {generateUniqueName} from "../../../support/helper";
 import curatePage from "../../../support/pages/curate";
-import loginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 
 const matchStep = generateUniqueName("StepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongNameStepWithALongName");
 const short = generateUniqueName("short");
 
 describe("truncate long Names", () => {
-  beforeEach(() => {
+  before(() => {
     cy.loginAsDeveloper().withRequest();
-    loginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   it("Check default collection with a long name, text should be trimmed and with tooltip", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Office").should("be.visible");
     curatePage.toggleEntityTypeId("Office");
     curatePage.selectMatchTab("Office");
@@ -37,12 +35,11 @@ describe("truncate long Names", () => {
       .then((result) => result[1]).trigger("mouseover");
     cy.findByRole("tooltip");
     cy.get(`[text="${matchStep}"]`);
+    createEditStepDialog.cancelButton("matching").click({force: true});
   });
 
   it("Check default collection with a short name, not trimmed and with out  tooltip", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
     curatePage.getEntityTypePanel("Office").should("be.visible");
-    curatePage.toggleEntityTypeId("Office");
     curatePage.selectMatchTab("Office");
     curatePage.addNewStep("Office").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(short, {timeout: 2000});

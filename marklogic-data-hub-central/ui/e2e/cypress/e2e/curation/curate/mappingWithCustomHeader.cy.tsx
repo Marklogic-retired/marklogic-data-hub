@@ -1,8 +1,6 @@
-import {toolbar} from "../../../support/components/common";
 import browsePage from "../../../support/pages/browse";
 import detailPage from "../../../support/pages/detail";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import {
@@ -25,7 +23,7 @@ const userRoles = ["hub-central-flow-writer",
 describe("Create and verify load steps, map step and flows with a custom header", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    loadPage.navigate();
   });
 
   after(() => {
@@ -38,8 +36,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Create load step", () => {
-    toolbar.getLoadToolbarIcon().click();
-    cy.waitForAsyncRequest();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(loadStep);
@@ -80,8 +76,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Create mapping step", () => {
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.navigate();
     curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
@@ -96,14 +91,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   it("Edit Map step", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-
-    cy.log("**Open Order to see steps**");
-    curatePage.getEntityTypePanel("Order").then(($ele) => {
-      if ($ele.hasClass("accordion-button collapsed")) {
-        cy.log("**Toggling Entity because it was closed.**");
-        curatePage.toggleEntityTypeId("Order");
-      }
-    });
+    curatePage.toggleEntityTypeId("Order");
 
     cy.log("**Open step settings and switch to Advanced tab**");
     curatePage.editStep(mapStep).should("be.visible").click();
@@ -137,20 +125,15 @@ describe("Create and verify load steps, map step and flows with a custom header"
   it("Add Map step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-
-    cy.log("**Open Order to see steps**");
-    curatePage.expandAccordian("Order");
+    curatePage.toggleEntityTypeId("Order");
 
     cy.log("**Cancel add to new flow**");
     curatePage.addToNewFlow("Order", mapStep);
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
-    cy.visit("/tiles/curate");
-    cy.waitForAsyncRequest();
-    curatePage.expandAccordian("Order");
+    curatePage.navigate();
 
-    cy.wait(1000);
     curatePage.openExistingFlowDropdownAndTooltip("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(mapStep, flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
@@ -158,7 +141,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
     runPage.runStep(mapStep, flowName);
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
     runPage.deleteStep(mapStep, flowName).click();
@@ -167,14 +150,15 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().click();
+    cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Order");
+
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.verifyNoStepRunResult("loadOrder", "success");
     runPage.closeFlowStatusModal(flowName);
@@ -186,12 +170,12 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.get("body").should("not.contain", flowName);
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+
+    curatePage.navigate();
     curatePage.runStepInCardView(mapStep).click();
     cy.findByText(flowName).should("not.exist");
     loadPage.confirmationOptions("Close").click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
@@ -206,20 +190,19 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
     runPage.runStep(mapStep, flowName);
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     runPage.verifyStepRunResult(mapStep, "success");
     runPage.closeFlowStatusModal(flowName);
   });
 
   it("Verify Run Map step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.navigate();
+
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).first().should("be.visible");
     runPage.verifyStepRunResult(mapStep, "success");
@@ -230,9 +213,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().click({force: true});
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.navigate();
+
     curatePage.addToNewFlow("Order", mapStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -243,13 +225,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
-    toolbar.getCurateToolbarIcon().click({force: true});
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+
+    curatePage.navigate();
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName);
     runPage.getFlowStatusSuccess(flowName).should("be.visible");
@@ -266,7 +248,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains("999ABC");
 
     detailPage.attachmentPresent().should("not.exist");
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
     advancedSettingsDialog.attachSourceDocument().click();
@@ -279,7 +261,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@runResponse", {timeout: 12000});
+    cy.wait("@runResponse");
     cy.waitForAsyncRequest();
     runPage.explorerLink(mapStep).click();
 

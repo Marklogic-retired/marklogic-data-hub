@@ -9,19 +9,12 @@ describe("Test sidebar indicators", () => {
   });
 
   beforeEach(() => {
-    cy.log(`**Go to Explore section**`);
-    cy.visit("/tiles/explore");
+    explorePage.navigate();
   });
 
   afterEach(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
-    cy.log("**Logging into the app as a developer**");
-    cy.loginAsDeveloper().withRequest();
-    cy.log(`**Go to Explore section**`);
-    cy.visit("/tiles/explore");
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
   });
 
   after(() => {

@@ -1,19 +1,17 @@
 import queryComponent from "../../support/components/query/manage-queries-modal";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common/index";
 import table from "../../support/components/common/tables";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 
 describe("manage queries modal scenarios, developer role", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
     cy.deleteSavedQueries();
+    explorePage.navigate();
   });
 
   after(() => {
@@ -23,7 +21,6 @@ describe("manage queries modal scenarios, developer role", () => {
   });
 
   it("Create Queries", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -54,7 +51,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
 
   it("Manage queries, edit, apply, delete query", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -139,7 +136,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
 
   it("Verify manage queries modal visibility and removing query scenario on the detail page", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -280,7 +277,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
 
   it("Verify editing previously saved query, updates the currently applied query name in browse page", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();

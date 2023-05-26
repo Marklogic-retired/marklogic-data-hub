@@ -1,14 +1,14 @@
 import pagination from "../../support/components/common/pagination";
 import table from "../../support/components/common/tables";
 import {toolbar} from "../../support/components/common";
-import monitor from "../../support/pages/monitor";
+import monitorPage from "../../support/pages/monitor";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
 
 describe("Validate pagination for the Monitor tile", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.visit("/tiles/monitor");
+    monitorPage.navigate();
   });
 
   afterEach(() => {
@@ -22,16 +22,16 @@ describe("Validate pagination for the Monitor tile", () => {
     table.getTableRows().should("have.length.at.most", 20);
 
     cy.log("**Scroll right and validate default pagination**");
-    monitor.scrollMonitorToPageSelect();
+    monitorPage.scrollMonitorToPageSelect();
     pagination.getPaginationSizeSelected().should("have.text", "20 / page20 / page");
 
     cy.log("**Make sure I have the option to change from 20 to 10/40/80**");
     pagination.getPaginationPageSizeOptions().should("contain", "10 / page").should("contain", "40 / page").should("contain", "80 / page");
 
     cy.log("**Set pagination to 10 and validate amount of records**");
-    monitor.getPaginationPageSizeOptions().scrollIntoView().select("10 / page", {force: true});
+    monitorPage.getPaginationPageSizeOptions().scrollIntoView().select("10 / page", {force: true});
     pagination.getPaginationSizeSelected().should("have.text", "10 / page10 / page");
-    monitor.getTableRows().should("have.length.at.most", 10);
+    monitorPage.getTableRows().should("have.length.at.most", 10);
   });
 
   it("Navigate to next page(in Monitor) and make sure pagination has persisted", () => {

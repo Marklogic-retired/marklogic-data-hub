@@ -1,15 +1,18 @@
+import {toolbar} from "../components/common";
+import homePage from "./home";
+
 class ModelPage {
 
   /**
   * @param type - accepts `table` for table-view or `project-diagram` for graph-view
   */
   selectView(view: string) {
-    cy.get(`[data-icon="${view}"]`).first().should("exist").scrollIntoView().trigger("mouseover").click({force: true});
+    cy.get(`[data-icon="${view}"]`).first().should("be.visible").scrollIntoView().trigger("mouseover").click({force: true});
     cy.wait(1000);
     cy.get("body")
       .then(($body) => {
         if ($body.find("[class*=\"rbt-input\"]")) {
-          cy.get(`[data-icon="${view}"]`).first().should("exist").scrollIntoView().trigger("mouseover").click({force: true});
+          cy.get(`[data-icon="${view}"]`).first().should("be.visible").scrollIntoView().trigger("mouseover").click({force: true});
         }
       });
   }
@@ -98,6 +101,15 @@ class ModelPage {
     return cy.findByTitle(`${color}`);
   }
 
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getModelToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
+  }
 }
 
 const modelPage = new ModelPage();

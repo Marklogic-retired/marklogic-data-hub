@@ -1,7 +1,6 @@
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import graphVis from "../../support/components/model/graph-vis";
-import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import "cypress-wait-until";
 
@@ -25,9 +24,8 @@ const userRoles = [
 describe("Entity Modeling: Writer Role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
     cy.setupHubCentralConfig();
+    modelPage.navigate();
   });
 
   after(() => {
@@ -36,8 +34,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
 
   it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getModelToolbarIcon().click({force: true});
-    cy.waitForAsyncRequest();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
@@ -84,6 +81,7 @@ describe("Entity Modeling: Writer Role", () => {
     graphViewSidePanel.getPropertiesTab().click();
     propertyTable.getExpandIcon("address").should("exist").click();
     propertyTable.getPropertyName("street").should("exist");
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
   });
 
@@ -144,7 +142,6 @@ describe("Entity Modeling: Writer Role", () => {
   });
 
   it("changes the structured property for other structured property", () => {
-    // edits structured property
     cy.log("Edits the structured property");
     propertyTable.editProperty("zip-zip");
     propertyModal.openPropertyDropdown();
@@ -156,11 +153,9 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getNoRadio("pii").click();
     propertyModal.getSubmitButton().click();
 
-    // verifies the changes
     cy.log("Verifies the changes");
     propertyTable.getPropertyType("zip").should("have.text", "Testing");
 
-    // rollsback the change to the original structured property
     cy.log("Rollsback the change to the original structured property");
     propertyTable.editProperty("zip-zip");
     propertyModal.openPropertyDropdown();
@@ -214,6 +209,7 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.getModalHeader().should("be.visible");
     relationshipModal.verifyRelationshipValue("OrderedBy");
     relationshipModal.cancelModal();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
   });
 
@@ -309,6 +305,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
 
     cy.wait(1000);
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     propertyTable.getExpandIcon("AddEntity-Entity Type").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();

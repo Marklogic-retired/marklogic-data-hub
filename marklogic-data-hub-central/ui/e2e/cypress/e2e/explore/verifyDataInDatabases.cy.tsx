@@ -9,8 +9,8 @@ import "cypress-wait-until";
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
+    browsePage.navigate();
   });
 
   afterEach(() => {
@@ -24,8 +24,6 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
 
   it("Switch on zero state page and select query parameters for final database", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.wait(6000);
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
         cy.log("**clear all facets**");

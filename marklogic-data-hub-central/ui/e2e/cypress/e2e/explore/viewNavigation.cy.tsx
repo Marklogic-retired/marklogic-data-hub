@@ -1,22 +1,17 @@
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {Application} from "../../support/application.config";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import LoginPage from "../../support/pages/login";
 
 describe("Navigation through all the Explore views (Table, Snippet, Graph and Details)", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
   });
 
   beforeEach(() => {
     cy.log("**Navigate to Explore**");
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(2000);
+    cy.loginAsDeveloper().withRequest();
+    browsePage.navigate();
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
         cy.log("**clear all facets**");
@@ -90,14 +85,8 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
   });
 
   it("Remove alert stabilize nodes", () => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
-
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
-    graphExplore.getGraphVisCanvas().should("be.visible");
-    cy.wait(8000);
     browsePage.waitForSpinnerToDisappear();
+    graphExplore.getGraphVisCanvas().should("be.visible");
 
     cy.log("Remove Alert");
     cy.findByText("The graph stabilization process causes the graph nodes to move automatically. To skip this process and view a static configuration, toggle OFF “Physics animation”.");
@@ -107,7 +96,7 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.log("**Go to another view and check the alert is not present**");
     cy.findByLabelText("title-link").click();
     cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
+    browsePage.navigate();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
@@ -116,12 +105,8 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.log("**Clear local store and check the message appears**");
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsDeveloperV2().withRequest();
-    LoginPage.navigateToMainPage();
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
+    browsePage.navigate();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();

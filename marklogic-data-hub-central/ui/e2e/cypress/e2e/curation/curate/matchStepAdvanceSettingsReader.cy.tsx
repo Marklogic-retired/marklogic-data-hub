@@ -1,22 +1,16 @@
 import {advancedSettings} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import "cypress-wait-until";
-import {
-  toolbar
-} from "../../../support/components/common/index";
-
 const matchStep = "match-person";
 
 describe("Validate Advance Settings for hub-central-match-merge-reader role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-match-merge-reader").withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");

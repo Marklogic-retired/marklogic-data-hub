@@ -1,16 +1,14 @@
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
   });
 
   afterEach(() => {
@@ -25,7 +23,6 @@ describe("Monitor Tile", () => {
 
   it("Navigate to Monitor Tile and verify that the column selector works", () => {
     cy.log("**Open explore and select table view**");
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickTableView();
     browsePage.waitForSpinnerToDisappear();

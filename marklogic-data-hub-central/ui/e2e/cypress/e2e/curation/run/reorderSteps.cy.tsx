@@ -1,5 +1,4 @@
 import {toolbar} from "../../../support/components/common";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 
@@ -9,7 +8,7 @@ describe("Run Tile tests", () => {
   });
 
   beforeEach(() => {
-    LoginPage.navigateToMainPage();
+    runPage.navigate();
     toolbar.getRunToolbarIcon().click({force: true});
     runPage.getFlowName("personJSON").should("be.visible");
   });

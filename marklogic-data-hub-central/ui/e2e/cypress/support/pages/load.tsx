@@ -1,3 +1,6 @@
+import {toolbar} from "../components/common";
+import homePage from "./home";
+
 class LoadPage {
 
   //Load tile list view page objects
@@ -326,6 +329,15 @@ class LoadPage {
     return cy.get(`#${stepName}missing-permission-tooltip`);
   }
 
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
+  }
 }
 
 const loadPage = new LoadPage();
