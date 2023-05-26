@@ -1,3 +1,6 @@
+import {toolbar} from "../components/common";
+import homePage from "./home";
+
 class CuratePage {
   /**
      * Open/close the entity type id to expose/hide the map/custom step configurations
@@ -102,7 +105,7 @@ class CuratePage {
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`).click({force: true});
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]:visible`).click({force: true});
   }
 
   selectCustomTab(entityTypeId: string) {
@@ -290,18 +293,23 @@ class CuratePage {
   goBack(id:string) {
     cy.findByTestId(id).click();
   }
+
   getFirstTableViewInstanceIcon() {
     return cy.get("a#instance").first();
   }
+
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
   }
+
   getStepCard(entity: string, stepName: string) {
     return cy.get(`div[data-testid="${entity}-${stepName}-step"]`);
   }
+
   getTooltip() {
     return cy.get(".tooltip-inner");
   }
+
   expandAccordian(entity: string) {
     this.getEntityTypePanel(entity).then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
@@ -309,6 +317,16 @@ class CuratePage {
         this.toggleEntityTypeId(entity);
       }
     });
+  }
+
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
   }
 }
 

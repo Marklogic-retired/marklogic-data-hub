@@ -2,7 +2,6 @@ import {compareValuesModal} from "../../../support/components/matching";
 import {toolbar} from "../../../support/components/common";
 import explorePage from "../../../support/pages/explore";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
 import runPage from "../../../support/pages/run";
 import "cypress-wait-until";
 
@@ -16,7 +15,7 @@ const userRoles = [
 describe("Merge Notification Functionality From Explore Card View", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    runPage.navigate();
   });
 
   after(() => {
@@ -27,7 +26,6 @@ describe("Merge Notification Functionality From Explore Card View", () => {
   });
 
   it("Run Match and Merge steps to generate Notification Docs", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.toggleFlowAccordion("personJSON");
     cy.log("** Run Map, Match and Merge Steps **");
@@ -108,9 +106,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
   });
 
   it("Run Match and Merge steps to generate Notification Docs", () => {
-    cy.intercept("GET", "/api/flows/personJSON/latestJobInfo").as("personJSON");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.wait("@personJSON").wait("@personJSON");
+    runPage.navigate();
     runPage.getFlowName("personJSON").should("be.visible");
     runPage.toggleExpandFlow("personJSON");
     cy.log("** Run Match and Merge Steps **");
@@ -147,7 +143,7 @@ describe("Merge Notification Functionality From Explore Card View", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
     cy.wait(2000);
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.navigate();
     browsePage.getMergeIcon().should("be.visible");
     cy.wait(8000);
     browsePage.getMergeIcon().first().click();

@@ -1,8 +1,7 @@
 import {entityTypeModal, propertyTable} from "../../support/components/model/index";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import graphVis from "../../support/components/model/graph-vis";
-import {Application} from "../../support/application.config";
 import modelPage from "../../support/pages/model";
 import "cypress-wait-until";
 
@@ -12,6 +11,7 @@ import {
   propertyModal,
   relationshipModal,
 } from "../../support/components/model/index";
+import curatePage from "../../support/pages/curate";
 
 describe("Graph Validations", () => {
   before(() => {
@@ -21,9 +21,7 @@ describe("Graph Validations", () => {
 
   beforeEach(() => {
     cy.visit("/tiles/model");
-    cy.contains(Application.title);
-    toolbar.getModelToolbarIcon().should("have.length.gt", 0).click({force: true});
-    cy.wait(3000);
+    cy.waitForAsyncRequest();
     modelPage.selectView("table");
     cy.wait(1000);
     entityTypeTable.waitForTableToLoad();
@@ -171,11 +169,11 @@ describe("Graph Validations", () => {
       });
     });
 
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    curatePage.navigate();
     confirmationModal.getNavigationWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
 
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.navigate();
     modelPage.selectView("project-diagram");
 
     ids.forEach(id => {

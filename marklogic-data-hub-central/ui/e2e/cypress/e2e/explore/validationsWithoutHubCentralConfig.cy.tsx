@@ -14,7 +14,7 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   });
 
   beforeEach(() => {
-    cy.visit("/tiles/explore");
+    explorePage.navigate();
   });
 
   afterEach(() => {

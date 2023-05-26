@@ -1,5 +1,3 @@
-import {toolbar} from "../../../support/components/common";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import "cypress-wait-until";
 
@@ -8,10 +6,7 @@ describe("Load Page validations", () => {
 
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.navigate();
   });
 
   after(() => {
@@ -21,7 +16,6 @@ describe("Load Page validations", () => {
   });
 
   it("Creates a step and edits it", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getLoadToolbarIcon().click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
     loadPage.stepDescriptionInput().type("cyTestDesc");

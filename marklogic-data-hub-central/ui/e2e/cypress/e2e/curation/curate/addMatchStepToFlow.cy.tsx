@@ -1,11 +1,7 @@
+import {createEditStepDialog} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
-import {
-  toolbar,
-  createEditStepDialog
-} from "../../../support/components/common/index";
 
 import {generateUniqueName} from "../../../support/helper";
 import "cypress-wait-until";
@@ -17,7 +13,7 @@ const flowName2 = generateUniqueName("flow2");
 describe("Add Matching step to a flow", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -25,14 +21,10 @@ describe("Add Matching step to a flow", () => {
     cy.resetTestUser();
   });
 
-  it("Navigating to Customer Match tab", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+  it("Create a new match step", () => {
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
-  });
-
-  it("Create a new match step", () => {
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("match customer step example", {timeout: 2000});
@@ -77,17 +69,16 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Delete the step and Navigate back to match tab", () => {
+  it("Delete the step", () => {
     runPage.deleteStep(matchStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.selectMatchTab("Customer");
   });
 
-  it("Add the Match step to an existing flow and Run the step(existing)", {defaultCommandTimeout: 120000}, () => {
-    cy.log("**Open the match step dropdown**");
+  it("Add the Match step to an existing flow and Run the step (existing)", {defaultCommandTimeout: 120000}, () => {
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.selectMatchTab("Customer");
     curatePage.openExistingFlowDropdown("Customer", matchStep);
 
     cy.log("**Select existing flow from the match step dropdown**");
@@ -108,16 +99,12 @@ describe("Add Matching step to a flow", () => {
   it("Delete the match step", () => {
     runPage.deleteStep(matchStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
-
-    cy.log("**Navigating to match tab**");
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    curatePage.getEntityTypePanel("Customer").should("be.visible");
-    curatePage.selectMatchTab("Customer");
+    cy.waitForAsyncRequest();
   });
 
   it("Add the Match step to new flow", {defaultCommandTimeout: 120000}, () => {
     cy.log("Create new flow");
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
     runPage.createFlowButton().should("be.visible").click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName2);
@@ -132,17 +119,17 @@ describe("Add Matching step to a flow", () => {
     cy.wait(1000);
   });
 
-  it("Delete the match step and Navigate back to match tab", () => {
+  it("Delete the match step", () => {
     runPage.deleteStep(matchStep, flowName2).click();
     loadPage.confirmationOptionsAll("Yes").last().click();
     cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    curatePage.getEntityTypePanel("Customer").should("be.visible");
-
-    curatePage.selectMatchTab("Customer");
   });
 
   it("Add the Match step to an existing flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
+    curatePage.selectMatchTab("Customer");
+
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
@@ -153,13 +140,10 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Matching", matchStep, flowName2);
   });
 
-  it("Navigating to match tab", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+  it("Run the Match step from card run button and should automatically run in the flow where step exists", {defaultCommandTimeout: 120000}, () => {
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectMatchTab("Customer");
-  });
-
-  it("Run the Match step from card run button and should automatically run in the flow where step exists", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepExistsOneFlowConfirmation().scrollIntoView().should("be.visible");
     curatePage.confirmContinueRun();
@@ -170,13 +154,10 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Matching", matchStep, flowName2);
   });
 
-  it("Navigating to match tab", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+  it("Add the match step to a second flow and verify it was added", () => {
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectMatchTab("Customer");
-  });
-
-  it("Add the match step to a second flow and verify it was added", () => {
     curatePage.openExistingFlowDropdown("Customer", matchStep);
     curatePage.getExistingFlowFromDropdown(matchStep, flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
@@ -185,13 +166,10 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Matching", matchStep, flowName1);
   });
 
-  it("Navigating to match tab", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+  it("Run the Match step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectMatchTab("Customer");
-  });
-
-  it("Run the Match step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
@@ -205,7 +183,7 @@ describe("Add Matching step to a flow", () => {
   });
 
   it("Delete the match step", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectMatchTab("Customer");
     curatePage.deleteMappingStepButton(matchStep).should("be.visible").click();
@@ -213,10 +191,10 @@ describe("Add Matching step to a flow", () => {
   });
 
   it("Validate match step is removed from flows", () => {
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
     runPage.expandFlow(flowName1);
     runPage.verifyNoStepsInFlow();
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
     runPage.expandFlow(flowName2);
     runPage.verifyNoStepsInFlow();
   });

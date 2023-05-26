@@ -1,8 +1,7 @@
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import graphVis from "../../support/components/model/graph-vis";
 import modelPage from "../../support/pages/model";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 import {
@@ -22,8 +21,8 @@ const userRoles = [
 describe("Concept classes in Modeling screen", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
+    modelPage.navigate();
   });
 
   afterEach(() => {
@@ -37,8 +36,6 @@ describe("Concept classes in Modeling screen", () => {
   });
 
   it("Create and verify new concept class", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
-    cy.wait(5000);
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
 
@@ -116,7 +113,7 @@ describe("Concept classes in Modeling screen", () => {
   });
 
   it("Can edit graph edit mode and add edge relationship between entity type and concept class via drag/drop", () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.navigate();
     modelPage.scrollPageBottom();
     cy.wait(6000);
     graphView.getAddButton().click();
@@ -148,6 +145,7 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.addRelationshipSubmit();
 
     cy.waitForAsyncRequest();
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -171,6 +169,7 @@ describe("Concept classes in Modeling screen", () => {
   });
 
   it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -242,6 +241,7 @@ describe("Concept classes in Modeling screen", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -263,7 +263,7 @@ describe("Concept classes in Modeling screen", () => {
   });
 
   it("Delete a concept class from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.navigate();
     modelPage.scrollPageBottom();
     cy.wait(6000);
 
@@ -332,8 +332,7 @@ describe("Concept classes in Modeling screen", () => {
 
   it("Create/Edit and verify new concept class from Table view", {defaultCommandTimeout: 120000}, () => {
     cy.log("Add new concept class from table view");
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    cy.waitForAsyncRequest();
+    modelPage.navigate();
     modelPage.selectView("table");
     cy.waitForAsyncRequest();
     entityTypeTable.waitForTableToLoad();

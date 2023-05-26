@@ -1,17 +1,13 @@
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common/index";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("User without hub-central-saved-query-user role should not see saved queries drop down on zero sate page", () => {
   before(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
-    LoginPage.navigateToMainPage();
+    browsePage.navigate();
   });
 
   afterEach(() => {
@@ -20,9 +16,6 @@ describe("User without hub-central-saved-query-user role should not see saved qu
   });
 
   it("Verify user without hub-central-saved-query-user role can explore data", () => {
-    toolbar.getExploreToolbarIcon().should("be.visible").click();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.getSaveQueriesDropdown().should("exist");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");

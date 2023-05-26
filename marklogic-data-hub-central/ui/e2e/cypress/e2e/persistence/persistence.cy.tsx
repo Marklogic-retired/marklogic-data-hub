@@ -68,8 +68,7 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Explore tile: the graph view switches settings should be preserved", () => {
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    browsePage.navigate();
     browsePage.clickGraphView();
 
     cy.log("**Switch off all the toggles**");
@@ -93,8 +92,7 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Go to curate tile, and validate that the accordion and tabs are kept when switching between pages", () => {
-    toolbar.getCurateToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     curatePage.getAccordionButton(0).click();
     curatePage.getAccordionButton(1).click();
     curatePage.getAccordionButtonTab(0, 1).click();
@@ -124,6 +122,7 @@ describe("Validate persistence across Hub Central", () => {
         cy.publishDataModel();
       }
     });
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
@@ -136,6 +135,7 @@ describe("Validate persistence across Hub Central", () => {
       });
     toolbar.getModelToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
@@ -148,6 +148,7 @@ describe("Validate persistence across Hub Central", () => {
       });
     toolbar.getModelToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
@@ -222,6 +223,7 @@ describe("Validate persistence across Hub Central", () => {
   it("Should sort table by entityName asc and desc", () => {
     toolbar.getModelToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
@@ -354,6 +356,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.log("**Navigates to Model and triggers table view**");
     toolbar.getModelToolbarIcon().click();
     browsePage.waitForSpinnerToDisappear();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
 
@@ -383,6 +386,7 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("**Returns to Model**");
     toolbar.getModelToolbarIcon().click();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
 
     cy.log("**Confirms that the property added is still there**");

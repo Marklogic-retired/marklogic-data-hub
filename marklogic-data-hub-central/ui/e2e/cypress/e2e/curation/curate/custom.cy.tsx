@@ -1,9 +1,7 @@
 import {advancedSettings, createEditStepDialog} from "../../../support/components/merging/index";
 import {mappingStepDetail} from "../../../support/components/mapping/index";
 import {confirmYesNo} from "../../../support/components/common/index";
-import {toolbar} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 
 import "cypress-wait-until";
 
@@ -19,8 +17,7 @@ const userRoles = [
 describe("Custom step settings", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
   });
 
@@ -63,8 +60,8 @@ describe("Custom step settings", () => {
 
   it("Verify Additional Settings saves correctly", () => {
     cy.log("**Open Customer entity**");
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.selectCustomTab("Customer");
 
     cy.log("**Enter custom properties**");

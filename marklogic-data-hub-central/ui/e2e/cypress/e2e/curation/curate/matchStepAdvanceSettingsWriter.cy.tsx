@@ -1,11 +1,9 @@
 import {advancedSettings} from "../../../support/components/common/index";
 import "cypress-wait-until";
 import {
-  toolbar,
   createEditStepDialog
 } from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 
 const matchStep = "matchCustomerTesting";
@@ -13,7 +11,7 @@ const matchStep = "matchCustomerTesting";
 describe("Validate Advance Settings for hub-central-match-merge-writer role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-match-merge-writer").withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -24,7 +22,6 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");

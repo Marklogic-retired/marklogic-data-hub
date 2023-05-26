@@ -1,3 +1,6 @@
+import {toolbar} from "../components/common";
+import homePage from "./home";
+
 class ExplorePage {
 
   getTitleExplore() {
@@ -118,6 +121,17 @@ class ExplorePage {
   getDisplaySettingsEntityColor(entity: string) {
     return cy.get(`[data-testid=${entity}-color]`);
   }
+
+  navigate() {
+    cy.url().then((url: string) => {
+      if (!url.includes("http")) {
+        homePage.navigate();
+      }
+    });
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
+  }
 }
 
-export default new ExplorePage();
+const explorePage = new ExplorePage();
+export default explorePage;

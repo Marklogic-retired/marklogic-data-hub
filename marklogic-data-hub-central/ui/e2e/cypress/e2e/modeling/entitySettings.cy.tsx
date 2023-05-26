@@ -8,7 +8,6 @@ import graphExplore from "../../support/pages/graphExplore";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import modelPage from "../../support/pages/model";
-import LoginPage from "../../support/pages/login";
 import homePage from "../../support/pages/home";
 import "cypress-wait-until";
 
@@ -34,12 +33,8 @@ const propertiesOnHoverData = {
 describe("Entity display settings in model tile", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
-    cy.log("**Go to graph view in model tile**");
-    homePage.getModelCard().click();
-    cy.waitForAsyncRequest();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
   });
 
   it("Can change entity display settings in model tile and change in explore", () => {

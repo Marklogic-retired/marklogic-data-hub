@@ -1,6 +1,5 @@
-import {toolbar, createEditStepDialog} from "../../../support/components/common";
+import {createEditStepDialog} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 const matchStep = "match-test";
@@ -8,7 +7,7 @@ const matchStep = "match-test";
 describe("Validate Match warnings", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -19,7 +18,6 @@ describe("Validate Match warnings", () => {
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");

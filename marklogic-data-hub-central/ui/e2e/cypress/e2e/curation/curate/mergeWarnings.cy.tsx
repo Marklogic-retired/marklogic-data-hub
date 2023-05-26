@@ -1,9 +1,8 @@
 import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
 import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
-import {toolbar, createEditStepDialog} from "../../../support/components/common";
+import {createEditStepDialog} from "../../../support/components/common";
 import {advancedSettings} from "../../../support/components/merging/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 const mergeStep = "merge-test";
@@ -12,7 +11,7 @@ const mergeStep1 = "merge-person";
 describe("Validate Merge warnings", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -23,7 +22,6 @@ describe("Validate Merge warnings", () => {
   });
 
   it("Navigate to curate tab and Open Person entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMergeTab("Person");
@@ -100,7 +98,7 @@ describe("Validate Merge warnings", () => {
   });
 
   it("Reopen the merge settings", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.getEntityTypePanel("Person").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {

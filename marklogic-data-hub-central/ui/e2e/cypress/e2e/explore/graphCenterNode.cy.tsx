@@ -1,17 +1,12 @@
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 describe("Center node on graph", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    browsePage.navigate();
 
-    cy.log("**Navigate to Explore**");
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
   });
 
   afterEach(() => {

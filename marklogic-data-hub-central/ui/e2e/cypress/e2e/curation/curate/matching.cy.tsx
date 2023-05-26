@@ -1,7 +1,6 @@
 
 import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import {
   matchingStepDetail,
   rulesetSingleModal,
@@ -10,7 +9,6 @@ import {
   compareValuesModal
 } from "../../../support/components/matching/index";
 import {
-  toolbar,
   createEditStepDialog,
   multiSlider,
   confirmYesNo
@@ -40,17 +38,16 @@ const urisDummy = ["dummy1", "dummy2"];
 describe("Matching", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("matching", "matchCustTest");
+    cy.deleteSteps("matching");
     cy.resetTestUser();
   });
 
   it("Navigate to curate tab and Open Product Detail entity", () => {
-    toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("ProductDetail").should("be.visible");
     curatePage.toggleEntityTypeId("ProductDetail");
     cy.findByLabelText("mappingNoTitleDisplay").should("be.visible");
@@ -61,7 +58,7 @@ describe("Matching", () => {
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
@@ -69,13 +66,15 @@ describe("Matching", () => {
   });
 
   it("Create a new match step with a collection and review the preloaded value", () => {
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStepCollection);
     createEditStepDialog.stepDescriptionInput().type("match customer step example for collection", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Collection");
     cy.log("**Selecting value in select component**");
     mappingStepDetail.getCollectionInputValue().click({force: true});
-    cy.intercept("POST", "/api/entitySearch/facet-values?database=final").as("loadSelect");
+    cy.intercept("POST", "/api/entitySearch/facet-values?database=*").as("loadSelect");
     mappingStepDetail.getCollectionInputValue().focus().type("json");
     cy.wait("@loadSelect").its("response.statusCode").should("eq", 200).then(() => {
       createEditStepDialog.getElementById("collList").should("exist").then(() => {
@@ -634,8 +633,6 @@ describe("Matching", () => {
       return nodeHasText && childrenDontHaveText;
     });
 
-
-
     cy.log("**Create and close valid list**");
     rulesetSingleModal.clearListTitle("values-to-ignore-input");
     rulesetSingleModal.addListTitle("values-to-ignore-input", "TitleList1New");
@@ -672,6 +669,7 @@ describe("Matching", () => {
   it("Values to Ignore list tooltip", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
+
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
@@ -693,6 +691,7 @@ describe("Matching", () => {
   it("Select and save values to ignore", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
+
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
@@ -754,6 +753,7 @@ describe("Matching", () => {
   it("Tests matching preview with values to ignore", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
+
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
@@ -798,6 +798,7 @@ describe("Matching", () => {
   it("Check collection Typeahead request when source  database is changed", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
+
     curatePage.toggleEntityTypeId("Order");
     curatePage.selectMatchTab("Order");
     curatePage.addNewStep("Order").click();
@@ -832,6 +833,5 @@ describe("Matching", () => {
     createEditStepDialog.saveButton("matching").click();
     curatePage.deleteMappingStepButton("testName").click();
     curatePage.deleteConfirmation("Yes").click();
-
   });
 });

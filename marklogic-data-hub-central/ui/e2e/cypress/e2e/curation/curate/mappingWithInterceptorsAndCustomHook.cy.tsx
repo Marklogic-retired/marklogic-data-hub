@@ -1,4 +1,3 @@
-import {toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
@@ -7,7 +6,6 @@ import {
 import loadPage from "../../../support/pages/load";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
-import LoginPage from "../../../support/pages/login";
 import browsePage from "../../../support/pages/browse";
 import "cypress-wait-until";
 
@@ -22,7 +20,7 @@ const userRoles = ["hub-central-flow-writer",
 describe("Create and verify load steps, map step and flows with interceptors & custom hook", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    loadPage.navigate();
   });
 
   after(() => {
@@ -34,7 +32,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
 
   it("Create and Edit load step", () => {
-    toolbar.getLoadToolbarIcon().click();
     loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.addNewButton("card").click();
     loadPage.saveButton().should("be.enabled");
@@ -93,8 +90,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
 
   it("Create mapping step", () => {
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitForAsyncRequest();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
     curatePage.addNewStep("Order").click();
@@ -173,6 +169,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   it("Edit Map step", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
+
     curatePage.toggleEntityTypeId("Order");
     curatePage.openStepDetails(mapStep);
     curatePage.dataPresent().should("exist");
@@ -191,7 +188,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.wait(2000);
   });
 
-  it("verify Map step settings change from within map step details page", () => {
+  it("Verify Map step settings change from within map step details page", () => {
     curatePage.dataPresent().should("exist");
     mappingStepDetail.entityData().should("exist");
     mappingStepDetail.stepSettingsLink().click();
@@ -229,9 +226,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
 
   it("Verify mapping step with duplicate name cannot be created", () => {
-    cy.visit("/");
-    cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().should("be.visible").click({force: true});
+    curatePage.navigate();
     curatePage.toggleEntityTypeId("Order");
     curatePage.addNewStep("Order").should("be.visible").click({force: true});
     createEditMappingDialog.setMappingName(mapStep);
@@ -278,7 +273,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
 
   // TODO: DHFPROD-10176
   it.skip("Create a map step under another entity", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     cy.waitUntil(() => curatePage.addNewStep("Customer").click());

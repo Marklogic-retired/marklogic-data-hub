@@ -1,11 +1,10 @@
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import LoginPage from "../../support/pages/login";
+import loadPage from "../../support/pages/load";
 import "cypress-wait-until";
 
 let facets: string[] = ["collection", "flow"];
@@ -13,7 +12,7 @@ let facets: string[] = ["collection", "flow"];
 describe("xml scenario for snippet view on browse documents page", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
   });
 
   afterEach(() => {
@@ -26,7 +25,6 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
 
   it("Select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
-    toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.clickFacetView();
@@ -129,8 +127,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.contains("This Week").click();
 
     cy.log("**Go to another page and back**");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getExploreToolbarIcon().click();
+    loadPage.navigate();
+    explorePage.navigate();
     browsePage.clickTableView();
 
     cy.log("**Verify grey facets tags exists**");

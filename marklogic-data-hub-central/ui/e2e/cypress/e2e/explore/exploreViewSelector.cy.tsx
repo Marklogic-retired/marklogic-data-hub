@@ -1,16 +1,12 @@
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
-import entitiesSidebar from "../../support/pages/entitiesSidebar";
-
-
 describe("Test '/Explore' view selector", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
   });
 
   afterEach(() => {
@@ -20,18 +16,18 @@ describe("Test '/Explore' view selector", () => {
 
   it(`Validate that the 'graph' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
 
     cy.log(`**Selecting 'Graph' view**`);
     browsePage.switchView("graph");
     explorePage.getGraphVisExploreContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
-    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.navigate();
     monitorPage.getMonitorContainer().should("be.visible");
 
     cy.log(`**Return to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     explorePage.getGraphVisExploreContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
@@ -44,18 +40,18 @@ describe("Test '/Explore' view selector", () => {
 
   it(`Validate that the 'table' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
 
     cy.log(`**Selecting 'Table' view**`);
     browsePage.switchView("table");
     table.getMainTableContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
-    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.navigate();
     monitorPage.getMonitorContainer().should("be.visible");
 
     cy.log(`**Return to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     table.getMainTableContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
@@ -75,11 +71,11 @@ describe("Test '/Explore' view selector", () => {
     browsePage.expandItemTableView("/xml/persons/ssn-match1.xml");
 
     cy.log(`**Go to Monitor section**`);
-    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.navigate();
     monitorPage.getMonitorContainer().should("be.visible");
 
     cy.log(`**Return to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     browsePage.switchView("table");
     table.getMainTableContainer().should("be.visible");
 
@@ -89,18 +85,18 @@ describe("Test '/Explore' view selector", () => {
 
   it(`Validate that the 'Snippet' view is shown and stored in the user preference`, () => {
     cy.log(`**Go to Explore section?**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
 
     cy.log(`**Selecting 'Snippet' view**`);
     browsePage.switchView("snippet");
     browsePage.getSnippetContainer().should("be.visible");
 
     cy.log(`**Go to Monitor section**`);
-    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.navigate();
     monitorPage.getMonitorContainer().should("be.visible");
 
     cy.log(`**Return to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     browsePage.getSnippetContainer().should("be.visible");
 
     cy.log(`**Select 'All Data' button**`);
@@ -116,11 +112,11 @@ describe("Test '/Explore' view selector", () => {
     browsePage.expandItemSnippetView("Person", "/xml/persons/ssn-match1.xml");
 
     cy.log(`**Go to Monitor section**`);
-    toolbar.getMonitorToolbarIcon().click();
+    monitorPage.navigate();
     monitorPage.getMonitorContainer().should("be.visible");
 
     cy.log(`**Return to Explore section**`);
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     browsePage.switchView("snippet");
     browsePage.getSnippetContainer().should("be.visible");
 

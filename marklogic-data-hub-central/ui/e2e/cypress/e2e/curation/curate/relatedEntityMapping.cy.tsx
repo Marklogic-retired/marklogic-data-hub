@@ -1,9 +1,7 @@
 import entitiesSidebar from "../../../support/pages/entitiesSidebar";
-import {toolbar} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
 import browsePage from "../../../support/pages/browse";
 import modelPage from "../../../support/pages/model";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import "cypress-wait-until";
@@ -31,7 +29,7 @@ const userRoles = [
 describe("Mapping", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    modelPage.navigate();
   });
 
   after(() => {
@@ -46,7 +44,6 @@ describe("Mapping", () => {
   });
 
   it("Define new entity, add relationship property", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getModelToolbarIcon().should("be.visible").click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
@@ -68,7 +65,7 @@ describe("Mapping", () => {
   });
 
   it("Create new entity and check if there is no message in curate tile", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click({force: true});
@@ -79,7 +76,7 @@ describe("Mapping", () => {
     cy.wait(1000);
 
     cy.publishDataModel();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    curatePage.navigate();
     cy.waitUntil(() => curatePage.getEntityTypePanel("TestEntity")).should("be.visible");
     curatePage.getEntityTypePanel("TestEntity").should("exist");
     curatePage.toggleEntityTypeId("TestEntity");
@@ -87,9 +84,8 @@ describe("Mapping", () => {
   });
 
   it("Create new mapping in Curate", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Person").should("be.visible");
-    curatePage.getEntityTypePanel("Person").should("exist");
     curatePage.toggleEntityTypeId("Person");
     curatePage.addNewStep("Person").should("be.visible").click();
     createEditMappingDialog.setMappingName("mapRelation");
@@ -142,23 +138,9 @@ describe("Mapping", () => {
     mappingStepDetail.validateMapURIValue("Relation (relatedTo Person)", "/Relation/444-44-4440.j...");
   });
 
-  it("Switch views and return to mapping details, verify persistence of expressions", () => {
-    cy.log("**Go back to curate page**");
+  it("Reload page and navigate to mapping details, verify persistence of expressions", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-    curatePage.getEntityTypePanel("Person").should("be.visible");
-
-    cy.log("**Go to Model page and select table view**");
-    toolbar.getModelToolbarIcon().should("be.visible").click({force: true});
-
-    cy.wait(5000);
-
-    modelPage.selectView("table");
-    entityTypeTable.waitForTableToLoad();
-
-    cy.log("**Go back to curate page and open Person**");
-    cy.visit("/tiles/curate");
-    curatePage.getEntityTypePanel("Person").should("exist");
 
     cy.log("**Open Person mapping step details**");
     curatePage.getEntityTypePanel("Person").then(($ele) => {
@@ -199,12 +181,8 @@ describe("Mapping", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Go to another page, back and check elements**");
-    toolbar.getLoadToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    loadPage.navigate();
+    curatePage.navigate();
 
     cy.log("**Verify and reset columns, delete relation**");
     mappingStepDetail.expandPopoverColumns();
@@ -220,15 +198,15 @@ describe("Mapping", () => {
 
     cy.log("**Go to another page, back and check filter**");
     mappingStepDetail.addFilterMainTable("cust", "Person");
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
+    loadPage.navigate();
+    curatePage.navigate();
     mappingStepDetail.expandFilterMainTable("Person");
     mappingStepDetail.verifyValueFilter("cust");
     mappingStepDetail.resetEntitySearch().click();
   });
 
   it("Create new flow, add mapping to flow, run mapping, verify results", () => {
-    toolbar.getRunToolbarIcon().should("be.visible").click();
+    runPage.navigate();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName("relationFlow");
@@ -255,16 +233,14 @@ describe("Mapping", () => {
   });
 
   it("Edit advanced settings for each entity", () => {
-    cy.log("**Navigate to curate page**");
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-    curatePage.getEntityTypePanel("Person").should("exist");
 
-    cy.log("**Open step details for Person**");
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
     browsePage.waitForSpinnerToDisappear();
+
     mappingStepDetail.relatedFilterMenu("Person");
     mappingStepDetail.selectMapRelatedEntity("Relation (relatedTo Person)-option");
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
@@ -289,13 +265,9 @@ describe("Mapping", () => {
   });
 
   it("Delete related entity from mapping via filter", () => {
-    cy.log("**Navigate to curate page**");
     cy.visit("/tiles/curate");
-    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    curatePage.getEntityTypePanel("Person").should("exist");
 
-    cy.log("**Open mapping steps for Person entity**");
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");

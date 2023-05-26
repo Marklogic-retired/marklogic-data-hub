@@ -1,6 +1,4 @@
 import {advancedSettings} from "../../../support/components/common/index";
-import {toolbar} from "../../../support/components/common";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 
@@ -11,7 +9,7 @@ let flowName2 = "e2eFlow2";
 describe("Validate CRUD functionality from list view", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    LoginPage.navigateToMainPage();
+    loadPage.navigate();
   });
 
   after(() => {
@@ -20,7 +18,6 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Verify Cancel", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     loadPage.loadView("table").click();
     loadPage.addNewButton("list").click();
@@ -128,13 +125,13 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Create a new flow and navigate back to load step", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
@@ -169,13 +166,13 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Verify Run in Flow popup, create new flow and add step", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     cy.findByText(flowName).should("not.exist");
 
     cy.findByLabelText("Cancel").click({force: true});
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
@@ -190,7 +187,7 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     cy.waitUntil(() => loadPage.loadView("table")).click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
@@ -210,7 +207,7 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     loadPage.addStepToNewFlowListView(stepName);
     cy.waitForAsyncRequest();
@@ -220,8 +217,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Loading", stepName, flowName2);
-    cy.log("**Verify Run Load step where step exists in multiple flows, choose one to automatically run in**");
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
@@ -247,7 +243,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("not.exist");
 
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     loadPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("No").click();

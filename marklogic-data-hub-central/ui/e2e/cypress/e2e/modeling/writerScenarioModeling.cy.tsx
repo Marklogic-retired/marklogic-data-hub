@@ -1,8 +1,7 @@
 
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import modelPage from "../../support/pages/model";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 import {
@@ -20,8 +19,8 @@ const userRoles = [
 describe("Entity Modeling: Graph View", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
+    modelPage.navigate();
   });
 
   afterEach(() => {
@@ -36,8 +35,8 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Test revert unpublished changes", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
     cy.log("**Creating new entity student in table view**");
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
@@ -64,6 +63,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.getRevertButton().click();
     confirmationModal.getYesButton(ConfirmationType.RevertChanges);
     cy.waitForAsyncRequest();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getEntity("Employee").should("not.exist");

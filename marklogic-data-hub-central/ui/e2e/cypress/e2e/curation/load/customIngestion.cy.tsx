@@ -1,5 +1,3 @@
-import {toolbar} from "../../../support/components/common";
-import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import "cypress-wait-until";
@@ -7,10 +5,7 @@ import "cypress-wait-until";
 describe("Custom Ingestion", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-reader", "hub-central-step-runner").withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.navigate();
   });
 
   after(() => {
@@ -22,7 +17,6 @@ describe("Custom Ingestion", () => {
     const flowName = "testCustomFlow";
     const loadStep = "ingestion-step";
 
-    toolbar.getLoadToolbarIcon().click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
 
     loadPage.editStepInCardView(loadStep).click();
@@ -30,7 +24,7 @@ describe("Custom Ingestion", () => {
 
     cy.findByText("Step Definition Name:").should("exist");
     loadPage.cancelSettings(loadStep).click();
-    toolbar.getRunToolbarIcon().click();
+    runPage.navigate();
 
     cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
     cy.waitUntil(() => cy.contains("Custom"));

@@ -1,17 +1,13 @@
-import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.navigateToMainPage();
   });
 
   beforeEach(() => {
-    cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
-    monitorPage.waitForMonitorTableToLoad();
+    monitorPage.navigate();
   });
 
   afterEach(() => {

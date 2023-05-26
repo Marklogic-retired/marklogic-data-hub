@@ -1,6 +1,4 @@
-import {toolbar} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
@@ -18,7 +16,7 @@ const userRoles = ["hub-central-flow-writer",
 describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -28,7 +26,6 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   });
 
   it("Create mapping step with parameter module path", () => {
-    toolbar.getCurateToolbarIcon().click();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
     curatePage.addNewStep("Order").should("be.visible").click();
@@ -56,12 +53,9 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   it("Edit Mapping step with parameter module path", () => {
     cy.visit("/tiles/curate");
     cy.waitForAsyncRequest();
-
-    cy.log("**Open Order to see steps**");
-    curatePage.getEntityTypePanel("Order").should("be.visible").click({force: true});
+    curatePage.toggleEntityTypeId("Order");
 
     cy.log("**Open step settings and switch to Advanced tab**");
-
     cy.wait(1000);
     curatePage.editStep(mapStep).should("be.visible").click({force: true});
     curatePage.switchEditAdvanced().should("be.visible").click({force: true});

@@ -1,6 +1,4 @@
-import {toolbar} from "../../support/components/common/index";
 import modelPage from "../../support/pages/model";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 import {
@@ -16,9 +14,8 @@ describe("Entity Modeling: Graph View", () => {
   before(() => {
     cy.log("**Logging into the app as a hub-central-entity-model-writer**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-writer").withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
     cy.setupHubCentralConfig();
+    modelPage.navigate();
   });
 
   afterEach(() => {
@@ -33,8 +30,6 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Create an entity type for active the publish button", () => {
     cy.log("**Create an entity type**");
-    toolbar.getModelToolbarIcon().click({force: true});
-    cy.waitForAsyncRequest();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
@@ -57,10 +52,9 @@ describe("Entity Modeling: Graph View", () => {
   it("Login as entity model reader role and verify that the publish button that should be disabled", () => {
     cy.log("**Logging into the app as a hub-central-entity-model-reader**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader").withRequest();
-    LoginPage.navigateToMainPage();
+    cy.visit("tiles/model");
     cy.waitForAsyncRequest();
 
-    toolbar.getModelToolbarIcon().click({force: true});
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
 

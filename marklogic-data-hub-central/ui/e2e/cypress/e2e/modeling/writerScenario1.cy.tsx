@@ -1,6 +1,5 @@
 import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import "cypress-wait-until";
 
@@ -11,12 +10,14 @@ import {
   graphViewSidePanel,
   propertyTable,
 } from "../../support/components/model/index";
+import explorePage from "../../support/pages/explore";
+import homePage from "../../support/pages/home";
 
 describe("Entity Modeling Scenario 1: Writer Role", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
+    modelPage.navigate();
   });
 
   afterEach(() => {
@@ -31,7 +32,6 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   });
 
   it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
@@ -198,7 +198,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   });
 
   it("Validate the entity in explore page", () => {
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
     cy.waitUntil(() => tiles.getExploreTile());
     cy.url().should("include", "/tiles/explore");
     toolbar.getModelToolbarIcon().click();
@@ -215,10 +215,10 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   it("Add new property to Order entity", () => {
     cy.log("**Re-login**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.navigateToMainPage();
     cy.setupHubCentralConfig();
+    homePage.navigate();
 
-    toolbar.getModelToolbarIcon().click();
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Order");
@@ -238,11 +238,9 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     cy.log("**Re-login**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     cy.setupHubCentralConfig();
-    LoginPage.navigateToMainPage();
+    homePage.navigate();
 
-    toolbar.getModelToolbarIcon().click();
-    cy.wait("@lastRequest");
-    cy.wait("@lastRequest");
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Buyer");

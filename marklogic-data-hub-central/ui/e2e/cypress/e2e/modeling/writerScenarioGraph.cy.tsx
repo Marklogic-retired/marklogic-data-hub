@@ -11,9 +11,8 @@ import {
 import {mappingStepDetail} from "../../support/components/mapping";
 import graphVis from "../../support/components/model/graph-vis";
 import curatePage from "../../support/pages/curate";
-import {confirmationModal, toolbar} from "../../support/components/common/index";
+import {confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 const userRoles = [
@@ -27,7 +26,7 @@ const userRoles = [
 describe("Entity Modeling: Graph View", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    modelPage.navigate();
   });
 
   beforeEach(() => {
@@ -40,7 +39,7 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Create an entity with name having more than 20 chars", () => {
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click({force: true});
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
@@ -70,6 +69,7 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -139,6 +139,7 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -168,6 +169,7 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -238,6 +240,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.getModalHeader().should("not.exist");
 
     cy.log("**verify relationship was created and properties are present**");
+    modelPage.scrollPageTop();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -330,6 +333,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.getModalHeader().should("not.exist");
 
     modelPage.scrollPageTop();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Person");
@@ -347,35 +351,31 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Relationships are not present in mapping until published", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     confirmationModal.getNavigationWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
 
     cy.log("**Go to curate open mapping step detail**");
-    toolbar.getCurateToolbarIcon().click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Person").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
-    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    curatePage.dataPresent().should("be.visible");
     cy.log("**unpublished relationship should not show up in mapping**");
     mappingStepDetail.getMapPropertyName("Person", "purchased").should("not.exist");
     mappingStepDetail.getMapPropertyName("Person", "referredBy").should("not.exist");
 
-    toolbar.getModelToolbarIcon().click();
-    cy.wait(2500);
+    modelPage.navigate();
     cy.publishDataModel();
 
-    cy.log("**Verify Person relationship is visible in mapping**");
-    cy.log("**verify relationship is visible in mapping**");
-    cy.log("**Go to curate and open Person**");
-    cy.visit("/tiles/curate");
+    cy.visit("tiles/curate");
     cy.waitForAsyncRequest();
     confirmationModal.getNavigationWarnText().should("not.exist");
 
     cy.wait(1000);
     curatePage.getEntityTypePanel("Person").should("be.visible", {timeout: 5000}).click({force: true});
     curatePage.openStepDetails("mapPersonJSON");
-    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    curatePage.dataPresent().should("be.visible");
 
     cy.log("**published relationship should show up in mapping**");
     mappingStepDetail.getMapPropertyName("Person", "purchased").should("exist");
@@ -389,11 +389,11 @@ describe("Entity Modeling: Graph View", () => {
     propertyTable.verifyRelationshipIcon("purchased").should("exist");
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
     mappingStepDetail.getXpathExpressionInput("purchased").should("not.exist");
-
   });
 
   it("Delete a relationship from graph view, cancel deletion", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getModelToolbarIcon().click();
+    modelPage.navigate();
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -424,7 +424,8 @@ describe("Entity Modeling: Graph View", () => {
   });
 
   it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getModelToolbarIcon().click();
+    modelPage.navigate();
+    modelPage.scrollPageTop();
     modelPage.selectView("project-diagram");
 
     modelPage.scrollPageBottom();
@@ -456,8 +457,9 @@ describe("Entity Modeling: Graph View", () => {
     graphViewSidePanel.getPropertyName("purchased").should("not.exist");
   });
 
-  it("edit structured property relationship", () => {
-    toolbar.getModelToolbarIcon().click();
+  it("Edit structured property relationship", () => {
+    modelPage.navigate();
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
 
     cy.log("**Creates a structured property on Customer**");
@@ -485,6 +487,7 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Verifies the relationship name is updated**");
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getPropertyName("new-Relationship-1Name").should("exist");

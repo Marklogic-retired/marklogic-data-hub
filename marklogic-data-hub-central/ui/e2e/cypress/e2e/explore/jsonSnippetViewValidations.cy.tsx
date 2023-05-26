@@ -1,9 +1,7 @@
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
-import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 let facets: string[] = ["collection", "flow"];
@@ -11,7 +9,7 @@ let facets: string[] = ["collection", "flow"];
 describe.skip("json scenario for snippet on browse documents page", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
   });
 
   afterEach(() => {
@@ -25,7 +23,6 @@ describe.skip("json scenario for snippet on browse documents page", () => {
   });
 
   it("Select \"all entities\" verify docs, hub/entity properties", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();

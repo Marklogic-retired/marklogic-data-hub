@@ -4,18 +4,12 @@ import graphView from "../../support/components/explore/graph-view";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import tables from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 describe("Group Nodes", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-
-    cy.log("**Navigate to Explore**");
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    browsePage.navigate();
   });
 
   afterEach(() => {

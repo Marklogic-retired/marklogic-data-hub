@@ -1,29 +1,24 @@
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 const TABLE_HEADERS = ["Property", "Value"];
 
 describe("Test '/Explore' graph right panel", () => {
-  beforeEach(() => {
+  before(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    browsePage.navigate();
   });
 
-  afterEach(() => {
+  after(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
   });
 
   it("Validate that the right panel opens and display node's information", () => {
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
-
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(8000);
@@ -109,8 +104,7 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Retain state when select facets", () => {
-    cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
+    browsePage.navigate();
 
     cy.log("**Verify Graph view is default view**");
     cy.wait(6000);
@@ -120,6 +114,7 @@ describe("Test '/Explore' graph right panel", () => {
     browsePage.getAllDataButton().click();
     cy.wait(2000);
     browsePage.getStagingButton().click();
+    browsePage.getClearAllFacetsButton().click();
     cy.findByTestId("collection-loadPersonJSON-checkbox").click();
     cy.findByTestId("facet-apply-button").click();
     cy.wait(1500);

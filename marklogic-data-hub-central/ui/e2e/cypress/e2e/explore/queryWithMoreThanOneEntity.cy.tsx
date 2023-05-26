@@ -14,9 +14,7 @@ describe("manage queries with more than one entity", () => {
     cy.loginAsDeveloper().withRequest();
 
     cy.log("**Go to Explore page and select the table view option**");
-    cy.intercept("GET", "/api/models/primaryEntityTypes?includeDrafts=true").as("lastRequest");
-    cy.visit("/tiles/explore");
-    cy.wait("@lastRequest");
+    browsePage.navigate();
     browsePage.getTableView().click();
     table.mainTable.should("be.visible");
     table.getTableRows().should("not.be.empty");

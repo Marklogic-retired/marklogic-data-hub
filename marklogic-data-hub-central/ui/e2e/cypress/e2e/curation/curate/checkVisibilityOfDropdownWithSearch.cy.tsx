@@ -1,8 +1,6 @@
 import {createEditMappingDialog} from "../../../support/components/mapping/index";
-import {toolbar} from "../../../support/components/common";
 import curatePage from "../../../support/pages/curate";
 import browsePage from "../../../support/pages/browse";
-import LoginPage from "../../../support/pages/login";
 
 import {generateUniqueName} from "../../../support/helper";
 import "cypress-wait-until";
@@ -13,7 +11,7 @@ const mapStep = generateUniqueName("mapOrder");
 describe("Check visibility of dropdown with search in mapping step details table", () => {
   before(() => {
     cy.loginAsTestUserWithRoles("hub-central-mapping-writer").withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -23,7 +21,6 @@ describe("Check visibility of dropdown with search in mapping step details table
   });
 
   it("Create mapping step and check the visibility of the dropdowns related to source, function and reference", () => {
-    toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep("Order").click());

@@ -20,8 +20,7 @@ describe("Entity Modeling: Reader Role", () => {
   });
 
   beforeEach(() => {
-    cy.visit("/tiles/model");
-    cy.wait(2000);
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
   });
@@ -33,7 +32,6 @@ describe("Entity Modeling: Reader Role", () => {
   it("Can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
     modelPage.getAddButton().should("be.disabled");
     entityTypeModal.getAddButton().should("not.exist");
-
     modelPage.getPublishButton().click({force: true});
     modelPage.getPublishButtonDisabledTooltip().should("exist");
 

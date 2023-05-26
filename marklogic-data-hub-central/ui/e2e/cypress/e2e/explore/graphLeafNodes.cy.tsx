@@ -3,18 +3,12 @@ import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import graphView from "../../support/components/explore/graph-view";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 describe("Leaf Nodes", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-    cy.log("**Navigate to Explore**");
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    browsePage.navigate();
   });
 
   afterEach(() => {

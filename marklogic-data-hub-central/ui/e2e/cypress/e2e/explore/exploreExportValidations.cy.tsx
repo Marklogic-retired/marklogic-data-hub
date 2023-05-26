@@ -1,12 +1,10 @@
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 describe("Test graph export to png", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    browsePage.navigate();
   });
 
   afterEach(() => {
@@ -18,7 +16,6 @@ describe("Test graph export to png", () => {
 
   it("Validate export as CSV in the table view", () => {
     cy.log("**Go to Explore section**");
-    toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
     cy.log("**Graph Export button should not exist in table view**");
     graphExplore.getExportPNGIcon().should("not.exist");

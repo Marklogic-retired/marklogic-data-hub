@@ -8,7 +8,6 @@ import graphExplore from "../../support/pages/graphExplore";
 import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 const defaultEntityTypeData = {
   name: BaseEntityTypes.CUSTOMER,
@@ -60,7 +59,7 @@ const newEntityTypeData2 = {
 describe("Entity Type Settings Modal", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
+    explorePage.navigate();
     cy.setupHubCentralConfig();
 
     browsePage.waitForSpinnerToDisappear();

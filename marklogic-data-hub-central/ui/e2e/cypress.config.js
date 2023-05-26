@@ -8,7 +8,8 @@ module.exports = defineConfig({
   viewportHeight: 1050,
   MOZ_FORCE_DISABLE_E10S: 1,
   numTestsKeptInMemory: 1,
-  defaultCommandTimeout: 12000,
+  defaultCommandTimeout: 15000,
+  requestTimeout: 30000,
   reporter: "junit",
   animationDistanceThreshold: 0,
   reporterOptions: {

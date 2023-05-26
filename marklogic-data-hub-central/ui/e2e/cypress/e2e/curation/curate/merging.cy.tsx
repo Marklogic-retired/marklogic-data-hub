@@ -3,10 +3,9 @@ import mergeStrategyModal from "../../../support/components/merging/merge-strate
 import mergingStepDetail from "../../../support/components/merging/merging-step-detail";
 import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
 import {advancedSettingsDialog, mappingStepDetail} from "../../../support/components/mapping/index";
-import {multiSlider, toolbar} from "../../../support/components/common";
+import {multiSlider} from "../../../support/components/common";
 import {confirmYesNo} from "../../../support/components/common/index";
 import curatePage from "../../../support/pages/curate";
-import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 const mergeStep = "mergeOrderTestStep";
@@ -21,7 +20,7 @@ const userRoles = [
 describe("Merging", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
+    curatePage.navigate();
   });
 
   after(() => {
@@ -32,7 +31,6 @@ describe("Merging", () => {
   });
 
   it("Navigate to curate tab and Open Order entity", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.selectMergeTab("Order");

@@ -1,7 +1,5 @@
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
-import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
-import LoginPage from "../../support/pages/login";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
@@ -18,7 +16,6 @@ const userRoles = [
 describe("Monitor Tile", () => {
   before(() => {
     cy.loginAsTestUserWithRoles(...userRoles).withRequest();
-    LoginPage.navigateToMainPage();
   });
 
   afterEach(() => {
@@ -40,7 +37,8 @@ describe("Monitor Tile", () => {
   let stepStatus = "completed";
 
   it("Create a flow, add steps to flow and run it", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
+
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
@@ -66,8 +64,7 @@ describe("Monitor Tile", () => {
   });
 
   it("Navigate to Monitor Tile and verify that the custom time picker works", () => {
-    cy.waitUntil(() => toolbar.getMonitorToolbarIcon()).click();
-    monitorPage.waitForMonitorTableToLoad();
+    monitorPage.navigate();
 
     cy.log("***Expand related row by JobId and get the data***");
     monitorPage.getExpandoRowIconByJobId(jobId).click();

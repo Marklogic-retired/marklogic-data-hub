@@ -1,18 +1,12 @@
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import graphExplore from "../../support/pages/graphExplore";
-import {toolbar} from "../../support/components/common";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 
 describe("Focus Defocus clusters", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-
-    cy.log("**Navigate to Explore**");
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    browsePage.navigate();
 
     cy.log("**Go to graph view**");
     browsePage.clickGraphView();

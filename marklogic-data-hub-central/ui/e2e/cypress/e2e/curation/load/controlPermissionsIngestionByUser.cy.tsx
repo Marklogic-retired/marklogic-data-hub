@@ -1,6 +1,4 @@
-import {toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
-import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Custom Ingestion", () => {
@@ -16,8 +14,7 @@ describe("Custom Ingestion", () => {
     if (element.includes("reader")) {
       it("Verify tooltip is showing up for reader role after mouse hover for select flow in cards", () => {
         cy.loginAsTestUserWithRoles(users[0]).withRequest();
-        LoginPage.navigateToMainPage();
-        toolbar.getLoadToolbarIcon().click();
+        loadPage.navigate();
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");
@@ -31,8 +28,7 @@ describe("Custom Ingestion", () => {
     if (element.includes("writer")) {
       it("Verify tooltip is not showing up for writer role trying to select flow in cards", () => {
         cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-        LoginPage.navigateToMainPage();
-        toolbar.getLoadToolbarIcon().click();
+        loadPage.navigate();
         loadPage.stepName(stepName).should("be.visible");
 
         cy.log("**-------- Before mouse hover card -------------**");

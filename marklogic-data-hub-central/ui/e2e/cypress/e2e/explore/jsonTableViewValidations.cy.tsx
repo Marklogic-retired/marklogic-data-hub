@@ -1,7 +1,6 @@
 import {BaseEntityTypes} from "../../support/types/base-entity-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import table from "../../support/components/common/tables";
-import {toolbar} from "../../support/components/common";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
@@ -12,9 +11,7 @@ describe("json scenario for table on browse documents page", () => {
 
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.intercept("GET", "/api/models/primaryEntityTypes?includeDrafts=true").as("lastRequest");
-    cy.visit("/tiles/explore");
-    cy.wait("@lastRequest");
+    browsePage.navigate();
   });
 
   after(() => {
@@ -23,8 +20,6 @@ describe("json scenario for table on browse documents page", () => {
   });
 
   it("Select \"all entities\" and verify table default columns", () => {
-    toolbar.getExploreToolbarIcon().should("be.visible").click({force: true});
-    browsePage.waitForSpinnerToDisappear();
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
         cy.log("**clear all facets**");

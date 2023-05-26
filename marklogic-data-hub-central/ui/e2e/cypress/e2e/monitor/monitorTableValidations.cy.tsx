@@ -3,21 +3,13 @@ import {mappingStepDetail} from "../../support/components/mapping/index";
 import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
-  before(() => {
-    cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
-    LoginPage.navigateToMainPage();
-    cy.waitForAsyncRequest();
-  });
-
   beforeEach(() => {
-    toolbar.getMonitorToolbarIcon().should("be.visible").click({force: true});
-    cy.waitForAsyncRequest();
-    monitorPage.waitForMonitorTableToLoad();
+    cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
+    monitorPage.navigate();
   });
 
   afterEach(() => {

@@ -1,5 +1,5 @@
 import {matchingStepDetail, rulesetMultipleModal, rulesetSingleModal, thresholdModal} from "../../support/components/matching/index";
-import {confirmationModal, createEditStepDialog, multiSlider, toolbar} from "../../support/components/common/index";
+import {confirmationModal, createEditStepDialog, multiSlider} from "../../support/components/common/index";
 import mergeStrategyModal from "../../support/components/merging/merge-strategy-modal";
 import mergingStepDetail from "../../support/components/merging/merging-step-detail";
 import mergeRuleModal from "../../support/components/merging/merge-rule-modal";
@@ -7,7 +7,6 @@ import {ConfirmationType} from "../../support/types/modeling-types";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import curatePage from "../../support/pages/curate";
 import browsePage from "../../support/pages/browse";
-import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
@@ -26,23 +25,20 @@ import {
 } from "../../support/components/model/index";
 
 const loadStepName = "loadPatient";
-const flowName = "patientFlow";
-const mapStep = "patientMap";
 const matchStep = "patientMatch";
 const mergeStep = "patientMerge";
+const flowName = "patientFlow";
+const mapStep = "patientMap";
 
 describe("Validate E2E Mastering Flow", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    LoginPage.navigateToMainPage();
-  });
-
-  afterEach(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
+    loadPage.navigate();
   });
 
   after(() => {
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadPatient");
     cy.deleteSteps("mapping", "patientMap");
@@ -58,8 +54,6 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create a load Step", () => {
-    toolbar.getLoadToolbarIcon().click({force: true});
-    cy.waitForAsyncRequest();
     loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
@@ -103,7 +97,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("be.visible");
     cy.wait(3000);
 
-    toolbar.getModelToolbarIcon().should("be.visible").click();
+    modelPage.navigate();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click();
@@ -163,7 +157,7 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create mapping step", () => {
-    toolbar.getCurateToolbarIcon().click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.toggleEntityTypeId("Patient");
     curatePage.addNewStep("Patient").click();
@@ -212,7 +206,7 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create a new match step", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
@@ -347,7 +341,7 @@ describe("Validate E2E Mastering Flow", () => {
   });
 
   it("Create a new merge step ", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.getEntityTypePanel("Patient").then(($ele) => {
       if ($ele.hasClass("accordion-button collapsed")) {
@@ -436,7 +430,7 @@ describe("Validate E2E Mastering Flow", () => {
 
   // TODO: DHFPROD-10184
   it.skip("Explore other collections", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.navigate();
     entitiesSidebar.selectEntity("All Data");
     cy.waitForModalToDisappear();
     browsePage.showMoreCollection();
