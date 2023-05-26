@@ -484,7 +484,11 @@ const JobResponse: React.FC<Props> = ({
       <Modal.Header className={"bb-none"} aria-label="job-response-modal-header">
         {isFlowRunning(jobResponse) ? (
           <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-running`}>
-            The flow <strong>{jobResponse.flow}</strong> is running
+            The flow{" "}
+            <strong>
+              {jobResponse.flow?.length > 40 ? jobResponse.flow.substring(0, 40) + "..." : jobResponse.flow}
+            </strong>{" "}
+            is running
             {stopRun && (
               <HCTooltip
                 text={canStopFlow(jobResponse) ? RunToolTips.stopRun : RunToolTips.stopRunMissingPermission}
@@ -514,7 +518,10 @@ const JobResponse: React.FC<Props> = ({
           </span>
         ) : (
           <span className={`fs-5 ${styles.title}`} aria-label={`${jobResponse.flow}-completed`}>
-            The flow <strong>{jobResponse.flow}</strong>{" "}
+            The flow{" "}
+            <strong>
+              {jobResponse.flow?.length > 40 ? jobResponse.flow.substring(0, 40) + "..." : jobResponse.flow}
+            </strong>{" "}
             {jobResponse.jobStatus === "canceled" ? "was canceled" : "completed"}
           </span>
         )}

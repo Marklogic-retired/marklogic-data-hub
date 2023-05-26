@@ -83,20 +83,33 @@ const ConfirmationModal: React.FC<Props> = props => {
             <>
               <p aria-label="identifier-text">
                 Each entity type is allowed a maximum of one identifier. The current identifier is{" "}
-                <b>{props.boldTextArray[0]}</b>. Choosing a different identifier could affect custom applications and
-                other code that uses <b>{props.boldTextArray[0]}</b> for searching.
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>
+                . Choosing a different identifier could affect custom applications and other code that uses{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                for searching.
               </p>
 
               <p>
-                Are you sure you want to change the identifier from <b>{props.boldTextArray[0]}</b> to{" "}
-                <b>{props.boldTextArray[1]}</b>?
+                Are you sure you want to change the identifier from{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                to <b>{props.boldTextArray[1]}</b>?
               </p>
             </>
           )}
 
           {(props.type === ConfirmationType.DeleteEntity || props.type === ConfirmationType.DeleteConceptClass) && (
             <p aria-label="delete-text">
-              Permanently delete <b>{props.boldTextArray[0]}</b>?
+              Permanently delete{" "}
+              <b>
+                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+              </b>
+              ?
             </p>
           )}
 
@@ -107,12 +120,22 @@ const ConfirmationModal: React.FC<Props> = props => {
               </HCAlert>
 
               <p aria-label="delete-relationship-text">
-                The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting{" "}
-                <b>{props.boldTextArray[0]}</b> will cause those relationships to be removed from all involved entity
-                types.
+                The{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                entity type is related to one or more entity types. Deleting{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                will cause those relationships to be removed from all involved entity types.
               </p>
               <p>
-                Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?
+                Are you sure you want to delete the{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                entity type?
               </p>
             </>
           )}
@@ -145,8 +168,11 @@ const ConfirmationModal: React.FC<Props> = props => {
               </HCAlert>
 
               <p aria-label="delete-step-text">
-                Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to
-                correlate with your changes to this entity property.
+                Edit these steps and choose a different entity type before deleting{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>
+                , to correlate with your changes to this entity property.
               </p>
               <p aria-label="toggle-steps" className={styles.toggleSteps} onClick={() => toggleSteps(!showSteps)}>
                 {showSteps ? "Hide Steps..." : "Show Steps..."}
@@ -179,7 +205,11 @@ const ConfirmationModal: React.FC<Props> = props => {
               </HCAlert>
 
               <p aria-label="delete-entity-foreign-key-text">
-                Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.
+                Edit the foreign key relationship of these entity types before deleting{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>
+                .
               </p>
               <p
                 aria-label="toggle-entities"
@@ -201,19 +231,37 @@ const ConfirmationModal: React.FC<Props> = props => {
 
           {props.type === ConfirmationType.DeletePropertyWarn && (
             <p aria-label="delete-property-text">
-              Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?
+              Are you sure you want to delete the{" "}
+              <b>
+                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+              </b>{" "}
+              property?
             </p>
           )}
 
           {props.type === ConfirmationType.PropertyName && (
             <>
               <p aria-label="property-name-text">
-                Entity properties with the name <b>{props.boldTextArray[0]}</b> will not return SQL queries. In SQL,{" "}
-                <b>{props.boldTextArray[0]}</b> is a special column and therefore, queries on entities titled{" "}
-                <b>{props.boldTextArray[0]}</b> will not return meaningful search results.
+                Entity properties with the name{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                will not return SQL queries. In SQL,{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                is a special column and therefore, queries on entities titled{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                will not return meaningful search results.
               </p>
               <p>
-                Are you sure you want to keep <b>{props.boldTextArray[0]}</b> as your property name?
+                Are you sure you want to keep{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                as your property name?
               </p>
             </>
           )}
@@ -225,8 +273,11 @@ const ConfirmationModal: React.FC<Props> = props => {
               </HCAlert>
 
               <p aria-label="delete-property-foreign-key-text">
-                The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other
-                entity types.
+                The property{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                appears in foreign key relationships in one or more other entity types.
               </p>
               <p
                 aria-label="toggle-entities"
@@ -261,7 +312,11 @@ const ConfirmationModal: React.FC<Props> = props => {
 
               {showSteps && <ul className={styles.stepList}>{renderArrayValues}</ul>}
               <p>
-                Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?
+                Are you sure you want to delete the{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>{" "}
+                property?
               </p>
             </>
           )}
@@ -303,7 +358,9 @@ const ConfirmationModal: React.FC<Props> = props => {
             <p aria-label="delete-step-text">
               Are you sure you want to delete the
               <b>
-                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                <AddTooltipWhenTextOverflow
+                  text={props.boldTextArray[0]}
+                />
               </b>
               step?
             </p>
@@ -322,7 +379,11 @@ const ConfirmationModal: React.FC<Props> = props => {
            **/}
           {props.type === ConfirmationType.AddStepToFlow && (
             <p aria-label="add-step-to-flow-text">
-              Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
+              Are you sure you want to add{" "}
+              <b>
+                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+              </b>{" "}
+              to flow <b>{props.boldTextArray[1]}</b>?
             </p>
           )}
 
@@ -335,7 +396,11 @@ const ConfirmationModal: React.FC<Props> = props => {
               </HCAlert>
 
               <p aria-label="delete-concept-class-related-entities-text">
-                Edit the concept relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.
+                Edit the concept relationship of these entity types before deleting{" "}
+                <b>
+                  <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
+                </b>
+                .
               </p>
               <p
                 aria-label="toggle-entities"

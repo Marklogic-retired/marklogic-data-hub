@@ -734,9 +734,17 @@ const FlowPanel: React.FC<Props> = ({
             >
               <span id={"flow-header-" + flow.name} className={styles.flowHeader}>
                 <HCTooltip
-                  text={canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails}
+                  text={
+                    <>
+                      {canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails}
+                      {flow.name.length > 60 ? <br /> : ""}
+                      {flow.name.length > 60 ? flow.name : ""}
+
+                    </>
+                  }
                   id="open-edit-tooltip"
                   placement="bottom"
+                  className={styles.flowNameTooltip}
                 >
                   <span
                     className={styles.flowName}
@@ -749,7 +757,7 @@ const FlowPanel: React.FC<Props> = ({
                       }
                     }}
                   >
-                    {flow.name}
+                    {flow.name.length > 60 ? flow.name.substring(0, 70) + "..." : flow.name}
                   </span>
                 </HCTooltip>
                 {latestJobData && latestJobData[flow.name] && latestJobData[flow.name].find(step => step.jobId) ? (
