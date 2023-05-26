@@ -9,11 +9,11 @@ class CompareValuesModal {
   }
 
   getUnmergeButton() {
-    return cy.get(`[aria-label="confirm-merge-unmerge"]`);
+    return cy.get(`[aria-label="confirm-merge-unmerge"]`).scrollIntoView();
   }
 
   getMergeButton() {
-    return cy.get(`[aria-label="confirm-merge-unmerge"]`);
+    return cy.get(`[aria-label="confirm-merge-unmerge"]`).scrollIntoView();
   }
 
   getInclusionCheckbox() {

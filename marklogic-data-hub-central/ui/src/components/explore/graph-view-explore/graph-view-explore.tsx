@@ -451,4 +451,4 @@ const GraphViewExplore: React.FC<Props> = props => {
   );
 };
 
-export default GraphViewExplore;
+export default React.memo(GraphViewExplore);
