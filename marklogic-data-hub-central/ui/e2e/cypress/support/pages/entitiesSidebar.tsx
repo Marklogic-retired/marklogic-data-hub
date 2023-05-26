@@ -218,5 +218,9 @@ class BaseEntitySidebar {
   getSingleConceptCheckbox(conceptName: string) {
     return cy.get(`[aria-label="related-concept-check-${conceptName}"]`);
   }
+
+  getRelatedEntityCheckbox(entityName: string) {
+    return cy.get(`[aria-label="related-entity-check-${entityName}"]`);
+  }
 }
 export default new BaseEntitySidebar();

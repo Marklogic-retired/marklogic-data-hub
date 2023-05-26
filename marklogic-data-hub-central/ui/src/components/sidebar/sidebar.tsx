@@ -1249,6 +1249,7 @@ const Sidebar: React.FC<Props> = props => {
                             ? `after-indicator ${styles.disabledTitleCheckbox}`
                             : `after-indicator ${styles.titleCheckbox}`
                         }
+                        aria-label="related-entities-checkbox"
                         onClick={() => setActiveAccordion("related-entities")}
                       >
                         {panelTitle(
