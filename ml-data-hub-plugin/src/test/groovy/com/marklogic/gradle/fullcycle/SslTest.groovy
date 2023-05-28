@@ -17,13 +17,9 @@
 
 package com.marklogic.gradle.fullcycle
 
-import com.marklogic.client.DatabaseClientFactory
-import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager
+
 import com.marklogic.gradle.task.BaseTest
 import org.gradle.testkit.runner.UnexpectedBuildFailure
-
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
@@ -142,7 +138,6 @@ class SslTest extends BaseTest {
                     </certificate-template-properties>
                 """
             }
-
         '''
 
         runTask("hubInit")
@@ -181,7 +176,8 @@ class SslTest extends BaseTest {
         mlAdminSimpleSsl=true
         mlManageSimpleSsl=true
         mlAppServicesSimpleSsl=true
-
+        mlSslHostnameVerifier=ANY
+        
         mlStagingSimpleSsl=true
         mlFinalSimpleSsl=true
         mlJobSimpleSsl=true
@@ -191,18 +187,11 @@ class SslTest extends BaseTest {
 
     def "bootstrap a project with ssl out the wazoo"() {
         when:
-        def result = runTask('mlDeploy')
-        def newSslContext = SSLContext.getInstance("SSLv3")
-        newSslContext.init(null, [new SimpleX509TrustManager()] as TrustManager[], null)
-        hubConfig().stagingSslContext = newSslContext
-        hubConfig().stagingSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY
+        def result = runTask('mlDeploy', "--stacktrace")
         print(result.output)
 
         then:
         notThrown(UnexpectedBuildFailure)
-        def modCount = getModulesDocCount()
-        //Commenting this out as the number of modules are going to change with new additions in 5
-        //modCount == BaseTest.MOD_COUNT_NO_OPTIONS_NO_TRACES
         result.task(":mlDeploy").outcome == SUCCESS
     }
 }
