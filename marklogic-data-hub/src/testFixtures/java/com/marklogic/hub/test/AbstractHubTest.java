@@ -277,7 +277,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         } else {
             installUserArtifacts();
         }
-        getHubConfig().getAdminManager().waitForRestart();
         logger.info("Installed project from folder in classpath: " + testProjectDir + "; time: " +
             (System.currentTimeMillis() - start));
     }
@@ -347,7 +346,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         new SimpleAppDeployer(getHubConfig().getManageClient(), getHubConfig().getAdminManager(), command)
             .deploy(getHubConfig().getAppConfig());
         // Wait for post-commit triggers to finish
-        getHubConfig().getAdminManager().waitForRestart();
         waitForTasksToFinish();
         waitForReindex(getHubClient(), getHubConfig().getDbName(DatabaseKind.FINAL));
     }
