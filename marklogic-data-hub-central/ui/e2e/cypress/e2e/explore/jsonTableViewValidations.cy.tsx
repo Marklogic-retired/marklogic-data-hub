@@ -201,28 +201,19 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
-  // TODO: DHFPROD-10183
-  it.skip("Search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
+  it("Search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
-
-    browsePage.getFacet("Adams Cole").trigger("mouseover");
-    cy.wait(1000);
-    browsePage.getTooltip("Adams Cole").should("not.exist");
-    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
-    browsePage.getFacet("adamscole@nutralab.com").trigger("mouseover");
-    cy.wait(1000);
-    browsePage.getTooltip("adamscole\\@nutralab\\.com").should("be.exist");
-
-    browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    browsePage.getSelectedFacets().should("exist");
-    browsePage.getFacetApplyButton().click();
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.visible").click();
+    browsePage.getFacetItemCheckbox("email", "coleadams39@nutralab.com").should("be.visible").click();
     browsePage.clickFacetView();
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.clickTableView();
     browsePage.getClearAllFacetsButton().click({force: true});
+    entitiesSidebar.backToMainSidebar();
   });
 
   it("Verify hub properties grey facets are not being removed when entity properties are selected", () => {
