@@ -1,5 +1,5 @@
 import mergingStepDetail from "../../support/components/merging/merging-step-detail";
-import {confirmationModal, toolbar} from "../../support/components/common";
+import {confirmationModal} from "../../support/components/common";
 import propertyTable from "../../support/components/model/property-table";
 import multiSlider from "../../support/components/common/multi-slider";
 import {matchingStepDetail} from "../../support/components/matching";
@@ -21,6 +21,8 @@ import {
   graphViewSidePanel,
   propertyModal
 } from "../../support/components/model/index";
+import runPage from "../../support/pages/run";
+import explorePage from "../../support/pages/explore";
 
 
 let entityNamesAsc: string[] = [];
@@ -54,14 +56,11 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Go to load tile, switch to list view, sort, and then visit another tile. When returning to load tile the list view is persisted", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getLoadToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
-    toolbar.getLoadToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    loadPage.navigate();
     loadPage.loadView("table").click();
     browsePage.waitForSpinnerToDisappear();
+    runPage.navigate();
+    loadPage.navigate();
     loadPage.addNewButton("list").should("be.visible");
     cy.findByTestId("loadTableName").should("be.visible").click();
     cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
@@ -82,10 +81,8 @@ describe("Validate persistence across Hub Central", () => {
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
 
     cy.log("**Switch Tile and come back, toggle value should be the same**");
-    toolbar.getCurateToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
+    explorePage.navigate();
     graphView.getRelationshipLabelsToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
     graphView.getPhysicsAnimationToggle().should("have.value", "false");
@@ -98,10 +95,8 @@ describe("Validate persistence across Hub Central", () => {
     curatePage.getAccordionButtonTab(0, 1).click();
     curatePage.getAccordionButtonTab(1, 2).click();
     cy.log("**Before switch page**");
-    toolbar.getLoadToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    toolbar.getCurateToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    loadPage.navigate();
+    curatePage.navigate();
     cy.log("**After come back to curate tile**");
     curatePage.getAccordionButton(0).should("have.attr", "aria-expanded");
     curatePage.getAccordionButton(1).should("have.attr", "aria-expanded");
@@ -114,10 +109,9 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     cy.log("Table view");
-    modelPage.getPublishButton().invoke("attr", "class").then($classNames => {
+    modelPage.getPublishButton().invoke("attr", "class").then(($classNames: any) => {
       if (!$classNames.includes("graph-view_disabledPointerEvents")) {
         cy.publishDataModel();
       }
@@ -126,28 +120,26 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
@@ -168,16 +160,14 @@ describe("Validate persistence across Hub Central", () => {
     graphViewSidePanel.getEntityTypeTabContent().should("exist");
 
     cy.log("Visit run tile and come back to model");
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    runPage.navigate();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     graphViewSidePanel.getEntityTypeTabContent().should("exist");
 
     graphViewSidePanel.getPropertiesTab().click();
@@ -188,25 +178,22 @@ describe("Validate persistence across Hub Central", () => {
     propertyTable.getProperty("shipping-city").scrollIntoView();
 
     cy.log("Visit run tile and come back to model");
-    toolbar.getRunToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    runPage.navigate();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
           confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
         }
       });
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
 
     cy.log("Verify property is still expanded");
     propertyTable.getProperty("shipping-street").scrollIntoView();
     propertyTable.getProperty("shipping-city").scrollIntoView();
   });
 
-  // TODO: DHFPROD-10186
-  it.skip("Go to run tile, expand flows and then visit another tile. When returning to the run tile, the expanded flows are persisted.", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+  it("Go to run tile, expand flows and then visit another tile. When returning to the run tile, the expanded flows are persisted.", () => {
+    runPage.navigate();
     cy.get("body")
       .then(($body) => {
         if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
@@ -215,14 +202,13 @@ describe("Validate persistence across Hub Central", () => {
       });
     cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse");
     cy.get("#personJSON .accordion-button").click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    loadPage.navigate();
+    runPage.navigate();
     cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
 
   it("Should sort table by entityName asc and desc", () => {
-    toolbar.getModelToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
@@ -253,22 +239,20 @@ describe("Validate persistence across Hub Central", () => {
     expect(JSON.stringify(entityNamesDesc)).equal(JSON.stringify(entityNamesDesc.sort().reverse()));
   });
 
-  // TODO: DHFPROD-10186
-  it.skip("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+  it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+    curatePage.navigate();
+    curatePage.getEntityTypePanel("Person").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.openStepDetails("mapPersonJSON");
     cy.contains("Entity Type: Person");
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    loadPage.navigate();
+    curatePage.navigate();
     cy.contains("Entity Type: Person");
     cy.findByTestId("arrow-left").click();
   });
 
   it("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Person").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
@@ -300,10 +284,9 @@ describe("Validate persistence across Hub Central", () => {
 
     cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
 
-    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    loadPage.navigate();
     browsePage.waitForSpinnerToDisappear();
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
     cy.contains("If only some of the values in the entities must match, then move the threshold lower.");
     cy.contains("If you want it to have only some influence, then move the ruleset lower.");
@@ -321,8 +304,7 @@ describe("Validate persistence across Hub Central", () => {
   });
 
   it("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMergeTab("Person");
@@ -338,10 +320,9 @@ describe("Validate persistence across Hub Central", () => {
     mergingStepDetail.getSortDescIcon().last().invoke("attr", "class").should("contain", "hc-table_activeCaret__");
 
     cy.log("*** Return to Curate Tab and verify all states changed above are persisted");
-    toolbar.getLoadToolbarIcon().should("be.visible").click();
+    loadPage.navigate();
     browsePage.waitForSpinnerToDisappear();
-    toolbar.getCurateToolbarIcon().should("be.visible").click();
-    browsePage.waitForSpinnerToDisappear();
+    curatePage.navigate();
     cy.contains("A merge strategy defines how to combine the property values of candidate entities, but the merge strategy is not active until assigned to a merge rule. A merge strategy can be assigned to multiple merge rules.");
     mergingStepDetail.verifyRowExpanded();
     mergingStepDetail.getSortAscIcon().first().invoke("attr", "class").should("contain", "hc-table_activeCaret__");
@@ -354,8 +335,7 @@ describe("Validate persistence across Hub Central", () => {
     const propertyName = generateUniqueName("a-Test");
 
     cy.log("**Navigates to Model and triggers table view**");
-    toolbar.getModelToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    modelPage.navigate();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     browsePage.waitForSpinnerToDisappear();
@@ -378,14 +358,13 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitForAsyncRequest();
 
     cy.log("**Clicks on Load toolbar icon**");
-    toolbar.getLoadToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
+    loadPage.navigate();
 
     cy.log("**Confirms Navigation warn**");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
 
     cy.log("**Returns to Model**");
-    toolbar.getModelToolbarIcon().click();
+    modelPage.navigate();
     modelPage.scrollPageTop();
     modelPage.selectView("table");
 
@@ -431,23 +410,20 @@ describe("Validate persistence across Hub Central", () => {
     curatePage.openStepDetails("match-person");
     matchingStepDetail.getAllDataRadio().click();
 
-    toolbar.getRunToolbarIcon().click();
-    cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().click();
+    runPage.navigate();
+    curatePage.navigate();
     matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("Matched Entities");
 
     matchingStepDetail.getAllDataURIRadio().click();
-    toolbar.getRunToolbarIcon().click();
-    cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().click();
+    runPage.navigate();
+    curatePage.navigate();
     matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("At least one URI is required.");
 
     matchingStepDetail.getUriOnlyRadio().click();
-    toolbar.getRunToolbarIcon().click();
-    cy.waitForAsyncRequest();
-    toolbar.getCurateToolbarIcon().click();
+    runPage.navigate();
+    curatePage.navigate();
     matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("At least Two URIs are required.");
   });
