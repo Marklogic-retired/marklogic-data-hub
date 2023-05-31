@@ -23,7 +23,6 @@ if (!this.rfc) {
 }
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.xqy");
-let flowlibSjs = require("/data-hub/4/impl/flow-lib.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
 
 const ns = {hub: "http://marklogic.com/data-hub"};
@@ -552,7 +551,9 @@ function queueWriter(writerFunction, identifier, envelope, options) {
 
 function runWriters(identifiers, targetDatabase = config.FINALDATABASE) {
   xdmp.invokeFunction(() => {
+    const flowlibSjs = require("/data-hub/4/impl/flow-lib.sjs");
     for (let identifier of identifiers) {
+      identifier = identifier.toString();
       let itemContext = contextQueue[identifier];
       let writerInfo = writerQueue[identifier];
       if (writerInfo) {

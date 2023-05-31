@@ -27,6 +27,7 @@ import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 
 const temporal = require("/MarkLogic/temporal.xqy");
+const legFlowLib = require("/data-hub/4/impl/flow-lib.sjs");
 const traceEvent = consts.TRACE_FLOW_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
 const databaseName = xdmp.databaseName(xdmp.database());
@@ -56,64 +57,70 @@ const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().red
   return collectionMap;
 }, {});
 
-for (let content of contentArray) {
-  const context = (content.context || {});
-  const permissions = context.permissions;
-  const targetCollections = context.collections || [];
-  const temporalCollection = targetCollections.concat(xdmp.documentGetCollections(content.uri))
-    .find(collection => temporalCollectionMap[collection]);
+const writerQueue = legFlowLib.writerQueue;
+if(writerQueue != null && Object.keys(writerQueue).length !== 0) {
+  const identifiers = contentArray.map(content => content["uri"]);
+  legFlowLib.runWriters(identifiers, databaseName);
+} else {
+  for (let content of contentArray) {
+    const context = (content.context || {});
+    const permissions = context.permissions;
+    const targetCollections = context.collections || [];
+    const temporalCollection = targetCollections.concat(xdmp.documentGetCollections(content.uri))
+      .find(collection => temporalCollectionMap[collection]);
 
-  if (!content['$delete']) {
-    const metadata = context.metadata;
-    const quality = context.quality || 0;
+    if (!content['$delete']) {
+      const metadata = context.metadata;
+      const quality = context.quality || 0;
 
-    if (temporalCollection) {
-      // temporalDocURI is managed by the temporal package and must not be carried forward.
-      if (metadata) {
-        delete metadata.temporalDocURI;
-      }
-      const collectionsReservedForTemporal = ['latest', content.uri];
-      if (traceEnabled) {
-        hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${databaseName}`);
-      }
-      temporal.documentInsert(temporalCollection, content.uri, content.value, {
-        permissions,
-        collections: targetCollections.filter((col) => !(temporalCollectionMap[col] || collectionsReservedForTemporal.includes(col))),
-        quality: quality,
-        metadata
-      });
-    } else if (!content.value) {
-      /* if content.value doesn't exist, we assume only metadata is being updated. This is used extensively by mastering to
-        avoid long locks on documents when we only update collections, etc.
-       */
-      if (traceEnabled) {
-        hubUtils.hubTrace(traceEvent, `Updating metadata for document ${content.uri} in database ${databaseName}`);
-      }
-      if (permissions) {
-        xdmp.documentSetPermissions(content.uri, permissions);
-      }
-      if (targetCollections) {
-        xdmp.documentSetCollections(content.uri, targetCollections);
-      }
-      if (quality || quality === 0) {
-        xdmp.documentSetQuality(content.uri, quality);
-      }
-      if (metadata) {
-        xdmp.documentSetMetadata(content.uri, metadata);
+      if (temporalCollection) {
+        // temporalDocURI is managed by the temporal package and must not be carried forward.
+        if (metadata) {
+          delete metadata.temporalDocURI;
+        }
+        const collectionsReservedForTemporal = ['latest', content.uri];
+        if (traceEnabled) {
+          hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${databaseName}`);
+        }
+        temporal.documentInsert(temporalCollection, content.uri, content.value, {
+          permissions,
+          collections: targetCollections.filter((col) => !(temporalCollectionMap[col] || collectionsReservedForTemporal.includes(col))),
+          quality: quality,
+          metadata
+        });
+      } else if (!content.value) {
+        /* if content.value doesn't exist, we assume only metadata is being updated. This is used extensively by mastering to
+          avoid long locks on documents when we only update collections, etc.
+         */
+        if (traceEnabled) {
+          hubUtils.hubTrace(traceEvent, `Updating metadata for document ${content.uri} in database ${databaseName}`);
+        }
+        if (permissions) {
+          xdmp.documentSetPermissions(content.uri, permissions);
+        }
+        if (targetCollections) {
+          xdmp.documentSetCollections(content.uri, targetCollections);
+        }
+        if (quality || quality === 0) {
+          xdmp.documentSetQuality(content.uri, quality);
+        }
+        if (metadata) {
+          xdmp.documentSetMetadata(content.uri, metadata);
+        }
+      } else {
+        if (traceEnabled) {
+          hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${databaseName}`);
+        }
+        xdmp.documentInsert(content.uri, content.value, {
+          permissions,
+          collections: targetCollections,
+          quality: quality,
+          metadata
+        });
       }
     } else {
-      if (traceEnabled) {
-        hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${databaseName}`);
-      }
-      xdmp.documentInsert(content.uri, content.value, {
-        permissions,
-        collections: targetCollections,
-        quality: quality,
-        metadata
-      });
+      deleteContent(content, temporalCollection);
     }
-  } else {
-    deleteContent(content, temporalCollection);
   }
 }
 

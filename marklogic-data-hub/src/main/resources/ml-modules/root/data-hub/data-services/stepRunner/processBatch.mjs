@@ -19,6 +19,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
+import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 function assertQueryMode() {
   if (fn.empty(xdmp.requestTimestamp())) {
@@ -29,7 +30,6 @@ function assertQueryMode() {
 assertQueryMode();
 
 const inputs = fn.head(xdmp.fromJSON(external.inputs));
-const legFlowLib = require("/data-hub/4/impl/flow-lib.sjs");
 
 const flowName = inputs.flowName;
 if (!fn.exists(flowName)) {
@@ -42,16 +42,11 @@ const jobId = inputs.jobId;
 // These are not just the runtime options that a user can provide. It is expected that this is
 // called by the Java ScriptStepRunner class, which has its own logic for combining options.
 const options = inputs.options;
-const identifiers = options["uris"];
+const identifiers = hubUtils.normalizeToSequence(options["uris"]);
 
 const datahub = DataHubSingleton.instance({
   performanceMetrics: !!options.performanceMetrics
 });
 
 const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
-const responseHolder = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
-if (options && options["options"] && options["options"]["isUpgradedLegacyFlow"] && options["options"]["isUpgradedLegacyFlow"] == true) {
-  legFlowLib.runWriters(identifiers, options["targetDatabase"]);
-}
-
-responseHolder;
+datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
