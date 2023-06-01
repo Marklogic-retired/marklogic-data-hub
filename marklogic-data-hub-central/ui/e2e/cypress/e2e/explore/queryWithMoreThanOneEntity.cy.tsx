@@ -68,6 +68,8 @@ describe("manage queries with more than one entity", () => {
 
     cy.log("**Clear selected query and check that the entities are not selected**");
     browsePage.getResetQueryButton().click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getBaseEntityOption(BaseEntityTypes.CUSTOMER).should("not.exist");
     entitiesSidebar.getBaseEntityOption(BaseEntityTypes.PERSON).should("not.exist");
 

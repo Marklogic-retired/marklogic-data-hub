@@ -4,10 +4,14 @@ import modelPage from "../../support/pages/model";
 
 describe(("relationBetweenEntities"), () => {
   before(() => {
+
+    cy.clearAllLocalStorage();
+    cy.clearAllSessionStorage();
     cy.loginAsDeveloper().withRequest();
   });
 
   beforeEach(() => {
+    cy.setupHubCentralConfig();
     cy.visit("tiles/model");
     cy.waitForAsyncRequest();
   });
@@ -22,7 +26,7 @@ describe(("relationBetweenEntities"), () => {
     graphView.getAddButton().click();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
-
+    modelPage.zoomOut(600);
     modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -172,7 +176,7 @@ describe(("relationBetweenEntities"), () => {
     graphVis.getEdgesRelatedToaNode("Person", relationshipName).then((edgeNames:any) => {
       cy.wrap(edgeNames.label).should("equal", "LongRelationshipBetw...");
     });
-
+    modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});

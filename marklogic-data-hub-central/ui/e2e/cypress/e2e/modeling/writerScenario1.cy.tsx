@@ -238,7 +238,6 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     cy.log("**Re-login**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     cy.setupHubCentralConfig();
-    homePage.navigate();
 
     modelPage.navigate();
     modelPage.selectView("table");

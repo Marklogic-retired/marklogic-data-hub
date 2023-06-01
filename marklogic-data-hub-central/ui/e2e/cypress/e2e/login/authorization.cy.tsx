@@ -327,7 +327,7 @@ describe("Login", () => {
 
     cy.log("**Opens Flow Status modal and clicks Explore Data button**");
     runPage.getStatusModalButton(flowName).should("be.visible").click();
-    runPage.explorerLink(stepName).should("be.visible").click();
+    runPage.getAllExplorerLink().eq(0).click();
     explorePage.getTitleExplore().scrollIntoView().should("be.visible");
   });
 

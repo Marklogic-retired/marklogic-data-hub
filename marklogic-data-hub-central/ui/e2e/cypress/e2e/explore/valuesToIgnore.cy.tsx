@@ -35,6 +35,9 @@ describe("Verify values to ignore feature", () => {
     cy.uploadFile("input/valuesToIgnore/values-to-ignore3.json");
     cy.uploadFile("input/valuesToIgnore/values-to-ignore4.json");
     cy.waitForAsyncRequest();
+    cy.waitUntil(() => runPage.getDocumentsWritten("mapForValuesToIgnore").then((value) => value >= 4));
+    cy.waitUntil(() => runPage.getDocumentsWritten("matchForValuesToIgnore").then((value) => value >= 5));
+
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
     browsePage.getTableView().click();

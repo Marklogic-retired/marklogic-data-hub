@@ -49,7 +49,7 @@ class EntityTypeTable {
   }
 
   viewEntityInGraphViewNotScroll(entityName: string) {
-    cy.get(`[data-testid="${entityName}-graphView-icon"]`).should("be.visible").click({force: true});
+    cy.get(`[data-testid="${entityName}-graphView-icon"]`).should("be.visible").click();
     cy.waitForAsyncRequest();
   }
 

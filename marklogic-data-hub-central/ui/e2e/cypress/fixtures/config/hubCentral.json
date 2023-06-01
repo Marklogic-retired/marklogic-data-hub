@@ -78,7 +78,11 @@
               "icon": "FaShapes",
               "graphX": 5,
               "graphY": 51
-            }
+            },
+            "ShoeType": {
+                "graphX": -174, 
+                "graphY": -171
+                }
 
         },
         "concepts": {
