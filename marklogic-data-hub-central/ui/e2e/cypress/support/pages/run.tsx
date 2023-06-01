@@ -190,6 +190,10 @@ class RunPage {
     return cy.get(`#${stepToRun}`);
   }
 
+  getAllExplorerLink() {
+    return cy.findAllByTestId(/.+-explorer-link/);
+  }
+
   getDocumentsWritten(stepName: string) {
     return cy.get(`[aria-label=${stepName}-documents-written]`).then(value => {
       return parseInt(value.first().text().replace(/,/, ""));
