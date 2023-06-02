@@ -39,8 +39,8 @@ describe("Verify values to ignore feature", () => {
     runPage.explorerLink("mergeForValuesToIgnore").click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
-    cy.findAllByText("Robert,Bob");
-    cy.findAllByText("Marge,Margot");
+    cy.findAllByText(/^(Robert,Bob|Bob,Robert)$/);
+    cy.findAllByText(/^(Marge,Margot|Margot,Marge)$/);
     cy.findAllByTestId("unmergeIcon").should("have.length", 2);
   });
 
@@ -71,8 +71,8 @@ describe("Verify values to ignore feature", () => {
     cy.waitForAsyncRequest();
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
-    cy.findByText("Robert,Bob").should("not.exist");
-    cy.findByText("Marge,Margot").should("exist");
+    cy.findByText(/^(Robert,Bob|Bob,Robert)$/).should("not.exist");
+    cy.findByText(/^(Marge,Margot|Margot,Marge)$/).should("exist");
   });
 
   it("Should not merge when values do match with multiple lists", () => {
@@ -101,7 +101,7 @@ describe("Verify values to ignore feature", () => {
     cy.waitForAsyncRequest();
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
-    cy.findByText("Robert,Bob").should("not.exist");
-    cy.findByText("Marge,Margot").should("not.exist");
+    cy.findByText(/^(Robert,Bob|Bob,Robert)$/).should("not.exist");
+    cy.findByText(/^(Marge,Margot|Margot,Marge)$/).should("not.exist");
   });
 });

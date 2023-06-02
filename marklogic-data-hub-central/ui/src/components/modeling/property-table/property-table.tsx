@@ -170,13 +170,8 @@ const PropertyTable: React.FC<Props> = props => {
                 editPropertyShowModal(record.propertyName, record);
               }}
             >
-              <HCTooltip text={
-                <span data-testid={`${record.propertyName}-tooltipTitle`}>
-                  {record.propertyName.length > 15 ? record.propertyName : ""}
-                  {record.propertyName.length > 15 ? <br /> : ""}
-                  {ModelingTooltips.entityPropertyName}
-                </span>
-              } id={`property-${text}-tooltip`} placement="top">
+              <HCTooltip text={ModelingTooltips.entityPropertyName}
+                id={`property-${text}-tooltip`} placement="bottom">
                 <span
                   tabIndex={0}
                   onKeyDown={event => {
@@ -185,22 +180,15 @@ const PropertyTable: React.FC<Props> = props => {
                     }
                   }}
                   data-testid={`${recordKey}` + text + "-tooltip-trigger"}
-                  className={`p-2 inline-block cursor-pointer ${
+                  className={`p-2 inline-block cursor-pointer ${styles.propertyName} ${
                     record.joinPropertyType && record.joinPropertyType !== "" ? "fst-italic" : ""
                   }`}
                 >
-                  <span data-testid={`${record.propertyName}-title`}>
-                    {record.propertyName.length > 15 ? (
-                      <>
-                        {record.propertyName.substring(0, 15)}
-                        <span className="text-primary">...</span>
-                      </>
-                    ) : (
-                      record.propertyName
-                    )}
-                  </span>
-                  {/* commenting out for now until we can figure out how to make this work. Issue number: DHFPROD-10287
-                <AddTooltipWhenTextOverflow text={record.propertyName} /> */}
+                  <AddTooltipWhenTextOverflow
+                    text={record.propertyName}
+                    placement="top"
+                    dataTestId={`${record.propertyName}-title`}
+                  />
                 </span>
               </HCTooltip>
               {record.multiple === record.propertyName && (
