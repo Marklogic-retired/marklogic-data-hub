@@ -490,7 +490,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.getExpandEntityIcon("Customer");
-    propertyTable.getPropertyName("new-Relationship-1Name").should("exist");
+    propertyTable.getPropertyName("new-Relationship-1Name").scrollIntoView().should("exist");
 
     cy.log("**Deletes the relationship**");
     propertyTable.getDeletePropertyIcon("Customer-Address-shipping", "new-Relationship-1Name").scrollIntoView().click();

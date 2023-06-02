@@ -1,3 +1,13 @@
+/* Readme:
+  To get this component working properly you should
+  restrict the size of the component that will contain <AddTooltipWhenTextOverflow />
+  example:
+  <span style={{maxWidth:'150px'}}>
+    <AddTooltipWhenTextOverflow text="abc" />
+  </span>
+  Additional if the component in the first render is hidden and doesn't work correctly
+  try using property forceRender
+*/
 import {HCTooltip} from "@components/common";
 import React, {useLayoutEffect, useRef, useState} from "react";
 import {Placement} from "react-bootstrap/esm/types";
@@ -6,10 +16,12 @@ export function AddTooltipWhenTextOverflow({
   text,
   placement = "auto",
   forceRender = false,
+  dataTestId  = "AddTooltipWhenTextOverflow"
 }: {
   text: string;
   placement?: Placement;
   forceRender?: Boolean;
+  dataTestId?:string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isEllipsisActive, setIsEllipsisActive] = useState(false);
@@ -36,7 +48,11 @@ export function AddTooltipWhenTextOverflow({
   );
 
   return (
-    <div ref={ref} style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}>
+    <div
+      ref={ref}
+      style={{overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"}}
+      data-testid={dataTestId}
+    >
       {isEllipsisActive ? (
         <HCTooltip text={text} id="additional-collections-tooltip" placement={placement}>
           <div style={{zIndex: 1, position: "absolute", width: labelWidth}}>&nbsp;</div>
