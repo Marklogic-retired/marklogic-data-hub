@@ -41,14 +41,17 @@ function buildContentObjectsFromMatchSummary(
     switch (actionType) {
     case "merge": {
       const mergeContentObjects = uriActionDetails.uris.map(uri => getContentObject(uri)).filter(contentObject => contentObject);
-      currentContentObject = {
-        uri,
-        value: mergeable.buildMergeDocument(mergeContentObjects, uri),
-        context: {
-          collections: consolidateContextValues(mergeContentObjects, "collections"),
-          permissions: consolidateContextValues(mergeContentObjects, "permissions")
-        }
-      };
+      // ensure we found 2 or more URIs to merge before trying to merge build the merge document
+      if (mergeContentObjects.length > 1) {
+        currentContentObject = {
+          uri,
+          value: mergeable.buildMergeDocument(mergeContentObjects, uri),
+          context: {
+            collections: consolidateContextValues(mergeContentObjects, "collections"),
+            permissions: consolidateContextValues(mergeContentObjects, "permissions")
+          }
+        };
+      }
       for (const contentToArchive of mergeContentObjects) {
         mergeable.applyDocumentContext(contentToArchive, {action: "archive"});
         contentObjects.push(contentToArchive);

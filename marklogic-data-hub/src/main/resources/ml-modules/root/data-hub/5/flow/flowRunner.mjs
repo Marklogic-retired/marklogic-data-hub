@@ -64,8 +64,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       if (!stepExecutionContext.wasCompleted()) {
         flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
         break;
-      }
-      else {
+      } else {
         addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
         flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
       }
@@ -89,7 +88,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
 /**
  * Runs the step defined by stepExecutionContext against the appropriate source database.
  *
- * @param stepExecutionContext {array} defines the step to execute and context for executing the step
+ * @param stepExecutionContext {StepExecutionContext} defines the step to execute and context for executing the step
  * @param contentArray {array} array of content objects to process
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
  * by the executed step is added to it
@@ -115,7 +114,7 @@ function runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQ
  * Runs the step defined by the stepExecutionContext. It is assumed that this is being run against the proper source
  * database, and thus has most likely been invoked by runStepAgainstSourceDatabase.
  *
- * @param stepExecutionContext {array} defines the step to execute and context for executing the step
+ * @param stepExecutionContext {StepExecutionContext} defines the step to execute and context for executing the step
  * @param contentArray {array} array of content objects to process
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
  * by the executed step is added to it
@@ -130,8 +129,8 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
   invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
-  runStepMainOnBatch(contentArray, stepExecutionContext) :
-  runStepMainOnEachItem(contentArray, stepExecutionContext);
+    runStepMainOnBatch(contentArray, stepExecutionContext) :
+    runStepMainOnEachItem(contentArray, stepExecutionContext);
 
   // If the step did not complete for any reason, then one or more errors were captured, and no output should be returned
   if (!stepExecutionContext.wasCompleted()) {
@@ -327,8 +326,7 @@ function copyContentObject(contentObject) {
         } catch (error) {
           console.log("Copy error: " + error + "; uri: " + contentObject.uri + "; key: " + key);
         }
-      }
-      else {
+      } else {
         // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if
         // JSON.parse/xdmp.quote can be used
         copy.context[key] = originalContext[key];
@@ -350,7 +348,7 @@ function copyContentObject(contentObject) {
  */
 function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
   //we want to call our features before the interceptors runs
-  if(whenValue === "beforeMain"){
+  if (whenValue === "beforeMain") {
     invokeFeatureBefore(stepExecutionContext, contentArray);
   }
   const flowStep = stepExecutionContext.flowStep;
@@ -379,7 +377,7 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
       throw error;
     }
   }
-  if(whenValue === "beforeContentPersisted"){
+  if (whenValue === "beforeContentPersisted") {
     invokeFeatureAfter(stepExecutionContext, contentArray);
   }
 }
@@ -470,5 +468,5 @@ export default {
   prepareContentBeforeStepIsRun,
   runFlowOnContent,
   runStepAgainstSourceDatabase
-}
+};
 
