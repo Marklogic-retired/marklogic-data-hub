@@ -147,6 +147,14 @@ function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
   return cachedArtifacts[artifactKey];
 }
 
+function artifactIsUnchanged(existingArtifact, newArtifact) {
+  const compareExistingArtifact = Object.assign({}, existingArtifact);
+  delete compareExistingArtifact.lastUpdated;
+  const compareNewArtifact = Object.assign({}, newArtifact);
+  delete compareNewArtifact.lastUpdated;
+  return fn.deepEqual(xdmp.toJSON(compareExistingArtifact), xdmp.toJSON(compareNewArtifact));
+}
+
 function setArtifact(artifactType, artifactName, artifact, dirFileName) {
   const artifactKey = generateArtifactKey(artifactType, artifactName);
   let validArtifact = validateArtifact(artifactType, artifactName, artifact) || artifact;
@@ -161,18 +169,28 @@ function setArtifact(artifactType, artifactName, artifact, dirFileName) {
   const artifactPermissions = artifactLibrary.getPermissions();
   const artifactCollections = ['hub-artifact'].concat(artifactLibrary.getCollections());
   const renamingArtifact = artifactNameProperty && artifact[artifactNameProperty] && artifactName !== artifact[artifactNameProperty];
-  let existingArtifact;
+  let existingArtifact = null;
   try {
     existingArtifact = getArtifactNode(artifactType, artifactName);
   } catch (e) {}
-  if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
+  let lastUpdated = fn.string(fn.currentDateTime());
+  let artifactExists = false;
+  if (existingArtifact !== null && fn.exists(existingArtifact)) {
+    artifactExists = true;
+    if (renamingArtifact) {
+      deleteArtifact(artifactType, artifactName);
+      artifactName = artifact[artifactNameProperty];
+    }
+    const existingArtifactObject = existingArtifact.toObject();
+    if (artifactIsUnchanged(existingArtifactObject, artifact)) {
+      lastUpdated = existingArtifactObject.lastUpdated || lastUpdated;
+    }
+  } else if (artifactLibrary.defaultArtifact) {
     artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
-  } else if (fn.exists(existingArtifact) && renamingArtifact) {
-    deleteArtifact(artifactType, artifactName);
-    artifactName = artifact[artifactNameProperty];
   }
 
-  artifact.lastUpdated = fn.string(fn.currentDateTime());
+  artifact.lastUpdated = (!artifactExists) ? (artifact.lastUpdated || lastUpdated): lastUpdated;
+
   hubUtils.replaceLanguageWithLang(artifact);
 
   for (const db of artifactDatabases) {

@@ -131,19 +131,15 @@ export default class Flow {
     let prefix = prefixAux.replace(`'`, '');
 
     // A map is used in this script to avoid N calls to array.includes
-    const script =
-       `let items = ${xdmp.toJsonString(items)};` +
-       `const itemHashes =items.map(item => xdmp.hash64('${prefix}' + item)); ` +
-       `const processedItemHashesMap = cts.values(cts.jsonPropertyReference('processedItemHashes'), null, ['map'], cts.andQuery([` +
-       `  cts.collectionQuery('Batch'), ` +
-       `  cts.jsonPropertyRangeQuery('processedItemHashes', '=', itemHashes)` +
-       `])); ` +
-       `items.filter(item => !processedItemHashesMap[xdmp.hash64('${prefix}' + item)]);`;
-
-    // xdmp.invokeFunction returns nothing, so using xdmp.eval
-    return fn.head(xdmp.eval(script,
-      null,
-      {database: xdmp.database(this.config.JOBDATABASE)}
+    return fn.head(xdmp.invokeFunction(() => {
+      const itemHashes = items.map(item => xdmp.hash64(`${prefix}${item}`));
+      const processedItemHashesMap = cts.values(cts.jsonPropertyReference('processedItemHashes'), null, ["map", "concurrent", "score-zero"], cts.andQuery([
+        cts.collectionQuery('Batch'),
+        cts.jsonPropertyRangeQuery('processedItemHashes', '=', itemHashes)
+      ]));
+      return items.filter(item => !processedItemHashesMap[xdmp.hash64(`${prefix}${item}`)]);
+    },
+    {database: xdmp.database(this.config.JOBDATABASE)}
     ));
   }
 

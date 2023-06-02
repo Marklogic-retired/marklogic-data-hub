@@ -7,29 +7,24 @@ const orderUriRegex = new RegExp('^\/Order\/[0-9a-z\-]*.json$');
 
 const assertions = [];
 
-function callHubUri(entityType){
+function callHubUri(entityType) {
   try {
     return core.hubURI(entityType);
-  }
-  catch (e) {
+  } catch (e) {
     return e;
   }
 }
 
-function callHubUriUsingSJS(entityType){
+function callHubUriUsingSJS(entityType) {
   try {
     return coreSjs.hubURI(entityType);
-  }
-  catch (e) {
+  } catch (e) {
     return e;
   }
 }
 
 let orderUri = callHubUri("Order");
 let orderUriSjs = callHubUriUsingSJS("Order");
-
-xdmp.log("orderUri: " + orderUri);
-xdmp.log("orderUriSjs: " + orderUriSjs);
 
 assertions.push(
   test.assertTrue(orderUri.startsWith("/Order/")),
@@ -49,5 +44,5 @@ assertions.push(
   test.assertTrue(orderUriRegex.test(orderUriSjs), "HubUri: " + orderUriSjs + " has different format")
 );
 
-assertions
+assertions;
 

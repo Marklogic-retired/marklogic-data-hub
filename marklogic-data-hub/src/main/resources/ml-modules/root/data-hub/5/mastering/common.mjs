@@ -302,7 +302,7 @@ function populateContentObject(doc, uri = xdmp.nodeUri(doc)) {
 }
 
 function getContentObject(uri) {
-  if (!contentObjectsByURI.has(uri)) {
+  if (!(contentObjectsByURI.has(uri) && contentObjectsByURI.get(uri))) {
     populateContentObject(cts.doc(uri), uri);
   }
   return contentObjectsByURI.get(uri);
