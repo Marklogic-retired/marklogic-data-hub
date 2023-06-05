@@ -8,6 +8,8 @@ hubTest.runWithRolesAndPrivileges(roles, [], function () {
     xdmp.documentDelete("doc0.json", {ifNotExists: "allow"});
     xdmp.documentDelete("doc1.json", {ifNotExists: "allow"});
     xdmp.documentDelete("doc2.json", {ifNotExists: "allow"});
+    xdmp.documentDelete("cust0.json", {ifNotExists: "allow"});
+    xdmp.documentDelete("cust1.json", {ifNotExists: "allow"});
   }, {update: "true"});
 });
 
