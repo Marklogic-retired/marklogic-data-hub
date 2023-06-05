@@ -59,7 +59,7 @@ public class SinglePageAppController implements ErrorController {
         Collections.list(httpServletRequest.getHeaderNames()).stream()
             .collect(Collectors.toMap(h -> h, httpServletRequest::getHeader));
         // These values are for testing
-        addHeadersFromCloudForTesting(headers);
+//        addHeadersFromCloudForTesting(headers);
         return headers;
     }
 
