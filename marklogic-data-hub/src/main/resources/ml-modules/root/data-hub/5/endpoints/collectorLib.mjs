@@ -17,6 +17,7 @@
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import featuresCore from "/data-hub/features/core.mjs";
 import entityLib from "/data-hub/5/impl/entity-lib.mjs";
+import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 
 /**
  * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
@@ -36,6 +37,8 @@ function prepareSourceQueryWithoutUris(combinedOptions, stepDefinition) {
     return fn.normalizeSpace(`${sourceQuery}`);
   }
 
+  sourceQuery = prepareTemporalCollections(sourceQuery);
+
   if (true === combinedOptions.constrainSourceQueryToJob || "true" === combinedOptions.constrainSourceQueryToJob) {
     if (combinedOptions.jobId) {
       sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
@@ -44,6 +47,23 @@ function prepareSourceQueryWithoutUris(combinedOptions, stepDefinition) {
     }
   }
   return invokeFeatureMethods(stepDefinition, sourceQuery);
+}
+
+function prepareTemporalCollections(sourceQuery) {
+  let sourceCollections =sourceQuery.match(/(['"]).*?\1/g);
+
+  const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
+    collectionMap[collectionName] = true;
+    return collectionMap;
+  }, {});
+  if (temporalCollectionMap.length > 0) {
+    const temporalCollections = sourceCollections.find(collection => temporalCollectionMap[collection]);
+    if (temporalCollections && temporalCollections.length > 0) {
+      return `cts.andQuery([${sourceQuery},cts.collectionQuery('latest')])`;
+    }
+  }
+
+  return sourceQuery;
 }
 
 function prepareSourceQuery(combinedOptions, stepDefinition) {

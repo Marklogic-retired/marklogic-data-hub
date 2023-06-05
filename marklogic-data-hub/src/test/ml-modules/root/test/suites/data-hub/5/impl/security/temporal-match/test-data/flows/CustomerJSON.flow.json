@@ -1,0 +1,8 @@
+{
+  "name" : "CustomerJSON",
+  "steps" : {
+    "1" : {
+      "stepId" : "match-customers-matching"
+    }
+  }
+}

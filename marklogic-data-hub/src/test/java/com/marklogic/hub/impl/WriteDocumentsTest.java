@@ -28,7 +28,7 @@ public class WriteDocumentsTest extends AbstractHubCoreTest {
                 protectTestDocument();
                 wipeTestDocument();
             } catch (Exception ex) {
-                logger.info("Unable to remove the test document, likely because the test failued: " + ex.getMessage());
+                logger.info("Unable to remove the test document, likely because the test failed: " + ex.getMessage());
             }
             removeCollection();
             removeAxes();
