@@ -16,8 +16,12 @@ const {exploreSidebar} = tooltipsConfig;
 
 const EntityIconsSidebar: React.FC<Props> = props => {
   const {currentBaseEntities, onClose, currentRelatedEntities, updateSelectedEntity, graphView} = props;
-  const currentRelatedEntitiesArray =
-    currentRelatedEntities && currentRelatedEntities.size > 0 ? Array.from(currentRelatedEntities.values()) : [];
+
+  const currentRelatedEntitiesArray =  currentRelatedEntities && currentRelatedEntities.size > 0 ?
+    Array.from(currentRelatedEntities.values()).filter(
+      ({name}) => !currentBaseEntities.find(baseEntity => baseEntity.name === name)
+    )
+    : [];
 
   const closeSpecificSidebar = event => {
     onClose(false);
