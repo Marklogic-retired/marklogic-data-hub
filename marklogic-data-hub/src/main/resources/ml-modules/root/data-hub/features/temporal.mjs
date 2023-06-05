@@ -72,7 +72,7 @@ function onArtifactPublish (artifactType, artifactName) {
 
 function onBuildInstanceQuery(stepContext, model, sourceQuery) {
   const temporalFeature = featuresUtils.getFeatureFromContext(stepContext, model, "temporal");
-  if (temporalFeature) {
+  if (temporalFeature && !sourceQuery.includes('latest')) {
     return `cts.andQuery([${sourceQuery},cts.collectionQuery('latest')])`;
   }
 

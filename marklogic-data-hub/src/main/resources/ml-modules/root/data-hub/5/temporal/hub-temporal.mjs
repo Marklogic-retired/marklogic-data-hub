@@ -55,10 +55,36 @@ function createCollection(temporalCollection) {
   }, {update: "true"});
 }
 
+function prepareTemporalSourceQuery(sourceQuery) {
+
+  let sourceCollections = sourceQuery.match(/(['"]).*?\1/g)
+  if (sourceCollections && sourceCollections.length > 0) {
+    sourceCollections = sourceCollections.map(c => {
+      return c.slice(1, -1);
+    });
+
+    const hasLatest = sourceCollections.find(c => "latest" === c);
+    if (!hasLatest || hasLatest.length == 0) {
+      const temporalCollectionMap = getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
+        collectionMap[collectionName] = true;
+        return collectionMap;
+      }, {});
+      if (temporalCollectionMap.length > 0) {
+        const temporalCollections = sourceCollections.find(collection => temporalCollectionMap[collection]);
+        if (temporalCollections && temporalCollections.length > 0) {
+          return `cts.andQuery([${sourceQuery},cts.collectionQuery('latest')])`;
+        }
+      }
+    }
+  }
+  return sourceQuery;
+}
+
 export default {
   getTemporalCollections: import.meta.amp(getTemporalCollections),
   createIndex: import.meta.amp(createIndex),
   createAxis: import.meta.amp(createAxis),
-  createCollection: import.meta.amp(createCollection)
+  createCollection: import.meta.amp(createCollection),
+  prepareTemporalSourceQuery: prepareTemporalSourceQuery
 }
 

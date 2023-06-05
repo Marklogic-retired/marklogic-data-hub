@@ -16,6 +16,7 @@
 'use strict';
 
 import collectorLib from  "/data-hub/5/endpoints/collectorLib.mjs";
+import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 import DataHub from  "/data-hub/5/datahub.mjs";
 import httpUtils from  "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
@@ -96,7 +97,8 @@ if(combinedOptions.sourceQueryIsModule == true) {
     httpUtils.throwNotFoundWithArray([404, "Not Found", "The collector query was empty"]);
   }
 
-  const javascript =  collectorLib.prepareSourceQuery(combinedOptions, stepDefinition);
+  let javascript =  collectorLib.prepareSourceQuery(combinedOptions, stepDefinition);
+  javascript = temporalLib.prepareTemporalSourceQuery(javascript);
   try {
     /**
      * DHF 5 has always used this eval, and it certainly is open for code injection. This is partially minimized
