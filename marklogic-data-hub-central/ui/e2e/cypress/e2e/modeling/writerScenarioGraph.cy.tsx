@@ -40,7 +40,7 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Create an entity with name having more than 20 chars", () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -70,7 +70,7 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Patients");
@@ -140,7 +140,7 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -170,7 +170,7 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -242,7 +242,7 @@ describe("Entity Modeling: Graph View", () => {
     cy.log("**verify relationship was created and properties are present**");
     modelPage.scrollPageTop();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.editProperty("purchased");
@@ -334,7 +334,7 @@ describe("Entity Modeling: Graph View", () => {
 
     modelPage.scrollPageTop();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.editProperty("referredBy");
@@ -394,7 +394,7 @@ describe("Entity Modeling: Graph View", () => {
   it("Delete a relationship from graph view, cancel deletion", {defaultCommandTimeout: 120000}, () => {
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(1000);
@@ -426,7 +426,7 @@ describe("Entity Modeling: Graph View", () => {
   it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(1000);
@@ -460,7 +460,7 @@ describe("Entity Modeling: Graph View", () => {
   it("Edit structured property relationship", () => {
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
 
     cy.log("**Creates a structured property on Customer**");
     entityTypeTable.viewEntityInGraphView("Customer");
@@ -488,7 +488,7 @@ describe("Entity Modeling: Graph View", () => {
 
     cy.log("**Verifies the relationship name is updated**");
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getPropertyName("new-Relationship-1Name").scrollIntoView().should("exist");
 

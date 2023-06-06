@@ -98,7 +98,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.wait(3000);
 
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});

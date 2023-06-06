@@ -117,7 +117,7 @@ describe("Validate persistence across Hub Central", () => {
       }
     });
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
     runPage.navigate();
@@ -129,7 +129,7 @@ describe("Validate persistence across Hub Central", () => {
       });
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
     runPage.navigate();
@@ -141,12 +141,12 @@ describe("Validate persistence across Hub Central", () => {
       });
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("shipping-shipping-span").should("exist");
 
     cy.log("Graph view");
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
     modelPage.scrollPageBottom();
     cy.wait(500);
     graphVis.getPositionsOfNodes("Customer").then((nodePositions: any) => {
@@ -210,7 +210,7 @@ describe("Validate persistence across Hub Central", () => {
   it("Should sort table by entityName asc and desc", () => {
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     browsePage.waitForSpinnerToDisappear();
     entityTypeTable.getExpandEntityIcon("Customer");
 
@@ -337,7 +337,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.log("**Navigates to Model and triggers table view**");
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Creates new Entity**");
@@ -366,7 +366,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.log("**Returns to Model**");
     modelPage.navigate();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
 
     cy.log("**Confirms that the property added is still there**");
     propertyTable.getProperty(propertyName).scrollIntoView().should("be.visible");

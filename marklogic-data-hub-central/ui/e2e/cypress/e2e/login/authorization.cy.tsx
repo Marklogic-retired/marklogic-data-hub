@@ -95,7 +95,7 @@ describe("Login", () => {
     toolbar.getModelToolbarIcon().click();
     cy.wait(2000);
     tiles.getModelTile().should("exist");
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     modelPage.getAddButton().should("be.disabled");
   });
 

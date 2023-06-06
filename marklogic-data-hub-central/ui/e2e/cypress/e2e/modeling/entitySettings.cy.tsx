@@ -38,8 +38,8 @@ describe("Entity display settings in model tile", () => {
   });
 
   it("Can change entity display settings in model tile and change in explore", () => {
-    modelPage.selectView("table");
-    modelPage.selectView("project-diagram");
+    modelPage.switchTableView();
+    modelPage.switchGraphView();
     cy.waitForAsyncRequest();
     cy.wait(5000);
     cy.log(`**Click on ${defaultEntityTypeData.name} entity to open side bar**`);
@@ -188,7 +188,7 @@ describe("Entity display settings in model tile", () => {
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to graph view**");
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
     cy.waitForAsyncRequest();
     cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();

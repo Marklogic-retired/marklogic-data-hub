@@ -13,18 +13,16 @@ import {
 } from "../../support/components/model/index";
 import curatePage from "../../support/pages/curate";
 
-describe("Graph Validations", () => {
+describe("Graph Validations", {defaultCommandTimeout: 40000}, () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
     cy.setupHubCentralConfig();
   });
 
   beforeEach(() => {
-    cy.visit("/tiles/model");
+    cy.visit("tiles/model");
     cy.waitForAsyncRequest();
-    modelPage.selectView("table");
-    cy.wait(1000);
-    entityTypeTable.waitForTableToLoad();
+    modelPage.switchTableView();
   });
 
   after(() => {
@@ -33,12 +31,12 @@ describe("Graph Validations", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
+  it("Can view and edit Entity Type tab in side panel", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.visible");
     modelPage.getPublishButton().invoke("attr", "class").then($classNames => {
-      if (!$classNames.includes("graph-view_disabledPointerEvents")) {
+      if (typeof $classNames === "string" && !$classNames.includes("graph-view_disabledPointerEvents")) {
         cy.publishDataModel();
       }
     });
@@ -56,14 +54,14 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityNamespace().click();
     modelPage.getEntityModifiedAlert().should("exist");
     modelPage.getPublishButton().should("be.enabled");
-    graphViewSidePanel.getEntityNamespace().type("test");
+    graphViewSidePanel.getEntityNamespace().type("test", {delay: 500});
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Since you entered a namespace, you must specify a prefix.").should("be.visible");
-    graphViewSidePanel.getEntityPrefix().type("pre");
+    graphViewSidePanel.getEntityPrefix().type("pre", {delay: 500});
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("be.visible");
     graphViewSidePanel.getEntityDescription().clear();
-    graphViewSidePanel.getEntityNamespace().clear().type("http://example.org/test");
+    graphViewSidePanel.getEntityNamespace().clear().type("http://example.org/test", {delay: 500});
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
     modelPage.toggleColorSelector("Person");
@@ -76,7 +74,7 @@ describe("Graph Validations", () => {
     }
   });
 
-  it("Can view and works with the Related Concept Classes tab in the side panel", {defaultCommandTimeout: 120000}, () => {
+  it("Can view and works with the Related Concept Classes tab in the side panel", () => {
     cy.log("**Visit Product entity**");
     entityTypeTable.viewEntityInGraphView("Product");
 
@@ -91,7 +89,7 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getConfirmationModal().should("exist");
   });
 
-  it("Can view and works with the Optional section and select source property dropdown", {defaultCommandTimeout: 120000}, () => {
+  it("Can view and works with the Optional section and select source property dropdown", () => {
     cy.log("**Visit Customer entity**");
     entityTypeTable.viewEntityInGraphView("Customer");
     graphViewSidePanel.getAddPropertyLinkButton("Customer").scrollIntoView().should("exist");
@@ -111,10 +109,10 @@ describe("Graph Validations", () => {
     relationshipModal.verifyEntityOption("nicknames").should("exist");
   });
 
-  it("Can filter and select entity type in graph view", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("project-diagram");
+  it("Can filter and select entity type in graph view", () => {
+    modelPage.switchGraphView();
     graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("not.exist");
-    graphViewSidePanel.getGraphViewFilterInput().type("Bab");
+    graphViewSidePanel.getGraphViewFilterInput().type("Bab", {delay: 500});
     graphViewSidePanel.selectEntityDropdown();
     graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("exist");
     graphViewSidePanel.getPropertiesTab().should("exist");
@@ -122,8 +120,8 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("exist");
   });
 
-  it("Can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("project-diagram");
+  it("Can center on entity type in graph view", () => {
+    modelPage.switchGraphView();
     cy.wait(500);
 
     modelPage.scrollPageBottom();
@@ -160,7 +158,7 @@ describe("Graph Validations", () => {
   it("Can select all available nodes in graph view, locations persist", () => {
     let ids = ["BabyRegistry", "Client", "Customer", "Order", "Person"];
     let savedCoords: any = {};
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     ids.forEach(id => {
       graphVis.getPositionsOfNodes(id).then((nodePositions: any) => {
@@ -174,7 +172,7 @@ describe("Graph Validations", () => {
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
 
     modelPage.navigate();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     ids.forEach(id => {
       graphVis.getPositionsOfNodes(id).then((nodePositions: any) => {
@@ -186,7 +184,7 @@ describe("Graph Validations", () => {
     });
   });
 
-  it("Add entities, a relation, publish, delete the relation and check if it's possible to delete an entity", {defaultCommandTimeout: 120000}, () => {
+  it("Add entities, a relation, publish, delete the relation and check if it's possible to delete an entity", () => {
     cy.log("**Reverts changes**");
     cy.revertDataModel();
 
@@ -236,7 +234,7 @@ describe("Graph Validations", () => {
     cy.findByText("Close").should("be.visible").click();
   });
 
-  it("Can view and edit an Entity's properties in side panel", {defaultCommandTimeout: 120000}, () => {
+  it("Can view and edit an Entity's properties in side panel", () => {
     cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
     cy.log("**Opens a-Test2 details**");
@@ -281,7 +279,7 @@ describe("Graph Validations", () => {
     cy.findByText("Close").should("be.visible").click();
   });
 
-  it("Can view Entity's relationship from graph ", {defaultCommandTimeout: 120000}, () => {
+  it("Can view Entity's relationship from graph ", () => {
     cy.get("[data-cy=graph-view]").click({force: true});
     graphVis.getPositionOfEdgeBetween("a-Test2,a-Test1").then((edgePosition: any) => {
       cy.wait(150);

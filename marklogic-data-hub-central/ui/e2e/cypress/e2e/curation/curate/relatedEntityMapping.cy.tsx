@@ -44,7 +44,7 @@ describe("Mapping", () => {
   });
 
   it("Define new entity, add relationship property", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -66,7 +66,7 @@ describe("Mapping", () => {
 
   it("Create new entity and check if there is no message in curate tile", {defaultCommandTimeout: 120000}, () => {
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});

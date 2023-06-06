@@ -32,7 +32,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   });
 
   it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -203,7 +203,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     cy.url().should("include", "/tiles/explore");
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
@@ -219,7 +219,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     homePage.navigate();
 
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Order");
     propertyTable.getAddPropertyButton("Order").click();
@@ -240,7 +240,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     cy.setupHubCentralConfig();
 
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Buyer");
     propertyTable.getAddPropertyButton("Buyer").click();
