@@ -1,4 +1,4 @@
-import React, {CSSProperties, useContext, useState} from "react";
+import React, {CSSProperties, useContext, useState, useRef} from "react";
 import styles from "./record-view.module.scss";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -15,7 +15,7 @@ import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Download, FileEarmark, ArrowRightSquare} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {Overlay, Spinner} from "react-bootstrap";
+import {OverlayTrigger, Spinner} from "react-bootstrap";
 import {SecurityTooltips} from "@config/tooltips.config";
 import {MdCallMerge} from "react-icons/md";
 import {previewMatchingActivity, getDocFromURI, getPreviewFromURIs} from "@api/matching";
@@ -42,9 +42,7 @@ const RecordCardView = props => {
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const handleDetailViewNavigation = () => {}; // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  const [infoVisibility, setInfoVisibility] = useState(false);
-  const [target, setTarget] = useState(null);
-  const [element, setElement] = useState(null);
+  const ref = useRef(null);
 
   // Custom CSS for source Format
   const sourceFormatStyle = sourceFmt => {
@@ -289,38 +287,15 @@ const RecordCardView = props => {
     }
   };
 
-  const handleInfoIconClick = (event, element) => {
-    setElement(element);
-    setTarget(event.target);
-    setInfoVisibility(true);
-  };
 
-  const closePopover = () => {
-    if (infoVisibility) {
-      setInfoVisibility(false);
-    }
-  };
 
-  const infoKeyDownHandler = (event, element) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleInfoIconClick(event, element);
-    }
-    if (event.key === "Escape") {
-      closePopover();
-    }
-  };
 
-  const infoPopover = (
-    <Overlay show={infoVisibility} target={target} placement="bottom-end">
-      {element ? displayRecordMetadata(element) : <></>}
-    </Overlay>
-  );
+
+
 
   return (
-    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
+    <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard} ref={ref}>
       <Row className="w-100 m-0">
-        {infoVisibility && element && infoPopover}
         {props.data && props.data.length > 0 ? (
           props.data.map((elem, index) => (
             <Col xs={"auto"} key={index}>
@@ -331,29 +306,35 @@ const RecordCardView = props => {
                       URI:{" "}
                       <span className={styles.uri}>
                         <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
-                          <span tabIndex={0} onFocus={closePopover}>
+                          <span tabIndex={0}>
                             {displayUri(elem.uri)}
                           </span>
                         </HCTooltip>
                       </span>
                     </span>
                     <span className={styles.cardIcons}>
-                      <span>
-                        <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
-                          <span className={styles.infoIcon}>
-                            <i>
-                              <FontAwesomeIcon
-                                tabIndex={0}
-                                icon={faInfoCircle}
-                                size="1x"
-                                data-testid={elem.uri + "-InfoIcon"}
-                                onClick={event => handleInfoIconClick(event, elem)}
-                                onKeyDown={event => infoKeyDownHandler(event, elem)}
-                              />
-                            </i>
-                          </span>
-                        </HCTooltip>
-                      </span>
+                      <OverlayTrigger
+                        trigger={["click"]}
+                        rootClose
+                        placement="bottom"
+                        container={ref}
+                        overlay={elem ? displayRecordMetadata(elem) : <></>}
+                      >
+                        <button className={styles.infoButton} tabIndex={-1}>
+                          <HCTooltip text={"View info"} id="view-info-tooltip" placement="top">
+                            <span className={styles.infoIcon}>
+                              <i>
+                                <FontAwesomeIcon
+                                  tabIndex={0}
+                                  icon={faInfoCircle}
+                                  size="1x"
+                                  data-testid={elem.uri + "-InfoIcon"}
+                                />
+                              </i>
+                            </span>
+                          </HCTooltip>
+                        </button>
+                      </OverlayTrigger >
                       <span
                         className={styles.sourceFormat}
                         style={sourceFormatStyle(elem.format)}
@@ -373,7 +354,6 @@ const RecordCardView = props => {
                           onKeyDown={e => navigateUsingKey(e, elem)}
                           id={"instance"}
                           data-cy="instance"
-                          onFocus={closePopover}
                         >
                           <HCTooltip text="View details" id="detail-view-tooltip" placement="bottom">
                             <ArrowRightSquare
