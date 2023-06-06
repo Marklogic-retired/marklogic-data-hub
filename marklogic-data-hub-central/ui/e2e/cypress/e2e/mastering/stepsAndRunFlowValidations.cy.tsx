@@ -81,7 +81,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
 
   it("Create Client entity and Add properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});

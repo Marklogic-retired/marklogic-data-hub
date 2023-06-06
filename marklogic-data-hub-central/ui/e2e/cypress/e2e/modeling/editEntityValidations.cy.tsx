@@ -21,7 +21,7 @@ describe("Entity validations ", () => {
   });
 
   it("Check Namespace URI and prefix", () => {
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});

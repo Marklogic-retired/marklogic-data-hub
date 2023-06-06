@@ -37,7 +37,7 @@ describe("Entity Modeling: Graph View", () => {
   it("Test revert unpublished changes", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Creating new entity student in table view**");
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddButton()).click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -64,7 +64,7 @@ describe("Entity Modeling: Graph View", () => {
     confirmationModal.getYesButton(ConfirmationType.RevertChanges);
     cy.waitForAsyncRequest();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getEntity("Employee").should("not.exist");
   });

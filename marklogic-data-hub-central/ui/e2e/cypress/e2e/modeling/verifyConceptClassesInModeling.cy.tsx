@@ -146,7 +146,7 @@ describe("Concept classes in Modeling screen", () => {
 
     cy.waitForAsyncRequest();
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
 
@@ -170,7 +170,7 @@ describe("Concept classes in Modeling screen", () => {
 
   it("Can enter graph edit mode and add edge relationships via single node click", {defaultCommandTimeout: 120000}, () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -242,7 +242,7 @@ describe("Concept classes in Modeling screen", () => {
     relationshipModal.getModalHeader().should("not.exist");
 
     modelPage.scrollPageTop();
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
 
     modelPage.scrollPageBottom();
     cy.wait(6000);
@@ -333,7 +333,7 @@ describe("Concept classes in Modeling screen", () => {
   it("Create/Edit and verify new concept class from Table view", {defaultCommandTimeout: 120000}, () => {
     cy.log("Add new concept class from table view");
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     cy.waitForAsyncRequest();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
@@ -381,7 +381,7 @@ describe("Concept classes in Modeling screen", () => {
     graphViewSidePanel.getSelectedEntityHeading("TestConcept").should("exist");
 
     cy.log("**Delete concept class from Table view and verify that it is not available anymore**");
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     cy.get(`[data-testid="nodeType"]`).scrollIntoView().should("be.visible").click({force: true});
     entityTypeTable.getDeleteConceptClassIcon("TestConcept").scrollIntoView().should("be.visible").click({force: true});

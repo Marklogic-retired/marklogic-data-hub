@@ -3,18 +3,16 @@ import homePage from "./home";
 
 class ModelPage {
 
-  /**
-  * @param type - accepts `table` for table-view or `project-diagram` for graph-view
-  */
-  selectView(view: string) {
-    cy.get(`[data-icon="${view}"]`).first().should("be.visible").scrollIntoView().click({force: true});
-    cy.wait(1000);
-    cy.get("body")
-      .then(($body) => {
-        if ($body.find("[class*=\"rbt-input\"]")) {
-          cy.get(`[data-icon="${view}"]`).first().should("be.visible").scrollIntoView().click({force: true});
-        }
-      });
+  switchTableView() {
+    cy.get("[data-cy='table-view']").should("be.visible").scrollIntoView().click({force: true});
+    cy.get("#mainTable").should("be.visible");
+    cy.waitForAsyncRequest();
+  }
+
+  switchGraphView() {
+    cy.get("[data-cy='graph-view']").should("be.visible").scrollIntoView().click({force: true});
+    cy.get("#graphVis").should("be.visible");
+    cy.waitForAsyncRequest();
   }
 
   closeSidePanel() {

@@ -21,7 +21,7 @@ describe("Entity Modeling: Reader Role", () => {
 
   beforeEach(() => {
     modelPage.navigate();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
   });
 

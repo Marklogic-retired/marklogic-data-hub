@@ -30,7 +30,7 @@ describe("Entity Modeling: Graph View", () => {
 
   it("Create an entity type for active the publish button", () => {
     cy.log("**Create an entity type**");
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -43,7 +43,7 @@ describe("Entity Modeling: Graph View", () => {
 
     cy.log("**Publish button should be enabled in table and graph view**");
     modelPage.getPublishButton().should("be.enabled");
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
     graphView.getPublishToDatabaseButton().should("be.enabled");
     cy.logout();
     cy.waitForAsyncRequest();
@@ -55,12 +55,12 @@ describe("Entity Modeling: Graph View", () => {
     cy.visit("tiles/model");
     cy.waitForAsyncRequest();
 
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
 
     cy.log("**Publish button should be disabled in table and graph view**");
     modelPage.getPublishButton().should("be.disabled");
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
     graphView.getPublishToDatabaseButton().should("be.disabled");
   });
 });

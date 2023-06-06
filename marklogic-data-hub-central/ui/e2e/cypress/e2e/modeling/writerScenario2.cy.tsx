@@ -35,7 +35,7 @@ describe("Entity Modeling: Writer Role", () => {
 
   it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
     modelPage.getAddButton().should("be.visible").click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
@@ -82,7 +82,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getExpandIcon("address").should("exist").click();
     propertyTable.getPropertyName("street").should("exist");
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
   });
 
   it("Create a property with name 'rowId' and get confirmation modal", () => {
@@ -199,7 +199,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
     cy.log("**foreign key no longer exists**");
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("not.exist");
-    modelPage.selectView("project-diagram");
+    modelPage.switchGraphView();
     graphVis.getPositionOfEdgeBetween("AddEntity,Customer").then((edgePosition: any) => {
 
       cy.wait(150);
@@ -210,7 +210,7 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyRelationshipValue("OrderedBy");
     relationshipModal.cancelModal();
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
   });
 
   it("Add properties to nested structured type", () => {
@@ -306,7 +306,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     cy.wait(1000);
     modelPage.scrollPageTop();
-    modelPage.selectView("table");
+    modelPage.switchTableView();
     propertyTable.getExpandIcon("AddEntity-Entity Type").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollIntoView().click();
     propertyTable.getExpandIcon("address").scrollTo("top", {ensureScrollable: false}).scrollIntoView().click({force: true});
