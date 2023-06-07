@@ -326,7 +326,7 @@ class BrowsePage {
   //search bar
   search(str: string, withEnter = false, isCopyPaste = false) {
     const searchInput = withEnter ? str + "{enter}" : str;
-    cy.findByPlaceholderText("Search").scrollIntoView().clear().type(searchInput);
+    cy.findByPlaceholderText("Search").scrollIntoView().should("be.visible").clear().type(searchInput);
     if (isCopyPaste) {
       cy.findByPlaceholderText("Search").scrollIntoView().invoke("val", searchInput);
     }

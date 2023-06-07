@@ -3,12 +3,13 @@ import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
+import homePage from "../../support/pages/home";
 import detailPage from "../../support/pages/detail";
 
 describe("Test navigation with facets from graph side panel to details twice", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    explorePage.navigate();
+    homePage.navigate();
   });
 
   afterEach(() => {
@@ -17,6 +18,7 @@ describe("Test navigation with facets from graph side panel to details twice", (
   });
 
   it("Validate that with applied facet can navigate from snippet view to graph and details from right side go back, repeat last one without fail", () => {
+    explorePage.navigate();
     browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.getStabilizationAlert().should("be.visible");

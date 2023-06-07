@@ -2,15 +2,16 @@ import dataModelDisplaySettingsModal from "../../support/components/explore/data
 import explorePage from "../../support/pages/explore";
 import {ExploreGraphNodes} from "../../support/types/explore-graph-nodes";
 import graphExplore from "../../support/pages/graphExplore";
+import browsePage from "../../support/pages/browse";
 
 describe("Verify text on hover nodes", () => {
-  beforeEach(() => {
+  before(() => {
     cy.clearAllSessionStorage();
     cy.clearAllLocalStorage();
     cy.deleteFiles("FINAL", "/config/hubCentral.json");
     cy.deleteFiles("STAGING", "/config/hubCentral.json");
+    cy.waitForAsyncRequest();
     cy.loginAsDeveloperV2().withRequest();
-    explorePage.navigate();
   });
 
   after(() => {
@@ -19,6 +20,10 @@ describe("Verify text on hover nodes", () => {
   });
 
   it("Check info tooltip using default and email label", () => {
+    explorePage.navigate();
+    graphExplore.stopStabilization();
+    browsePage.search("Adams Cole");
+    cy.waitForAsyncRequest();
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
       let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
