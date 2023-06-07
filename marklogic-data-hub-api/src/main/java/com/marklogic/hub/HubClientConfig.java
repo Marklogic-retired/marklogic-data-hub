@@ -83,6 +83,9 @@ public class HubClientConfig {
     private String stagingSchemasDbName;
     private String finalSchemasDbName;
 
+    private Integer maxStringsInMemory;
+    private String collectorTmpDir;
+
     // This is captured here as it's valid for a client to want to insert modules and be able to reuse the default permissions.
     // The other permission properties from HubConfigImpl are not yet being stored here because it's preferred to use
     // DHF DS endpoints to load artifacts, and those endpoints know the permissions to use.
@@ -296,6 +299,9 @@ public class HubClientConfig {
         stagingSchemasDbName = "data-hub-staging-SCHEMAS";
         finalSchemasDbName = "data-hub-final-SCHEMAS";
 
+        maxStringsInMemory = 0;
+        collectorTmpDir = "";
+
         modulePermissions = "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute";
     }
 
@@ -380,6 +386,9 @@ public class HubClientConfig {
         propertyConsumerMap.put("mlStagingSchemasDbName", prop -> stagingSchemasDbName = prop);
         propertyConsumerMap.put("mlFinalTriggersDbName", prop -> finalTriggersDbName = prop);
         propertyConsumerMap.put("mlFinalSchemasDbName", prop -> finalSchemasDbName = prop);
+
+        propertyConsumerMap.put("hubMaxStringsInMemory", prop -> maxStringsInMemory = Integer.parseInt(prop));
+        propertyConsumerMap.put("hubCollectorTmpDir", prop -> collectorTmpDir = prop);
 
         propertyConsumerMap.put("mlModulePermissions", prop -> modulePermissions = prop);
 
@@ -747,6 +756,22 @@ public class HubClientConfig {
 
     public void setFinalSchemasDbName(String finalSchemasDbName) {
         this.finalSchemasDbName = finalSchemasDbName;
+    }
+
+    public Integer getMaxStringsInMemory() {
+        return maxStringsInMemory;
+    }
+
+    public void setMaxStringsInMemory(Integer maxStringsInMemory) {
+        this.maxStringsInMemory = maxStringsInMemory;
+    }
+
+    public String getCollectorTmpDir() {
+        return collectorTmpDir;
+    }
+
+    public void setCollectorTmpDir(String collectorTmpDir) {
+        this.collectorTmpDir = collectorTmpDir;
     }
 
     @JsonIgnore

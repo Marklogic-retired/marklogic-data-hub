@@ -24,6 +24,9 @@
  */
 package com.marklogic.hub.util;
 
+import com.marklogic.hub.HubClientConfig;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -87,36 +90,18 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
         }
         return (int) f;
     }
-    /**
-     * Construct a disk-backed queue that keeps at most
-     * <code>maxInMemorySize</code> elements in memory.
-     */
-    public DiskQueue() {
-        // 260 is the max path length in Windows and a unicode code character can be 4 bits
-        this(safeIntCast((Runtime.getRuntime().freeMemory() / (float) 130) * DEFAULT_REFILL_RATIO));
-    }
 
     /**
      * Construct a disk-backed queue that keeps at most
-     * <code>maxInMemorySize</code> elements in memory.
-     *
-     * @param maxInMemorySize Maximum number of elements to keep in memory.
+     * <code>maxStringsInMemory</code> elements in memory.
      */
-    public DiskQueue(int maxInMemorySize) {
-        this(Math.min(Math.max(maxInMemorySize, 10000), 500000), null);
-    }
-
-
-    /**
-     * Construct a disk-backed queue that keeps at most
-     * <code>maxInMemorySize</code> elements in memory.
-     *
-     * @param maxInMemorySize Maximum number of elements to keep in memory.
-     * @param tempDir Directory where queue temporary files will be written to.
-     */
-    public DiskQueue(int maxInMemorySize, File tempDir) {
+    public DiskQueue(HubClientConfig hubClientConfig) {
         super();
-        if (maxInMemorySize < 1) {
+        int maxStringsInMemory = hubClientConfig.getMaxStringsInMemory() != 0 ? hubClientConfig.getMaxStringsInMemory() :
+            safeIntCast((Runtime.getRuntime().freeMemory() / (float) 130) * DEFAULT_REFILL_RATIO);
+        File tempDir = StringUtils.isEmpty(hubClientConfig.getCollectorTmpDir()) ? null : new File(hubClientConfig.getCollectorTmpDir());
+
+        if (maxStringsInMemory < 1) {
             throw new InvalidParameterException(DiskQueue.class.getSimpleName() + " max in-memory size must be at least one");
         }
         if (tempDir != null && !(tempDir.exists() && tempDir.isDirectory() && tempDir.canWrite())) {
@@ -124,8 +109,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> imp
         }
 
         this.tempDir = tempDir;
-        memoryQueue = new MemoryQueue<>(maxInMemorySize);
-//        memoryIterator = memoryQueue.iterator();
+        memoryQueue = new MemoryQueue<>(maxStringsInMemory);
         refillMemoryRatio = DEFAULT_REFILL_RATIO;
     }
 

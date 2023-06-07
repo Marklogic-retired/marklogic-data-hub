@@ -42,6 +42,7 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import com.marklogic.mgmt.util.PropertySource;
 import com.marklogic.mgmt.util.SimplePropertySource;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -1186,6 +1187,9 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         customTokens.put("%%mlStepDefinitionPermissions%%", stepDefinitionPermissions);
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
+
+        customTokens.put("%%hubMaxStringsInMemory%%", Integer.toString(getMaxStringsInMemory()));
+        customTokens.put("%%hubCollectorTmpDir%%", StringUtils.isEmpty(getCollectorTmpDir()) ? "" : getCollectorTmpDir());
 
         //logging level of hub debug messages
         customTokens.put("%%mlHubLogLevel%%", hubLogLevel);

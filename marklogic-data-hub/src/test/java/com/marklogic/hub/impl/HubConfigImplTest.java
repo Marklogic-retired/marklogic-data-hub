@@ -49,6 +49,30 @@ public class HubConfigImplTest {
     }
 
     @Test
+    void maxInMemoryStringsAndCollectorDir() {
+        HubConfigImpl config = new HubConfigImpl();
+
+        Properties props = new Properties();
+        props.setProperty("hubMaxStringsInMemory", "5000");
+        props.setProperty("hubCollectorTmpDir", "/test/val");
+        config.applyProperties(new SimplePropertySource(props));
+        assertEquals(5000, config.getMaxStringsInMemory());
+        assertEquals("/test/val", config.getCollectorTmpDir());
+
+        config = new HubConfigImpl();
+        props = new Properties();
+        props.setProperty("hubMaxStringsInMemory", "5000");
+        config.applyProperties(new SimplePropertySource(props));
+        assertEquals(5000, config.getMaxStringsInMemory());
+        assertTrue(StringUtils.isEmpty(config.getCollectorTmpDir()));
+
+        config = new HubConfigImpl();
+        config.applyProperties(new SimplePropertySource(new Properties()));
+        assertEquals(0, config.getMaxStringsInMemory());
+        assertTrue(StringUtils.isEmpty(config.getCollectorTmpDir()));
+    }
+
+    @Test
     void withDefaultValues() {
         HubConfigImpl config = new HubConfigImpl();
         assertEquals("localhost", config.getHost());
