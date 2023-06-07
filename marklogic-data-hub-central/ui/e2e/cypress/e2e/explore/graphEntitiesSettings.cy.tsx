@@ -174,7 +174,7 @@ describe("Entity Type Settings Modal", () => {
     cy.log("**Select label and check the selection**");
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).click();
     dataModelDisplaySettingsModal.getEntityLabelDropdownOption(
-      defaultEntityTypeData.name, defaultEntityTypeData.properties.name).click();
+      defaultEntityTypeData.name, defaultEntityTypeData.properties.name).scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getEntityLabelDropdown(defaultEntityTypeData.name).should("contain.text", defaultEntityTypeData.properties.name);
 
     cy.log("**Select propertiesOnHover and check the selection**");

@@ -114,6 +114,7 @@ class ExplorePage {
       }
     });
     toolbar.getExploreToolbarIcon().should("be.visible").click();
+    cy.findByTestId("spinner").should("have.length", 0, {timeout: 30000});
     cy.waitForAsyncRequest();
   }
 }
