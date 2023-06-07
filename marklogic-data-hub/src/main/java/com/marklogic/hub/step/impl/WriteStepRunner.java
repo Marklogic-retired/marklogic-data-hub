@@ -35,6 +35,7 @@ import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.impl.JobStatus;
+import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.StepItemCompleteListener;
@@ -399,7 +400,7 @@ public class WriteStepRunner implements StepRunner {
         });
         final DiskQueue<String> uris;
         if(!isStopped.get()) {
-            uris = new FileCollector(inputFileType).run(determineInputFilePath(this.inputFilePath));
+            uris = new FileCollector(inputFileType, ((HubClientImpl) hubClient).getHubClientConfig()).run(determineInputFilePath(this.inputFilePath));
         }
         else {
             uris = null;

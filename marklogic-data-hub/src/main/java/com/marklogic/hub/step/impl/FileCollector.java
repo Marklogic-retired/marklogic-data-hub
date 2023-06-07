@@ -1,6 +1,7 @@
 package com.marklogic.hub.step.impl;
 
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.util.DiskQueue;
 import org.apache.commons.io.FilenameUtils;
 
@@ -24,8 +25,13 @@ public class FileCollector extends LoggingObject {
     private final Set<String> csvExts = new HashSet<>(Arrays.asList("txt", "csv", "tsv", "psv"));
     private final Set<String> xmlExts = new HashSet<>(Arrays.asList("xml", "xhtml", "html"));
     private final Map<String, Set<String>> fileFormats;
+    private final HubClientConfig hubClientConfig;
 
     public FileCollector(String inputFormat) {
+        this(inputFormat, null);
+    }
+
+    public FileCollector(String inputFormat, HubClientConfig hubClientConfig) {
         this.inputFormat = inputFormat.toLowerCase();
 
         fileFormats = new HashMap<>();
@@ -33,6 +39,7 @@ public class FileCollector extends LoggingObject {
         fileFormats.put("json", jsonExts);
         fileFormats.put("csv", csvExts);
         fileFormats.put("xml", xmlExts);
+        this.hubClientConfig = hubClientConfig;
     }
 
     public DiskQueue<String> run(Path dirPath) {
@@ -42,7 +49,7 @@ public class FileCollector extends LoggingObject {
 
         DiskQueue<String> results;
         try {
-            results = new DiskQueue<>();
+            results = new DiskQueue<>(hubClientConfig);
 
             if (logger.isInfoEnabled()) {
                 logger.info("Finding files in directory: " + dirPath);
