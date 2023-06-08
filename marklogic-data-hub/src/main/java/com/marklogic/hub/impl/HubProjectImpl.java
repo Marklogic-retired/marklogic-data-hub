@@ -442,7 +442,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     @Override
-    public void upgradeProject(FlowManagerImpl flowManager) throws IOException {
+    public void upgradeProject(FlowManager flowManager) throws IOException {
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
         Path oldMappingsDir = this.getLegacyHubMappingsDir();
         Path newEntitiesDirPath = this.getHubEntitiesDir();
@@ -468,7 +468,6 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                     }
                 }
             }
-            upgradeLegacyFlows(flowManager);
         }
         File[] oldMappingsDirectories = oldMappingsDir.toFile().listFiles();
         if (oldMappingsDirectories != null) {
@@ -495,12 +494,20 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
     }
 
-    public void upgradeLegacyFlows(FlowManagerImpl flowManager) {
+    public int upgradeLegacyFlows(FlowManagerImpl flowManager) {
+        int flowsUpdated = 0;
+        if(this.getHubPluginsDir() == null || this.getLegacyHubEntitiesDir() == null) {
+            logger.info("No legacy Flows found in plugins/entities directory to upgrade");
+            return flowsUpdated;
+        }
+
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
         File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
         if(ArrayUtils.isEmpty(oldEntityDirectories)) {
-            return;
+            logger.info("No legacy Flows found in plugins/entities directory to upgrade");
+            return flowsUpdated;
         }
+
         ScaffoldingImpl scaffolding = new ScaffoldingImpl(flowManager.getHubConfig());
         ObjectMapper objectMapper = new ObjectMapper();
         if(oldEntityDirectories != null) {
@@ -545,12 +552,14 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                             ObjectNode stepIdObj = objectMapper.createObjectNode();
                             steps.put(Integer.toString(stepNumber++), stepIdObj);
                             stepIdObj.put("stepId", newStepName.concat("-").concat(stepType));
+                            flowsUpdated++;
                         }
                     }
                     flowManager.saveLocalFlow(flow);
                 }
             }
         }
+        return flowsUpdated;
     }
 
     private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType) {

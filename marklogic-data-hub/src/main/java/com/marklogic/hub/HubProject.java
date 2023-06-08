@@ -16,7 +16,6 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 
 import java.io.File;
@@ -248,7 +247,7 @@ public interface HubProject {
      *
      * @throws IOException if problem happens with the on-disk project.
      */
-    void upgradeProject(FlowManagerImpl flowManager) throws IOException;
+    void upgradeProject(FlowManager flowManager) throws IOException;
 
     /**
      * Exports the project content to disk

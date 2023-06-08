@@ -139,7 +139,16 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getProjectDir().resolve("entities").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("step-definitions").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("steps").toFile().exists());
+    }
 
+    @Test
+    public void upgradeLegacyFlows() throws IOException {
+        final HubProject hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x");
+
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        ((HubProjectImpl) hubProject).upgradeLegacyFlows(flowManager);
         verify4xUpgradedFlows();
     }
 
