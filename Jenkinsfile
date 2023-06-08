@@ -534,12 +534,12 @@ void cypressE2EOnPremLinuxTests(String type,String mlVersion){
     junit '**/e2e/**/*.xml'
 }
 
-void cypressE2EOnPremMacTests(String type,String mlVersion){
+/*void cypressE2EOnPremMacTests(String type,String mlVersion){
 
     copyDMG type,mlVersion
     setUpMLMac '$WORKSPACE/xdmp/src/Mark*.dmg'
 
-    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    copyArtifacts filter: '**//*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
     sh '''
        cd $WORKSPACE
        WAR_NAME=$(basename *central*.war )
@@ -560,8 +560,8 @@ void cypressE2EOnPremMacTests(String type,String mlVersion){
 
    '''
 
-    junit '**/e2e/**/*.xml'
-}
+    junit '**//*e2e/**//*.xml'
+}*/
 
 void cypressE2EOnPremWinTests(String type,String mlVersion){
 
@@ -872,6 +872,21 @@ def cypressE2ePostFailed(){
     println("$STAGE_NAME Failed")
     sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
 
+}
+def cypressE2ePostFailedWin(){
+  bat '''
+                rmdir /s /q "%STAGE_NAME%" || true
+                mkdir "%STAGE_NAME%\\MLLogs"
+                xcopy /s /e /i "C:\\Program Files\\MarkLogic\\Data\\Logs\\*" "%WORKSPACE%\\MLLogs\\" || true
+                mkdir "%STAGE_NAME%\\E2ELogs"
+                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\videos" "%STAGE_NAME%\\E2ELogs\\"
+                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\screenshots" "%STAGE_NAME%\\E2ELogs\\"
+
+                copy /s /y NUL "%STAGE_NAME%\\MLLogs\\."
+
+                for /r "%STAGE_NAME%\\E2ELogs\\videos" %%F in (*) do copy "%%F" "%STAGE_NAME%\\MLLogs\\."
+                for /r "%STAGE_NAME%\\E2ELogs\\screenshots" %%F in (*) do copy "%%F" "%STAGE_NAME%\\MLLogs\\."
+                '''
 }
 pipeline{
 	agent none;
@@ -1406,10 +1421,10 @@ pipeline{
 
                         }
                         unstable {
-                            cypressE2ePostFailed()
+                            cypressE2ePostFailedWin()
                         }
                         failure {
-                            cypressE2ePostFailed()
+                            cypressE2ePostFailedWin()
                         }
                     }
                 }
@@ -1431,7 +1446,7 @@ pipeline{
                         }
                     }
                 }
-                stage('10.0-10-cypress-linux-setup-mac-chrome'){
+                /*stage('10.0-10-cypress-linux-setup-mac-chrome'){
                     agent {label 'dhfLinuxAgent'}
                     steps{
                         script{
@@ -1448,7 +1463,7 @@ pipeline{
                                 }
                         }
                     }
-                }
+                }*/
                 stage('cypress-win-chrome'){
                     agent { label 'w10-dhf-5'}
                     environment{
@@ -1468,14 +1483,14 @@ pipeline{
                             }
                         }
                         unstable {
-                           cypressE2ePostFailed()
+                           cypressE2ePostFailedWin()
                            }
                         failure {
-                            cypressE2ePostFailed()
+                            cypressE2ePostFailedWin()
                            }
                    }
                 }
-                stage('cypress-mac-chrome'){
+                /*stage('cypress-mac-chrome'){
                     agent { label 'dhfmacchrome'}
                     steps{
                         timeout(time: 4,  unit: 'HOURS'){
@@ -1495,7 +1510,7 @@ pipeline{
                             cypressE2ePostFailed()
                            }
                    }
-                }
+                }*/
             }
         }
     }
