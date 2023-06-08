@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -509,7 +510,9 @@ public class WriteStepRunner implements StepRunner {
                 runStepResponse.withStepOutput(
                         errorListener
                                 .getThrowables().stream()
+                                .filter(Objects::nonNull)
                                 .map(Throwable::toString)
+                                .filter(Objects::nonNull)
                                 .collect(Collectors.toList())
                 );
                 errorListener.getThrowables().clear();
