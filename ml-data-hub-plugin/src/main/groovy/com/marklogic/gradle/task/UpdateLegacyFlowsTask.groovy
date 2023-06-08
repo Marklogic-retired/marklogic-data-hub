@@ -26,7 +26,10 @@ class UpdateLegacyFlowsTask extends HubTask {
     @TaskAction
     void updateLegacyFlows() {
         println "start upgradeLegacyFlows task ."
-        new HubProjectImpl().upgradeLegacyFlows(new FlowManagerImpl(getHubConfig()));
+        int flowsUpdated = new HubProjectImpl().upgradeLegacyFlows(new FlowManagerImpl(getHubConfig()))
+        if(flowsUpdated == 0) {
+            println("No legacy Flows found in plugins/entities directory to upgrade")
+        }
         println "upgradeLegacyFlows has completed!"
     }
 }
