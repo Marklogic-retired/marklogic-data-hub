@@ -714,7 +714,7 @@ void fullCycleSingleNodeTestOnLinux(String type,String mlVersion){
     props = readProperties file:'data-hub/pipeline.properties';
     copyRPM type,mlVersion
     setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-    sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
+    sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean publishToMavenLocal ml-data-hub:testFullCycle -i --stacktrace'
     junit '**/TEST-*.xml'
 }
 
@@ -1076,7 +1076,7 @@ pipeline{
          stage('rh7-singlenode'){
          when { expression {return params.regressions} }
                 agent {label 'dhfLinuxAgent'}
-                steps{timeout(time: 3,  unit: 'HOURS'){
+                steps{timeout(time: 4,  unit: 'HOURS'){
                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
                    singleNodeTestOnLinux('Release','10.0-10')
                     fullCycleSingleNodeTestOnLinux('Release', '10.0-10')
