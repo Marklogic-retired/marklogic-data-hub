@@ -22,8 +22,9 @@ public class RunFlowWithWriteErrorTest extends AbstractHubCoreTest {
         ObjectNode stepDef = objectMapper.createObjectNode();
         final String stepDefName = "simpleCustomStep-step";
         stepDef.put("name", stepDefName);
+        stepDef.put("type", "custom");
         stepDef.put("modulePath", "/custom-modules/custom/simpleCustomStep/writeErrorStepModule.sjs");
-        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("stepDefinition", stepDefName, stepDef, "");
+        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("stepDefinition", stepDefName, stepDef, "simpleCustomStep");
 
         RunFlowResponse response = runFlow(new FlowInputs("simpleCustomStepFlow"));
 

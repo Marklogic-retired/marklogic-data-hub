@@ -37,7 +37,7 @@ export default class StepDefinition {
   getStepDefinition(name, type) {
     let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, ['unstemmed', 'case-insensitive'])];
     if (type) {
-      query.concat(cts.jsonPropertyValueQuery('type', type, ['unstemmed', 'case-insensitive']));
+      query.push(cts.jsonPropertyValueQuery('type', type, ['unstemmed', 'case-insensitive']));
     }
     for (const def of cts.search(cts.andQuery(query), ["score-zero", "unfaceted"], 0)) {
       if (def.toObject().name === name) {

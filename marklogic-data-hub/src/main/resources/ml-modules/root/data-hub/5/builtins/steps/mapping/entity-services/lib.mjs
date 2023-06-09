@@ -808,13 +808,12 @@ function getMarkLogicMappingFunctions() {
     let output = [];
 
     for (const metaData of fnMetadata) {
-      if (metaData.xpath("/m:function-defs", ns)) {
-        let j = 1;
-        let fnLocation = metaData.xpath("/m:function-defs/@location", ns);
-        for (const mlFunction of metaData.xpath("/m:function-defs/m:function-def", ns)) {
-          let funcName = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/@name", ns));
-          let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name", ns)).replace("\n", ",");
-          j++;
+      const functionDefs = fn.head(metaData.xpath("/m:function-defs", ns));
+      if (fn.exists(functionDefs)) {
+        let fnLocation = functionDefs.xpath("./@location", ns);
+        for (const mlFunction of functionDefs.xpath("./m:function-def", ns)) {
+          let funcName = String(mlFunction.xpath("./@name", ns));
+          let params = String(mlFunction.xpath("./m:parameters/m:parameter/@name", ns)).replace("\n", ",");
 
           let singleFunction ={};
           singleFunction["functionName"] = funcName;
@@ -841,8 +840,8 @@ function getFunctionsWithSignatures(xpathFunctions) {
   const response = [];
   //used to prevent duplicates(overloaded functions) in the response
   const functionMap = new Map();
-  for (let i = 0; i < xpathFunctions.length; i++) {
-    let xpathFunction = Object.assign({}, xpathFunctions[i]);
+  for (let xpathFunctionItem of xpathFunctions) {
+    let xpathFunction = Object.assign({}, xpathFunctionItem);
     let fn = xpathFunction.functionName;
     if (!excludedFunctions.includes(fn)) {
       xpathFunction["category"] = "xpath";

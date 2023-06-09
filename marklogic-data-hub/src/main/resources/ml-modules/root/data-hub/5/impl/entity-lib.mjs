@@ -338,7 +338,9 @@ function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
             .some(property => {
               if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
                 affectedModels.add(modelName);
+                return true;
               }
+              return false;
             });
         });
     });

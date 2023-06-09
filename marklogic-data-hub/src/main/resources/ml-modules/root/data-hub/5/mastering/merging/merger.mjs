@@ -73,7 +73,7 @@ function buildContentObjectsFromMatchSummary(
       const customFunction = hubUtils.requireFunction(uriActionDetails.actionModulePath, uriActionDetails.actionModuleFunction);
       const results = customFunction(uri, uriActionDetails.matchResults, this.mergeStep);
       if (fn.exists(results)) {
-        contentObjects.concat(hubUtils.normalizeToArray(results));
+        contentObjects.push(...hubUtils.normalizeToArray(results));
       }
     }
     // eslint-disable-next-line no-fallthrough
