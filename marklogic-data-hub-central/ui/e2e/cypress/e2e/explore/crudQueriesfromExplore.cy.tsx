@@ -273,6 +273,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.getEllipsisButton().scrollIntoView().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardYesButton().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getAppliedFacets("Bates").should("exist");
     browsePage.search("Bates");
     table.clickColumnTitle(4);
