@@ -102,8 +102,8 @@ function generateMetadata(uri) {
 function addMapNamespaceToMetadata(xml) {
   let metadata = xml;
   try {
-    let query = xdmp.quote(xml).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
-    query = "let $xml := xdmp:unquote('" + xml + "')/node() return element {fn:node-name($xml)} {$xml/@*,namespace {'map'} {'http://marklogic.com/xdmp/map'},$xml/node()}";
+    xml = xdmp.quote(xml).replace('<?xml version="1.0" encoding="UTF-8"?>', '');
+    let query = "let $xml := xdmp:unquote('" + xml + "')/node() return element {fn:node-name($xml)} {$xml/@*,namespace {'map'} {'http://marklogic.com/xdmp/map'},$xml/node()}";
     metadata = xdmp.xqueryEval(query);
   } catch (e) {
     datahub.debug.log({

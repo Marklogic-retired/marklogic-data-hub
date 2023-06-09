@@ -116,10 +116,11 @@ function normolizeToXQueryContext(context) {
   const normalizedContextObject = Object.assign({}, context);
   for (let [key, value] of Object.entries(normalizedContextObject)) {
     if (Array.isArray(value)) {
+      let newValue = value;
       if (key === "permissions") {
-        value = value.map(perm => xdmp.permission(xdmp.roleName(perm.roleId), perm.capability, "element"));
+        newValue = value.map(perm => xdmp.permission(xdmp.roleName(perm.roleId), perm.capability, "element"));
       }
-      normalizedContextObject[key] = Sequence.from(value);
+      normalizedContextObject[key] = Sequence.from(newValue);
     }
   }
   return normalizedContextObject;

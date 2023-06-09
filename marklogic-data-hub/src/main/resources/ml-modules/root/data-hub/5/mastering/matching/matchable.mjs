@@ -1,8 +1,12 @@
 import consts from "/data-hub/5/impl/consts.mjs";
+import core from "/data-hub/5/artifacts/core.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 import {getEntityModel} from "/data-hub/core/models/entities.mjs";
+
+// matching XQuery module for performance
+const matchingXqy = require("/data-hub/5/mastering/matching/matching.xqy");
 
 const groupQueries = common.groupQueries;
 const optimizeCtsQueries = common.optimizeCtsQueries;
@@ -366,6 +370,15 @@ class MatchRulesetDefinition {
     this._cachedCtsQueries = new Map();
     this._cachedQueryHashes = new Map();
     this._cachedMatchFunctionResults = new Map();
+    if (this.matchRuleset.exclusionLists && this.matchRuleset.exclusionLists.length > 0) {
+      this.excludedValues = new Set();
+      for (const excListName of this.matchRuleset.exclusionLists) {
+        const excList = core.getArtifact("exclusionList", excListName);
+        for (const value of excList.values) {
+          this.excludedValues.add(String(value));
+        }
+      }
+    }
   }
 
   name() {
@@ -383,14 +396,20 @@ class MatchRulesetDefinition {
   _valueFunction(matchRule, model) {
     if (!matchRule._valueFunction) {
       const pathKey = matchRule.documentXPath || matchRule.entityPropertyPath;
-      matchRule._valueFunction = (documentNode) => {
-        const key = `${xdmp.nodeUri(documentNode)}:${pathKey}`;
+      matchRule._valueFunction = (contentObject) => {
+        const key = `${contentObject.uri}:${pathKey}`;
         if (!cachedPropertyValues.has(key)) {
+          let values;
           if (matchRule.documentXPath) {
-            cachedPropertyValues.set(key, documentNode.xpath(matchRule.documentXPath, matchRule.namespaces));
+            values = contentObject.value.xpath(matchRule.documentXPath, matchRule.namespaces);
           } else {
-            cachedPropertyValues.set(key, model.propertyValues(matchRule.entityPropertyPath, documentNode));
+            values = model.propertyValues(matchRule.entityPropertyPath, contentObject.value);
           }
+          // based on the exclusion lists, remove certain values from querying
+          if (this.excludedValues) {
+            values = Sequence.from([values.toArray().filter(val => !this.excludedValues.has(String(val)))]);
+          }
+          cachedPropertyValues.set(key, values);
         }
         return cachedPropertyValues.get(key);
       };
@@ -463,7 +482,6 @@ class MatchRulesetDefinition {
     if (!matchRule._matchFunction) {
       let passMatchRule = matchRule.node;
       let passMatchStep = this.matchable.matchStepNode;
-      let convertToNode = false;
       let matchFunction;
       let propertyQueryFunction = (values) => this.matchable.propertyQuery(matchRule.entityPropertyPath, values);
       if (matchRule.documentXPath) {
@@ -472,23 +490,18 @@ class MatchRulesetDefinition {
       switch (matchRule.matchType) {
       case "exact":
         matchFunction = propertyQueryFunction;
-        convertToNode = true;
         break;
       case "doubleMetaphone":
         matchFunction = this.doubleMetaphoneMatchFunction;
-        convertToNode = true;
         break;
       case "synonym":
         matchFunction = this.synonymMatchFunction;
-        convertToNode = true;
         break;
       case "zip":
         matchFunction = this.zipMatchFunction;
-        convertToNode = true;
         break;
       case "custom":
         matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);
-        convertToNode = /\.xq[yml]?$/.test(matchRule.algorithmModulePath);
         break;
       default:
         httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
@@ -520,72 +533,57 @@ class MatchRulesetDefinition {
       }
       return cachedMatchRuleScores.get(cacheKey);
     }
-    let score = 0;
-    const query = this.buildCtsQuery(contentObjectA.value);
+    const query = this.buildCtsQuery(contentObjectA);
     const isFuzzyMatch = this.fuzzyMatch();
-    if (query !== null && fn.exists(query)) {
-      let queryMatches = cts.contains(contentObjectB.value, query);
-      if (!queryMatches && isFuzzyMatch) {
-        const hashesA = this.queryHashes(contentObjectA.value);
-        const hashesB = this.queryHashes(contentObjectB.value);
+    const hashesA = Sequence.from(isFuzzyMatch ? this.queryHashes(contentObjectA, isFuzzyMatch): []);
+    const hashesB = Sequence.from(isFuzzyMatch ? this.queryHashes(contentObjectB, isFuzzyMatch): []);
+    const queryMatches = matchingXqy.queryMatchScore(
+      contentObjectB.value,
+      query,
+      hashesA,
+      hashesB);
+    let matchScore = 0;
+    if (queryMatches) {
+      let pos = 1;
+      const model = this.matchable.model();
+      const matchRuleFunctions = [];
+      for (const matchRule of this.matchRuleset.matchRules) {
+        if (!matchRule.node) {
+          matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
+        }
+        pos++;
+        const valueFunction = this._valueFunction(matchRule, model);
+        const matchFunction = this._matchFunction(matchRule, model);
+        const values = valueFunction(contentObjectA);
+        const query = (values !== null && fn.exists(values)) ? matchFunction(contentObjectA.uri, values) : null;
+        if (query instanceof Function) {
+          matchRuleFunctions.push(query);
+        }
+      }
+      if (matchRuleFunctions.length === 0 || matchRuleFunctions.every((rule) => rule(contentObjectB.value))) {
         if (matchingDebugTraceEnabled) {
-          xdmp.trace(matchingTraceEvent, `Comparing cts.doc('${contentObjectA.uri}') hashes with cts.doc('${contentObjectB.uri}') hashes.
-          Hashes A: ${xdmp.toJsonString([...hashesA])}.
-          Hashes B: ${xdmp.toJsonString([...hashesB])}`);
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
         }
-        const outerHash = hashesA.size >= hashesB.size ? hashesA : hashesB;
-        const innerHash = outerHash === hashesA ? hashesB : hashesA;
-        if ((outerHash.size === 0 || innerHash.size === 0) && matchingDebugTraceEnabled) {
-          xdmp.trace(matchingTraceEvent, `Hashes are empty, so using cts.contains.`);
-        }
-        for (const hash1 of outerHash) {
-          if (innerHash.has(hash1)) {
-            queryMatches = true;
-            break;
-          }
-        }
-      }
-      if (queryMatches) {
-        let pos = 1;
-        const model = this.matchable.model();
-        const matchRuleFunctions = [];
-        for (const matchRule of this.matchRuleset.matchRules) {
-          if (!matchRule.node) {
-            matchRule.node = fn.head(fn.subsequence(this.matchRulesNodes, pos, 1));
-          }
-          pos++;
-          const valueFunction = this._valueFunction(matchRule, model);
-          const matchFunction = this._matchFunction(matchRule, model);
-          const values = valueFunction(contentObjectA.value);
-          const query = (values !== null && fn.exists(values)) ? matchFunction(contentObjectA.uri, values) : null;
-          if (query instanceof Function) {
-            matchRuleFunctions.push(query);
-          }
-        }
-        if (matchRuleFunctions.length === 0 || matchRuleFunctions.every((rule) => rule(contentObjectB.value))) {
-          if (matchingDebugTraceEnabled) {
-            xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query matched!");
-          }
-          score = this.weight();
-        }
-      }
-      if (matchingDebugTraceEnabled) {
-        xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
+        matchScore = this.weight();
       }
     }
-    if (matchingDebugTraceEnabled && score === 0) {
+    if (matchingDebugTraceEnabled) {
+      xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Scoring ${xdmp.describe(contentObjectA.value)} with ${xdmp.describe(contentObjectB.value)} using cts.query: ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}.`);
+    }
+    if (matchingDebugTraceEnabled && matchScore === 0) {
       xdmp.trace(consts.TRACE_MATCHING_DEBUG, "Query didn't match!");
     }
-    cachedMatchRuleScores.set(cacheKey, score);
-    return score;
+    cachedMatchRuleScores.set(cacheKey, matchScore);
+    return matchScore;
   }
 
-  buildCtsQuery(documentNode) {
-    if (matchingTraceEnabled) {
-      xdmp.trace(matchingTraceEvent, `Building cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()}`);
-    }
-    const uri = xdmp.nodeUri(documentNode);
+  buildCtsQuery(contentObject) {
+    const uri = contentObject.uri;
     if (!this._cachedCtsQueries.has(uri)) {
+      const documentNode = contentObject.value;
+      if (matchingTraceEnabled) {
+        xdmp.trace(matchingTraceEvent, `Building cts.query for ${xdmp.describe(documentNode)} with match ruleset ${this.name()}`);
+      }
       const queries = [];
       const model = this.matchable.model();
       let pos = 1;
@@ -596,7 +594,7 @@ class MatchRulesetDefinition {
         pos++;
         const valueFunction = this._valueFunction(matchRule, model);
         const matchFunction = this._matchFunction(matchRule, model);
-        const values = valueFunction(documentNode);
+        const values = valueFunction(contentObject);
         const query = fn.exists(values) ? matchFunction(uri, values) : null;
         if (query === null || fn.empty(query)) {
           return null;
@@ -617,16 +615,15 @@ class MatchRulesetDefinition {
     return this._cachedCtsQueries.get(uri);
   }
 
-  queryHashes(documentNode) {
-    const uri = xdmp.nodeUri(documentNode);
+  queryHashes(contentObject) {
+    const uri = contentObject.uri;
     if (!this._cachedQueryHashes.has(uri)) {
-      const query = this.buildCtsQuery(documentNode);
+      const query = this.buildCtsQuery(contentObject);
       let hashes = [];
       if (query) {
-        const queryHasher = hubUtils.requireFunction("/data-hub/5/mastering/matching/queryHasher.xqy", "queryToHashes");
-        hashes = [...queryHasher(query, this.fuzzyMatch())];
+        hashes = [...matchingXqy.queryToHashes(query, this.fuzzyMatch())];
       }
-      this._cachedQueryHashes.set(uri, new Set(hashes.map(h => String(h))));
+      this._cachedQueryHashes.set(uri, new Set(hashes));
     }
     return this._cachedQueryHashes.get(uri);
   }

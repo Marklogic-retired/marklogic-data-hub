@@ -1,7 +1,6 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
-import core from "/data-hub/5/artifacts/core.mjs";
 
 const {populateContentObjects, populateExistingContentObjects, getContentObject, releaseContentObject, groupQueries, optimizeCtsQueries} = common;
 
@@ -23,15 +22,79 @@ const matchingTraceEvent = xdmp.traceEnabled(consts.TRACE_MATCHING) ? consts.TRA
  * @return {cts.query}
  * @since 5.8.0
  */
-function buildQueryFromMatchRuleset(documentNode, matchRulesets) {
+function buildQueryFromMatchRuleset(contentObject, matchRulesets) {
   const queries = [];
   for (const matchRuleset of matchRulesets) {
-    const query = matchRuleset.buildCtsQuery(documentNode);
+    const query = matchRuleset.buildCtsQuery(contentObject);
     if (query) {
       queries.push(query);
     }
   }
   return groupQueries(queries, cts.andQuery);
+}
+
+function gatherThresholdQueryFunctions(thresholdDefinitions) {
+  return thresholdDefinitions.map((def, index, array) => {
+    const nextDef = array[index + 1];
+    const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
+    const minimumCombos = def.minimumMatchCombinations();
+    return (contentObject) => {
+      const positiveQuery = groupQueries(minimumCombos.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset)), cts.orQuery);
+      if (notQuery) {
+        return cts.andNotQuery(
+          positiveQuery,
+          groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset)), cts.orQuery)
+        );
+      } else {
+        return positiveQuery;
+      }
+    };
+  });
+}
+
+function addHashesToTripleArray(contentObject, matchRulesetDefinitions, triplesByUri, inMemoryTriples) {
+  for (const matchRuleset of matchRulesetDefinitions) {
+    const queryHashes = matchRuleset.queryHashes(contentObject, matchRuleset.fuzzyMatch());
+    for (const queryHash of queryHashes) {
+      let uriTriples = triplesByUri.get(contentObject.uri);
+      if (!uriTriples) {
+        uriTriples = [];
+        triplesByUri.set(contentObject.uri, uriTriples);
+      }
+      const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
+      const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
+      inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
+      uriTriples.push(uriToHashTriple, hashToRulesetTriple);
+    }
+  }
+}
+
+function getMatchingURIs(matchable, contentObject, baselineQuery, filterQuery, thresholdQueryFunctions) {
+  let allMatchingBatchUris = [];
+  for (const thresholdQueryFunction of thresholdQueryFunctions) {
+    const finalMatchQuery = optimizeCtsQueries(cts.andQuery([baselineQuery, filterQuery, thresholdQueryFunction(contentObject)]));
+    const total = cts.estimate(finalMatchQuery);
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
+    }
+    if (total === 0) {
+      break;
+    }
+    const maxScan = Math.min(matchable.maxScan(), total);
+    let matchingUris;
+    let uriOptions = ["score-zero", "concurrent", "item-order"];
+    if (total > maxScan) {
+      const halfMaxScan = Math.ceil(maxScan / 2);
+      matchingUris = Sequence.from([
+        cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
+        cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
+      ]).toArray();
+    } else {
+      matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
+    }
+    allMatchingBatchUris = allMatchingBatchUris.concat(matchingUris);
+  }
+  return allMatchingBatchUris;
 }
 
 /*
@@ -47,22 +110,7 @@ function buildMatchSummary(matchable, content) {
   }
   const matchRulesetDefinitions = matchable.matchRulesetDefinitions();
   const thresholdDefinitions = matchable.thresholdDefinitions().filter(def => def.action());
-  const thresholdQueryFunctions =  thresholdDefinitions.map((def, index, array) => {
-    const nextDef = array[index + 1];
-    const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
-    const minimumCombos = def.minimumMatchCombinations();
-    return (doc) => {
-      const positiveQuery = groupQueries(minimumCombos.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery);
-      if (notQuery) {
-        return cts.andNotQuery(
-          positiveQuery,
-          groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(doc, ruleset)), cts.orQuery)
-        );
-      } else {
-        return positiveQuery;
-      }
-    };
-  });
+  const thresholdQueryFunctions = gatherThresholdQueryFunctions(thresholdDefinitions);
   const thresholdNames = thresholdDefinitions.map(def => def.name());
   const triplesByUri = new Map();
   const hashMatchInfo = {
@@ -73,7 +121,6 @@ function buildMatchSummary(matchable, content) {
     thresholds: thresholdDefinitions.map((def) => def.raw())
   };
 
-  matchable.matchStep.dataFormat = xdmp.uriFormat(fn.head(content).uri);
   const allUris = hubUtils.normalizeToArray(content).map((c) => c.uri);
   let urisToActOn = [];
   // prime triple cache on blocked merges
@@ -91,70 +138,13 @@ function buildMatchSummary(matchable, content) {
     if (fn.startsWith(contentObject.uri, "/com.marklogic.smart-mastering/")) {
       continue;
     }
-    const contentValue = contentObject.value.toObject();
-    let ignoreContent = false;
-    for (const matchRuleset of matchRulesetDefinitions) {
-      if (contentValue && contentValue.envelope && contentValue.envelope.instance && contentValue.envelope.instance.info) {
-        const valueModel = contentValue.envelope.instance[contentValue.envelope.instance.info.title];
-        for (const rule of matchRuleset.matchRules()) {
-          if (rule.exclusionLists) {
-            for (const excListName of rule.exclusionLists) {
-              const excList = core.getArtifact("exclusionList", excListName);
-              for (const name of excList.values) {
-                if (valueModel[rule.entityPropertyPath] === name) {
-                  ignoreContent = true;
-                }
-              }
-            }
-          }
-        }
-      }
-      if (!ignoreContent && useFuzzyMatching) {
-        const queryHashes = matchRuleset.queryHashes(contentObject.value, matchRuleset.fuzzyMatch());
-        for (const queryHash of queryHashes) {
-          let uriTriples = triplesByUri.get(contentObject.uri);
-          if (!uriTriples) {
-            uriTriples = [];
-            triplesByUri.set(contentObject.uri, uriTriples);
-          }
-          const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
-          const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
-          inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
-          uriTriples.push(uriToHashTriple, hashToRulesetTriple);
-        }
-
-      }
-    }
-    if (ignoreContent) {
-      continue;
+    if (useFuzzyMatching) {
+      addHashesToTripleArray(contentObject, matchRulesetDefinitions, triplesByUri, inMemoryTriples);
     }
     let documentIsMerged = false;
     const filterQuery = matchable.filterQuery(contentObject.value);
     const thresholdGroups = {};
-    let allMatchingBatchUris = [];
-    for (const thresholdQueryFunction of thresholdQueryFunctions) {
-      const finalMatchQuery = optimizeCtsQueries(cts.andQuery([baselineQuery, filterQuery, thresholdQueryFunction(contentObject.value)]));
-      const total = cts.estimate(finalMatchQuery);
-      if (matchingTraceEnabled) {
-        xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);
-      }
-      if (total === 0) {
-        break;
-      }
-      const maxScan = Math.min(matchable.maxScan(), total);
-      let matchingUris;
-      let uriOptions = ["score-zero", "concurrent", "item-order"];
-      if (total > matchable.maxScan()) {
-        const halfMaxScan = Math.ceil(maxScan / 2);
-        matchingUris = Sequence.from([
-          cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "ascending"]), finalMatchQuery, 0),
-          cts.uris(contentObject.uri, uriOptions.concat([`limit=${halfMaxScan}`, "descending"]), finalMatchQuery, 0)
-        ]).toArray();
-      } else {
-        matchingUris = cts.uris(null, uriOptions, finalMatchQuery, 0).toArray();
-      }
-      allMatchingBatchUris = allMatchingBatchUris.concat(matchingUris);
-    }
+    const allMatchingBatchUris = getMatchingURIs(matchable, contentObject, baselineQuery, filterQuery, thresholdQueryFunctions);
     const urisToSearch = allMatchingBatchUris.filter(uri => !allUris.includes(uri));
     if (urisToSearch.length > 0) {
       populateContentObjects(urisToSearch);
@@ -191,8 +181,6 @@ function buildMatchSummary(matchable, content) {
         const allDocsSet = [contentObject, ...matchingDocumentSet];
         const thresholdDefinition = thresholdDefinitions.find((def) => thresholdName === def.name());
         const actionDetails = matchable.buildActionDetails(allDocsSet, thresholdDefinition);
-        // release nodes that have been matched to reduce locking now that we're done with them
-        matchingDocumentSet.forEach((contentObject) => releaseContentObject(contentObject.uri));
         const actionURI = Object.keys(actionDetails)[0];
         actionDetails[actionURI].uris = actionDetails[actionURI].uris.map((uri) => uriToMerged.has(uri) ? uriToMerged.get(uri): uri);
         if (allActionDetails[actionURI]) {
@@ -210,7 +198,6 @@ function buildMatchSummary(matchable, content) {
     if (!documentIsMerged) {
       urisToActOn.push(contentObject.uri);
     }
-    releaseContentObject(contentObject.uri);
   }
   if (matchingDebugTraceEnabled) {
     xdmp.trace(consts.TRACE_MATCHING_DEBUG, `URIs mapped to merge URIs: ${JSON.stringify(uriToMerged, null, 2)}`);
@@ -233,10 +220,13 @@ function buildMatchSummary(matchable, content) {
   for (const actionURI of Object.keys(allActionDetails)) {
     const actionDetail = allActionDetails[actionURI];
     if (actionDetail.action === "notify") {
-      actionDetail.uris = actionDetail.uris.map((uri) => uriToMerged.get(uri) || uri).filter((uri, index, array) => array.indexOf(uri) === index && uri !== actionURI);
+      actionDetail.uris = actionDetail.uris
+        .map((uri) => uriToMerged.get(uri) || uri)
+        .filter((uri, index, array) => array.indexOf(uri) === index && uri !== actionURI);
     }
     actionDetail.uris.forEach(releaseContentObject);
   }
+  allUris.forEach(releaseContentObject);
   const output = [matchSummary];
   if (useFuzzyMatching) {
     const fuzzyMatchEntries = triplesByUri.entries();
@@ -344,7 +334,6 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
         continue;
       }
       const thresholdDefinition = thresholdDefinitionsByName[thresholdName];
-      populateContentObjects(thresholdMatches);
       const matchDocSet = thresholdMatches.map((uri) => getContentObject(uri)).filter((content) => {
         return content && (matchable.scoreDocument(currentContentObject, content) >= thresholdDefinition.score());
       });

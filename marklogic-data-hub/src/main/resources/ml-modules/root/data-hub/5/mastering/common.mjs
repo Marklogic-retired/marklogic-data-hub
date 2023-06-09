@@ -251,9 +251,15 @@ function optimizeCtsQueries(ctsQuery) {
 
 function populateExistingContentObjects(contentObjects = []) {
   for (const contentObject of contentObjects) {
-    contentObjectsByURI.set(contentObject.uri, contentObject);
+    contentObjectsByURI.set(String(contentObject.uri), contentObject);
   }
 }
+
+function contentObjectExistsWithDocument(uri) {
+  const existing = contentObjectsByURI.get(uri);
+  return existing && existing.value;
+}
+
 function populateContentObjects(uris = [], matchSummary) {
   if (uris.length === 0) {
     return;
@@ -261,9 +267,9 @@ function populateContentObjects(uris = [], matchSummary) {
   const allActionDetails = matchSummary ? matchSummary.matchSummary.actionDetails: null;
   let allURIs = [];
   for (const uri of uris) {
-    if (!contentObjectsByURI.has(uri)) { allURIs.push(uri); }
+    if (!contentObjectExistsWithDocument(uri)) { allURIs.push(uri); }
     if (allActionDetails && allActionDetails[uri]) {
-      allURIs = allURIs.concat(allActionDetails[uri].uris.filter(u => !contentObjectsByURI.has(u)));
+      allURIs = allURIs.concat(allActionDetails[uri].uris.filter(u => !contentObjectExistsWithDocument(u)));
     }
   }
   if (allURIs.length > 0) {
@@ -288,27 +294,37 @@ function addMemoryContentObjects(contentObjects) {
 }
 
 function populateContentObject(doc, uri = xdmp.nodeUri(doc)) {
-  if (doc && !contentObjectsByURI.has(uri)) {
-    contentObjectsByURI.set(uri, {
-      uri,
-      value: doc,
-      context: {
-        collections: xdmp.nodeCollections(doc),
-        permissions: xdmp.nodePermissions(doc),
-        metadata: xdmp.nodeMetadata(doc)
-      }
-    });
+  uri = String(uri);
+  if (doc) {
+    const existing = contentObjectsByURI.get(uri);
+    if (existing) {
+      existing.value = doc;
+    } else {
+      contentObjectsByURI.set(uri, {
+        uri,
+        value: doc,
+        context: {
+          collections: xdmp.nodeCollections(doc),
+          permissions: xdmp.nodePermissions(doc),
+          metadata: xdmp.nodeMetadata(doc)
+        }
+      });
+    }
   }
 }
 
 function getContentObject(uri) {
-  if (!(contentObjectsByURI.has(uri) && contentObjectsByURI.get(uri))) {
+  uri = String(uri);
+  let contentObject = contentObjectsByURI.get(uri);
+  if (!contentObject) {
     populateContentObject(cts.doc(uri), uri);
+    contentObject = contentObjectsByURI.get(uri);
   }
-  return contentObjectsByURI.get(uri);
+  return contentObject;
 }
 
 function releaseContentObject(uri) {
+  uri = String(uri);
   if (contentObjectsByURI.has(uri)) {
     const contentObject = contentObjectsByURI.get(uri);
     hubUtils.releaseDatabaseNodeFromContentObject(contentObject);

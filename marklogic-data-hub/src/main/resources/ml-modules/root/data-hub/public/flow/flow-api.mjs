@@ -87,7 +87,7 @@ function runFlowStepOnContent(flowName, stepNumber, contentArray, runtimeOptions
   return {
     contentArray: outputContentArray,
     stepResponse: stepExecutionContext.buildStepResponse()
-  }
+  };
 }
 
 function isXmlInput(context) {
@@ -160,7 +160,7 @@ function parseJsonOptionsFromXml(input) {
 
 function buildContentArray(xmlInput) {
   const contentArray = [];
-  for (var content of xmlInput.xpath("/input/content")) {
+  for (const content of xmlInput.xpath("/input/content")) {
     const uri = fn.head(content.xpath("uri/text()")).toString();
     let value = fn.head(content.xpath("value/node()"));
     if (fn.empty(value)) {
@@ -176,9 +176,9 @@ function processPost(context, params, input) {
   return isXmlInput(context) ? processXmlInput(input) : processJsonInput(input);
 }
 
-export default{
+export default {
   makeEnvelope,
   processPost,
   runFlowOnContent,
   runFlowStepOnContent
-}
+};

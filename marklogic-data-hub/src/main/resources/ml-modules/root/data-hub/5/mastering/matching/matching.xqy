@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-module namespace qh = "http://marklogic.com/smart-mastering/query-hasher";
+module namespace qh = "http://marklogic.com/smart-mastering/matching";
 
 declare function number-friendly-double-metaphone($value) {
   spell:double-metaphone(fn:translate($value, "0123456789", "abcdfghlmn"))
@@ -37,4 +37,8 @@ declare function build-hashes($node as node(), $value-convert-function as functi
 
 declare function compare-hashes($hashesA as xs:unsignedLong*, $hashesB as xs:unsignedLong*) as xs:boolean {
   $hashesA = $hashesB
+};
+
+declare function query-match-score($document as node(), $query as cts:query?, $hashesA as xs:unsignedLong*, $hashesB as xs:unsignedLong*) {
+  fn:exists($query) and (cts:contains($document, $query) or compare-hashes($hashesA, $hashesB))
 };

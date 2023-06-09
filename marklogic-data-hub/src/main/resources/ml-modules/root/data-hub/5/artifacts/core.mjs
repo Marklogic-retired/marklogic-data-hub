@@ -278,8 +278,7 @@ function getFullFlow(flowName, stepNumber) {
 
 function removeNullProperties(obj) {
   let propNames = Object.getOwnPropertyNames(obj);
-  for (let i = 0; i < propNames.length; i++) {
-    let propName = propNames[i];
+  for (let propName of propNames) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
     }

@@ -30,8 +30,8 @@ function testBaselineQuery() {
   const matchableWithBaselineQueryInterceptorsQuery = new Matchable({
     targetEntityType: "http://example.org/Customer-0.0.1/Customer",
     baselineQueryInterceptors: [
-      { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "baselineQueryInterceptorA" },
-      { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "baselineQueryInterceptorB" }
+      {path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "baselineQueryInterceptorA"},
+      {path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "baselineQueryInterceptorB"}
     ]
   }, {}).baselineQuery();
   const interceptorQueries = fn.tail(cts.andQueryQueries(matchableWithBaselineQueryInterceptorsQuery)).toArray();
@@ -40,10 +40,10 @@ function testBaselineQuery() {
     let invalidBaselineQuery = new MatchableModule.Matchable({
       targetEntityType: "http://example.org/Customer-0.0.1/Customer",
       baselineQueryInterceptors: [
-        { path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction" }
+        {path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction"}
       ]
     }, {}).baselineQuery();
-    test.assertNotExists(invalidBaselineQuery, "invalidBaselineQuery should not exist.")
+    test.assertNotExists(invalidBaselineQuery, "invalidBaselineQuery should not exist.");
   } catch (e) {
     matchableWithBadBaselineQueryInterceptorsError = e;
   }
@@ -69,10 +69,10 @@ function testBaselineQuery() {
 function testFilterQuery() {
   const docA = cts.doc("/content/docA.json");
   const filterQueryJustDoc = new MatchableModule.Matchable({}, {}).filterQuery(docA);
-  const filterQueryDocAndSerialized = new Matchable({ filterQuery: { collectionQuery: { uris: ["new"] } } }, {}).filterQuery(docA);
+  const filterQueryDocAndSerialized = new Matchable({filterQuery: {collectionQuery: {uris: ["new"]}}}, {}).filterQuery(docA);
   const filterWithInterceptorQuery = new Matchable({
     filterQueryInterceptors: [
-      { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "filterQueryInterceptor" }
+      {path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "filterQueryInterceptor"}
     ]
   }, {}).filterQuery(docA);
   const interceptorQuery = fn.head(fn.tail(cts.andQueryQueries(filterWithInterceptorQuery)));
@@ -80,10 +80,10 @@ function testFilterQuery() {
   try {
     let invalidFilterQuery = new MatchableModule.Matchable({
       filterQueryInterceptors: [
-        { path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction" }
+        {path: "/non-existing/matchableInterceptors.sjs", function: "myNonExistentFunction"}
       ]
     }, {}).filterQuery(docA);
-    test.assertNotExists(invalidFilterQuery, "invalidFilterQuery should not exist.")
+    test.assertNotExists(invalidFilterQuery, "invalidFilterQuery should not exist.");
   } catch (e) {
     matchableWithBadFilterQueryInterceptorError = e;
   }
@@ -103,18 +103,18 @@ function testFilterQuery() {
 }
 
 function testMatchRulesetDefinitions() {
-  const docA = cts.doc("/content/docA.json");
+  const docAContentObject = {uri: "/content/docA.json", value: cts.doc("/content/docA.json"), context: {}};
   const matchStep = {
     targetEntityType: "http://example.org/Customer-0.0.1/Customer",
     matchRulesets: [
       {
         name: "name - exact",
-        matchRules: [{ entityPropertyPath: "name", matchType: "exact"}]
+        matchRules: [{entityPropertyPath: "name", matchType: "exact"}]
       },
       {
         name: "name - synonym",
         fuzzyMatch: true,
-        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+        matchRules: [{entityPropertyPath: "name", matchType: "synonym",
           options: {
             thesaurusURI: "/content/nicknames.xml",
             filter: "<qualifier xmlns=\"http://marklogic.com/xdmp/thesaurus\">lastName</qualifier>"
@@ -123,7 +123,7 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - synonym - noMatchQualifier",
-        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+        matchRules: [{entityPropertyPath: "name", matchType: "synonym",
           options: {
             thesaurusURI: "/content/nicknames.xml",
             filter: "<qualifier xmlns=\"http://marklogic.com/xdmp/thesaurus\">firstName</qualifier>"
@@ -132,7 +132,7 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - double metaphone",
-        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+        matchRules: [{entityPropertyPath: "name", matchType: "doubleMetaphone",
           options: {
             dictionaryURI: "/content/last-names.xml",
             distanceThreshold: 100
@@ -141,7 +141,7 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - double metaphone - noMatch",
-        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+        matchRules: [{entityPropertyPath: "name", matchType: "doubleMetaphone",
           options: {
             dictionaryURI: "/content/last-names.xml",
             distanceThreshold: 100
@@ -150,20 +150,20 @@ function testMatchRulesetDefinitions() {
       },
       {
         name: "name - zip - 5digit",
-        matchRules: [{ entityPropertyPath: "name", matchType: "zip", options: {}}]
+        matchRules: [{entityPropertyPath: "name", matchType: "zip", options: {}}]
       },
       {
         name: "name - zip - 9digit",
-        matchRules: [{ entityPropertyPath: "name", matchType: "zip", options: {}}]
+        matchRules: [{entityPropertyPath: "name", matchType: "zip", options: {}}]
       },
       {
         name: "name - custom",
         weight: 10,
         matchRules: [{
-            entityPropertyPath: "name",
-            matchType: "custom",
-            algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
-            algorithmFunction: "customMatchStringInterceptor"
+          entityPropertyPath: "name",
+          matchType: "custom",
+          algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
+          algorithmFunction: "customMatchStringInterceptor"
         },
         {
           entityPropertyPath: "name",
@@ -200,46 +200,46 @@ function testMatchRulesetDefinitions() {
   ];
   for (let i = 0; i < matchStep.matchRulesets.length; i++) {
     let matchRulesetDefinition = matchRulesetDefinitions[i];
-    let matchRulesetNode = fn.head(fn.subsequence(matchable.matchStepNode.xpath("matchRulesets"), i + 1,1));
+    let matchRulesetNode = fn.head(fn.subsequence(matchable.matchStepNode.xpath("matchRulesets"), i + 1, 1));
     assertions.push(test.assertEqual(matchStep.matchRulesets[i].name, matchRulesetDefinitions[i].name(), "Name should be set for MatchRulesetDefinition"));
     assertions.push(test.assertEqualJson(matchStep.matchRulesets[i], matchRulesetDefinitions[i].raw(), "Raw value should be set for MatchRulesetDefinition"));
-    matchRulesetDefinitions[i].buildCtsQuery(docA);
-    if(matchStep.matchRulesets[i].name === "name - custom") {
-      let isQuery = matchRulesetDefinition.buildCtsQuery(docA) instanceof cts.query;
+    matchRulesetDefinitions[i].buildCtsQuery(docAContentObject);
+    if (matchStep.matchRulesets[i].name === "name - custom") {
+      let isQuery = matchRulesetDefinition.buildCtsQuery(docAContentObject) instanceof cts.query;
       assertions.push(test.assertEqual(isQuery, true, "Cts query is created for matched rule when custom match function returns atomic value"));
     }
-    if(matchStep.matchRulesets[i].name === "name - custom empty sequence") {
-      let isQuery = matchRulesetDefinition.buildCtsQuery(docA) instanceof cts.query;
+    if (matchStep.matchRulesets[i].name === "name - custom empty sequence") {
+      let isQuery = matchRulesetDefinition.buildCtsQuery(docAContentObject) instanceof cts.query;
       assertions.push(test.assertFalse(isQuery, "Cts query is not created for matched rule when custom match function returns empty sequence"));
     }
-    if(matchStep.matchRulesets[i].name === "name - synonym") {
+    if (matchStep.matchRulesets[i].name === "name - synonym") {
       let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
-      const queryHashes = matchRulesetDefinition.queryHashes(docA);
+      const queryHashes = matchRulesetDefinition.queryHashes(docAContentObject);
       assertions.push(test.assertTrue(fn.exists(queryHashes), "Query hashes should exists"));
       assertions.push(test.assertEqual(2, matchingTerms.length, "Original term and matching synonym qualifier is returned"));
     }
-    if(matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
+    if (matchStep.matchRulesets[i].name === "name - synonym - noMatchQualifier") {
       let matchingTerms = matchRulesetDefinition.synonymMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(0, matchingTerms.length, "No matching qualifier was found"));
     }
-    if(matchStep.matchRulesets[i].name === "name - double metaphone") {
+    if (matchStep.matchRulesets[i].name === "name - double metaphone") {
       let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("Robert", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(3, Sequence.from(matchingTerms).toArray().length, "3 words are returned that have distanceThreshold less than equal to 100"));
     }
-    if(matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
+    if (matchStep.matchRulesets[i].name === "name - double metaphone - noMatch") {
       let matchingTerms = matchRulesetDefinition.doubleMetaphoneMatchFunction("johns", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
       assertions.push(test.assertEqual(0, Sequence.from(matchingTerms).toArray().length, "No word is returned that have distanceThreshold less than equal to 100"));
-      const docB = cts.doc("/content/docB.json");
-      const ctsQuery = matchRulesetDefinitions[i].buildCtsQuery(docB);
+      const docBContentObject = {uri: "/content/docB.json", value: cts.doc("/content/docB.json"), context: {}};
+      const ctsQuery = matchRulesetDefinitions[i].buildCtsQuery(docBContentObject);
       assertions.push(test.assertEqual(null, ctsQuery, "double metaphone with no matches should return a null cts query"));
     }
-    if(matchStep.matchRulesets[i].name === "name - zip - 5digit") {
-      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101", fn.head(matchRulesetNode.xpath("matchRules")), matchStep)
-      assertions.push(test.assertEqual(["95101","95101-*"], matchingTerms, "Original 5 digits zip value and wildcard entry is returned"));
+    if (matchStep.matchRulesets[i].name === "name - zip - 5digit") {
+      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101", fn.head(matchRulesetNode.xpath("matchRules")), matchStep);
+      assertions.push(test.assertEqual(["95101", "95101-*"], matchingTerms, "Original 5 digits zip value and wildcard entry is returned"));
     }
-    if(matchStep.matchRulesets[i].name === "name - zip - 9digit") {
-      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101-1210", matchStep.matchRulesets[i].matchRules[0], matchStep)
-      assertions.push(test.assertEqual(["95101-1210","95101"], matchingTerms, "Original 9 digits zip value and trimmed 5 digits zip is returned"));
+    if (matchStep.matchRulesets[i].name === "name - zip - 9digit") {
+      let matchingTerms = matchRulesetDefinition.zipMatchFunction("95101-1210", matchStep.matchRulesets[i].matchRules[0], matchStep);
+      assertions.push(test.assertEqual(["95101-1210", "95101"], matchingTerms, "Original 9 digits zip value and trimmed 5 digits zip is returned"));
     }
   }
 }
@@ -280,14 +280,14 @@ function testBuildActionDetails() {
     const actionUri = Object.keys(actionDetails)[0] || "";
     let expectedPrefix;
     switch (thresholdDefinitions[i].action()) {
-      case "merge":
-        expectedPrefix = "/com.marklogic.smart-mastering/merged/";
-        break;
-      case "notify":
-        expectedPrefix = "/com.marklogic.smart-mastering/matcher/notifications/";
-        break;
-      default:
-        expectedPrefix = "/content/";
+    case "merge":
+      expectedPrefix = "/com.marklogic.smart-mastering/merged/";
+      break;
+    case "notify":
+      expectedPrefix = "/com.marklogic.smart-mastering/matcher/notifications/";
+      break;
+    default:
+      expectedPrefix = "/content/";
     }
     assertions.push(test.assertTrue(actionUri.startsWith(expectedPrefix), `action URI should have correct prefix: '${expectedPrefix}' is ${actionUri}. Action: ${thresholdDefinitions[i].action()}`));
     const actionBody = actionDetails[actionUri];
@@ -299,11 +299,11 @@ function testThresholds() {
   const matchStep = {
     targetEntityType: "http://example.org/Customer-0.0.1/Customer",
     matchRulesets: [
-      { name: "givenName", weight: 12 },
-      { name: "surName", weight: 8 },
-      { name: "id", weight: 5 },
-      { name: "postal", weight: 3 },
-      { name: "state", weight: 1 }
+      {name: "givenName", weight: 12},
+      {name: "surName", weight: 8},
+      {name: "id", weight: 5},
+      {name: "postal", weight: 3},
+      {name: "state", weight: 1}
     ],
     thresholds: [
       {
@@ -328,7 +328,7 @@ function testThresholds() {
   const assertions = [
     test.assertEqual(matchStep.thresholds.length, thresholdDefinitions.length, "Count of threshold definitions should match count of objects in the step.")
   ];
-  const expectedCombinationPerThreshold = [[["givenName"], ["surName","id"], ["surName","postal"]], [["givenName"], ["surName","id"]], [["givenName","surName"], ["givenName","id"], ["givenName","postal"],["surName","id","postal"]]];
+  const expectedCombinationPerThreshold = [[["givenName"], ["surName", "id"], ["surName", "postal"]], [["givenName"], ["surName", "id"]], [["givenName", "surName"], ["givenName", "id"], ["givenName", "postal"], ["surName", "id", "postal"]]];
   for (let i = 0; i < matchStep.thresholds.length; i++) {
     const thresholdDefinition = thresholdDefinitions[i];
     const minimumMatchCombinations = thresholdDefinition.minimumMatchCombinations();
@@ -349,12 +349,12 @@ function testScoreDocument() {
       {
         weight: 10,
         name: "name - exact",
-        matchRules: [{ entityPropertyPath: "name", matchType: "exact"}]
+        matchRules: [{entityPropertyPath: "name", matchType: "exact"}]
       },
       {
         weight: 5,
         name: "name - synonym",
-        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+        matchRules: [{entityPropertyPath: "name", matchType: "synonym",
           options: {
             thesaurusURI: "/content/nicknames.xml"
           }
@@ -363,7 +363,7 @@ function testScoreDocument() {
       {
         weight: 5,
         name: "name - double metaphone",
-        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+        matchRules: [{entityPropertyPath: "name", matchType: "doubleMetaphone",
           options: {
             dictionaryURI: "/content/first-names.xml",
             distanceThreshold: 100
@@ -374,10 +374,10 @@ function testScoreDocument() {
         weight: 3,
         name: "name - custom",
         matchRules: [
-          { entityPropertyPath: "name",
+          {entityPropertyPath: "name",
             matchType: "exact"
           },
-          { entityPropertyPath: "name",
+          {entityPropertyPath: "name",
             matchType: "custom",
             algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
             algorithmFunction: "customLastNameInterceptor"
@@ -388,10 +388,10 @@ function testScoreDocument() {
         weight: 2,
         name: "name - custom 2",
         matchRules: [
-          { entityPropertyPath: "name",
+          {entityPropertyPath: "name",
             matchType: "exact"
           },
-          { entityPropertyPath: "name",
+          {entityPropertyPath: "name",
             matchType: "custom",
             algorithmModulePath: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs",
             algorithmFunction: "customFalseLastNameInterceptor"
@@ -402,15 +402,15 @@ function testScoreDocument() {
   };
 
   const matchable = new MatchableModule.Matchable(matchStep, {});
-  const score = matchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
+  const score = matchable.scoreDocument({uri: "doc1.json", value: docA}, {uri: "doc2.json", value: docA});
   const assertions = [
     test.assertEqual(23, score, "score should come back as 23 (exact:10 + doubleMetaphone:5 + exact with custom true function:3 + synonym:5).")
   ];
-  const scoreInterceptorMatchable = new MatchableModule.Matchable(Object.assign({scoreDocumentInterceptors:  [
-      { path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor" }
-    ]}, matchStep), {});
-  const interceptorScore = scoreInterceptorMatchable.scoreDocument({uri: "doc1.json", value: docA },{uri: "doc2.json", value: docA });
-  assertions.push(test.assertEqual(10, interceptorScore, "interceptorScore should come back as 10. max(exact:10, doubleMetaphone:5)"))
+  const scoreInterceptorMatchable = new MatchableModule.Matchable(Object.assign({scoreDocumentInterceptors: [
+    {path: "/test/suites/data-hub/5/mastering/matching/test-data/matchableInterceptors.sjs", function: "scoreDocumentInterceptor"}
+  ]}, matchStep), {});
+  const interceptorScore = scoreInterceptorMatchable.scoreDocument({uri: "doc1.json", value: docA}, {uri: "doc2.json", value: docA});
+  assertions.push(test.assertEqual(10, interceptorScore, "interceptorScore should come back as 10. max(exact:10, doubleMetaphone:5)"));
   return assertions;
 }
 
