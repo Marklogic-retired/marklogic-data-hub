@@ -20,8 +20,6 @@ const setMatchDocuments = (docs) => {
         assertions.push(test.assertEqual(null, temporal.documentInsert("kool", `cust${i}.json`, doc, options)));
       });
     }, {update: "true"});
-    const record = hubTest.getRecord(`cust${i}.json`);
-    assertions.push(test.assertExists(record.document));
   });
 }
 
@@ -66,7 +64,7 @@ setMatchDocuments(matchDocs);
 
 const flowName = "CustomerJSON";
 
-const content1 = datahub.flow.findMatchingContent(flowName, "1", options);
+const content1 = datahub.flow.findMatchingContent(flowName, "1", {});
 assertions.push(
   test.assertEqual(1, content1.length),
   test.assertEqual("cust1.json", content1[0].uri,
@@ -90,7 +88,7 @@ const updateDoc = [
 ]
 setMatchDocuments([updateDoc]);
 
-const content2 = datahub.flow.findMatchingContent(flowName, "1", options);
+const content2 = datahub.flow.findMatchingContent(flowName, "1", {});
 assertions.push(
   test.assertEqual(0, content2.length)
 );

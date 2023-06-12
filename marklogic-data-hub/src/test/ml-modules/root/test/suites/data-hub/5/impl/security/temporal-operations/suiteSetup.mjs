@@ -3,6 +3,14 @@ const temporal = require("/MarkLogic/temporal.xqy");
 
 const roles = ["admin"];
 
+xdmp.invokeFunction(() => {
+  const hubTestX = require("/test/data-hub-test-helper.xqy");
+  const test = require("/test/test-helper.xqy");
+  hubTestX.resetHub();
+  hubTestX.loadEntities(test.__CALLER_FILE__);
+  hubTestX.loadArtifacts(test.__CALLER_FILE__);
+}, {update: "true"});
+
 hubTest.runWithRolesAndPrivileges(roles, [], function () {
   xdmp.invokeFunction(function () {
     try {
