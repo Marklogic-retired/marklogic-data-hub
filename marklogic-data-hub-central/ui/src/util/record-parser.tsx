@@ -1,5 +1,5 @@
 export const xmlParser = xmlData => {
-  let parser = require("fast-xml-parser");
+  let {XMLParser} = require("fast-xml-parser");
   let options = {
     attributeNamePrefix: "",
     attrNodeName: false, //default is 'false'
@@ -16,11 +16,12 @@ export const xmlParser = xmlData => {
     parseTrueNumberOnly: false,
   };
 
-  return parser.parse(xmlData, options);
+  const parser = new XMLParser(options);
+  return parser.parse(xmlData);
 };
 
 export const xmlParserForMapping = xmlData => {
-  let parser = require("fast-xml-parser");
+  let {XMLParser} = require("fast-xml-parser");
   let options = {
     attributeNamePrefix: "@",
     attrNodeName: false, //default is 'false'
@@ -37,7 +38,9 @@ export const xmlParserForMapping = xmlData => {
     parseTrueNumberOnly: false,
   };
 
-  return parser.parse(xmlData, options);
+  const parser = new XMLParser(options);
+
+  return parser.parse(xmlData);
 };
 
 export const xmlDecoder = xml => {
