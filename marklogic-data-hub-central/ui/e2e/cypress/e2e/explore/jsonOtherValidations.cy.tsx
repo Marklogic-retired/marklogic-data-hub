@@ -16,8 +16,10 @@ describe("Verify numeric/date facet can be applied", () => {
   });
 
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
-    browsePage.clickTableView();
-    browsePage.waitForSpinnerToDisappear();
+    browsePage.switchToTableView();
+    entitiesSidebar.clearAllFacetsApplied();
+    entitiesSidebar.openBaseEntityDropdown();
+    entitiesSidebar.selectBaseEntityOption("All Entities");
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
@@ -50,36 +52,37 @@ describe("Verify numeric/date facet can be applied", () => {
   it("Verify functionality of clear and apply facet buttons", () => {
     cy.log("**Go to explore page and click on table view**");
     cy.visit("tiles/explore");
+    cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
 
     cy.log("**verify no facets selected case.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
 
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
+    entitiesSidebar.applyFacetsButton.should("not.be.disabled");
 
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.checked");
     browsePage.getAppliedFacets("Adams Cole").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
 
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
+    entitiesSidebar.applyFacetsButton.should("not.be.disabled");
     browsePage.getClearAllFacetsButton().click();
     browsePage.getAppliedFacets("Adams Cole").should("not.exist");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
     browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
   });
 
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
@@ -94,14 +97,11 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
     browsePage.getGreySelectedFacets("Alexandra").should("exist");
     browsePage.navigate();
-    browsePage.clickFacetView();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
+    browsePage.switchToSnippetView();
     browsePage.getGreySelectedFacets("Alexandra").should("not.exist");
     cy.log("**verify gray facets don't persist when switching between browse and run views.**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Person");
-    entitiesSidebar.showMoreEntities().click({force: true});
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.PERSON);
     browsePage.clickMoreLink("fname");
     browsePage.getFacetItemCheckbox("fname", "Alexandra").click();

@@ -26,8 +26,6 @@ describe("Leaf Nodes", () => {
     });
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    cy.wait(2000);
-    cy.waitForAsyncRequest();
 
     graphExplore.fit();
     graphExplore.stopStabilization();
@@ -52,15 +50,13 @@ describe("Leaf Nodes", () => {
 
   it("Validate leaf nodes are working correctly", () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 
     cy.log("**Select 'Customer' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    cy.waitForAsyncRequest();
-    cy.wait(2000);
   });
 
   it("Clicking Show related on '101' leaf node to expand", () => {
@@ -151,8 +147,6 @@ describe("Leaf Nodes", () => {
 
   it("Verify if concepts leaf can be expanded properly. Select 'Product' entity", () => {
     entitiesSidebar.selectBaseEntityOption("Product");
-    cy.waitForAsyncRequest();
-    cy.wait(5000);
 
     graphExplore.fit();
     graphExplore.stopStabilization();

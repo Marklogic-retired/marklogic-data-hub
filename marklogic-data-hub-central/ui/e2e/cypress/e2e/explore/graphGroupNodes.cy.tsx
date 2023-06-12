@@ -19,7 +19,7 @@ describe("Group Nodes", () => {
 
   it("Validate group nodes are working correctly in the graph", () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 

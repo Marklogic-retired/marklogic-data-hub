@@ -19,7 +19,7 @@ describe("Concepts", () => {
 
   it("Validate record counts changes when toggling concepts", () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     browsePage.getClearAllFacetsButton().then(($ele) => {
       if ($ele.is(":enabled")) {
@@ -30,7 +30,6 @@ describe("Concepts", () => {
     });
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
     cy.log("**Verify results number change**");
     cy.log("**Turn off concepts on graph**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
@@ -41,7 +40,7 @@ describe("Concepts", () => {
 
   it("Validate that the concepts toggle works correctly", {defaultCommandTimeout: 200000}, () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
 
     graphView.getPhysicsAnimationToggle().scrollIntoView().should("have.value", "true");
@@ -103,13 +102,13 @@ describe("Concepts", () => {
     });
 
     cy.log("**Verify that Related Concepts Filter in sidebar is disabled since concepts are toggled OFF**");
-    entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
-    entitiesSidebar.getDisabledRelatedConceptsTooltip().should("be.visible");
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.disabled");
+    entitiesSidebar.relatedConceptsPanel.trigger("mouseover");
+    entitiesSidebar.disabledRelatedConceptsTooltip.should("be.visible");
+    entitiesSidebar.allRelatedConceptsCheckbox.should("be.disabled");
 
     cy.log("**Turn ON concepts toggle**");
     graphView.getConceptToggle().scrollIntoView().trigger("mouseover").click();
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
+    entitiesSidebar.allRelatedConceptsCheckbox.should("be.checked");
 
     cy.wait(4000);
 
@@ -147,15 +146,15 @@ describe("Concepts", () => {
 
   it("Validate default related concepts filter in sidebar", {defaultCommandTimeout: 200000}, () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
     graphExplore.getGraphVisCanvas().should("be.visible");
 
     cy.log("**All checkboxes should be checked by default since concepts are all being displayed**");
     entitiesSidebar.removeSelectedBaseEntity();
-    entitiesSidebar.getRelatedConceptsPanel().click({force: true});
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
+    entitiesSidebar.relatedConceptsPanel.click({force: true});
+    entitiesSidebar.allRelatedConceptsCheckbox.should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("Kettle").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("be.checked");
@@ -185,8 +184,8 @@ describe("Concepts", () => {
     });
 
     cy.log("**Verify uncheck all checkbox works**");
-    entitiesSidebar.getAllRelatedConceptsCheckbox().click();
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("not.be.checked");
+    entitiesSidebar.allRelatedConceptsCheckbox.click();
+    entitiesSidebar.allRelatedConceptsCheckbox.should("not.be.checked");
     entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("not.be.checked");
     entitiesSidebar.getSingleConceptCheckbox("Kettle").should("not.be.checked");
     entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("not.be.checked");
@@ -220,11 +219,10 @@ describe("Concepts", () => {
     cy.log("**Select 'Product' entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    cy.wait(5000);
 
     cy.log("**Verify only Product concepts are present and checked by default since they are shown**");
 
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.checked");
+    entitiesSidebar.allRelatedConceptsCheckbox.should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("BasketballShoes").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("Kettle").should("be.checked");
     entitiesSidebar.getSingleConceptCheckbox("SlowCooker").should("be.checked");
@@ -273,7 +271,7 @@ describe("Concepts", () => {
 
   it("Validate that the physics animation toggle is visible and the tooltip works on it", {defaultCommandTimeout: 200000}, () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
 

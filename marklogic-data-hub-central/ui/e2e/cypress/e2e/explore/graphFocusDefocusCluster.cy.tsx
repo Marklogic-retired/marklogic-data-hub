@@ -9,7 +9,7 @@ describe("Focus Defocus clusters", () => {
     browsePage.navigate();
 
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     browsePage.waitForSpinnerToDisappear();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(2000);

@@ -1,5 +1,6 @@
 import monitorSidebar from "../../support/components/monitor/monitor-sidebar";
 import {mappingStepDetail} from "../../support/components/mapping/index";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
 import browsePage from "../../support/pages/browse";
@@ -291,24 +292,24 @@ describe("Monitor Tile", () => {
   });
 
   it("Verify functionality of clear and apply facet buttons", () => {
-    browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.clearAllFacetsButton.should("be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
     cy.wait(1000);
 
     monitorPage.validateGreyFacet("step-type", 0);
-    browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
+    entitiesSidebar.clearAllFacetsButton.should("not.be.disabled");
+    entitiesSidebar.applyFacetsButton.should("not.be.disabled");
 
-    browsePage.getApplyFacetsButton().click();
-    browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.applyFacets();
+    entitiesSidebar.clearAllFacetsButton.should("not.be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
 
     monitorPage.validateGreyFacet("step", 0);
-    browsePage.getClearAllFacetsButton().should("not.be.disabled");
-    browsePage.getApplyFacetsButton().should("not.be.disabled");
-    browsePage.getClearAllFacetsButton().click();
-    browsePage.getClearAllFacetsButton().should("be.disabled");
-    browsePage.getApplyFacetsButton().should("be.disabled");
+    entitiesSidebar.clearAllFacetsButton.should("not.be.disabled");
+    entitiesSidebar.applyFacetsButton.should("not.be.disabled");
+    entitiesSidebar.clearAllFacetsApplied();
+    entitiesSidebar.clearAllFacetsButton.should("be.disabled");
+    entitiesSidebar.applyFacetsButton.should("be.disabled");
   });
 
   it("Verify step status faceting", () => {
@@ -319,7 +320,7 @@ describe("Monitor Tile", () => {
     monitorPage.validateGreyFacet("status", 0);
 
     cy.intercept("POST", "/api/jobs/stepResponses", {statusCode: 200}).as("stepResponses");
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     cy.wait("@stepResponses").should("have.property", "state", "Complete");
     cy.waitForAsyncRequest();
 
@@ -334,7 +335,7 @@ describe("Monitor Tile", () => {
     });
     cy.log("**failed status is removed**");
     monitorPage.verifyTableRow("cyCardView").should("not.exist");
-    browsePage.getClearAllFacetsButton().click();
+    entitiesSidebar.clearAllFacetsApplied();
   });
 
   it("Verify job ID link opens status modal", () => {
@@ -451,7 +452,7 @@ describe("Monitor Tile", () => {
 
     monitorPage.selectStartTimeFromDropDown("Today");
     monitorPage.getSelectedTime().should("contain", "Today");
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.getAppliedFacets("Today").should("exist");
     monitorPage.getSelectedTime().should("contain", "Today");
 

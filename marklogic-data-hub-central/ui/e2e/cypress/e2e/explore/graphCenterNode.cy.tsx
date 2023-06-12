@@ -18,7 +18,7 @@ describe("Center node on graph", () => {
 
   it("Can center on node type in graph view", {defaultCommandTimeout: 120000}, () => {
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     cy.wait(2000);
 

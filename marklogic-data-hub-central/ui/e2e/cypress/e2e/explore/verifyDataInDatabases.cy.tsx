@@ -35,7 +35,6 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.toggleAllDataView();
     browsePage.search("Adams");
 
@@ -79,13 +78,10 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     LoginPage.navigateToMainPage();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.wait(6000);
-    explorePage.getFinalDatabaseButton();
-    cy.waitForAsyncRequest();
+    entitiesSidebar.switchToFinalDatabase();
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 11);
@@ -107,7 +103,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   it("Verify query parameters for final database on browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     entitiesSidebar.toggleEntitiesView();
-    entitiesSidebar.getClearFacetsButton().click();
+    entitiesSidebar.clearAllFacetsApplied();
 
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
@@ -121,8 +117,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
       browsePage.waitForSpinnerToDisappear();
       explorePage.getStagingDatabaseButton();
       browsePage.waitForSpinnerToDisappear();
-      explorePage.getFinalDatabaseButton();
-      browsePage.waitForSpinnerToDisappear();
+      entitiesSidebar.switchToFinalDatabase();
       cy.contains("Showing 1-20 of " + val + " results", {timeout: 5000});
       browsePage.getTotalDocuments().should("be.equal", val);
     });
@@ -140,8 +135,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     toolbar.getExploreToolbarIcon().click();
     browsePage.getTableView().click();
     browsePage.waitForSpinnerToDisappear();
-    explorePage.getFinalDatabaseButton();
-    browsePage.waitForSpinnerToDisappear();
+    entitiesSidebar.switchToFinalDatabase();
     browsePage.search("Powers");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);

@@ -24,16 +24,14 @@ describe("Monitor Tile", () => {
   it("Navigate to Monitor Tile and verify that the column selector works", () => {
     cy.log("**Open explore and select table view**");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Open base entities dropdown and select an entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption(BaseEntityTypes.PERSON);
-    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Click on the column selector and check that the popover appears**");
     browsePage.getColumnSelectorIcon().click();

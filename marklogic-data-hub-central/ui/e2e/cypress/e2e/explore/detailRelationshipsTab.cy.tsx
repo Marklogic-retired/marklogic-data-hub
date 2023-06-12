@@ -22,7 +22,6 @@ describe("Test graph export to png", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Office");
-    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to Detail page**");
     browsePage.getDetailInstanceViewIcon("101").scrollIntoView().should("be.visible").click();
@@ -44,7 +43,6 @@ describe("Test graph export to png", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to Detail page**");
     browsePage.getDetailInstanceViewIcon("90").scrollIntoView().should("be.visible").click();

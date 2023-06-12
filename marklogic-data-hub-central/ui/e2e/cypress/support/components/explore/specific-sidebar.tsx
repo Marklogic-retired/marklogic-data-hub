@@ -14,10 +14,6 @@ class SpecificSidebar {
   getLeftBarEntityIcon(entityType: string) {
     return cy.get(`[aria-label="base-entity-icon-${entityType}"]`);
   }
-
-  getSearchField() {
-    return cy.get(`#graph-view-filter-input`);
-  }
 }
 
 const specificSidebar = new SpecificSidebar();

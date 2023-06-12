@@ -24,7 +24,7 @@ describe("Validate table and column selector in explore", () => {
 
   it("Validate the table and expandable rows", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    browsePage.getHCTableRows().should("have.length", 20);
+    browsePage.hcTableRows.should("have.length", 20);
     table.getTableColumns().should("be.visible");
     browsePage.getExpandable().should("be.visible");
   });
@@ -32,7 +32,6 @@ describe("Validate table and column selector in explore", () => {
   it("Validate columns selector popover, draggable titles and checkable titles", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    browsePage.waitForSpinnerToDisappear();
     browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click({force: true});
     browsePage.getColumnSelector().should("be.visible");
@@ -43,7 +42,7 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getTableView().click();
 
     cy.log(`**Filter by 'Customer' base entity**`);
-    entitiesSidebar.getBaseEntityDropdown().scrollIntoView().click();
+    entitiesSidebar.baseEntityDropdown.scrollIntoView().click();
     entitiesSidebar.selectBaseEntityOption("Customer");
 
     cy.log("**Validate that a Non-Structured property has the sort arrows**");
