@@ -40,7 +40,7 @@ describe("Entity Type Settings Modal", () => {
 
   it("Open settings modal, check default values, select new ones cancel and check that the defaults values are keep", () => {
     cy.log("**Select Graph view and open explore settings modal**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");
@@ -85,7 +85,7 @@ describe("Entity Type Settings Modal", () => {
 
   it("Open settings modal, select new values and save the changes", () => {
     cy.log("**Select Graph view and open explore settings modal**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getEntityTypeDisplaySettingsButton().scrollIntoView().click({force: true});
     dataModelDisplaySettingsModal.getModalBody().should("be.visible");

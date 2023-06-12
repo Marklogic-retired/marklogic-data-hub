@@ -221,13 +221,13 @@ describe("Mapping", () => {
     runPage.explorerLink("mapRelation").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForHCTableToLoad();
 
     browsePage.removeBaseEntity("Person");
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 13);
-    entitiesSidebar.showMoreEntities().click({force: true});
+    entitiesSidebar.showMoreEntities();
     entitiesSidebar.openBaseEntityFacets("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
   });

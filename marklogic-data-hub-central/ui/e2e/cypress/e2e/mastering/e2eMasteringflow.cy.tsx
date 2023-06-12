@@ -436,7 +436,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.showMoreCollection();
     cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
@@ -444,7 +444,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-mastered").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
@@ -452,7 +452,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-mastered").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-merged").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
@@ -460,7 +460,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-merged").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
@@ -468,7 +468,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-notification").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();

@@ -10,6 +10,18 @@ class BrowsePage {
     return cy.get("tr.hc-table_row");
   }
 
+  get graphSearchSummary() {
+    return cy.findByLabelText("graph-view-searchSummary");
+  }
+
+  get graphViewIcon() {
+    return cy.get("[data-cy=graph-view]");
+  }
+
+  get hcTableRows() {
+    return cy.get(".hc-table_row");
+  }
+
   // common spinners
   // Can be moved to a common components
   getSpinner() {
@@ -26,7 +38,7 @@ class BrowsePage {
   // Common table
   // can be moved to a tableBase page object
   waitForHCTableToLoad() {
-    this.getHCTableRows().should("have.length.gt", 0);
+    this.hcTableRows.should("have.length.gt", 0);
   }
 
   // common component
@@ -220,6 +232,10 @@ class BrowsePage {
     return cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]");
   }
 
+  clearFacet(facet: string) {
+    this.getAppliedFacets(facet).should("be.visible").click();
+  }
+
   // common
   getAppliedFacetName(facet: string) {
     return cy.findByTestId(`clear-${facet}`).invoke("text");
@@ -266,11 +282,6 @@ class BrowsePage {
   // common
   getClearAllFacetsButton() {
     return cy.get("[aria-label=clear-facets-button]", {timeout: 3000});
-  }
-
-  // common
-  getApplyFacetsButton() {
-    return cy.get("[aria-label=apply-facets-button]", {timeout: 3000});
   }
 
   // common
@@ -364,14 +375,6 @@ class BrowsePage {
   }
 
   // common
-  //table, facet view
-  clickFacetView() {
-    this.waitForSpinnerToDisappear();
-    this.waitForHCTableToLoad();
-    cy.get("[data-cy=facet-view]").click().trigger("mouseout", {force: true});
-  }
-
-  // common
   getFacetView() {
     return cy.get("[data-cy=facet-view]");
   }
@@ -382,32 +385,29 @@ class BrowsePage {
   }
 
   // common
-  getGraphView() {
-    return cy.get("[data-cy=graph-view]");
+  switchToTableView() {
+    this.getTableView().click({force: true});
+    this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   // common
-  clickTableView() {
-    cy.wait(1500);
-    return this.getTableView().click({force: true});
-  }
-
-  // common
-  clickGraphView() {
-    this.getGraphView().click({force: true});
+  switchToGraphView() {
+    this.graphViewIcon.click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     cy.wait(3000);
   }
 
-  // common
-  clickSnippetView() {
-    return this.getSnippetView().click({force: true});
+  switchToSnippetView() {
+    this.getSnippetView().click({force: true});
+    this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   // common
   clickOnBaseEntitiesDropdown() {
-    return cy.get("#entitiesSidebar-select-wrapper").should("be.visible").click();
+    return cy.get("#entitiesSidebar-select-wrapper").scrollIntoView().should("be.visible").click();
   }
 
   // common
@@ -428,11 +428,6 @@ class BrowsePage {
   // common
   getSortIndicatorDesc() {
     return cy.get(`[aria-label="icon: caret-down"]`);
-  }
-
-  // common
-  getHCTableRows() {
-    return cy.get(".hc-table_row");
   }
 
   // common
@@ -633,7 +628,7 @@ class BrowsePage {
   //Was replaced the table wich use this method, so we updated selector to use the new one
   getManageQueriesModalOpened() {
     this.getManageQueriesButton().scrollIntoView().click({force: true});
-    this.getHCTableRows().should("have.length.gt", 0);
+    this.hcTableRows.should("have.length.gt", 0);
   }
 
   // common

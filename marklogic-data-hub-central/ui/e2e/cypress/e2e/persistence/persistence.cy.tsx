@@ -1,10 +1,11 @@
 import mergingStepDetail from "../../support/components/merging/merging-step-detail";
-import {confirmationModal} from "../../support/components/common";
 import propertyTable from "../../support/components/model/property-table";
 import multiSlider from "../../support/components/common/multi-slider";
 import {matchingStepDetail} from "../../support/components/matching";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import graphView from "../../support/components/explore/graph-view";
+import {confirmationModal} from "../../support/components/common";
+import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphVis from "../../support/components/model/graph-vis";
 import tables from "../../support/components/common/tables";
 import graphExplore from "../../support/pages/graphExplore";
@@ -68,7 +69,7 @@ describe("Validate persistence across Hub Central", () => {
 
   it("Explore tile: the graph view switches settings should be preserved", () => {
     browsePage.navigate();
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
 
     cy.log("**Switch off all the toggles**");
     graphView.getPhysicsAnimationToggle().scrollIntoView().click({force: true});
@@ -383,11 +384,11 @@ describe("Validate persistence across Hub Central", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.databaseSwitch("final");
     graphExplore.getSearchBar().type("Adams");
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").click();
     browsePage.getFacetItemCheckbox("collection", "Customer").click();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     browsePage.databaseSwitch("staging").click();
     browsePage.waitForSpinnerToDisappear();

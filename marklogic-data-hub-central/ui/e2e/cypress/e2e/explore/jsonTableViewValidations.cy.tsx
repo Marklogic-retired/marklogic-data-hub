@@ -30,7 +30,6 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
     browsePage.getTableView().should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
@@ -51,7 +50,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
 
-    browsePage.getHCTableRows().should("have.length", 20);
+    browsePage.hcTableRows.should("have.length", 20);
     table.getTableColumns().should("have.length", 5);
   });
 
@@ -61,15 +60,15 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
 
-    browsePage.getHCTableRows().should("have.length.lt", 52);
+    browsePage.hcTableRows.should("have.length.lt", 52);
     table.getTableColumns().should("to.have.length.of.at.most", 10);
   });
 
   it("Search for a simple text/query and verify content", () => {
     entitiesSidebar.getMainPanelSearchInput("Bob");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getHCTableRows().then(($row) => {
+    browsePage.hcTableRows.then(($row) => {
       let length = $row.length;
       browsePage.getTotalDocuments().should("be.equal", length);
     });
@@ -121,7 +120,7 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
     entitiesSidebar.getBaseEntityOption("All Entities").scrollIntoView().should("be.visible");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     browsePage.totalNumberDocuments("1");
     browsePage.getTableViewInstanceIcon().click();
@@ -139,11 +138,11 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
     browsePage.waitForSpinnerToDisappear();
-    explorePage.getFinalDatabaseButton();
+    entitiesSidebar.switchToFinalDatabase();
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.getMainPanelSearchInput("Adams Cole");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
@@ -205,13 +204,12 @@ describe("json scenario for table on browse documents page", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
-    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.visible").click();
     browsePage.getFacetItemCheckbox("email", "coleadams39@nutralab.com").should("be.visible").click();
-    browsePage.clickFacetView();
+    browsePage.switchToSnippetView();
     browsePage.getTotalDocuments().should("be.equal", 1);
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.getClearAllFacetsButton().click({force: true});
     entitiesSidebar.backToMainSidebar();
   });

@@ -2,7 +2,6 @@ import {toolbar} from "../components/common";
 import homePage from "./home";
 
 class ExplorePage {
-
   getTitleExplore() {
     return cy.get(`[aria-label="title-explore"]`);
   }
@@ -39,17 +38,10 @@ class ExplorePage {
     return cy.findByLabelText(text);
   }
 
-  getGraphSearchSummary() {
-    return cy.findByLabelText("graph-view-searchSummary");
-  }
-
   getDetailViewURI(uri: string) {
     return cy.findByLabelText(uri);
   }
 
-  getSearchField() {
-    return cy.get(`#graph-view-filter-input`);
-  }
   scrollSideBarTop() {
     return cy.get("#hc-sider-content").scrollTo("top", {ensureScrollable: false});
   }
@@ -74,13 +66,6 @@ class ExplorePage {
     // cy.wait("@entitySearchStaging");
     //tried intercept + wait on request but didn't work. Leaving comment as reference
     cy.wait(6000);
-  }
-  getFinalDatabaseButton() {
-    cy.get(`[aria-label="switch-database-final"] ~ label`).scrollIntoView().click();
-    // cy.intercept("POST", "/api/entitySearch?database=final").as("entitySearchFinal");
-    // cy.wait("@entitySearchFinal");
-    //tried intercept + wait on request but didn't work. Leaving comment as reference
-    cy.wait(3000);
   }
 
   getAllDataButton() {

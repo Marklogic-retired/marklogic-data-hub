@@ -23,9 +23,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
 
   it("Select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
-    browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.clickFacetView();
+    browsePage.switchToSnippetView();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
     entitiesSidebar.getBaseEntityOption("Customer").should("be.visible");
@@ -127,7 +125,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.log("**Go to another page and back**");
     loadPage.navigate();
     explorePage.navigate();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
 
     cy.log("**Verify grey facets tags exists**");
     browsePage.getGreySelectedFacets("Customer").should("exist");
@@ -205,9 +203,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.getTotalDocuments().should("be.gte", 5);
-    browsePage.getHCTableRows().should("have.length", 5);
+    browsePage.hcTableRows.should("have.length", 5);
     table.getTableColumns().should("have.length", 13);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
@@ -255,7 +253,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("Verify record view of the XML document in non-entity detail page", () => {
     entitiesSidebar.toggleAllDataView();
     browsePage.getSearchText().clear();
-    browsePage.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.getNavigationIconForDocument("/dictionary/first-names.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getRecordView().should("exist");

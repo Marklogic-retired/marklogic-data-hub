@@ -6,202 +6,163 @@ import table from "../../support/components/common/tables";
 import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 
-describe("Test '/Explore' left sidebar", () => {
+
+describe("Explore Page - Entities Sidepanel", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
   });
 
   beforeEach(() => {
-    cy.log(`**Go to Explore section**`);
     explorePage.navigate();
+    entitiesSidebar.clearAllFacetsApplied();
+    entitiesSidebar.baseEntityDropdown.click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
   });
 
   it("Validate that the left sidebar opens up and closes correctly when un/selecting a base entity", {browser: "!firefox"}, () => {
-    cy.log(`**Selecting 'Customer' base entity**`);
-    cy.wait(8000);
-    entitiesSidebar.showMoreEntities().click({force: true});
+    entitiesSidebar.showMoreEntities();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
-    explorePage.getSearchField().should("not.exist");
+    entitiesSidebar.searchInput.should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
-
-    cy.log("**Base entity icon is displayed on the entity icons list**");
     entitiesSidebar.getEntityIconFromList(BaseEntityTypes.CUSTOMER).should("be.visible");
-
-    cy.log("**Returning to main sidebar and confirming it's visible**");
     entitiesSidebar.backToMainSidebar();
-    explorePage.getSearchField().should("be.visible");
+
+    entitiesSidebar.searchInput.should("be.visible");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
   });
 
-  // TODO: DHFPROD-10179
-  it.skip("Validate search text and applying them over a base entities", () => {
-    cy.log("**Selecting Customer entity**");
-    browsePage.getGraphView().click();
-    entitiesSidebar.showMoreEntities().should(`be.visible`).click({force: true});
-
-    cy.log("**Testing search input**");
-    entitiesSidebar.getInputSearch().type("adams");
-    entitiesSidebar.getInputSearch().should("have.value", "adams");
-
-    cy.log("****Applying text search**");
-    entitiesSidebar.clickOnApplyFacetsButton();
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
+  it("Validate search text and applying them over a base entities", () => {
+    browsePage.switchToGraphView();
+    entitiesSidebar.showMoreEntities();
+    entitiesSidebar.searchInput.type("adams");
+    entitiesSidebar.searchInput.should("have.value", "adams");
+    entitiesSidebar.applyFacets();
 
     cy.log("**Checking node amount shown**");
-    graphExplore.getAllNodes().then((nodes: any) => {
+    graphExplore.allNodes.then((nodes: any) => {
       expect(Object.keys(nodes).length).to.be.equals(2);
     });
   });
 
-  // TODO: DHFPROD-10179
-  it.skip("Validate facets on graph view and applying them over a base entities", () => {
-    cy.log("**Testing checkbox facet**");
-    entitiesSidebar.clickFacetCheckbox("Adams Cole");
+  it("Validate facets on graph view and applying them over a base entities", () => {
+    entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
+    entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.visible").click();
     entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.checked");
-    entitiesSidebar.clickOnApplyFacetsButton();
-
-    browsePage.waitForSpinnerToDisappear();
-    cy.wait(3000);
+    entitiesSidebar.applyFacets();
 
     cy.log("**Checking node amount shown**");
-    graphExplore.getAllNodes().then((nodes: any) => {
+    graphExplore.allNodes.then((nodes: any) => {
       expect(Object.keys(nodes).length).to.be.equals(2);
     });
   });
 
   it("Validate facets on table view and applying them over a base entities", {browser: "!firefox"}, () => {
-    cy.log(`**Selecting 'Customer' base entity**`);
-    cy.wait(8000);
-    entitiesSidebar.showMoreEntities().click();
+    entitiesSidebar.showMoreEntities();
     entitiesSidebar.openBaseEntityFacets(BaseEntityTypes.CUSTOMER);
-
-    cy.log("**Checking facet is selected**");
-    entitiesSidebar.clickFacetCheckbox("Adams Cole");
+    entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.visible").click();
     entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.checked");
-    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
+    entitiesSidebar.applyFacets();
+    browsePage.getAppliedFacets("Adams Cole").should("be.visible");
 
-    cy.log("**Applying facet**");
-    entitiesSidebar.clickOnApplyFacetsButton();
-    browsePage.getAppliedFacets("Adams Cole").should("exist");
-
-    cy.log("**Checking table rows amount shown**");
-    browsePage.clickTableView();
-    browsePage.getHCTableRows().should("have.length", 2);
-
-    cy.log("**Applying another facet**");
-
+    browsePage.switchToTableView();
+    browsePage.hcTableRows.should("have.length", 2);
     entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.visible").click();
     entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.checked");
-    browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
-    entitiesSidebar.clickOnApplyFacetsButton();
-    browsePage.getAppliedFacets("adamscole@nutralab.com").should("exist");
-    entitiesSidebar.getFacetCheckboxEmail("adamscole@nutralab.com").should("be.checked");
-    browsePage.getHCTableRows().should("have.length.below", 2);
+    entitiesSidebar.applyFacets();
+    browsePage.getAppliedFacets("adamscole@nutralab.com").should("be.visible");
+    browsePage.hcTableRows.should("have.length.below", 2);
 
-    cy.log("**Clear only one facet and confirm it doesn't remove them all**");
-    entitiesSidebar.getClearOneFacet("adamscole@nutralab.com").should("be.visible").click();
-    browsePage.getHCTableRows().should("have.length", 2);
-    browsePage.getAppliedFacets("Adams Cole").should("exist");
+    browsePage.clearFacet("adamscole@nutralab.com");
+    browsePage.hcTableRows.should("have.length", 2);
+    browsePage.getAppliedFacets("Adams Cole").should("be.visible");
     entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.checked");
 
-    cy.log("**Testing date facet**");
-    entitiesSidebar.getDateFacetLabel().should("have.text", "birthDate");
+    entitiesSidebar.dateFacetLabel.should("have.text", "birthDate");
     entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
-    entitiesSidebar.getDateFacet().should("not.be.empty");
-
+    entitiesSidebar.dateFacetLabel.should("not.be.empty");
     entitiesSidebar.backToMainSidebar();
   });
 
   it("Base Entity Filtering from side panel", {browser: "!firefox"}, () => {
-    cy.log("**Navigate to Graph View and verify all entities displayed**");
-    cy.wait(5000);
-    browsePage.getClearAllFacetsButton().click({force: true});
-    browsePage.clickGraphView();
+    const orderID = "10248";
+    const customerID = "101";
+
+    entitiesSidebar.clearAllFacetsApplied();
+    browsePage.switchToGraphView();
+
+    cy.log("**Checking node CUSTOMER exist**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
-      expect(custCoordinates).to.not.equal(undefined);
-    });
-    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
-      expect(orderCoordinates).to.not.equal(undefined);
+      expect(nodePositions[ExploreGraphNodes.CUSTOMER_102]).to.not.equal(undefined);
     });
 
-    cy.log("**Select Order Entity from dropdown and verify Customer node is gone**");
+    cy.log("**Checking node ORDER exist**");
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      expect(nodePositions[ExploreGraphNodes.ORDER_10258]).to.not.equal(undefined);
+    });
+
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
-    cy.wait(1000);
-    explorePage.getFinalDatabaseButton();
+    entitiesSidebar.switchToFinalDatabase();
+
+    cy.log("**Checking node CUSTOMER not exist**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
-      expect(custCoordinates).to.equal(undefined);
-    });
-    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
-      expect(orderCoordinates).to.not.equal(undefined);
+      expect(nodePositions[ExploreGraphNodes.CUSTOMER_102]).to.equal(undefined);
     });
 
-    cy.log("**Navigate to Table View and verify Order filtered with entity-specific columns**");
-    browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
+    cy.log("**Checking node ORDER exist**");
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      expect(nodePositions[ExploreGraphNodes.ORDER_10258]).to.not.equal(undefined);
+    });
+
+    cy.log("**Verify Order filtered with entity-specific columns**");
+    browsePage.switchToTableView();
     table.getColumnTitle(2).should("contain", "orderId");
     table.getColumnTitle(3).should("contain", "address");
     table.getColumnTitle(4).should("contain", "orderDetails");
 
-    cy.log("**orderId value should be present while customerID should not**");
-    browsePage.getTableViewCell("10248").should("have.length.gt", 0);
-    browsePage.getTableViewCell("101").should("not.have.length.gt", 0);
+    browsePage.getTableViewCell(orderID).should("have.length.gt", 0);
+    browsePage.getTableViewCell(customerID).should("not.have.length.gt", 0);
 
-    cy.log("**Select Customer Entity and verify default table columns since > 1 entity filtered**");
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.baseEntityDropdown.click();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
     table.getColumnTitle(2).should("contain", "Identifier");
     table.getColumnTitle(3).should("contain", "Entity Type");
     table.getColumnTitle(4).should("contain", "Record Type");
     table.getColumnTitle(5).should("contain", "Created");
 
-    cy.log("**both Order and Customer ID's should be present in table**");
-    browsePage.getTableViewCell("10248").should("have.length.gt", 0);
-    browsePage.getTableViewCell("101").should("have.length.gt", 0);
+    browsePage.getTableViewCell(orderID).should("have.length.gt", 0);
+    browsePage.getTableViewCell(customerID).should("have.length.gt", 0);
 
-    cy.log("**Verify related entity icons are disabled in table view**");
     entitiesSidebar.openBaseEntityFacets("Customer");
     entitiesSidebar.getEntityIconFromList("Customer").should("be.visible");
-    entitiesSidebar.getRelatedEntityIcon("Office").should("be.visible");
-    entitiesSidebar.getRelatedEntityIcon("Office").trigger("mouseover");
-    entitiesSidebar.getDisabledRelatedEntityTooltip().should("be.visible");
+    entitiesSidebar.getRelatedEntityIcon("Office").should("be.visible").trigger("mouseover");
+    entitiesSidebar.disabledRelatedEntityTooltip.should("be.visible");
 
-    cy.log("**Verify related concepts are disabled in table view**");
     entitiesSidebar.backToMainSidebar();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Product");
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-    entitiesSidebar.getRelatedConceptsPanel().trigger("mouseover");
-    entitiesSidebar.getDisabledRelatedConceptsTooltip().should("be.visible");
-    entitiesSidebar.getAllRelatedConceptsCheckbox().should("be.disabled");
+    entitiesSidebar.relatedConceptsPanel.trigger("mouseover");
+    entitiesSidebar.disabledRelatedConceptsTooltip.should("be.visible");
+    entitiesSidebar.allRelatedConceptsCheckbox.should("be.disabled");
 
-    cy.log("**Select BabyRegistry and verify related entities panel appears but is disabled in table view**");
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.baseEntityDropdown.click("right");
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    entitiesSidebar.getRelatedEntityPanel().should("be.visible");
-    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
-    entitiesSidebar.getRelatedEntityPanel().click();
-    cy.log("**related entity panel should remain collapsed**");
-    entitiesSidebar.verifyCollapsedRelatedEntityPanel().should("exist");
+    entitiesSidebar.relatedEntityPanel.should("be.visible").and("have.class", "collapsed");
+    entitiesSidebar.relatedEntityPanel.click();
 
-    cy.log("**verify both Customer and Order nodes are still present in graph**");
-    browsePage.clickGraphView();
+    cy.log("**related entity panel should remain collapsed**");
+    entitiesSidebar.relatedEntityPanel.should("have.class", "collapsed");
+
+    browsePage.switchToGraphView();
+
+    cy.log("**Checking node CUSTOMER exist**");
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
-      expect(custCoordinates).to.not.equal(undefined);
+      expect(nodePositions[ExploreGraphNodes.CUSTOMER_102]).to.not.equal(undefined);
     });
+
+    cy.log("**Checking node ORDER exist**");
     graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
-      expect(orderCoordinates).to.not.equal(undefined);
+      expect(nodePositions[ExploreGraphNodes.ORDER_10258]).to.not.equal(undefined);
     });
 
     cy.log("**verify that related entity panel is collapsed due to related entity (Customer) being selected as a base**");
@@ -211,117 +172,83 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
-    entitiesSidebar.getDisabledEntityTooltip().should("exist");
-    browsePage.getClearAllFacetsButton().trigger("mouseover", {force: true});
-    cy.wait(1000);
+    entitiesSidebar.disabledEntityTooltip.should("exist");
+    entitiesSidebar.clearAllFacetsApplied();
 
     cy.log("**verify related entity panel is enabled when Customer is deselected as a base entity**");
     explorePage.scrollSideBarTop();
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.baseEntityDropdown.click("right");
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+    entitiesSidebar.baseEntityDropdown.click("right");
     entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    cy.wait(2000);
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntity("Customer").trigger("mouseover");
-    entitiesSidebar.getDisabledEntityTooltip().should("not.exist");
+    entitiesSidebar.disabledEntityTooltip.should("not.exist");
   });
 
-  // TODO: DHFPROD-10179
-  it.skip("Searching main search side panel", () => {
-    cy.wait(8000);
-    browsePage.getTableView().click();
-    cy.log("Typing Adams in search bar and click on apply facets");
-    entitiesSidebar.getMainPanelSearchInput("Adams");
-    entitiesSidebar.getApplyFacetsButton().click();
-    browsePage.waitForSpinnerToDisappear();
+  it("Searching main search side panel", () => {
+    browsePage.switchToTableView();
+    entitiesSidebar.searchInput.type("adams");
+    entitiesSidebar.applyFacets();
 
-    cy.log("Verifying the results in table view");
     browsePage.getTableViewResults("Customer-102").should("have.length.gt", 0);
     browsePage.getTableViewResults("Customer-103").should("have.length.gt", 0);
 
-    cy.log("Verifying the results in snippet view");
-    browsePage.getSnippetView().click();
+    browsePage.switchToSnippetView();
     explorePage.getSnippetViewResults("Customer-102").should("be.visible");
     explorePage.getSnippetViewResults("Customer-103").should("be.visible");
 
-    cy.log("Switch to graph view and verify search summary is visible");
-    browsePage.clickGraphView();
-    explorePage.getGraphSearchSummary().should("have.length.gt", 0);
+    browsePage.switchToGraphView();
+    browsePage.graphSearchSummary.should("have.length.gt", 0);
 
-    cy.log("verify search filtered on top of base entity selections and Order is now gone in graph");
+    cy.log("**Checking node ORDER not exist**");
     graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
-      expect(orderCoordinates).to.equal(undefined);
+      expect(nodePositions[ExploreGraphNodes.ORDER_10258]).to.equal(undefined);
     });
 
     cy.log("Find and click on Customer-102 node");
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      let customerCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(custCoordinates.x, custCoordinates.y, {force: true});
+      canvas.click(customerCoordinates.x, customerCoordinates.y, {force: true});
+      explorePage.getDetailViewURI("/json/customers/Cust2.json").should("be.visible");
     });
-
-    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
-      const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(custCoordinates.x, custCoordinates.y, {force: true});
-    });
-
-    explorePage.getDetailViewURI("/json/customers/Cust2.json").should("be.visible");
-    entitiesSidebar.clickOnApplyFacetsButton();
-    browsePage.getHCTableRows().should("have.length", 0);
-    entitiesSidebar.clickOnClearFacetsButton();
-    entitiesSidebar.backToMainSidebar();
-    browsePage.waitForHCTableToLoad();
   });
 
-  // TODO: DHFPROD-10179
-  it.skip("Searching text on related entities", () => {
-    cy.wait(8000);
-    cy.log("**Selecting Order entity**");
-    browsePage.selectBaseEntity("Order");
-    browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.clickOnRelatedEntity("Person");
-
-    cy.log("**Testing search input**");
-    entitiesSidebar.getInputSearch().type("Alice");
-    entitiesSidebar.getInputSearch().should("have.value", "Alice");
-    entitiesSidebar.clickOnApplyFacetsButton();
-
-    cy.log("**Checking table rows amount shown**");
-    browsePage.getHCTableRows().should("have.length", 1);
-    entitiesSidebar.clickOnClearFacetsButton();
-    entitiesSidebar.getInputSearch().should("have.value", "");
-    browsePage.getHCTableRows().should("have.length.greaterThan", 1);
-  });
-
-  it("Verify that if we select any base entity, the related entities check is selected with all the related entities", () => {
-    browsePage.getGraphView().click();
-    browsePage.waitForSpinnerToDisappear();
-
-    cy.log("**Selecting All entities**");
-    entitiesSidebar.getBaseEntityDropdown().click("right");
-    entitiesSidebar.selectBaseEntityOption("All Entities");
-    cy.waitForAsyncRequest();
-    entitiesSidebar.getBaseEntityDropdown().click("right");
-    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
-    cy.waitForAsyncRequest();
-    entitiesSidebar.toggleRelatedEntityPanel();
-    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
-    entitiesSidebar.getRelatedEntityCheckbox("Customer").should("be.checked").then(() => {
-      entitiesSidebar.getRelatedEntityCheckbox("Customer").click();
-      entitiesSidebar.getRelatedEntityCheckbox("Customer").should("not.be.checked");
-    });
-
-    entitiesSidebar.getBaseEntityDropdown().click("right");
-    entitiesSidebar.selectBaseEntityOption("All Entities");
-    cy.waitForAsyncRequest();
-    entitiesSidebar.getBaseEntityDropdown().click("right");
+  it("Searching on related entities", () => {
+    entitiesSidebar.baseEntityDropdown.click("right");
     entitiesSidebar.selectBaseEntityOption("Office");
-    cy.waitForAsyncRequest();
+    entitiesSidebar.selectRelatedEntity("Customer");
+    browsePage.switchToTableView();
+    browsePage.hcTableRows.should("have.length.greaterThan", 0);
+
+    entitiesSidebar.dateFacetLabel.should("have.text", "birthDate");
+    entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
+    entitiesSidebar.dateFacetLabel.should("not.be.empty");
+    entitiesSidebar.applyFacets();
+
+    browsePage.hcTableRows.should("have.length", "");
+    entitiesSidebar.clearAllFacetsApplied();
+  });
+
+  it("When any base entity is selected, all related entities check are selected", () => {
+    browsePage.switchToGraphView();
+    entitiesSidebar.baseEntityDropdown.click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.baseEntityDropdown.click("right");
+    entitiesSidebar.selectBaseEntityOption("BabyRegistry");
+    entitiesSidebar.toggleRelatedEntityPanel();
+
+    entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
+    entitiesSidebar.getRelatedEntityCheckbox("Customer").should("be.checked").click();
+    entitiesSidebar.getRelatedEntityCheckbox("Customer").should("not.be.checked");
+
+    entitiesSidebar.baseEntityDropdown.click("right");
+    entitiesSidebar.selectBaseEntityOption("All Entities");
+    entitiesSidebar.baseEntityDropdown.click("right");
+    entitiesSidebar.selectBaseEntityOption("Office");
     entitiesSidebar.toggleRelatedEntityPanel();
     entitiesSidebar.getRelatedEntity("Customer").should("be.visible");
     entitiesSidebar.getRelatedEntityCheckbox("Customer").should("be.checked");

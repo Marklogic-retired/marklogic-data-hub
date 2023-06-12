@@ -27,7 +27,7 @@ class GraphExplore {
   }
 
 
-  getAllNodes() {
+  get allNodes() {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
       let nodesInCanvas = win.graphVisExploreApi.getNodePositions();
       return nodesInCanvas;

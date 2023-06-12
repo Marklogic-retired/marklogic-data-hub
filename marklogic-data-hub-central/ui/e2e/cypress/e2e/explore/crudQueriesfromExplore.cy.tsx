@@ -36,7 +36,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("be.checked");
     entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("be.checked");
 
-    entitiesSidebar.getClearFacetsButton().click();
+    entitiesSidebar.clearAllFacetsApplied();
 
     entitiesSidebar.getCollectionCheckbox("collection", "collection1").should("not.exist");
     entitiesSidebar.getCollectionCheckbox("collection", "collection2").should("not.exist");
@@ -46,7 +46,7 @@ describe("Save/manage queries scenarios, developer role", () => {
     explorePage.navigate();
     browsePage.databaseSwitch("final").click();
     explorePage.getEntities().click();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
@@ -291,7 +291,6 @@ describe("Save/manage queries scenarios, developer role", () => {
     cy.log("**creating query 1 with customer entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getFacetApplyButton().click();
@@ -332,11 +331,9 @@ describe("Save/manage queries scenarios, developer role", () => {
     entitiesSidebar.selectBaseEntityOption("Person");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");
-    cy.waitForAsyncRequest();
     entitiesSidebar.getBaseEntity("Customer").click();
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    entitiesSidebar.clickOnApplyFacetsButton();
-    cy.waitForAsyncRequest();
+    entitiesSidebar.applyFacets();
     entitiesSidebar.backToMainSidebar();
     table.clickColumnTitle(3);
     entitiesSidebar.openBaseEntityDropdown();
@@ -383,8 +380,8 @@ describe("Save/manage queries scenarios, developer role", () => {
   });
 
   it("Show Reset query button, open reset confirmation", () => {
-    entitiesSidebar.getClearQuery().trigger("mouseover");
-    entitiesSidebar.getClearQueryTooltip().should("be.visible");
+    entitiesSidebar.clearQueryLabel.trigger("mouseover");
+    entitiesSidebar.clearQueryTooltip.should("be.visible");
     cy.log("**clicking on no doesn't create a new query and navigates to zero state**");
     entitiesSidebar.getBaseEntityOption("All Entities").should("be.visible");
     entitiesSidebar.openBaseEntityDropdown();
@@ -521,7 +518,6 @@ describe("Save/manage queries scenarios, developer role", () => {
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Order");
-    browsePage.waitForSpinnerToDisappear();
     browsePage.getDataExportIcon().click();
     browsePage.alertContent().eq(0).contains(`One or more structured properties are included in this query. The data for those properties will not be included in the export file. Click "Show Preview" below to see what will be exported.`);
     browsePage.closeExportModal();
@@ -530,8 +526,6 @@ describe("Save/manage queries scenarios, developer role", () => {
   it("Verify facets checked on sidebar", () => {
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
     browsePage.getFacetItemCheckbox("collection", "Person").should("be.checked");
     browsePage.getGreySelectedFacets("Person").should("exist");

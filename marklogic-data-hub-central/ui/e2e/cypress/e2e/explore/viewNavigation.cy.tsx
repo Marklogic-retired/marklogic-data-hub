@@ -21,7 +21,6 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     });
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("All Entities");
-    browsePage.waitForSpinnerToDisappear();
   });
 
   afterEach(() => {
@@ -31,28 +30,28 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
 
   it("Switch views and validate they get updated correctly", () => {
     cy.log("**Select Table view and validate it switches correctly**");
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     graphExplore.getGraphVisCanvas().should("not.exist");
     browsePage.getSnippetViewResult().should("not.exist");
     browsePage.getTotalDocuments().should("exist").should("be.greaterThan", 25);
 
     cy.log("**Go to Snippet View**");
-    browsePage.clickSnippetView();
+    browsePage.switchToSnippetView();
     graphExplore.getGraphVisCanvas().should("not.exist");
-    browsePage.getHCTableRows().should("not.exist");
+    browsePage.hcTableRows.should("not.be.visible");
     browsePage.getSnippetViewResult().should("be.visible");
 
     cy.log("**Go to graph view**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.stopStabilization();
     browsePage.getSnippetViewResult().should("not.exist");
-    browsePage.getHCTableRows().should("not.exist");
+    browsePage.hcTableRows.should("not.exist");
   });
 
   it("Switch views, go to details and back", () => {
     cy.log("**Go to Snippet View**");
-    browsePage.clickSnippetView();
+    browsePage.switchToSnippetView();
     browsePage.getSnippetViewResult().should("be.visible");
 
     cy.log("**Click on source icon in first row and check in details page that source tab icon should be active**");
@@ -68,7 +67,7 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     browsePage.viewSelector("snippet").prev().should("be.checked");
 
     cy.log("**Switch to table view**");
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Click on instance icon in first row and check in details page that instance tab icon should be active**");

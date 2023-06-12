@@ -21,7 +21,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
 
   it("Create Queries", () => {
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
@@ -52,7 +52,7 @@ describe("manage queries modal scenarios, developer role", () => {
 
   it("Manage queries, edit, apply, delete query", () => {
     explorePage.navigate();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     cy.log("**edit query**");
@@ -137,7 +137,7 @@ describe("manage queries modal scenarios, developer role", () => {
 
   it("Verify manage queries modal visibility and removing query scenario on the detail page", () => {
     explorePage.navigate();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     entitiesSidebar.openBaseEntityDropdown();
@@ -278,7 +278,7 @@ describe("manage queries modal scenarios, developer role", () => {
 
   it("Verify editing previously saved query, updates the currently applied query name in browse page", () => {
     explorePage.navigate();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     browsePage.getSaveQueriesDropdown().should("be.visible");

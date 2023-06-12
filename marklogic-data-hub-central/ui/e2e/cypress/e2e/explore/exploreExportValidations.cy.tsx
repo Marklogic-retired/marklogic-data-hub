@@ -38,7 +38,7 @@ describe("Test graph export to png", () => {
 
   it("Validate that the export png icon appear only in graph view and can export", () => {
     cy.log("**Select Graph view and check that the export button exist and show the tooltip**");
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
     graphExplore.getExportPNGIcon()
       .scrollIntoView()
       .should("exist")

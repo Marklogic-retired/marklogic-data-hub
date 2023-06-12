@@ -23,10 +23,8 @@ describe.skip("json scenario for snippet on browse documents page", () => {
   });
 
   it("Select \"all entities\" verify docs, hub/entity properties", () => {
-    browsePage.clickFacetView();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForHCTableToLoad();
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    browsePage.switchToSnippetView();
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should("exist");
@@ -44,7 +42,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
 
   // TODO: DHFPROD-10182
   it.skip("Verify shadow effect upon scrolling within the snippet view", () => {
-    browsePage.clickFacetView();
+    browsePage.switchToSnippetView();
     browsePage.getSnippetViewResult().should("have.css", "box-shadow", "none");
     browsePage.getSnippetViewResult().scrollTo("center", {ensureScrollable: false});
 
@@ -65,7 +63,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     explorePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSearchText().should("have.value", "10256");
     browsePage.getFacetView().should("have.css", "color", "rgb(57, 68, 148)");
@@ -73,7 +71,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
 
   it("Select Person entity and verify entity, docs, hub/entity properties", () => {
     entitiesSidebar.selectEntity("Person");
-    entitiesSidebar.getSelectedEntityText().should("contain", "Person");
+    entitiesSidebar.selectedEntityText.should("contain", "Person");
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should("exist");
@@ -101,7 +99,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     browsePage.getEntityConfirmationNoClick().click({force: true});
     cy.waitForModalToDisappear();
     browsePage.waitForSpinnerToDisappear();
-    entitiesSidebar.getSelectedEntityText().should("contain", "Customer");
+    entitiesSidebar.selectedEntityText.should("contain", "Customer");
     browsePage.getFacetItemCheckbox("collection", "mapCustomerXML").should("not.exist");
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Customer").should("not.exist");
@@ -116,7 +114,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
 
   it("Apply facet search and verify docs, hub/entity properties", () => {
     entitiesSidebar.selectEntity("All Entities");
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getShowMoreLink("collection").click({force: true});
     browsePage.getFacetItemCheckbox("collection", "Person").click({force: true});
@@ -133,7 +131,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
 
   it("Apply facet search and clear individual grey facet", () => {
     entitiesSidebar.selectEntity("All Entities");
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getShowMoreLink("collection").click();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
@@ -143,7 +141,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
 
   it("Apply facet search and clear all grey facets", () => {
     entitiesSidebar.selectEntity("All Entities");
-    entitiesSidebar.getSelectedEntityText().should("contain", "All Entities");
+    entitiesSidebar.selectedEntityText.should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getShowMoreLink("collection").click();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
@@ -215,7 +213,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     explorePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
-    browsePage.clickFacetView();
+    browsePage.switchToSnippetView();
   });
 
   it("Verify source view of the document", () => {

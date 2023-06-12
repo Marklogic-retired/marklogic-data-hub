@@ -2,10 +2,9 @@ import matchingStepDetail from "../../support/components/matching/matching-step-
 import {rulesetSingleModal} from "../../support/components/matching";
 import graphExplore from "../../support/pages/graphExplore";
 import {generateRandomString} from "../../support/helper";
-import curatePage from "../../support/pages/curate";
 import browsePage from "../../support/pages/browse";
+import curatePage from "../../support/pages/curate";
 import runPage from "../../support/pages/run";
-
 
 const ignoreGonzales = generateRandomString("ignoreGonzales", 3);
 const ignoreSimpson  = generateRandomString("ignoreSimpson", 3);
@@ -40,10 +39,10 @@ describe("Verify values to ignore feature", () => {
 
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
-    browsePage.getTableView().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.findAllByText(/^(Robert,Bob|Bob,Robert)$/);
-    cy.findAllByText(/^(Marge,Margot|Margot,Marge)$/);
+    cy.waitForAsyncRequest();
+    browsePage.switchToTableView();
+    cy.findAllByText("Robert,Bob");
+    cy.findAllByText("Marge,Margot");
     cy.findAllByTestId("unmergeIcon").should("have.length", 2);
   });
 
@@ -71,6 +70,7 @@ describe("Verify values to ignore feature", () => {
     runPage.clickStepInsidePopover("#loadValuesToIgnore");
     runPage.clickStepInsidePopover("#mapForValuesToIgnore");
     runPage.getRunFlowButton("testValuesToIgnore").click();
+    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();

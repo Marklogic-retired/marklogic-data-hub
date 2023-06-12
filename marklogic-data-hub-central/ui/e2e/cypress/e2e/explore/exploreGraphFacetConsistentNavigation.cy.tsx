@@ -1,16 +1,14 @@
 import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
 import entitiesSidebar from "../../support/pages/entitiesSidebar";
 import graphExplore from "../../support/pages/graphExplore";
+import explorePage from "../../support/pages/explore";
 import browsePage from "../../support/pages/browse";
 import detailPage from "../../support/pages/detail";
-import {toolbar} from "../../support/components/common";
-import homePage from "../../support/pages/home";
 
 describe("Test navigation with facets from graph side panel to details twice", () => {
   before(() => {
     cy.loginAsDeveloper().withRequest();
-    homePage.navigate();
-    toolbar.getExploreToolbarIcon().click();
+    explorePage.navigate();
   });
 
   afterEach(() => {
@@ -18,20 +16,15 @@ describe("Test navigation with facets from graph side panel to details twice", (
     cy.clearAllLocalStorage();
   });
 
-  it("Validate that with aplied facet can navigate from snipet view to graph and details from right side go back, repeat last one without fail", () => {
-    cy.log("**Verify loading indicator in the graph**");
-    graphExplore.getGraphLoader().should("be.visible");
-    cy.waitForAsyncRequest();
-
-    cy.log("**Select Graph view**");
-    browsePage.clickGraphView();
+  it("Validate that with applied facet can navigate from snippet view to graph and details from right side go back, repeat last one without fail", () => {
+    browsePage.switchToGraphView();
     graphExplore.getGraphVisCanvas().should("be.visible");
     graphExplore.getStabilizationAlert().should("be.visible");
     graphExplore.stopStabilization();
 
     cy.log("**Enter text in search field and apply facets**");
     entitiesSidebar.getMainPanelSearchInput("3039");
-    entitiesSidebar.getApplyFacetsButton().click();
+    entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
 
     cy.log("**Go to snippet view and click in graph icon in one registry**");
@@ -45,7 +38,7 @@ describe("Test navigation with facets from graph side panel to details twice", (
     Cypress._.times(2, () => {
       cy.wait(1000);
       graphExploreSidePanel.getInstanceViewIcon().scrollIntoView().should("be.visible").click({force: true});
-      detailPage.getDocumentID().should("be.visible");
+      detailPage.getDocumentTable().should("be.visible");
       detailPage.clickBackButton();
       cy.intercept("/api/entitySearch/**").as("entitySearch");
       cy.intercept("/api/models/hubCentralConfig").as("hubCentralConfig");

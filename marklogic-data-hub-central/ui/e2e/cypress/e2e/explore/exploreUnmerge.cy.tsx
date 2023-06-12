@@ -159,20 +159,20 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getSearchButton().click();
     cy.wait(6000);
 
-    browsePage.clickSnippetView();
+    browsePage.switchToSnippetView();
     cy.log("** unmerge icon should be visible**");
     browsePage.getUnmergeIcon().should("have.length", 1);
     cy.log("** when hover unmerge icon should show a security tooltip**");
     browsePage.getUnmergeIcon().trigger("mouseover");
     cy.findByText("Unmerge: Contact your security administrator for access.");
 
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     browsePage.getUnmergeIcon().should("have.length", 1);
     cy.log("** when hover unmerge icon should show a security tooltip**");
     browsePage.getUnmergeIcon().trigger("mouseover");
     cy.findByText("Unmerge: Contact your security administrator for access.");
 
-    browsePage.clickGraphView();
+    browsePage.switchToGraphView();
 
     cy.log("**Verify Graph view is default view**");
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -209,12 +209,12 @@ describe("Test '/Explore' graph right panel", () => {
     cy.visit("tiles/explore");
     cy.waitForAsyncRequest();
 
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     cy.wait(3000);
     graphExplore.getSearchBar().type("Jones");
     graphExplore.getSearchButton().click();
     cy.wait(3000);
-    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.baseEntityDropdown.click();
     entitiesSidebar.selectBaseEntityOption("Person");
     cy.log("** unmerge icon should be visible on merged records in table view**");
     browsePage.getUnmergeIcon().should("be.visible");
@@ -232,7 +232,7 @@ describe("Test '/Explore' graph right panel", () => {
   });
 
   it("Navigate to Snippet View and verify unmerge option is available", () => {
-    browsePage.clickSnippetView();
+    browsePage.switchToSnippetView();
     cy.log("** unmerge icon should be visible on merged records in snippet view**");
     browsePage.getUnmergeIcon().should("have.length", 1);
     browsePage.getUnmergeIcon().first().scrollIntoView().should("be.visible");
@@ -272,7 +272,7 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getCloseModalMergePerson().click({force: true});
 
     toolbar.getExploreToolbarIcon().click();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     cy.log("** Unmerge icon should be visible because of inclusion checkbox**");
     browsePage.getUnmergeIcon().should("be.visible");
   });
@@ -302,7 +302,7 @@ describe("Test '/Explore' graph right panel", () => {
     cy.waitForAsyncRequest();
     graphExplore.getCloseModalMergePerson().click({force: true});
     toolbar.getExploreToolbarIcon().click();
-    browsePage.clickTableView();
+    browsePage.switchToTableView();
     cy.log("** Unmerge icon should not be visible because of inclusion checkbox**");
     browsePage.getUnmergeIcon().should("not.exist");
   });
