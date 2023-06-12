@@ -37,6 +37,13 @@ describe("Search Pagination Simple Component", () => {
       expect(getAllByRole("listitem").length).toBe(7);
     });
 
+    test("Renders pagination with negative input", () => {
+      const {getByTestId} = render(
+        <SearchPaginationSimple total={1} pageSize={-1} pageNumber={1} maxRowsPerPage={2} />,
+      );
+      expect(getByTestId("pagination-container")).toBeInTheDocument();
+    });
+
     test("Verify not showing pagination controls if not necessary", () => {
       const {queryByTestId} = render(
         <SearchPaginationSimple total={5} pageSize={5} pageNumber={1} maxRowsPerPage={5} />,

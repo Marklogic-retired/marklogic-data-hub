@@ -11,7 +11,7 @@ interface Props {
 }
 
 const SearchPaginationSimple: React.FC<Props> = props => {
-  const totalPage = Math.ceil(props.total / props.pageSize);
+  const totalPage = Math.max(0, Math.ceil(props.total / props.pageSize));
 
   const setPerPageSelector = (maxRowsPerPage: number) => {
     let pageOptionsDropdown: string[] = [];
@@ -77,7 +77,7 @@ const SearchPaginationSimple: React.FC<Props> = props => {
   });
 
   const renderPagination = (
-    <div className={styles.paginationContainer}>
+    <div className={styles.paginationContainer} data-testid="pagination-container">
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
         <Pagination.Prev
           onClick={handlePrev}
