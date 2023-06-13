@@ -158,6 +158,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
           }
         });
         setSelectedExcludeListToInput(listToIgnore);
+        setSelectedExcludeList(listToIgnore.map(item => item.name));
       } else {
         setSelectedExcludeListToInput([]);
       }
@@ -185,11 +186,40 @@ const MatchRulesetModal: React.FC<Props> = props => {
     return excludeList.find(item => item.name === name);
   };
 
+  const isEditing = () => {
+    return Object.keys(curationRuleset).length !== 0;
+  };
+
+  const checkExcludeListReference = (references: Array<string>, listNameToDelete: string) => {
+    let someReferenceInTheSameStep = false;
+    const containInternalReference = references.some(
+      ruleSet => ruleSet === curationOptions.activeStep.stepArtifact.name,
+    );
+    if (containInternalReference) {
+      let matchRulesets = [...curationOptions.activeStep.stepArtifact.matchRulesets];
+      matchRulesets.splice(curationRuleset["index"], 1);
+      matchRulesets.forEach(ruleSet => {
+        if (Array.isArray(ruleSet.matchRules)) {
+          ruleSet.matchRules.forEach(rule => {
+            if (Array.isArray(rule.exclusionLists)) {
+              someReferenceInTheSameStep = rule.exclusionLists.some(list => list === listNameToDelete);
+              if (someReferenceInTheSameStep) return someReferenceInTheSameStep;
+            }
+          });
+        }
+      });
+    } else {
+      someReferenceInTheSameStep = true;
+    }
+    return someReferenceInTheSameStep;
+  };
+
   const fetchReferencesExcludeValuesList = async (listName: string) => {
     await getReferencesExcludeValuesList(listName).then(res => {
       let references = res.data.stepNames;
       setReferencesListValuesToIgnore(res.data.stepNames);
-      if (references?.length > 0) {
+      const checkReferences = isEditing() ? checkExcludeListReference(references, listName) : true;
+      if (references?.length > 0 && checkReferences) {
         setDeleteWarning(true);
       } else {
         setListToDelete(listName);
@@ -341,7 +371,6 @@ const MatchRulesetModal: React.FC<Props> = props => {
     } else {
       rulesetName = `${propertyName} - ${matchType.charAt(0).toUpperCase() + matchType.slice(1)}`;
     }
-
     switch (matchType) {
     case "exact":
     case "zip": {
@@ -1115,6 +1144,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
   const handleChangeValuesToIgnore = (selected, e) => {
     if (selected.length === 0) {
       setSelectedExcludeListToInput([]);
+      setSelectedExcludeList([]);
       return;
     }
     if (selected.length > 0 && selected[selected.length - 1].name !== presetListMock[0].name) {
