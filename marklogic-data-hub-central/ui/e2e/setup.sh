@@ -47,6 +47,9 @@ fi
 # Add document properites to records for e2e test
 ./gradlew addDocProperties -PenvironmentName=$env --info --stacktrace
 
+#Load values to ignore data
+./gradlew loadListToIgnore
+
 #Verify flow was run successfully based on record count in staging and final database.
 #The task would fail if there was a count mismatch
 ./gradlew verifyStagingCounts -PenvironmentName=$env -q

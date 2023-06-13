@@ -72,6 +72,40 @@ class DocCount extends com.marklogic.gradle.task.HubTask {
     }
 }
 
+task loadListToIgnore(type: com.marklogic.gradle.task.ServerEvalTask) {
+  description 'Load required files for values to ignore functionality'
+  client = hubConfig.newStagingClient()
+  javascript = '''
+ declareUpdate();
+  const permissions = [
+      xdmp.permission('data-hub-developer', 'update'),
+      xdmp.permission('data-hub-operator', 'read'),
+      xdmp.permission('data-hub-operator', 'update')
+    ]
+
+  const collections = [
+    'http://marklogic.com/data-hub/exclusion-list',
+    'loadValuesToIgnore',
+
+  ]
+  const uri1  = 'values-to-ignore1.json'
+  const list1 = {"FirstName": "Robert","LastName": "Gonzales","SSN": "222-22-2221","Address": "456 Jones St","ZipCode": "42222","Verified": true}
+  xdmp.documentInsert(uri1, list1, {permissions,collections})
+
+  const uri2  = 'values-to-ignore2.json'
+  const list2 = {"FirstName": "Bob","LastName": "Gonzales","SSN": "222-22-2221","Address": "456 Jones St","ZipCode": "42222","Verified": true}
+  xdmp.documentInsert(uri2, list2, {permissions,collections})
+
+  const uri3  = 'values-to-ignore3.json'
+  const list3 = {"FirstName": "Marge","LastName": "Bouvier Simpson","SSN": "222-22-2221","Address": "456 Jones S","ZipCode": "22222","Verified": true}
+  xdmp.documentInsert(uri3, list3, {permissions,collections})
+
+  const uri4  = 'values-to-ignore4.json'
+  const list4 = {"FirstName": "Margot","LastName": "Bouvier Simpson","SSN": "222-22-2221","Address": "456 Jones St","ZipCode": "22222","Verified": true}
+  xdmp.documentInsert(uri4, list4, {permissions,collections})
+  '''
+}
+
 task verifyStagingCounts(type: DocCount) {
     client = hubConfig.newStagingClient()
     script = "fn.count(cts.uris('', [], cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON', 'loadPersonXML'])))"

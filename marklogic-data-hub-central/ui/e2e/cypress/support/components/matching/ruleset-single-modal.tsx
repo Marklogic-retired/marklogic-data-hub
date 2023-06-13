@@ -100,7 +100,7 @@ class RulesetSingleModal {
   }
 
   selectValuesToIgnoreInput() {
-    cy.get(`[id="valuesToIgnore"]`).click();
+    cy.get(`[id="valuesToIgnore"]`).click("center");
   }
 
   hoverItemPresetList(listName: string) {
@@ -133,6 +133,14 @@ class RulesetSingleModal {
 
   getElementByAriaLabel(label: string) {
     return cy.get(`[aria-label=${label}]`);
+  }
+
+  toggleSteps() {
+    return cy.findByLabelText("toggle-steps").click();
+  }
+
+  clearValuesToIgnoreInput() {
+    return cy.get("#valuesToIgnore").focus().clear();
   }
 
 }
