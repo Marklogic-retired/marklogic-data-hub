@@ -46,7 +46,13 @@ const Monitor: React.FC = () => {
         },
       });
       if (response.data && mountedRef.current) {
-        setData(response.data.results);
+        const dataFixed = response.data.results.map((dataItem) => {
+          if (dataItem.entityName === null) {
+            dataItem.entityName = "";
+          }
+          return dataItem;
+        });
+        setData(dataFixed);
         setTotalDocuments(response.data.total);
         setFacets(response.data.facets);
       } else {

@@ -36,6 +36,7 @@ describe("Monitor Tile", () => {
   let firstPageTableCellsStepName1: any[] = [];
   let firstPageTableCellsStepType1: any[] = [];
   let firstPageTableCellsStatus1: any[] = [];
+  let firstPageTableCellsEntityType1: any[] = [];
   let firstPageTableCellsDateTime1: any[] = [];
   let orginalDateTimeArr: any[] = [];
   const flowName = "testMonitor";
@@ -188,13 +189,12 @@ describe("Monitor Tile", () => {
     cy.wrap(compareStatus).should("not.be.gt", 0);
 
 
-    //Will be fixed as part of DHFPROD-9157
-    /*cy.log("**check step entity type order ASC**");
+    cy.log("**check step entity type order ASC**");
     firstPageTableCellsEntityType.forEach(element => cy.log(element));
     let firstEntityType = firstPageTableCellsEntityType[0];
     let lastEntityType = firstPageTableCellsEntityType[firstPageTableCellsEntityType.length - 1];
     let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
-    cy.wrap(compareEntityType).should("not.be.gt", 0);*/
+    cy.wrap(compareEntityType).should("not.be.gt", 0);
   });
 
   it("Descending order validations for column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time ", () => {
@@ -239,20 +239,18 @@ describe("Monitor Tile", () => {
       });
     });
 
-    //Commenting this validations due to a bug DHFPROD-9157
-    /*cy.log("**check step entity type order DESC**");
-    monitorPage.getOrderColumnMonitorTable("Entity Type").scrollIntoView().dblclick({force: true}).then(() => {
+    cy.log("**check Entity Type order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Entity Type").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
       monitorPage.getTableNestedRows().should("be.visible");
       monitorPage.getRowData(firstPageTableCellsJobId, "stepEntityType").then(($row) => {
         Cypress.$.makeArray($row)
-          .map((el) =>  firstPageTableCellsEntityType1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n"));
-          });
-        let firstEntityType = firstPageTableCellsEntityType1[0];
-        let lastEntityType = firstPageTableCellsEntityType1[firstPageTableCellsEntityType1.length - 1];
-        let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
-        expect(compareEntityType).not.to.be.lt(0);
+          .map((el) => firstPageTableCellsEntityType1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n")));
+        let firstStatus = firstPageTableCellsEntityType1[0];
+        let lastStatus = firstPageTableCellsEntityType1[firstPageTableCellsEntityType1.length - 1];
+        let compareStatus = firstStatus.toString().localeCompare(lastStatus.toString());
+        expect(compareStatus).not.to.be.lt(0);
       });
-    });*/
+    });
 
     cy.log("**check step datetime order DESC**");
     monitorPage.getOrderColumnMonitorTable("Start Date and Time").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
