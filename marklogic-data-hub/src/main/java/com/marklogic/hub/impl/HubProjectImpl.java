@@ -494,7 +494,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
     }
 
-    public int upgradeLegacyFlows(FlowManagerImpl flowManager) {
+    public int upgradeLegacyFlows(FlowManager flowManager) {
         int flowsUpdated = 0;
         if(this.getHubPluginsDir() == null || this.getLegacyHubEntitiesDir() == null) {
             logger.info("No legacy Flows found in plugins/entities directory to upgrade");
@@ -555,7 +555,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                             flowsUpdated++;
                         }
                     }
-                    flowManager.saveLocalFlow(flow);
+                    ((FlowManagerImpl) flowManager).saveLocalFlow(flow);
                 }
             }
         }
