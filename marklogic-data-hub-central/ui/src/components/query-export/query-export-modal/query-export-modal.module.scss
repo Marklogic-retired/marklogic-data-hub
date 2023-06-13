@@ -1,3 +1,4 @@
+@import "../../../theme/HCUtils.scss";
 .radio {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
     font-size: 14px;
@@ -20,6 +21,7 @@
     color: #333333;
 }
 
+
 .warning {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
@@ -36,3 +38,11 @@
 .exportTable {
     margin: 5px 20px -10px 20px;
 }
+
+.maxValueRows{
+    padding-left: 4px !important; 
+}
+
+.validationError {
+    @extend .validationError;
+  }

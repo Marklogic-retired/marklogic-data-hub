@@ -1,6 +1,7 @@
 import React from "react";
 import {fireEvent, render, wait} from "@testing-library/react";
 import QueryExportModal from "./query-export-modal";
+import userEvent from "@testing-library/user-event";
 
 describe("Query Export Component", () => {
   let columns = ["id", "firstName", "lastName", "age"];
@@ -144,5 +145,39 @@ describe("Query Export Component", () => {
     okButton.onclick = jest.fn();
     fireEvent.click(okButton);
     expect(okButton.onclick).toHaveBeenCalledTimes(1);
+  });
+
+  test("Verify Maximum rows", () => {
+    const {getByLabelText, queryByText, getByTestId} = render(
+      <QueryExportModal
+        exportModalVisibility={true}
+        columns={columnsNested}
+        hasStructured={true}
+        setExportModalVisibility={jest.fn()}
+      />,
+    );
+    const limitedSet = getByLabelText("Limited set of the first rows returned") as HTMLInputElement;
+    fireEvent.click(limitedSet);
+    expect(limitedSet).toBeChecked();
+    const maxRows = getByTestId("max-rows-input");
+    expect(queryByText("Limited set of the first rows returned")).toBeInTheDocument();
+    expect(queryByText("Maximum rows:")).toBeInTheDocument();
+    expect(maxRows).toHaveValue("1");
+    userEvent.clear(maxRows);
+    userEvent.type(maxRows, "1000000000000000000000000000000000");
+    expect(queryByText("Maximum input value reached. Please enter an integer within bounds.")).toBeInTheDocument();
+    expect(getByLabelText("Export")).toHaveAttribute("disabled");
+    userEvent.clear(maxRows);
+    userEvent.type(maxRows, "-1000");
+    expect(queryByText("Please enter a positive integer.")).toBeInTheDocument();
+    expect(getByLabelText("Export")).toHaveAttribute("disabled");
+    userEvent.clear(maxRows);
+    userEvent.type(maxRows, "1000");
+    expect(queryByText("Please enter a positive integer.")).not.toBeInTheDocument();
+    expect(queryByText("Maximum input value reached. Please enter an integer within bounds.")).not.toBeInTheDocument();
+    expect(getByLabelText("Export")).not.toHaveAttribute("disabled");
+    userEvent.clear(maxRows);
+    userEvent.type(maxRows, "a41");
+    expect(queryByText("Please enter a positive integer.")).toBeInTheDocument();
   });
 });

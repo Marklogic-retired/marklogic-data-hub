@@ -9,7 +9,8 @@ import {HCInput, HCAlert, HCButton, HCModal} from "@components/common";
 
 const QueryExportModal = props => {
   const [value, setValue] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(Number.MAX_SAFE_INTEGER);
+  const [limit, setLimit] = useState<number>(1);
+  const [limitNumberErrorMessage, setLimitNumberErrorMessage] = useState<string>("");
 
   const {searchOptions} = useContext(SearchContext);
   const {handleError} = useContext(UserContext);
@@ -51,6 +52,22 @@ const QueryExportModal = props => {
 
   const onChange = e => {
     setValue(parseInt(e.target.value));
+    setLimitNumberErrorMessage("");
+    setLimit(1);
+  };
+
+  const handleOnChangeNumberOfRows = (e) => {
+    e.preventDefault();
+    const re = new RegExp(/^[0-9]*$/);
+    const limitNumber:number = Number(e.target.value);
+    if ((limitNumber <= 0 || Number.isNaN(limitNumber) || !re.test(e.target.value)) && e.target.value !== "") {
+      setLimitNumberErrorMessage("Please enter a positive integer.");
+    } else if (limitNumber > Number.MAX_SAFE_INTEGER) {
+      setLimitNumberErrorMessage("Maximum input value reached. Please enter an integer within bounds.");
+    } else {
+      setLimitNumberErrorMessage("");
+      setLimit(Number(e.target.value));
+    }
   };
 
   return (
@@ -114,12 +131,15 @@ const QueryExportModal = props => {
               <Col className={"d-flex"}>
                 <HCInput
                   dataTestid="max-rows-input"
-                  className={styles.text}
-                  type="number"
-                  min="1"
-                  onChange={e => setLimit(Number(e.target.value))}
-                  style={{width: 60}}
+                  className={ styles.noSpin}
+                  value={limit}
+                  type="text"
+                  onChange={e => handleOnChangeNumberOfRows(e)}
+                  style={{width: 100}}
                 />
+              </Col>
+              <Col md={{offset: 6}} className={styles.validationError + " " + styles.maxValueRows}>
+                {limitNumberErrorMessage}
               </Col>
             </Row>
           )}
@@ -163,7 +183,7 @@ const QueryExportModal = props => {
         <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onClose}>
           Cancel
         </HCButton>
-        <HCButton key="submit" variant="primary" aria-label={"Export"} onClick={onOk} disabled={limit <= 0}>
+        <HCButton key="submit" variant="primary" aria-label={"Export"} onClick={onOk} disabled={limitNumberErrorMessage !== ""}>
           Export
         </HCButton>
       </Modal.Footer>
