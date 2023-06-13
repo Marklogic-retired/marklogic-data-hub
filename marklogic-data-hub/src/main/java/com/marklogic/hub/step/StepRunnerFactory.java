@@ -10,9 +10,11 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
+import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.ScriptStepRunner;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +56,8 @@ public class StepRunnerFactory {
         StepRunner stepRunner;
         if (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
             stepRunner = new WriteStepRunner(hubClient, hubProject);
+        } else if (((TextNode) step.getOptions().get("sourceQueryIsScript")).asBoolean()) {
+            stepRunner = new QueryStepRunner(hubClient);
         } else {
             stepRunner = new ScriptStepRunner(hubClient);
         }
