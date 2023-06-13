@@ -250,6 +250,13 @@ public interface HubProject {
     void upgradeProject(FlowManager flowManager) throws IOException;
 
     /**
+     * Performs an upgrade to legacy 4.3.2 flows
+     *
+     * @return number of legacy flows updated
+     */
+    int upgradeLegacyFlows(FlowManager flowManager);
+
+    /**
      * Exports the project content to disk
      */
     void exportProject(File location);
