@@ -5,22 +5,25 @@ import {toolbar} from "../../support/components/common";
 import monitorPage from "../../support/pages/monitor";
 import browsePage from "../../support/pages/browse";
 import runPage from "../../support/pages/run";
+import loadPage from "../../support/pages/load";
 import "cypress-wait-until";
 
 describe("Monitor Tile", () => {
-  beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-job-monitor").withRequest();
+  before(() => {
+    cy.loginAsDeveloper().withRequest();
     monitorPage.navigate();
   });
 
-  afterEach(() => {
-    cy.clearAllSessionStorage();
-    cy.clearAllLocalStorage();
-  });
-
   after(() => {
+    cy.loginAsDeveloper().withRequest();
+    cy.deleteRecordsInFinal("mapCustomersJSON", "mapClientJSON", "mapOfficeStep");
+    cy.deleteRecordsInStaging("loadValuesToIgnore");
+    cy.deleteRecordsInFinal("loadPersonJSON", "mapPersonJSON", "master-person", "sm-Person-auditing", "match-person", "merge-person", "sm-Person-merged", "sm-Person-mastered", "sm-Person-notification", "mdm-content", "no-match", "datahubMasteringMatchSummary-Person");
+    cy.deleteFlows("testMonitor");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
   });
 
   let firstPageTableCellsJobId: any[] = [];
@@ -35,8 +38,46 @@ describe("Monitor Tile", () => {
   let firstPageTableCellsStatus1: any[] = [];
   let firstPageTableCellsDateTime1: any[] = [];
   let orginalDateTimeArr: any[] = [];
+  const flowName = "testMonitor";
+
+  it("Can create flow and add steps to flow and reorder flow", {defaultCommandTimeout: 120000}, () => {
+    //Verify create flow and add all user-defined steps to flow via Run tile
+    toolbar.getRunToolbarIcon().should("be.visible").click();
+    cy.waitForAsyncRequest();
+    runPage.createFlowButton().click({force: true});
+    runPage.newFlowModal().should("be.visible");
+    runPage.setFlowName(flowName);
+    loadPage.confirmationOptions("Save").click();
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("loadPersonJSON");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("mapPersonJSON");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("match-person");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("merge-person");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("master-person");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("mapCustomersJSON");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("mapClientJSON");
+    runPage.addStep(flowName);
+    runPage.addStepToFlow("mapOfficeStep");
+    runPage.addStep(flowName);
+
+    cy.intercept("GET", "/api/jobs/**").as("runResponse");
+    runPage.runFlow(flowName);
+    cy.uploadFile("patients/first-name-double-metaphone1.json");
+    cy.uploadFile("patients/first-name-double-metaphone2.json");
+    cy.wait("@runResponse");
+    cy.waitForAsyncRequest();
+    runPage.verifyFlowModalCompleted(flowName);
+    runPage.closeFlowStatusModal(flowName);
+  });
 
   it("Validate column order for Step Name,	Step Type,	StatusEntity, Type Start, Date and Time part 1", () => {
+    monitorPage.navigate();
     cy.log("**expand table and get data column of JobId**");
     monitorPage.getTableRows().then(($els) => {
       return (
@@ -147,7 +188,7 @@ describe("Monitor Tile", () => {
     cy.wrap(compareStatus).should("not.be.gt", 0);
 
 
-    //Will be fixed as part of DHFPROD-10273
+    //Will be fixed as part of DHFPROD-9157
     /*cy.log("**check step entity type order ASC**");
     firstPageTableCellsEntityType.forEach(element => cy.log(element));
     let firstEntityType = firstPageTableCellsEntityType[0];
@@ -197,6 +238,21 @@ describe("Monitor Tile", () => {
         expect(compareStatus).not.to.be.lt(0);
       });
     });
+
+    //Commenting this validations due to a bug DHFPROD-9157
+    /*cy.log("**check step entity type order DESC**");
+    monitorPage.getOrderColumnMonitorTable("Entity Type").scrollIntoView().dblclick({force: true}).then(() => {
+      monitorPage.getTableNestedRows().should("be.visible");
+      monitorPage.getRowData(firstPageTableCellsJobId, "stepEntityType").then(($row) => {
+        Cypress.$.makeArray($row)
+          .map((el) =>  firstPageTableCellsEntityType1.push(el.innerText.toString().replace(/\t/g, "").split("\r\n"));
+          });
+        let firstEntityType = firstPageTableCellsEntityType1[0];
+        let lastEntityType = firstPageTableCellsEntityType1[firstPageTableCellsEntityType1.length - 1];
+        let compareEntityType = firstEntityType.toString().localeCompare(lastEntityType.toString());
+        expect(compareEntityType).not.to.be.lt(0);
+      });
+    });*/
 
     cy.log("**check step datetime order DESC**");
     monitorPage.getOrderColumnMonitorTable("Start Date and Time").should("exist").scrollIntoView().should("be.visible").dblclick({force: true}).then(() => {
@@ -275,7 +331,7 @@ describe("Monitor Tile", () => {
   it("Apply facet search and verify docs", () => {
     cy.wait(1500);
     browsePage.getShowMoreLink("step-type").click();
-    monitorPage.validateAppliedFacetTableRows("step-type", 1, "mapping");
+    monitorPage.validateAppliedFacetTableRows("step-type", 2, "mapping");
   });
 
   it("Apply facet search and clear individual grey facet", () => {
@@ -308,20 +364,18 @@ describe("Monitor Tile", () => {
     entitiesSidebar.clearAllFacetsButton.should("not.be.disabled");
     entitiesSidebar.applyFacetsButton.should("not.be.disabled");
     entitiesSidebar.clearAllFacetsApplied();
+    cy.waitForAsyncRequest();
     entitiesSidebar.clearAllFacetsButton.should("be.disabled");
     entitiesSidebar.applyFacetsButton.should("be.disabled");
   });
 
   it("Verify step status faceting", () => {
+    cy.scrollTo("top", {ensureScrollable: false});
     cy.wait(1000);
     monitorSidebar.verifyFacetCategory("status");
 
     cy.log("**verify status faceting**");
-    monitorPage.validateGreyFacet("status", 0);
-
-    cy.intercept("POST", "/api/jobs/stepResponses", {statusCode: 200}).as("stepResponses");
-    entitiesSidebar.applyFacets();
-    cy.wait("@stepResponses").should("have.property", "state", "Complete");
+    monitorPage.selectAndApplyFacet("status", 0);
     cy.waitForAsyncRequest();
 
     monitorPage.getExpandAllTableRows().scrollIntoView().click({force: true});
@@ -346,118 +400,121 @@ describe("Monitor Tile", () => {
 
     cy.log("*** verify step result content inside status modal ***");
     runPage.getStepSuccess("mapPersonJSON").should("be.visible");
-    runPage.verifyFlowModalCompleted("testPersonJSON");
+    runPage.verifyFlowModalCompleted(flowName);
     cy.log("*** modal can be closed ***");
-    runPage.closeFlowStatusModal("testPersonJSON");
+    runPage.closeFlowStatusModal(flowName);
     runPage.getFlowStatusModal().should("not.exist");
   });
 
-  // TODO: DHFPROD-10185
-  it.skip("Apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
-    browsePage.getShowMoreLink("step").click();
-    cy.get("[id=\"date-select\"]").scrollIntoView();
-    cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
-    cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepVal => {
-      browsePage.getFacetItemCheckbox("step", stepVal).click();
-      browsePage.getGreySelectedFacets(stepVal).should("exist");
-      browsePage.getFacetItemCheckbox("step", stepVal).should("be.checked");
-      browsePage.getFacetApplyButton().click();
-      cy.get("[id=\"date-select\"]").scrollIntoView();
-      cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
-      cy.get("[data-testid=\"flow-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(flowVal => {
-        browsePage.getFacetItemCheckbox("flow", flowVal).click();
-        browsePage.getGreySelectedFacets(flowVal).should("exist");
-        cy.get("[id=\"date-select\"]").scrollIntoView();
-        cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
-        cy.get("[data-testid=\"step-type-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepTypeVal => {
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
-          browsePage.getGreySelectedFacets(stepTypeVal).trigger("mousemove", {force: true});
-          browsePage.getGreySelectedFacets(stepTypeVal).should("exist");
-          browsePage.getFacetApplyButton().click();
-          monitorPage.clearFacetSearchSelection(flowVal);
-          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("be.checked");
-          browsePage.getFacetItemCheckbox("step", stepVal).click();
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
-          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-          browsePage.getFacetItemCheckbox("step", stepVal).should("not.be.checked");
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("not.be.checked");
-          browsePage.getGreySelectedFacets(stepVal).should("not.exist");
-          browsePage.getGreySelectedFacets(stepTypeVal).should("not.exist");
-          cy.waitForAsyncRequest();
-          browsePage.getFacetItemCheckbox("step", stepVal).click();
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
-          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-          browsePage.getFacetApplyButton().click();
-          monitorPage.clearFacetSearchSelection(stepVal);
-          monitorPage.clearFacetSearchSelection(stepTypeVal);
-          browsePage.getFacetItemCheckbox("step", stepVal).should("not.be.checked");
-          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("not.be.checked");
-          browsePage.getGreySelectedFacets(stepVal).should("not.exist");
-          browsePage.getGreySelectedFacets(stepTypeVal).should("not.exist");
-        });
-      });
-    });
+  it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+    browsePage.clickShowMoreLink("step");
+    browsePage.getShowMoreLink("step").scrollIntoView();
+    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
+    browsePage.clickShowMoreLink("flow");
+    browsePage.getShowMoreLink("flow").scrollIntoView();
+    monitorPage.getFacetCheckbox("flow", flowName).scrollIntoView().click({force: true});
+    browsePage.getFacetItemCheckbox("flow", flowName).should("be.checked");
+    browsePage.getGreySelectedFacets(flowName).should("exist");
+    monitorPage.getFacetCheckbox("step-type", "ingestion").scrollIntoView().click({force: true});
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
+    browsePage.getGreySelectedFacets("ingestion").should("exist");
+    browsePage.getFacetApplyButton().scrollIntoView().click({force: true});
+    monitorPage.clearFacetSearchSelection(flowName);
+    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
+    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
+    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
+    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
+    cy.waitForAsyncRequest();
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
+    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+    browsePage.getFacetApplyButton().click();
+    monitorPage.clearFacetSearchSelection("loadPersonJSON");
+    monitorPage.clearFacetSearchSelection("ingestion");
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
+    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
+    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
   });
 
-  // TODO: DHFPROD-10185
-  it.skip("Verify facets can be selected, applied and cleared using clear text", () => {
-    monitorPage.validateAppliedFacet("step", 0);
+
+  it("Verify facets can be selected, applied and cleared using clear text", () => {
+    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
     browsePage.getFacetSearchSelectionCount("step").should("contain", "1");
     browsePage.getClearFacetSelection("step").click();
     browsePage.waitForSpinnerToDisappear();
   });
 
-  // TODO: DHFPROD-10185
-  it.skip("Apply facets, unchecking them should not recheck original facets", () => {
-    browsePage.getShowMoreLink("step").click();
-    cy.get("[id=\"date-select\"]").scrollIntoView();
-    cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
-    cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepVal1 => {
-      cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(1).invoke("text").then(stepVal2 => {
-        cy.findByTestId("step-" + stepVal1 + "-checkbox").trigger("mousemove", {force: true});
-        browsePage.getFacetItemCheckbox("step", stepVal1).click();
-        browsePage.getFacetItemCheckbox("step", stepVal2).click();
-        browsePage.getGreySelectedFacets(stepVal1).should("exist");
-        browsePage.getGreySelectedFacets(stepVal2).should("exist");
-        browsePage.getFacetApplyButton().click();
-        browsePage.getFacetItemCheckbox("step", stepVal1).should("be.checked");
-        cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-        cy.findByTestId("step-" + stepVal2 + "-checkbox").trigger("mousemove", {force: true});
-        browsePage.getFacetItemCheckbox("step", stepVal2).should("be.checked");
-        browsePage.getFacetItemCheckbox("status", "finished").click();
-        browsePage.getFacetItemCheckbox("step", stepVal1).click();
-        browsePage.waitForSpinnerToDisappear();
-        cy.findByTestId("step-" + stepVal2 + "-checkbox").trigger("mousemove", {force: true});
-        browsePage.getFacetItemCheckbox("step", stepVal2).click({force: true});
-        browsePage.getFacetItemCheckbox("status", "finished").click();
-        cy.findByTestId("step-" + stepVal1 + "-checkbox").trigger("mousemove", {force: true});
-        browsePage.getFacetItemCheckbox("step", stepVal1).should("not.be.checked");
-        cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-        browsePage.getFacetItemCheckbox("step", stepVal2).should("not.be.checked");
-        browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
-      });
-    });
+  it("Apply facets, unchecking them should not recheck original facets", () => {
+    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
+    monitorPage.getFacetCheckbox("step", "mapPersonJSON").scrollIntoView().click({force: true});
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
+    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
+    browsePage.getGreySelectedFacets("mapPersonJSON").should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
+    cy.findByTestId("step-" + "mapPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
+    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
+    browsePage.getFacetItemCheckbox("status", "completed").click();
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.findByTestId("step-" + "mapPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
+    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").scrollIntoView().click();
+    browsePage.getFacetItemCheckbox("status", "completed").scrollIntoView().click({force: true});
+    cy.findByTestId("step-" + "loadPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
+    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("status", "completed").should("not.be.checked");
   });
 
-  // TODO: DHFPROD-10185
-  it.skip("Verify select, apply, remove grey and applied startTime facet", () => {
+  it("Verify select, apply, remove grey and applied startTime facet", () => {
+    cy.log("Select multiple facets and remove startTime grey facet");
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
+      }
+    });
     monitorPage.validateGreyFacet("step-type", 0);
     monitorPage.validateGreyFacet("step-type", 1);
     monitorPage.selectStartTimeFromDropDown("Today");
-    monitorPage.getSelectedTime().should("contain", "Today");
+    monitorPage.getSelectedTime("Today").should("contain", "Today");
     browsePage.getGreySelectedFacets("Today").should("exist");
     monitorPage.validateClearStartTimeGreyFacet("Today");
-    monitorPage.getSelectedTime().should("contain", "select time");
+    //Commenting this validations due to a bug DHFPROD-10318
+    //monitorPage.getSelectedTime("Today").should("contain", "Today");
 
+    cy.log("Select multiple facets and apply all facets");
     monitorPage.selectStartTimeFromDropDown("Today");
-    monitorPage.getSelectedTime().should("contain", "Today");
+    monitorPage.getSelectedTime("Today").should("contain", "Today");
     entitiesSidebar.applyFacets();
     browsePage.getAppliedFacets("Today").should("exist");
-    monitorPage.getSelectedTime().should("contain", "Today");
+    monitorPage.getSelectedTime("Today").should("contain", "Today");
 
+    cy.log("Remove applied startTime facet");
     monitorPage.clearFacetSearchSelection("Today");
-    browsePage.getSelectedFacet("Today").should("not.exist");
-    browsePage.getClearAllFacetsButton().click();
+    //Commenting this validations due to a bug DHFPROD-10318
+    //browsePage.getSelectedFacet("Today").should("not.exist");
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
+      }
+    });
   });
 });

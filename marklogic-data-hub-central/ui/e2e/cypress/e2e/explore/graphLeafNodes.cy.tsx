@@ -63,7 +63,7 @@ describe("Leaf Nodes", () => {
     graphExplore.fit();
     graphExplore.stopStabilization();
     graphExplore.getGraphVisCanvas().scrollIntoView().should("be.visible");
-    graphExplore.getSearchBar().type("Cynthia");
+    graphExplore.getSearchBar().scrollIntoView().should("be.visible").clear().type("Cynthia");
     cy.intercept("POST", "/api/entitySearch/graph?database=final").as("Search");
     graphExplore.getSearchButton().click();
     browsePage.waitForSpinnerToDisappear();
