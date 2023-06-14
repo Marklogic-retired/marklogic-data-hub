@@ -2,10 +2,13 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
 import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Defines endpoints for managing Job documents
@@ -41,19 +44,19 @@ public interface JobService {
      */
     static JobService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class JobServiceImpl implements JobService {
-            private final DatabaseClient dbClient;
-            private final BaseProxy baseProxy;
+            private DatabaseClient dbClient;
+            private BaseProxy baseProxy;
 
-            private final BaseProxy.DBFunctionRequest req_startStep;
-            private final BaseProxy.DBFunctionRequest req_finishStep;
-            private final BaseProxy.DBFunctionRequest req_getJob;
-            private final BaseProxy.DBFunctionRequest req_startJob;
-            private final BaseProxy.DBFunctionRequest req_getJobWithDetails;
-            private final BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
-            private final BaseProxy.DBFunctionRequest req_finishJob;
-            private final BaseProxy.DBFunctionRequest req_findStepResponses;
+            private BaseProxy.DBFunctionRequest req_startStep;
+            private BaseProxy.DBFunctionRequest req_finishStep;
+            private BaseProxy.DBFunctionRequest req_getJob;
+            private BaseProxy.DBFunctionRequest req_startJob;
+            private BaseProxy.DBFunctionRequest req_getJobWithDetails;
+            private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
+            private BaseProxy.DBFunctionRequest req_finishJob;
+            private BaseProxy.DBFunctionRequest req_findStepResponses;
 
-            JobServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private JobServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/job/", servDecl);
 

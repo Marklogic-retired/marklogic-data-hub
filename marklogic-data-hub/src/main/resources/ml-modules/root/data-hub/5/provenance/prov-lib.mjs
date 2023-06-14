@@ -47,10 +47,11 @@ function deleteProvenance(deleteRequest, endpointState) {
   deleteRequest = validateDeleteRequest(deleteRequest);
   const {retainDuration, batchSize} = deleteRequest;
   const timePruningBegins = fn.currentDateTime().subtract(retainDuration);
+  const forestIDs = deleteRequest.forestIDs || Sequence.from([]);
   return fn.head(xdmp.invokeFunction(function() {
     const collectionQuery = cts.collectionQuery('http://marklogic.com/provenance-services/record');
     const timeQuery = cts.tripleRangeQuery(null, sem.iri('http://www.w3.org/ns/prov#generatedAtTime'), timePruningBegins, '<');
-    const lastRemovedUriQuery = endpointState.lastUri ? cts.rangeQuery(cts.uriReference(), '>=', endpointState.lastUri) : null;
+    const lastRemovedUriQuery = endpointState.lastUri ? cts.rangeQuery(cts.uriReference(), '>', endpointState.lastUri) : null;
     const queries = [collectionQuery, timeQuery];
     if (lastRemovedUriQuery) {
       queries.push(lastRemovedUriQuery);
@@ -58,8 +59,8 @@ function deleteProvenance(deleteRequest, endpointState) {
     const finalQuery = cts.andQuery(queries);
     let estimateCount = cts.estimate(finalQuery);
     let lastUri = null;
-    for (let uri of cts.uris(null, [`limit=${batchSize}`, "concurrent", "score-zero"], finalQuery)) {
-      xdmp.documentDelete(uri);
+    for (let uri of cts.uris(null, [`limit=${batchSize}`, "concurrent", "score-zero"], finalQuery, 0, forestIDs)) {
+      xdmp.documentDelete(uri, {"ifNotExists": "allow"});
       lastUri = uri;
     }
     return (lastUri !== null && estimateCount > batchSize) ? {lastUri} : null;

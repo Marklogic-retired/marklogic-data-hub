@@ -1,14 +1,11 @@
 package com.marklogic.hub.flow;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeleteJobsTest extends AbstractHubCoreTest {
 

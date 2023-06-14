@@ -12,14 +12,14 @@ const result = datahub.flow.stepDefinition.makeFunction(flowName, "echo", "/cust
 assertions.push(test.assertTrue(result != null));
 
 try {
-  datahub.flow.stepDefinition.makeFunction("flowNameDoesntMatter", "main", "/doesnt/exist.sjs")
+  datahub.flow.stepDefinition.makeFunction("flowNameDoesntMatter", "main", "/doesnt/exist.sjs");
   throw Error("Expected makeFunction to fail because module path does not exist");
 } catch (e) {
   console.log(e.data[1]);
   assertions.push([
     test.assertEqual("400", e.data[0]),
     test.assertEqual(
-      "Unable to access module: /doesnt/exist.sjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module",
+      "Unable to access module: /doesnt/exist.sjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module.",
       e.data[1]
     )
   ]);

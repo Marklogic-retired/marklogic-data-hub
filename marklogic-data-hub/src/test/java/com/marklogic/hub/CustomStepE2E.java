@@ -29,7 +29,7 @@ public class CustomStepE2E extends AbstractHubCoreTest {
         assertEquals(806, getStagingDocCount("LabsCore"), "There should be 806 doc in LabsCore collection");
         assertEquals(372, getFinalDocCount("CompletedAdmissions"), "There should be 372 doc in CompletedAdmissions collection");
 
-        runFlow(new FlowInputs("Admissions", "5"));
+        RunFlowResponse response = runFlow(new FlowInputs("Admissions", "5"));
         assertEquals(372, getFinalDocCount("mdm-content"), "There should be 372 doc in mdm-content collection");
     }
 

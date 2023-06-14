@@ -26,7 +26,7 @@ public class RunFlowWithInvalidStepDefTest extends AbstractHubCoreTest {
             "The job should have failed because the only step in the flow references a step definition that " +
                 "does not exist");
         String message = response.getStepResponses().get("1").getStepOutput().get(0);
-        assertTrue(message.contains("A step with name \\\"doesntExist\\\" and type of \\\"CUSTOM\\\" was not found"),
+        assertTrue(message.contains("Could not find a step definition with name 'doesntExist' and type 'CUSTOM' for step '1' in flow 'invalidStepDef'"),
             "Did not find expected message in: " + message);
         assertEquals("1", response.getLastAttemptedStep());
         assertEquals("0", response.getLastCompletedStep());

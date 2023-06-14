@@ -1,0 +1,13 @@
+{
+    "functionName": "queryCount",
+    "endpoint": "/data-hub/data-services/stepRunner/queryCount.mjs",
+    "desc": "Use this to get counts for cts query based steps that don't require a collector to return URIs",
+    "params": [
+        {"name":"endpointConstants", "datatype":"jsonDocument", "multiple":false, "nullable":false, "$javaClass": "com.fasterxml.jackson.databind.JsonNode"}
+    ],
+    "return": {
+        "datatype": "long",
+        "multiple": false,
+        "nullable": true
+    }
+}

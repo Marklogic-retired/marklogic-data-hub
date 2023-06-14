@@ -54,6 +54,7 @@ hubDeployAsDeveloper.finalizedBy("loadThesaurus")
 
 class DocCount extends com.marklogic.gradle.task.HubTask {
     @Internal com.marklogic.client.DatabaseClient client
+    @Input String databaseName
     @Input String script
     @Input int expected
 
@@ -62,9 +63,9 @@ class DocCount extends com.marklogic.gradle.task.HubTask {
         try {
             int result = Integer.parseInt(client.newServerEval().javascript(script).evalAs(String.class));
             if(result != expected) {
-                throw new GradleException("Record count did not match. Expected ${expected} in ${client.getDatabase()} database, got "+ result)
+                throw new GradleException("Record count did not match. Expected ${expected} in ${databaseName} database, got "+ result)
             } else {
-                println("Flow/steps were run successfully and got expected number of records in ${client.getDatabase()} database")
+                println("Flow/steps were run successfully and got expected number of records in ${databaseName} database")
             }
         } finally {
             client.release()
@@ -107,12 +108,14 @@ task loadListToIgnore(type: com.marklogic.gradle.task.ServerEvalTask) {
 }
 
 task verifyStagingCounts(type: DocCount) {
+    databaseName = "data-hub-STAGING"
     client = hubConfig.newStagingClient()
     script = "fn.count(cts.uris('', [], cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON', 'loadPersonXML'])))"
     expected = 40
 }
 
 task verifyFinalCounts(type: DocCount) {
+    databaseName = "data-hub-FINAL"
     client = hubConfig.newFinalClient()
     script = "fn.count(cts.uris('', [], cts.collectionQuery(['mdm-dictionary', 'mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON'])))"
     expected = 35

@@ -2,10 +2,13 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
 import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Provides a set of operations on the database server
@@ -41,21 +44,21 @@ public interface FlowService {
      */
     static FlowService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class FlowServiceImpl implements FlowService {
-            private final DatabaseClient dbClient;
-            private final BaseProxy baseProxy;
+            private DatabaseClient dbClient;
+            private BaseProxy baseProxy;
 
-            private final BaseProxy.DBFunctionRequest req_updateFlow;
-            private final BaseProxy.DBFunctionRequest req_getFlow;
-            private final BaseProxy.DBFunctionRequest req_deleteFlow;
-            private final BaseProxy.DBFunctionRequest req_addStepToFlow;
-            private final BaseProxy.DBFunctionRequest req_getFlowsWithStepDetails;
-            private final BaseProxy.DBFunctionRequest req_getFlowWithLatestJobInfo;
-            private final BaseProxy.DBFunctionRequest req_getFlowsWithLatestJobInfo;
-            private final BaseProxy.DBFunctionRequest req_removeStepFromFlow;
-            private final BaseProxy.DBFunctionRequest req_createFlow;
-            private final BaseProxy.DBFunctionRequest req_getFullFlow;
+            private BaseProxy.DBFunctionRequest req_updateFlow;
+            private BaseProxy.DBFunctionRequest req_getFlow;
+            private BaseProxy.DBFunctionRequest req_deleteFlow;
+            private BaseProxy.DBFunctionRequest req_addStepToFlow;
+            private BaseProxy.DBFunctionRequest req_getFlowsWithStepDetails;
+            private BaseProxy.DBFunctionRequest req_getFlowWithLatestJobInfo;
+            private BaseProxy.DBFunctionRequest req_getFlowsWithLatestJobInfo;
+            private BaseProxy.DBFunctionRequest req_removeStepFromFlow;
+            private BaseProxy.DBFunctionRequest req_createFlow;
+            private BaseProxy.DBFunctionRequest req_getFullFlow;
 
-            FlowServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private FlowServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/flow/", servDecl);
 

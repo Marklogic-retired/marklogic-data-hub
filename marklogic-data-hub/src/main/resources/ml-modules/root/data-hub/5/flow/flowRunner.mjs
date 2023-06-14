@@ -95,7 +95,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
  * @returns {array} array of content objects that are returned by the step
  */
 function runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue) {
-  return stepExecutionContext.sourceDatabaseIsCurrentDatabase() ?
+  return stepExecutionContext.sourceDatabaseIsCurrentDatabase() && !stepExecutionContext.combinedOptions.stepUpdate ?
     runStep(stepExecutionContext, contentArray, writeQueue) :
     fn.head(
       xdmp.invokeFunction(function () {

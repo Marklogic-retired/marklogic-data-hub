@@ -27,7 +27,6 @@ import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -36,7 +35,7 @@ public class SourceQueryCollector {
 
     private final HubClient hubClient;
     private final String sourceDatabase;
-    private static HubClientConfig hubClientConfig;
+    private final HubClientConfig hubClientConfig;
 
     /**
      * @param hubClient
@@ -76,7 +75,7 @@ public class SourceQueryCollector {
 
             try (Response response = ok.newCall(request).execute()) {
                 if (response.isSuccessful()) {
-                    return readItems(response);
+                    return readItems(hubClientConfig, response);
                 } else {
                     throw new RuntimeException(String.format("Unable to collect items to process for flow %s and step %s; cause: %s", flow, step, response.body().string()));
                 }
@@ -86,7 +85,7 @@ public class SourceQueryCollector {
         }
     }
 
-    private static DiskQueue<String> readItems(Response response) throws IOException {
+    private static DiskQueue<String> readItems(HubClientConfig hubClientConfig, Response response) throws IOException {
         DiskQueue<String> results = new DiskQueue<>(hubClientConfig);
         try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
             String line;
