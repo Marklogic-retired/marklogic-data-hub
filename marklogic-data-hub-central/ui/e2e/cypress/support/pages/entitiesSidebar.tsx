@@ -216,7 +216,7 @@ class BaseEntitySidebar {
   }
 
   applyFacets() {
-    this.applyFacetsButton.click();
+    this.applyFacetsButton.should("be.visible").click();
     cy.waitForAsyncRequest();
   }
 

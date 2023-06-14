@@ -383,7 +383,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     browsePage.databaseSwitch("final");
-    graphExplore.getSearchBar().type("Adams");
+    graphExplore.getSearchBar().type("Bowman");
     entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").click();
@@ -392,12 +392,12 @@ describe("Validate persistence across Hub Central", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.databaseSwitch("staging").click();
     browsePage.waitForSpinnerToDisappear();
-    graphExplore.getSearchBar().should("have.value", "Adams");
+    graphExplore.getSearchBar().should("have.value", "Bowman");
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
     browsePage.databaseSwitch("final").click();
     browsePage.waitForSpinnerToDisappear();
-    graphExplore.getSearchBar().should("have.value", "Adams");
+    graphExplore.getSearchBar().should("have.value", "Bowman");
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("collection", "Customer").should("exist");
   });
