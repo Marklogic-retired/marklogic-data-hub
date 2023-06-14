@@ -2,10 +2,13 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
 import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Provides a set of operations on the database server
@@ -41,24 +44,24 @@ public interface ModelsService {
      */
     static ModelsService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class ModelsServiceImpl implements ModelsService {
-            private final DatabaseClient dbClient;
-            private final BaseProxy baseProxy;
+            private DatabaseClient dbClient;
+            private BaseProxy baseProxy;
 
-            private final BaseProxy.DBFunctionRequest req_generateDatabaseProperties;
-            private final BaseProxy.DBFunctionRequest req_saveDraftModel;
-            private final BaseProxy.DBFunctionRequest req_deleteDraftModel;
-            private final BaseProxy.DBFunctionRequest req_createDraftModel;
-            private final BaseProxy.DBFunctionRequest req_generateProtectedPathConfig;
-            private final BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
-            private final BaseProxy.DBFunctionRequest req_generateModelConfig;
-            private final BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
-            private final BaseProxy.DBFunctionRequest req_saveModels;
-            private final BaseProxy.DBFunctionRequest req_getModelReferences;
-            private final BaseProxy.DBFunctionRequest req_publishDraftModels;
-            private final BaseProxy.DBFunctionRequest req_getLatestJobData;
-            private final BaseProxy.DBFunctionRequest req_updateDraftModelEntityTypes;
+            private BaseProxy.DBFunctionRequest req_generateDatabaseProperties;
+            private BaseProxy.DBFunctionRequest req_saveDraftModel;
+            private BaseProxy.DBFunctionRequest req_deleteDraftModel;
+            private BaseProxy.DBFunctionRequest req_createDraftModel;
+            private BaseProxy.DBFunctionRequest req_generateProtectedPathConfig;
+            private BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
+            private BaseProxy.DBFunctionRequest req_generateModelConfig;
+            private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
+            private BaseProxy.DBFunctionRequest req_saveModels;
+            private BaseProxy.DBFunctionRequest req_getModelReferences;
+            private BaseProxy.DBFunctionRequest req_publishDraftModels;
+            private BaseProxy.DBFunctionRequest req_getLatestJobData;
+            private BaseProxy.DBFunctionRequest req_updateDraftModelEntityTypes;
 
-            ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/models/", servDecl);
 

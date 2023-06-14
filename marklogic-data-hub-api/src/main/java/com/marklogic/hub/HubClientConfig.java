@@ -186,17 +186,21 @@ public class HubClientConfig {
     }
 
     public DatabaseClient newStagingClient(String dbName) {
-        DatabaseClientConfig config = new DatabaseClientConfig(host, stagingPort, username, password);
+        return getDatabaseClient(dbName, stagingPort, stagingAuthMethod, stagingSslHostnameVerifier, stagingSslContext, stagingCertFile, stagingCertPassword, stagingExternalName, stagingTrustManager);
+    }
+
+    private DatabaseClient getDatabaseClient(String dbName, Integer port, String authMethod, DatabaseClientFactory.SSLHostnameVerifier stagingSslHostnameVerifier, SSLContext stagingSslContext, String certFile, String certPassword, String externalName, X509TrustManager trustManager) {
+        DatabaseClientConfig config = new DatabaseClientConfig(host, port, username, password);
         if (dbName != null) {
             config.setDatabase(dbName);
         }
-        config.setSecurityContextType(SecurityContextType.valueOf(stagingAuthMethod.toUpperCase()));
+        config.setSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
         config.setSslHostnameVerifier(stagingSslHostnameVerifier);
         config.setSslContext(stagingSslContext);
-        config.setCertFile(stagingCertFile);
-        config.setCertPassword(stagingCertPassword);
-        config.setExternalName(stagingExternalName);
-        config.setTrustManager(stagingTrustManager);
+        config.setCertFile(certFile);
+        config.setCertPassword(certPassword);
+        config.setExternalName(externalName);
+        config.setTrustManager(trustManager);
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
@@ -204,36 +208,11 @@ public class HubClientConfig {
     }
 
     public DatabaseClient newFinalClient(String dbName) {
-        DatabaseClientConfig config = new DatabaseClientConfig(host, finalPort, username, password);
-        if (dbName != null) {
-            config.setDatabase(dbName);
-        }
-        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(finalSslHostnameVerifier);
-        config.setSslContext(finalSslContext);
-        config.setCertFile(finalCertFile);
-        config.setCertPassword(finalCertPassword);
-        config.setExternalName(finalExternalName);
-        config.setTrustManager(finalTrustManager);
-        if (isHostLoadBalancer) {
-            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
-        }
-        return configuredDatabaseClientFactory.newDatabaseClient(config);
+        return getDatabaseClient(dbName, finalPort, finalAuthMethod, finalSslHostnameVerifier, finalSslContext, finalCertFile, finalCertPassword, finalExternalName, finalTrustManager);
     }
 
     public DatabaseClient newJobDbClient() {
-        DatabaseClientConfig config = new DatabaseClientConfig(host, jobPort, username, password);
-        config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));
-        config.setSslHostnameVerifier(jobSslHostnameVerifier);
-        config.setSslContext(jobSslContext);
-        config.setCertFile(jobCertFile);
-        config.setCertPassword(jobCertPassword);
-        config.setExternalName(jobExternalName);
-        config.setTrustManager(jobTrustManager);
-        if (isHostLoadBalancer) {
-            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
-        }
-        return configuredDatabaseClientFactory.newDatabaseClient(config);
+        return getDatabaseClient(null, jobPort, jobAuthMethod, jobSslHostnameVerifier, jobSslContext, jobCertFile, jobCertPassword, jobExternalName, jobTrustManager);
     }
 
     public DatabaseClient newModulesDbClient() {

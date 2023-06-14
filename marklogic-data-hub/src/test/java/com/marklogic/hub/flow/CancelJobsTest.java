@@ -5,12 +5,11 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.flow.impl.JobStatus;
-import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CancelJobsTest extends AbstractHubCoreTest {
 
@@ -32,11 +31,8 @@ public class CancelJobsTest extends AbstractHubCoreTest {
         RunFlowResponse response = runAndCancelFlow2(new FlowInputs("simpleCustomStepFlow", "1"));
         JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJobWithDetails(response.getJobId());
         String jobStatus = jobsJson.path("job").path("jobStatus").asText();
-        Boolean canceled = false;
-            if(jobStatus.equals("canceled")){
-                canceled = true;
-            }
-        assertTrue(canceled, "Unexpected job status'");
+
+        assertEquals("canceled", jobStatus, "Unexpected job status'");
     }
 
     protected RunFlowResponse runAndCancelFlow2(FlowInputs flowInputs) {
@@ -49,7 +45,7 @@ public class CancelJobsTest extends AbstractHubCoreTest {
         RunFlowResponse response = flowRunner.runFlow(flowInputs);
         waitTime();
         flowRunner.stopJob(response.jobId);
-        waitTime();
+        flowRunner.awaitCompletion();
         return response;
     }
 

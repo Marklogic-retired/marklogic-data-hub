@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.datamovement.JacksonCSVSplitter;
 import com.marklogic.client.dataservices.IOEndpoint;
 import com.marklogic.client.dataservices.InputCaller;
@@ -455,7 +456,7 @@ public class WriteStepRunner implements StepRunner {
         endpointConstants.put("jobId", jobId);
         endpointConstants.put("stepNumber", step);
         endpointConstants.put("flowName", flow.getName());
-        JsonNode optionsNode = jsonToNode(combinedOptions);
+        JsonNode optionsNode = StepRunnerUtil.jsonToNode(combinedOptions);
         endpointConstants.set("options", optionsNode);
         ErrorListener errorListener = new ErrorListener(this, stepMetrics, stopOnFailure, optionsNode.path("retryLimit").asInt(0));
         switch (inputFileType.toLowerCase()) {
@@ -512,7 +513,7 @@ public class WriteStepRunner implements StepRunner {
                         errorListener
                                 .getThrowables().stream()
                                 .filter(Objects::nonNull)
-                                .map(Throwable::toString)
+                                .map(t -> t instanceof FailedRequestException ? ((FailedRequestException)t).getServerMessage(): t.toString())
                                 .filter(Objects::nonNull)
                                 .collect(Collectors.toList())
                 );
@@ -710,7 +711,7 @@ public class WriteStepRunner implements StepRunner {
     //percentComplete for csv files is (csvFilesProcessed/ urisCount) * 100.0
     //The number of csv files would probably be less than that of regular files, so the step status listeners are updated more frequently
     //'uris' is backed by DiskQueue whose size changes as the Collection is iterated, so size is calculated before iteration
-    protected void runStatusListener(StepMetrics stepMetrics) {
+    public void runStatusListener(StepMetrics stepMetrics) {
         double uriSize = (double) stepMetrics.getTotalEventsCount();
         double batchCount = (double) stepMetrics.getTotalBatchesCount();
         long totalRunBatches = stepMetrics.getSuccessfulBatchesCount() + stepMetrics.getFailedBatchesCount();
@@ -735,21 +736,16 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
-    private static JsonNode jsonToNode(Map<String, Object> map) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.convertValue(map, JsonNode.class);
-    }
-
     static class ErrorListener implements InputCaller.BulkInputCaller.ErrorListener {
-        WriteStepRunner writeStepRunner;
+        WriteStepRunner stepRunner;
         StepMetrics stepMetrics;
-        final static List<Throwable> throwables = new ArrayList<>();
+        final List<Throwable> throwables = new ArrayList<>();
         StepStatusListener[] stepStatusListeners = null;
         int retryLimit;
         boolean stopOnFailure;
 
-        public ErrorListener(WriteStepRunner writeStepRunner, StepMetrics stepMetrics, boolean stopOnFailure, int retryLimit) {
-            this.writeStepRunner = writeStepRunner;
+        public ErrorListener(WriteStepRunner stepRunner, StepMetrics stepMetrics, boolean stopOnFailure, int retryLimit) {
+            this.stepRunner = stepRunner;
             this.stepMetrics = stepMetrics;
             this.stopOnFailure = stopOnFailure;
             this.retryLimit = retryLimit;
@@ -774,7 +770,7 @@ public class WriteStepRunner implements StepRunner {
             long failedEvents = input.length;
             stepMetrics.getSuccessfulEvents().set(stepMetrics.getSuccessfulEventsCount() - failedEvents);
             stepMetrics.getFailedEvents().addAndGet(failedEvents);
-            writeStepRunner.runStatusListener(stepMetrics);
+            stepRunner.runStatusListener(stepMetrics);
             if (throwable != null){
                 throwables.add(throwable);
             }

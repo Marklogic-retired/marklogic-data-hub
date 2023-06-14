@@ -46,34 +46,37 @@ const uriOptions = batchSize == null ? ["concurrent", "score-zero"] : [`limit=${
 const jobQuery = cts.andQuery([
   cts.collectionQuery(['Job']),
   cts.rangeQuery(cts.jsonPropertyReference('timeEnded', ['type=dateTime']), '<', initialState.retainStart),
-  // only want jobs that have finished - there can be very long running jobs
+  // only want jobs that have finished - there can be very long-running jobs
   cts.jsonPropertyValueQuery('jobStatus', ['finished', 'failed'])
 ]);
 
 const jobIds = cts.values(cts.jsonPropertyReference('jobId'), null, uriOptions, jobQuery).toArray();
-
 const batchUriQuery = cts.andQuery([
   cts.collectionQuery(['Batch']),
   cts.rangeQuery(cts.jsonPropertyReference('jobId'), '=', jobIds)
 ]);
-const batchUrisToDelete = cts.uris(null, uriOptions, batchUriQuery).toArray();
-let urisToDelete;
-let remaining;
+const forestIDs = constants.forestIDs || Sequence.from([]);
+const batchUrisToDelete = cts.uris(null, uriOptions, batchUriQuery, 0, forestIDs).toArray();
+let urisToDelete = [];
+let remaining = false;
 if (batchUrisToDelete.length > 0) {
   urisToDelete = batchUrisToDelete;
   remaining = true;
-} else {
+} else if (!cts.exists(batchUriQuery)) {
   const remainingJobCount = cts.estimate(jobQuery);
   const jobUriQuery = cts.andQuery([
     cts.collectionQuery(['Job']),
     cts.rangeQuery(cts.jsonPropertyReference('jobId'), '=', jobIds)
   ]);
-  const jobUrisToDelete = cts.uris(null, ["concurrent", "score-zero"], jobUriQuery).toArray();
+  const jobUrisToDelete = cts.uris(null, ["concurrent", "score-zero"], jobUriQuery, 0, forestIDs).toArray();
   urisToDelete = jobUrisToDelete;
   remaining = remainingJobCount > jobUrisToDelete.length;
 }
 
-jobs.deleteJobs(urisToDelete);
+remaining = remaining || cts.exists(jobQuery, null, 0, forestIDs);
+if (urisToDelete.length > 0) {
+  jobs.deleteJobs(urisToDelete);
+}
 
 const deleted = urisToDelete.length;
 let res = remaining

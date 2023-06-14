@@ -99,6 +99,11 @@ public class StepRunnerUtil {
         return combinedOptions;
     }
 
+    public static JsonNode jsonToNode(Map<String, Object> map) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(map, JsonNode.class);
+    }
+
     /**
      * Introduced in 5.5 as a way for step-specific options to be provided in the runtime options. A try/catch is used
      * here in case the user does not conform to the schema of:

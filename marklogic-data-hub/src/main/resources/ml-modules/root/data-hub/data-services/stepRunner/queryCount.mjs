@@ -23,7 +23,6 @@ import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 
 const endpointConstants = fn.head(xdmp.fromJSON(external.endpointConstants));
-const endpointState = fn.head(xdmp.fromJSON(external.endpointState));
 
 const flowName = endpointConstants.flowName;
 if (!fn.exists(flowName)) {
@@ -31,12 +30,14 @@ if (!fn.exists(flowName)) {
 }
 
 const stepNumber = endpointConstants.stepNumber;
-const jobId = endpointConstants.jobId;
 
 // These are not just the runtime options that a user can provide. It is expected that this is
 // called by the Java ScriptStepRunner class, which has its own logic for combining options.
 const options = endpointConstants.options.options || endpointConstants.options;
 
+if (options.sourceQueryLimit && (fn.number(options.sourceQueryLimit) < 0 || fn.string(fn.number(options.sourceQueryLimit)) === "NaN")) {
+  httpUtils.throwBadRequest(`Invalid sourceQueryLimit set in '${stepNumber}' of flow '${flowName}': ${options.sourceQueryLimit}`);
+}
 
 const datahub = DataHubSingleton.instance({
   performanceMetrics: !!options.performanceMetrics
@@ -54,21 +55,6 @@ if (!stepDefinition) {
   httpUtils.throwBadRequest(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
 }
 const combinedOptions = flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, options);
-const ctsQuery = xdmp.eval(collectorLib.prepareSourceQueryWithoutUris(combinedOptions, stepDefinition));
-const forestIDs = endpointConstants.forestIDs ? endpointConstants.forestIDs : xdmp.databaseForests(xdmp.database());
+const ctsQuery = cts.registeredQuery(cts.register(xdmp.eval(collectorLib.prepareSourceQueryWithoutUris(combinedOptions, stepDefinition))));
 
-const lastProcessedURI = endpointState.lastProcessedURI;
-
-const finalQuery = lastProcessedURI ? cts.andQuery([ctsQuery, cts.rangeQuery(cts.uriReference(), ">", lastProcessedURI)]): ctsQuery;
-const batchSize = combinedOptions.batchSize || 100;
-
-combinedOptions.uris = cts.uris(null, [`limit=${batchSize}`, "score-zero", "eager", "concurrent"], finalQuery, 0, forestIDs).toArray();
-if (combinedOptions.uris.length !== 0) {
-  const content = datahub.flow.findMatchingContent(flowName, stepNumber, combinedOptions);
-  datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
-
-  const latestReturnCount = combinedOptions.uris.length;
-  const newState = latestReturnCount < batchSize ? null: {lastProcessedURI: combinedOptions.uris[latestReturnCount - 1], uris: combinedOptions.uris};
-
-  newState;
-}
+cts.estimate(ctsQuery);

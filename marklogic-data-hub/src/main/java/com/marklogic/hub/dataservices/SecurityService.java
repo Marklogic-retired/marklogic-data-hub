@@ -2,10 +2,13 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.impl.BaseProxy;
 import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
 
 /**
  * Provides a set of operations on the database server
@@ -41,13 +44,13 @@ public interface SecurityService {
      */
     static SecurityService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
         final class SecurityServiceImpl implements SecurityService {
-            private final DatabaseClient dbClient;
-            private final BaseProxy baseProxy;
+            private DatabaseClient dbClient;
+            private BaseProxy baseProxy;
 
-            private final BaseProxy.DBFunctionRequest req_describeRole;
-            private final BaseProxy.DBFunctionRequest req_describeUser;
+            private BaseProxy.DBFunctionRequest req_describeRole;
+            private BaseProxy.DBFunctionRequest req_describeUser;
 
-            SecurityServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+            private SecurityServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/data-services/security/", servDecl);
 

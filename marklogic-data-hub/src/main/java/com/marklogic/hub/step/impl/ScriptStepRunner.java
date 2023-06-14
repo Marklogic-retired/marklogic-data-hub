@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.QueryBatch;
@@ -41,17 +42,20 @@ import com.marklogic.hub.step.StepStatusListener;
 import com.marklogic.hub.util.DiskQueue;
 
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
@@ -316,9 +320,19 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        // The client used here doesn't matter, given that a QueryBatcher is going to be constructed based on an
-        // Iterator. It's the step options that determine where documents are written to.
-        dataMovementManager = hubClient.getStagingClient().newDataMovementManager();
+        final String finalDatabaseName = hubClient.getDbName(DatabaseKind.FINAL);
+        final String stagingDatabaseName = hubClient.getDbName(DatabaseKind.STAGING);
+        final String sourceDatabase = Optional.ofNullable((String) combinedOptions.get("sourceDatabase")).orElse(stagingDatabaseName);
+        final DatabaseClient executeClient;
+        if (sourceDatabase.equals(finalDatabaseName)) {
+            executeClient = hubClient.getFinalClient();
+        } else if (sourceDatabase.equals(stagingDatabaseName)) {
+            executeClient = hubClient.getStagingClient();
+        } else {
+            executeClient = hubClient.getStagingClient(sourceDatabase);
+        }
+
+        dataMovementManager = executeClient.newDataMovementManager();
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -345,9 +359,12 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                     // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
                     // with the batch to help distribute load, per DHFPROD-1172.
                     StepRunnerService stepRunner = StepRunnerService.on(batch.getClient());
+                    final StringReader endpointState = new StringReader("{}");
+                    final StringReader endpointConstants = new StringReader("{}");
                     // Use SessionState to allow custom steps to create new sessions
-                    JsonNode jsonResponse = stepRunner.processBatch(stepRunner.newSessionState(),inputs);
-                    ResponseHolder response = objectMapper.readerFor(ResponseHolder.class).readValue(jsonResponse);
+                    Stream<JsonNode> jsonResponse = stepRunner.processBatch(stepRunner.newSessionState(), Stream.of(inputs), endpointState, endpointConstants);
+
+                    ResponseHolder response = objectMapper.readerFor(ResponseHolder.class).readValue(jsonResponse.skip(1).findFirst().get());
 
                     stepMetrics.getFailedEvents().addAndGet(response.errorCount);
                     stepMetrics.getSuccessfulEvents().addAndGet(response.totalCount - response.errorCount);
@@ -369,7 +386,7 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
                                 }
                             }
                         } catch (Exception ex) {
-                            logger.warn("Unable to add written documents to fullOutput map in RunStepResponse; cause: " + ex.getMessage());
+                            logger.warn("Unable to add written documents to fullOutput map in RunStepResponse.", ex);
                         }
                     }
 
@@ -519,5 +536,17 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
             return JobStatus.COMPLETED_PREFIX + step;
         }
         return JobStatus.FAILED_PREFIX + step;
+    }
+
+    public void runStatusListener(StepMetrics stepMetrics) {
+        double batchCount = (double) stepMetrics.getTotalBatchesCount();
+        long totalRunBatches = stepMetrics.getSuccessfulBatchesCount() + stepMetrics.getFailedBatchesCount();
+        int percentComplete = (int) (((double) totalRunBatches/ batchCount) * 100.0);
+        if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
+            previousPercentComplete = percentComplete;
+            stepStatusListeners.forEach((StepStatusListener listener) -> {
+                listener.onStatusChange(jobId, percentComplete, JobStatus.RUNNING_PREFIX + step, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "Ingesting");
+            });
+        }
     }
 }

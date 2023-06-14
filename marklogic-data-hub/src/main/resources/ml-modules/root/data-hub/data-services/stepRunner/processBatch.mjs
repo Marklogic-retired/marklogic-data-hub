@@ -19,7 +19,6 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 
 import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import DataHubSingleton from "/data-hub/5/datahub-singleton.mjs";
-import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
 function assertQueryMode() {
   if (fn.empty(xdmp.requestTimestamp())) {
@@ -29,7 +28,7 @@ function assertQueryMode() {
 
 assertQueryMode();
 
-const inputs = fn.head(xdmp.fromJSON(external.inputs));
+const inputs = fn.head(xdmp.fromJSON(external.input));
 
 const flowName = inputs.flowName;
 if (!fn.exists(flowName)) {
@@ -48,4 +47,22 @@ const datahub = DataHubSingleton.instance({
 });
 
 const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
-datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
+let results;
+
+try {
+  results = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
+} catch (e) {
+  results = {
+    errors: [e.toString()],
+    completedItems: [],
+    failedItems: options.uris,
+    errorCount: options.uris.length,
+    totalCount: options.uris.length
+  };
+}
+
+
+Sequence.from([
+  external.endpointState ? fn.head(xdmp.fromJSON(external.endpointState)): null,
+  results
+]);

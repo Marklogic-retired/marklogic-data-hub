@@ -356,7 +356,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 RunStepResponse stepResp = null;
 
                 try {
-                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
+                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum, runtimeOptions)
                         .withJobId(jobId)
                         .withRuntimeOptions(runtimeOptions)
                         .onItemComplete((jobID, itemID) -> {
@@ -414,7 +414,7 @@ public class FlowRunnerImpl implements FlowRunner {
                                 runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
                         });
                     } catch (Exception ex) {
-                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
+                        logger.error("Unable to invoke FlowStatusListener.", ex);
                     }
                     if(runningFlow.isStopOnError()) {
                         stopJobOnError(runningJobId);

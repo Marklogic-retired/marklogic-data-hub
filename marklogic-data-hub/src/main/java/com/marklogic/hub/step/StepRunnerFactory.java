@@ -1,5 +1,6 @@
 package com.marklogic.hub.step;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
@@ -14,8 +15,8 @@ import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.ScriptStepRunner;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
-import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,19 +48,21 @@ public class StepRunnerFactory {
         this.hubProject = clientConfig instanceof HubConfigImpl ? ((HubConfigImpl) clientConfig).getHubProject(): null;
     }
 
-    public StepRunner getStepRunner(Flow flow, String stepNum)  {
+    public StepRunner getStepRunner(Flow flow, String stepNum, Map<String, Object> runtimeOptions)  {
 
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get(stepNum);
         StepDefinition stepDef = stepDefinitionProvider.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
 
         StepRunner stepRunner;
+        Map<String, Object> combinedOptions = new HashMap<>(step.getOptions());
+        combinedOptions.putAll(runtimeOptions);
         if (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
             stepRunner = new WriteStepRunner(hubClient, hubProject);
-        } else if (((TextNode) step.getOptions().get("sourceQueryIsScript")).asBoolean()) {
-            stepRunner = new QueryStepRunner(hubClient);
-        } else {
+        } else if (optionIsTrue(combinedOptions.get("sourceQueryIsScript")) || optionIsTrue(combinedOptions.get("sourceQueryIsModule"))) {
             stepRunner = new ScriptStepRunner(hubClient);
+        } else {
+            stepRunner = new QueryStepRunner(hubClient);
         }
 
         stepRunner = stepRunner.withFlow(flow)
@@ -111,5 +114,12 @@ public class StepRunnerFactory {
             ((WriteStepRunner)stepRunner).withStepDefinition(stepDef);
         }
         return stepRunner;
+    }
+
+    private static boolean optionIsTrue(Object booleanObject) {
+        return booleanObject != null && (
+               (booleanObject instanceof JsonNode && ((JsonNode) booleanObject).asBoolean()) ||
+               (booleanObject instanceof Boolean && ((Boolean) booleanObject).booleanValue())
+        );
     }
 }

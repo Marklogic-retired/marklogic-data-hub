@@ -1006,7 +1006,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
     @Override
     public DatabaseClient newStagingClient() {
-        return newStagingClient(getStagingDbName());
+        return newStagingClient(null);
     }
 
     @Override
@@ -1018,7 +1018,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
     @Override
     public DatabaseClient newFinalClient() {
-        return newFinalClient(getFinalDbName());
+        return newFinalClient(null);
     }
 
     @Deprecated

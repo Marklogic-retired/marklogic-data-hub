@@ -1,20 +1,30 @@
 {
     "functionName": "processBatch",
+    "endpoint": "/data-hub/data-services/stepRunner/processBatch.mjs",
     "desc": "Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step",
     "params": [
         {
-          "name" : "api_session",
+          "name" : "session",
           "datatype" : "session",
+          "nullable": true,
+          "multiple":false,
           "desc" : "Holds the session object"
         },
         {
-            "name": "inputs",
+            "name": "input",
             "datatype": "jsonDocument",
+            "multiple": true,
+            "nullable": true,
+            "desc" : "Holds input for processing",
             "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
-        }
+        },
+        {"name":"endpointState",     "datatype":"jsonDocument", "multiple":false, "nullable":true},
+        {"name":"endpointConstants", "datatype":"jsonDocument", "multiple":false, "nullable":false}
     ],
     "return": {
         "datatype": "jsonDocument",
-        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+        "nullable": true,
+        "multiple": true
     }
 }
