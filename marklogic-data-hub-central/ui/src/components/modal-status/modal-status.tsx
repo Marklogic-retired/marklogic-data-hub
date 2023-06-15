@@ -22,7 +22,13 @@ const ERROR_BTN_TEXT = {
 };
 
 const ModalStatus: React.FC<Props> = props => {
-  const {user, userNotAuthenticated, handleError, clearErrorMessage, getSessionTime} = useContext(UserContext);
+  const {
+    user,
+    userNotAuthenticated,
+    handleError,
+    clearErrorMessage,
+    getSessionTime,
+    resetSessionTime} = useContext(UserContext);
   const [showModal, toggleModal] = useState(false);
   const [sessionTime, setSessionTime] = useState(SESSION_WARNING_COUNTDOWN);
   const [title, setTitle] = useState("Session Timeout");
@@ -75,7 +81,8 @@ const ModalStatus: React.FC<Props> = props => {
         if (sessionTime <= 0) {
           onCancel();
         } else {
-          setSessionTime(getSessionTime());
+          const actual = getSessionTime();
+          setSessionTime(actual > 30 ? 30 : actual);
         }
       }
     } else if (showModal && user.error.type !== "MODAL") {
@@ -97,6 +104,7 @@ const ModalStatus: React.FC<Props> = props => {
           history.push("/noresponse");
         }
       } finally {
+        resetSessionTime();
         setSessionTime(SESSION_WARNING_COUNTDOWN);
         setSessionWarning(false);
         toggleModal(false);

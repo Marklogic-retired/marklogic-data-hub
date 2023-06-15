@@ -402,10 +402,9 @@ const UserProvider: React.FC<{children: any}> = ({children}) => {
     });
   };
 
-  const resetSessionTime = () => {
-    const initialTimeoutDate = new Date();
-    initialTimeoutDate.setSeconds(initialTimeoutDate.getSeconds() + MAX_SESSION_TIME);
-    setSessionTimeoutDate(user.maxSessionTime);
+  const resetSessionTime = async () => {
+    let session = await axios("/api/environment/systemInfo");
+    setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
   };
 
   const getSessionTime = () => {
