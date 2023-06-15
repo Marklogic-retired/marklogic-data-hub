@@ -24,6 +24,7 @@ describe(("relationBetweenEntities"), () => {
 
   it("Add New Relationship example drag and drop", () => {
     graphView.getAddButton().click();
+    graphView.checkIfAddDropDownIsOpen();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.zoomOut(600);
@@ -43,6 +44,7 @@ describe(("relationBetweenEntities"), () => {
 
   it("Check type when relationship is created", () => {
     graphView.getAddButton().click();
+    graphView.checkIfAddDropDownIsOpen();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
@@ -109,6 +111,7 @@ describe(("relationBetweenEntities"), () => {
 
   it("Truncate text for a long relationship name between entities", () => {
     graphView.getAddButton().click();
+    graphView.checkIfAddDropDownIsOpen();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();
@@ -152,6 +155,7 @@ describe(("relationBetweenEntities"), () => {
 
   it("Truncate text for a long relationship name between entity and concept", () => {
     graphView.getAddButton().click();
+    graphView.checkIfAddDropDownIsOpen();
     graphView.addNewRelationship().should("be.visible").click({force: true});
     graphView.verifyEditInfoMessage().should("exist");
     modelPage.scrollPageBottom();

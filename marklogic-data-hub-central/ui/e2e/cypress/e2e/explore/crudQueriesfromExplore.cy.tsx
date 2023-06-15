@@ -286,9 +286,12 @@ describe("Save/manage queries scenarios, developer role", () => {
 
   it("Switching between queries when making changes to saved query", () => {
     entitiesSidebar.removeSelectedBaseEntity();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getClearAllFacetsButton().click();
+    browsePage.waitForSpinnerToDisappear();
     entitiesSidebar.clearQuery();
     browsePage.getResetConfirmationNoClick();
+    browsePage.waitForSpinnerToDisappear();
     cy.log("**creating query 1 with customer entity**");
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Customer");

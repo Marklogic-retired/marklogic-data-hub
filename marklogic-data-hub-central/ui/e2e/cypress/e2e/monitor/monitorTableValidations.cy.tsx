@@ -405,6 +405,8 @@ describe("Monitor Tile", () => {
   });
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+    cy.reload();
+    cy.waitForAsyncRequest();
     browsePage.clickShowMoreLink("step");
     browsePage.getShowMoreLink("step").scrollIntoView();
     monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
@@ -415,6 +417,7 @@ describe("Monitor Tile", () => {
     monitorPage.getFacetCheckbox("flow", flowName).scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("flow", flowName).should("be.checked");
     browsePage.getGreySelectedFacets(flowName).should("exist");
+    browsePage.getShowMoreLink("step-type").scrollIntoView().click();
     monitorPage.getFacetCheckbox("step-type", "ingestion").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
     browsePage.getGreySelectedFacets("ingestion").should("exist");
@@ -467,7 +470,7 @@ describe("Monitor Tile", () => {
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("step-" + "mapPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").scrollIntoView().click();
+    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("status", "completed").scrollIntoView().click({force: true});
     cy.findByTestId("step-" + "loadPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
