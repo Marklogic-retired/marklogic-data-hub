@@ -20,11 +20,11 @@ class GraphView {
       .then(val => {
         if (val === "true") {
           cy.wait(5000);
-          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+          graphView.getPhysicsAnimationToggle().scrollIntoView().click({force: true});
         } else {
-          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+          graphView.getPhysicsAnimationToggle().scrollIntoView().click({force: true});
           cy.wait(5000);
-          graphView.getPhysicsAnimationToggle().scrollIntoView().trigger("mouseover").click({force: true});
+          graphView.getPhysicsAnimationToggle().scrollIntoView().click({force: true});
         }
       }
       );

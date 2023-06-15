@@ -35,6 +35,14 @@ class GraphView {
     return cy.findByLabelText("graph-edit-mode-info");
   }
 
+  checkIfAddDropDownIsOpen() {
+    this.getAddButton().invoke("attr", "aria-expanded").then((status) => {
+      if (status === "false") {
+        this.getAddButton().click();
+      }
+    });
+  }
+
 }
 
 const graphView = new GraphView();
