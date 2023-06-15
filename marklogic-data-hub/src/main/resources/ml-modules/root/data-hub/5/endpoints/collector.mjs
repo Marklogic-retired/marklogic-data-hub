@@ -75,7 +75,7 @@ if(combinedOptions.sourceQueryIsModule == true) {
 
   const collectorFunction = hubUtils.requireFunction(sourceModule["modulePath"], sourceModule["functionName"]);
   xdmp.invokeFunction(() => {
-    return collectorFunction(combinedOptions.options);
+    return hubUtils.normalizeToSequence(collectorFunction(combinedOptions.options));
   }, {database: xdmp.database(database)})
 } else {
   if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {

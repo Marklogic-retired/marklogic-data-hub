@@ -100,7 +100,7 @@ export default class Flow {
         uris = filteredItems;
       }
 
-      if (combinedOptions.sourceQueryIsScript) {
+      if (combinedOptions.sourceQueryIsScript || (combinedOptions.sourceQueryIsModule && combinedOptions.isUpgradedLegacyFlow)) {
         // When the source query is a script, map each item to a content object with the "uri" property containing the item value
         return uris.map(uri => { return {uri}; });
       }
