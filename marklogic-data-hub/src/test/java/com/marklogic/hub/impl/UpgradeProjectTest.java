@@ -13,6 +13,8 @@ import com.marklogic.rest.util.Fragment;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * src/test/resources/upgrade-projects into the build directory (a non-version-controlled area) where it
  * can then be upgraded and verified.
  */
+@Execution(ExecutionMode.SAME_THREAD)
 public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Autowired
@@ -225,7 +228,9 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         final String projectPath = "build/tmp/upgrade-projects/" + projectName;
         final File projectDir = Paths.get(projectPath).toFile();
         try {
-            FileUtils.deleteDirectory(projectDir);
+            if(projectDir.exists()) {
+                FileUtils.forceDelete(projectDir);
+            }
             FileUtils.copyDirectory(Paths.get("src/test/resources/upgrade-projects/" + projectName).toFile(), projectDir);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
