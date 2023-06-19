@@ -104,13 +104,13 @@ const App: React.FC<Props> = ({history, location}) => {
 
   return (
     <div id="background" style={pageTheme["background"]}>
-      <NotificationProvider>
-        <MonitorProvider>
-          <SearchProvider>
-            <ModelingProvider>
-              <CurationProvider>
-                <LoadingProvider>
-                  <HubCentralConfigProvider>
+      <HubCentralConfigProvider>
+        <NotificationProvider>
+          <MonitorProvider>
+            <SearchProvider>
+              <ModelingProvider>
+                <CurationProvider>
+                  <LoadingProvider>
                     <ErrorMessageProvider>
                       <Header environment={getEnvironment()} />
                       <ModalStatus />
@@ -173,13 +173,14 @@ const App: React.FC<Props> = ({history, location}) => {
                         </ErrorBoundary>
                       </main>
                     </ErrorMessageProvider>
-                  </HubCentralConfigProvider>
-                </LoadingProvider>
-              </CurationProvider>
-            </ModelingProvider>
-          </SearchProvider>
-        </MonitorProvider>
-      </NotificationProvider>
+                  </LoadingProvider>
+                </CurationProvider>
+              </ModelingProvider>
+            </SearchProvider>
+          </MonitorProvider>
+        </NotificationProvider>
+      </HubCentralConfigProvider>
+
     </div>
   );
 };

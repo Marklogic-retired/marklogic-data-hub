@@ -4,7 +4,7 @@ import Graph from "react-graph-vis";
 import graphConfig from "@config/graph-vis.config";
 import * as _ from "lodash";
 import {SearchContext} from "@util/search-context";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig} from "@util/hubCentralConfig-context";
 import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
 import {defaultIcon, defaultConceptIcon, graphViewConfig} from "@config/explore.config";
@@ -60,7 +60,7 @@ const GraphVisExplore: React.FC<Props> = props => {
 
   const {searchOptions, setGraphViewOptions, savedNode, setSavedNode, entityInstanceId} = useContext(SearchContext);
   const {user} = useContext(UserContext);
-  const {hubCentralConfig} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);

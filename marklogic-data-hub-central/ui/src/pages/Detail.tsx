@@ -21,7 +21,7 @@ import {DynamicIcons, HCDivider, HCTable, HCTooltip} from "@components/common";
 import {FileEarmarkBinary, FileEarmarkText} from "react-bootstrap-icons";
 import ExpandCollapse from "../components/expand-collapse/expand-collapse";
 import _ from "lodash";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig} from "@util/hubCentralConfig-context";
 import {entityFromJSON, entityParser} from "@util/data-conversion";
 import {themeColors} from "@config/themes.config";
 import {ReactComponent as Ontology} from "../assets/ontology.svg";
@@ -30,7 +30,7 @@ interface Props extends RouteComponentProps<any> {}
 
 const Detail: React.FC<Props> = ({history, location}) => {
   const {setSavedQueries, entityDefinitionsArray, setEntityDefinitionsArray} = useContext(SearchContext);
-  const {hubCentralConfig} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
   const {user, handleError} = useContext(UserContext);
   const [parentPagePreferences, setParentPagePreferences] = useState({});
   const accordionsKey = new Set<string>();

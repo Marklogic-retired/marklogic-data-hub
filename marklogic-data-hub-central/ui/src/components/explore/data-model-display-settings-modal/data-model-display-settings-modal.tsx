@@ -5,7 +5,7 @@ import {HCButton, HCDivider, HCModal} from "@components/common";
 import {themeColors} from "@config/themes.config";
 import {defaultIcon} from "@config/explore.config";
 import {UserContext} from "@util/user-context";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig, useHubCentralConfigFunctions} from "@util/hubCentralConfig-context";
 import * as _ from "lodash";
 import EntityDisplaySettings, {EntityTableColumns} from "./entity-display-settings/entity-display-settings";
 import ConceptsDisplaySettings, {ConceptsTableColumns} from "./concepts-display-settings/concepts-display-settings";
@@ -40,7 +40,8 @@ const DataModelDisplaySettingsModal: React.FC<Props> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [visibleSettings, setVisibleSettings] = useState<eVisibleSettings>(eVisibleSettings.EntityType);
 
-  const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
+  const {updateHubCentralConfigOnServer} = useHubCentralConfigFunctions();
   const {setNotificationsObj} = useContext(NotificationContext);
 
   useEffect(() => {

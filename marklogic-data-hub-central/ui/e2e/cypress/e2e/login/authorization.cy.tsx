@@ -148,7 +148,6 @@ describe("Login", () => {
     cy.log("**Navigates to Load and adds a New Step**");
     toolbar.getLoadToolbarIcon().click();
     cy.wait("@lastRequest");
-    cy.wait("@lastRequest");
     loadPage.addNewButton("card").should("be.visible").click();
 
     cy.log("**Writes the step name and saves changes**");

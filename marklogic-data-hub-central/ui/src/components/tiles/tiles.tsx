@@ -19,7 +19,7 @@ import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
 import DataModelDisplaySettingsModal from "@components/explore/data-model-display-settings-modal/data-model-display-settings-modal";
 import tooltipsConfig from "@config/explorer-tooltips.config";
 import {convertArrayOfEntitiesToObject} from "@util/modeling-utils";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfigFunctions} from "@util/hubCentralConfig-context";
 
 interface Props {
   id: string;
@@ -44,7 +44,7 @@ const Tiles: React.FC<Props> = props => {
   const [exploreSettingsModal, setExploreSettingsModal] = useState(false);
 
   const [entityModels, setEntityModels] = useState<any>({});
-  const {getHubCentralConfigFromServer} = useContext(HubCentralConfigContext);
+  const {getHubCentralConfigFromServer} = useHubCentralConfigFunctions();
 
   /*** For Manage Queries - Explore tab ****/
   const auth = useContext(AuthoritiesContext);

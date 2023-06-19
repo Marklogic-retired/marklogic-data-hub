@@ -32,7 +32,7 @@ import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ViewType} from "../types/modeling-types";
 import {themeColors} from "@config/themes.config";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig} from "@util/hubCentralConfig-context";
 import {baseEntitiesSorting} from "@util/entities-sorting";
 import {getRelatedConcepts} from "@api/facets";
 import {getEnvironment} from "@util/environment";
@@ -57,7 +57,7 @@ const Browse: React.FC<Props> = ({location}) => {
     savedNode,
     setSavedNode,
   } = useContext(SearchContext);
-  const {hubCentralConfig} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
   const [data, setData] = useState<any[]>([]);

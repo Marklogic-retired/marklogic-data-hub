@@ -27,7 +27,7 @@ import {ErrorMessageContext} from "@util/error-message-context";
 import {HCButton, HCModal} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig, useHubCentralConfigFunctions} from "@util/hubCentralConfig-context";
 
 export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
@@ -44,8 +44,9 @@ const INITIAL_SELECTION = ""; // '' for no tile initially
 
 const TilesView = props => {
   const {handleError} = useContext(UserContext);
-  const {hubCentralConfig, getHubCentralConfigFromServer, updateHubCentralConfigOnServer} =
-    useContext(HubCentralConfigContext);
+  const {getHubCentralConfigFromServer, updateHubCentralConfigOnServer} =
+    useHubCentralConfigFunctions();
+  const {hubCentralConfig} = useHubCentralConfig();
   const [selection, setSelection] = useState<TileId | string>(INITIAL_SELECTION);
   const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
   const [options, setOptions] = useState<TileItem | null>(null);
