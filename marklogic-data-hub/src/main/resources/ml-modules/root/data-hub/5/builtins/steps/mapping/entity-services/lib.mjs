@@ -8,6 +8,8 @@ import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import mappingLib from "/data-hub/5/mapping/mapping-lib.mjs";
 import mappingStepLib from "/data-hub/5/builtins/steps/mapping/default/lib.mjs";
 import flowUtils from "/data-hub/5/impl/flow-utils.mjs";
+const json=require("/MarkLogic/json/json.xqy");
+const memOp = require("/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations.xqy");
 
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const infoEvent = consts.TRACE_MAPPING;
@@ -408,16 +410,21 @@ function validateAndTestMapping(mapping, uri) {
   //modify the document instance with the properly updated one if a pre-step interceptor was used
   let newDocumentIsLoad = false;
   if (mapping.name) {
+    let docActual = cts.doc(uri);
     const updatedDocument = invokeGetDocument(mapping.name, uri);
+    sourceDocument = docActual.toObject();
     if (updatedDocument && updatedDocument.format === "JSON") {
-      sourceDocument = cts.doc(uri).toObject();
       if (sourceDocument) {
         sourceDocument = updatedDocument.data;
         sourceDocument = xdmp.toJSON(sourceDocument);
         newDocumentIsLoad = true;
       }
+    }else if (updatedDocument && updatedDocument.format === "XML") {
+        const updatedData = updatedDocument.data;
+           sourceDocument = updatedData;
+           newDocumentIsLoad = true;
+      }
     }
-  }
   if (!newDocumentIsLoad) {
     sourceDocument = cts.doc(uri);
   }
@@ -450,7 +457,7 @@ function validateAndTestMapping(mapping, uri) {
 function invokeGetDocument(stepName, uri) {
   return fn.head(xdmp.invoke(
     "/data-hub/data-services/mapping/getDocument.mjs",
-    {stepName: stepName, uri: uri}
+    {stepName: stepName, uri: uri, keepSameType: true}
   ));
 }
 

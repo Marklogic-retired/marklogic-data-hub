@@ -28,6 +28,7 @@ import xmlToJsonForMapping from "/data-hub/data-services/mapping/xmlToJsonForMap
 
 const stepName = external.stepName;
 const uri = external.uri;
+const keepSameType = external.keepSameType;
 
 const response = {
   data: null,
@@ -75,7 +76,7 @@ catch(e){
 }
 
 let doc = contentArray[0].value;
-
+let xmlNode;
 response.format = originalDoc.documentFormat;
 const isJson = response.format.toUpperCase() === 'JSON';
 if (isJson) {
@@ -89,7 +90,6 @@ if (isJson) {
   }
 
 } else {
-  let xmlNode;
   if (mappingStep.sourceRecordScope === "entireRecord") {
     xmlNode = doc;
   } else {
@@ -98,12 +98,16 @@ if (isJson) {
       xmlNode = doc;
     }
   }
+}
 
+if(keepSameType && !isJson ){
+  response.data = xmlNode;
+}else if(!isJson){
   const transformResult = xmlToJsonForMapping.transform(xmlNode);
   response.data = transformResult.data;
-
   response.namespaces = Object.assign({ "entity-services": "http://marklogic.com/entity-services"}, transformResult.namespaces);
 }
+
 response.sourceProperties = sourcePropsLib.buildSourceProperties(response.data, isJson);
 
 response;
