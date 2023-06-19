@@ -224,8 +224,11 @@ const Flows: React.FC<Props> = ({
               openFilePicker();
               setStartRun(false);
             } else {
-              runStep(newStepToFlowOptions?.flowName, stepsInFlow[stepsInFlow.length - 1]);
-              setStartRun(false);
+              const flowFromFlows = flows.find(f => f.name === newStepToFlowOptions?.flowName);
+              if (flowFromFlows) {
+                runStep(newStepToFlowOptions?.flowName, stepsInFlow[stepsInFlow.length - 1]);
+                setStartRun(false);
+              }
             }
           }
           //run step that is already inside a flow

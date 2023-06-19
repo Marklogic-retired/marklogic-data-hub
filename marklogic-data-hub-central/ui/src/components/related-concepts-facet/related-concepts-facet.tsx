@@ -4,7 +4,7 @@ import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {entitiesSorting} from "@util/entities-sorting";
 import {defaultIcon, exploreSidebar} from "@config/explore.config";
 import {SearchContext} from "@util/search-context";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig} from "@util/hubCentralConfig-context";
 import * as _ from "lodash";
 
 import {DynamicIcons, HCFacetIndicator} from "@components/common";
@@ -29,7 +29,7 @@ const RelatedConceptsFacets: React.FC<Props> = props => {
   const [showMore, setShowMore] = useState<boolean>(false);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedList, setCheckedList] = useState<any[]>([]);
-  const {hubCentralConfig} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
   const [conceptsConfig, setConceptsConfig] = useState<any>({});
 
   useEffect(() => {

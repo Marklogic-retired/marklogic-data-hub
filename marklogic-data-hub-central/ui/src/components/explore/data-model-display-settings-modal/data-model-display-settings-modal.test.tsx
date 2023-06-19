@@ -5,7 +5,7 @@ import "@testing-library/jest-dom/extend-expect";
 import DataModelDisplaySettingsModal from "./data-model-display-settings-modal";
 import {BrowserRouter as Router} from "react-router-dom";
 import {entityDefinitionsArray, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {HubCentralConfigContext, HubCentralConfigFunctionsContext} from "@util/hubCentralConfig-context";
 
 const entityType = "Customer";
 const entityTypeProperty = "name";
@@ -13,9 +13,12 @@ const entityTypeColor = "#FFF0A3";
 
 const defaultContextOptions = {
   hubCentralConfig,
+};
+
+const defaultContextFunctions = {
   setHubCentralConfig: jest.fn(),
   getHubCentralConfigFromServer: jest.fn(),
-  updateHubCentralConfigOnServer: jest.fn(),
+  updateHubCentralConfigOnServer: jest.fn()
 };
 
 describe("Entity type display settings modal", () => {
@@ -24,14 +27,16 @@ describe("Entity type display settings modal", () => {
   test("Render entity type display settings modal", () => {
     const {getByLabelText, getAllByLabelText} = render(
       <Router>
-        <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal
-            entityModels={[]}
-            toggleModal={jest.fn()}
-            isVisible={true}
-            entityDefinitionsArray={entityDefinitionsArray}
-          />
-        </HubCentralConfigContext.Provider>
+        <HubCentralConfigFunctionsContext.Provider value={defaultContextFunctions}>
+          <HubCentralConfigContext.Provider value={defaultContextOptions}>
+            <DataModelDisplaySettingsModal
+              entityModels={[]}
+              toggleModal={jest.fn()}
+              isVisible={true}
+              entityDefinitionsArray={entityDefinitionsArray}
+            />
+          </HubCentralConfigContext.Provider>
+        </HubCentralConfigFunctionsContext.Provider>
       </Router>,
     );
     expect(getByLabelText(`${entityType}-entityType`)).toBeInTheDocument();
@@ -44,14 +49,17 @@ describe("Entity type display settings modal", () => {
   test("Open color and icon picker, choose a color and save", () => {
     const {getByLabelText, queryByLabelText, getByText, getByTitle} = render(
       <Router>
-        <HubCentralConfigContext.Provider value={defaultContextOptions}>
-          <DataModelDisplaySettingsModal
-            entityModels={[]}
-            toggleModal={jest.fn()}
-            isVisible={true}
-            entityDefinitionsArray={entityDefinitionsArray}
-          />
-        </HubCentralConfigContext.Provider>
+        <HubCentralConfigFunctionsContext.Provider value={defaultContextFunctions}>
+          <HubCentralConfigContext.Provider value={defaultContextOptions}>
+            <DataModelDisplaySettingsModal
+              entityModels={[]}
+              toggleModal={jest.fn()}
+              isVisible={true}
+              entityDefinitionsArray={entityDefinitionsArray}
+            />
+          </HubCentralConfigContext.Provider>
+        </HubCentralConfigFunctionsContext.Provider>
+
       </Router>,
     );
 
@@ -85,6 +93,6 @@ describe("Entity type display settings modal", () => {
     expect(getByLabelText(`${entityType}-labelOption-${entityTypeProperty}`)).toBeInTheDocument();
 
     userEvent.click(getByText("Save"));
-    expect(defaultContextOptions.updateHubCentralConfigOnServer).toHaveBeenCalledTimes(1);
+    expect(defaultContextFunctions.updateHubCentralConfigOnServer).toHaveBeenCalledTimes(1);
   });
 });

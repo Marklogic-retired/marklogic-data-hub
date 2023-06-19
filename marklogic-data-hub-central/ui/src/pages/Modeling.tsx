@@ -34,7 +34,7 @@ import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 import {HCAlert, HCButton, HCTooltip} from "@components/common";
 import {updateUserPreferences} from "../services/user-preferences";
 import {entitiesConfigExist} from "@util/modeling-utils";
-import {HubCentralConfigContext} from "@util/hubCentralConfig-context";
+import {useHubCentralConfig, useHubCentralConfigFunctions} from "@util/hubCentralConfig-context";
 import ConceptClassModal from "@components/modeling/concept-class-modal/concept-class-modal";
 import {Dropdown, DropdownButton} from "react-bootstrap";
 import {ChevronDown} from "react-bootstrap-icons";
@@ -74,7 +74,8 @@ const Modeling: React.FC = () => {
   const [arrayValues, setArrayValues] = useState<string[]>([]);
 
   //hubCentral Config
-  const {hubCentralConfig, updateHubCentralConfigOnServer} = useContext(HubCentralConfigContext);
+  const {hubCentralConfig} = useHubCentralConfig();
+  const {updateHubCentralConfigOnServer} = useHubCentralConfigFunctions();
   const [revertUnpublishedChanges, setRevertUnpublishedChanges] = useState(false);
 
   //Concept Classes
