@@ -25,7 +25,7 @@ class Tiles {
   }
 
   itemRowInTable(item: string) {
-    return cy.waitUntil(() => cy.get(`[data-row-key="${item}"]`));
+    return cy.get(`[data-row-key="${item}"]`);
   }
 
   closeTile() {

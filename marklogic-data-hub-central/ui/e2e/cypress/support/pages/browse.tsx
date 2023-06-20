@@ -260,11 +260,11 @@ class BrowsePage {
   // common
   selectDateRange(options?: {time?: string}) {
     this.getDateFacetPicker(options).click();
-    cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
-    cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child")).click({force: true});
+    cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child").click({force: true});
+    cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child").click({force: true});
 
     if (options && options.time) {
-      cy.waitUntil(() => cy.get(".daterangepicker .applyBtn").click());
+      cy.get(".daterangepicker .applyBtn").click();
     }
   }
 
@@ -478,7 +478,7 @@ class BrowsePage {
   }
 
   selectColumnSelectorProperty(name: string) {
-    cy.waitUntil(() => cy.findByTestId("column-selector-popover"));
+    cy.findByTestId("column-selector-popover");
     cy.get("[data-testid=node-" + name + "] .rc-tree-checkbox").click({force: true});
   }
 

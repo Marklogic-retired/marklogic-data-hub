@@ -13,7 +13,7 @@ class MergeRuleModal {
         }
       }
     });
-    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+    cy.findByLabelText(`${property}-option`).should("not.be.visible");
   }
 
   selectStructuredPropertyToMerge(parent: string, property: string) {
@@ -24,7 +24,7 @@ class MergeRuleModal {
     cy.get(`[aria-label="${parent}-option"]`).find(`[aria-label="icon: caret-down"]`).should("be.visible").click({force: true});
     // click on the property selected
     cy.get(`[aria-label="${structuredProperty}-option"]`).should("be.visible").click({force: true});
-    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+    cy.findByLabelText(`${property}-option`).should("not.be.visible");
   }
 
   selectMergeTypeDropdown(mergeType: string) {
@@ -58,7 +58,7 @@ class MergeRuleModal {
 
   selectStrategyName(strategyName: string) {
     cy.get("#strategyName-select-wrapper").should("be.visible").click();
-    cy.waitUntil(() => cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible")).click({force: true});
+    cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible").click({force: true});
   }
 
   getStrategySelect() {

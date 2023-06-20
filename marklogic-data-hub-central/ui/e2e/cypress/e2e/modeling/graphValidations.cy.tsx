@@ -193,7 +193,7 @@ describe("Graph Validations", {defaultCommandTimeout: 40000}, () => {
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});//.should("exist").click();
     entityTypeModal.newEntityName("a-Test2");
     entityTypeModal.newEntityDescription("Entity description test2");
-    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeModal.getAddButton().click();
 
     cy.log("**Add attributes to Test2**");
     cy.get("[data-testid='entityName']").scrollIntoView().should("be.visible").click();

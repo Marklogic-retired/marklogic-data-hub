@@ -45,7 +45,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.getSelectedFacet("birthDate:").should("exist");
     browsePage.getDateFacetPicker().trigger("mouseover");
-    cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
+    browsePage.getDateFacetClearIcon().click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
   });
 
@@ -107,7 +107,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetItemCheckbox("fname", "Alexandra").click();
     browsePage.getGreySelectedFacets("Alexandra").should("exist");
     runPage.navigate();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    runPage.getFlowName("personJSON").should("be.visible");
     runPage.expandFlow("personJSON");
     runPage.runStep("mapPersonJSON", "personJSON");
     runPage.verifyStepRunResult("mapPersonJSON", "success");
@@ -127,7 +127,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.getSelectedFacet("updated:").should("exist");
     browsePage.getDateFacetPicker({time: "updated"}).trigger("mouseover");
-    cy.waitUntil(() => browsePage.getDateFacetClearIcon({time: "updated"})).click({force: true});
+    browsePage.getDateFacetClearIcon({time: "updated"}).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
   });
 });

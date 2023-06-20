@@ -76,7 +76,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.clearAllLocalStorage();
     cy.loginAsDeveloper().withRequest();
     LoginPage.navigateToMainPage();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     cy.wait(6000);
     entitiesSidebar.switchToFinalDatabase();
     entitiesSidebar.toggleEntitiesView();
@@ -101,7 +101,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
   });
 
   it("Verify query parameters for final database on browse page", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     entitiesSidebar.toggleEntitiesView();
     entitiesSidebar.clearAllFacetsApplied();
 
@@ -146,7 +146,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.clearAllLocalStorage();
     cy.loginAsDeveloper().withRequest();
     LoginPage.navigateToMainPage();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     cy.wait(6000);
     browsePage.getTableView().click();
     explorePage.getStagingDatabaseButton();

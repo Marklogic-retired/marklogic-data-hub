@@ -42,11 +42,11 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageTop();
     modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("AThisIsVeryLongNameHavingMoreThan20Characters");
     entityTypeModal.newEntityDescription("entity description");
-    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
     entityTypeModal.getAddButton().should("not.exist");
     cy.scrollTo("top");
@@ -296,9 +296,9 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitForAsyncRequest();
     cy.wait(2000);
     graphView.getAddButton().click();
-    cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));
+    graphView.addNewRelationship().should("be.visible");
     graphView.addNewRelationship().click({force: true});
-    cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
+    graphView.verifyEditInfoMessage().should("exist");
 
     cy.log("**add second relationship**");
     graphView.getAddButton().click();
@@ -413,7 +413,7 @@ describe("Entity Modeling: Graph View", () => {
     });
 
     confirmationModal.deleteRelationship();
-    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-no").click());
+    cy.findByLabelText("confirm-deletePropertyWarn-no").click();
     relationshipModal.cancelModal();
     cy.wait(3000);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
@@ -447,7 +447,7 @@ describe("Entity Modeling: Graph View", () => {
     });
 
     confirmationModal.deleteRelationship();
-    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-yes").click());
+    cy.findByLabelText("confirm-deletePropertyWarn-yes").click();
     cy.log("** To verify that property is not visible**");
     cy.wait(3000);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {

@@ -41,7 +41,7 @@ describe("Concept classes in Modeling screen", () => {
 
     conceptClassModal.newConceptClassName("test_Shoe-Style");
     conceptClassModal.newConceptClassDescription("Different categories of shoe styles.");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
+    conceptClassModal.getAddButton().click();
     conceptClassModal.getAddButton().should("not.exist");
 
     cy.wait(5000);
@@ -70,8 +70,8 @@ describe("Concept classes in Modeling screen", () => {
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("test_Shoe-Style");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
-    cy.waitUntil(() => conceptClassModal.conceptClassNameError().should("exist"));
+    conceptClassModal.getAddButton().click();
+    conceptClassModal.conceptClassNameError().should("exist");
     conceptClassModal.getCancelButton().click();
     cy.wait(1000);
 
@@ -79,8 +79,8 @@ describe("Concept classes in Modeling screen", () => {
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("1TestConcept");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
-    cy.waitUntil(() => conceptClassModal.conceptModalValidationError().should("exist"));
+    conceptClassModal.getAddButton().click();
+    conceptClassModal.conceptModalValidationError().should("exist");
     conceptClassModal.getCancelButton().click();
     cy.wait(1000);
 
@@ -88,8 +88,8 @@ describe("Concept classes in Modeling screen", () => {
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("_TestConcept");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
-    cy.waitUntil(() => conceptClassModal.conceptModalValidationError().should("exist"));
+    conceptClassModal.getAddButton().click();
+    conceptClassModal.conceptModalValidationError().should("exist");
     conceptClassModal.getCancelButton().click();
     cy.wait(1000);
 
@@ -97,8 +97,8 @@ describe("Concept classes in Modeling screen", () => {
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("-TestConcept");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
-    cy.waitUntil(() => conceptClassModal.conceptModalValidationError().should("exist"));
+    conceptClassModal.getAddButton().click();
+    conceptClassModal.conceptModalValidationError().should("exist");
     conceptClassModal.getCancelButton().click();
     cy.wait(1000);
 
@@ -106,8 +106,8 @@ describe("Concept classes in Modeling screen", () => {
     graphView.getAddButton().click();
     graphView.getAddConceptClassOption().should("be.visible").click({force: true});
     conceptClassModal.newConceptClassName("[!@#$%^&*()<>]");
-    cy.waitUntil(() => conceptClassModal.getAddButton().click());
-    cy.waitUntil(() => conceptClassModal.conceptModalValidationError().should("exist"));
+    conceptClassModal.getAddButton().click();
+    conceptClassModal.conceptModalValidationError().should("exist");
     conceptClassModal.getCancelButton().click();
     cy.wait(1000);
   });

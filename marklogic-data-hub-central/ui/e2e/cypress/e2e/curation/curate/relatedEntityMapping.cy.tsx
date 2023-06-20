@@ -68,7 +68,7 @@ describe("Mapping", () => {
     modelPage.navigate();
     modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click({force: true});
+    modelPage.getAddButton().click({force: true});
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("TestEntity");
     entityTypeModal.getAddButton().click();
@@ -77,7 +77,7 @@ describe("Mapping", () => {
 
     cy.publishDataModel();
     curatePage.navigate();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("TestEntity")).should("be.visible");
+    curatePage.getEntityTypePanel("TestEntity").should("be.visible");
     curatePage.getEntityTypePanel("TestEntity").should("exist");
     curatePage.toggleEntityTypeId("TestEntity");
     cy.contains("This functionality is not implemented yet.").should("not.exist");

@@ -39,7 +39,7 @@ describe("Monitor Tile", () => {
   it("Create a flow, add steps to flow and run it", {defaultCommandTimeout: 120000}, () => {
     runPage.navigate();
 
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    runPage.getFlowName("personJSON").should("be.visible");
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);

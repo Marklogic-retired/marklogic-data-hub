@@ -5,7 +5,7 @@ class RulesetSingleModal {
     cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     });
-    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+    cy.findByLabelText(`${property}-option`).should("not.be.visible");
   }
 
   selectStructuredPropertyToMatch(parent: string, property: string) {
@@ -16,7 +16,7 @@ class RulesetSingleModal {
     cy.get(`[aria-label="${parent}-option"]`).find(`[aria-label="icon: caret-down"]`).should("be.visible").click({force: true});
     // click on the property selected
     cy.get(`[aria-label="${structuredProperty}-option"]`).should("be.visible").click({force: true});
-    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+    cy.findByLabelText(`${property}-option`).should("not.be.visible");
   }
 
   selectMatchTypeDropdown(matchType: string) {

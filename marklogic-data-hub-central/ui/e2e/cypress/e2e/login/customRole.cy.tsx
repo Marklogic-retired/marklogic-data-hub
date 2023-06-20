@@ -1,9 +1,10 @@
-import {toolbar, tiles, confirmationModal} from "../../support/components/common/index";
+import {tiles, confirmationModal} from "../../support/components/common/index";
 import {ConfirmationType} from "../../support/types/modeling-types";
 import curatePage from "../../support/pages/curate";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import "cypress-wait-until";
+import modelPage from "../../support/pages/model";
 
 describe("Custom Role", () => {
   before(() => {
@@ -27,16 +28,16 @@ describe("Custom Role", () => {
     cy.loginAsTestUserWithRoles("hc-custom-role").withUI();
     cy.url().should("include", "/tiles");
 
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.navigate();
     cy.waitForAsyncRequest();
     loadPage.loadView("th-large").should("be.visible");
 
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.navigate();
     cy.waitForAsyncRequest();
     tiles.getModelTile().should("exist");
 
     let entityTypeId = "Customer";
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    curatePage.navigate();
     cy.waitForAsyncRequest();
     cy.get("body")
       .then(($body) => {
@@ -48,7 +49,7 @@ describe("Custom Role", () => {
     curatePage.verifyTabs(entityTypeId, "be.visible", "be.visible");
 
     const flowName = "personJSON";
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.navigate();
     cy.waitForAsyncRequest();
     runPage.createFlowButton().should("be.disabled");
     cy.findByText(flowName).should("be.visible");

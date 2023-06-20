@@ -177,7 +177,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentEntity().should("contain", "Customer");
     explorePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText();
   });
 
   it("Verify detail view of the document with encoded uri", () => {
@@ -195,7 +195,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
     explorePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText();
     browsePage.getSearchText().clear();
 
     entitiesSidebar.selectEntity("All Entities");
@@ -212,7 +212,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     explorePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText();
     browsePage.switchToSnippetView();
   });
 
@@ -226,7 +226,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getSourceView().click();
     detailPage.getDocumentJSON().should("exist");
     explorePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText();
   });
 
   it("verify detail page source and instance tooltips", () => {

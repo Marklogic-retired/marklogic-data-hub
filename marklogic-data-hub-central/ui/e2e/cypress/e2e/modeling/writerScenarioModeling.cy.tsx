@@ -39,11 +39,11 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageTop();
     modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Student");
     entityTypeModal.newEntityDescription("Student entity description");
-    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeModal.getAddButton().click();
 
     cy.log("**Clicking on revert change button to discard unpublished changes in table view**");
     entityTypeTable.getRevertButtonTableView().click();
@@ -52,11 +52,11 @@ describe("Entity Modeling: Graph View", () => {
     entityTypeTable.getEntity("Student").should("not.exist");
 
     cy.log("**Creating new entity Employee in graph view**");
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Employee");
     entityTypeModal.newEntityDescription("Employee entity description");
-    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeModal.getAddButton().click();
     entityTypeTable.viewEntityInGraphView("Employee");
 
     cy.log("**Clicking on revert change button to discard unpublished changes in graph view**");
