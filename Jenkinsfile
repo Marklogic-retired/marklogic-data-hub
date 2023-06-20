@@ -878,9 +878,10 @@ def cypressE2ePostFailedWin(){
                 rmdir /s /q "%STAGE_NAME%" || true
                 mkdir "%STAGE_NAME%\\MLLogs"
                 xcopy /s /e /i "C:\\Program Files\\MarkLogic\\Data\\Logs\\*" "%WORKSPACE%\\MLLogs\\" || true
-                mkdir "%STAGE_NAME%\\E2ELogs"
-                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\videos" "%STAGE_NAME%\\E2ELogs\\"
-                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\screenshots" "%STAGE_NAME%\\E2ELogs\\"
+                mkdir "%STAGE_NAME%\\E2ELogs\\videos"
+                mkdir "%STAGE_NAME%\\E2ELogs\\screenshots"
+                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\videos" "%STAGE_NAME%\\E2ELogs\\videos"
+                xcopy /s /e /i "%WORKSPACE%\\data-hub\\marklogic-data-hub-central\\ui\\e2e\\cypress\\screenshots" "%STAGE_NAME%\\E2ELogs\\screenshots"
     '''
     archiveArtifacts artifacts: "**/E2ELogs/**/videos/**/*,**/E2ELogs/**/screenshots/**/*,${STAGE_NAME}/MLLogs/**/*"
     println("$STAGE_NAME Failed")
