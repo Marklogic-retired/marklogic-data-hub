@@ -387,6 +387,8 @@ class BrowsePage {
   clickShowMoreLink(facet: string) {
     cy.get("body").findByTestId(`show-more-${facet}`).then($button => {
       if ($button.is(":visible")) {
+        cy.waitForAsyncRequest();
+        browsePage.getShowMoreLink(facet).scrollIntoView();
         cy.findByTestId(`show-more-${facet}`).click();
       } else {
         cy.log("Show More Link for the facet is not found");

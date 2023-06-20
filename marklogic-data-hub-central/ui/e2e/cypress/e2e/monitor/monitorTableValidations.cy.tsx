@@ -404,16 +404,14 @@ describe("Monitor Tile", () => {
     runPage.getFlowStatusModal().should("not.exist");
   });
 
-  it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
+  it("Apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
     cy.reload();
     cy.waitForAsyncRequest();
     browsePage.clickShowMoreLink("step");
-    browsePage.getShowMoreLink("step").scrollIntoView();
     monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
     browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
     browsePage.clickShowMoreLink("flow");
-    browsePage.getShowMoreLink("flow").scrollIntoView();
     monitorPage.getFacetCheckbox("flow", flowName).scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("flow", flowName).should("be.checked");
     browsePage.getGreySelectedFacets(flowName).should("exist");
