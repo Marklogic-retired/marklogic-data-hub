@@ -76,7 +76,7 @@ class PropertyModal {
     this.getForeignKeySelectWrapper().trigger("mouseover").click();
   }
   getForeignKey(propertyName: string) {
-    return cy.waitUntil(() => cy.findByLabelText(`${propertyName}-option`));
+    return cy.findByLabelText(`${propertyName}-option`);
   }
   checkForeignKeyDropdownLength(len: number) {
     return cy.get(`#foreignKey-select-MenuList [role="option"]`).should("have.length", len);

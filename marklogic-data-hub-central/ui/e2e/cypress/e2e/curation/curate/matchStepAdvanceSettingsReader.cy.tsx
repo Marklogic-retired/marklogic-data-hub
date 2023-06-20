@@ -11,10 +11,10 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.getEntityTypePanel("Person").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
-    cy.waitUntil(() => curatePage.addNewStep("Person"));
+    curatePage.addNewStep("Person");
   });
 
   it("Validate the default Advanced settings are disabled", () => {

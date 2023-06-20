@@ -21,9 +21,9 @@ describe("Check visibility of dropdown with search in mapping step details table
   });
 
   it("Create mapping step and check the visibility of the dropdowns related to source, function and reference", () => {
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep("Order").click());
+    curatePage.addNewStep("Order").click();
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping");
     createEditMappingDialog.setSourceRadio("Query");

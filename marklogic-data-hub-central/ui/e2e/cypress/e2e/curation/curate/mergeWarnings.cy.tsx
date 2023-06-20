@@ -22,10 +22,10 @@ describe("Validate Merge warnings", () => {
   });
 
   it("Navigate to curate tab and Open Person entity", () => {
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMergeTab("Person");
-    cy.waitUntil(() => curatePage.addNewStep("Person"));
+    curatePage.addNewStep("Person");
   });
 
   it("Creating a new merge step ", () => {
@@ -64,7 +64,7 @@ describe("Validate Merge warnings", () => {
   it("Click on cancel and reopen the merge step", () => {
     curatePage.cancelSettings(mergeStep).click();
     cy.wait(1000);
-    cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
+    curatePage.editStep(mergeStep).click({force: true});
     curatePage.alertContent().should("not.exist");
     curatePage.switchEditAdvanced().click();
     curatePage.mergeTargetCollection("onMerge").eq(1).should("have.text", "match-person\nPerson");
@@ -84,7 +84,7 @@ describe("Validate Merge warnings", () => {
     advancedSettings.keepTargetCollection("onMerge");
     cy.wait(1000);
     curatePage.saveSettings(mergeStep).click();
-    cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
+    curatePage.editStep(mergeStep).click({force: true});
     curatePage.alertContentAriaLabel("Warning: Target Collections includes the source collection match-person").should("exist");
     curatePage.alertContentAriaLabel("Warning: Target Collections includes the source collection match-person").should("contain", "Please remove source collection from target collections");
     cy.findByTestId("onMerge-edit").click();
@@ -107,8 +107,8 @@ describe("Validate Merge warnings", () => {
       }
     });
     curatePage.selectMergeTab("Person");
-    cy.waitUntil(() => curatePage.addNewStep("Person"));
-    cy.waitUntil(() => curatePage.editStep(mergeStep).should("be.visible")).click({force: true});
+    curatePage.addNewStep("Person");
+    curatePage.editStep(mergeStep).should("be.visible").click({force: true});
     curatePage.alertContent().should("not.exist");
     curatePage.switchEditAdvanced().click();
     curatePage.alertContent().should("not.exist");

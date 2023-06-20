@@ -18,10 +18,10 @@ describe("Validate Match warnings", () => {
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
-    cy.waitUntil(() => curatePage.addNewStep("Person"));
+    curatePage.addNewStep("Person");
   });
 
   it("Creating a new match step", () => {
@@ -35,7 +35,7 @@ describe("Validate Match warnings", () => {
   });
 
   it("Navigate to match step and validate warning messages", () => {
-    cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
+    curatePage.editStep(matchStep).click({force: true});
     curatePage.switchEditAdvanced().click();
     curatePage.targetCollection("mapPersonJSON");
     cy.findByText("Create \"mapPersonJSON\"").click();
@@ -55,7 +55,7 @@ describe("Validate Match warnings", () => {
     curatePage.saveSettings(matchStep).click();
     curatePage.cancelSettings(matchStep).click();
     cy.wait(1000);
-    cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
+    curatePage.editStep(matchStep).click({force: true});
     curatePage.alertContent().should("not.exist");
     curatePage.switchEditAdvanced().click();
     curatePage.matchTargetCollection("mapPersonJSON").should("be.visible");
@@ -76,8 +76,8 @@ describe("Validate Match warnings", () => {
     curatePage.removeTargetCollection("mapPersonJSON");
     curatePage.saveSettings(matchStep).click();
     cy.wait(1000);
-    cy.waitUntil(() => curatePage.addNewStep("Person"));
-    cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
+    curatePage.addNewStep("Person");
+    curatePage.editStep(matchStep).click({force: true});
     curatePage.alertContent().should("not.exist");
     curatePage.switchEditAdvanced().click();
     curatePage.alertContent().should("not.exist");

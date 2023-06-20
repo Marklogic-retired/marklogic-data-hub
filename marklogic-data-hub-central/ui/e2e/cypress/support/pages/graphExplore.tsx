@@ -144,13 +144,13 @@ class GraphExplore {
   }
 
   getContextMenu() {
-    return cy.waitUntil(() => cy.get("#contextMenu"));
+    return cy.get("#contextMenu");
   }
   showRecordsInCluster() {
-    return cy.waitUntil(() => cy.get("#focusOnCluster")).click();
+    return cy.get("#focusOnCluster").click();
   }
   showAllRecordsFromQuery() {
-    return cy.waitUntil(() => cy.get("#defocus")).trigger("mouseover").click();
+    return cy.get("#defocus").trigger("mouseover").click();
   }
   /*
    * GROUP/LEAF NODE DROPDOWN ITEMS

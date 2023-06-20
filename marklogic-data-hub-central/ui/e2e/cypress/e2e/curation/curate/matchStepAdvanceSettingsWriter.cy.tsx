@@ -22,10 +22,10 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
   });
 
   it("Navigate to curate tab and Open Customer entity", () => {
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
-    cy.waitUntil(() => curatePage.addNewStep("Customer"));
+    curatePage.addNewStep("Customer");
   });
 
   it("Creating a new match step", () => {

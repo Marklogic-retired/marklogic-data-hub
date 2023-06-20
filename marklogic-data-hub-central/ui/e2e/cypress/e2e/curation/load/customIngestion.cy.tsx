@@ -17,7 +17,7 @@ describe("Custom Ingestion", () => {
     const flowName = "testCustomFlow";
     const loadStep = "ingestion-step";
 
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.stepName("ingestion-step").should("be.visible");
 
     loadPage.editStepInCardView(loadStep).click();
     loadPage.switchEditAdvanced().click();
@@ -26,8 +26,8 @@ describe("Custom Ingestion", () => {
     loadPage.cancelSettings(loadStep).click();
     runPage.navigate();
 
-    cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
-    cy.waitUntil(() => cy.contains("Custom"));
+    cy.findByText(flowName).closest("div").click();
+    cy.contains("Custom");
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/test-1.json");

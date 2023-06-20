@@ -14,8 +14,8 @@ class RunPage {
   }
 
   toggleFlowConfig(flowName: string) {
-    cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
-    cy.waitUntil(() => cy.contains("Map"));
+    cy.findByText(flowName).closest("div").click();
+    cy.contains("Map");
   }
 
   getFlowName(flowName: string) {
@@ -126,12 +126,12 @@ class RunPage {
   }
 
   runStep(stepName: string, flowName: string) {
-    cy.waitUntil(() => cy.get(`#${flowName}`).find(`[aria-label="runStep-${stepName}"]`)).first().should("be.visible").click({force: true});
+    cy.get(`#${flowName}`).find(`[aria-label="runStep-${stepName}"]`).first().should("be.visible").click({force: true});
     cy.waitForAsyncRequest();
   }
 
   runLastStepInAFlow(stepName: string) {
-    cy.waitUntil(() => cy.findAllByLabelText(`runStep-${stepName}`)).last().click({force: true});
+    cy.findAllByLabelText(`runStep-${stepName}`).last().click({force: true});
     cy.waitForAsyncRequest();
   }
 
@@ -167,12 +167,12 @@ class RunPage {
   }
 
   moveStepRight(stepName: string) {
-    cy.waitUntil(() => cy.findAllByLabelText(`rightArrow-${stepName}`)).last().click({force: true});
+    cy.findAllByLabelText(`rightArrow-${stepName}`).last().click({force: true});
     cy.waitForAsyncRequest();
   }
 
   moveStepLeft(stepName: string) {
-    cy.waitUntil(() => cy.findAllByLabelText(`leftArrow-${stepName}`)).last().click({force: true});
+    cy.findAllByLabelText(`leftArrow-${stepName}`).last().click({force: true});
     cy.waitForAsyncRequest();
   }
 

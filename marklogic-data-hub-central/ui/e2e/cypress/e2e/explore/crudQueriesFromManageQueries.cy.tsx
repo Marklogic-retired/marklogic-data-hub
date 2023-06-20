@@ -169,10 +169,10 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     explorePage.clickExploreSettingsMenuIcon();
-    cy.waitUntil(() => browsePage.getManageQueriesButton().should("have.length.gt", 0));
+    browsePage.getManageQueriesButton().should("have.length.gt", 0);
     cy.wait(1000);
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getManageQueriesButton().should("be.visible"), {timeout: 10000});
+    browsePage.getManageQueriesButton().should("be.visible");
     cy.log("**open manage queries modal dialog and remove previosly saved query**");
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
@@ -303,7 +303,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getEditQueryName().type("edited-personQuery");
     queryComponent.getSubmitButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getManageQueryCloseIcon().should("be.visible")).click();
+    browsePage.getManageQueryCloseIcon().should("be.visible").click();
     queryComponent.getManageQueryModal().should("not.exist");
 
     cy.log("**Check if the current query name is updated in browse page or not**");

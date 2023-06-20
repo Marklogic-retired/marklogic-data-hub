@@ -109,10 +109,10 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
       cy.reload();
       cy.wait(1000);
       cy.waitForAsyncRequest();
-      cy.waitUntil(() => cy.get(`#${flowName}`).should("be.visible"));
+      cy.get(`#${flowName}`).should("be.visible");
       cy.get(`#${flowName}`).find("[class*=\"accordion-button\"]").click({force: true});
-      cy.waitUntil(() => cy.findAllByText(stepType)[0].should("be.visible"));
-      cy.waitUntil(() => cy.findAllByText(stepName)[0].should("be.visible"));
+      cy.findAllByText(stepType)[0].should("be.visible");
+      cy.findAllByText(stepName)[0].should("be.visible");
     }
   });
 });
@@ -126,17 +126,17 @@ Cypress.Commands.add("waitForBootstrapModalToDisappear", () => {
 });
 
 Cypress.Commands.add("uploadFile", (filePath) => {
-  cy.waitUntil(() => cy.get("input[type=\"file\"]"));
+  cy.get("input[type=\"file\"]");
   cy.get("input[type=\"file\"]").attachFile(filePath, {force: true});
   cy.waitForAsyncRequest();
 });
 
 Cypress.Commands.add("verifyStepRunResult", (jobStatus, stepType, stepName) => {
   if (jobStatus === "success") {
-    cy.waitUntil(() => cy.get("[data-icon=\"check-circle\"]").should("be.visible"), {timeout: 120000});
+    cy.get("[data-icon=\"check-circle\"]").should("be.visible");
     cy.get("span").should("contain.text", `The ${stepType.toLowerCase()} step ${stepName} completed successfully`);
   } else {
-    cy.waitUntil(() => cy.get("[data-icon=\"exclamation-circle\"]").should("be.visible"), {timeout: 120000});
+    cy.get("[data-icon=\"exclamation-circle\"]").should("be.visible");
     cy.get("span").should("contain.text", `The ${stepType.toLowerCase()} step ${stepName} failed`);
     cy.get("#error-list").should("contain.text", "Message:");
   }

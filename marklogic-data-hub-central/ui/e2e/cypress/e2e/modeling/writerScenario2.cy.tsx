@@ -192,7 +192,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     cy.log("**verify removing foreign key from relationship is possible**");
     propertyTable.editProperty("address-OrderedBy");
-    cy.waitUntil(() => cy.get("#foreignKey-select-wrapper").should("be.visible"));
+    cy.get("#foreignKey-select-wrapper").should("be.visible");
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("None").click();
     propertyModal.getSubmitButton().click();
@@ -221,7 +221,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("More number types");
     propertyModal.getCascadedTypeFromDropdown("int");
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
+    propertyTable.getExpandIcon("zip").click({force: true});
     propertyTable.getProperty("zip-fiveDigit");
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
@@ -238,7 +238,7 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom"));
+    cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
     propertyTable.getProperty("extra-extra");
     propertyTable.getAddPropertyToStructureType("extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");

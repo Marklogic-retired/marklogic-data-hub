@@ -242,13 +242,13 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   // TODO: DHFPROD-10176
   it.skip("Verify link to settings, Add map step to existing flow, Run the flow and explore the data", () => {
     curatePage.openMappingStepDetail("Order", mapStep);
-    cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible")).click();
+    mappingStepDetail.expandEntity().should("be.visible").click();
     mappingStepDetail.stepSettingsLink().click();
-    cy.waitUntil(() => createEditMappingDialog.stepDetailsLink().click());
+    createEditMappingDialog.stepDetailsLink().click();
 
     cy.wait(1000);
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible"));
+    mappingStepDetail.expandEntity().should("be.visible");
 
     mappingStepDetail.goBackToCurateHomePage();
     curatePage.toggleEntityTypeId("Order");
@@ -274,15 +274,15 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   // TODO: DHFPROD-10176
   it.skip("Create a map step under another entity", () => {
     curatePage.navigate();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.getEntityTypePanel("Customer").should("be.visible");
     curatePage.toggleEntityTypeId("Customer");
-    cy.waitUntil(() => curatePage.addNewStep("Customer").click());
+    curatePage.addNewStep("Customer").click();
     createEditMappingDialog.setMappingName("mapCustomer");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['loadCustomersJSON'])`);
     createEditMappingDialog.saveButton().click({force: true});
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    curatePage.dataPresent().should("be.visible");
     mappingStepDetail.goBackToCurateHomePage();
   });
 });

@@ -17,7 +17,7 @@ class ProjectInfo {
   }
 
   waitForInfoPageToLoad() {
-    cy.waitUntil(() => cy.findByText("Download Hub Central Files").should("be.visible"));
+    cy.findByText("Download Hub Central Files").should("be.visible");
   }
 }
 

@@ -36,7 +36,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Create load step", () => {
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(loadStep);
     loadPage.stepDescriptionInput().type("load order with a custom header");
@@ -78,7 +78,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   it("Create mapping step", () => {
     curatePage.navigate();
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep("Order").click());
+    curatePage.addNewStep("Order").click();
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom header");
     createEditMappingDialog.setSourceRadio("Query");
@@ -106,7 +106,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     curatePage.openMappingStepDetail("Order", mapStep);
     browsePage.waitForSpinnerToDisappear();
-    cy.waitUntil(() => mappingStepDetail.expandEntity());
+    mappingStepDetail.expandEntity();
     mappingStepDetail.setXpathExpressionInput("orderId", "OrderID");
     mappingStepDetail.setXpathExpressionInput("address", "/");
     mappingStepDetail.setXpathExpressionInput("city", "ShipCity");
@@ -184,7 +184,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => runPage.getFlowName(flowName).first().should("be.visible"));
+    runPage.getFlowName(flowName).first().should("be.visible");
     runPage.addStep(flowName);
     runPage.addStepToFlow(mapStep);
     cy.verifyStepAddedToFlow("Mapping", mapStep, flowName2);
@@ -249,13 +249,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
 
     detailPage.attachmentPresent().should("not.exist");
     curatePage.navigate();
-    cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
+    curatePage.editStep(mapStep).click({force: true});
     curatePage.switchEditAdvanced().click();
     advancedSettingsDialog.attachSourceDocument().click();
     cy.intercept("PUT", "/api/steps/mapping/mapOrderCustomHeader").as("mapOrderCustomHeaderStep");
     cy.intercept("GET", "/api/steps/mapping").as("mappingSteps");
     cy.intercept("GET", "/api/jobs/*").as("runResponse");
-    cy.waitUntil(() => advancedSettingsDialog.saveSettings(mapStep).click({force: true}));
+    advancedSettingsDialog.saveSettings(mapStep).click({force: true});
     cy.wait("@mapOrderCustomHeaderStep").its("response.statusCode").should("eq", 200);
     cy.wait("@mappingSteps").its("response.statusCode").should("eq", 200);
     curatePage.runStepInCardView(mapStep).click();

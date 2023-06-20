@@ -386,7 +386,7 @@ describe("Login", () => {
     loginPage.getPassword().type("password");
     loginPage.getLoginButton().click();
     cy.location("pathname").should("include", "/tiles/curate");
-    cy.waitUntil(() => cy.contains("Customer"));
+    cy.contains("Customer");
     cy.contains("Person");
     cy.contains("No Entity Type");
   });
@@ -405,7 +405,7 @@ describe("Login", () => {
     cy.url().should("include", "/tiles/model");
     tiles.getModelTile().should("exist");
     cy.get(`#user-dropdown`).click();
-    cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
+    cy.get("#logOut").should("be.visible").click();
 
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
       .withUI()

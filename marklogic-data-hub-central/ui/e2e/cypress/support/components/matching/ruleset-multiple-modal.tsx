@@ -6,7 +6,7 @@ class RulesetMultipleModal {
 
   selectPropertyToMatch(property: string) {
     cy.get(`[data-testid="${property}-checkbox"]`).trigger("mouseover").click();
-    cy.waitUntil(() => cy.get(`[data-testid="${property}-checkbox"]`).should("be.visible"), {timeout: 10000});
+    cy.get(`[data-testid="${property}-checkbox"]`).should("be.visible");
   }
 
   selectMatchTypeDropdown(property: string, matchType: string) {

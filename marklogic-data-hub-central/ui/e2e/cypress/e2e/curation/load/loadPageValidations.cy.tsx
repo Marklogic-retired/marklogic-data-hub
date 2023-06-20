@@ -28,7 +28,7 @@ describe("Load Page validations", () => {
     cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
 
-    cy.waitUntil(() => loadPage.stepName(stepName).should("be.visible"));
+    loadPage.stepName(stepName).should("be.visible");
 
     loadPage.editStepInCardView(stepName).click();
     loadPage.stepNameInput().should("have.value", stepName);

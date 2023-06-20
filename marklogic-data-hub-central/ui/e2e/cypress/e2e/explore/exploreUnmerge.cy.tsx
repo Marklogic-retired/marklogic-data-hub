@@ -141,7 +141,7 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getSearchButton().click();
     cy.wait(4000);
     browsePage.waitForSpinnerToDisappear();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    explorePage.navigate();
     browsePage.getMergeIcon().first().scrollIntoView().should("be.visible");
     browsePage.getMergeIcon().first().trigger("mouseover");
     cy.findByText("Merge: Contact your security administrator for access.");

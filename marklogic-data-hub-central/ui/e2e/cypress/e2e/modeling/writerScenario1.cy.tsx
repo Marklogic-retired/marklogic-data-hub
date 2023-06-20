@@ -34,11 +34,11 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
     modelPage.switchTableView();
     entityTypeTable.waitForTableToLoad();
-    cy.waitUntil(() => modelPage.getAddButton()).click();
+    modelPage.getAddButton().click();
     modelPage.getAddEntityTypeOption().should("be.visible").click({force: true});
     entityTypeModal.newEntityName("Person");
     entityTypeModal.getAddButton().click();
-    cy.waitUntil(() => entityTypeModal.entityNameError().should("exist"));
+    entityTypeModal.entityNameError().should("exist");
     entityTypeModal.getAddButton().should("not.be.disabled");
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");
@@ -199,7 +199,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
 
   it("Validate the entity in explore page", () => {
     explorePage.navigate();
-    cy.waitUntil(() => tiles.getExploreTile());
+    tiles.getExploreTile();
     cy.url().should("include", "/tiles/explore");
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
@@ -208,7 +208,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
     cy.get("#user-dropdown").click();
-    cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
+    cy.get("#logOut").should("be.visible").click();
     cy.location("pathname").should("eq", "/");
   });
 
@@ -292,7 +292,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
 
   it("Validate Show Steps and Hide Steps", () => {
     propertyTable.editProperty("fname");
-    cy.waitUntil(() => propertyModal.getToggleStepsButton().should("exist")).click();
+    propertyModal.getToggleStepsButton().should("exist").click();
     cy.contains("mapPersonJSON").should("be.visible");
     cy.contains("match-person").should("be.visible");
     cy.contains("merge-person").should("be.visible");

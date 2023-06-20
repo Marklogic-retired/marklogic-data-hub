@@ -18,7 +18,7 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Verify Cancel", () => {
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("table").click();
     loadPage.addNewButton("list").click();
     loadPage.stepNameInput().type(stepName);
@@ -85,13 +85,13 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.setCustomHook("loadTile/customHook");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
-    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
+    loadPage.saveSettings(stepName).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.stepName(stepName).click();
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
-    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
+    loadPage.saveSettings(stepName).click({force: true});
     cy.waitForAsyncRequest();
   });
 
@@ -121,19 +121,19 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     cy.log("**should route user back to load page list view**");
-    cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
+    loadPage.addNewButton("list").should("be.visible");
   });
 
   it("Create a new flow and navigate back to load step", () => {
     runPage.navigate();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    runPage.getFlowName("personJSON").should("be.visible");
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
     loadPage.navigate();
     loadPage.loadView("table").click();
-    cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
+    loadPage.addNewButton("list").should("be.visible");
   });
 
   it("Verify Run in an existing flow", {defaultCommandTimeout: 120000}, () => {
@@ -188,7 +188,7 @@ describe("Validate CRUD functionality from list view", () => {
 
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     loadPage.navigate();
-    cy.waitUntil(() => loadPage.loadView("table")).click();
+    loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
@@ -250,7 +250,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.deleteStep(stepName).click();
-    cy.waitUntil(() => loadPage.confirmationOptions("Yes")).click();
+    loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("not.exist");
   });
