@@ -20,9 +20,14 @@ describe("Verify values to ignore feature", () => {
 
   after(() => {
     cy.loginAsDeveloperV2().withRequest();
-    cy.deleteRecordsInFinal("loadValuesToIgnore", "mapForValuesToIgnore", "matchForValuesToIgnore", "mergeForValuesToIgnore");
-    cy.deleteRecordsInFinal("sm-Person-archived", "sm-Person-mastered", "sm-Person-merged", "sm-Person-auditing", "sm-Person-notification");
     cy.deleteRecordsInStaging("loadValuesToIgnore");
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+
+  afterEach(() => {
+    cy.loginAsDeveloperV2().withRequest();
+    cy.deleteRecordsInFinal("loadValuesToIgnore", "mapForValuesToIgnore", "matchForValuesToIgnore", "mergeForValuesToIgnore");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -43,6 +48,9 @@ describe("Verify values to ignore feature", () => {
     mergeResults.contains("Match - merge").scrollIntoView().should("have.length.gt", 0).click();
     cy.findByText("/json/persons/first-name-double-metaphone1.json").scrollIntoView().should("be.visible");
     cy.findByText("/json/persons/first-name-double-metaphone2.json").scrollIntoView().should("be.visible");
+    cy.findByLabelText("modalTitleLegend").findByTestId("expandBtn").click();
+    cy.findAllByText("lname - Exact").should("have.length.gt", 0);
+
     multiSlider.enableEdit("ruleset");
     multiSlider.ruleSetEditOptionActive("lname", "Exact");
     cy.wait(500);
@@ -61,11 +69,13 @@ describe("Verify values to ignore feature", () => {
     matchingStepDetail.getTestMatchUriButton();
     cy.waitForAsyncRequest();
     cy.wait(1000);
-    cy.findByLabelText("noMatchedDataView").should("not.exist");
     mergeResults = cy.get(`[id="testMatchedPanel"]`).first();
     mergeResults.contains("Match - merge").should("have.length.gt", 0).click();
-    cy.findByText("/json/persons/first-name-double-metaphone1.json").should("not.exist");
-    cy.findByText("/json/persons/first-name-double-metaphone2.json").should("not.exist");
+    cy.findByText("/json/persons/first-name-double-metaphone1.json").should("be.visible");
+    cy.findByText("/json/persons/first-name-double-metaphone2.json").should("be.visible");
+    cy.findByLabelText("modalTitleLegend").findByTestId("expandBtn").click();
+    cy.findByLabelText("lname - Exact").should("not.exist");
+
 
     multiSlider.ruleSetEditOptionActive("lname", "Exact");
     cy.wait(500);
@@ -112,12 +122,13 @@ describe("Verify values to ignore feature", () => {
     cy.waitForAsyncRequest();
     runPage.toggleExpandFlow("testValuesToIgnore");
     runPage.openStepsSelectDropdown("testValuesToIgnore");
-    runPage.clickStepInsidePopover("#mapForValuesToIgnore");
     runPage.getRunFlowButton("testValuesToIgnore").click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     cy.findByTestId("mergeForValuesToIgnore-success", {timeout: 12000}).should("be.visible");
     runPage.explorerLink("mergeForValuesToIgnore").click();
+    browsePage.switchToTableView();
+    browsePage.waitForSpinnerToDisappear();
     cy.findByText(/^(Robert,Bob|Bob,Robert)$/).should("not.exist");
     cy.findByText(/^(Marge,Margot|Margot,Marge)$/).should("exist");
   });

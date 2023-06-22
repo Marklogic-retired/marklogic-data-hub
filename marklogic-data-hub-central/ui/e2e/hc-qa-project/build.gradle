@@ -78,16 +78,15 @@ task loadListToIgnore(type: com.marklogic.gradle.task.ServerEvalTask) {
   javascript = '''
  declareUpdate();
   const permissions = [
-      xdmp.permission('data-hub-developer', 'update'),
-      xdmp.permission('data-hub-operator', 'read'),
-      xdmp.permission('data-hub-operator', 'update')
-    ]
+      xdmp.permission('data-hub-common-writer', 'update'),
+      xdmp.permission('data-hub-common', 'read')
+    ];
 
   const collections = [
     'http://marklogic.com/data-hub/exclusion-list',
-    'loadValuesToIgnore',
+    'loadValuesToIgnore'
+  ];
 
-  ]
   const uri1  = 'values-to-ignore1.json'
   const list1 = {"FirstName": "Robert","LastName": "Gonzales","SSN": "222-22-2221","Address": "456 Jones St","ZipCode": "42222","Verified": true}
   xdmp.documentInsert(uri1, list1, {permissions,collections})
@@ -126,4 +125,61 @@ task addDocProperties(type: com.marklogic.gradle.task.ServerEvalTask) {
                 "xdmp:document-set-properties(\"/thesaurus/nicknames.xml\", (<foo />))" +
              ")"
     }
+}
+
+task clearJobsContent(type: com.marklogic.gradle.task.ServerEvalTask) {
+    doFirst {
+        client = hubConfig.newJobDbClient()
+        xquery = "(" +
+                "cts:collections() ! xdmp:collection-delete(.)" +
+                ")"
+    }
+}
+
+task clearStagingContent(type: com.marklogic.gradle.task.ServerEvalTask) {
+    doFirst {
+        client = hubConfig.newStagingClient()
+        xquery = "(" +
+                "cts:collections() ! xdmp:collection-delete(.)" +
+                ")"
+    }
+}
+
+task clearFinalContent(type: com.marklogic.gradle.task.ServerEvalTask) {
+    doFirst {
+        client = hubConfig.newFinalClient()
+        xquery = "(" +
+                "cts:collections() ! xdmp:collection-delete(.)" +
+                ")"
+    }
+}
+
+def stepsForFlow = [ personJSON: Arrays.asList("1","2","3"), personXML: Arrays.asList("1")]
+
+["CurateCustomerJSON","CurateCustomerXML", "CurateCustomerWithRelatedEntitiesJSON", "personJSON", "personXML", "convertedFlow", "CurateClientJSON", "officeFlow", "productFlow"].each {theFlowName ->
+    task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
+        description = "Run the steps for flow ${theFlowName}"
+        flowName = theFlowName
+        steps = stepsForFlow[theFlowName]
+    }
+}
+
+task runFlows() {
+    def tasks = [runCurateCustomerJSON, runCurateCustomerXML, runCurateCustomerWithRelatedEntitiesJSON, runpersonJSON, runpersonXML, runconvertedFlow, runCurateClientJSON, runofficeFlow, runproductFlow]
+    for (int i = 0; i < tasks.size() - 1; i++) {
+        tasks[i + 1].mustRunAfter(tasks[i])
+    }
+    dependsOn(tasks)
+}
+
+task reset() {
+    dependsOn clearStagingContent
+    dependsOn clearFinalContent
+    dependsOn hubDeployArtifacts
+    dependsOn hubDeployUserArtifacts
+    dependsOn runFlows
+    dependsOn addDocProperties
+    dependsOn loadListToIgnore
+    dependsOn verifyStagingCounts
+    dependsOn verifyFinalCounts
 }

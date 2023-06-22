@@ -89,6 +89,7 @@ export class Matchable {
     }
     this._propertyQueryFunctions = new Map();
     this._cachedScores = new Map();
+    this._cachedRulesetMatches = new Map();
     this._cachedRulesetScores = new Map();
   }
 
@@ -167,7 +168,8 @@ export class Matchable {
       notDocumentQuery = cts.documentQuery(excludeDocuments.toArray());
     }
     if (this.matchStep.filterQuery) {
-      stepFilterQuery = cts.query(this.matchStep.filterQuery);
+      stepFilterQuery = this.matchStep.filterQuery instanceof cts.query ?
+        this.matchStep.filterQuery : cts.query(this.matchStep.filterQuery);
     }
     if (stepFilterQuery && notDocumentQuery) {
       filterQuery = cts.andNotQuery(stepFilterQuery, notDocumentQuery);
@@ -193,6 +195,7 @@ export class Matchable {
   scoreDocument(contentObjectA, contentObjectB) {
     const scoreKey = [contentObjectA.uri, contentObjectB.uri].sort().join(":");
     if (this._cachedScores.has(scoreKey)) {
+      contentObjectB.matchedRulesets = this._cachedRulesetMatches.get(scoreKey);
       return this._cachedScores.get(scoreKey);
     }
     const matchingRulesetDefinitions = this.matchRulesetDefinitions();
@@ -223,6 +226,7 @@ export class Matchable {
       xdmp.trace(matchingTraceEvent, `Base score set to ${defaultScore} for ${xdmp.describe(contentObjectA.value, Sequence.from([]), Sequence.from([]))} and ${xdmp.describe(contentObjectB.value, Sequence.from([]), Sequence.from([]))}`);
     }
     const results = common.applyInterceptors("Score Document Interceptor", defaultScore, this.matchStep.scoreDocumentInterceptors, contentObjectA, contentObjectB, matchingRulesetDefinitions);
+    this._cachedRulesetMatches.set(scoreKey, contentObjectB.matchedRulesets);
     this._cachedScores.set(scoreKey, results);
     return results;
   }
@@ -370,12 +374,23 @@ class MatchRulesetDefinition {
     this._cachedCtsQueries = new Map();
     this._cachedQueryHashes = new Map();
     this._cachedMatchFunctionResults = new Map();
+    this.exclusionListNames = [];
+    this.excludedValues = new Set();
     if (this.matchRuleset.exclusionLists && this.matchRuleset.exclusionLists.length > 0) {
-      this.excludedValues = new Set();
-      for (const excListName of this.matchRuleset.exclusionLists) {
-        const excList = core.getArtifact("exclusionList", excListName);
-        for (const value of excList.values) {
-          this.excludedValues.add(String(value));
+      this.exclusionListNames = this.exclusionListNames.concat(this.matchRuleset.exclusionLists);
+    }
+    if (this.matchRuleset.matchRules) {
+      for (const matchRule of this.matchRuleset.matchRules) {
+        if (matchRule.exclusionLists) {
+          this.exclusionListNames = this.exclusionListNames.concat(matchRule.exclusionLists);
+        }
+      }
+      if (this.exclusionListNames && this.exclusionListNames.length > 0) {
+        for (const excListName of this.exclusionListNames) {
+          const excList = core.getArtifact("exclusionList", excListName);
+          for (const value of excList.values) {
+            this.excludedValues.add(String(value));
+          }
         }
       }
     }
@@ -406,8 +421,14 @@ class MatchRulesetDefinition {
             values = model.propertyValues(matchRule.entityPropertyPath, contentObject.value);
           }
           // based on the exclusion lists, remove certain values from querying
-          if (this.excludedValues) {
-            values = Sequence.from([values.toArray().filter(val => !this.excludedValues.has(String(val)))]);
+          if (this.excludedValues && this.excludedValues.size > 0) {
+            if (matchingDebugTraceEnabled) {
+              xdmp.trace(matchingTraceEvent, `Filtering out the following values: ${xdmp.toJsonString([...this.excludedValues])}.`);
+            }
+            values = Sequence.from(values.toArray().filter(val => !this.excludedValues.has(String(val))));
+            if (matchingDebugTraceEnabled) {
+              xdmp.trace(matchingTraceEvent, `Final values for query: ${xdmp.toJsonString(values)}.`);
+            }
           }
           cachedPropertyValues.set(key, values);
         }
@@ -595,11 +616,17 @@ class MatchRulesetDefinition {
         const valueFunction = this._valueFunction(matchRule, model);
         const matchFunction = this._matchFunction(matchRule, model);
         const values = valueFunction(contentObject);
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Values for ${xdmp.describe(documentNode)} with match rule  ${xdmp.toJsonString(matchRule)} are ${xdmp.describe(values, Sequence.from([]), Sequence.from([]))}`);
+        }
         const query = fn.exists(values) ? matchFunction(uri, values) : null;
+        if (matchingDebugTraceEnabled) {
+          xdmp.trace(consts.TRACE_MATCHING_DEBUG, `Query for ${xdmp.describe(documentNode)} with match rule  ${xdmp.toJsonString(matchRule)} are ${xdmp.describe(query, Sequence.from([]), Sequence.from([]))}`);
+        }
         if (query === null || fn.empty(query)) {
           return null;
         }
-        if (query instanceof cts.query) {
+        if (query && !(query instanceof Function)) {
           queries.push(query);
         }
       }

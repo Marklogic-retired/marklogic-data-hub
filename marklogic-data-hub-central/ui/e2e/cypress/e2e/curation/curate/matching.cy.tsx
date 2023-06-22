@@ -5,8 +5,7 @@ import {
   matchingStepDetail,
   rulesetSingleModal,
   thresholdModal,
-  rulesetMultipleModal,
-  compareValuesModal
+  rulesetMultipleModal
 } from "../../../support/components/matching/index";
 import {
   createEditStepDialog,
@@ -26,8 +25,7 @@ const ruleset = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "5"}
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "2"}];
 
 const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 0", score: "score 10"},
-  {ruleset: "fname - Double Metaphone", matchType: "Double Metaphone 1", score: "score 10"},
-  {ruleset: "testMultipleProperty", matchType: "", score: ""}];
+  {ruleset: "fname - Double Metaphone", matchType: "Double Metaphone 1", score: "score 10"}];
 
 const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json"];
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
@@ -525,11 +523,14 @@ describe("Matching", () => {
       cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
 
       cy.log("**To verify content of multiple properties**");
-      cy.findAllByLabelText("Expand row").first().scrollIntoView().click();
-      cy.findAllByText("lname").should("have.length.gt", 0);
-      cy.findByLabelText("exact 0").should("have.length.gt", 0);
-      cy.findAllByText("ZipCode").should("have.length.gt", 0);
-      cy.findByLabelText("zip 1").should("have.length.gt", 0);
+      cy.wait(1000);
+      cy.get("[class*=\"matching-step-detail_matchedTab_\"]").within(() => {
+        cy.get(".tab-content:first").scrollIntoView();
+        cy.findAllByText("lname - Exact").should("have.length.gt", 0);
+        cy.findAllByLabelText("Exact 0").should("have.length.gt", 0);
+        cy.findAllByText("ZipCode - Zip").should("have.length.gt", 0);
+        cy.findAllByLabelText("Zip 2").should("have.length.gt", 0);
+      });
 
       cy.log("**To test compare values for matched Uris**");
       cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
@@ -553,7 +554,6 @@ describe("Matching", () => {
         cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
         cy.findAllByLabelText(`${compareValuesData[i].uriValue1}-cell2`).should("have.length.gt", 0);
       }
-      compareValuesModal.getTableHeader().should("not.be.visible");
 
       cy.log("**To test highlighted matched rows**");
       cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
@@ -569,7 +569,6 @@ describe("Matching", () => {
         cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
       }
       cy.findAllByText("Total Score: 30").should("have.length.gt", 0);
-
       multiSlider.enableEdit("ruleset");
       multiSlider.ruleSetActiveDeleteOptionMulti("testMultipleProperty");
       matchingStepDetail.getSliderDeleteText().should("be.visible");

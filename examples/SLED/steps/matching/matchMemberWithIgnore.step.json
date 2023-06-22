@@ -23,22 +23,32 @@
     {
       "name": "SSN - Exact",
       "weight": 40,
+      "reduce": false,
+      "fuzzyMatch": false,
       "matchRules": [
         {
           "entityPropertyPath": "SSN",
           "matchType": "exact",
-          "options": { }
+          "options": { },
+          "exclusionLists": [
+            "defaultsList"
+          ]
         }
       ]
     },
     {
       "name": "LastName - Exact",
       "weight": 8,
+      "reduce": false,
+      "fuzzyMatch": false,
       "matchRules": [
         {
           "entityPropertyPath": "LastName",
           "matchType": "exact",
-          "options": { }
+          "options": { },
+          "exclusionLists": [
+            "doeList"
+          ]
         }
       ]
     },
@@ -127,7 +137,10 @@
           "entityPropertyPath": "FirstName",
           "matchType": "exact",
           "options": { },
-          "exclusionLists": ["drindyList", "nunoList"]
+          "exclusionLists": [
+            "drindyList",
+            "nunoList"
+          ]
         }
       ]
     },
@@ -145,11 +158,16 @@
     {
       "name": "FirstLastNameSorted - Exact",
       "weight": 23,
+      "reduce": false,
+      "fuzzyMatch": false,
       "matchRules": [
         {
           "entityPropertyPath": "FirstLastNameSorted",
           "matchType": "exact",
-          "options": { }
+          "options": { },
+          "exclusionLists": [
+            "defaultsList"
+          ]
         }
       ]
     },
@@ -194,5 +212,5 @@
       "score": 43
     }
   ],
-  "lastUpdated": "2022-10-17T22:33:54.064212Z"
+  "lastUpdated": "2023-06-22T22:45:04.286029Z"
 }

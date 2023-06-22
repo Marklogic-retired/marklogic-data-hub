@@ -108,6 +108,9 @@ function optimizeCtsQueries(ctsQuery) {
   if (matchingTraceEnabled) {
     xdmp.trace(matchingTraceEvent, `Optimizing cts query: ${xdmp.describe(ctsQuery, Sequence.from([]), Sequence.from([]))}`);
   }
+  if (!ctsQuery || ctsQuery.length === 0) {
+    return null;
+  }
   const isAndQuery = ctsQuery instanceof cts.andQuery;
   const isOrQuery = ctsQuery instanceof cts.orQuery;
   if (isAndQuery || isOrQuery) {
