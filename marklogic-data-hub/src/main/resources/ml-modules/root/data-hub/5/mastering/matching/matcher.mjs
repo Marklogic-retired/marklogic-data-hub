@@ -30,7 +30,7 @@ function buildQueryFromMatchRuleset(contentObject, matchRulesets) {
       queries.push(query);
     }
   }
-  return groupQueries(queries, cts.andQuery);
+  return queries.length === 0 ? null: groupQueries(queries, cts.andQuery);
 }
 
 function gatherThresholdQueryFunctions(thresholdDefinitions) {
@@ -39,11 +39,14 @@ function gatherThresholdQueryFunctions(thresholdDefinitions) {
     const notQuery = (nextDef) ? nextDef.minimumMatchCombinations(): null;
     const minimumCombos = def.minimumMatchCombinations();
     return (contentObject) => {
-      const positiveQuery = groupQueries(minimumCombos.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset)), cts.orQuery);
-      if (notQuery) {
+      const positiveComboQueries = minimumCombos.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset));
+      const positiveQuery = (positiveComboQueries && positiveComboQueries.length > 0) ? groupQueries(positiveComboQueries, cts.orQuery): null;
+      const negativeComboQueries = (notQuery && notQuery.length > 0)  ? notQuery.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset)): null;
+      const negativeQuery = (negativeComboQueries && negativeComboQueries.length > 0) ? groupQueries(negativeComboQueries, cts.orQuery): null;
+      if (negativeQuery && positiveQuery) {
         return cts.andNotQuery(
           positiveQuery,
-          groupQueries(notQuery.map(ruleset => buildQueryFromMatchRuleset(contentObject, ruleset)), cts.orQuery)
+          negativeQuery
         );
       } else {
         return positiveQuery;
@@ -72,7 +75,11 @@ function addHashesToTripleArray(contentObject, matchRulesetDefinitions, triplesB
 function getMatchingURIs(matchable, contentObject, baselineQuery, filterQuery, thresholdQueryFunctions) {
   let allMatchingBatchUris = [];
   for (const thresholdQueryFunction of thresholdQueryFunctions) {
-    const finalMatchQuery = optimizeCtsQueries(cts.andQuery([baselineQuery, filterQuery, thresholdQueryFunction(contentObject)]));
+    const thresholdQuery = thresholdQueryFunction(contentObject);
+    if (!thresholdQuery) {
+      continue;
+    }
+    const finalMatchQuery = optimizeCtsQueries(cts.andQuery([baselineQuery, filterQuery, thresholdQuery]));
     const total = cts.estimate(finalMatchQuery);
     if (matchingTraceEnabled) {
       xdmp.trace(matchingTraceEvent, `Found ${total} results for ${xdmp.describe(contentObject.value)} with query ${xdmp.describe(finalMatchQuery, Sequence.from([]), Sequence.from([]))}`);

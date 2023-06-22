@@ -16,30 +16,30 @@
 'use strict';
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 
-function extractFriendlyErrorMessage(e){
+function extractFriendlyErrorMessage(e) {
   let errorMessage;
-  switch(e.name){
-    case "XDMP-UNDFUN":
-      errorMessage = `Unable to find function: '${e.data[0]}'. Cause: Either the function does not exist or the wrong number of arguments were specified.`;
-      break;
-    case "XDMP-ARGTYPE":
-      errorMessage = `Invalid argument. Cause: Either the argument to the function in a mapping expression is not the right type, or the function does not expect arguments.`;
-      break;
-    case "XDMP-COMPUTE":
-      errorMessage = `Cannot compute. Cause: The provided argument(s) for a mapping expression include invalid values.`;
-      break;
-    case "XDMP-LEXVAL":
-      errorMessage = extractInvalidLexicalValueError(e);
-      break;
-    case "XSLT-BADXPATH":
-      errorMessage = extractBadXPathError(e);
-      break;
-    case "XDMP-TOOFEWARGS":
-    case "XDMP-TOOMANYARGS":
-      errorMessage = extractIncorrectNumberOfArgumentsError(e);
-      break;
-    default:
-      errorMessage = null;
+  switch (e.name) {
+  case "XDMP-UNDFUN":
+    errorMessage = `Unable to find function: '${e.data[0]}'. Cause: Either the function does not exist or the wrong number of arguments were specified.`;
+    break;
+  case "XDMP-ARGTYPE":
+    errorMessage = `Invalid argument. Cause: Either the argument to the function in a mapping expression is not the right type, or the function does not expect arguments.`;
+    break;
+  case "XDMP-COMPUTE":
+    errorMessage = `Cannot compute. Cause: The provided argument(s) for a mapping expression include invalid values.`;
+    break;
+  case "XDMP-LEXVAL":
+    errorMessage = extractInvalidLexicalValueError(e);
+    break;
+  case "XSLT-BADXPATH":
+    errorMessage = extractBadXPathError(e);
+    break;
+  case "XDMP-TOOFEWARGS":
+  case "XDMP-TOOMANYARGS":
+    errorMessage = extractIncorrectNumberOfArgumentsError(e);
+    break;
+  default:
+    errorMessage = null;
   }
   return errorMessage;
 }
@@ -48,22 +48,18 @@ function extractBadXPathError(e) {
   const expression = e.data[0];
   const errorInfo = e.data[1];
   let errorMessage = null;
-  if(errorInfo.startsWith("XDMP-UNEXPECTED")){
-    if(errorInfo.includes("unexpected Rpar_")){
+  if (errorInfo.startsWith("XDMP-UNEXPECTED")) {
+    if (errorInfo.includes("unexpected Rpar_")) {
       errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected right parenthesis.`;
-    }
-    else if(errorInfo.includes("expecting Rpar_")){
+    } else if (errorInfo.includes("expecting Rpar_")) {
       errorMessage = `Invalid XPath expression: '${expression}'. Cause: Missing right parenthesis.`;
-    }
-    else if(errorInfo.includes("unexpected Comma_")){
+    } else if (errorInfo.includes("unexpected Comma_")) {
       errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected comma.`;
-    }
-    else if(errorInfo.includes("Unexpected token syntax error")){
+    } else if (errorInfo.includes("Unexpected token syntax error")) {
       errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected character.`;
     }
-  }
-  else if(errorInfo.startsWith("XDMP-BADCHAR")){
-    errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected character.`
+  } else if (errorInfo.startsWith("XDMP-BADCHAR")) {
+    errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected character.`;
   }
   return errorMessage;
 }
@@ -73,14 +69,15 @@ function extractInvalidLexicalValueError(e) {
   const mappedValue = e.data[0];
   const regex = /^XDMP-LEXVAL: xs:(\w+).*$/;
   let errorMessage = error.message;
-  const expectedDataType = errorMessage.match(regex)[1];
-  if(expectedDataType){
-    errorMessage = `Data type mismatch. Cause: Returned type value (${mappedValue}) from a mapping expression does not match expected property type (${expectedDataType}).`
+  const datatypeMatch = errorMessage.match(regex);
+  const expectedDataType = datatypeMatch ?  datatypeMatch[1]: errorMessage;
+  if (expectedDataType) {
+    errorMessage = `Data type mismatch. Cause: Returned type value (${mappedValue}) from a mapping expression does not match expected property type (${expectedDataType}).`;
   }
   return errorMessage;
 }
 
-function extractErrorMessageForMappingUI(e){
+function extractErrorMessageForMappingUI(e) {
   let errorMessage = extractFriendlyErrorMessage(e);
   return errorMessage ? errorMessage : hubUtils.getErrorMessage(e);
 }
@@ -90,7 +87,7 @@ function extractIncorrectNumberOfArgumentsError(e) {
   let errorMessage = error.message;
   const regex = /^(XDMP-TOOMANYARGS|XDMP-TOOFEWARGS): \(err:XPST0017\) fn:(.+) -- Too (many|few) args, expected (\d+) but got (\d+)$/;
   const extractedError = errorMessage.match(regex);
-  if(extractedError){
+  if (extractedError) {
     errorMessage = `Wrong number of arguments: '${extractedError[2]}'. Cause: Requires ${extractedError[4]} arguments but received ${extractedError[5]}.`;
   }
   return errorMessage;
