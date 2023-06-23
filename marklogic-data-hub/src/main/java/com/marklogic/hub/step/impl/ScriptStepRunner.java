@@ -18,6 +18,7 @@ package com.marklogic.hub.step.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.datamovement.QueryBatch;
@@ -47,6 +48,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -316,9 +318,19 @@ public class ScriptStepRunner extends LoggingObject implements StepRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
-        // The client used here doesn't matter, given that a QueryBatcher is going to be constructed based on an
-        // Iterator. It's the step options that determine where documents are written to.
-        dataMovementManager = hubClient.getStagingClient().newDataMovementManager();
+        final String finalDatabaseName = hubClient.getDbName(DatabaseKind.FINAL);
+        final String stagingDatabaseName = hubClient.getDbName(DatabaseKind.STAGING);
+        final String sourceDatabase = Optional.ofNullable((String) combinedOptions.get("sourceDatabase")).orElse(stagingDatabaseName);
+        final DatabaseClient executeClient;
+        if (sourceDatabase.equals(finalDatabaseName)) {
+            executeClient = hubClient.getFinalClient();
+        } else if (sourceDatabase.equals(stagingDatabaseName)) {
+            executeClient = hubClient.getStagingClient();
+        } else {
+            executeClient = hubClient.getStagingClient(sourceDatabase);
+        }
+
+        dataMovementManager = executeClient.newDataMovementManager();
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
