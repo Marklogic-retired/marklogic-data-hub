@@ -18,18 +18,17 @@ const spell = require("/MarkLogic/spell");
 
 function main(content, options) {
 
-  const values = cts.values(cts.pathReference('/(es:envelope|envelope)/(es:instance|instance)/Person/fname',[],{es:"http://marklogic.com/entity-services"})).toArray();
+  const values = cts.values(cts.pathReference("/(es:envelope|envelope)/(es:instance|instance)/Person/fname", [], {es: "http://marklogic.com/entity-services"})).toArray();
 
   const dictionary = spell.makeDictionary(values, "element");
   const uri = "/dictionary/first-names.xml";
 
   console.log("Generating dictionary of " + values.length + " first names at URI: " + uri);
 
-  xdmp.eval(
-    "declareUpdate(); var d, uri; xdmp.documentInsert(uri, d, " +
-    "[xdmp.permission('data-hub-common', 'read'), xdmp.permission('data-hub-common-writer', 'update')], ['mdm-dictionary'])",
-    {uri: uri, d: dictionary}
-  );
+  xdmp.invokeFunction(() => xdmp.documentInsert(uri, dictionary, [
+    xdmp.permission("data-hub-common", "read"),
+    xdmp.permission("data-hub-common-writer", "update")],
+  ["mdm-dictionary"]), {update: "true"});
 
   return null;
 }

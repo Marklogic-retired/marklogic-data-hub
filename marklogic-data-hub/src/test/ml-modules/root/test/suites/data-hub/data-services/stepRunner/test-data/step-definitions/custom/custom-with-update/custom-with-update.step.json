@@ -1,0 +1,8 @@
+{
+  "lang" : "zxx",
+  "name" : "custom-with-update",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 2,
+  "modulePath" : "/test/suites/data-hub/data-services/stepRunner/test-data/custom-with-update.mjs"
+}

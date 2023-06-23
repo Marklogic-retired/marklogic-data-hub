@@ -16,6 +16,9 @@
     },
     "2":{
       "stepId": "simpleMap-mapping"
+    },
+    "3":{
+      "stepId": "customWithUpdate-custom"
     }
   }
 }
