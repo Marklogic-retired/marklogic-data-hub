@@ -163,7 +163,7 @@ describe("Validate E2E Mastering Flow", () => {
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
 
-  it("Create mapping step", () => {
+  it("Create mapping step and Map source to entity", () => {
     curatePage.navigate();
     curatePage.getEntityTypePanel("Patient").should("be.visible");
     curatePage.toggleEntityTypeId("Patient");
@@ -176,9 +176,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     curatePage.dataPresent().scrollIntoView().should("be.visible");
     curatePage.verifyStepDetailsOpen(mapStep);
-  });
 
-  it("Map source to entity", () => {
     mappingStepDetail.setXpathExpressionInput("FirstName", "FirstName");
     mappingStepDetail.setXpathExpressionInput("LastName", "LastName");
     mappingStepDetail.setXpathExpressionInput("SSN", "SSN");

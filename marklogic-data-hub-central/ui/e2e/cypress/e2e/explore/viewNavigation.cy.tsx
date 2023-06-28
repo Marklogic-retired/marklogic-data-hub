@@ -28,6 +28,11 @@ describe("Navigation through all the Explore views (Table, Snippet, Graph and De
     cy.clearAllLocalStorage();
   });
 
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+
   it("Switch views and validate they get updated correctly", () => {
     cy.log("**Select Table view and validate it switches correctly**");
     browsePage.switchToTableView();

@@ -176,7 +176,9 @@ describe(("relationBetweenEntities"), () => {
     relationshipModal.editRelationshipName(relationshipName);
     relationshipModal.addRelationshipSubmit();
     cy.wait(3000);
-    modelPage.navigate();
+    cy.waitForAsyncRequest();
+    cy.reload();
+    cy.waitForAsyncRequest();
     graphVis.getEdgesRelatedToaNode("Person", relationshipName).then((edgeNames:any) => {
       cy.wrap(edgeNames.label).should("equal", "LongRelationshipBetw...");
     });

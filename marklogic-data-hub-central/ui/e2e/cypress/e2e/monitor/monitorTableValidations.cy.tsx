@@ -402,15 +402,12 @@ describe("Monitor Tile", () => {
     cy.log("*** modal can be closed ***");
     runPage.closeFlowStatusModal(flowName);
     runPage.getFlowStatusModal().should("not.exist");
+    entitiesSidebar.clearAllFacetsApplied();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   });
 
   it("Apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
-    cy.reload();
-    cy.waitForAsyncRequest();
-    browsePage.clickShowMoreLink("step");
-    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
     browsePage.clickShowMoreLink("flow");
     monitorPage.getFacetCheckbox("flow", flowName).scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("flow", flowName).should("be.checked");
@@ -419,6 +416,21 @@ describe("Monitor Tile", () => {
     monitorPage.getFacetCheckbox("step-type", "ingestion").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
     browsePage.getGreySelectedFacets("ingestion").should("exist");
+    browsePage.getShowMoreLink("step").scrollIntoView();
+    browsePage.clickShowMoreLink("step");
+    browsePage.getShowMoreLink("step").scrollIntoView();
+    cy.get("[data-testid=stepName-search-input]").then(($ele) => {
+      if ($ele.length) {
+        browsePage.clickPopoverSearch("stepName");
+        browsePage.setInputField("stepName", "loadPersonJSON");
+        browsePage.getPopoverFacetCheckbox("loadPersonJSON").should("be.visible").click();
+        browsePage.confirmPopoverFacets();
+      } else {
+        monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
+      }
+    });
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
     browsePage.getFacetApplyButton().scrollIntoView().click({force: true});
     monitorPage.clearFacetSearchSelection(flowName);
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
@@ -442,7 +454,6 @@ describe("Monitor Tile", () => {
     browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
     browsePage.getGreySelectedFacets("ingestion").should("not.exist");
   });
-
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
     monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});

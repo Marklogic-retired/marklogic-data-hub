@@ -72,6 +72,8 @@ describe("Validate Match warnings", () => {
     cy.intercept("PUT", " /api/steps/matching/match-test").as("saveStep");
     cy.intercept("GET", " /api/steps/custom").as("loadSteps");
     curatePage.removeTargetCollection("Person");
+    curatePage.switchEditBasic();
+    curatePage.switchEditAdvanced();
     curatePage.saveSettings(matchStep).click();
     cy.wait("@saveStep");
     cy.wait("@loadSteps");
