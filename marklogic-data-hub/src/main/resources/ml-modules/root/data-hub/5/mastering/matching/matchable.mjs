@@ -71,9 +71,13 @@ export function buildActionDetails(matchingDocumentSet, thresholdBucket) {
 export class Matchable {
   constructor(matchStep, stepContext) {
     // update the match step if using the legacy format
+    this.isLegacyStep = false;
     if (matchStep.scoring) {
+      this.legacyStep = matchStep;
+      this.legacyStepXML = matchingXqy.xmlOptionsFromJson(xdmp.toJSON(matchStep));
       const updateMatchOptions = hubUtils.requireFunction("/data-hub/data-services/mastering/updateMatchOptionsLib.mjs", "updateMatchOptions");
       this.matchStep = updateMatchOptions(matchStep);
+      this.isLegacyStep = true;
     } else {
       this.matchStep = matchStep;
     }
@@ -502,6 +506,20 @@ class MatchRulesetDefinition {
         break;
       case "custom":
         matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);
+        if (this.matchable.isLegacyStep) {
+          const isXQuery = fn.endsWith(matchRule.algorithmModulePath, ".xqy");
+          passMatchStep = isXQuery ? this.matchable.legacyStepXML: this.matchable.legacyStep;
+          let algorithms = this.matchable.legacyStep.algorithms;
+          if (algorithms.algorithm) {
+            algorithms = algorithms.algorithm;
+          }
+          const legacyRuleJson = this.matchable.legacyStep.scoring.expand.find(rule => {
+            const algorithm = algorithms.find(a => a.name === rule.algorithmRef);
+            return (rule.propertyName === matchRule.entityPropertyPath ||  rule.propertyName === matchRule.documentXPath)
+              && algorithm.at === matchRule.algorithmModulePath && algorithm.function === matchRule.algorithmFunction;
+          });
+          passMatchRule = isXQuery ? matchingXqy.convertQuickStartMatchRuleForXqueryModule(legacyRuleJson): legacyRuleJson;
+        }
         break;
       default:
         httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
