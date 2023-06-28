@@ -215,6 +215,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName4);
+    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     runPage.verifyStepRunResult(mergeStep, "success");
 

@@ -13,6 +13,10 @@ import "cypress-wait-until";
 
 describe("Login", () => {
   before(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+    cy.clearAllSessionStorage();
+    cy.clearAllLocalStorage();
     cy.visit("/");
     cy.waitForAsyncRequest();
   });
