@@ -818,6 +818,10 @@ class BrowsePage {
   navigate() {
     explorePage.navigate();
   }
+
+  verifyCardExist(name: string) {
+    cy.get("div.card-body").contains(name).should("be.visible");
+  }
 }
 
 const browsePage = new BrowsePage();

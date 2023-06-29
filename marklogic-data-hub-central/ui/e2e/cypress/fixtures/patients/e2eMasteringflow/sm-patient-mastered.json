@@ -1,0 +1,74 @@
+[
+  {
+    "firstName": "Gary",
+    "lastName": "Turner",
+    "ssn": "",
+    "zipCode": 44556,
+    "address": "123 Main St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Jane,Jennifer",
+    "lastName": "Smith,Smyth",
+    "ssn": "111-11-1111",
+    "zipCode": "11111",
+    "address": "22222 Main St",
+    "dateOfBirth": "1981-01-01,1982-02-02"
+  },
+  {
+    "firstName": "Alexandra,Alexandria",
+    "lastName": "Wilson",
+    "ssn": "444-44-4440,444-44-4441",
+    "zipCode": "",
+    "address": "123 Wilson St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Gerry",
+    "lastName": "Turner",
+    "ssn": "",
+    "zipCode": 55667,
+    "address": "123 Main St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Jason",
+    "lastName": "Jones",
+    "ssn": "222-22-2220",
+    "zipCode": 22222,
+    "address": "123 Jones St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Robert,Bob",
+    "lastName": "Bates",
+    "ssn": "333-33-3330,333-33-3331",
+    "zipCode": "",
+    "address": "123 Bates St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Alice",
+    "lastName": "Taylor",
+    "ssn": "",
+    "zipCode": "",
+    "address": "1990 Taylor St",
+    "dateOfBirth": "1990-01-01"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": " Jones",
+    "ssn": "222-22-2221",
+    "zipCode": "22222-0000",
+    "address": "456 Jones St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Barbara",
+    "lastName": "Taylor",
+    "ssn": "",
+    "zipCode": "",
+    "address": "1991 Taylor St",
+    "dateOfBirth": "1991-01-01"
+  }
+]
