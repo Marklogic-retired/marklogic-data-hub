@@ -45,7 +45,7 @@ if (nodeToExpand == null && !(queryObj.isConcept && queryObj.objectConcept)) {
   httpUtils.throwBadRequest("Missing parentIRI. Required to expand a node.")
 }
 const hasPredicateFilter = queryObj.predicateFilter !== undefined && queryObj.predicateFilter.length > 0;
-
+let excludeNode = nodeToExpand;
 let result;
 let totalEstimate = 0;
 if(!isConcept) {
@@ -67,11 +67,12 @@ if(!isConcept) {
   }
 } else {
   //is concept
+  excludeNode = queryObj.objectConcept;
   let objectConceptIRI = sem.iri(queryObj.objectConcept);
   result = graphUtils.getEntityNodesExpandingConcept(objectConceptIRI, limit);
 }
 
-let {nodes, edges} = graphUtils.graphResultsToNodesAndEdges(result, entityTypeIds, false, true);
+let {nodes, edges} = graphUtils.graphResultsToNodesAndEdges(result, entityTypeIds, false, excludeNode);
 if (isConcept) {
   totalEstimate = nodes.length;
 } else if (hasPredicateFilter && limit < totalEstimate) {

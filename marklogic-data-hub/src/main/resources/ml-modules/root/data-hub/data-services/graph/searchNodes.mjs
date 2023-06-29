@@ -126,7 +126,12 @@ if(queryObj.conceptsFilterTypeIds != null){
   })
 }
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
+let archivedCollections = [];
+relatedEntityTypeIds.concat(queryObj.entityTypeIds).forEach(entity =>{
+  archivedCollections.push("sm-" + entity + "-archived");
+})
+
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, archivedCollections, ctsQuery, pageLength);
 //get total from base entities
 let resultBaseCounting = graphUtils.getEntityTypeIRIsCounting(entityTypeIRIs, ctsQuery);
 let totalCount = fn.head(resultBaseCounting).total;
