@@ -49,10 +49,12 @@ function getOrderedLabelPredicates() {
   ];
 }
 
-function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit = 100) {
+function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, archivedCollections, ctsQueryCustom, limit = 100) {
   const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)])).toArray();
   const relatedLimit = Math.max(1, relatedEntityTypeIRIs.length) * limit;
   const conceptLimit = Math.max(1, predicateConceptList.length) * relatedLimit;
+
+  const store = sem.store(null, cts.notQuery(cts.collectionQuery(archivedCollections)));
   const results = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT * WHERE {
@@ -112,12 +114,12 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                                ${ conceptFacetList != null && conceptFacetList.length >= 1 ? "FILTER (isIRI(?firstObjectIRI) && ?firstObjectIRI = $conceptFacetList)": ""}
                        }
                       GROUP BY ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?conceptClassName
-                      LIMIT ${conceptLimit} 
+                      LIMIT ${conceptLimit}
                      }
                      BIND("concept graph" AS ?origin)
                }
            }
-  `, {docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()});
+  `, {docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()},null, store);
   if (graphTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
   }
@@ -153,7 +155,7 @@ function getEntityNodes(documentUri, predicateIRI, lastObjectIRI, limit) {
         OPTIONAL {
             ?predicateIRI @labelIRI ?anyPredicateLabel.
         }
-        FILTER (isLiteral(?docURI) && ?docURI = $parentDocURI && isIRI(?predicateIRI) && ?predicateIRI = $matchPredicate)
+        FILTER (isLiteral(?firstDocURI) && ?firstDocURI = $parentDocURI && isIRI(?predicateIRI) && ?predicateIRI = $matchPredicate)
         ${lastObjectIRI ? "FILTER ?subjectIRI > $lastObjectIRI" : ""}
       }
       GROUP BY ?subjectIRI ?docURI ?predicateIRI ?firstObjectIRI
@@ -333,7 +335,7 @@ function shouldCreateGroupNode(item, individualNodeCount) {
   return fn.exists(item.predicateIRI) && (nodeCount - individualNodeCount) > 0;
 }
 
-function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludeOriginNode = false) {
+function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludedOriginNode = undefined) {
   const nodesByID = {};
   const edgesByID = {};
   const docUriToSubjectIri = {};
@@ -450,7 +452,11 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     const originId = originHasDoc ? docUri : subjectIri;
     const predicateArr = fn.string(item.predicateIRI).split("/");
     const edgeLabel = predicateArr[predicateArr.length - 1];
-    if (!(nodesByID[originId] || excludeOriginNode)) {
+    let excludeNode = false;
+    if (!!excludedOriginNode && originId === excludedOriginNode) {
+      excludeNode = true;
+    }
+    if (!excludeNode && !nodesByID[originId]) {
       const nodeOrigin = {};
       nodeOrigin.id = originId;
       nodeOrigin.docUri = docUri;
@@ -527,7 +533,12 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             edge.to = sortedIds[1];
             edgesByID[edge.id] = edge;
           }
-          if (!nodesByID[key]) {
+          excludeNode = false;
+          if (!!excludedOriginNode && key === excludedOriginNode) {
+            excludeNode = true;
+          }
+
+          if (!nodesByID[key] && !excludeNode) {
             let objectNode = {};
             objectNode.id = key;
             objectNode.docUri = objectHasDoc ? key : item.firstDocURI ? item.firstDocURI : null;
