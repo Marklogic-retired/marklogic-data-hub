@@ -1,0 +1,26 @@
+[
+  {
+    "firstName": "Jane,Jennifer",
+    "lastName": "Smith,Smyth",
+    "ssn": "111-11-1111",
+    "zipCode": "11111",
+    "address": "22222 Main St",
+    "dateOfBirth": "1981-01-01,1982-02-02"
+  },
+  {
+    "firstName": "Alexandra,Alexandria",
+    "lastName": "Wilson",
+    "ssn": "444-44-4440,444-44-4441",
+    "zipCode": "",
+    "address": "123 Wilson St",
+    "dateOfBirth": ""
+  },
+  {
+    "firstName": "Robert,Bob",
+    "lastName": "Bates",
+    "ssn": "333-33-3330,333-33-3331",
+    "zipCode": "",
+    "address": "123 Bates St",
+    "dateOfBirth": ""
+  }
+]
