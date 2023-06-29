@@ -69,13 +69,20 @@ describe("Validate Match warnings", () => {
   });
 
   it("Remove the warnings one by one", () => {
+    cy.intercept("PUT", " /api/steps/matching/match-test").as("saveStep");
+    cy.intercept("GET", " /api/steps/custom").as("loadSteps");
     curatePage.removeTargetCollection("Person");
     curatePage.saveSettings(matchStep).click();
+    cy.wait("@saveStep");
+    cy.wait("@loadSteps");
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection mapPersonJSON");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     curatePage.removeTargetCollection("mapPersonJSON");
+    curatePage.switchEditBasic();
+    curatePage.switchEditAdvanced();
     curatePage.saveSettings(matchStep).click();
-    cy.wait(1000);
+    cy.wait("@saveStep");
+    cy.wait("@loadSteps");
     curatePage.addNewStep("Person");
     curatePage.editStep(matchStep).click({force: true});
     curatePage.alertContent().should("not.exist");

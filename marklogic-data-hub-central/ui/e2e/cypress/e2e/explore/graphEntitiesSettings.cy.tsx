@@ -224,9 +224,10 @@ describe("Entity Type Settings Modal", () => {
     dataModelDisplaySettingsModal.getModalBody().should("not.exist");
 
     cy.log("**Check in the sidebar that the entity type have the new color and icon**");
-    entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("be.visible").and("have.attr", "data-color").then(color => {
-      expect(Cypress._.toLower(color)).equal(Cypress._.toLower(newEntityTypeData.color.HEX));
-    });
+    entitiesSidebar.getBaseEntity(defaultEntityTypeData.name)
+      .should("be.visible")
+      .and("have.attr", "data-color", newEntityTypeData.color.HEX.toLowerCase());
+
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("have.css", "background-color", newEntityTypeData.color.RGB);
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("have.attr", "data-icon").then(icon => {
       expect(Cypress._.toLower(icon)).equal(Cypress._.toLower(newEntityTypeData.icon));
@@ -335,9 +336,12 @@ describe("Entity Type Settings Modal", () => {
     entitiesSidebar.backToMainSidebar();
 
     cy.log("**Check in the sidebar that the entity type have the new color and icon**");
-    entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).should("be.visible").and("have.attr", "data-color").then(color => {
-      expect(Cypress._.toLower(color)).equal(Cypress._.toLower(newEntityTypeData2.color.HEX));
-    });
+
+    entitiesSidebar.getBaseEntity(defaultEntityTypeData.name)
+      .should("be.visible")
+      .and("have.attr", "data-color", newEntityTypeData2.color.HEX.toLowerCase());
+
+
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).and("have.css", "background-color", newEntityTypeData2.color.RGB);
     entitiesSidebar.getBaseEntity(defaultEntityTypeData.name).and("have.attr", "data-icon").then(icon => {
       expect(Cypress._.toLower(icon)).equal(Cypress._.toLower(newEntityTypeData2.icon));
