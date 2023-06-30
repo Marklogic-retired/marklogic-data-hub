@@ -93,6 +93,11 @@ declare function entity-validate($entity-uri as xs:string) {
         let $definition-properties := $definitions => map:get($definition-type) => map:get("properties")
         for $property-name in map:keys($definition-properties)
         let $property := $definition-properties => map:get($property-name)
+        let $property := if (map:contains($property, "items")) then
+            map:get($property, "items")
+        else(
+            $property
+        )
         let $datatype := $property => map:get("datatype")
         return
             if (fn:exists($datatype) and fn:string($datatype) eq "") then
