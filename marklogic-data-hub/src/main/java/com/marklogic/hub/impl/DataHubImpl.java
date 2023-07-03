@@ -979,7 +979,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     protected void prepareProjectBeforeUpgrading(HubProject hubProject, String newDataHubVersion) throws IOException {
         final String backupPath = HubProject.HUB_CONFIG_DIR + "-pre-" + newDataHubVersion;
-        FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
+        FileUtils.moveDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
         logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
     }
 
