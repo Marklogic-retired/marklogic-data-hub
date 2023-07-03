@@ -182,19 +182,26 @@ const GraphViewExplore: React.FC<Props> = props => {
   };
 
   const isUnmergeAvailable = nodeId => {
+    if (!canReadMatchMerge) {
+      return false;
+    }
     if (Object.keys(props.entityTypeInstances).length === 0) return false;
     const filteredData = props.entityTypeInstances.nodes.filter(item => item["id"] === nodeId);
-    if (filteredData.length === 0) return false;
-    const item = props.data.filter(item => item.uri === filteredData[0].docUri);
-    if (item.length === 0) return false;
-    if (filteredData.length > 0 && canReadMatchMerge) {
-      return filteredData[0].unmerge;
+    if (filteredData.length === 0) {
+      return false;
     }
-    return false;
+    return filteredData.some(node => node.unmerge) ||
+        props.data.some(item => item.uri === filteredData[0].docUri && item.unmerge);
   };
 
   const openUnmergeCompare = async uri => {
-    const item = props.data.filter(item => item.uri === uri)[0];
+    let item = props.data.find(item => item.uri === uri);
+    // Look for item in nodes if it isn't in the direct search results
+    if (!item) {
+      item = props.entityTypeInstances.nodes.find(item => item.docUri === uri);
+      item.uri = uri;
+      item.entityName = item.group.substring(item.group.lastIndexOf("/") + 1);
+    }
     let arrayUris;
     let activeEntityIndex = props.entityDefArray.findIndex(entity => entity.name === item["entityName"]);
     setActiveEntityArray([props.entityDefArray[activeEntityIndex]]);
