@@ -49,12 +49,22 @@ function getOrderedLabelPredicates() {
   ];
 }
 
-function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, archivedCollections, ctsQueryCustom, limit = 100) {
-  const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"], cts.andQuery([ctsQueryCustom, cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)])).toArray();
+function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentFromBaseAndRelated, conceptFacetList, ctsQueryCustom, limit = 100) {
+  const archivedCollections = getArchivedCollections();
+  const archivedCollectionQuery = fn.exists(archivedCollections) ? cts.collectionQuery(archivedCollections): null;
+  const positiveQuery = cts.andQuery([
+    ctsQueryCustom,
+    cts.tripleRangeQuery(null, rdfTypeIri, entityTypeIRIs)
+  ]);
+  const docURIs = cts.uris(null, [`truncate=${limit}`, "concurrent", "document", "score-zero", "eager"],
+    archivedCollectionQuery ? cts.andNotQuery(
+      positiveQuery,
+      archivedCollectionQuery): positiveQuery
+  ).toArray();
   const relatedLimit = Math.max(1, relatedEntityTypeIRIs.length) * limit;
   const conceptLimit = Math.max(1, predicateConceptList.length) * relatedLimit;
 
-  const store = sem.store(null, cts.notQuery(cts.collectionQuery(archivedCollections)));
+  const store = archivedCollectionQuery ? sem.store(null, cts.notQuery(archivedCollectionQuery)): null;
   const results = sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT * WHERE {
@@ -119,7 +129,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predic
                      BIND("concept graph" AS ?origin)
                }
            }
-  `, {docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()},null, store);
+  `, {docURIs, conceptFacetList, entitiesDifferentFromBaseAndRelated, entityTypeIRIs, predicateConceptList, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(entityTypeIRIs).concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}, null, store);
   if (graphTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Graph search results: '${xdmp.toJsonString(results)}'`);
   }
@@ -176,6 +186,7 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
   if (graphTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Creating plan for graph nodes and edges for concept '${objectConceptIRI}' with limit of ${limit}`);
   }
+  const store = sem.store(null, cts.andNotQuery(cts.orQuery([cts.tripleRangeQuery(objectConceptIRI, null, null), cts.tripleRangeQuery(null, null, objectConceptIRI)]), cts.collectionQuery(getArchivedCollections())));
   const results =  sem.sparql(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                  SELECT ?subjectIRI ?predicateIRI ?firstObjectIRI ?docURI ?firstDocURI  WHERE {
@@ -193,7 +204,7 @@ function getEntityNodesExpandingConcept(objectConceptIRI, limit) {
                     }
                  }
                  LIMIT $limit
-    `, {objectConceptIRI, limit}, []);
+    `, {objectConceptIRI, limit}, [], store);
   if (graphTraceEnabled) {
     xdmp.trace(graphTraceEvent, `Retrieved ${fn.count(results)} rows for concept '${objectConceptIRI}' with limit of ${limit}`);
   }
@@ -212,9 +223,9 @@ function getEntityNodesByDocument(docURI, limit) {
   }
   // Using separate sem.sparql calls, instead of an Optic join to avoid a seg fault with ML 10.0-7
   const bindings = {parentDocURI: docURI, labelIRI: getOrderedLabelPredicates(), allPredicates: getAllPredicates(), limit};
-  const collectionQuery = cts.collectionQuery(getAllEntityIds());
+  const collectionQuery = cts.andNotQuery(cts.collectionQuery(getAllEntityIds()), cts.collectionQuery(getArchivedCollections()));
   const subjectResults = sem.sparql(`
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
         {
@@ -679,10 +690,12 @@ function relatedObjHasRelationships(objectIRIs, objectEntityName, baseCount = 0,
   let predicatesMap = getPredicatesMap();
   let hasRelationships = false;
   if (predicatesMap.has(objectEntityName) || isConcept) {
+    const archivedCollections = getArchivedCollections();
+    const excludeQuery = fn.exists(archivedCollections) ? cts.notQuery(cts.collectionQuery(archivedCollections)): null;
     const asIRIs = objectIRIs.map(iri => sem.iri(iri));
     const predicates = isConcept ? null: predicatesMap.get(objectEntityName);
     const maxCount = baseCount + 1;
-    const relationshipsFirstObjectCount = fn.count(cts.triples(asIRIs, predicates, null, "=", ["document", "lazy", "concurrent"]), maxCount) + fn.count(cts.triples(null, predicates, asIRIs, "=", ["document", "lazy", "concurrent"]), maxCount);
+    const relationshipsFirstObjectCount = fn.count(cts.triples(asIRIs, predicates, null, "=", ["document", "lazy", "concurrent"], excludeQuery), maxCount) + fn.count(cts.triples(null, predicates, asIRIs, "=", ["document", "lazy", "concurrent"], excludeQuery), maxCount);
     hasRelationships = relationshipsFirstObjectCount > baseCount;
   }
   return hasRelationships;
@@ -751,6 +764,9 @@ function describeIRI(semanticConceptIRI) {
   return description;
 }
 
+function getArchivedCollections() {
+  return cts.valueMatch(cts.collectionReference(), "sm-*-archived");
+}
 export default {
   describeIRI,
   getAllEntityIds,

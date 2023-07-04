@@ -59,7 +59,7 @@ let pageLength = pageLengthParam;
 let structuredQuery = external.structuredQuery;
 let queryOptions = external.queryOptions;
 
-if(query == null) {
+if (query == null) {
   httpUtils.throwBadRequest("Request cannot be empty");
 }
 
@@ -74,7 +74,7 @@ start = start || 0;
 pageLength = pageLength || 1000;
 let qrySearch;
 
-if(structuredQuery !== undefined && structuredQuery.toString().length > 0) {
+if (structuredQuery !== undefined && structuredQuery.toString().length > 0) {
   structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
   queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
   const newOptions = fn.head(xdmp.xsltEval(stylesheet, queryOptions)).root;
@@ -93,45 +93,40 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   if (queryObj.entityTypeIds.includes(entityName)) {
     //get predicate from concepts
     predicateConceptList = predicateConceptList.concat(entityLib.getConceptPredicatesByModel(model));
-    if(relatedEntityTypeIds != null){
-      const predicateListBaseEntities = entityLib.getPredicatesByModelAndBaseEntities(model,relatedEntityTypeIds);
+    if (relatedEntityTypeIds != null) {
+      const predicateListBaseEntities = entityLib.getPredicatesByModelAndBaseEntities(model, relatedEntityTypeIds);
       allRelatedPredicateList = allRelatedPredicateList.concat(predicateListBaseEntities);
     }
     entityTypeIRIs.push(sem.iri(entityNameIri));
   }
-  if(!queryObj.entityTypeIds.includes(entityName) && !(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName))){
+  if (!queryObj.entityTypeIds.includes(entityName) && !(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName))) {
     entitiesDifferentsFromBaseAndRelated.push(sem.iri(entityNameIri));
   }
 });
 
 
 let ctsQuery = cts.trueQuery();
-if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
+if (queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
   const searchTxtResponse = fn.head(search.parse(queryObj.searchText));
   ctsQuery = cts.query(searchTxtResponse);
-  if(qrySearch !== undefined){
-    ctsQuery = cts.andQuery([qrySearch,ctsQuery]);
+  if (qrySearch !== undefined) {
+    ctsQuery = cts.andQuery([qrySearch, ctsQuery]);
   }
-}else{
+} else {
   // if doesn't has search text, but could has facetSelects
-  if(qrySearch !== undefined){
+  if (qrySearch !== undefined) {
     ctsQuery = qrySearch;
   }
 }
 
 let conceptFacetList = [];
-if(queryObj.conceptsFilterTypeIds != null){
+if (queryObj.conceptsFilterTypeIds != null) {
   queryObj.conceptsFilterTypeIds.map(item => {
     conceptFacetList.push(sem.iri(item));
-  })
+  });
 }
 
-let archivedCollections = [];
-relatedEntityTypeIds.concat(queryObj.entityTypeIds).forEach(entity =>{
-  archivedCollections.push("sm-" + entity + "-archived");
-})
-
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, archivedCollections, ctsQuery, pageLength);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, predicateConceptList, entitiesDifferentsFromBaseAndRelated, conceptFacetList, ctsQuery, pageLength);
 //get total from base entities
 let resultBaseCounting = graphUtils.getEntityTypeIRIsCounting(entityTypeIRIs, ctsQuery);
 let totalCount = fn.head(resultBaseCounting).total;
