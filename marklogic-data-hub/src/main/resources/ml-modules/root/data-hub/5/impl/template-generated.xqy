@@ -268,7 +268,14 @@ declare function extraction-template-generate(
                 <tde:context>{ $prefix-path || (if ($prefix-value) then "(" || $prefix-value || $entity-type-name || "|" || $entity-type-name || ")" else  $entity-type-name)}</tde:context>
                 <tde:vars>
                   <tde:var><tde:name>primary-key-val</tde:name><tde:val>fn:encode-for-uri(fn:head(./{ if ($prefix-value) then "(" || 	$prefix-value || $primary-key-name || "|" || $primary-key-name || ")" else $primary-key-name } ! xs:string(.)[. ne ""]))</tde:val></tde:var>
-                  <tde:var><tde:name>subject-iri</tde:name><tde:val>sem:iri(concat("{ model-graph-prefix($model) }/{ $entity-type-name }/", if (fn:empty($primary-key-val) or $primary-key-val eq "") then sem:uuid-string() else $primary-key-val))</tde:val></tde:var>
+                  <tde:var><tde:name>subject-iri</tde:name><tde:val>{
+                    (: Keep the top entity ID consistent :)
+                    if ($entity-type-name eq $top-entity) then
+                      '$top-subject-iri'
+                    else
+                      'sem:iri(concat("'|| model-graph-prefix($model) ||'/'|| $entity-type-name || '/", if (fn:empty($primary-key-val) or $primary-key-val eq "") then sem:uuid-string() else $primary-key-val))'
+
+                  }</tde:val></tde:var>
                   {
                     for $related-property-name in $related-entity-type-property-names
                     return
