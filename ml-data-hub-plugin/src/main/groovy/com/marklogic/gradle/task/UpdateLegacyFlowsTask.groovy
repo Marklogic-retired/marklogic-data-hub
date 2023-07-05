@@ -17,16 +17,41 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.impl.FlowManagerImpl
-import com.marklogic.hub.impl.HubProjectImpl
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 class UpdateLegacyFlowsTask extends HubTask {
 
+    @Input
+    @Optional()
+    List<String> legacyEntities = new ArrayList<>()
+
+    @Input
+    @Optional
+    List<String> legacyFlowTypes = new ArrayList<>()
+
+    @Input
+    @Optional
+    List<String> legacyFlowNames = new ArrayList<>()
+
+
     @TaskAction
     void updateLegacyFlows() {
+        if(legacyEntities == null || legacyEntities.size() == 0) {
+            legacyEntities = project.hasProperty("legacyEntities") ? project.property("legacyEntities").toString().trim().tokenize(",") : new ArrayList<>()
+        }
+
+        if(legacyFlowTypes == null || legacyFlowTypes.size() == 0) {
+            legacyFlowTypes = project.hasProperty("legacyFlowTypes") ? project.property("legacyFlowTypes").toString().trim().tokenize(",") : new ArrayList<>()
+        }
+
+        if(legacyFlowNames == null || legacyFlowNames.size() == 0) {
+            legacyFlowNames = project.hasProperty("legacyFlowNames") ? project.property("legacyFlowNames").toString().trim().tokenize(",") : new ArrayList<>()
+        }
+
         println "start upgradeLegacyFlows task ."
-        int flowsUpdated = getHubProject().upgradeLegacyFlows(getFlowManager())
+        int flowsUpdated = getHubProject().upgradeLegacyFlows(getFlowManager(), legacyEntities, legacyFlowTypes, legacyFlowNames)
         if(flowsUpdated == 0) {
             println("No legacy Flows found in plugins/entities directory to upgrade")
         }

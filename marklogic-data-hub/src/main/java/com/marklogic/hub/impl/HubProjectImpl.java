@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -495,6 +497,14 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     public int upgradeLegacyFlows(FlowManager flowManager) {
+        return upgradeLegacyFlows(flowManager, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
+    public int upgradeLegacyFlows(FlowManager flowManager, List<String> legacyEntities, List<String> legacyFlowTypes, List<String> legacyFlowNames) {
+        Set<String> legacyEntitiesSet = new HashSet<>(legacyEntities);
+        Set<String> legacyFlowTypesSet = new HashSet<>(legacyFlowTypes);
+        Set<String> legacyFlowNamesSet = new HashSet<>(legacyFlowNames);
+
         int flowsUpdated = 0;
         if(this.getHubPluginsDir() == null || this.getLegacyHubEntitiesDir() == null) {
             logger.info("No legacy Flows found in plugins/entities directory to upgrade");
@@ -502,7 +512,10 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
 
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
-        File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles();
+
+        File[] oldEntityDirectories = oldEntitiesDir.toFile().listFiles((dir, name) -> legacyEntitiesSet.size() > 0 ?
+            dir.isDirectory() && legacyEntitiesSet.contains(name) : dir.isDirectory());
+
         if(ArrayUtils.isEmpty(oldEntityDirectories)) {
             logger.info("No legacy Flows found in plugins/entities directory to upgrade");
             return flowsUpdated;
@@ -512,17 +525,31 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         ObjectMapper objectMapper = new ObjectMapper();
         if(oldEntityDirectories != null) {
             for(File legacyEntityDir: oldEntityDirectories) {
-                File[] flowTypes = legacyEntityDir.listFiles(File::isDirectory);
+                File[] flowTypes = legacyEntityDir.listFiles((dir, name) -> legacyFlowTypesSet.size() > 0 ?
+                    dir.isDirectory() && legacyFlowTypesSet.contains(name) : dir.isDirectory());
                 Arrays.sort(flowTypes, Collections.reverseOrder());
                 if(flowTypes != null) {
                     String flowName = "dh_Upgrade_".concat(legacyEntityDir.getName()).concat("Flow");
-                    ObjectNode flow = objectMapper.createObjectNode();
-                    flow.put("name", flowName);
-                    ObjectNode steps = objectMapper.createObjectNode();
-                    flow.put("steps", steps);
-                    int stepNumber = 1;
+
+                    ObjectNode flow = ((FlowManagerImpl) flowManager).getLocalFlowAsJSON(flowName);
+                    ObjectNode steps;
+                    int stepNumber = 0;
+                    if(flow == null) {
+                        flow = objectMapper.createObjectNode();
+                        flow.put("name", flowName);
+                        steps = objectMapper.createObjectNode();
+                        flow.put("steps", steps);
+                    } else {
+                        steps = (ObjectNode) flow.get("steps");
+                        Iterable<String> iterable = () -> steps.fieldNames();
+                        stepNumber = StreamSupport.stream(iterable.spliterator(), false).mapToInt(Integer::parseInt).max().getAsInt();
+                    }
+                    int currStepNumber = stepNumber;
+
                     for(File oldFlowType: flowTypes) {
-                        File[] stepFiles = oldFlowType.listFiles(File::isDirectory);
+                        File[] stepFiles = oldFlowType.listFiles((dir, name) -> legacyFlowNamesSet.size() > 0 ?
+                            dir.isDirectory() && legacyFlowNamesSet.contains(name) : dir.isDirectory());
+
                         for (File stepFile : stepFiles) {
                             String stepName = stepFile.getName();
                             // Step names are not allowed to have special characters
@@ -542,6 +569,13 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                                 stepType = "custom";
                                 acceptSourceModule = true;
                             }
+
+                            if(getStepFile(StepDefinition.StepDefinitionType.getStepDefinitionType(stepType), newStepName).exists()) {
+                                logger.info(String.format("Ignoring legacy flow %s in the %s entity as a step with StepName: %s and StepType: %s already exists in steps directory",
+                                    stepName, legacyEntityDir.getName(), newStepName, stepType));
+                                continue;
+                            }
+
                             JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule);
                             // Save StepDefinition to local file
                             scaffolding.saveStepDefinition(newStepName, newStepName, stepType, true);
@@ -550,12 +584,14 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                             scaffolding.saveLocalStep(stepType, stepPayLoad);
                             // Add step to local Flow
                             ObjectNode stepIdObj = objectMapper.createObjectNode();
-                            steps.put(Integer.toString(stepNumber++), stepIdObj);
+                            steps.put(Integer.toString(++stepNumber), stepIdObj);
                             stepIdObj.put("stepId", newStepName.concat("-").concat(stepType));
                             flowsUpdated++;
                         }
                     }
-                    ((FlowManagerImpl) flowManager).saveLocalFlow(flow);
+                    if(stepNumber > currStepNumber) {
+                        ((FlowManagerImpl) flowManager).saveLocalFlow(flow);
+                    }
                 }
             }
         }
