@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -211,12 +212,132 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
     }
 
+    @Test
+    public void onlyLegacyEntitiesUpgrade() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "onlyLegacyEntitiesUpgrade");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyEntities.add("Customer");
+        legacyEntities.add("Product");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_CustomerFlow.flow.json").toFile().exists());
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_ProductFlow.flow.json").toFile().exists());
+        assertFalse(hubProject.getFlowsDir().resolve("dh_Upgrade_OrderFlow.flow.json").toFile().exists());
+    }
+
+    @Test
+    public void onlyFlowTypeUpgrade() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "onlyFlowTypeUpgrade");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyFlowTypes.add("input");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).toFile().exists());
+    }
+
+    @Test
+    public void onlyFlowNamesUpgrade() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "onlyFlowNamesUpgrade");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyFlowNames.add("Load Customers");
+        legacyFlowNames.add("Harmonize Products");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders.step.json").toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
+    }
+
+    @Test
+    public void entityAndFlowNameUpgrade() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "entityAndFlowNameUpgrade");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyEntities.add("Customer");
+        legacyFlowNames.add("Load Customers");
+        legacyFlowNames.add("Harmonize Products");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
+    }
+
+    @Test
+    public void entityAndFlowTypeUpgrade() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "entityAndFlowTypeUpgrade");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyEntities.add("Product");
+        legacyFlowTypes.add("input");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
+    }
+
+    @Test
+    public void nonExistentFlowName() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "nonExistentFlowName");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyFlowNames.add("NonExistentFlow");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertEquals(0, hubProject.getFlowsDir().toFile().listFiles().length);
+    }
+
+    @Test
+    public void multipleLegacyFlowUpgrades() throws IOException {
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory("dhf43x", "multipleLegacyFlowUpgrades");
+        hubProject.init(new HashMap<>());
+        hubProject.upgradeProject(flowManager);
+        List<String> legacyEntities = new ArrayList<>();
+        List<String> legacyFlowTypes = new ArrayList<>();
+        List<String> legacyFlowNames = new ArrayList<>();
+        legacyFlowTypes.add("input");
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().exists());
+        assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).toFile().exists());
+
+        legacyFlowTypes = new ArrayList<>();
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        verify4xUpgradedFlows();
+    }
+
     private void verifyDirContents(File dir, int expectedCount) {
         assertEquals(expectedCount, dir.listFiles().length);
     }
 
     private File copyTestProjectToTempDirectory(String projectName) {
-        final String projectPath = "build/tmp/upgrade-projects/" + projectName;
+        return copyTestProjectToTempDirectory(projectName, projectName);
+    }
+
+    private File copyTestProjectToTempDirectory(String projectName, String destProjectName) {
+        final String projectPath = "build/tmp/upgrade-projects/" + destProjectName;
         final File projectDir = Paths.get(projectPath).toFile();
         try {
             if(projectDir.exists()) {
