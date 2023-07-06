@@ -125,7 +125,7 @@ export default class Mergeable {
         properties.push([mergeXPathInformation, mergedProperties]);
       }
     }
-    const documentNodes = hubUtil.normalizeToArray(contentObjects).map(contentObj => contentObj.value);
+    const documentNodes = contentObjects.map(contentObj => contentObj.value);
     const distinctHeaderNodeNames = fn.distinctValues(Sequence.from(documentNodes.map((doc) => doc.xpath("*:envelope/*:headers/* ! fn:node-name(.)"))));
     // merge headers
     for (const topHeader of distinctHeaderNodeNames) {
