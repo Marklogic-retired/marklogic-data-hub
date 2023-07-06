@@ -22,7 +22,7 @@
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import entityValidation from "/data-hub/5/builtins/steps/mapping/entity-services/entity-validation-lib.mjs";
-const es = require('/MarkLogic/entity-services/entity-services');
+const es = require('/data-hub/core/entiity-services/entity-services-impl.xqy');
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
 
 const INFO_EVENT = consts.TRACE_CORE;

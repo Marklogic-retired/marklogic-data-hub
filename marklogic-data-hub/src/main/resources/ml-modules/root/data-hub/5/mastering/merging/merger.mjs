@@ -40,7 +40,14 @@ function buildContentObjectsFromMatchSummary(
     let currentContentObject = null;
     switch (actionType) {
     case "merge": {
-      const mergeContentObjects = uriActionDetails.uris.map(uri => getContentObject(uri)).filter(contentObject => contentObject);
+      const mergeContentObjects = uriActionDetails.uris.map(uri => {
+        const contentObject = getContentObject(uri);
+        // checking against node being prematurely released
+        if (!contentObject.value) {
+          contentObject.value = cts.doc(uri);
+        }
+        return contentObject;
+      }).filter(contentObject => contentObject && contentObject.value);
       // ensure we found 2 or more URIs to merge before trying to merge build the merge document
       if (mergeContentObjects.length > 1) {
         currentContentObject = {
@@ -54,6 +61,7 @@ function buildContentObjectsFromMatchSummary(
       }
       for (const contentToArchive of mergeContentObjects) {
         mergeable.applyDocumentContext(contentToArchive, {action: "archive"});
+        hubUtils.releaseDatabaseNodeFromContentObject(contentToArchive);
         contentObjects.push(contentToArchive);
       }
       const auditDoc = mergeable.buildAuditDocument(uri, uriActionDetails.uris, "merge");
