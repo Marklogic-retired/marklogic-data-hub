@@ -1,0 +1,52 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['PersonMapping'])",
+  "collections": [
+    "MatchingPerson"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "Name - Exact",
+      "weight": 23,
+      "reduce": false,
+      "fuzzyMatch": false,
+      "matchRules": [
+        {
+          "entityPropertyPath": "Name",
+          "matchType": "exact",
+          "options": { },
+          "exclusionLists": [ ]
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "exact",
+      "action": "notify",
+      "score": 14
+    }
+  ],
+  "name": "MatchingPerson",
+  "description": "",
+  "collection": [
+    "PersonMapping"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "MatchingPerson-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2023-07-07T16:39:06.43065-03:00"
+}

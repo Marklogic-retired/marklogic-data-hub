@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
+    }
+    dependencies {
+        if (project.hasProperty("testing")) {
+            classpath "com.marklogic:ml-data-hub:6.0-SNAPSHOT"
+        } else {
+            classpath "com.marklogic:ml-data-hub:5.7.1"
+        }
+    }
+}
+
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "java"
+}
+apply plugin: "com.marklogic.ml-data-hub"
+
+repositories {
+    maven {url "https://developer.marklogic.com/maven2/"}
+    mavenCentral()
+    if (project.hasProperty("testing")) {
+        mavenLocal()
+    }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    // Ensures that the marklogic-unit-test modules are loaded into the modules database when the application is deployed
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
+
+    // Makes the DHF JUnit5 library available for tests
+    if (project.hasProperty("testing")) {
+        testImplementation "com.marklogic:marklogic-data-hub-junit5:6.0-SNAPSHOT"
+    } else {
+        testImplementation "com.marklogic:marklogic-data-hub-junit5:5.7.1"
+    }
+
+    mlcp "com.marklogic:mlcp:10.0.9"
+    mlcp files("lib")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task runFlows {
+    dependsOn {
+        tasks.findAll { task -> "Run flow".equals(task.group) }
+    }
+}
+
+
+
+

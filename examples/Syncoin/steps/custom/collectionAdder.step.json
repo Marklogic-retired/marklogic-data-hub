@@ -1,0 +1,28 @@
+{
+  "collections": [
+    "collectionAdder"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": "joi000000000000000000000000000000000000000000",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "provenanceGranularityLevel": "coarse",
+  "name": "collectionAdder",
+  "stepId": "collectionAdder-custom",
+  "stepDefinitionName": "collectionAdder",
+  "stepDefinitionType": "custom",
+  "sourceQuery": "cts.collectionQuery('Customer')",
+  "selectedSource": "query",
+  "lastUpdated": "2023-06-29T15:29:31.8410917-03:00",
+  "additionalCollections": [
+    "fewfew",
+    "y5",
+    "htr"
+  ],
+  "targetFormat": "json",
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "description": "grgergerg",
+  "collectionToAdd": "added-collection"
+}

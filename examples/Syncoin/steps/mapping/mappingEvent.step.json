@@ -1,0 +1,73 @@
+{
+  "collections": [
+    "mappingEvent",
+    "Event"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "mappingEvent",
+  "targetEntityType": "http://example.org/Event-1.0.0/Event",
+  "description": "",
+  "collection": [
+    "LoadEvent"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['LoadEvent'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mappingEvent-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-07-07T16:36:36.440413-03:00",
+  "properties": {
+    "EventType": {
+      "sourcedFrom": "EventType"
+    },
+    "GUID": {
+      "sourcedFrom": "GUID"
+    },
+    "Classification": {
+      "sourcedFrom": "Classification"
+    },
+    "eventID": {
+      "sourcedFrom": "eventID"
+    },
+    "Remarks": {
+      "sourcedFrom": "Remarks"
+    }
+  },
+  "namespaces": { },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Event.ObservedLocation:Location",
+      "properties": {
+        "Latitude": {
+          "sourcedFrom": "Address/Location/Latitude"
+        },
+        "Longitude": {
+          "sourcedFrom": "Address/Location/Longitude"
+        },
+        "MGRS": {
+          "sourcedFrom": "Address/Location/MGRS"
+        }
+      },
+      "targetEntityType": "http://example.org/Location-1.0.0/Location",
+      "collections": [
+        "mappingEvent",
+        "Location"
+      ],
+      "permissions": "data-hub-common,read,data-hub-common,update"
+    }
+  ]
+}

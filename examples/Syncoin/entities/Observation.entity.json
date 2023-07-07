@@ -1,0 +1,44 @@
+{
+  "info": {
+    "title": "Observation",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Observation": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "DateTimeObservation": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservedLocation": {
+          "$ref": "#/definitions/Location"
+        }
+      }
+    },
+    "Location": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Latitude": {
+          "datatype": "float"
+        },
+        "Longitude": {
+          "datatype": "float"
+        },
+        "MGRS": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

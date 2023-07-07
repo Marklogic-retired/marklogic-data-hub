@@ -1,0 +1,85 @@
+{
+  "info": {
+    "title": "Facility",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/",
+    "draft": false
+  },
+  "definitions": {
+    "Observation": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "DateTimeObservation": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservedLocation": {
+          "$ref": "#/definitions/Location"
+        }
+      }
+    },
+    "Facility": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GUID": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Type": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservationInfo": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Observation"
+          }
+        },
+        "OperationalStatus": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservedLocation": {
+          "datatype": "string",
+          "relatedEntityType": "http://example.org/Location-0.0.1/Location",
+          "joinPropertyName": ""
+        }
+      }
+    },
+    "Location": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Latitude": {
+          "datatype": "float"
+        },
+        "Longitude": {
+          "datatype": "float"
+        },
+        "MGRS": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

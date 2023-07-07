@@ -1,0 +1,51 @@
+{
+  "collections": [
+    "PersonMapping",
+    "Person"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": false,
+  "sourceRecordScope": "instanceOnly",
+  "name": "PersonMapping",
+  "targetEntityType": "http://example.org/Person-1.0.0/Person",
+  "description": "",
+  "collection": [
+    "LoadPersonJSON"
+  ],
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['LoadPersonJSON'])",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": { },
+  "interceptors": [ ],
+  "provenanceGranularityLevel": "off",
+  "customHook": { },
+  "sourceDatabase": "data-hub-STAGING",
+  "mappingParametersModulePath": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "PersonMapping-mapping",
+  "acceptsBatch": true,
+  "lastUpdated": "2023-07-07T16:09:41.5305943-03:00",
+  "properties": {
+    "Name": {
+      "sourcedFrom": "name"
+    },
+    "Assessment": {
+      "sourcedFrom": "Assessment"
+    },
+    "GUID": {
+      "sourcedFrom": "GUID"
+    },
+    "Classification": {
+      "sourcedFrom": "Classification"
+    },
+    "observed": {
+      "sourcedFrom": "observed"
+    }
+  },
+  "namespaces": { }
+}

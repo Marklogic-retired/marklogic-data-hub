@@ -1,0 +1,8 @@
+{
+  "user-name": "hub-user",
+  "description": "Most limited user that can access Hub Central",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-user"
+  ]
+}
