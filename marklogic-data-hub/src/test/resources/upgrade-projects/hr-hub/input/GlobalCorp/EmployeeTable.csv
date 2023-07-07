@@ -1,0 +1,6 @@
+emp_id,first_name,last_name,dob,addr1,addr2,city,latitude,longitude,state,zip,home_phone,mobile,pager,home_email,job_title,hire_date,work_phone,work_email,reports_to,dept_num,office_number
+356,Tina,Webb,2/20/1988,62 Mayer Plaza,,El Paso,31.6948,-106.3,TX,88535,1-(915)584-8677,1-(339)592-9887,,,Marketing Manager,9/21/2007,1-(402)348-8753,Tina.Webb@foo.com,4,3,218
+859,Anthony,Lynch,2/15/1955,264 Towne Court,,Albany,42.6149,-73.9708,NY,12247,1-(518)145-9097,1-(360)644-1023,,,Research Nurse,5/11/2014,1-(520)152-8561,Anthony.Lynch@foo.com,2,5,128
+317,Nicole,Lewis,12/14/1967,81829 Kropf Parkway,,San Francisco,37.7211,-122.4754,CA,94132,1-(415)200-5450,1-(337)726-5912,,,Civil Engineer,9/13/2008,1-(334)859-9747,Nicole.Lewis@foo.com,2,5,469
+324,Paula,Fernandez,8/7/1965,36397 Thackeray Crossing,,Arlington,32.7714,-97.2915,TX,76004,1-(817)853-8611,1-(212)324-2409,,,VP Accounting,4/8/2010,1-(410)532-3474,Paula.Fernandez@foo.com,5,1,760
+427,Sarah,Washington,4/17/1954,20 Ryan Parkway,,Lexington,38.0283,-84.4715,KY,40576,1-(859)147-4868,1-(815)768-3364,,,Librarian,10/19/2012,1-(210)795-3451,Sarah.Washington@foo.com,5,1,64
