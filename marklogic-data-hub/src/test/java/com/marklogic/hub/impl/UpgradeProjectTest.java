@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.impl.Step;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
@@ -21,10 +25,13 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,12 +67,11 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void upgrade43xToCurrentVersion() throws IOException {
-        final HubProject hubProject = getHubProject();
+        final HubProjectImpl hubProject = getHubProject();
         final File projectDir = copyTestProjectToTempDirectory("dhf43x");
-
         // This test is a little awkward because it's not clear if dataHub.upgradeProject can just be called in the
-        // context of this test. So instead, some of the methods called by that method are called directly here.
-        dataHub.prepareProjectBeforeUpgrading(hubProject, "5.0.3");
+        // context of this test. So instead, some methods called by that method are called directly here.
+        dataHub.prepareProjectBeforeUpgrading(hubProject, getHubConfig().getJarVersion());
         hubProject.init(new HashMap<>());
         hubProject.upgradeProject(flowManager);
         hubProject.upgradeLegacyFlows(flowManager);
@@ -83,7 +89,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertEquals("Parent", db.get("range-element-attribute-index").get(0).get("parent-localname").asText(),
             "Other existing indexes should have been retained though; only range-element-index should have been removed");
 
-        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-pre-5.0.3").toFile();
+        File internalConfigBackupDir = hubProject.getProjectDir().resolve("src").resolve("main").resolve("hub-internal-config-pre-".concat(getHubConfig().getJarVersion())).toFile();
         assertTrue(internalConfigBackupDir.exists(), "The prepareProjectBeforeUpgrading method should backup the " +
             "hub-internal-config directory in the rare event that a user has made changes to this directory and doesn't want to " +
             "lose them (though a user really shouldn't be doing that)");
@@ -214,10 +220,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void onlyLegacyEntitiesUpgrade() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "onlyLegacyEntitiesUpgrade");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "onlyLegacyEntitiesUpgrade");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -231,10 +234,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void onlyFlowTypeUpgrade() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "onlyFlowTypeUpgrade");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "onlyFlowTypeUpgrade");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -246,10 +246,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void onlyFlowNamesUpgrade() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "onlyFlowNamesUpgrade");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "onlyFlowNamesUpgrade");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -264,10 +261,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void entityAndFlowNameUpgrade() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "entityAndFlowNameUpgrade");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "entityAndFlowNameUpgrade");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -281,10 +275,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void entityAndFlowTypeUpgrade() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "entityAndFlowTypeUpgrade");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "entityAndFlowTypeUpgrade");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -297,10 +288,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void nonExistentFlowName() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "nonExistentFlowName");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "nonExistentFlowName");
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
@@ -311,21 +299,115 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void multipleLegacyFlowUpgrades() throws IOException {
-        final HubProjectImpl hubProject = getHubProject();
-        copyTestProjectToTempDirectory("dhf43x", "multipleLegacyFlowUpgrades");
-        hubProject.init(new HashMap<>());
-        hubProject.upgradeProject(flowManager);
+        HubProjectImpl hubProject = setUpProject("dhf43x", "multipleLegacyFlowUpgrades");
+
         List<String> legacyEntities = new ArrayList<>();
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
         legacyFlowTypes.add("input");
         hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).toFile().exists());
 
         legacyFlowTypes = new ArrayList<>();
         hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
         verify4xUpgradedFlows();
+    }
+
+    @Test
+    public void runUpgradedLegacyFlows() throws IOException {
+        HubProjectImpl hubProject = setUpProject("hr-hub", "runUpgradedLegacyFlows");
+        hubProject.upgradeLegacyFlows(flowManager);
+
+        deployAsDeveloper(getHubConfig());
+        int stagingDbCount = getStagingDocCount();
+        int finalDbCount = getFinalDocCount();
+
+        FlowInputs inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        inputs.setInputFilePath("input/AcmeTech");
+        String stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "load-acme-tech");
+        inputs.setSteps(Arrays.asList(stepNum));
+        RunFlowResponse inputStepResponse = runFlow(inputs);
+        logger.info("inputStepResponse RunFlow Response: " + inputStepResponse);
+        assertEquals(stagingDbCount + 2, getStagingDocCount(), "Two documents in the input/AcmeTech should be written");
+
+        waitForReindex(getHubClient(), "data-hub-STAGING");
+
+        inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "harmonize-acme-tech");
+        inputs.setSteps(Arrays.asList(stepNum));
+        RunFlowResponse customStepResponse = runFlow(inputs);
+        logger.info("customStepResponse RunFlow Response: " + customStepResponse);
+        assertEquals(finalDbCount + 2, getFinalDocCount(), "Two input documents should be harmonized and written into final db");
+    }
+
+    @Test
+    public void runUpgradedLegacyFlowsNonUris() throws IOException {
+        StepManager stepManager = new StepManager(getHubConfig());
+        HubProjectImpl hubProject = setUpProject("hr-hub", "runUpgradedLegacyFlowsNonUris");
+        hubProject.upgradeLegacyFlows(flowManager);
+
+        ObjectNode node = stepManager.getLocalStepAsJSON("LoadOrders-ingestion");
+        node.put("sourceFormat", "csv");
+        stepManager.saveLocalStep(node);
+
+        deployAsDeveloper(getHubConfig());
+        int stagingDbCount = getStagingDocCount();
+        int finalDbCount = getFinalDocCount();
+
+        FlowInputs inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_OrderFlow");
+        inputs.setInputFilePath("input/orders");
+        inputs.setSteps(Arrays.asList("1"));
+        runFlow(inputs);
+        assertEquals(stagingDbCount + 1, getStagingDocCount(), "1 document in the input/orders should be written");
+
+        waitForReindex(getHubClient(), "data-hub-STAGING");
+        inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_OrderFlow");
+        inputs.setSteps(Arrays.asList("2"));
+        runFlow(inputs);
+        assertEquals(finalDbCount + 1, getFinalDocCount(), "1 harmonized record should be written into final db");
+    }
+
+    @Test
+    public void runUpgradedLegacyFlowsFromCsv() throws IOException {
+        StepManager stepManager = new StepManager(getHubConfig());
+        HubProjectImpl hubProject = setUpProject("hr-hub", "runUpgradedLegacyFlowsFromCsv");
+        hubProject.upgradeLegacyFlows(flowManager);
+
+        ObjectNode node = stepManager.getLocalStepAsJSON("load-global-corp-ingestion");
+        node.put("sourceFormat", "csv");
+        stepManager.saveLocalStep(node);
+
+        Path inputPath = getHubProject().getProjectDir().resolve("input").resolve("AcmeTech");
+        logger.info("Files in the input path: " + inputPath.toFile().listFiles().length);
+
+        deployAsDeveloper(getHubConfig());
+        int stagingDbCount = getStagingDocCount();
+        int finalDbCount = getFinalDocCount();
+
+        FlowInputs inputs = new FlowInputs();
+        Map<String, Object> options = new HashMap<>();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        inputs.setInputFilePath("input/GlobalCorp");
+
+        String stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "load-global-corp");
+        inputs.setSteps(Arrays.asList(stepNum));
+        inputs.setOptions(options);
+        runFlow(inputs);
+        assertEquals(stagingDbCount + 15, getStagingDocCount(), "15 documents in the input/GlobalCorp should be written");
+
+        waitForReindex(getHubClient(), "data-hub-STAGING");
+        inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "harmonize-global-corp");
+        inputs.setSteps(Arrays.asList(stepNum));
+        runFlow(inputs);
+        assertEquals(finalDbCount + 5, getFinalDocCount(), "5 harmonized Employee documents are written into final db");
     }
 
     private void verifyDirContents(File dir, int expectedCount) {
@@ -400,4 +482,28 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertEquals("json", node.get("options").get("dataFormat").asText());
         assertEquals("/entities/Product/harmonize/Harmonize Products/main.sjs", node.get("options").get("mainModuleUri").asText());
     }
+
+    private HubProjectImpl setUpProject(String sourceProjectName, String destProjectName) throws IOException {
+        runAsDataHubDeveloper();
+        final HubProjectImpl hubProject = getHubProject();
+        copyTestProjectToTempDirectory(sourceProjectName, destProjectName);
+        getHubConfig().setHubProject(hubProject);
+        hubProject.init(getHubConfig().getAppConfig().getCustomTokens());
+        hubProject.upgradeProject(flowManager);
+        getHubConfig().refreshProject();
+        runAsDataHubDeveloper();
+        return hubProject;
+    }
+
+    public String getStepNumFromStepName(String flowName, String stepName) throws IOException {
+        Flow flow = flowManager.getFullFlow(flowName);
+        Map<String, Step> stepsMap = flow.getSteps();
+        for (String key : flow.getSteps().keySet()) {
+            if(stepName.equals(stepsMap.get(key).getName())) {
+                return key;
+            }
+        }
+        return "0";
+    }
+
 }

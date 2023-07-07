@@ -1,0 +1,2 @@
+id,customer,order_date,ship_date,product_id,sku,price,quantity,discounted_price,title,description
+1,600,04/20/2017,05/02/2017,1000055,101591922267,4.5,1.0,3.92,different gallon,

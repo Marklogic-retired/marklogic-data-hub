@@ -1,0 +1,14 @@
+{
+  "info" : {
+    "title" : "Employee",
+    "version" : "0.0.1"
+  },
+  "definitions" : {
+    "Employee" : {
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : { }
+    }
+  }
+}
