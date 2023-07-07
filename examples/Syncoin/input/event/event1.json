@@ -1,0 +1,17 @@
+{
+    "EventType": "TYP",
+    "GUID": "550e840",
+    "Classification": "UNCLASSIFIED",
+    "eventID": 4,
+	"Remarks": "DP MIGHT WANTED.",
+    "Address": [
+    {
+      "Location": {
+        "Latitude": "0",
+        "Longitude": 0.00999999977648258,
+        "MGRS": "Columbus"
+
+      }
+	}
+    ]
+}

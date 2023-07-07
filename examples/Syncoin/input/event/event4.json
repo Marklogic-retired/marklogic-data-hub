@@ -1,0 +1,17 @@
+{
+    "EventType": "TYP",
+    "GUID": "55053e840",
+    "Classification": "UNCLASSIFIED",
+    "eventID": 1,
+	  "Remarks": "Seeking public.",
+    "Address": [
+    {
+      "Location": {
+        "Latitude": "0",
+        "Longitude": 0.00999999977648258,
+        "MGRS": "Zheng"
+
+      }
+	}
+    ]
+}

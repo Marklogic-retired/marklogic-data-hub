@@ -1,0 +1,46 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['MatchingPerson'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "MergingPerson"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "Name",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "1",
+      "retainDuplicateValues": false,
+      "priorityOrder": {
+        "sources": [ ],
+        "timeWeight": 0,
+        "lengthWeight": 1
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": null,
+  "name": "MergingPerson",
+  "description": "",
+  "collection": "MatchingPerson",
+  "selectedSource": "collection",
+  "lastUpdatedLocation": {
+    "documentXPath": ""
+  },
+  "additionalCollections": [ ],
+  "headers": { },
+  "interceptors": [ ],
+  "customHook": { },
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "MergingPerson-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2023-07-07T16:44:15.8599418-03:00"
+}

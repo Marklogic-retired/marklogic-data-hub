@@ -1,0 +1,101 @@
+{
+  "info": {
+    "title": "Unit",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/",
+    "draft": false
+  },
+  "definitions": {
+    "Observation": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "DateTimeObservation": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservedLocation": {
+          "$ref": "#/definitions/Location"
+        }
+      }
+    },
+    "Unit": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "ObservationInfo": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Observation"
+          }
+        },
+        "OrganizationType": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Echelon": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "UnitNumber": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ParentOrganizationType": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ParentEchelon": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ParentUnitNumber": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GUID": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ObservedLocation": {
+          "datatype": "string",
+          "relatedEntityType": "http://example.org/Location-0.0.1/Location",
+          "joinPropertyName": ""
+        }
+      }
+    },
+    "Location": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Latitude": {
+          "datatype": "float"
+        },
+        "Longitude": {
+          "datatype": "float"
+        },
+        "MGRS": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

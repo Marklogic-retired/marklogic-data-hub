@@ -1,0 +1,30 @@
+{
+  "info": {
+    "title": "EobsrepMessage",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "EobsrepMessage": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "ReportDate": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Message": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

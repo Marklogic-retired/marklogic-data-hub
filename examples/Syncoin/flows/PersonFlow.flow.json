@@ -1,0 +1,12 @@
+{
+  "name": "PersonFlow",
+  "steps": {
+    "1": {
+      "stepId": "LoadPersonJSON-ingestion"
+    },
+    "2": {
+      "stepId": "PersonMapping-mapping"
+    }
+  },
+  "lastUpdated": "2023-07-07T16:09:53.9347143-03:00"
+}

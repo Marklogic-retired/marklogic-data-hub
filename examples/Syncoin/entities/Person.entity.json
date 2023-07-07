@@ -1,0 +1,43 @@
+{
+  "info": {
+    "title": "Person",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Person": {
+      "properties": {
+        "Name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Assessment": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GUID": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "observed": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Event-0.0.1/Event",
+          "joinPropertyName": "eventID"
+        }
+      }
+    }
+  }
+}

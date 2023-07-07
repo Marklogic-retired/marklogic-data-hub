@@ -1,0 +1,12 @@
+{
+  "name": "EventFlow",
+  "steps": {
+    "1": {
+      "stepId": "LoadEvent-ingestion"
+    },
+    "2": {
+      "stepId": "mappingEvent-mapping"
+    }
+  },
+  "lastUpdated": "2023-07-07T16:07:21.9874655-03:00"
+}

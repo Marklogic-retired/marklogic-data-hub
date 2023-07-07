@@ -1,0 +1,30 @@
+{
+  "info": {
+    "title": "Operation",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Operation": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Region": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "GUID": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

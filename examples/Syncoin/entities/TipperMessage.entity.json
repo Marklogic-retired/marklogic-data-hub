@@ -1,0 +1,34 @@
+{
+  "info": {
+    "title": "TipperMessage",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "TipperMessage": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Title": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Description": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Point": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "PublicationDate": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

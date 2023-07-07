@@ -1,0 +1,34 @@
+{
+  "info": {
+    "title": "EnsitMessage",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "EnsitMessage": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "ReportDate": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "From": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "To": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

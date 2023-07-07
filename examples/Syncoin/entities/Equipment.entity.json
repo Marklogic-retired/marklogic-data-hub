@@ -1,0 +1,77 @@
+{
+  "info": {
+    "title": "Equipment",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/",
+    "draft": false
+  },
+  "definitions": {
+    "Equipment": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "ObservationInfo": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Observation"
+          }
+        },
+        "Nomenclature": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "QuantityPresent": {
+          "datatype": "integer"
+        },
+        "GUID": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Classification": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "description": "desc"
+    },
+    "Observation": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "DateTimeObservation": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
+    "Location": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "Latitude": {
+          "datatype": "float"
+        },
+        "Longitude": {
+          "datatype": "float"
+        },
+        "MGRS": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

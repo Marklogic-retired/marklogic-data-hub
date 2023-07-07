@@ -1,0 +1,17 @@
+{
+    "EventType": "TYP",
+    "GUID": "550e82340",
+    "Classification": "UNCLASSIFIED",
+    "eventID": 2,
+	"Remarks": "Suspect remains elusive",
+    "Address": [
+    {
+      "Location": {
+        "Latitude": "0",
+        "Longitude": 0.00999999977648258,
+        "MGRS": "Magellan"
+
+      }
+	}
+    ]
+}
