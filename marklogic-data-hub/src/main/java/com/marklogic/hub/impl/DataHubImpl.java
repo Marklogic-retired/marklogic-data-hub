@@ -62,6 +62,7 @@ import com.marklogic.hub.InstallInfo;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.deploy.commands.CheckSecurityConfiguration;
+import com.marklogic.hub.deploy.commands.ConfigureAppServerBasePaths;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubTriggersCommand;
@@ -738,7 +739,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         commandMap.put("mlDatabaseCommands", dbCommands);
     }
 
-    private static void updateServerCommandList(Map<String, List<Command>> commandMap) {
+    private void updateServerCommandList(Map<String, List<Command>> commandMap) {
         final String key = "mlServerCommands";
         List<Command> newCommands = new ArrayList<>();
         for (Command c : commandMap.get(key)) {
@@ -751,6 +752,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             }
             newCommands.add(c);
         }
+        newCommands.add(new ConfigureAppServerBasePaths(hubConfig));
         commandMap.put(key, newCommands);
     }
 
