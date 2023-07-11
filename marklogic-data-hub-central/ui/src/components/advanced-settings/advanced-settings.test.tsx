@@ -1,5 +1,5 @@
 import React from "react";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {fireEvent, render, wait, waitForElement, act, cleanup} from "@testing-library/react";
 import AdvancedSettings from "./advanced-settings";
 import mocks from "../../api/__mocks__/mocks.data";
@@ -8,11 +8,11 @@ import {AdvancedSettingsTooltips, SecurityTooltips} from "../../config/tooltips.
 import StepsConfig from "../../config/steps.config";
 import userEvent from "@testing-library/user-event";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Advanced step settings", () => {
   beforeEach(() => {
-    mocks.advancedAPI(axiosMock);
+    mocks.advancedAPI(axiosInstance);
   });
 
   afterEach(() => {

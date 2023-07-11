@@ -3,7 +3,7 @@ import React from "react";
 import SockJS from "sockjs-client";
 import {Subject, BehaviorSubject} from "rxjs";
 import {Client, Message, Stomp} from "stompjs/lib/stomp.min";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 /** possible states for the STOMP service */
 export enum STOMPState {
@@ -205,7 +205,7 @@ export class STOMPService {
       this.state.next(STOMPState.CLOSED);
 
       // check to see if it failed due to being logged out
-      axios("/api/environment/systemInfo")
+      axiosInstance("/api/environment/systemInfo")
         .then(() => {
           // Attempt reconnection
           console.debug("Reconnecting in 5 seconds...");

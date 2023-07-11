@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
@@ -381,8 +381,8 @@ const Browse: React.FC<Props> = ({location}) => {
     let loaded = true;
     (async () => {
       try {
-        const modelsResponse = await axios.get(`/api/models`);
-        const relationships = await axios.get(`/api/entitySearch/relationships?database=final`);
+        const modelsResponse = await axiosInstance.get(`/api/models`);
+        const relationships = await axiosInstance.get(`/api/entitySearch/relationships?database=final`);
         const parsedModelData = entityFromJSON(modelsResponse.data);
         const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
         const entitiesTypeIds = parsedEntityDef.map(entity => entity.name);

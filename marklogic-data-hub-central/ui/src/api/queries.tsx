@@ -1,7 +1,7 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 export const creatNewQuery = async query => {
-  return await axios({
+  return await axiosInstance({
     method: "POST",
     url: `/api/entitySearch/savedQueries`,
     data: query,
@@ -9,25 +9,25 @@ export const creatNewQuery = async query => {
 };
 
 export const fetchQueries = async () => {
-  return await axios({
+  return await axiosInstance({
     method: "GET",
     url: `/api/entitySearch/savedQueries`,
   });
 };
 
 export const fetchQueryById = async query => {
-  return await axios({
+  return await axiosInstance({
     method: "GET",
     url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
   });
 };
 
 export const updateQuery = async query => {
-  return await axios.put(`/api/entitySearch/savedQueries`, {query});
+  return await axiosInstance.put(`/api/entitySearch/savedQueries`, {query});
 };
 
 export const removeQuery = async query => {
-  return await axios({
+  return await axiosInstance({
     method: "DELETE",
     url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
   });
@@ -116,14 +116,14 @@ export const exportSavedQuery = (id, limit, database) => {
 };
 
 export const getSavedQueryPreview = async (id, database) => {
-  return await axios({
+  return await axiosInstance({
     method: "GET",
     url: `/api/entitySearch/export/query/${id}?fileType=csv&limit=2&database=${database}`,
   });
 };
 
 export const graphSearchQuery = async (graphSearchPayload: any) => {
-  return await axios
+  return await axiosInstance
     .post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data)
     // Catching 400 error that occurs when graph is called before payload is ready
     .catch(error => {
@@ -138,26 +138,26 @@ export const expandGroupNode = async (payload: any, limit?: number) => {
   let url = !limit
     ? `/api/entitySearch/nodeExpand?database=${payload.database}`
     : `/api/entitySearch/nodeExpand?database=${payload.database}&limit=${limit}`;
-  return await axios.post(url, payload.data);
+  return await axiosInstance.post(url, payload.data);
 };
 
 export const searchResultsQuery = async (searchPayload: any) => {
-  return await axios.post(`/api/entitySearch?database=${searchPayload.database}`, searchPayload.data);
+  return await axiosInstance.post(`/api/entitySearch?database=${searchPayload.database}`, searchPayload.data);
 };
 export const getEntities = async () => {
-  return await axios.get(`/api/models`);
+  return await axiosInstance.get(`/api/models`);
 };
 
 export const facetValues = async (database: string, payload: any) => {
-  return await axios.post(`/api/entitySearch/facet-values?database=${database}`, payload);
+  return await axiosInstance.post(`/api/entitySearch/facet-values?database=${database}`, payload);
 };
 
 export const primaryEntityTypes = async () => {
-  return await axios.get(`/api/models/primaryEntityTypes`);
+  return await axiosInstance.get(`/api/models/primaryEntityTypes`);
 };
 
 export const fetchSemanticConceptInfo = async (semanticConceptIRI: string, database: string) => {
-  return await axios.get(
+  return await axiosInstance.get(
     `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=${database}`,
   );
 };

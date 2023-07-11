@@ -4,12 +4,12 @@ import {MemoryRouter} from "react-router-dom";
 import LoadCard from "./load-card";
 import data from "../../assets/mock-data/curation/common.data";
 import ingestionData from "../../assets/mock-data/curation/ingestion.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {SecurityTooltips} from "../../config/tooltips.config";
 import dayjs from "dayjs";
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -22,7 +22,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("Load Card component", () => {
   beforeEach(() => {
-    mocks.loadAPI(axiosMock);
+    mocks.loadAPI(axiosInstance);
   });
 
   afterEach(() => {

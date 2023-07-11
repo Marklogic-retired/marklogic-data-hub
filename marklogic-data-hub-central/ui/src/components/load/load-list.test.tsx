@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, wait, within, cleanup, waitForElement} from "@testing-library/react";
 import LoadList from "./load-list";
 import data from "../../assets/mock-data/curation/common.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import loadData from "../../assets/mock-data/curation/ingestion.data";
 import {MemoryRouter} from "react-router-dom";
@@ -12,7 +12,7 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
 import dayjs from "dayjs";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -25,7 +25,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("Load data component", () => {
   beforeEach(() => {
-    mocks.loadAPI(axiosMock);
+    mocks.loadAPI(axiosInstance);
   });
 
   afterEach(() => {

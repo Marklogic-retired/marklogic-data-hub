@@ -16,7 +16,7 @@ import {
   referencePayloadForeignKey,
 } from "../../../assets/mock-data/modeling/modeling";
 import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 
 jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");
@@ -26,10 +26,10 @@ const mockPrimaryEntityTypes = primaryEntityTypes as jest.Mock;
 const mockGetSystemInfo = getSystemInfo as jest.Mock;
 const mockUpdateEntityModels = updateEntityModels as jest.Mock;
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 beforeEach(() => {
-  axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
+  axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
 });
 
 afterEach(() => {

@@ -1,5 +1,5 @@
 import React, {useEffect, useContext} from "react";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {Switch} from "react-router";
 import {Route, Redirect, RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
@@ -83,7 +83,7 @@ const App: React.FC<Props> = ({history, location}) => {
   useEffect(() => {
     // On route change...
     if (user.authenticated) {
-      axios
+      axiosInstance
         .get("/api/environment/systemInfo")
         .then(() => {})
         // Timeouts throw 401s and are caught here

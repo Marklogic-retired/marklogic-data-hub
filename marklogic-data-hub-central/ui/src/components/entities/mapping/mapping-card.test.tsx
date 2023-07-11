@@ -2,7 +2,7 @@ import React from "react";
 import {BrowserRouter as Router, MemoryRouter} from "react-router-dom";
 import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import MappingCard from "./mapping-card";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
@@ -10,7 +10,7 @@ import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import dayjs from "dayjs";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -41,7 +41,7 @@ describe("Mapping Card component", () => {
   };
 
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {

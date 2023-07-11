@@ -12,7 +12,7 @@ import {Modal} from "react-bootstrap";
 import {QueryOptions} from "../../../../types/query-types";
 import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {getExportPreview} from "../../../query-export/export-preview/export-preview";
 import {getSavedQueryPreview} from "@api/queries";
@@ -61,7 +61,7 @@ const QueryModal = props => {
   };
 
   const editQuery = async query => {
-    const response = await axios.put(`/api/entitySearch/savedQueries`, query);
+    const response = await axiosInstance.put(`/api/entitySearch/savedQueries`, query);
     if (response.data) {
       getQueries();
       return {code: response.status};

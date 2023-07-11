@@ -13,7 +13,7 @@ import MappingCard from "./mapping/mapping-card";
 import {MappingStepMessages} from "@config/tooltips.config";
 import MatchingCard from "./matching/matching-card";
 import MergingCard from "./merging/merging-card";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
@@ -217,7 +217,7 @@ const EntityTiles = props => {
   const getMatchingArtifacts = async () => {
     try {
       if (props.canReadMatchMerge) {
-        let response = await axios.get("/api/steps/matching");
+        let response = await axiosInstance.get("/api/steps/matching");
         if (response.status === 200) {
           let entArt = response.data;
           entArt.sort((a, b) => (a.entityType > b.entityType ? 1 : -1));
@@ -233,7 +233,7 @@ const EntityTiles = props => {
 
   const deleteMatchingArtifact = async matchingName => {
     try {
-      let response = await axios.delete(`/api/steps/matching/${matchingName}`);
+      let response = await axiosInstance.delete(`/api/steps/matching/${matchingName}`);
       if (response.status === 200) {
         updateIsLoadingFlag();
       }
@@ -246,9 +246,9 @@ const EntityTiles = props => {
 
   const createMatchingArtifact = async matchingObj => {
     try {
-      let response = await axios.post("/api/steps/matching", matchingObj);
+      let response = await axiosInstance.post("/api/steps/matching", matchingObj);
       if (response.status === 200) {
-        let warningResponse = await axios.get(`/api/steps/matching/${matchingObj.name}/validate`);
+        let warningResponse = await axiosInstance.get(`/api/steps/matching/${matchingObj.name}/validate`);
         if (warningResponse.status === 200) {
           await setActiveStepWarning(warningResponse["data"]);
           setValidateMatchCalled(true);
@@ -281,9 +281,9 @@ const EntityTiles = props => {
 
   const updateMatchingArtifact = async matchingObj => {
     try {
-      let response = await axios.put(`/api/steps/matching/${matchingObj.name}`, matchingObj);
+      let response = await axiosInstance.put(`/api/steps/matching/${matchingObj.name}`, matchingObj);
       if (response.status === 200) {
-        let warningResponse = await axios.get(`/api/steps/matching/${matchingObj.name}/validate`);
+        let warningResponse = await axiosInstance.get(`/api/steps/matching/${matchingObj.name}/validate`);
         if (warningResponse.status === 200) {
           await setActiveStepWarning(warningResponse["data"]);
           setValidateMatchCalled(true);
@@ -302,7 +302,7 @@ const EntityTiles = props => {
   const getMergingArtifacts = async () => {
     if (props.canReadMatchMerge) {
       try {
-        let response = await axios.get("/api/steps/merging");
+        let response = await axiosInstance.get("/api/steps/merging");
         if (response.status === 200) {
           setMergingArtifacts(response.data);
         }
@@ -316,7 +316,7 @@ const EntityTiles = props => {
 
   const deleteMergingArtifact = async mergeName => {
     try {
-      let response = await axios.delete(`/api/steps/merging/${mergeName}`);
+      let response = await axiosInstance.delete(`/api/steps/merging/${mergeName}`);
       if (response.status === 200) {
         updateIsLoadingFlag();
       }
@@ -329,9 +329,9 @@ const EntityTiles = props => {
 
   const createMergingArtifact = async mergingObj => {
     try {
-      let response = await axios.post("/api/steps/merging", mergingObj);
+      let response = await axiosInstance.post("/api/steps/merging", mergingObj);
       if (response.status === 200) {
-        let warningResponse = await axios.get(`/api/steps/merging/${mergingObj.name}/validate`);
+        let warningResponse = await axiosInstance.get(`/api/steps/merging/${mergingObj.name}/validate`);
         if (warningResponse.status === 200) {
           await setActiveStepWarning(warningResponse["data"]);
           setValidateMergeCalled(true);
@@ -364,9 +364,9 @@ const EntityTiles = props => {
 
   const updateMergingArtifact = async mergingObj => {
     try {
-      let response = await axios.put(`/api/steps/merging/${mergingObj.name}`, mergingObj);
+      let response = await axiosInstance.put(`/api/steps/merging/${mergingObj.name}`, mergingObj);
       if (response.status === 200) {
-        let warningResponse = await axios.get(`/api/steps/merging/${mergingObj.name}/validate`);
+        let warningResponse = await axiosInstance.get(`/api/steps/merging/${mergingObj.name}/validate`);
         if (warningResponse.status === 200) {
           await setActiveStepWarning(warningResponse["data"]);
           setValidateMergeCalled(true);
@@ -385,7 +385,7 @@ const EntityTiles = props => {
   const getCustomArtifacts = async () => {
     try {
       if (props.canReadCustom) {
-        let response = await axios.get("/api/steps/custom");
+        let response = await axiosInstance.get("/api/steps/custom");
         if (response.status === 200) {
           let entArt = response.data;
           setCustomArtifactsWithEntity([...entArt.stepsWithEntity]);
@@ -405,7 +405,7 @@ const EntityTiles = props => {
   const getCustomArtifactProps = async (name: String) => {
     try {
       if (props.canReadCustom) {
-        let response = await axios.get("/api/steps/custom/" + name);
+        let response = await axiosInstance.get("/api/steps/custom/" + name);
         if (response.status === 200) {
           return response.data;
         }

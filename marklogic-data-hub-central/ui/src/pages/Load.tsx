@@ -5,7 +5,7 @@ import ViewSwitch from "@components/common/switch-view/view-switch";
 import LoadList from "@components/load/load-list";
 import LoadCard from "@components/load/load-card";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {createStep, updateStep, getSteps, deleteStep} from "@api/steps";
 import {sortStepsByUpdated} from "@util/conversionFunctions";
 import {AuthoritiesContext} from "@util/authorities";
@@ -156,7 +156,7 @@ const Load: React.FC = () => {
   const getFlows = async () => {
     try {
       setFlowsLoading(true);
-      let response = await axios.get("/api/flows");
+      let response = await axiosInstance.get("/api/flows");
       if (response.status === 200) {
         setFlows(response.data);
         setFlowsLoading(false);
@@ -195,7 +195,7 @@ const Load: React.FC = () => {
       setLoading(true);
       let url = "/api/flows/" + flowName + "/steps";
       let body = stepToAdd;
-      let response = await axios.post(url, body);
+      let response = await axiosInstance.post(url, body);
       if (response.status === 200) {
         setLoading(false);
       }

@@ -1,7 +1,7 @@
 import React from "react";
 import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../api/__mocks__/mocks.data";
 import Run from "../pages/Run";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
@@ -15,7 +15,7 @@ import {createMemoryHistory} from "history";
 import TilesView from "./TilesView";
 import {ErrorMessageContext} from "../util/error-message-context";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 jest.setTimeout(30000);
 
 const mockHistoryPush = jest.fn();
@@ -44,7 +44,7 @@ describe("Verify links back to step details", () => {
   });
 
   test("Verify a user with read authority for steps can use link", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "readIngestion", "readMapping", "readCustom"]);
 
@@ -87,7 +87,7 @@ describe("Verify links back to step details", () => {
   });
 
   test("Verify a user with read authority for steps cannot use link", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow"]);
     let getByLabelText, getByTestId;
@@ -133,8 +133,8 @@ describe("Verify load step failures in a flow", () => {
   });
 
   test("Verify errors when flow with Load step fails with jobStatus finished_with_errors", async () => {
-    mocks.runErrorsAPI(axiosMock);
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
+    mocks.runErrorsAPI(axiosInstance);
+    axiosInstance.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
     const {getByText, getByLabelText, getAllByLabelText, getAllByText, getByTestId} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -184,8 +184,8 @@ describe("Verify load step failures in a flow", () => {
   });
 
   test("Verify errors when flow with Load step fails with jobStatus failed", async () => {
-    mocks.runFailedAPI(axiosMock);
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve(data.response)));
+    mocks.runFailedAPI(axiosInstance);
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve(data.response)));
     let result = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -234,7 +234,7 @@ describe("Verify Run CRUD operations", () => {
   });
 
   beforeEach(() => {
-    mocks.runCrudAPI(axiosMock);
+    mocks.runCrudAPI(axiosInstance);
   });
 
   test("Verify a user with writeFlow authority can create", async () => {
@@ -255,7 +255,7 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByText("Save"));
 
-    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
+    expect(axiosInstance.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
   });
 
   test("Verify a user with writeFlow authority can update", async () => {
@@ -279,7 +279,7 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: updatedFlow.description}});
     fireEvent.click(getByText("Save"));
 
-    expect(axiosMock.put).toHaveBeenNthCalledWith(1, updateFlowURL, updatedFlow);
+    expect(axiosInstance.put).toHaveBeenNthCalledWith(1, updateFlowURL, updatedFlow);
   });
 
   test("Verify a user with writeFlow authority can delete", async () => {
@@ -299,7 +299,7 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.click(getByTestId(`deleteFlow-${existingFlowName}`));
     fireEvent.click(getByText("Yes"));
 
-    expect(axiosMock.delete).toHaveBeenNthCalledWith(1, updateFlowURL);
+    expect(axiosInstance.delete).toHaveBeenNthCalledWith(1, updateFlowURL);
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -348,16 +348,16 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByLabelText("Save"));
     // Create new flow
-    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
+    expect(axiosInstance.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
     const newStepValues = {
       stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType,
       stepName: data.newStepToFlowOptions.newStepName,
     };
     // Add step to new flow and Run step
     await wait(() => {
-      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
+      expect(axiosInstance.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
     }).then(() => {
-      () => expect(axiosMock.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
+      () => expect(axiosInstance.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
     });
   });
 
@@ -399,8 +399,8 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   });
 
   test("Verify errors when flow with mapping/matching/merging/mastering step fails with jobStatus failed", async () => {
-    mocks.runFailedAPI(axiosMock);
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
+    mocks.runFailedAPI(axiosInstance);
+    axiosInstance.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
     const result = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -470,8 +470,8 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   });
 
   test("Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors", async () => {
-    mocks.runErrorsAPI(axiosMock);
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
+    mocks.runErrorsAPI(axiosInstance);
+    axiosInstance.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
     const {getByLabelText, getAllByText, getByTestId} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -561,8 +561,8 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   }, 15000);
 
   test("Check if explore curated data is clicked and exists in history", async () => {
-    mocks.runErrorsAPI(axiosMock);
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
+    mocks.runErrorsAPI(axiosInstance);
+    axiosInstance.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
     let getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
@@ -605,7 +605,7 @@ describe("Verify Add Step function", () => {
   });
 
   test("Verify a user with developer privileges can add a step to a flow", async () => {
-    mocks.runAddStepAPI(axiosMock);
+    mocks.runAddStepAPI(axiosInstance);
     const {getByText, getByLabelText, getAllByText} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -638,7 +638,7 @@ describe("Verify Add Step function", () => {
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
     await wait(() => {
-      expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {
+      expect(axiosInstance.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {
         "stepDefinitionType": "ingestion",
         "stepName": data.steps.data["ingestionSteps"][0].name,
       });
@@ -646,7 +646,7 @@ describe("Verify Add Step function", () => {
   });
 
   test("Verify a user with operator privileges cannot add a step to a flow", async () => {
-    mocks.runAddStepAPI(axiosMock);
+    mocks.runAddStepAPI(axiosInstance);
     const {getByText, getByLabelText, queryByText, getAllByText} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockOpRolesService}>
@@ -666,8 +666,8 @@ describe("Verify Add Step function", () => {
   });
 
   test("Verify a flow panel that is closed reopens when a step is added to it", async () => {
-    mocks.runAddStepAPI(axiosMock);
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
+    mocks.runAddStepAPI(axiosInstance);
+    axiosInstance.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
     const {getByText, getByLabelText, getByPlaceholderText, getAllByText, getByTestId} = await render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -683,7 +683,7 @@ describe("Verify Add Step function", () => {
     fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
     fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
     fireEvent.click(getByLabelText("Save"));
-    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {
+    expect(axiosInstance.post).toHaveBeenNthCalledWith(1, "/api/flows", {
       name: newFlowValues.name,
       description: newFlowValues.description,
     });
@@ -708,7 +708,7 @@ describe("Verify Add Step function", () => {
 
       let confirm = getByLabelText("Yes");
       fireEvent.click(confirm);
-      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {
+      expect(axiosInstance.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {
         "stepDefinitionType": "ingestion",
         "stepName": data.steps.data["ingestionSteps"][0].name,
       });

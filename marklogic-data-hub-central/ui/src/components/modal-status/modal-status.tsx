@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
 import {RouteComponentProps, withRouter, useLocation, useHistory} from "react-router-dom";
 import {Modal} from "react-bootstrap";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 import {UserContext} from "@util/user-context";
 import {useInterval} from "../../hooks/use-interval";
@@ -40,8 +40,7 @@ const ModalStatus: React.FC<Props> = props => {
 
   useEffect(() => {
     if (user.error.type === "MODAL") {
-      axios
-        .get("/api/environment/systemInfo")
+      fetchSystemInfo()
         .then(res => {
           setTitle(user.error.title);
           setButtonText(ERROR_BTN_TEXT);
@@ -90,13 +89,17 @@ const ModalStatus: React.FC<Props> = props => {
     }
   }, 1000);
 
+  const fetchSystemInfo = async () => {
+    return await getSystemInfo();
+  };
+
   const onOk = async () => {
     if (user.error.type === "MODAL") {
       clearErrorMessage();
     } else if (sessionWarning) {
       // refresh session
       try {
-        await getSystemInfo();
+        fetchSystemInfo();
       } catch (error) {
         if (error.response) {
           handleError(error);
@@ -117,7 +120,7 @@ const ModalStatus: React.FC<Props> = props => {
       props.history.push("/error");
     } else if (sessionWarning) {
       try {
-        let response = await axios.get(`/api/logout`);
+        let response = await axiosInstance.get(`/api/logout`);
         if (response.status === 200) {
           userNotAuthenticated();
         }

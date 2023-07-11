@@ -1,17 +1,17 @@
 import React from "react";
 import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import Steps from "./steps";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/steps.data";
 import StepsConfig from "../../config/steps.config";
 import {ErrorTooltips} from "../../config/tooltips.config";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Steps settings component", () => {
   beforeEach(() => {
-    mocks.advancedAPI(axiosMock);
+    mocks.advancedAPI(axiosInstance);
   });
 
   afterEach(() => {

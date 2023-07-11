@@ -1,12 +1,14 @@
 import React from "react";
 import {render, fireEvent, wait} from "@testing-library/react";
 import PopOverSearch from "./pop-over-search";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {stringSearchResponse} from "../../assets/mock-data/explore/facet-props";
-jest.mock("axios");
 import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import {searchContextInterfaceByDefault, defaultSearchOptions} from "@util/uiTestCommonInterface";
+
+
+jest.mock("@config/axios");
 
 describe("<PopOverSearch/>", () => {
   afterEach(() => {
@@ -14,7 +16,7 @@ describe("<PopOverSearch/>", () => {
   });
 
   test("Popover component renders without crashing, has an input field and a checked icon", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
         <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
@@ -46,14 +48,14 @@ describe("<PopOverSearch/>", () => {
       "dataType": "string",
       "pattern": "ad",
     };
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
     expect(getByText("Adams Cole")).toBeInTheDocument();
     expect(getByLabelText("icon: check-square-o")).toBeInTheDocument();
   });
 
   test("Popover component renders without crashing, has an input field and a checked icon on monitor tile", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <MemoryRouter>
         <SearchContext.Provider
@@ -87,8 +89,8 @@ describe("<PopOverSearch/>", () => {
       "facetName": "stepName",
       "searchTerm": "ad",
     };
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
     expect(getByText("Adams Cole")).toBeInTheDocument();
     expect(getByLabelText("icon: check-square-o")).toBeInTheDocument();
   });

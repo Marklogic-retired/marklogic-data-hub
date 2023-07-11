@@ -6,7 +6,7 @@ import {MergingStep, defaultPriorityOption} from "../../../../types/curation-typ
 import React, {useContext, useEffect, useState} from "react";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "@util/user-context";
 
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {CurationContext} from "@util/curation-context";
 import CustomPageHeader from "../../page-header/page-header";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -175,7 +175,7 @@ const MergingStepDetail: React.FC = () => {
   const retrieveCalculatedMergingActivity = async (mergingStepArtifact: MergingStep) => {
     if (mergingStepArtifact && mergingStepArtifact.name) {
       try {
-        const calculatedMergingActivityResp = await axios.get(`/api/steps/merging/${mergingStepArtifact.name}/calculateMergingActivity`);
+        const calculatedMergingActivityResp = await axiosInstance.get(`/api/steps/merging/${mergingStepArtifact.name}/calculateMergingActivity`);
         if (calculatedMergingActivityResp.status === 200) {
           setSourceNames(calculatedMergingActivityResp.data.sourceNames || []);
         }

@@ -4,7 +4,7 @@ import {Lock, Person} from "react-bootstrap-icons";
 import React, {useContext, useState, useEffect, useRef} from "react";
 import {Spinner} from "react-bootstrap";
 import {UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import styles from "./login-form.module.scss";
 
 const LoginForm: React.FC = () => {
@@ -41,7 +41,7 @@ const LoginForm: React.FC = () => {
     if (event) event.preventDefault();
     try {
       setIsLoading(true);
-      let response = await axios.post("/api/login", {
+      let response = await axiosInstance.post("/api/login", {
         username,
         password,
       });
