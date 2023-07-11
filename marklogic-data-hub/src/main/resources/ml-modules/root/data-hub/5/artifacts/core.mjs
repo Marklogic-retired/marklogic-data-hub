@@ -342,7 +342,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   // Copy all known non-options properties over
   [
     "name", "description", "stepDefinitionName", "stepDefinitionType", "stepId",
-    "customHook", "interceptors", "batchSize", "threadCount", "lastUpdated"
+    "customHook", "interceptors", "batchSize", "threadCount", "lastUpdated", "features"
   ].forEach(key => {
     if (referencedStep[key] === "" || referencedStep[key]) {
       newFlowStep[key] = referencedStep[key];
