@@ -181,12 +181,15 @@ const GraphViewExplore: React.FC<Props> = props => {
     setAlertStabilizeVisible(false);
   };
 
-  const isUnmergeAvailable = nodeId => {
+  const isUnmergeAvailable = (nodeId, expandedNodes = {}) => {
     if (!canReadMatchMerge) {
       return false;
     }
     if (Object.keys(props.entityTypeInstances).length === 0) return false;
-    const filteredData = props.entityTypeInstances.nodes.filter(item => item["id"] === nodeId);
+    const allNodes = Object.values(expandedNodes)
+      .map((val: any) => val?.nodes)
+      .reduce((prev, current) => prev.concat(current), props.entityTypeInstances.nodes);
+    const filteredData = allNodes.filter(item => (item["id"] === nodeId || item["docUri"] === nodeId));
     if (filteredData.length === 0) {
       return false;
     }
@@ -194,13 +197,18 @@ const GraphViewExplore: React.FC<Props> = props => {
         props.data.some(item => item.uri === filteredData[0].docUri && item.unmerge);
   };
 
-  const openUnmergeCompare = async uri => {
-    let item = props.data.find(item => item.uri === uri);
-    // Look for item in nodes if it isn't in the direct search results
+  const openUnmergeCompare = async (uri, item) => {
     if (!item) {
-      item = props.entityTypeInstances.nodes.find(item => item.docUri === uri);
-      item.uri = uri;
-      item.entityName = item.group.substring(item.group.lastIndexOf("/") + 1);
+      item = props.data.find(item => item.uri === uri);
+      // Look for item in nodes if it isn't in the direct search results
+      if (!item) {
+        item = props.entityTypeInstances.nodes.find(item => item.docUri === uri);
+        item.uri = uri;
+        item.entityName = item.group.substring(item.group.lastIndexOf("/") + 1);
+      }
+    }
+    if (!item.entityName) {
+      item.entityName = item?.data?.envelope?.instance?.info?.title;
     }
     let arrayUris;
     let activeEntityIndex = props.entityDefArray.findIndex(entity => entity.name === item["entityName"]);

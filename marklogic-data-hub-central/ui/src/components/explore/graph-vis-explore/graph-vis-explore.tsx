@@ -31,8 +31,8 @@ type Props = {
   setIsLoading: (loading: boolean) => void;
   entityDefArray: any[];
   data: any[];
-  openUnmergeCompare: (item: object) => void;
-  isUnmergeAvailable: (nodeId: string) => boolean;
+  openUnmergeCompare: (uri: object, item: object) => void;
+  isUnmergeAvailable: (nodeId: string, expandedNodeData: {}) => boolean;
 };
 
 const GraphVisExplore: React.FC<Props> = props => {
@@ -936,9 +936,16 @@ const GraphVisExplore: React.FC<Props> = props => {
         break;
       }
       case "Unmerge": {
-        const filteredData = props.data.filter(item => item["uri"] === clickedNode["nodeId"]);
+        const allNodes = Object.values(expandedNodeData)
+          .reduce((prev:any[], current:any) => prev.concat(current?.nodes), props.data);
+        const filteredData = allNodes.filter(item => item["uri"] === clickedNode["nodeId"] || item["id"] === clickedNode["nodeId"]);
         if (filteredData.length > 0 && canWriteMatchMerge) {
-          props.openUnmergeCompare(filteredData[0].uri);
+          const item = filteredData[0];
+          if (!item.uri) {
+            item.uri = item.docUri;
+            item.entityName = item.group.substring(item.group.lastIndexOf("/") + 1);
+          }
+          props.openUnmergeCompare(item.uri, item);
         }
         break;
       }
@@ -1062,7 +1069,7 @@ const GraphVisExplore: React.FC<Props> = props => {
             Show all records
           </div>
         )}
-        {props.isUnmergeAvailable(clickedNode["nodeId"]) && unmergeOption()}
+        {props.isUnmergeAvailable(clickedNode["nodeId"], expandedNodeData) && unmergeOption()}
         <div id="centerNode" key="10" className={styles.contextMenuItem}>
           Center this record
         </div>

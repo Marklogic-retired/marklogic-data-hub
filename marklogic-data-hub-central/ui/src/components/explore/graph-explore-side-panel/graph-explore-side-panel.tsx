@@ -20,7 +20,7 @@ type Props = {
   openUnmergeCompare: any;
   loadingCompare: string;
   data: any[];
-  isUnmergeAvailable: (nodeId: string) => boolean;
+  isUnmergeAvailable: (nodeId: string, expandedNodeData: {}) => boolean;
 };
 
 const DEFAULT_TAB = "instance";
