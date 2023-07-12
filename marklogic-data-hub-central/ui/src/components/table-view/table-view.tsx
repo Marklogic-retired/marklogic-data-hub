@@ -13,9 +13,9 @@ interface Props {
   isEntityInstance: boolean;
   isSidePanel?: boolean;
   data?: any;
-  openUnmergeCompare?: (item: object) => void;
+  openUnmergeCompare?: (uri: object, item: object) => void;
   loadingCompare?: string;
-  isUnmergeAvailable?: (nodeid: string) => boolean;
+  isUnmergeAvailable?: (nodeid: string, expandedNodeData:{}) => boolean;
 }
 
 const TableView: React.FC<Props> = props => {
@@ -109,15 +109,15 @@ const TableView: React.FC<Props> = props => {
 
     setExpandedRows(newExpandedRows);
   };
-  const handleOpenCompare = docUri => {
+  const handleOpenCompare = (docUri, item) => {
     if (props.openUnmergeCompare && typeof props.openUnmergeCompare === "function") {
-      props.openUnmergeCompare(docUri);
+      props.openUnmergeCompare(docUri, item);
     }
   };
 
   const unmergeIcon = () => {
     if (props.data) {
-      if (!props.isUnmergeAvailable?.(props.data.docUri)) return null;
+      if (!props.isUnmergeAvailable?.(props.data.docUri, {[props.data.docUri]: {nodes: [props.data]}})) return null;
       if (props.data.unmerge) {
         if (canWriteMatchMerge) {
           return (
@@ -140,7 +140,7 @@ const TableView: React.FC<Props> = props => {
                       className={styles.unMergeIcon}
                       data-testid={`unmergeIcon`}
                       aria-label={`unmerge-icon`}
-                      onClick={() => handleOpenCompare(props.data.docUri)}
+                      onClick={() => handleOpenCompare(props.data.docUri, props.data)}
                     />
                   </i>
                 </HCTooltip>
