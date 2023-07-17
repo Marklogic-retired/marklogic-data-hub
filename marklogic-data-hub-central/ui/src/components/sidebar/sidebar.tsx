@@ -51,6 +51,7 @@ interface Props {
   entitiesWithRelatedConcepts: any;
   entityRelationships: any;
   isBackToResultsClicked?: boolean;
+  renderTriggeredFromAnotherView?:boolean;
 }
 const Sidebar: React.FC<Props> = props => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
@@ -452,7 +453,7 @@ const Sidebar: React.FC<Props> = props => {
               } else {
                 //Setting the All Data datasource with staging database at end
                 checkDataInDatabase("final", "all-data").then(countAllDataFinalCount => {
-                  if (countAllDataFinalCount === 0) {
+                  if (countAllDataFinalCount === 0 && !props.renderTriggeredFromAnotherView) {
                     //Setting the staging database if there is no data in final database
                     setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
                   } else {

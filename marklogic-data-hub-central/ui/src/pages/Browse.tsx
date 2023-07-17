@@ -828,6 +828,7 @@ const Browse: React.FC<Props> = ({location}) => {
               entitiesWithRelatedConcepts={entitiesWithRelatedConcepts}
               entityRelationships={entityRelationships}
               isBackToResultsClicked={state ? true : false}
+              renderTriggeredFromAnotherView={searchOptions.updateFromExternalView}
             />
           </>
         </HCSider>
