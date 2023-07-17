@@ -467,7 +467,7 @@ const JobResponse: React.FC<Props> = ({
     } else if (entityName) {
       setLatestJobFacet(jobId, entityName, stepName, targetDatabase);
     } else {
-      setLatestDatabase(targetDatabase, jobId);
+      setLatestDatabase(targetDatabase, jobId, true);
     }
     history.push({pathname: "/tiles/explore"});
   };

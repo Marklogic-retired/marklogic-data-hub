@@ -428,4 +428,12 @@ describe("Validate persistence across Hub Central", () => {
     matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("At least Two URIs are required.");
   });
+
+  it("Ingest Data and explore ingested data, results should persists", () => {
+    runPage.navigate();
+    runPage.getStatusModalButton("personXML").click();
+    runPage.explorerLink("loadPersonXML").click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should("equal", 6);
+  });
 });
