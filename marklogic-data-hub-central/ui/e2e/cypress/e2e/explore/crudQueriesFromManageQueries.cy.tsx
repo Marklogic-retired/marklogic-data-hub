@@ -219,8 +219,10 @@ describe("manage queries modal scenarios, developer role", () => {
     table.getTableColumns().should("have.length", 10);
     browsePage.getSelectedFacet("Alice").should("exist");
 
+    cy.intercept("POST", "/api/entitySearch?database=final").as("reqToFinal");
     explorePage.clickExploreSettingsMenuIcon();
     browsePage.getManageQueriesModalOpened();
+    cy.wait("@reqToFinal");
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery();
     cy.waitForAsyncRequest();
