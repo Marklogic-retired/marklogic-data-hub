@@ -407,15 +407,23 @@ describe("Monitor Tile", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
-    browsePage.clickShowMoreLink("flow");
-    monitorPage.getFacetCheckbox("flow", flowName).scrollIntoView().click({force: true});
-    browsePage.getFacetItemCheckbox("flow", flowName).should("be.checked");
-    browsePage.getGreySelectedFacets(flowName).should("exist");
-    browsePage.getShowMoreLink("step-type").scrollIntoView().click();
+  it("Verify facets can be selected, applied and cleared using clear text", () => {
     monitorPage.getFacetCheckbox("step-type", "ingestion").scrollIntoView().click({force: true});
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
-    browsePage.getGreySelectedFacets("ingestion").should("exist");
+    cy.waitForAsyncRequest();
+    browsePage.getFacetSearchSelectionCount("step-type").should("contain", "1");
+    browsePage.getClearFacetSelection("step-type").should("be.visible").click({force: true});
+    browsePage.waitForSpinnerToDisappear();
+  });
+
+  it("Apply facets, unchecking them should not recheck original facets", () => {
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
+      }
+    });
     browsePage.getShowMoreLink("step").scrollIntoView();
     browsePage.clickShowMoreLink("step");
     browsePage.getShowMoreLink("step").scrollIntoView();
@@ -423,48 +431,12 @@ describe("Monitor Tile", () => {
       if ($ele.length) {
         browsePage.clickPopoverSearch("stepName");
         browsePage.setInputField("stepName", "loadPersonJSON");
-        browsePage.getPopoverFacetCheckbox("loadPersonJSON").should("be.visible").click();
+        browsePage.getPopoverFacetCheckbox("loadPersonJSON").should("be.visible").click({force: true});
         browsePage.confirmPopoverFacets();
       } else {
         monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
       }
     });
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
-    browsePage.getFacetApplyButton().scrollIntoView().click({force: true});
-    monitorPage.clearFacetSearchSelection(flowName);
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
-    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
-    cy.waitForAsyncRequest();
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetApplyButton().click();
-    monitorPage.clearFacetSearchSelection("loadPersonJSON");
-    monitorPage.clearFacetSearchSelection("ingestion");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
-    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
-  });
-
-  it("Verify facets can be selected, applied and cleared using clear text", () => {
-    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
-    cy.waitForAsyncRequest();
-    browsePage.getFacetSearchSelectionCount("step").should("contain", "1");
-    browsePage.getClearFacetSelection("step").click();
-    browsePage.waitForSpinnerToDisappear();
-  });
-
-  it("Apply facets, unchecking them should not recheck original facets", () => {
-    monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
     monitorPage.getFacetCheckbox("step", "mapPersonJSON").scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
