@@ -627,7 +627,7 @@ const FlowPanel: React.FC<Props> = ({
                         <div key={index} className={styles.divItem}>
                           <HCTooltip
                             text={
-                              step.stepDefinitionType.toLowerCase() === "ingestion"
+                              step?.stepDefinitionType?.toLowerCase() === "ingestion"
                                 ? controlDisabled(step)
                                   ? RunToolTips.loadStepRunFlow
                                   : ""
