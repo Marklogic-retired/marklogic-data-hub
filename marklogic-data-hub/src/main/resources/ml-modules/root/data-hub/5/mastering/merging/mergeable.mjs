@@ -41,10 +41,11 @@ export default class Mergeable {
 
       this.mergeStep.targetCollections.onMerge = this.mergeStep.targetCollections.onMerge || {};
       this.mergeStep.targetCollections.onMerge.add = [`sm-${targetEntityTitle}-merged`, `sm-${targetEntityTitle}-mastered`, targetEntityTitle].concat(this.mergeStep.targetCollections.onMerge.add || []).filter(c => c);
+      this.mergeStep.targetCollections.onMerge.remove = [`sm-${targetEntityTitle}-archived`].concat(this.mergeStep.targetCollections.onMerge.remove || []).filter(c => c);
 
       this.mergeStep.targetCollections.onNoMatch = this.mergeStep.targetCollections.onNoMatch || {};
       this.mergeStep.targetCollections.onNoMatch.add = [`sm-${targetEntityTitle}-mastered`, targetEntityTitle].concat(this.mergeStep.targetCollections.onNoMatch.add || []).filter(c => c);
-      this.mergeStep.targetCollections.onNoMatch.remove = [`sm-${targetEntityTitle}-archived`].concat(this.mergeStep.targetCollections.onMerge.remove || []);
+      this.mergeStep.targetCollections.onNoMatch.remove = [`sm-${targetEntityTitle}-archived`].concat(this.mergeStep.targetCollections.onNoMatch.remove || []);
 
       this.mergeStep.targetCollections.onNotification = this.mergeStep.targetCollections.onNotification || {};
       this.mergeStep.targetCollections.onNotification.add = [`sm-${targetEntityTitle}-notification`].concat(this.mergeStep.targetCollections.onNotification.add || []).filter(c => c);

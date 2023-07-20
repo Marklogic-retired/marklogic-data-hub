@@ -41,9 +41,9 @@ function buildContentObjectsFromMatchSummary(
     switch (actionType) {
     case "merge": {
       const mergeContentObjects = uriActionDetails.uris.map(uri => {
-        const contentObject = getContentObject(uri);
+        const contentObject = getContentObject(uri) || {uri, context: {}};
         // checking against node being prematurely released
-        if (!contentObject.value) {
+        if (!(contentObject && contentObject.value)) {
           contentObject.value = cts.doc(uri);
         }
         return contentObject;
@@ -58,11 +58,14 @@ function buildContentObjectsFromMatchSummary(
             permissions: consolidateContextValues(mergeContentObjects, "permissions")
           }
         };
-      }
-      for (const contentToArchive of mergeContentObjects) {
-        mergeable.applyDocumentContext(contentToArchive, {action: "archive"});
-        hubUtils.releaseDatabaseNodeFromContentObject(contentToArchive);
-        contentObjects.push(contentToArchive);
+        for (const contentToArchive of mergeContentObjects) {
+          if (contentToArchive.uri !== uri) {
+            mergeable.applyDocumentContext(contentToArchive, {action: "archive"});
+            hubUtils.releaseDatabaseNodeFromContentObject(contentToArchive);
+            contentObjects.push(contentToArchive);
+          }
+        }
+        mergeable.applyDocumentContext(currentContentObject, uriActionDetails);
       }
       const auditDoc = mergeable.buildAuditDocument(uri, uriActionDetails.uris, "merge");
       mergeable.applyDocumentContext(auditDoc, {action: "audit"});
