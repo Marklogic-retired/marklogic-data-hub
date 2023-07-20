@@ -16,7 +16,6 @@ class ClearUserSchemasTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void setUp() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         installReferenceModelProject();
     }
 

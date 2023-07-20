@@ -31,13 +31,6 @@ public class FlowControllerTest extends AbstractMvcTest {
     private final static String PATH = "/api/flows";
     private int initialFlowCount;
 
-    @BeforeEach
-    void beforeEach() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles(),
-            "A bug in ML 9 prevents amps from working on exported SJS functions correctly, " +
-                "such that job/batch documents cannot be updated unless the user has flow-operator-role or greater");
-    }
-
     @Test
     void test() throws Exception {
         installReferenceModelProject();

@@ -44,7 +44,6 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
 
     @Test
     void testQBE(){
-        assumeTrue(isVersionCompatibleWith520Roles());
         writeFinalJsonDoc("doc1.json", "{\"itemPrice\": 10}");
         writeFinalJsonDoc("doc2.json", "{\"itemPrice\": 5}");
 

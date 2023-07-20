@@ -58,8 +58,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        assumeTrue(isVersionCompatibleWith520Roles());
-
         // For on-premise deployments, it's common to run as an admin user
         runAsAdmin();
 
@@ -71,8 +69,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @AfterEach
     void afterEach() {
-        assumeTrue(isVersionCompatibleWith520Roles());
-
         // Deploying will remove the test-specific database settings, so gotta restore them
         applyDatabasePropertiesForTests(getHubConfig());
         getHubConfig().getAdminManager().waitForRestart();
@@ -80,8 +76,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @Test
     void deployToReplicaOnPremise() {
-        assumeTrue(isVersionCompatibleWith520Roles());
-
         verifyCommandListForDeployingToReplicaOnPremise();
 
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
@@ -99,8 +93,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @Test
     void deployToReplicaInDHS() {
-        assumeTrue(isVersionCompatibleWith520Roles());
-
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
         runAsTestUserWithRoles("data-hub-developer", "data-hub-security-admin");

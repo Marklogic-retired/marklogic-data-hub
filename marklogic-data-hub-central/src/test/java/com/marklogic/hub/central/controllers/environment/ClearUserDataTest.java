@@ -20,10 +20,6 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
     @Test
     void permittedUser() throws Exception {
-        if (!isVersionCompatibleWith520Roles()) {
-            return;
-        }
-
         installReferenceModelProject();
 
         loginAsTestUserWithRoles("hub-central-clear-user-data");
@@ -36,9 +32,6 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
     @Test
     void forbiddenUser() throws Exception {
-        if (!isVersionCompatibleWith520Roles()) {
-            return;
-        }
         loginAsTestUserWithRoles("hub-central-user","data-hub-developer");
         verifyRequestIsForbidden(post(PATH));
     }

@@ -93,18 +93,12 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
     protected ObjectNode canInstallDhs(String installedHubVersion, MarkLogicVersion mlVersion) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
-        if (installedHubVersion != null && Character.getNumericValue(installedHubVersion.charAt(0)) < 5) {
+
+        if(mlVersion.supportsDataHubFramework()) {
+            node.put("canBeInstalled", true);
+        } else {
             node.put("canBeInstalled", false);
-            node.put("message", "DHF cannot be upgraded when the major version of the existing DHF instance is 4");
-        }
-        else {
-            if (mlVersion.isVersionCompatibleWith520Roles()) {
-                node.put("canBeInstalled", true);
-            }
-            else {
-                node.put("canBeInstalled", false);
-                node.put("message", "DHF 5.3.0 and higher require MarkLogic 10.0-3 or higher for the use of granular privileges");
-            }
+            node.put("message", String.format("DHF cannot be installed on the %s marklogic version", mlVersion));
         }
         return node;
     }

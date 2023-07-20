@@ -32,7 +32,6 @@ public class DataHubHttpUserTest extends AbstractSecurityTest {
 
     @Test
     void testCreateHttpRole() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         //'dh-common' is added so that user can do eval
         runAsTestUserWithRoles("data-hub-http-user", "data-hub-common").getStagingClient().newServerEval().javascript("xdmp.httpGet(\"http://www.marklogic.com\")").eval();
     }

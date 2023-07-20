@@ -350,13 +350,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         waitForReindex(getHubClient(), getHubConfig().getDbName(DatabaseKind.FINAL));
     }
 
-    protected boolean isVersionCompatibleWith520Roles() {
-        return new Versions(getHubClient()).getMarkLogicVersion().isVersionCompatibleWith520Roles();
-    }
-
-    protected boolean supportsRangeIndexConstraints() {
-        return new Versions(getHubClient()).getMarkLogicVersion().supportsRangeIndexConstraints();
-    }
     /**
      * This is public and static so that it can also be invoked by RunMarkLogicUnitTestsTest. Apparently, some of these
      * database changes go away as a result of some test that runs in our test suite before RMLUTT. So RMLUTT has to

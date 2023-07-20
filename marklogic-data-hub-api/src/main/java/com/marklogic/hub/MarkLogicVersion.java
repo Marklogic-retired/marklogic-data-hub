@@ -16,7 +16,9 @@
 package com.marklogic.hub;
 
 import com.marklogic.mgmt.ManageClient;
-import org.apache.commons.lang3.StringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Can parse the version string returned by the Manage API so that clients can determine if the version of MarkLogic
@@ -61,87 +63,42 @@ public class MarkLogicVersion {
     }
 
     /*
-     * The DHF 5.2.0 roles depend on granular privileges that are first available in ML 10.0-3.
-     */
-    public boolean isVersionCompatibleWith520Roles() {
-        if (nightly) {
-            return major >= 10;
-        }
-
-        return major > 10 || (major == 10 && minor >= 300);
-    }
-
-    /*
-     * Users should be able to update amps on versions > 10.0-4.4
-     */
-    public boolean cannotUpdateAmps() {
-        if (nightly) {
-            return false;
-        }
-
-        return major == 10 && minor == 404;
-    }
-
-    /*
      * Compares current ML version with the minimum required version and fails immediately
      * if current ML version is lower than the minimum required version.
      */
     public boolean supportsDataHubFramework() {
-        if (nightly) {
+        if (nightly && major >= 10) {
             return true;
         }
 
-        return major > 10 || (major == 10 && minor >= 201) || (major == 9 && minor >= 1100);
+        return major >= 11 || (major == 10 && minor >= 1000);
     }
 
-    /*
-     * Range constraints from Entity Services weren't returned until ML 10.0-4
-     */
-    public boolean supportsRangeIndexConstraints() {
-        if (nightly) {
-            return major >= 10;
-        }
+    private void parseMarkLogicVersionString(String version) {
+        String[] versionArr = version.split("[.-]");
 
-        return major > 10 || (major == 10 && minor >= 400);
-    }
-
-    private void parseMarkLogicVersionString(String versionString) {
+        this.major = Integer.parseInt(versionArr[0]);
         try {
-            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            int minor = 0;
-            boolean isNightly = versionString.matches("[^-]+[-|.](\\d{4})(\\d{2})(\\d{2})($|-\\d{1})");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = dateFormat.parse(versionArr[2]);
 
-            if (isNightly) {
-                this.dateString = versionString.replaceAll("[^-]+[-|.](\\d{4})(\\d{2})(\\d{2})($|-\\d{1})", "$1-$2-$3");
-                this.nightly = true;
-            }
-            else {
-                //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-                if (versionString.matches("^.*[-|.](.+)\\..*")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)\\..*", "$1"));
-                }
-                else if (versionString.matches("^.*[-|.](.+)$")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)$", "$1"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0") : String.valueOf(minor);
-
-                int hotFixNum = 0;
-
-                //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-                if (versionString.matches("^.*[-|.](.+)\\.(.*)")) {
-                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*[-|.](.+)\\.(.*)", "$2"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0") : String.valueOf(hotFixNum);
-                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
-                this.minor = Integer.parseInt(alteredString);
-            }
-            this.major = major;
+            this.nightly = true;
+            this.dateString = outputFormat.format(date);
+            return;
+        } catch (Exception e) {
+            this.nightly = false;
         }
-        catch (Exception e) {
-            throw new RuntimeException("Unable to parse MarkLogic version string, cause: " + e.getMessage(), e);
+
+        int minor, patch;
+        if(major <= 10) {
+            minor = versionArr.length > 2 ? Integer.parseInt(versionArr[2]) : 0;
+            patch = versionArr.length > 3 ? Integer.parseInt(versionArr[3]) : 0;
+        } else {
+            minor = versionArr.length > 1 ? Integer.parseInt(versionArr[1]) : 0;
+            patch = versionArr.length > 2 ? Integer.parseInt(versionArr[2]) : 0;
         }
+        this.minor = minor * 100 + patch;
     }
 
     private String getMarkLogicVersionString(ManageClient manageClient) {

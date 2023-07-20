@@ -140,7 +140,6 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     @Test
     void testRowExportWithPathRangeQuery() throws Exception {
-        assumeTrue(new Versions(getHubConfig()).getMarkLogicVersion().supportsRangeIndexConstraints());
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
         deployEntityIndexes();
 

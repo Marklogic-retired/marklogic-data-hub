@@ -14,7 +14,6 @@ class ClearUserArtifactsTest extends AbstractHubCoreTest {
     int initialDbCount;
     @BeforeEach
     void setUp() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         initialDbCount = getDocumentCount(getHubClient().getStagingClient());
         // These 2 projects contain all kinds of user artifacts
         installProjectInFolder("test-projects/download-artifacts");

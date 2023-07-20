@@ -4,7 +4,6 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
@@ -13,7 +12,6 @@ import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.groups.GroupManager;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import com.marklogic.rest.util.ResourcesFragment;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,14 +22,11 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setUp() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
-
         // It's acceptable to run this as an admin, as an admin or admin-like user is typically used to install DH
         // either on-premise or in DHS.
         runAsAdmin();
@@ -208,7 +203,6 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
      */
     @Test
     void verifiyBadPrivilegesAreCleanedUp() {
-        assumeTrue(new Versions(getHubConfig()).getMarkLogicVersion().isVersionCompatibleWith520Roles());
         DatabaseClient client = getHubConfig().newFinalClient();
         String xquery = "xquery version \"1.0-ml\";\n" +
                 "import module namespace sec=\"http://marklogic.com/xdmp/security\" at \n" +
@@ -240,9 +234,7 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
             client.newServerEval().xquery(xquery).eval();
         } catch (FailedRequestException e) {}
         CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
-        assertDoesNotThrow(() -> {
-            command.execute(newCommandContext());
-        });
+        assertDoesNotThrow(() -> command.execute(newCommandContext()));
 
     }
 
