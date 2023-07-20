@@ -200,7 +200,7 @@ export class EntityModel {
       xdmp.trace(consts.TRACE_ENTITY_DEBUG, `Extracting values for property ${propertyPath} of ${this.entityModelIRI} from ${xdmp.describe(documentNode)}`);
     }
     const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+    return propertyDefinition.path ? documentNode.xpath(`${propertyDefinition.path}[string(.) ne '' or . instance of object-node()]`, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}[string(.) ne '' or . instance of object-node()]`, {ns: propertyDefinition.namespace});
   }
 
   /*
