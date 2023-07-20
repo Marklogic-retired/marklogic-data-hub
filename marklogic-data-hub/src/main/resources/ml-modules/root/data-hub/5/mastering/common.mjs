@@ -387,7 +387,7 @@ class GenericMatchModel {
 
   propertyValues(propertyPath, documentNode) {
     const propertyDefinition = this.propertyDefinition(propertyPath);
-    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+    return propertyDefinition.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//${propertyDefinition.namespace ? "ns:": ""}${propertyDefinition.localname}[string(.) ne '' or . instance of object-node()]`, {ns: propertyDefinition.namespace});
   }
 
   propertyIndexes(propertyPath) {
