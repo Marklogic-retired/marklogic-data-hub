@@ -30,7 +30,6 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
      */
     @BeforeEach
     public void clean() {
-        assumeTrue(isVersionCompatibleWith520Roles());
         runAsAdmin();
         //Some other tests seem to have written custom modules to 'hub-core-module' collection and that causes issues in this test. Hence removing
         //those modules first.

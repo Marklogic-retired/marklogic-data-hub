@@ -155,22 +155,6 @@ public class Versions extends LoggingObject {
         return null;
     }
 
-    public String getMarkLogicVersionString() {
-        // this call specifically needs to access marklogic without a known database
-        DatabaseClient client = hubClient != null ?
-            hubClient.getStagingClient() :
-            hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
-        try {
-            return client.newServerEval().xquery("xdmp:version()").evalAs(String.class);
-        } catch (Exception ex) {
-            throw new RuntimeException("Unable to get version of MarkLogic; cause: " + ex.getMessage(), ex);
-        }
-    }
-
-    public MarkLogicVersion getMarkLogicVersion() {
-        return new MarkLogicVersion(this.getMarkLogicVersionString());
-    }
-
     public static int compare(String v1, String v2) {
         if (v1 == null || v2 == null) {
             return 1;

@@ -236,13 +236,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         String finalOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
         Stream<String> optionsString = Stream.of(stagingOptions, finalOptions);
         MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
-        if(version.supportsRangeIndexConstraints()){
-            optionsString.forEach(option -> assertNull(option, "Expected the option to not be deployed since there is a conflicting constraint for 'Collection'."));
-        }
-        else{
-            optionsString.forEach(option -> assertNotNull(option, "Expected the option to be deployed since entity constraint is not generated in this marklogic version."));
-        }
-
+        optionsString.forEach(option -> assertNull(option, "Expected the option to not be deployed since there is a conflicting constraint for 'Collection'."));
 
         String stagingExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
         String finalExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);

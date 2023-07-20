@@ -65,25 +65,9 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             try {
                 receipt = super.updateResource(payload, resourceId);
             } catch (HttpClientErrorException ex) {
-                if (HttpStatus.FORBIDDEN.equals(ex.getStatusCode()) && cannotUpdateAmps()) {
-                    logger.error("An error occurred while trying to update an amp: " + ex.getMessage()
-                        + ". Updates to amps as a user with the data-hub-security-admin role are not allowed " +
-                        "in this version of MarkLogic, so this error is being logged and not thrown. " +
-                        "If you need to modify the amp, you must delete it first via the Manage API.");
-                } else {
-                    throw ex;
-                }
+                throw ex;
             }
             return receipt;
-        }
-
-        private boolean cannotUpdateAmps() {
-            try {
-                return new MarkLogicVersion(getManageClient()).cannotUpdateAmps();
-            } catch (Exception e) {
-                logger.warn("Could not determine MarkLogic version; cause: " + e.getMessage() + "; will assume that user can update amps and will throw original exception");
-                return false;
-            }
         }
     }
 

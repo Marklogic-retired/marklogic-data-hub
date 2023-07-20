@@ -132,11 +132,7 @@ public class ConceptTest extends AbstractHubCoreTest {
     @Test
     protected void publishDraftModels() {
         modelService = ModelsService.on(getHubClient().getFinalClient());
-        if (isVersionCompatibleWith520Roles()) {
-            runAsDataHubDeveloper();
-        } else {
-            runAsAdmin();
-        }
+        runAsDataHubDeveloper();
         assertDoesNotThrow(() -> modelService.publishDraftModels(), "Should publish draft with no issues.");
     }
 

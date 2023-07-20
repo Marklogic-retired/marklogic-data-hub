@@ -42,11 +42,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     @AfterEach
     public void resetData() {
-        if (isVersionCompatibleWith520Roles()) {
-            runAsDataHubDeveloper();
-        } else {
-            runAsDeprecatedFlowDeveloper();
-        }
+        runAsDataHubDeveloper();
         applyDatabasePropertiesForTests(getHubConfig());
     }
 
@@ -108,10 +104,6 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     public void testSearchResultsWithSorting() {
         runAsDataHubDeveloper();
         installProjectInFolder("customer-entity-with-indexes", true);
-
-        if (!isVersionCompatibleWith520Roles()) {
-            runAsDeprecatedFlowDeveloper();
-        }
 
         new EntityManagerImpl(getHubConfig()).saveDbIndexes();
         deployAsDeveloper(getHubConfig());

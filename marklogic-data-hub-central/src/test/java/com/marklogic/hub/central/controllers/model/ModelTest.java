@@ -48,9 +48,7 @@ public class ModelTest extends AbstractHubCentralTest {
     @AfterEach
     void cleanUp() {
         deleteProtectedPaths();
-        if (isVersionCompatibleWith520Roles()) {
-            applyDatabasePropertiesForTests(getHubConfig());
-        }
+        applyDatabasePropertiesForTests(getHubConfig());
     }
 
     protected void createNamespacedModel() {
@@ -150,7 +148,6 @@ public class ModelTest extends AbstractHubCentralTest {
     }
 
     protected void updateModelWithGraphConfig(){
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         String entityTypes = "[\n" +
                 "{\n" +
                 "\"entityName\": \"Customer\", \n" +
@@ -239,8 +236,6 @@ public class ModelTest extends AbstractHubCentralTest {
     }
 
     protected void updateModelEntityTypes() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
-
         // Loading unrelated indexes so that we can check for them after updating entity model
         loadUnrelatedIndexes();
 
@@ -282,8 +277,6 @@ public class ModelTest extends AbstractHubCentralTest {
     }
 
     protected void updateDataType(String datatype) {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
-
         String entityTypes = "[\n" +
                 "  {\n" +
                 "    \"entityName\": \"" + MODEL_NAME + "\",\n" +
@@ -308,8 +301,6 @@ public class ModelTest extends AbstractHubCentralTest {
     }
 
     protected void addProperty() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
-
         String entityTypes = "[\n" +
                 "  {\n" +
                 "    \"entityName\": \"" + MODEL_NAME + "\",\n" +
@@ -475,20 +466,12 @@ public class ModelTest extends AbstractHubCentralTest {
     }
 
     protected void publishDraftModels() {
-        if (isVersionCompatibleWith520Roles()) {
-            runAsDataHubDeveloper();
-        } else {
-            runAsAdmin();
-        }
+        runAsDataHubDeveloper();
         assertDoesNotThrow(() -> controller.publishDraftModels(), "Should publish the deleted draft with no issues.");
     }
 
     protected void clearDraftModels() {
-        if (isVersionCompatibleWith520Roles()) {
-            runAsDataHubDeveloper();
-        } else {
-            runAsAdmin();
-        }
+        runAsDataHubDeveloper();
         assertDoesNotThrow(() -> controller.clearDraftModels(), "Should clear the unpublished entities data");
     }
 }

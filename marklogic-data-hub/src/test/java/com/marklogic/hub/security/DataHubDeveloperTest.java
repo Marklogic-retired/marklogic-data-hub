@@ -43,7 +43,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task9ConfigureBitemporal() throws IOException {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String temporalAxis = "{\n" +
             "  \"axis-name\": \"test-axis\",\n" +
             "  \"axis-start\": {\n" +
@@ -170,7 +169,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task11CreateFinalTriggers() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Trigger trigger = new Trigger();
         trigger.setApi(userWithRoleBeingTestedApi);
         trigger.setName("test-trigger");
@@ -205,7 +203,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task13ConfigureAlertsInFinal() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         ObjectNode node = ObjectMapperFactory.getObjectMapper().createObjectNode();
         node.put("uri", "my-alert-config");
         node.put("name", "my alerting app");
@@ -258,7 +255,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task17CreateScheduledTask() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
         if (getHubConfig().getIsProvisionedEnvironment()) {
@@ -272,7 +268,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         task.setTaskRoot("Modules/");
         task.setTaskPeriod(1);
         task.setTaskType("minutely");
-        
+
         // Per DHFPROD-7355, a change in ML nightly has resulted in a user without the "security" role from being able
         // to assign "nobody" as a user, so the user itself is being used
         task.setTaskUser(userWithRoleBeingTested.getUserName());
@@ -291,7 +287,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureFinalIndexes() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, FINAL_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
@@ -304,7 +299,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureStagingIndexes() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, STAGING_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {
@@ -317,7 +311,6 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task18ConfigureJobIndexes() {
-        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Database db = new Database(userWithRoleBeingTestedApi, JOBS_DB);
         db.setGeospatialElementIndex(Arrays.asList(buildGeoIndex()));
         try {

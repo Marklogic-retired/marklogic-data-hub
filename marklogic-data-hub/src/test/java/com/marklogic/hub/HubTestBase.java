@@ -149,26 +149,6 @@ public class HubTestBase extends AbstractHubTest {
     }
 
     @Override
-    protected HubClient runAsDataHubDeveloper() {
-        if (isVersionCompatibleWith520Roles()) {
-            return super.runAsDataHubDeveloper();
-        }
-        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
-        runAsFlowDeveloper();
-        return getHubClient();
-    }
-
-    @Override
-    protected HubClient runAsDataHubOperator() {
-        if (isVersionCompatibleWith520Roles()) {
-            return super.runAsDataHubOperator();
-        }
-        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-operator instead of data-hub-operator");
-        runAsFlowOperator();
-        return getHubClient();
-    }
-
-    @Override
     protected HubClient doRunAsUser(String mlUsername, String mlPassword) {
         if (hubClient != null && mlUsername.equals(hubClient.getUsername())) {
             return getHubClient();
