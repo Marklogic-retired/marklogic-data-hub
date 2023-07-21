@@ -1529,7 +1529,7 @@ const MatchingStepDetail: React.FC = () => {
                         />
                       </div>
                     </div>
-                    {rulesetDataList.length > 0 &&
+                    {rulesetDataList.length > 0 && rulesetDataList[0].rulesetName !== "" &&
                       rulesetDataList.map((rulesetDataList, index) => (
                         <Accordion
                           id="testMatchedPanel"
@@ -1663,7 +1663,7 @@ const MatchingStepDetail: React.FC = () => {
                         />
                       </div>
                     </div>
-                    {rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
+                    {rulesetDataList[0].rulesetName !== "" && rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
                       <Accordion
                         id="testNotMatchedPanel"
                         className={"w-100"}
