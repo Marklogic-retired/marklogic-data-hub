@@ -15,6 +15,7 @@ import {
 
 import "cypress-wait-until";
 
+
 const matchStep = "matchCustTest";
 const matchStepCollection = "matchCustTestCollection";
 
@@ -427,6 +428,7 @@ describe("Matching", () => {
         matchingStepDetail.getUriOnlyInputField().clear().type(uris[i]);
         matchingStepDetail.getAddUriOnlyIcon().click();
       }
+      matchingStepDetail.getEmptyMatchedEntities().should("not.exist");
       cy.log("**test two truthy URI matches**");
       matchingStepDetail.getTestMatchUriButton();
       cy.waitForAsyncRequest();
@@ -461,6 +463,7 @@ describe("Matching", () => {
       matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri");
       matchingStepDetail.getAddUriIcon().click();
       matchingStepDetail.getTestMatchUriButton();
+      matchingStepDetail.getEmptyMatchedEntities().should("not.exist");
       cy.waitForAsyncRequest();
       cy.wait(1000);
       cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
@@ -499,6 +502,7 @@ describe("Matching", () => {
       cy.log("**To test when user selects all data and click on test button**");
       matchingStepDetail.getAllDataRadio().click();
       matchingStepDetail.getTestMatchUriButton();
+      matchingStepDetail.getEmptyMatchedEntities().should("not.exist");
       cy.waitForAsyncRequest();
       cy.wait(3000);
       cy.findByLabelText("noMatchedDataView").should("not.exist");

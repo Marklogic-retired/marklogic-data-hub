@@ -123,6 +123,10 @@ class MatchingStepDetail {
   getBackButton() {
     return cy.get("[aria-label=\"Back\"]");
   }
+
+  getEmptyMatchedEntities() {
+    return cy.findByText("(Threshold: 0)", {timeout: 0});
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();
