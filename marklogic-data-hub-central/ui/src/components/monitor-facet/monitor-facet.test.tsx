@@ -1,6 +1,6 @@
 import React from "react";
 import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
-import {flowNameFacetProps, stepNameFacetProps, stepTypeFacetProps} from "../../assets/mock-data/monitor/facet-props";
+import {flowNameFacetProps, stepNameFacetProps, stepTypeFacetProps, statusFacetProps} from "../../assets/mock-data/monitor/facet-props";
 import MonitorFacet from "./monitor-facet";
 import userEvent from "@testing-library/user-event";
 
@@ -82,5 +82,15 @@ describe("Facet component", () => {
       userEvent.tab({shift: true});
       expect(facetActions[i]).toHaveFocus();
     }
+  });
+
+  it("Step Type facets renders properly", async () => {
+    const {getByText, getByTestId} = render(<MonitorFacet {...statusFacetProps} />);
+    userEvent.click(getByTestId("show-more-status"));
+    expect(getByText(/Completed Successfully/i)).toBeInTheDocument();
+    expect(getByText(/Running/i)).toBeInTheDocument();
+    expect(getByText(/Failed/i)).toBeInTheDocument();
+    expect(getByText(/Canceled/i)).toBeInTheDocument();
+    expect(getByText(/Completed with Errors/i)).toBeInTheDocument();
   });
 });
