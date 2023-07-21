@@ -160,6 +160,8 @@ const MonitorFacet: React.FC<Props> = props => {
         return "Canceled";
       } else if (value.includes("failed")) {
         return "Failed";
+      } else if (value.includes("running")) {
+        return "Running";
       }
     } else {
       return value;

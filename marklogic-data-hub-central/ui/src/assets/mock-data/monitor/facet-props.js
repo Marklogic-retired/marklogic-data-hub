@@ -54,9 +54,39 @@ export const stepTypeFacetProps = {
     {
       "name": "custom",
       "value": "custom"
-    }
+    },
   ],
   tooltip: ""
+};
+
+export const statusFacetProps = {
+  "name": "stepStatus",
+  "displayName": "Status",
+  updateSelectedFacets: jest.fn(),
+  addFacetValues: jest.fn(),
+  "facetValues": [
+    {
+      "name": "completed",
+      "value": "completed",
+    },
+    {
+      "name": "running",
+      "value": "running",
+    },
+    {
+      "name": "errors",
+      "value": "errors",
+    },
+    {
+      "name": "canceled",
+      "value": "canceled",
+    },
+    {
+      "name": "failed",
+      "value": "failed",
+    },
+  ],
+  "tooltip": "Status of a step that has run.",
 };
 
 export const stepNameFacetProps = {
