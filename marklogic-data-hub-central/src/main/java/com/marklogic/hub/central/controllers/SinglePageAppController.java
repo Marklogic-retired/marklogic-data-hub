@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-public class SinglePageAppController implements ErrorController {
+public class SinglePageAppController extends BaseController implements ErrorController {
 
     @Autowired
     HubCentral hubCentral;
@@ -40,9 +40,11 @@ public class SinglePageAppController implements ErrorController {
     @RequestMapping(value = {"/"})
     public String index(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         if(environment.getProperty("mlAuthentication").equalsIgnoreCase("cloud")) {
-            Map<String, String> headers = getHeadersMap(httpServletRequest);
+            Map<String, String> headers = Collections.list(httpServletRequest.getHeaderNames()).stream()
+                .collect(Collectors.toMap(h -> h, httpServletRequest::getHeader));
+            logger.info("Headers Map: " + headers);
             CloudParameters.updateCloudParameters(headers);
-            createHubConfigurations(headers.getOrDefault("mlCloudApiKey", ""));
+            createHubConfigurations(headers.getOrDefault("mlCloudApiKey".toLowerCase(), ""));
             addCookiesToResponse(httpServletResponse);
         }
         return "forward:index.html";
@@ -55,8 +57,7 @@ public class SinglePageAppController implements ErrorController {
     }
 
     private Map<String, String> getHeadersMap(HttpServletRequest httpServletRequest) {
-        Map<String, String> headers = new HashMap<>();
-        Collections.list(httpServletRequest.getHeaderNames()).stream()
+        Map<String, String> headers = Collections.list(httpServletRequest.getHeaderNames()).stream()
             .collect(Collectors.toMap(h -> h, httpServletRequest::getHeader));
         // These values are for testing
         addHeadersFromCloudForTesting(headers);
@@ -78,7 +79,7 @@ public class SinglePageAppController implements ErrorController {
     }
 
     private void addCookiesToResponse(HttpServletResponse response) {
-        response.addCookie(new Cookie("mlHcBasePath", "/hc"));
-        response.addCookie(new Cookie("mlAuthentication", "cloud"));
+        response.addCookie(new Cookie("mlHcBasePath", CloudParameters.HC_BASE_PATH));
+        response.addCookie(new Cookie("mlAuthentication", CloudParameters.AUTHENTICATION_TYPE));
     }
 }
