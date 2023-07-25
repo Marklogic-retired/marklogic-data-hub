@@ -16,14 +16,14 @@ public class CloudParameters {
     public static String ADMIN_BASE_PATH = "";
 
     public static void updateCloudParameters(Map<String, String> cloudProperties) {
-        ML_HOST = cloudProperties.get("mlHost");
-        AUTHENTICATION_TYPE = cloudProperties.get("mlAuthentication");
-        HC_BASE_PATH = cloudProperties.get("mlHcBasePath");
-        STAGING_BASE_PATH = cloudProperties.get("mlStagingBasePath");
-        FINAL_BASE_PATH = cloudProperties.get("mlFinalBasePath");
-        JOB_BASE_PATH = cloudProperties.get("mlJobBasePath");
-        MANAGE_BASE_PATH = cloudProperties.get("mlManageBasePath");
-        APP_SERVICES_BASE_PATH = cloudProperties.get("mlAppServicesBasePath");
-        ADMIN_BASE_PATH = cloudProperties.get("mlAdminBasePath");
+        ML_HOST = cloudProperties.get("mlHost".toLowerCase());
+        AUTHENTICATION_TYPE = cloudProperties.get("mlAuthentication".toLowerCase());
+        HC_BASE_PATH = cloudProperties.get("mlHcBasePath".toLowerCase());
+        STAGING_BASE_PATH = cloudProperties.get("mlStagingBasePath".toLowerCase());
+        FINAL_BASE_PATH = cloudProperties.get("mlFinalBasePath".toLowerCase());
+        JOB_BASE_PATH = cloudProperties.get("mlJobBasePath".toLowerCase());
+        MANAGE_BASE_PATH = cloudProperties.get("mlManageBasePath".toLowerCase());
+        APP_SERVICES_BASE_PATH = cloudProperties.get("mlAppServicesBasePath".toLowerCase());
+        ADMIN_BASE_PATH = cloudProperties.get("mlAdminBasePath".toLowerCase());
     }
 }
