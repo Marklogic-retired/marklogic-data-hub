@@ -9,6 +9,8 @@ import browsePage from "../../support/pages/browse";
 import modelPage from "../../support/pages/model";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
+import graphExploreSidePanel from "../../support/components/explore/graph-explore-side-panel";
+import detailPage from "../../support/pages/detail";
 
 import {
   createEditMappingDialog,
@@ -37,6 +39,18 @@ let smPatientArchivedCollection = [
   "ssn-match2.json",
   "name-synonym2.json",
 ];
+
+let smPatientNotificationCollection = [
+  "/patient/last-name-dob-custom1.json /patient/last-name-dob-custom2.json",
+  "/patient/last-name-address-reduce1.json /patient/last-name-address-reduce2.json",
+  "/patient/last-name-plus-zip-boost1.json /patient/last-name-plus-zip-boost2.json"
+];
+
+let smPatientAuditingCollection = {
+  "/patient/ssn-match1.json": "/patient/ssn-match2.json",
+  "/patient/first-name-double-metaphone1.json": "/patient/first-name-double-metaphone2.json",
+  "/patient/first-name-synonym1.json": "/patient/first-name-synonym2.json"
+};
 
 describe("Validate E2E Mastering Flow", () => {
   before(() => {
@@ -328,13 +342,20 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("be.visible");
     cy.findByTestId("clear-sm-Patient-merged").should("be.visible");
+    browsePage.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+      }
+    });
   });
 
   it("Explore other collections", () => {
     browsePage.navigate();
-    browsePage.switchToTableView();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Patient");
+    browsePage.switchToTableView();
     browsePage.showMoreCollection();
     cy.get("#hc-sider-content").scrollTo("bottom");
 
@@ -401,15 +422,38 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
     browsePage.getTotalDocuments().should("eq", 3);
+    for (let i = 0; i < 3; i++) {
+      graphExploreSidePanel.getInstanceViewIcon().eq(i).should("be.visible").click({force: true});
+      detailPage.getDocumentXML().then(($body) => {
+        for (let key in smPatientAuditingCollection) {
+          if ($body.text().includes(key)) {
+            cy.contains(smPatientAuditingCollection[key]);
+          }
+        }
+      });
+      detailPage.clickBackButton();
+    }
 
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
     cy.waitForAsyncRequest();
-    browsePage.getFacetItemCheckbox("collection", "sm-Patient-notification").click();
+    browsePage.seeAllLink("Collection").then(($ele) => {
+      if ($ele.length) {
+        browsePage.clickPopoverSearch("Collection");
+        browsePage.setInputField("Collection", "sm-Patient-notification");
+        browsePage.getPopoverFacetCheckbox("sm-Patient-notification").should("be.visible").click({force: true});
+        browsePage.confirmPopoverFacets();
+      } else {
+        browsePage.getFacetItemCheckbox("collection", "sm-Patient-notification").scrollIntoView().click({force: true});
+      }
+    });
     entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
     browsePage.getTotalDocuments().should("eq", 3);
+    smPatientNotificationCollection.forEach((cardName: string) => {
+      browsePage.verifyCardExist(cardName);
+    });
 
     browsePage.getClearAllFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();
