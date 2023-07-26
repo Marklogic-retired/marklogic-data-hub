@@ -12,7 +12,7 @@ interface Props {
 const PageHeader: React.FC<Props> = props => {
   return (
     <div className={styles.customHeader}>
-      <Row id="back-button" className={"py-3 px-3 header-heading-title"}>
+      <Row id="back-button" className={"py-2 px-3 header-heading-title"}>
         <Col>
           <div className={`d-flex align-items-center`} data-testid="arrow-left">
             <div className={styles.backIcon}>

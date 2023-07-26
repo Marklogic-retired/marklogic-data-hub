@@ -1291,7 +1291,7 @@ const MappingStepDetail: React.FC = () => {
             <div>
               <span className={styles.sourceName}>
                 {textHaveDotsSeparator ? (
-                  <span>
+                  <div>
                     <HCTooltip
                       text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
                       id="xml-source-name-tooltip"
@@ -1302,9 +1302,9 @@ const MappingStepDetail: React.FC = () => {
                       </span>
                     </HCTooltip>
                     <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>{text?.split(":")[1]}</span>
-                  </span>
+                  </div>
                 ) : textHaveMultDotsSeparator ? (
-                  <span>
+                  <div>
                     <HCTooltip
                       text={prefix + " = \"" + namespaces[prefix] + "\""}
                       id="xml-source-name-tooltip"
@@ -1315,7 +1315,7 @@ const MappingStepDetail: React.FC = () => {
                       </span>
                     </HCTooltip>
                     <span data-testid={`${suffix}-namespaced-value`}>{suffix}</span>
-                  </span>
+                  </div>
                 ) : (
                   text
                 )}
@@ -1324,7 +1324,7 @@ const MappingStepDetail: React.FC = () => {
           ) : (
             <span className={styles.sourceName}>
               {text?.split(":").length > 1 ? (
-                <span>
+                <div>
                   <HCTooltip
                     text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
                     id="source-name-tooltip"
@@ -1333,7 +1333,7 @@ const MappingStepDetail: React.FC = () => {
                     <span className={styles.namespace}>{text?.split(":")[0] + ": "}</span>
                   </HCTooltip>
                   <span>{text?.split(":")[1]}</span>
-                </span>
+                </div>
               ) : (
                 text
               )}
@@ -1388,7 +1388,7 @@ const MappingStepDetail: React.FC = () => {
         let renderText = (textToSearchInto, textToHighlight) =>
           getRenderOutput(textToSearchInto, textToHighlight, "key", row.rowKey);
         return (
-          <div>
+          <div className={styles.nameItemContainer}>
             {sourceFormat === "xml" && row.rowKey !== 1 && firstLevelKeysXML.includes(row.rowKey) ? (
               row.children ? (
                 <span
@@ -1415,7 +1415,7 @@ const MappingStepDetail: React.FC = () => {
             ) : null}
             <span className={styles.sourceName}>
               {textHaveDotsSeparator ? (
-                <span>
+                <div>
                   <HCTooltip
                     text={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}
                     id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"}
@@ -1428,9 +1428,9 @@ const MappingStepDetail: React.FC = () => {
                   <span data-testid={`${text?.split(":")[1]}-namespaced-value`}>
                     {renderText(text?.split(":")[1], text?.split(":")[1])}
                   </span>
-                </span>
+                </div>
               ) : textHaveMultDotsSeparator ? (
-                <span>
+                <div>
                   <HCTooltip
                     text={prefix + " = \"" + namespaces[prefix] + "\""}
                     id={sourceFormat === "xml" && row.rowKey !== 1 ? "xml-source-name-tooltip" : "source-name-tooltip"}
@@ -1441,7 +1441,7 @@ const MappingStepDetail: React.FC = () => {
                     </span>
                   </HCTooltip>
                   <span data-testid={`${suffix}-namespaced-value`}>{renderText(suffix, suffix)}</span>
-                </span>
+                </div>
               ) : (
                 renderText(text, text)
               )}
@@ -2279,7 +2279,7 @@ const MappingStepDetail: React.FC = () => {
                   </div>
 
                   {sourceFormat === "xml" ? (
-                    <div>
+                    <div className={styles.tablesContainer}>
                       <div id="upperTableXML">
                         <HCTable
                           rowKey={"rowKey"}
