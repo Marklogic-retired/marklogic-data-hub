@@ -298,6 +298,10 @@ class BrowsePage {
     cy.findByTestId(`${facetName}-search-input`).click();
   }
 
+  seeAllLink(facetName: string) {
+    return cy.findByTestId(`${facetName}-search-input`);
+  }
+
   setInputField(facetName: string, str: string) {
     cy.get(`[aria-label=${facetName}-popover-input-field]`).clear().type(str, {force: true});
   }
