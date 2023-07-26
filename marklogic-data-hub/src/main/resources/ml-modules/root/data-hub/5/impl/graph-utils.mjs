@@ -343,15 +343,18 @@ function getNodeLabel(objectIRIArr, objectUri, document) {
 
 function shouldCreateGroupNode(item, individualNodeCount) {
   const nodeCount = fn.head(Sequence.from([item.nodeCount, 1]));
-  return fn.exists(item.predicateIRI) && (nodeCount - individualNodeCount) > 0;
+  const hasGroupCount = fn.exists(item.predicateIRI) && (nodeCount - individualNodeCount) > 1;
+
+  return hasGroupCount;
 }
 
 function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true, excludedOriginNode = undefined) {
-  const nodesByID = {};
-  const edgesByID = {};
+  let nodesByID = {};
+  let edgesByID = {};
   const docUriToSubjectIri = {};
   const distinctIriPredicateCombos = {};
   const groupNodeCount = {};
+  const groupNodeCountByPredicate = {};
 
   const addToDocUriToSubjectIri = (docUri, iri) => {
     if (!docUriToSubjectIri[docUri]) {
@@ -372,6 +375,32 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
     }
     return distinctIriPredicateCombos[iri].size + getGroupNodeCount(iri);
   };
+  const removeGroupNodeIfAllEdgesExist =(originDoc, predicateIRI, objectDoc, entityType) => {
+    if (nodesByID[originDoc] && nodesByID[objectDoc]) {
+      let groupId = originDoc + predicateIRI;
+      if(groupNodeCountByPredicate[groupId]) {
+        groupNodeCountByPredicate[groupId].edges = groupNodeCountByPredicate[groupId].edges + 1;
+        if (groupNodeCountByPredicate[groupId].edges >= groupNodeCountByPredicate[groupId].nodeCount) {
+          const groupObjectId = `${originDoc}-${predicateIRI}-${entityType}`;
+          if (nodesByID[groupObjectId]) {
+            delete nodesByID[groupObjectId];
+            delete edgesByID["edge-" + groupObjectId];
+          }
+        }
+      }
+      groupId = objectDoc + predicateIRI;
+      if(groupNodeCountByPredicate[groupId]) {
+        groupNodeCountByPredicate[groupId].edges = groupNodeCountByPredicate[groupId].edges + 1;
+        if (groupNodeCountByPredicate[groupId].edges >= groupNodeCountByPredicate[groupId].nodeCount) {
+          const groupObjectId = `${objectDoc}-${predicateIRI}-${entityType}`;
+          if (nodesByID[groupObjectId]) {
+            delete nodesByID[groupObjectId];
+            delete edgesByID["edge-" + groupObjectId];
+          }
+        }
+      }
+    }
+  }
 
   let listOfURIs = new Set();
   for (const item of result) {
@@ -403,6 +432,18 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       }
     } else {
       groupNodeCount[subjectIri] = (groupNodeCount[subjectIri] || 0) + fn.head(item.nodeCount);
+      if (fn.exists(item.docURI)) {
+        const subjectUri = fn.string(item.docURI);
+        if(!groupNodeCountByPredicate[subjectUri + predicateIri]) {
+          groupNodeCountByPredicate[subjectUri + predicateIri] = {};
+          groupNodeCountByPredicate[subjectUri + predicateIri].edges = 0;
+          groupNodeCountByPredicate[subjectUri + predicateIri].nodeCount = 0;
+        }
+        if(groupNodeCountByPredicate[subjectUri + predicateIri].nodeCount < fn.number(item.nodeCount)) {
+          groupNodeCountByPredicate[subjectUri + predicateIri].nodeCount = fn.number(item.nodeCount);
+        }
+
+      }
     }
   }
 
@@ -495,7 +536,11 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
       //Checking for target nodes
       const groupObjectId = `${originId}-${item.predicateIRI}-${objectEntityType}`;
       const numberOfPredicateConnections = [...distinctIriPredicateCombos[subjectIri], ...(distinctIriPredicateCombos[objectIRI]||[])].filter(pred => pred.startsWith(`${item.predicateIRI}-`)).length;
-      if (shouldCreateGroupNode(item, numberOfPredicateConnections)) {
+      const groupCountIdPred = originId + item.predicateIRI;
+
+      const allEdgesExist = groupNodeCountByPredicate[groupCountIdPred]
+        && groupNodeCountByPredicate[groupCountIdPred].edges === fn.number(groupNodeCountByPredicate[groupCountIdPred].nodeCount);
+      if (!allEdgesExist && shouldCreateGroupNode(item, numberOfPredicateConnections)) {
         const objectId = groupObjectId;
         let edge = {};
         edge.id = "edge-" + objectId;
@@ -543,6 +588,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
             edge.from = sortedIds[0];
             edge.to = sortedIds[1];
             edgesByID[edge.id] = edge;
+            removeGroupNodeIfAllEdgesExist(sortedIds[0], item.predicateIRI, sortedIds[1], objectEntityType);
           }
           excludeNode = false;
           if (!!excludedOriginNode && key === excludedOriginNode) {
@@ -594,6 +640,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
               from: sortedIds[0],
               to: sortedIds[1]
             };
+            removeGroupNodeIfAllEdgesExist(sortedIds[0], item.predicateIRI, sortedIds[1], objectEntityType);
           }
         }
       }
@@ -611,6 +658,7 @@ function graphResultsToNodesAndEdges(result, entityTypeIds = [], isSearch = true
               from: sortedIds[0],
               to: sortedIds[1]
             };
+            removeGroupNodeIfAllEdgesExist(sortedIds[0], item.predicateIRI, sortedIds[1], objectEntityType);
           }
         };
         if (docUriToNodeKeys && docUriToNodeKeys.length > 0) {
