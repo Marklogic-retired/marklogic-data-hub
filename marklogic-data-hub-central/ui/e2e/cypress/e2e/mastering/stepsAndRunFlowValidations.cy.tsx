@@ -102,6 +102,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     cy.wait(1000);
     modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
+    confirmationModal.body.should("not.exist", {timeout: 60000});
   });
 
   it("Create Client mapping step", () => {
@@ -207,7 +208,7 @@ describe("Validate the scenarios when the steps are added in different flows", (
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
 
-  it("Add Client merge Step to New Flow", {defaultCommandTimeout: 120000}, () => {
+  it("Add Client merge Step to New Flow", () => {
     curatePage.addStepToNewFlow(mergeStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -215,14 +216,15 @@ describe("Validate the scenarios when the steps are added in different flows", (
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep, flowName4);
-    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     runPage.verifyStepRunResult(mergeStep, "success");
 
     runPage.explorerLink(mergeStep).click();
-    browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getTableView().click();
+    cy.waitForAsyncRequest();
     browsePage.waitForHCTableToLoad();
     browsePage.getTotalDocuments().should("eq", 1);
   });

@@ -1,6 +1,10 @@
 import {ConfirmationType} from "../../types/modeling-types";
 
 class ConfirmationModal {
+  get body() {
+    return cy.get("[data-testid='confirmation-modal']");
+  }
+
   getNoButton(type: ConfirmationType) {
     return cy.findByLabelText(`confirm-${type}-no`);
   }

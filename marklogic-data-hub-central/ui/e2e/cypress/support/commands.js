@@ -111,8 +111,8 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
       cy.waitForAsyncRequest();
       cy.get(`#${flowName}`).should("be.visible");
       cy.get(`#${flowName}`).find("[class*=\"accordion-button\"]").click({force: true});
-      cy.findAllByText(stepType)[0].should("be.visible");
-      cy.findAllByText(stepName)[0].should("be.visible");
+      cy.findAllByText(stepType).eq(0).should("be.visible");
+      cy.findAllByText(stepName).eq(0).should("be.visible");
     }
   });
 });
@@ -166,7 +166,8 @@ Cypress.Commands.add("deleteFlows", (...flowNames) => {
   flowNames.forEach(flow => {
     cy.request({
       method: "DELETE",
-      url: `/api/flows/${flow}`
+      url: `/api/flows/${flow}`,
+      failOnStatusCode: false
     }).then(response => {
       console.warn(`DELETE FLOW ${flow}: ${JSON.stringify(response.statusText)}`);
     });
@@ -186,7 +187,8 @@ Cypress.Commands.add("deleteSteps", (stepType, ...stepNames) => {
   stepNames.forEach(step => {
     cy.request({
       method: "DELETE",
-      url: `/api/steps/${stepType}/${step}`
+      url: `/api/steps/${stepType}/${step}`,
+      failOnStatusCode: false
     }).then(response => {
       console.warn(`DELETE ${stepType} STEP ${step}: ${JSON.stringify(response.statusText)}`);
     });
@@ -197,7 +199,8 @@ Cypress.Commands.add("deleteEntities", (...entityNames) => {
   entityNames.forEach(entity => {
     cy.request({
       method: "DELETE",
-      url: `/api/models/${entity}`
+      url: `/api/models/${entity}`,
+      failOnStatusCode: false
     }).then(response => {
       console.warn(`DELETE ENTITY ${entity}: ${JSON.stringify(response.statusText)}`);
     });
@@ -228,9 +231,7 @@ Cypress.Commands.add("deleteFiles", (dataBase, ...files) => {
 });
 
 Cypress.Commands.add("waitForAsyncRequest", () => {
-  cy.window().then({
-    timeout: 120000
-  }, win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve)));
+  cy.window().then(win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve, {timeout: 60000})));
 });
 
 function setTestUserRoles(roles) {

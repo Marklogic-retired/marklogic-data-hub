@@ -67,7 +67,7 @@ class RunPage {
   }
 
   addStep(stepName: string) {
-    cy.findByLabelText(`addStep-${stepName}`).should("be.visible", {timeout: 12000}).click({force: true});
+    cy.findByLabelText(`addStep-${stepName}`).scrollIntoView().should("be.visible").click({force: true});
     cy.wait(1000);
   }
 
