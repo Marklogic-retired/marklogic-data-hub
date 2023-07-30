@@ -1,0 +1,31 @@
+{
+  "headers": {
+    "sources": [
+      {
+        "name": "CustomerJSON"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadCustomersJSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadCustomersJSON",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCustomersJSON-ingestion",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "inputFilePath": "input/json",
+  "outputURIReplacement": ".*input/json,'/Customer'",
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-STAGING",
+  "provenanceGranularityLevel": "coarse",
+  "sourceName": "CustomerJSON",
+  "sourceType": "JSON",
+  "lastUpdated": "2020-06-04T23:01:35.540012Z"
+}

@@ -1,0 +1,41 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "sourceQuery": "cts.collectionQuery('mapCustomersJSON')",
+  "collections": [
+    "matched-customers",
+    "match-customers"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [
+    {
+      "name": "customerId - Exact",
+      "weight": 10,
+      "matchRules": [
+        {
+          "entityPropertyPath": "customerId",
+          "matchType": "exact",
+          "options": { }
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "Definitive Match",
+      "action": "merge",
+      "score": 10
+    }
+  ],
+  "name": "match-customers",
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "acceptsBatch": true,
+  "stepId": "match-customers-matching",
+  "stepUpdate": false,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2023-06-26T12:26:56.478289-03:00"
+}
