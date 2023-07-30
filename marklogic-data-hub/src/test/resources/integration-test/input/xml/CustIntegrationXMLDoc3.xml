@@ -1,0 +1,30 @@
+<CustOrders xmlns="custOrderInfo">
+  <CustomerID>203</CustomerID>
+  <Name>
+    <FirstName>Bowman</FirstName>
+    <LastName>Hale</LastName>
+  </Name>
+  <Nicknames>
+    <nickname>Bow</nickname>
+    <nickname>Hal</nickname>
+  </Nicknames>
+  <Email>bowmanhale@nutralab.com</Email>
+  <Address>
+    <Shipping>
+      <Street>Bradford Street</Street>
+      <City>Seymour</City>
+      <State>South Carolina</State>
+      <Postal>77647-8579</Postal>
+    </Shipping>
+    <Billing>
+      <Street>Whitwell Place</Street>
+      <City>Edinburg</City>
+      <State>Iowa</State>
+      <Postal>89804-7281</Postal>
+    </Billing>
+  </Address>
+  <Phone>(905) 402-3810</Phone>
+  <PIN>1979</PIN>
+  <Created>2014-04-30T01:37:02</Created>
+  <SSN>333-33-3333</SSN>
+</CustOrders>

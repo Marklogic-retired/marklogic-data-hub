@@ -1,0 +1,35 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "sourceQuery": "cts.collectionQuery('matched-customers')",
+  "provenanceGranularityLevel": "coarse",
+  "collections": [
+    "merge-customers"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "customerId",
+      "priorityOrder": {
+        "sources": [ ]
+      }
+    }
+  ],
+  "mergeStrategies": [ ],
+  "targetCollections": {
+    "onNoMatch": {
+      "add": [ ],
+      "remove": [ ]
+    }
+  },
+  "name": "merge-customers",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "merge-customers-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2023-06-26T12:26:56.5313401-03:00"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "CurateCustomerXML",
+  "steps": {
+    "1": {
+      "stepId": "loadCustomersXML-ingestion"
+    },
+    "2": {
+      "stepId": "mapCustomersXML-mapping"
+    },
+    "3": {
+      "stepId": "collectionAdder-custom"
+    }
+  },
+  "lastUpdated": "2020-06-04T23:01:35.580381Z"
+}

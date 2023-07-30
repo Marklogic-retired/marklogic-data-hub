@@ -1,0 +1,49 @@
+{
+  "collections": [
+    "Customer",
+    "mapCustomersJSON"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "batchSize": 2,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "attachSourceDocument": true,
+  "sourceRecordScope": "instanceOnly",
+  "name": "mapCustomersJSONSmallBatchSize",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersJSONSmallBatchSize-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "provenanceGranularityLevel": "off",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
+    },
+    "customerSince": {
+      "sourcedFrom": ""
+    },
+    "status": {
+      "sourcedFrom": "Status"
+    },
+    "ssn": {
+      "sourcedFrom": "SSN"
+    }
+  },
+  "lastUpdated": "2021-04-29T18:28:01.183569Z",
+  "customHook": {
+    "module": "",
+    "parameters": "{}",
+    "user": "",
+    "runBefore": false
+  },
+  "acceptsBatch": true
+}

@@ -1,0 +1,44 @@
+{
+  "CustomerID": 101,
+  "Name": {
+    "FirstName": "Carmella",
+    "LastName": "Hardin"
+  },
+  "nicknames": [
+    "Carm",
+    "din"
+  ],
+  "Email": "carmellahardin@nutralab.com",
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Whitwell Place",
+        "Street2": "More info",
+        "City": "Ellerslie",
+        "State": "Georgia",
+        "Postal": "31807-1718"
+      }
+    },
+    {
+      "Shipping": {
+        "Street": "999 Skyway Road",
+        "City": "San carlos",
+        "State": "California",
+        "Postal": "94070-1851"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Anna Court",
+        "City": "Stewart",
+        "State": "Kansas",
+        "Postal": "66601-6783"
+      }
+    }
+  ],
+  "Phone": "(910) 407-2081",
+  "PIN": 2172,
+  "Created": "04/03/2017",
+  "Status": "New Customer",
+  "SSN": "111-11-1111"
+}

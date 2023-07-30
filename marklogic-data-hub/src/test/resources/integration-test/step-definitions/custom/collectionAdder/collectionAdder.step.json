@@ -1,0 +1,10 @@
+{
+  "lang": "zxx",
+  "name": "collectionAdder",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json",
+    "collectionToAdd": "newIntegrationCollection"
+  },
+  "modulePath": "/custom-modules/custom/integration-step/collectionAdder.sjs"
+}
