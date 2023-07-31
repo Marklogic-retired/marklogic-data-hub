@@ -13,7 +13,7 @@ import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "@config/tooltips.config";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
-import {updateMatchingArtifact} from "@api/matching";
+import {updateMatchingArtifact, validateURI} from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable, HCModal} from "@components/common";
@@ -23,6 +23,7 @@ import {themeColors} from "@config/themes.config";
 type Props = {
   editRuleset: any;
   isVisible: boolean;
+  sourceDatabase: string;
   toggleModal: (isVisible: boolean) => void;
 };
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -95,6 +96,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
   //For expand-collapse
   const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
 
+  const sourceDatabase = props.sourceDatabase;
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
     let index = props.editRuleset.index;
@@ -423,7 +425,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
     }
   };
 
-  const onSubmit = event => {
+  const onSubmit = async(event) => {
     event.preventDefault();
     setSaveClicked(true);
     let rulesetNameErrorMsg = "";
@@ -444,7 +446,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
       propertyErrorMessage = "A property to match is required.";
     } else {
       let indentMainKeyPropertyRow;
-      selectedRowKeys.forEach(key => {
+      for (const key of selectedRowKeys) {
         let propertyPath = key;
         if (key?.includes(".")) {
           indentMainKeyPropertyRow = key.split(".")[0];
@@ -466,6 +468,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
           case "synonym": {
             if (thesaurusValues[key] === "" || thesaurusValues[key] === undefined) {
               thesaurusErrorMessageObj[key] = "A thesaurus URI is required";
+            } else {
+              const uriError = await validateURI(thesaurusValues[key], sourceDatabase);
+              if (uriError) {
+                thesaurusErrorMessageObj[key] = uriError;
+              }
             }
 
             let synonymMatchRule: MatchRule = {
@@ -485,6 +492,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
           case "doubleMetaphone": {
             if (dictionaryValues[key] === "" || dictionaryValues[key] === undefined) {
               dictionaryUriErrorMessageObj[key] = "A dictionary URI is required";
+            } else if (distanceThresholdValues[key] && distanceThresholdValues[key] !== "") {
+              const uriError = await validateURI(dictionaryValues[key], sourceDatabase);
+              if (uriError) {
+                dictionaryUriErrorMessageObj[key] = uriError;
+              }
             }
 
             if (distanceThresholdValues[key] === "" || distanceThresholdValues[key] === undefined) {
@@ -532,7 +544,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
             break;
           }
         }
-      });
+      }
     }
 
     if (rulesetNameErrorMsg === "") {
@@ -543,7 +555,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
         let errorInDistThreshold = Object.keys(distanceThresholdErrorMessageObj).length > 0;
         let errorInUri = Object.keys(uriErrorMessageObj).length > 0;
         let errorInFunction = Object.keys(functionErrorMessageObj).length > 0;
-
         if (errorInMatchType) {
           setMatchTypeErrorMessages({...matchErrorMessageObj});
         }
@@ -786,6 +797,26 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
     </span>
   );
 
+  const renderErrorThesaurus = (propertyPath) => {
+    if (!thesaurusValues[propertyPath]) {
+      return "A thesaurus URI is required";
+    }
+    if (thesaurusErrorMessages[propertyPath]) {
+      return thesaurusErrorMessages[propertyPath];
+    }
+    return "";
+  };
+
+  const renderErrorDictionary = (propertyPath) => {
+    if (!dictionaryValues[propertyPath]) {
+      return "A dictionary URI is required";
+    }
+    if (dictionaryErrorMessages[propertyPath]) {
+      return dictionaryErrorMessages[propertyPath];
+    }
+    return "";
+  };
+
   const renderSynonymOptions = (propertyPath, hasParent) => {
     return (
       <div className={styles.matchTypeDetailsContainer}>
@@ -808,7 +839,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
               data-testid={propertyPath + "-thesaurus-uri-err"}
               style={validationErrorStyle("thesaurus-uri-input")}
             >
-              {!thesaurusValues[propertyPath] ? "A thesaurus URI is required" : ""}
+              {renderErrorThesaurus(propertyPath)}
             </div>
           ) : (
             ""
@@ -869,7 +900,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
               data-testid={propertyPath + "-dictionary-uri-err"}
               style={validationErrorStyle("dictionary-uri-input")}
             >
-              {!dictionaryValues[propertyPath] ? "A dictionary URI is required" : ""}
+              {renderErrorDictionary(propertyPath)}
             </div>
           ) : (
             ""

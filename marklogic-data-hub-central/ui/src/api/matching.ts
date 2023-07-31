@@ -15,6 +15,20 @@ export const updateMatchingArtifact = async matching => {
   }
 };
 
+export const validateURI = async (uriValue, database) => {
+
+  try {
+    let srcDocResp = await axios.get(`/api/entitySearch?docUri=${encodeURIComponent(uriValue)}&database=${database}`);
+    if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
+      return undefined;
+    } else {
+      return srcDocResp.data?.message ?? "There was an issue validating this URI.";
+    }
+  } catch (error) {
+    return error.response?.data?.message ?? "There was an issue validating this URI.";
+  }
+};
+
 export const calculateMatchingActivity = async matchStepName => {
   try {
     let response = await axios.get(`/api/steps/matching/${matchStepName}/calculateMatchingActivity`);
@@ -40,8 +54,8 @@ export const previewMatchingActivity = async testMatchData => {
       return response.data;
     }
   } catch (error) {
-    let message = error;
-    console.error("Error while fetching the preview matching activity!", message);
+    console.error("Error while fetching the preview matching activity!", error.response);
+    return {error: error.response?.data?.message ?? undefined};
   }
 };
 

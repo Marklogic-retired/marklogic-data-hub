@@ -485,8 +485,14 @@ class MatchRulesetDefinition {
     let spellOption = {
       distanceThreshold: matchRule.options.distanceThreshold
     };
-    const suggest = hubUtils.requireFunction("/MarkLogic/spell.xqy", "suggest");
-    let results = hubUtils.normalizeToArray(value).map((val) => suggest(dictionary, fn.string(val), spellOption));
+    let results;
+    try {
+      const suggest = hubUtils.requireFunction("/MarkLogic/spell.xqy", "suggest");
+      results = hubUtils.normalizeToArray(value).map((val) => suggest(dictionary, fn.string(val), spellOption));
+    } catch (e) {
+      httpUtils.throwNotFound(e.message + ": " + e.data.toString());
+    }
+
     return Sequence.from(results);
   }
 

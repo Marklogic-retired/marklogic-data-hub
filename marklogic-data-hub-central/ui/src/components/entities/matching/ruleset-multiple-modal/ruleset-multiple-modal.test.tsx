@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import RulesetMultipleModal from "./ruleset-multiple-modal";
 
 import {CurationContext} from "../../../../util/curation-context";
-import {updateMatchingArtifact} from "../../../../api/matching";
+import {validateURI, updateMatchingArtifact} from "../../../../api/matching";
 import {
   customerMatchingStep,
   customerMatchStepWithLargePropCount,
@@ -16,6 +16,7 @@ jest.mock("../../../../api/matching");
 jest.setTimeout(30000);
 
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
+const mockValidateUri = validateURI as jest.Mock;
 
 describe("Matching Multiple Rulesets Modal component", () => {
   afterEach(() => {
@@ -32,7 +33,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={false} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -40,7 +41,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -80,7 +81,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     // To verify delete icon is present for editing multiple ruleset modal
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{editRuleset}} />
+        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{editRuleset}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
     expect(queryByLabelText("editMultipleRulesetDeleteIcon")).toBeInTheDocument();
@@ -92,7 +93,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -128,7 +129,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
     });
@@ -191,7 +192,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
@@ -215,7 +216,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
@@ -255,7 +256,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByLabelText = renderResults.getByLabelText;
@@ -327,7 +328,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       queryByText = renderResults.queryByText;
@@ -374,7 +375,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       queryByTestId = renderResults.queryByTestId;
@@ -419,11 +420,12 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
   it("cannot save until required field is populated when match type is Synonym", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockValidateUri.mockResolvedValueOnce("An error").mockResolvedValue(undefined);
     const toggleModalMock = jest.fn();
 
     const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -438,15 +440,25 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     expect(toggleModalMock).toHaveBeenCalledTimes(0);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    expect(mockValidateUri).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
 
-    userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
+    userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "invalid");
 
     userEvent.click(getByText("Save"));
 
     await wait(() => {
-      expect(queryByTestId("customerId-thesaurus-uri-err")).not.toBeInTheDocument();
+      expect(mockValidateUri).toHaveBeenCalledTimes(1);
+      expect(getByTestId("customerId-thesaurus-uri-err")).toBeInTheDocument();
+    });
+
+    userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
+    userEvent.click(getByText("Save"));
+
+    await wait(() => {
+      expect(mockValidateUri).toHaveBeenCalledTimes(2);
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(queryByTestId("customerId-thesaurus-uri-err")).not.toBeInTheDocument();
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
@@ -454,11 +466,12 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
   it("cannot save until required fields are populated when match type is Double metaphone", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockValidateUri.mockResolvedValueOnce("An error").mockResolvedValue(undefined);
     const toggleModalMock = jest.fn();
 
     const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -475,6 +488,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     expect(toggleModalMock).toHaveBeenCalledTimes(0);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    expect(mockValidateUri).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
 
     userEvent.type(getByLabelText("customerId-dictionary-uri-input"), "/dictionary/uri/sample.json");
@@ -489,9 +503,18 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByText("Save"));
 
     await wait(() => {
+      expect(queryByTestId("customerId-dictionary-uri-err")).toBeInTheDocument();
+      expect(mockValidateUri).toHaveBeenCalledTimes(1);
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    });
+
+    userEvent.click(getByText("Save"));
+
+    await wait(() => {
       expect(queryByTestId("customerId-dictionary-uri-err")).not.toBeInTheDocument();
       expect(queryByTestId("customerId-distance-threshold-err")).not.toBeInTheDocument();
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(mockValidateUri).toHaveBeenCalledTimes(2);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
@@ -505,7 +528,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByTestId = renderResults.getByTestId;
@@ -555,7 +578,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByLabelText, getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -583,7 +606,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     const {getByLabelText, getByText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -613,7 +636,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByTestId = renderResults.getByTestId;
@@ -679,7 +702,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchStepWithLargePropCount}>
-          <RulesetMultipleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+          <RulesetMultipleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
         </CurationContext.Provider>,
       );
       getByTitle = renderResults.getByTitle;

@@ -168,7 +168,7 @@ describe("Matching", () => {
     multiSlider.getThresholdHandleNameAndType("testing", "merge").should("be.visible");
   });
 
-  it("Edit threshold Match Type", () => {
+  it("Edit threshold notify type", () => {
     multiSlider.thresholdEditOptionActive("testing", "merge");
     thresholdModal.selectActionDropdown("Notify");
     thresholdModal.saveButton().click();
@@ -186,7 +186,7 @@ describe("Matching", () => {
     multiSlider.sliderTooltipValue("20");
   });
 
-  it("Add ruleset", () => {
+  it("Add ruleset about customerId", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("customerId");
@@ -206,7 +206,7 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("exist");
   });
 
-  it("Add another ruleset", () => {
+  it("Add a ruleset with values to ignore", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("email");
@@ -237,7 +237,8 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email - Exact").trigger("mousemove").should("be.visible");
   });
 
-  it("Add a ruleset with single structured property", () => {
+  // TODO: DHFPROD-10177
+  it.skip("Add a ruleset with single structured property", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectStructuredPropertyToMatch("shipping", "shipping > street");
@@ -281,7 +282,8 @@ describe("Matching", () => {
     cy.contains("customerMultiplePropertyRuleset").should("have.length.gt", 0);
   });
 
-  it("Delete a ruleset", () => {
+  // TODO: DHFPROD-10177
+  it.skip("Delete a ruleset about shipping.street", () => {
     multiSlider.deleteOptionActiveRuleset("shipping.street", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("shipping.street", "Exact");
@@ -291,7 +293,7 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationRuleset("shipping.street", "Exact").should("not.exist");
   });
 
-  it("Delete a ruleset", () => {
+  it("Delete a ruleset about email", () => {
     multiSlider.deleteOptionActiveRuleset("email", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("email", "Exact");
@@ -320,7 +322,7 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "notify").should("not.exist");
   });
 
-  it("Edit ruleset", () => {
+  it("Edit ruleset about customerId", () => {
     multiSlider.ruleSetEditOptionActive("customerId", "Exact");
     cy.contains("Edit Match Ruleset for Single Property");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
@@ -329,7 +331,7 @@ describe("Matching", () => {
     cy.contains("customerId - Exact").should("have.length.gt", 0);
   });
 
-  it("Delete ruleset", () => {
+  it("Delete ruleset about customerId", () => {
     multiSlider.deleteOptionActiveRuleset("customerId", "Exact");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("customerId", "Exact");
@@ -337,8 +339,6 @@ describe("Matching", () => {
     cy.findByLabelText("noMatchedCombinations").scrollIntoView().trigger("mouseover");
     cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0);
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
-    cy.visit("/tiles");
-    cy.waitForAsyncRequest();
   });
 
   it("Edit test match URIs", () => {

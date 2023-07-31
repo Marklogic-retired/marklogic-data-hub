@@ -141,6 +141,7 @@ const MatchingStepDetail: React.FC = () => {
   const [colourElementAdded, setColourElementAdded] = useState(false);
   const [colourElementAdded2, setColourElementAdded2] = useState(false);
   const notMatchedThreshold = [{thresholdName: "Not Matched", action: "none", score: 0}];
+  const [previewError, setPreviewError] = useState(undefined);
 
   //To handle timeline display
   const [rulesetItems, setRulesetItems] = useState<any[]>([]);
@@ -300,8 +301,12 @@ const MatchingStepDetail: React.FC = () => {
       return localRulesetDataList;
     };
     previewActivity = await previewMatchingActivity(testMatchData);
+    setToggleLoading(false);
     if (previewActivity) {
-      setToggleLoading(false);
+      if (previewActivity.error) {
+        setPreviewError(previewActivity.error);
+        return;
+      }
       let updatedRulesetList = await test();
       setDataFunction(previewActivity.actionPreview.length);
       setActivityFunction(previewActivity);
@@ -540,6 +545,7 @@ const MatchingStepDetail: React.FC = () => {
 
   const handleTestButtonClick = async () => {
     testMatchedData.uris = [];
+    setPreviewError(undefined);
     setRulesetDataList([
       {rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""], matchRulesets: [""]}], score: 0},
     ]);
@@ -1505,7 +1511,7 @@ const MatchingStepDetail: React.FC = () => {
               className={styles.previewTabs}
             >
               <Tab title="Matched Entities" eventKey="matched">
-                {previewMatchedData === 0 && (
+                {!previewError && previewMatchedData === 0 && (
                   <div className={styles.noMatchedDataView} aria-label="noMatchedDataView">
                     <span>No matches found. You can try: </span>
                     <br />
@@ -1518,6 +1524,16 @@ const MatchingStepDetail: React.FC = () => {
                     </div>
                   </div>
                 )}
+                {previewError && (
+                  <div className={styles.noNotMatchedDataView} aria-label="previewError">
+                    <span>There was an issue previewing the data. See below: </span>
+                    <br />º
+                    <div className={styles.noMatchedDataContent}>
+                      <span> {previewError} </span>
+                    </div>
+                  </div>
+                )
+                }
                 {previewMatchedActivity?.actionPreview && testMatchTab === "matched" ? (
                   <div className={styles.UriMatchedDataTable}>
                     <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
@@ -1775,11 +1791,13 @@ const MatchingStepDetail: React.FC = () => {
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}
         editRuleset={editRuleset}
+        sourceDatabase={matchingStep.sourceDatabase}
         toggleModal={toggleShowRulesetSingleModal}
       />
       <RulesetMultipleModal
         isVisible={showRulesetMultipleModal}
         editRuleset={editRuleset}
+        sourceDatabase={matchingStep.sourceDatabase}
         toggleModal={toggleShowRulesetMultipleModal}
       />
       <CompareValuesModal

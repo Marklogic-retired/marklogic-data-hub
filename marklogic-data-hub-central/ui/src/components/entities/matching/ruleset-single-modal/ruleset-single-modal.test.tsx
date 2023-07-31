@@ -6,12 +6,13 @@ import userEvent from "@testing-library/user-event";
 import RulesetSingleModal from "./ruleset-single-modal";
 
 import {CurationContext} from "../../../../util/curation-context";
-import {updateMatchingArtifact, getAllExcludeValuesList} from "../../../../api/matching";
+import {updateMatchingArtifact, getAllExcludeValuesList, validateURI} from "../../../../api/matching";
 import {customerMatchingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 
 jest.mock("../../../../api/matching");
 
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
+const mockValidateUri = validateURI as jest.Mock;
 const mockGetAllExcludeValuesList = getAllExcludeValuesList as jest.Mock;
 
 jest.useRealTimers();
@@ -33,7 +34,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={false} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -41,7 +42,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -82,7 +83,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={false} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -90,7 +91,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -114,12 +115,13 @@ describe("Matching Ruleset Single Modal component", () => {
 
   it("can select Synonym ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockValidateUri.mockResolvedValueOnce(undefined);
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -145,14 +147,80 @@ describe("Matching Ruleset Single Modal component", () => {
     });
   });
 
+  it("cannot save a Synonym ruleset type with invalid thesaurus", async () => {
+    mockValidateUri.mockResolvedValueOnce("An error");
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
+    const toggleModalMock = jest.fn();
+
+    const {queryByText, queryByTestId, getByText, getByTestId, getByLabelText} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
+      </CurationContext.Provider>,
+    );
+
+    expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => {
+      userEvent.click(getByText("nicknames"));
+    });
+
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
+    userEvent.click(screen.getByText("Synonym"));
+    userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
+
+    userEvent.click(getByText("Save"));
+    wait(() => {
+      expect(queryByTestId("thesaurus-uri-err")).toBeInTheDocument();
+      expect(mockValidateUri).toHaveBeenCalledTimes(1);
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it("cannot save with Double Metaphone ruleset type and invalid dictionary", async () => {
+
+    mockValidateUri.mockResolvedValueOnce("An error");
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
+    const toggleModalMock = jest.fn();
+
+    const {queryByText, queryByTestId, getByText, getByTestId, getByLabelText} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
+      </CurationContext.Provider>,
+    );
+
+    expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => {
+      userEvent.click(getByText("orders"));
+    });
+
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
+    userEvent.click(screen.getByText("Double Metaphone"));
+    userEvent.type(getByLabelText("dictionary-uri-input"), "/Users/jsmith/Documents/sample-data/123ABC");
+    userEvent.type(getByLabelText("distance-threshold-input"), "100");
+
+    userEvent.click(getByText("Save"));
+
+    wait(() => {
+      expect(queryByTestId("dictionary-uri-err")).toBeInTheDocument();
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(mockValidateUri).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("can select Double Metaphone ruleset type and click save", async () => {
+    mockValidateUri.mockResolvedValueOnce(undefined);
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     mockGetAllExcludeValuesList.mockResolvedValue({status: 200, data: []});
     const toggleModalMock = jest.fn();
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -174,6 +242,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(mockValidateUri).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
@@ -186,7 +255,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -220,7 +289,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -257,7 +326,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={false} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={false} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -265,7 +334,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -292,7 +361,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={editSynonym} />
+        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={editSynonym} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -324,7 +393,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 
@@ -360,7 +429,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal isVisible={true} toggleModal={toggleModalMock} editRuleset={{}} />
+        <RulesetSingleModal isVisible={true} toggleModal= {toggleModalMock} editRuleset={{}} sourceDatabase={"db"} />
       </CurationContext.Provider>,
     );
 

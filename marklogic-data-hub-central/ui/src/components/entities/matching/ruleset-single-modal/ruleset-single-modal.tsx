@@ -17,6 +17,7 @@ import {
   getAllExcludeValuesList,
   updateMatchingArtifact,
   getReferencesExcludeValuesList,
+  validateURI
 } from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
@@ -31,6 +32,7 @@ import {ConfirmationType} from "../../../../types/common-types";
 type Props = {
   editRuleset: any;
   isVisible: boolean;
+  sourceDatabase: string;
   toggleModal: (isVisible: boolean) => void;
 };
 
@@ -103,6 +105,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
   const [deleteWarning, setDeleteWarning] = useState<boolean>(false);
   const [referencesListValuesToIgnore, setReferencesListValuesToIgnore] = useState<string[]>([]);
 
+  const sourceDatabase = props.sourceDatabase;
   let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
     let index = props.editRuleset.index;
@@ -356,7 +359,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
     return selectedProperty ? selectedProperty.split(" > ").join(".") : "";
   };
 
-  const onSubmit = event => {
+  const onSubmit = async(event) => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let matchErrorMessage = "";
@@ -401,6 +404,11 @@ const MatchRulesetModal: React.FC<Props> = props => {
       let thesaurusErrorMessage = "";
       if (thesaurusValue === "") {
         thesaurusErrorMessage = "A thesaurus URI is required";
+      } else {
+        const uriError = await validateURI(thesaurusValue, sourceDatabase);
+        if (uriError) {
+          thesaurusErrorMessage = uriError;
+        }
       }
 
       let synonymMatchRule: MatchRule = {
@@ -439,6 +447,12 @@ const MatchRulesetModal: React.FC<Props> = props => {
       let distanceThresholdErrorMessage = "";
       if (distanceThresholdValue === "") {
         distanceThresholdErrorMessage = "A distance threshold is required";
+      } else  if (dictionaryValue !== "") {
+        const uriError = await validateURI(dictionaryValue, sourceDatabase);
+        if (uriError) {
+          dictionaryUriErrorMessage = uriError;
+        }
+
       }
 
       rulesetName = `${propertyName} - Double Metaphone`;
@@ -675,7 +689,10 @@ const MatchRulesetModal: React.FC<Props> = props => {
               </div>
             </Col>
             <Col xs={12} className={styles.validationError}>
-              {thesaurusErrorMessage}
+              <span
+                data-testid={"thesaurus-uri-err"}>
+                {thesaurusErrorMessage}
+              </span>
             </Col>
           </Row>
         </Col>
@@ -761,7 +778,10 @@ const MatchRulesetModal: React.FC<Props> = props => {
               </div>
             </Col>
             <Col xs={12} className={styles.validationError}>
-              {dictionaryErrorMessage}
+              <span
+                data-testid={"dictionary-uri-err"}>
+                {dictionaryErrorMessage}
+              </span>
             </Col>
           </Row>
         </Col>
