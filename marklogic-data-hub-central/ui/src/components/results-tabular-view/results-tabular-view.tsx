@@ -672,8 +672,8 @@ const ResultsTabularView = props => {
     };
 
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    setToggleLoading("");
     if (previewMatchActivity) {
-      setToggleLoading("");
       setPreviewMatchedActivity(previewMatchActivity);
     }
   };
