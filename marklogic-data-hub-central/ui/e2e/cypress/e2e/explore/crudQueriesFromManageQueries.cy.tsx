@@ -227,6 +227,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getDeleteQuery();
     cy.waitForAsyncRequest();
     queryComponent.getManageQueryModal().should("not.exist");
+    cy.waitForAsyncRequest();
   });
 
   it("Verify applying previously saved query scenario on the detail page", () => {
