@@ -18,13 +18,13 @@ interface Props {
   currentRelatedConcepts: Map<string, any>;
   onSettingCheckedList: (checkAll: any) => void;
   setCurrentRelatedConcepts: (relatedConcepts: Map<string, any>) => void;
-  setActiveRelatedConcepts: (boolean) => void;
   entityIndicatorData: any;
 }
 
 const RelatedConceptsFacets: React.FC<Props> = props => {
   const {setConceptFilterTypeIds} = useContext(SearchContext);
-  const {currentRelatedConcepts, onSettingCheckedList, setCurrentRelatedConcepts, entityIndicatorData} = props;
+  const {currentRelatedConcepts, onSettingCheckedList,
+    setCurrentRelatedConcepts, entityIndicatorData} = props;
   const [conceptsList, setConceptsList] = useState<any[]>([]);
   const [showMore, setShowMore] = useState<boolean>(false);
   const [options, setOptions] = useState<any[]>([]);
@@ -77,12 +77,14 @@ const RelatedConceptsFacets: React.FC<Props> = props => {
     setCurrentRelatedConcepts(conceptsUpdated);
     const values = Array.from(conceptsUpdated.values());
     const checkedValues = values.filter(({checked}) => checked);
+
     onSettingCheckedList(checkedValues);
     setCheckedList(checkedValues);
-    let relatedConceptIds = checkedValues.map(function (i) {
+    let relatedConceptIds = checkedValues.length === 0 ? ["#"] : checkedValues.map(function (i) {
       return i.value;
     });
     setConceptFilterTypeIds(relatedConceptIds);
+
   };
 
   return (

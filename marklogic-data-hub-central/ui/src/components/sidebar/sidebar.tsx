@@ -83,7 +83,6 @@ const Sidebar: React.FC<Props> = props => {
   const [dateRangeValue, setDateRangeValue] = useState<string>();
   const [searchBox, setSearchBox] = useState(searchOptions.query);
   const [activeRelatedEntities, setActiveRelatedEntities] = useState(true);
-  const [activeRelatedConcepts, setActiveRelatedConcepts] = useState(true);
 
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
@@ -221,7 +220,7 @@ const Sidebar: React.FC<Props> = props => {
   };
 
   const onCheckAllRelatedConceptsKeyDown = event => {
-    if (event.key === "Enter" && activeRelatedConcepts) {
+    if (event.key === "Enter") {
       const {target} = event;
       const {checked} = target;
       setCheckAllRelatedConcepts(!checked);
@@ -230,12 +229,10 @@ const Sidebar: React.FC<Props> = props => {
   };
 
   const onCheckAllRelatedConceptsClick = event => {
-    if (activeRelatedConcepts) {
-      const {target} = event;
-      const {checked} = target;
-      setCheckAllRelatedConcepts(checked);
-      onCheckAllRelatedConcepts(checked);
-    }
+    const {target} = event;
+    const {checked} = target;
+    setCheckAllRelatedConcepts(checked);
+    onCheckAllRelatedConcepts(checked);
   };
 
   useEffect(() => {
@@ -1382,18 +1379,17 @@ const Sidebar: React.FC<Props> = props => {
                         >
                           {panelTitle(
                             <span tabIndex={0}>
-                              <span className={!activeRelatedConcepts ? styles.disabledCheckbox : ""}>
-                                <HCCheckbox
-                                  ariaLabel="related-concepts-checkbox"
-                                  id="check-all"
-                                  value="check-all"
-                                  disabled={!props.graphView || !props.viewConcepts}
-                                  cursorDisabled={!activeRelatedConcepts}
-                                  handleClick={onCheckAllRelatedConceptsClick}
-                                  handleKeyDown={onCheckAllRelatedConceptsKeyDown}
-                                  checked={checkAllRelatedConcepts}
-                                />
-                              </span>
+                              <HCCheckbox
+                                ariaLabel="related-concepts-checkbox"
+                                id="check-all"
+                                value="check-all"
+                                disabled={!props.graphView || !props.viewConcepts}
+                                cursorDisabled={false}
+                                handleClick={onCheckAllRelatedConceptsClick}
+                                handleKeyDown={onCheckAllRelatedConceptsKeyDown}
+                                checked={checkAllRelatedConcepts}
+                              />
+
                               related concepts
                             </span>,
                             ExploreGraphViewToolTips.relatedConcepts,
@@ -1406,7 +1402,6 @@ const Sidebar: React.FC<Props> = props => {
                           currentRelatedConcepts={props.currentRelatedConcepts}
                           setCurrentRelatedConcepts={props.setCurrentRelatedConcepts}
                           onSettingCheckedList={onSettingRelatedConceptsCheckedList}
-                          setActiveRelatedConcepts={setActiveRelatedConcepts}
                           entityIndicatorData={props.entityIndicatorData}
                         />
                       </Accordion.Body>
