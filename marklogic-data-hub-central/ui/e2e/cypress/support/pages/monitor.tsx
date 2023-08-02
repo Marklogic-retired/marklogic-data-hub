@@ -53,6 +53,11 @@ class MonitorPage {
     return cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`);
   }
 
+  clickFacetCheckbox(facetType: string, facetName: string) {
+    this.getFacetCheckbox(facetType, facetName).scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
+  }
+
   validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
     // filter by checking "mapping" facet
     this.getFacetCheckbox(facetType, facetName).should("be.visible").check();
