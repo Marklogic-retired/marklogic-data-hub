@@ -408,22 +408,14 @@ describe("Monitor Tile", () => {
   });
 
   it("Verify facets can be selected, applied and cleared using clear text", () => {
-    monitorPage.getFacetCheckbox("step-type", "ingestion").scrollIntoView().click({force: true});
-    cy.waitForAsyncRequest();
+    monitorPage.clickFacetCheckbox("step-type", "ingestion");
     browsePage.getFacetSearchSelectionCount("step-type").should("contain", "1");
     browsePage.getClearFacetSelection("step-type").should("be.visible").click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
 
   it("Apply facets, unchecking them should not recheck original facets", () => {
-    browsePage.getClearAllFacetsButton().then(($ele) => {
-      if ($ele.is(":enabled")) {
-        cy.log("**clear all facets**");
-        browsePage.getClearAllFacetsButton().click();
-        browsePage.waitForSpinnerToDisappear();
-        cy.waitForAsyncRequest();
-      }
-    });
+    browsePage.clearAllFacets();
     browsePage.getShowMoreLink("step").scrollIntoView();
     browsePage.clickShowMoreLink("step");
     browsePage.getShowMoreLink("step").scrollIntoView();
@@ -434,10 +426,10 @@ describe("Monitor Tile", () => {
         browsePage.getPopoverFacetCheckbox("loadPersonJSON").should("be.visible").click({force: true});
         browsePage.confirmPopoverFacets();
       } else {
-        monitorPage.getFacetCheckbox("step", "loadPersonJSON").scrollIntoView().click({force: true});
+        monitorPage.clickFacetCheckbox("step", "loadPersonJSON");
       }
     });
-    monitorPage.getFacetCheckbox("step", "mapPersonJSON").scrollIntoView().click({force: true});
+    monitorPage.clickFacetCheckbox("step", "mapPersonJSON");
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
     browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
@@ -447,12 +439,12 @@ describe("Monitor Tile", () => {
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
     cy.findByTestId("step-" + "mapPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
-    browsePage.getFacetItemCheckbox("status", "completed").click();
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.clickFacetCheckbox("status", "completed");
+    browsePage.clickFacetCheckbox("step", "loadPersonJSON");
     browsePage.waitForSpinnerToDisappear();
     cy.findByTestId("step-" + "mapPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").scrollIntoView().click({force: true});
-    browsePage.getFacetItemCheckbox("status", "completed").scrollIntoView().click({force: true});
+    browsePage.clickFacetCheckbox("step", "mapPersonJSON");
+    browsePage.clickFacetCheckbox("status", "completed");
     cy.findByTestId("step-" + "loadPersonJSON" + "-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
@@ -462,14 +454,7 @@ describe("Monitor Tile", () => {
 
   it("Verify select, apply, remove grey and applied startTime facet", () => {
     cy.log("Select multiple facets and remove startTime grey facet");
-    browsePage.getClearAllFacetsButton().then(($ele) => {
-      if ($ele.is(":enabled")) {
-        cy.log("**clear all facets**");
-        browsePage.getClearAllFacetsButton().click();
-        browsePage.waitForSpinnerToDisappear();
-        cy.waitForAsyncRequest();
-      }
-    });
+    browsePage.clearAllFacets();
     monitorPage.validateGreyFacet("step-type", 0);
     monitorPage.validateGreyFacet("step-type", 1);
     monitorPage.selectStartTimeFromDropDown("Today");
@@ -490,13 +475,6 @@ describe("Monitor Tile", () => {
     monitorPage.clearFacetSearchSelection("Today");
     //Commenting this validations due to a bug DHFPROD-10318
     //browsePage.getSelectedFacet("Today").should("not.exist");
-    browsePage.getClearAllFacetsButton().then(($ele) => {
-      if ($ele.is(":enabled")) {
-        cy.log("**clear all facets**");
-        browsePage.getClearAllFacetsButton().click();
-        browsePage.waitForSpinnerToDisappear();
-        cy.waitForAsyncRequest();
-      }
-    });
+    browsePage.clearAllFacets();
   });
 });

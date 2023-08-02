@@ -196,6 +196,11 @@ class BrowsePage {
     return cy.findByTestId(`${facet}-${str}-checkbox`);
   }
 
+  clickFacetCheckbox(facetType: string, facetName: string) {
+    this.getFacetItemCheckbox(facetType, facetName).scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
+  }
+
   // common
   getClearFacetSearchSelection(facet: string) {
     return cy.get("[data-cy=\"clear-" + facet + "\"]");
@@ -282,6 +287,17 @@ class BrowsePage {
   // common
   getClearAllFacetsButton() {
     return cy.get("[aria-label=clear-facets-button]", {timeout: 3000});
+  }
+
+  clearAllFacets() {
+    this.getClearAllFacetsButton().then(($ele) => {
+      if ($ele.is(":enabled")) {
+        cy.log("**clear all facets**");
+        browsePage.getClearAllFacetsButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
+      }
+    });
   }
 
   // common
