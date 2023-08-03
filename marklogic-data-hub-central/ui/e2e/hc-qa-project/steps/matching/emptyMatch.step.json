@@ -1,0 +1,31 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['mapPersonJSON'])",
+  "collections": [
+    "emptyMatch"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "matchRulesets": [],
+  "thresholds": [],
+  "name": "emptyMatch",
+  "description": "",
+  "collection": [
+    "mapPersonJSON"
+  ],
+  "selectedSource": "collection",
+  "additionalCollections": [],
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "off",
+  "customHook": {},
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "emptyMatch-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2023-08-03T08:20:36.6426802-05:00"
+}

@@ -458,16 +458,17 @@ const JobResponse: React.FC<Props> = ({
     stepType: string,
     stepName: string,
   ) => {
+    const openExploreFromExternalView:boolean = true;
     if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
       let entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
-      setLatestJobFacet(jobId, entityView, stepName, targetDatabase);
+      setLatestJobFacet(jobId, entityView, stepName, targetDatabase, undefined, openExploreFromExternalView);
     } else if (stepType === "merging") {
-      setLatestJobFacet(jobId, entityName, stepName, targetDatabase, `sm-${entityName}-merged`);
+      setLatestJobFacet(jobId, entityName, stepName, targetDatabase, `sm-${entityName}-merged`, openExploreFromExternalView);
     } else if (entityName) {
-      setLatestJobFacet(jobId, entityName, stepName, targetDatabase);
+      setLatestJobFacet(jobId, entityName, stepName, targetDatabase, undefined, openExploreFromExternalView);
     } else {
-      setLatestDatabase(targetDatabase, jobId, true);
+      setLatestDatabase(targetDatabase, jobId, openExploreFromExternalView);
     }
     history.push({pathname: "/tiles/explore"});
   };

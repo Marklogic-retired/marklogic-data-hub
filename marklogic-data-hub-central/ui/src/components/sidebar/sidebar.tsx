@@ -450,11 +450,13 @@ const Sidebar: React.FC<Props> = props => {
               } else {
                 //Setting the All Data datasource with staging database at end
                 checkDataInDatabase("final", "all-data").then(countAllDataFinalCount => {
-                  if (countAllDataFinalCount === 0 && !props.renderTriggeredFromAnotherView) {
-                    //Setting the staging database if there is no data in final database
-                    setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
-                  } else {
-                    setDatasourcePreferences("all-data");
+                  if (!props.renderTriggeredFromAnotherView) {
+                    if (countAllDataFinalCount === 0) {
+                      //Setting the staging database if there is no data in final database
+                      setDatabaseAndDatasource({database: "staging", datasource: "all-data"});
+                    } else {
+                      setDatasourcePreferences("all-data");
+                    }
                   }
                 });
               }

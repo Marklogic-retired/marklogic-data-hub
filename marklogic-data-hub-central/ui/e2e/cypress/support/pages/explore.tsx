@@ -106,6 +106,12 @@ class ExplorePage {
   getDisplaySettingsEntityColor(entity: string) {
     return cy.get(`[data-testid=${entity}-color]`);
   }
+  getEntitiesInput() {
+    return cy.findAllByLabelText("switch-datasource-entities");
+  }
+  getFinalInput() {
+    return cy.findAllByLabelText("switch-database-final");
+  }
 
   navigate() {
     cy.url().then((url: string) => {
