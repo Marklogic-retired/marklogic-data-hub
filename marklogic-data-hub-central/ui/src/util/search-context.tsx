@@ -76,6 +76,7 @@ interface ISearchContextInterface {
     stepName: string,
     targetDatabase?: string,
     collectionVals?: string,
+    updateFromExternalView?:boolean
   ) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
@@ -351,6 +352,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     stepName: string,
     targetDatabase?: string,
     collectionValues?: string,
+    updateFromExternalView:boolean = false
   ) => {
     let facets = {};
     facets = {
@@ -379,6 +381,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       pageLength: searchOptions.pageSize,
       database: targetDatabase ? targetDatabase : "final",
       stepName: stepName,
+      updateFromExternalView: updateFromExternalView
     };
     setSearchOptions(NEWOPTIONS);
   };

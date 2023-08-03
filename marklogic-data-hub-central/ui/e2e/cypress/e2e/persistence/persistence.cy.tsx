@@ -434,6 +434,20 @@ describe("Validate persistence across Hub Central", () => {
     runPage.getStatusModalButton("personXML").click();
     runPage.explorerLink("loadPersonXML").click();
     browsePage.waitForSpinnerToDisappear();
+    cy.wait(4000);
     browsePage.getTotalDocuments().should("equal", 6);
+  });
+
+  it("Merge step with out results, 0 result should persists on explore view", () => {
+    runPage.navigate();
+    runPage.runFlow("testEmptyFlow");
+    runPage.explorerLink("MergeEmpty").click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.wait(4000);
+    browsePage.getTableView().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should("equal", 0);
+    explorePage.getEntitiesInput().should("be.checked");
+    explorePage.getFinalInput().should("be.checked");
   });
 });

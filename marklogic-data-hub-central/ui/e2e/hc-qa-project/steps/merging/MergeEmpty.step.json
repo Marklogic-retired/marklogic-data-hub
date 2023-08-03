@@ -1,0 +1,35 @@
+{
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery(['emptyMatch'])",
+  "provenanceGranularityLevel": "off",
+  "collections": [
+    "MergeEmpty"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [],
+  "mergeStrategies": [],
+  "targetCollections": null,
+  "name": "MergeEmpty",
+  "description": "",
+  "collection": [
+    "emptyMatch"
+  ],
+  "selectedSource": "collection",
+  "lastUpdatedLocation": {
+    "documentXPath": ""
+  },
+  "additionalCollections": [],
+  "headers": {},
+  "interceptors": [],
+  "customHook": {},
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "MergeEmpty-merging",
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2023-08-03T08:21:49.8870921-05:00"
+}
