@@ -18,20 +18,9 @@ const LoginForm: React.FC = () => {
   const formRef = useRef<any>();
 
   useEffect(() => {
-    let mlAuthenticationFlag = document.cookie.split("; ").filter(row => row.startsWith("mlAuthentication=")).map(c => c.split("=")[1])[0];
-    let basePathURL = document.cookie.split("; ").filter(row => row.startsWith("mlHcBasePath=")).map(c => c.split("=")[1])[0];
-    if (basePathURL) {
-      window.localStorage.setItem("dataHubBasePath", basePathURL);
-    } else {
-      window.localStorage.setItem("dataHubBasePath", "");
-    }
-    if (mlAuthenticationFlag && mlAuthenticationFlag === "cloud") {
-      window.localStorage.setItem("dataHubEnvironmentSettings", mlAuthenticationFlag);
-
-      //automatically submit empty username and password if environment is cloud
-      if (formRef && formRef.current) {
-        formRef.current.dispatchEvent(new Event("submit", {cancelable: true}));
-      }
+    //automatically submit empty username and password if environment is cloud
+    if (window.localStorage.getItem("dataHubEnvironmentSettings") === "cloud" && formRef && formRef.current) {
+      formRef.current.dispatchEvent(new Event("submit", {cancelable: true}));
     } else {
       window.localStorage.setItem("dataHubEnvironmentSettings", "");
     }

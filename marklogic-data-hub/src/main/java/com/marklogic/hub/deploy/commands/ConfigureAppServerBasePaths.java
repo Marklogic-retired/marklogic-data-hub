@@ -81,7 +81,6 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
                 byte[] returnedData = IOUtils.toByteArray(entity.getContent());
 
                 JsonNode tokenMap = mapper.readTree(returnedData);
-                logger.info("Access Token Map: " + tokenMap);
                 return tokenMap.get("access_token").asText();
             }
         } catch (IOException e) {
