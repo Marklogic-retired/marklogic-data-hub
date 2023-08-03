@@ -14,7 +14,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -42,7 +41,6 @@ public class SinglePageAppController extends BaseController implements ErrorCont
         if(environment.getProperty("mlAuthentication").equalsIgnoreCase("cloud")) {
             Map<String, String> headers = Collections.list(httpServletRequest.getHeaderNames()).stream()
                 .collect(Collectors.toMap(h -> h, httpServletRequest::getHeader));
-            logger.info("Headers Map: " + headers);
             CloudParameters.updateCloudParameters(headers);
             createHubConfigurations(headers.getOrDefault("mlCloudApiKey".toLowerCase(), ""));
             addCookiesToResponse(httpServletResponse);
@@ -54,28 +52,6 @@ public class SinglePageAppController extends BaseController implements ErrorCont
         HubConfigImpl hubClientConfig = hubCentral.newHubConfig(cloudApikey);
         hubClientProvider.setHubClientConfig(hubClientConfig);
         hubClientProvider.setHubClientDelegate(hubClientConfig.newHubClient());
-    }
-
-    private Map<String, String> getHeadersMap(HttpServletRequest httpServletRequest) {
-        Map<String, String> headers = Collections.list(httpServletRequest.getHeaderNames()).stream()
-            .collect(Collectors.toMap(h -> h, httpServletRequest::getHeader));
-        // These values are for testing
-        addHeadersFromCloudForTesting(headers);
-        return headers;
-    }
-
-    private void addHeadersFromCloudForTesting(Map<String, String> headers) {
-        headers.put("mlCloudApiKey", "hub-developer:password");
-        headers.put("mlHost", "localhost");
-        headers.put("mlAuthentication", "cloud");
-        headers.put("mlManageAuthentication", "cloud");
-        headers.put("mlHcBasePath", "/hc");
-        headers.put("mlStagingBasePath", "/data-hub/staging");
-        headers.put("mlFinalBasePath", "/data-hub/final");
-        headers.put("mlJobBasePath", "/data-hub/jobs");
-        headers.put("mlManageBasePath", "/local/manage");
-        headers.put("mlAppServicesBasePath", "/local/app-services");
-        headers.put("mlAdminBasePath", "/local/admin");
     }
 
     private void addCookiesToResponse(HttpServletResponse response) {

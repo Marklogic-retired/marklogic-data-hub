@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from "react";
+import React, {useEffect, useContext, useState} from "react";
 import axios from "@config/axios";
 import {Switch} from "react-router";
 import {Route, Redirect, RouteComponentProps, withRouter} from "react-router-dom";
@@ -29,6 +29,7 @@ interface Props extends RouteComponentProps<any> {}
 
 const App: React.FC<Props> = ({history, location}) => {
   const {user, handleError} = useContext(UserContext);
+  const [loginPath, setLoginPath] = useState("/");
 
   const PrivateRoute = ({children, ...rest}) => (
     <Route
@@ -97,6 +98,20 @@ const App: React.FC<Props> = ({history, location}) => {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    let mlAuthenticationFlag = document.cookie.split("; ").filter(row => row.startsWith("mlAuthentication=")).map(c => c.split("=")[1])[0];
+    let basePathURL = document.cookie.split("; ").filter(row => row.startsWith("mlHcBasePath=")).map(c => c.split("=")[1])[0];
+    if (basePathURL) {
+      window.localStorage.setItem("dataHubBasePath", basePathURL);
+      setLoginPath(basePathURL);
+    } else {
+      window.localStorage.setItem("dataHubBasePath", "");
+    }
+    if (mlAuthenticationFlag && mlAuthenticationFlag === "cloud") {
+      window.localStorage.setItem("dataHubEnvironmentSettings", mlAuthenticationFlag);
+    }
+  }, []);
+
   const path = location["pathname"];
   const pageTheme = themeMap[path] ? themes[themeMap[path]] : themes["default"];
   document.body.classList.add(pageTheme["bodyBg"]);
@@ -119,7 +134,7 @@ const App: React.FC<Props> = ({history, location}) => {
                         <ErrorBoundary>
                           <div className="contentContainer">
                             <Switch>
-                              <Route path="/" exact component={Login} />
+                              <Route path={loginPath} exact component={Login} />
                               <Route path="/noresponse" exact component={NoResponse} />
                               <PrivateRoute path="/tiles" exact>
                                 <TilesView />
