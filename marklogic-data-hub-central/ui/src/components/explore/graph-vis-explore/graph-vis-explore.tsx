@@ -19,7 +19,6 @@ import {AuthoritiesContext} from "@util/authorities";
 import {HCTooltip} from "@components/common";
 import {SecurityTooltips} from "@config/tooltips.config";
 
-
 type Props = {
   entityTypeInstances: any;
   graphView: any;
@@ -667,28 +666,30 @@ const GraphVisExplore: React.FC<Props> = props => {
         if (checkThreshold && response.data.total > 1000) {
           handleTableViewRecords("exceededThreshold");
         } else {
-          const groupClicked = payloadData["nodeInfo"] ? payloadData.nodeInfo.predicateIri : clickedNode["predicateIri"];
-          let  someExpandedNodesAreAlreadyPresent = false;
+          const groupClicked = payloadData["nodeInfo"]
+            ? payloadData.nodeInfo.predicateIri
+            : clickedNode["predicateIri"];
+          let someExpandedNodesAreAlreadyPresent = false;
           let allNodes = network.body.data.nodes.get();
-          let skipNodes:any[] = [];
+          let skipNodes: any[] = [];
           for (const expanded in expandedNodeData) {
             if (!expandedNodeData[expanded].wasAllExpand && expandedNodeData[expanded].group === groupClicked) {
               skipNodes = [...skipNodes, ...expandedNodeData[expanded].nodes];
             }
           }
-          let  dataToCheck = response.data.nodes.filter((receivedNode) => {
-            return !skipNodes.some((nodeSkip) => nodeSkip.id === receivedNode.id);
+          let dataToCheck = response.data.nodes.filter(receivedNode => {
+            return !skipNodes.some(nodeSkip => nodeSkip.id === receivedNode.id);
           });
           dataToCheck = dataToCheck.length > 0 ? dataToCheck : response.data.nodes;
-          allNodes.every((node) => {
-            someExpandedNodesAreAlreadyPresent = dataToCheck.some((a) => {
+          allNodes.every(node => {
+            someExpandedNodesAreAlreadyPresent = dataToCheck.some(a => {
               return a.id === node.id;
             });
-            return  !someExpandedNodesAreAlreadyPresent;
+            return !someExpandedNodesAreAlreadyPresent;
           });
           let dataWithAvoidCollapse = [];
           if (someExpandedNodesAreAlreadyPresent) {
-            dataWithAvoidCollapse = response.data.nodes.map((node) => {
+            dataWithAvoidCollapse = response.data.nodes.map(node => {
               return {...node, avoidCollapse: true};
             });
           }
@@ -700,7 +701,7 @@ const GraphVisExplore: React.FC<Props> = props => {
             edges: response.data.edges,
             removedNode: nodeId,
             wasAllExpand: payloadData["expandAll"],
-            group: payloadData["nodeInfo"] ? payloadData.nodeInfo.predicateIri : clickedNode["predicateIri"]
+            group: payloadData["nodeInfo"] ? payloadData.nodeInfo.predicateIri : clickedNode["predicateIri"],
           };
           setExpandedNodeData(expandedNodeInfo);
           network.body.data.nodes.remove(nodeId);
@@ -768,12 +769,12 @@ const GraphVisExplore: React.FC<Props> = props => {
 
   const getExpandedEdgeIdsToRemove = (leafNodeExpandId, edgeIdsToRemove: any[] = []) => {
     const getNode = network.body.data.nodes.get(clickedNode["nodeId"]);
-    let skipEdges:string[] = [];
-    let predicates:any[] = [];
+    let skipEdges: string[] = [];
+    let predicates: any[] = [];
     if (getNode) {
       skipEdges = getNode.edgesToNotBeDeleted;
       if (Array.isArray(skipEdges)) {
-        predicates = skipEdges.map((predicate) => network.body.data.edges.get(predicate));
+        predicates = skipEdges.map(predicate => network.body.data.edges.get(predicate));
       }
     }
     if (expandedNodeData[leafNodeExpandId]) {
@@ -782,8 +783,8 @@ const GraphVisExplore: React.FC<Props> = props => {
         e => e["from"] === leafNodeExpandId || e["to"] === leafNodeExpandId,
       );
       if (Array.isArray(predicates)) {
-        predicates.forEach((predicatesToSkip) => {
-          edgesToRemove = edgesToRemove.filter((edge) => edge.predicate !== predicatesToSkip.predicate);
+        predicates.forEach(predicatesToSkip => {
+          edgesToRemove = edgesToRemove.filter(edge => edge.predicate !== predicatesToSkip.predicate);
         });
       }
 
@@ -796,12 +797,11 @@ const GraphVisExplore: React.FC<Props> = props => {
   };
 
   const handleLeafNodeCollapse = (nodeToCollapseId = undefined) => {
-
     const nodeToProcess = nodeToCollapseId === undefined ? clickedNode["nodeId"] : nodeToCollapseId;
     try {
       let graphNodesDataTemp: any = getExpandedNodeIdsToRemove(nodeToProcess, [], nodeToProcess);
       let graphEdgesDataTemp = getExpandedEdgeIdsToRemove(nodeToProcess);
-      graphNodesDataTemp = graphNodesDataTemp.filter((c) => clickedNode["parentNodeExpandId"] !== c);
+      graphNodesDataTemp = graphNodesDataTemp.filter(c => clickedNode["parentNodeExpandId"] !== c);
 
       let tempExpandedData = expandedNodeData;
       graphNodesDataTemp.forEach(expandId => delete tempExpandedData[expandId]);
@@ -818,13 +818,13 @@ const GraphVisExplore: React.FC<Props> = props => {
   const nodeGroupAreAlreadyPresentInRender = (response, node) => {
     let edgeName = "";
     if (Array.isArray(response.data.edges)) {
-      response.data.edges.forEach((edge) => {
+      response.data.edges.forEach(edge => {
         if (edge.to === node.id) {
           edgeName = edge.label;
         }
       });
       if (edgeName !== "") {
-        const numberOfOccurrences = response.data.edges.filter((edge) => edge.label === edgeName).length;
+        const numberOfOccurrences = response.data.edges.filter(edge => edge.label === edgeName).length;
         return numberOfOccurrences - 1 === node.count;
       }
     }
@@ -1007,9 +1007,13 @@ const GraphVisExplore: React.FC<Props> = props => {
         break;
       }
       case "Unmerge": {
-        const allNodes = Object.values(expandedNodeData)
-          .reduce((prev:any[], current:any) => prev.concat(current?.nodes), props.data);
-        const filteredData = allNodes.filter(item => item["uri"] === clickedNode["nodeId"] || item["id"] === clickedNode["nodeId"]);
+        const allNodes = Object.values(expandedNodeData).reduce(
+          (prev: any[], current: any) => prev.concat(current?.nodes),
+          props.data,
+        );
+        const filteredData = allNodes.filter(
+          item => item["uri"] === clickedNode["nodeId"] || item["id"] === clickedNode["nodeId"],
+        );
         if (filteredData.length > 0 && canWriteMatchMerge) {
           const item = filteredData[0];
           if (!item.uri) {
@@ -1028,9 +1032,9 @@ const GraphVisExplore: React.FC<Props> = props => {
     let expandedNodeIds = Object.keys(expandedNodeData);
     let someAvoidExpand = false;
 
-    expandedNodeIds.forEach((nodeID) => {
+    expandedNodeIds.forEach(nodeID => {
       const nodes = expandedNodeData[nodeID];
-      nodes.nodes.forEach((node) => {
+      nodes.nodes.forEach(node => {
         if (node.id === clickedNode["nodeId"]) {
           if (node.avoidCollapse) {
             someAvoidExpand = true;

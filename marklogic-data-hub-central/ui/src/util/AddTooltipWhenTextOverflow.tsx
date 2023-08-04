@@ -16,12 +16,12 @@ export function AddTooltipWhenTextOverflow({
   text,
   placement = "auto",
   forceRender = false,
-  dataTestId  = "AddTooltipWhenTextOverflow"
+  dataTestId = "AddTooltipWhenTextOverflow",
 }: {
   text: string;
   placement?: Placement;
   forceRender?: Boolean;
-  dataTestId?:string;
+  dataTestId?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [isEllipsisActive, setIsEllipsisActive] = useState(false);

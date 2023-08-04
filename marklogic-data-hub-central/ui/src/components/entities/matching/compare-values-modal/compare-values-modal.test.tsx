@@ -238,8 +238,6 @@ describe("Compare Values Modal component", () => {
     };
 
     expect(mockUnmergeUri).toHaveBeenLastCalledWith(payload2);
-
-
   });
 
   test("Merge Modal renders with popup info for showing all URIs", async () => {

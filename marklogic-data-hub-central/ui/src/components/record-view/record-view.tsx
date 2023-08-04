@@ -287,12 +287,6 @@ const RecordCardView = props => {
     }
   };
 
-
-
-
-
-
-
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard} ref={ref}>
       <Row className="w-100 m-0">
@@ -306,9 +300,7 @@ const RecordCardView = props => {
                       URI:{" "}
                       <span className={styles.uri}>
                         <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
-                          <span tabIndex={0}>
-                            {displayUri(elem.uri)}
-                          </span>
+                          <span tabIndex={0}>{displayUri(elem.uri)}</span>
                         </HCTooltip>
                       </span>
                     </span>
@@ -334,7 +326,7 @@ const RecordCardView = props => {
                             </span>
                           </HCTooltip>
                         </button>
-                      </OverlayTrigger >
+                      </OverlayTrigger>
                       <span
                         className={styles.sourceFormat}
                         style={sourceFormatStyle(elem.format)}

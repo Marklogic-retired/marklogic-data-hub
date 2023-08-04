@@ -56,10 +56,10 @@ const QueryExportModal = props => {
     setLimit(1);
   };
 
-  const handleOnChangeNumberOfRows = (e) => {
+  const handleOnChangeNumberOfRows = e => {
     e.preventDefault();
     const re = new RegExp(/^[0-9]*$/);
-    const limitNumber:number = Number(e.target.value);
+    const limitNumber: number = Number(e.target.value);
     if ((limitNumber <= 0 || Number.isNaN(limitNumber) || !re.test(e.target.value)) && e.target.value !== "") {
       setLimitNumberErrorMessage("Please enter a positive integer.");
     } else if (limitNumber > Number.MAX_SAFE_INTEGER) {
@@ -131,7 +131,7 @@ const QueryExportModal = props => {
               <Col className={"d-flex"}>
                 <HCInput
                   dataTestid="max-rows-input"
-                  className={ styles.noSpin}
+                  className={styles.noSpin}
                   value={limit}
                   type="text"
                   onChange={e => handleOnChangeNumberOfRows(e)}
@@ -183,7 +183,13 @@ const QueryExportModal = props => {
         <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onClose}>
           Cancel
         </HCButton>
-        <HCButton key="submit" variant="primary" aria-label={"Export"} onClick={onOk} disabled={limitNumberErrorMessage !== ""}>
+        <HCButton
+          key="submit"
+          variant="primary"
+          aria-label={"Export"}
+          onClick={onOk}
+          disabled={limitNumberErrorMessage !== ""}
+        >
           Export
         </HCButton>
       </Modal.Footer>

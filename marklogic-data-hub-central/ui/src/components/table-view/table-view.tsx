@@ -15,7 +15,7 @@ interface Props {
   data?: any;
   openUnmergeCompare?: (uri: object, item: object) => void;
   loadingCompare?: string;
-  isUnmergeAvailable?: (nodeid: string, expandedNodeData:{}) => boolean;
+  isUnmergeAvailable?: (nodeid: string, expandedNodeData: {}) => boolean;
 }
 
 const TableView: React.FC<Props> = props => {

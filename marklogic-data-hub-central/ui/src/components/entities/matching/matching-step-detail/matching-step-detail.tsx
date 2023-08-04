@@ -168,7 +168,12 @@ const MatchingStepDetail: React.FC = () => {
         let thresholdItems = matchingStepArtifact.thresholds.map((item, id) => ({
           id: id,
           start: item.score,
-          value: (item.thresholdName.length > 15 ? item.thresholdName.substring(0, 15) + "..." : item.thresholdName) + " - " + item.action + ":" + item.score.toString(),
+          value:
+            (item.thresholdName.length > 15 ? item.thresholdName.substring(0, 15) + "..." : item.thresholdName) +
+            " - " +
+            item.action +
+            ":" +
+            item.score.toString(),
         }));
         setThresholdItems(thresholdItems);
         if (matchingStepArtifact.thresholds.length === 0) {
@@ -1529,7 +1534,8 @@ const MatchingStepDetail: React.FC = () => {
                         />
                       </div>
                     </div>
-                    {rulesetDataList.length > 0 && rulesetDataList[0].rulesetName !== "" &&
+                    {rulesetDataList.length > 0 &&
+                      rulesetDataList[0].rulesetName !== "" &&
                       rulesetDataList.map((rulesetDataList, index) => (
                         <Accordion
                           id="testMatchedPanel"
@@ -1663,104 +1669,109 @@ const MatchingStepDetail: React.FC = () => {
                         />
                       </div>
                     </div>
-                    {rulesetDataList[0].rulesetName !== "" && rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
-                      <Accordion
-                        id="testNotMatchedPanel"
-                        className={"w-100"}
-                        flush
-                        key={index}
-                        activeKey={
-                          activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""
-                        }
-                        defaultActiveKey={
-                          activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""
-                        }
-                      >
-                        <Accordion.Item
-                          eventKey={rulesetDataList.rulesetName}
-                          style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}
+                    {rulesetDataList[0].rulesetName !== "" &&
+                      rulesetNonMatchedDataList?.map((rulesetDataList, index) => (
+                        <Accordion
+                          id="testNotMatchedPanel"
+                          className={"w-100"}
+                          flush
+                          key={index}
+                          activeKey={
+                            activeMatchedRuleset.includes(rulesetDataList.rulesetName)
+                              ? rulesetDataList.rulesetName
+                              : ""
+                          }
+                          defaultActiveKey={
+                            activeMatchedRuleset.includes(rulesetDataList.rulesetName)
+                              ? rulesetDataList.rulesetName
+                              : ""
+                          }
                         >
-                          <Card>
-                            <div className={"p-0 d-flex"}>
-                              <Accordion.Button
-                                onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}
-                              >
-                                <span>
-                                  <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
-                                  <span className={"d-block"}>
-                                    {rulesetDataList.actionPreviewData.length} pair matches
+                          <Accordion.Item
+                            eventKey={rulesetDataList.rulesetName}
+                            style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}
+                          >
+                            <Card>
+                              <div className={"p-0 d-flex"}>
+                                <Accordion.Button
+                                  onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}
+                                >
+                                  <span>
+                                    <span className={"text-info fw-bold"}>{rulesetDataList.rulesetName}</span>
+                                    <span className={"d-block"}>
+                                      {rulesetDataList.actionPreviewData.length} pair matches
+                                    </span>
                                   </span>
-                                </span>
-                              </Accordion.Button>
-                            </div>
-                            <Accordion.Body className={"pt-1"}>
-                              {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
-                                const itemKey =
-                                  actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
-                                return (
-                                  <Accordion
-                                    id="testMatchedUriDataPanel"
-                                    className={"w-100"}
-                                    flush
-                                    key={idx}
-                                    activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
-                                    defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
-                                  >
-                                    <Accordion.Item eventKey={itemKey}>
-                                      <div className={"d-flex"}>
-                                        <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
-                                          <span onClick={e => e.stopPropagation()} className={"text-info"}>
-                                            <span className={"d-block"}>
-                                              {actionPreviewData.uris[0]}
-                                              <span className={"text-dark"}> (Score: {actionPreviewData.score})</span>
+                                </Accordion.Button>
+                              </div>
+                              <Accordion.Body className={"pt-1"}>
+                                {rulesetDataList?.actionPreviewData?.map((actionPreviewData, idx) => {
+                                  const itemKey =
+                                    actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + idx;
+                                  return (
+                                    <Accordion
+                                      id="testMatchedUriDataPanel"
+                                      className={"w-100"}
+                                      flush
+                                      key={idx}
+                                      activeKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                      defaultActiveKey={activeMatchedUri.includes(itemKey) ? itemKey : ""}
+                                    >
+                                      <Accordion.Item eventKey={itemKey}>
+                                        <div className={"d-flex"}>
+                                          <Accordion.Button onClick={() => handleUrisAccordionChange(itemKey)}>
+                                            <span onClick={e => e.stopPropagation()} className={"text-info"}>
+                                              <span className={"d-block"}>
+                                                {actionPreviewData.uris[0]}
+                                                <span className={"text-dark"}> (Score: {actionPreviewData.score})</span>
+                                              </span>
+                                              <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
                                             </span>
-                                            <span className={"d-block"}>{actionPreviewData.uris[1]}</span>
-                                          </span>
-                                        </Accordion.Button>
-                                        <div className={"p-2"}>
-                                          <HCButton
-                                            size="sm"
-                                            className={styles.compareTestButton}
-                                            id={idx}
-                                            variant="primary"
-                                            onClick={e => {
-                                              handleCompareButton(e, rulesetDataList.rulesetName, [
-                                                actionPreviewData.uris[0],
-                                                actionPreviewData.uris[1],
-                                              ]);
-                                            }}
-                                            loading={
-                                              compareBtnLoading[0]?.toString() === idx.toString() &&
-                                              compareBtnLoading[1] === rulesetDataList.rulesetName
-                                                ? true
-                                                : false
-                                            }
-                                            aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}
-                                          >
-                                            Compare
-                                          </HCButton>
+                                          </Accordion.Button>
+                                          <div className={"p-2"}>
+                                            <HCButton
+                                              size="sm"
+                                              className={styles.compareTestButton}
+                                              id={idx}
+                                              variant="primary"
+                                              onClick={e => {
+                                                handleCompareButton(e, rulesetDataList.rulesetName, [
+                                                  actionPreviewData.uris[0],
+                                                  actionPreviewData.uris[1],
+                                                ]);
+                                              }}
+                                              loading={
+                                                compareBtnLoading[0]?.toString() === idx.toString() &&
+                                                compareBtnLoading[1] === rulesetDataList.rulesetName
+                                                  ? true
+                                                  : false
+                                              }
+                                              aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}
+                                            >
+                                              Compare
+                                            </HCButton>
+                                          </div>
                                         </div>
-                                      </div>
-                                      {curationOptions.activeStep?.stepArtifact?.matchRulesets && (
-                                        <Accordion.Body>
-                                          <span aria-label="expandedTableView">
-                                            <ExpandableTableView
-                                              rowData={actionPreviewData}
-                                              allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets}
-                                              entityData={curationOptions.activeStep}
-                                            />
-                                          </span>
-                                        </Accordion.Body>
-                                      )}
-                                    </Accordion.Item>
-                                  </Accordion>
-                                );
-                              })}
-                            </Accordion.Body>
-                          </Card>
-                        </Accordion.Item>
-                      </Accordion>
-                    ))}
+                                        {curationOptions.activeStep?.stepArtifact?.matchRulesets && (
+                                          <Accordion.Body>
+                                            <span aria-label="expandedTableView">
+                                              <ExpandableTableView
+                                                rowData={actionPreviewData}
+                                                allRuleset={curationOptions.activeStep?.stepArtifact?.matchRulesets}
+                                                entityData={curationOptions.activeStep}
+                                              />
+                                            </span>
+                                          </Accordion.Body>
+                                        )}
+                                      </Accordion.Item>
+                                    </Accordion>
+                                  );
+                                })}
+                              </Accordion.Body>
+                            </Card>
+                          </Accordion.Item>
+                        </Accordion>
+                      ))}
                   </div>
                 ) : (
                   ""

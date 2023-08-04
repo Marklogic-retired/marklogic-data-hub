@@ -51,7 +51,7 @@ interface Props {
   entitiesWithRelatedConcepts: any;
   entityRelationships: any;
   isBackToResultsClicked?: boolean;
-  renderTriggeredFromAnotherView?:boolean;
+  renderTriggeredFromAnotherView?: boolean;
 }
 const Sidebar: React.FC<Props> = props => {
   const stagingDbName: string = getEnvironment().stagingDb ? getEnvironment().stagingDb : "Staging";
@@ -1391,7 +1391,6 @@ const Sidebar: React.FC<Props> = props => {
                                 handleKeyDown={onCheckAllRelatedConceptsKeyDown}
                                 checked={checkAllRelatedConcepts}
                               />
-
                               related concepts
                             </span>,
                             ExploreGraphViewToolTips.relatedConcepts,

@@ -206,9 +206,9 @@ const ListModal: React.FC<Props> = props => {
       );
       break;
     case "stringRule":
-      errorMessage = <>
-        Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.
-      </>;
+      errorMessage = (
+        <>Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.</>
+      );
       break;
     case "valuesRequired":
       errorMessage = <>Values to ignore in this list are required.</>;
@@ -221,9 +221,9 @@ const ListModal: React.FC<Props> = props => {
     let errorMessage;
     switch (listNameErrorMessage.id) {
     case "stringRule":
-      errorMessage = <>
-        Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.
-      </>;
+      errorMessage = (
+        <>Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.</>
+      );
       break;
     case "titleRequired":
       errorMessage = <>A title for this list is required.</>;

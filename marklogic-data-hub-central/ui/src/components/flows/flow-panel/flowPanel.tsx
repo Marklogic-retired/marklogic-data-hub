@@ -739,7 +739,6 @@ const FlowPanel: React.FC<Props> = ({
                       {canWriteFlow ? RunToolTips.flowEdit : RunToolTips.flowDetails}
                       {flow.name.length > 60 ? <br /> : ""}
                       {flow.name.length > 60 ? flow.name : ""}
-
                     </>
                   }
                   id="open-edit-tooltip"

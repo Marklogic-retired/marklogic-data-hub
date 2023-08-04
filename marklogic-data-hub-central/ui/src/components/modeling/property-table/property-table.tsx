@@ -170,8 +170,7 @@ const PropertyTable: React.FC<Props> = props => {
                 editPropertyShowModal(record.propertyName, record);
               }}
             >
-              <HCTooltip text={ModelingTooltips.entityPropertyName}
-                id={`property-${text}-tooltip`} placement="bottom">
+              <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="bottom">
                 <span
                   tabIndex={0}
                   onKeyDown={event => {

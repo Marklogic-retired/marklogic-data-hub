@@ -65,7 +65,9 @@ export const mergeUris = async payload => {
 
 export const unmergeUri = async payload => {
   try {
-    let response = await axios.put(`/api/steps/merging/unmerge?mergeDocumentURI=${payload.mergeDocumentURI}&blockFutureMerges=${payload.blockFutureMerges}`);
+    let response = await axios.put(
+      `/api/steps/merging/unmerge?mergeDocumentURI=${payload.mergeDocumentURI}&blockFutureMerges=${payload.blockFutureMerges}`,
+    );
     if (response.status === 200) {
       return response;
     } else {
