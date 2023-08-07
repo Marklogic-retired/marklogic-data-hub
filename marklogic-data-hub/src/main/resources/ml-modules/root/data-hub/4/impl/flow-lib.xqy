@@ -54,7 +54,12 @@ declare variable $FLOW-CACHE-KEY-PREFIX := "flow-cache-";
 declare variable $MAIN-CACHE-KEY-PREFIX := "main-cache-";
 
 declare variable $context-queue := map:map();
-declare variable $writer-queue := map:map();
+declare variable $writer-queue :=
+  let $writer-map := map:map()
+  let $_ := map:set-javascript-by-ref($writer-map, fn:true())
+  return $writer-map;
+
+declare variable $current-database := xdmp:database();
 
 declare function flow:get-module-ns(
   $type as xs:string) as xs:string?
@@ -785,6 +790,21 @@ declare function flow:queue-writer(
     )
 };
 
+declare function flow:populate-queue(
+  $queue as map:map)
+{
+  let $populate-queue :=
+    for $key in map:keys($queue)
+      return map:put($writer-queue, $key, map:get($queue, $key))
+  return $populate-queue
+};
+
+declare function flow:set-database(
+  $database-name as xs:string)
+{
+  (xdmp:set($current-database, xdmp:database($database-name)), $current-database)
+};
+
 declare function flow:run-writers(
   $identifiers as xs:string*)
 {
@@ -799,24 +819,17 @@ declare function flow:run-writers(
       at "/data-hub/4/impl/trace-lib.xqy";
 
     declare variable $identifiers external;
-    declare variable $context-queue external;
     declare variable $writer-queue external;
-    declare variable $rfc-context external;
-    declare variable $current-trace-settings external;
 
     declare option xdmp:mapping "false";
 
-    let $_ := xdmp:set($rfc:context, $rfc-context)
-    let $_ := xdmp:set($trace:current-trace-settings, $current-trace-settings)
     let $_ :=
       for $identifier in $identifiers
-      let $item-context := map:get($context-queue, $identifier)
       let $writer-info := map:get($writer-queue, $identifier)
       return (
         if (fn:exists($writer-info)) then
           flow:run-writer(
             map:get($writer-info, "writer-function"),
-            $item-context,
             $identifier,
             map:get($writer-info, "envelope"),
             map:get($writer-info, "options")
@@ -824,24 +837,21 @@ declare function flow:run-writers(
         else ()
       )
     return
-      $trace:current-trace-settings
+      map:map()
   ',
   map:new((
     map:entry("identifiers", $identifiers),
-    map:entry("context-queue", $context-queue),
-    map:entry("writer-queue", $writer-queue),
-    map:entry("rfc-context", $rfc:context),
-    map:entry("current-trace-settings", $trace:current-trace-settings)
+    map:entry("writer-queue", $writer-queue)
   )),
   map:new((
     map:entry("ignoreAmps", fn:true()),
     map:entry("isolation", "different-transaction"),
-    map:entry("database", rfc:get-target-database()),
+    map:entry("database", $current-database),
     map:entry("commit", "auto"),
     map:entry("update", "true")
   )))
   return
-    xdmp:set($trace:current-trace-settings, $updated-settings)
+    xdmp:set($trace:current-trace-settings, map:map())
 };
 
 (:~
@@ -855,33 +865,12 @@ declare function flow:run-writers(
  :)
 declare function flow:run-writer(
   $writer-function,
-  $item-context as map:map,
   $identifier as xs:string,
   $envelope as item(),
   $options as map:map)
 {
-  let $before := xdmp:elapsed-time()
-  let $trace := rfc:get-trace($item-context)
-  let $current-trace := rfc:get-trace($item-context)
-  let $_ := trace:set-plugin-label($current-trace, "writer")
-  let $_ := trace:reset-plugin-input($current-trace)
-  let $_ := trace:set-plugin-input($current-trace, "envelope", $envelope)
-  let $resp :=
-    try {
-        $writer-function($identifier, $envelope, $options),
-
-        trace:plugin-trace($item-context, (), xdmp:elapsed-time() - $before),
-
-        (: write the trace for the current identifier :)
-        trace:write-trace($item-context)
-    }
-    catch($ex) {
-      debug:log(xdmp:describe($ex, (), ())),
-      trace:error-trace($item-context, $ex, xdmp:elapsed-time() - $before)
-    }
-  let $duration := xdmp:elapsed-time() - $before
-  return
-    $resp
+  let $resp := $writer-function($identifier, $envelope, $options)
+  return $resp
 };
 
 declare function flow:make-error-json(

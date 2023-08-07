@@ -21,6 +21,8 @@ declareUpdate();
 const contentArray = external.contentArray;
 // provenanceQueue to persist;
 const provenanceQueue = external.provenanceQueue;
+const writerQueue = external.writerQueue;
+const writerQueueXqy = external.writerQueueXqy;
 
 import consts from "/data-hub/5/impl/consts.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
@@ -28,6 +30,7 @@ import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 
 const temporal = require("/MarkLogic/temporal.xqy");
 const legFlowLib = require("/data-hub/4/impl/flow-lib.sjs");
+const legFlowLibXqy = require("/data-hub/4/impl/flow-lib.xqy");
 const traceEvent = consts.TRACE_FLOW_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
 const databaseName = xdmp.databaseName(xdmp.database());
@@ -57,10 +60,14 @@ const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().red
   return collectionMap;
 }, {});
 
-const writerQueue = legFlowLib.writerQueue;
 if(writerQueue != null && Object.keys(writerQueue).length !== 0) {
   const identifiers = contentArray.map(content => content["uri"]);
   legFlowLib.runWriters(identifiers, databaseName);
+} else if(writerQueueXqy != null && Object.keys(writerQueueXqy).length !== 0) {
+  const identifiers = contentArray.map(content => content["uri"]);
+  legFlowLibXqy.populateQueue(writerQueueXqy);
+  legFlowLibXqy.setDatabase(databaseName);
+  legFlowLibXqy.runWriters(identifiers);
 } else {
   for (let content of contentArray) {
     const context = (content.context || {});

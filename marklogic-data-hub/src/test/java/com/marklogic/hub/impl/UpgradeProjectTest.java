@@ -345,6 +345,33 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     }
 
     @Test
+    public void runUpgradedLegacyFlowsXml() throws IOException {
+        HubProjectImpl hubProject = setUpProject("hr-hub", "runUpgradedLegacyFlowsXml");
+        hubProject.upgradeLegacyFlows(flowManager);
+
+        deployAsDeveloper(getHubConfig());
+        int stagingDbCount = getStagingDocCount();
+        int finalDbCount = getFinalDocCount();
+
+        FlowInputs inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        inputs.setInputFilePath("input/Claims");
+        String stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "input-claims");
+        inputs.setSteps(Arrays.asList(stepNum));
+        RunFlowResponse inputStepResponse = runFlow(inputs);
+        logger.info("inputStepResponse RunFlow Response: " + inputStepResponse);
+        assertEquals(stagingDbCount + 1, getStagingDocCount(), "One document in the input/Claims should be written");
+
+        inputs = new FlowInputs();
+        inputs.setFlowName("dh_Upgrade_EmployeeFlow");
+        stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "harmonize-claims");
+        inputs.setSteps(Arrays.asList(stepNum));
+        RunFlowResponse customStepResponse = runFlow(inputs);
+        logger.info("customStepResponse RunFlow Response: " + customStepResponse);
+        assertEquals(finalDbCount + 1, getFinalDocCount(), "One input documents should be harmonized and written into final db");
+    }
+
+    @Test
     public void runUpgradedLegacyFlowsNonUris() throws IOException {
         StepManager stepManager = new StepManager(getHubConfig());
         HubProjectImpl hubProject = setUpProject("hr-hub", "runUpgradedLegacyFlowsNonUris");
