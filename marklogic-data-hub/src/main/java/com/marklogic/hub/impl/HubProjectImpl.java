@@ -636,6 +636,8 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         step.put("permissions", "data-hub-common,read,data-hub-common,update");
         step.put("stepId", step.get("name").asText().concat("-").concat(step.get("stepDefinitionType").asText()));
         step.put("isUpgradedLegacyFlow", true);
+        step.put("sourceFormat", properties.get("dataFormat").toString());
+        step.put("targetFormat", properties.get("dataFormat").toString());
     }
 
     private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {

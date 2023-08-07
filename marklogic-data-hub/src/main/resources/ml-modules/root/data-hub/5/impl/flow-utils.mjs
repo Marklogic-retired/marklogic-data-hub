@@ -711,7 +711,11 @@ function addMetadataToContent(content, flowName, stepName, jobId) {
  * @return An object consisting of properties "databaseName", "transactionId", and "transactionDateTime"
  */
 function writeContentArray(contentArray, databaseName, provenanceQueue) {
-  const vars = {contentArray, provenanceQueue};
+  const legFlowLibXqy = require("/data-hub/4/impl/flow-lib.xqy");
+  const writerQueueXqy = legFlowLibXqy.writerQueue;
+  const legFlowLib = require("/data-hub/4/impl/flow-lib.sjs");
+  const writerQueue = legFlowLib.writerQueue;
+  const vars = {contentArray, provenanceQueue, writerQueue, writerQueueXqy};
 
   // ignoreAmps is true to prevent a user from e.g. overwriting job documents, which could be done via an amp
   const options = {
