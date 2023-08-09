@@ -342,16 +342,10 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("be.visible");
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("be.visible");
     cy.findByTestId("clear-sm-Patient-merged").should("be.visible");
-    browsePage.getClearAllFacetsButton().then(($ele) => {
-      if ($ele.is(":enabled")) {
-        cy.log("**clear all facets**");
-        browsePage.getClearAllFacetsButton().click();
-        browsePage.waitForSpinnerToDisappear();
-      }
-    });
+    browsePage.clearAllFacets();
   });
 
-  it("Explore other collections", () => {
+  it("Explore mastered collections", () => {
     browsePage.navigate();
     entitiesSidebar.openBaseEntityDropdown();
     entitiesSidebar.selectBaseEntityOption("Patient");
@@ -374,10 +368,10 @@ describe("Validate E2E Mastering Flow", () => {
       });
     });
 
-    browsePage.getClearAllFacetsButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    browsePage.clearAllFacets();
+  });
 
+  it("Explore merge collections", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-merged").click();
     entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
@@ -394,16 +388,14 @@ describe("Validate E2E Mastering Flow", () => {
       });
     });
 
-    browsePage.getClearAllFacetsButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    browsePage.clearAllFacets();
+  });
 
+  it("Explore archived collections", () => {
     entitiesSidebar.toggleAllDataView();
-
     cy.log("Reloading available collections");
     browsePage.showMoreCollection();
     browsePage.showMoreCollection();
-
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
     entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
@@ -413,9 +405,10 @@ describe("Validate E2E Mastering Flow", () => {
     smPatientArchivedCollection.forEach((cardName: string) => {
       browsePage.verifyCardExist(cardName);
     });
+    browsePage.clearAllFacets();
+  });
 
-    browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
-    cy.waitForAsyncRequest();
+  it("Explore auditing collections", () => {
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
     entitiesSidebar.applyFacets();
     browsePage.waitForSpinnerToDisappear();
@@ -434,8 +427,10 @@ describe("Validate E2E Mastering Flow", () => {
       detailPage.clickBackButton();
     }
 
-    browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
-    cy.waitForAsyncRequest();
+    browsePage.clearAllFacets();
+  });
+
+  it("Explore notification collections", () => {
     browsePage.seeAllLink("Collection").then(($ele) => {
       if ($ele.length) {
         browsePage.clickPopoverSearch("Collection");
@@ -455,8 +450,6 @@ describe("Validate E2E Mastering Flow", () => {
       browsePage.verifyCardExist(cardName);
     });
 
-    browsePage.getClearAllFacetsButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    browsePage.clearAllFacets();
   });
 });
