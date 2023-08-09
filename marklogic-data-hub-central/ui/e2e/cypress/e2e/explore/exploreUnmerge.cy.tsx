@@ -250,7 +250,9 @@ describe("Test '/Explore' graph right panel", () => {
     browsePage.getUnmergeIcon().first().scrollIntoView().click();
     compareValuesModal.getModal().should("be.visible");
     compareValuesModal.getInclusionCheckbox().click();
-    compareValuesModal.getUnmergeButton().click();
+    compareValuesModal.getUnmergeButton().click().then(() => {
+      cy.findByText("Are you sure you want to unmerge this document? By doing so, the original documents will be moved out of the archive collection and also considered for future matches.").should("be.visible");
+    });
     compareValuesModal.confirmationYes().click();
     compareValuesModal.getModal().should("not.exist");
 
@@ -281,7 +283,9 @@ describe("Test '/Explore' graph right panel", () => {
     cy.log("** Reopen modal and submit unmerge **");
     browsePage.getUnmergeIcon().first().scrollIntoView().click();
     compareValuesModal.getModal().should("be.visible");
-    compareValuesModal.getUnmergeButton().click();
+    compareValuesModal.getUnmergeButton().click().then(() => {
+      cy.findByText("Are you sure you want to unmerge this document? By doing so, the original documents will be moved out of the archive collection and be prevented from future match consideration.").should("be.visible");
+    });
     compareValuesModal.confirmationYes().click();
     compareValuesModal.getModal().should("not.exist");
 

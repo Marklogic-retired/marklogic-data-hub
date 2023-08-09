@@ -529,8 +529,13 @@ const CompareValuesModal: React.FC<Props> = props => {
           </div>
           <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
             {props.isMerge
-              ? "Are you sure you want to merge these documents? Doing so will combine them to form one single document. The original documents will be moved to the archive collection."
-              : "Are you sure you want to unmerge this document? Doing so will move the original documents out of the archive collection."}
+              ? "Are you sure you want to merge these documents? By doing so will combine them to form one single document. The original documents will be moved to the archive collection."
+              : `Are you sure you want to unmerge this document? 
+              ${
+    includeUnmerged
+      ? " By doing so, the original documents will be moved out of the archive collection and also considered for future matches."
+      : " By doing so, the original documents will be moved out of the archive collection and be prevented from future match consideration."
+    }`}
           </div>
         </div>
       </Modal.Body>
