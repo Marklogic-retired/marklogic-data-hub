@@ -70,4 +70,16 @@ public class IntegrationStep extends AbstractHubCoreTest {
 
     }
 
+    @Test
+    public void testLoadCSV() {
+        //test with ONE SCV File but with 18 successFulEvents
+        makeInputFilePathsAbsoluteInFlow("CMSProvider");
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("CMSProvider", "1"));
+        RunStepResponse ingestionJob = flowResponse.getStepResponses().get("1");
+        assertTrue(ingestionJob.isSuccess(), "ingestion job failed: " + ingestionJob.stepOutput);
+        assertEquals(18, ingestionJob.getSuccessfulEvents(), "There should be 18 successFulEvents");
+
+
+    }
+
 }
