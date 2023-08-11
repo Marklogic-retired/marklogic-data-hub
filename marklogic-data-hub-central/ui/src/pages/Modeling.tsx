@@ -529,7 +529,7 @@ const Modeling: React.FC = () => {
               <p>{tiles.model.intro}</p>
               {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
-            {modelingOptions.isModified && (
+            {modelingOptions.isModified && canWriteEntityModel && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
                 <HCAlert variant="info" aria-label="entity-modified-alert" showIcon>
                   {ModelingTooltips.entityEditedAlert}
@@ -607,7 +607,7 @@ const Modeling: React.FC = () => {
               <p>{tiles.model.intro}</p>
               {<ViewSwitch handleViewChange={handleViewChange} selectedView={modelingOptions.view} />}
             </div>
-            {modelingOptions.isModified && (
+            {modelingOptions.isModified && canWriteEntityModel && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
                 <HCAlert variant="info" aria-label="entity-modified-alert" showIcon>
                   {ModelingTooltips.entityEditedAlert}

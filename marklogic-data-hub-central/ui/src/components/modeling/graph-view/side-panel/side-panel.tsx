@@ -528,31 +528,38 @@ const GraphViewSidePanel: React.FC<Props> = ({
         key: "relationshipName",
         headerFormatter: () => <span aria-label="relationshipName-header">Relationship Name</span>,
         formatter: (_, row) => {
-          if (row?.predicate.length > 20) {
-            let render = (
-              <div>
-                <HCTooltip text={row?.predicate} id={`property-tooltip`} placement="top">
-                  <span
-                    data-testid={`relationship-name-${row?.predicate}`}
-                    onClick={() => handleRelatedConceptClassesClick(row)}
-                    className={styles.link}
-                  >
-                    {row?.predicateUI}
-                  </span>
-                </HCTooltip>
-              </div>
-            );
-            return render;
-          }
-
           return (
-            <span
-              data-testid={`relationship-name-${row?.predicate}`}
-              onClick={() => handleRelatedConceptClassesClick(row)}
-              className={styles.link}
+            <HCTooltip
+              text={
+                !canWriteEntityModel && canReadEntityModel
+                  ? "Edit Relationship: " + SecurityTooltips.missingPermission
+                  : row?.predicate.length > 20
+                    ? row?.predicate
+                    : ""
+              }
+              id="edit-tooltip"
+              placement="top"
             >
-              {row?.predicateUI}
-            </span>
+              <i
+                key="last"
+                role="edit-relationship button"
+                data-testid={row?.predicate + (!canWriteEntityModel && canReadEntityModel ? "-disabled" : "-edit")}
+                onClick={event => {
+                  if (!canWriteEntityModel && canReadEntityModel) {
+                    return event.preventDefault();
+                  } else {
+                    handleRelatedConceptClassesClick(row);
+                  }
+                }}
+              >
+                <span
+                  data-testid={`relationship-name-${row?.predicate}`}
+                  className={!canWriteEntityModel && canReadEntityModel ? styles.linkDisabled : styles.link}
+                >
+                  {row?.predicateUI}
+                </span>
+              </i>
+            </HCTooltip>
           );
         },
       },
@@ -582,12 +589,34 @@ const GraphViewSidePanel: React.FC<Props> = ({
         formatter: (_, row) => {
           const id = `${row?.predicate}-${row?.conceptClass}-delete`;
           return (
-            <FontAwesomeIcon
-              icon={faTrashAlt}
-              className={styles.deleteIcon}
-              onClick={() => handleRelationshipDeletion(row)}
-              data-testid={id}
-            />
+            <HCTooltip
+              text={
+                !canWriteEntityModel && canReadEntityModel
+                  ? "Delete Relationship: " + SecurityTooltips.missingPermission
+                  : ModelingTooltips.deleteIcon(isConceptNode)
+              }
+              id="delete-tooltip"
+              placement="top"
+            >
+              <i
+                key="last"
+                role="delete-relationship button"
+                data-testid={row?.predicate + "-delete" + (!canWriteEntityModel && canReadEntityModel ? "-disabled" : "")}
+                onClick={event => {
+                  if (!canWriteEntityModel && canReadEntityModel) {
+                    return event.preventDefault();
+                  } else {
+                    handleRelationshipDeletion(row);
+                  }
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  className={!canWriteEntityModel && canReadEntityModel ? styles.deleteIconDisabled : styles.deleteIcon}
+                  data-testid={id}
+                />
+              </i>
+            </HCTooltip>
           );
         },
       },

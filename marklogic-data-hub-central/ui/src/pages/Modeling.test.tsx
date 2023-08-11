@@ -113,14 +113,14 @@ describe("Modeling Page", () => {
     // expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2);
   });
 
-  test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
+  test("Modeling: with mock data, Alert component renders and operator role can not click add", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
 
     let getByText, getByLabelText, queryByLabelText;
     await act(async () => {
       const renderResults = render(
         <AuthoritiesContext.Provider value={mockOpRolesService}>
-          <ModelingContext.Provider value={notModifiedTableView}>
+          <ModelingContext.Provider value={isModifiedTableView}>
             <Router>
               <Modeling />
             </Router>
