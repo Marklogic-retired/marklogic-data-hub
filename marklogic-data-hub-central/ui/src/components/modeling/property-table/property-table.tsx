@@ -24,7 +24,7 @@ import {entityReferences} from "@api/modeling";
 import {getViewSettings, setViewSettings, UserContext} from "@util/user-context";
 import {ModelingContext} from "@util/modeling-context";
 import {definitionsParser, trimText} from "@util/data-conversion";
-import {ModelingTooltips} from "@config/tooltips.config";
+import {ModelingTooltips, SecurityTooltips} from "@config/tooltips.config";
 import {ModelingMessages} from "@config/tooltips.config";
 import {getSystemInfo} from "@api/environment";
 import arrayIcon from "../../../assets/icon_array.png";
@@ -170,8 +170,7 @@ const PropertyTable: React.FC<Props> = props => {
                 editPropertyShowModal(record.propertyName, record);
               }}
             >
-              <HCTooltip text={ModelingTooltips.entityPropertyName}
-                id={`property-${text}-tooltip`} placement="bottom">
+              <HCTooltip text={ModelingTooltips.entityPropertyName} id={`property-${text}-tooltip`} placement="bottom">
                 <span
                   tabIndex={0}
                   onKeyDown={event => {
@@ -462,7 +461,15 @@ const PropertyTable: React.FC<Props> = props => {
             : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
 
         return (
-          <HCTooltip text={ModelingTooltips.deleteProperty} id={`${id}-tooltip`} placement="top-end">
+          <HCTooltip
+            text={
+              !canWriteEntityModel && canReadEntityModel
+                ? "Delete property: " + SecurityTooltips.missingPermission
+                : ModelingTooltips.deleteProperty
+            }
+            id={`${id}-tooltip`}
+            placement="top-end"
+          >
             <span className="p-2 inline-block cursor-pointer">
               <FontAwesomeIcon
                 tabIndex={0}

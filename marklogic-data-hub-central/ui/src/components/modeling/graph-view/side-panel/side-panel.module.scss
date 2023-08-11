@@ -21,6 +21,13 @@
         color: var(--hoverColor);
         cursor: pointer;
     }
+    .linkDisabled {
+      color: #cccccc;
+    }
+
+    .linkDisabled:hover {
+      cursor: not-allowed;
+  }
     .deleteIcon {
         color: $info;
         font-size: 21px;

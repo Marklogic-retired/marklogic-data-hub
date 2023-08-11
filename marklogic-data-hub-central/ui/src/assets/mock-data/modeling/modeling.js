@@ -259,9 +259,27 @@ export const getEntityTypes = [
               "collation": "http://marklogic.com/collation/codepoint"
             },
 
-          }
+          },
+          "relatedConcepts": [
+            {
+              "conceptClass": "ShoeType",
+              "context": "category",
+              "predicate": "isCategory"
+            }
+          ]
         }
       }
+    }
+  },
+  {
+    "conceptName": "ShoeType",
+    "label": "ShoeType",
+    "model": {
+      "info": {
+        "name": "ShoeType",
+        "description": "desc",
+        "draft": false,
+      },
     }
   },
   {
@@ -1141,7 +1159,14 @@ export const hubCentralConfig = {
       "Customer": {
         "color": "#F6D4A7",
         "icon": "FaRegMoon"
-      }
+      },
+    },
+    "concepts": {
+      "ShoeType": {
+        "color": "#E3EABC",
+        "icon": "FaShoePrints"
+
+      },
     }
   }
 };
