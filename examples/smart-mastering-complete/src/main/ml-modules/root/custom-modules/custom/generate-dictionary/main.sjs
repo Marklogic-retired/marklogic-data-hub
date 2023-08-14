@@ -29,11 +29,11 @@ function main(content, options) {
 
   console.log("Generating dictionary of " + values.length + " first names at URI: " + uri);
 
-  xdmp.eval(
-    "declareUpdate(); var d, uri; xdmp.documentInsert(uri, d, " +
-    "[xdmp.permission('data-hub-common', 'read'), xdmp.permission('data-hub-common', 'update')], ['mdm-dictionary'])",
-    {uri: uri, d: dictionary}
-  );
+  xdmp.invokeFunction(() => xdmp.documentInsert(uri, dictionary, [
+      xdmp.permission("data-hub-common", "read"),
+      xdmp.permission("data-hub-common-writer", "update")],
+    ["mdm-dictionary"]), {update: "true"});
+
 
   return null;
 }
