@@ -106,6 +106,8 @@ describe("Monitor Tile", () => {
         monitorSidebar.getDateRangePicker().should("not.exist");
       }
     });
+    monitorPage.clearFacets();
+    cy.findByText("Select time").should("be.visible");
   });
 
   it("Verify job ID link opens status modal", () => {
