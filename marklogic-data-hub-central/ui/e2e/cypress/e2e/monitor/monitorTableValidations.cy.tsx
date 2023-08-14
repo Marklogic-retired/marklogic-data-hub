@@ -460,9 +460,7 @@ describe("Monitor Tile", () => {
     monitorPage.selectStartTimeFromDropDown("Today");
     monitorPage.getSelectedTime("Today").should("contain", "Today");
     browsePage.getGreySelectedFacets("Today").should("exist");
-    monitorPage.validateClearStartTimeGreyFacet("Today");
-    //Commenting this validations due to a bug DHFPROD-10318
-    //monitorPage.getSelectedTime("Today").should("contain", "Today");
+    monitorPage.getSelectedTime("Today").should("contain", "Today");
 
     cy.log("Select multiple facets and apply all facets");
     monitorPage.selectStartTimeFromDropDown("Today");
@@ -473,8 +471,7 @@ describe("Monitor Tile", () => {
 
     cy.log("Remove applied startTime facet");
     monitorPage.clearFacetSearchSelection("Today");
-    //Commenting this validations due to a bug DHFPROD-10318
-    //browsePage.getSelectedFacet("Today").should("not.exist");
+    browsePage.getSelectedFacet("Today").should("not.exist");
     browsePage.clearAllFacets();
   });
 });

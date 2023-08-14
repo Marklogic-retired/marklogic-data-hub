@@ -129,6 +129,7 @@ export const MonitorSidebar: React.FC<Props> = props => {
               selectedFacets.push({constraint, "facet": facetValue, displayName});
             } else {
               selectedFacets.push({constraint, "facet": dateRangeValue, displayName});
+              keyForSelectTime();
             }
           }
           monitorOptions.selectedFacets[constraint].map(facet => {
@@ -288,7 +289,13 @@ export const MonitorSidebar: React.FC<Props> = props => {
   };
 
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
-
+  const keyForSelectTime = () => {
+    let value  = selectTimeOptions.find(oItem => oItem.value === dateRangeValue);
+    if (typeof value === "object") {
+      return value;
+    }
+    return "";
+  };
   return (
     <div className={styles.container}>
       <div className={styles.facetContainer} style={{"marginLeft": "7px"}}>
@@ -313,6 +320,7 @@ export const MonitorSidebar: React.FC<Props> = props => {
             inputId="date-select"
             placeholder="Select time"
             value={selectTimeOptions.find(oItem => oItem.value === dateRangeValue)}
+            key={`selected-${keyForSelectTime()}`}
             onChange={handleOptionSelect}
             isSearchable={false}
             aria-label="date-select"
