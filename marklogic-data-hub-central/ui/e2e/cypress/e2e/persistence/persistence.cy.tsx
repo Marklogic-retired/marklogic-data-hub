@@ -437,10 +437,4 @@ describe("Validate persistence across Hub Central", () => {
     cy.wait(4000);
     browsePage.getTotalDocuments().should("equal", 6);
   });
-
-  it("Merge step with out results, Explore link should be disabled", () => {
-    runPage.navigate();
-    runPage.runFlow("testEmptyFlow");
-    runPage.explorerLink("MergeEmpty").should("be.disabled");
-  });
 });

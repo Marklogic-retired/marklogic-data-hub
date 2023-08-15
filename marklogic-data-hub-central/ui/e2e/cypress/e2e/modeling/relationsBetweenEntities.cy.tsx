@@ -1,6 +1,7 @@
 import {graphView, relationshipModal} from "../../support/components/model";
 import graphVis from "../../support/components/model/graph-vis";
 import modelPage from "../../support/pages/model";
+import {graphViewSidePanel} from "../../support/components/model/index";
 
 describe(("relationBetweenEntities"), () => {
   before(() => {
@@ -188,7 +189,7 @@ describe(("relationBetweenEntities"), () => {
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
       graphVis.getGraphVisCanvas().trigger("pointerup", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
     });
-    cy.findByText("Related Concept Classes").click();
+    graphViewSidePanel.getRelatedConceptClassesTab().click();
     cy.findByText("LongRelationshipBet...").should("exist");
     modelPage.closeSidePanel();
 
