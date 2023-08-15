@@ -19,8 +19,8 @@ declare function plugin:write(
 	  		xdmp:document-insert(
 	  				$uri,
 	  				$envelope,
-                    (xdmp:permission("data-hub-common", "read"),
-                     xdmp:permission("data-hub-common", "update")),
+                    (xdmp:permission("data-hub-developer", "read"),
+                     xdmp:permission("data-hub-developer", "update")),
 	  				("Employee","claim") )
 	  	 }
 	  catch($exception)
