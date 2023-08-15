@@ -370,8 +370,10 @@ describe("Matching", () => {
     cy.wait(1000);
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().clear().type("/test/Uri1");
-    matchingStepDetail.getAddUriOnlyIcon().click();
-    cy.findByText("This URI has already been added.").should("be.visible");
+    matchingStepDetail.getAddUriOnlyIcon().click().then(() => {
+      matchingStepDetail.getUriOnlyInputField().should("have.attr", "placeholder", "Enter URI or Paste URIs");
+      cy.findByText("This URI has already been added.").should("be.visible");
+    });
     matchingStepDetail.getUriOnlyInputField().clear().type("/test/Uri2");
     matchingStepDetail.getAddUriOnlyIcon().click();
 
@@ -381,8 +383,10 @@ describe("Matching", () => {
     cy.findByLabelText("inputUriRadio").click();
     matchingStepDetail.getUriDeleteIcon().should("not.exist");
     matchingStepDetail.getUriInputField().type("/test/Uri1");
-    matchingStepDetail.getAddUriIcon().click();
-    cy.findByText("/test/Uri1").should("be.visible");
+    matchingStepDetail.getAddUriIcon().click().then(() => {
+      matchingStepDetail.getUriInputField().should("have.attr", "placeholder", "Enter URI or Paste URIs");
+      cy.findByText("/test/Uri1").should("be.visible");
+    });
     matchingStepDetail.getTableHeader().should("not.be.visible");
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
