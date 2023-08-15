@@ -362,6 +362,7 @@ const MatchingStepDetail: React.FC = () => {
 
   const handleUriInputChange = event => {
     setUriContent(event.target.value);
+
   };
 
   const handleUriInputChange2 = event => {
@@ -390,6 +391,7 @@ const MatchingStepDetail: React.FC = () => {
       setDuplicateUriWarning(false);
       setSingleUriWarning(false);
       setColourElementAdded(true);
+      setUriContent("");
     }
   };
 
@@ -415,6 +417,7 @@ const MatchingStepDetail: React.FC = () => {
       setDuplicateUriWarning2(false);
       setSingleUriWarning2(false);
       setColourElementAdded2(true);
+      setUriContent2("");
     }
   };
 
