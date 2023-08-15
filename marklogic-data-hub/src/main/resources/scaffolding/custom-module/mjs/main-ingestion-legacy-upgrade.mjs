@@ -4,6 +4,7 @@ function main(content, options) {
   const legacyOptions = options.options;
   const contentUri = content["uri"];
   let contentValue = content["value"];
+  const contentContext = content["context"];
 
   if(hubUtils.isJsonDocument(contentValue)) {
     contentValue = contentValue.toObject();
@@ -13,6 +14,8 @@ function main(content, options) {
   let result = {};
   result["uri"] = contentUri;
   result["value"] = require(legacyOptions["mainModuleUri"]).main(contentUri, contentValue, legacyOptions);
+  result["context"] = contentContext;
+
   return result;
 }
 

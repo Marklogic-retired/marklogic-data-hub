@@ -3,7 +3,9 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DocumentMetadataHelper;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
@@ -362,6 +364,11 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         logger.info("inputStepResponse RunFlow Response: " + inputStepResponse);
         assertEquals(stagingDbCount + 1, getStagingDocCount(), "One document in the input/Claims should be written");
 
+        DocumentMetadataHelper helper = getMetadata(getHubClient().getStagingClient(), "Claim1.xml");
+        helper.assertInCollections("Employee");
+        helper.assertHasPermissions("data-hub-common", DocumentMetadataHandle.Capability.READ);
+        helper.assertHasPermissions("data-hub-common", DocumentMetadataHandle.Capability.UPDATE);
+
         inputs = new FlowInputs();
         inputs.setFlowName("dh_Upgrade_EmployeeFlow");
         stepNum = getStepNumFromStepName("dh_Upgrade_EmployeeFlow", "harmonize-claims");
@@ -369,6 +376,11 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         RunFlowResponse customStepResponse = runFlow(inputs);
         logger.info("customStepResponse RunFlow Response: " + customStepResponse);
         assertEquals(finalDbCount + 1, getFinalDocCount(), "One input documents should be harmonized and written into final db");
+        helper = getMetadata(getHubClient().getFinalClient(), "Claim1.xml");
+        helper.assertInCollections("Employee");
+        // Permissions are defined in the writer.xqy module
+        helper.assertHasPermissions("data-hub-developer", DocumentMetadataHandle.Capability.READ);
+        helper.assertHasPermissions("data-hub-developer", DocumentMetadataHandle.Capability.UPDATE);
     }
 
     @Test
