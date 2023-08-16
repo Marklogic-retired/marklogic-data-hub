@@ -497,10 +497,10 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     public int upgradeLegacyFlows(FlowManager flowManager) {
-        return upgradeLegacyFlows(flowManager, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        return upgradeLegacyFlows(flowManager, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "data-hub-STAGING", "data-hub-FINAL");
     }
 
-    public int upgradeLegacyFlows(FlowManager flowManager, List<String> legacyEntities, List<String> legacyFlowTypes, List<String> legacyFlowNames) {
+    public int upgradeLegacyFlows(FlowManager flowManager, List<String> legacyEntities, List<String> legacyFlowTypes, List<String> legacyFlowNames, String sourceDb, String targetDb) {
         Set<String> legacyEntitiesSet = new HashSet<>(legacyEntities);
         Set<String> legacyFlowTypesSet = new HashSet<>(legacyFlowTypes);
         Set<String> legacyFlowNamesSet = new HashSet<>(legacyFlowNames);
@@ -579,12 +579,12 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                             JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule);
                             // Save StepDefinition to local file
                             scaffolding.saveStepDefinition(newStepName, newStepName, stepType, true);
-                            updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName());
+                            updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName(), sourceDb, targetDb);
                             // Save Step to local file
                             scaffolding.saveLocalStep(stepType, stepPayLoad);
                             // Add step to local Flow
                             ObjectNode stepIdObj = objectMapper.createObjectNode();
-                            steps.put(Integer.toString(++stepNumber), stepIdObj);
+                            steps.putIfAbsent(Integer.toString(++stepNumber), stepIdObj);
                             stepIdObj.put("stepId", newStepName.concat("-").concat(stepType));
                             flowsUpdated++;
                         }
@@ -598,14 +598,14 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return flowsUpdated;
     }
 
-    private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType) {
+    private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType, String sourceDb, String finalDb) {
         ObjectNode step = (ObjectNode) stepPayLoad;
         ObjectMapper mapper = new ObjectMapper();
         Properties properties = new Properties();
         try {
             File propsFile = stepFile.listFiles((File file, String name) -> name.equals(stepName.concat(".properties")))[0];
             properties.load(Files.newInputStream(propsFile.toPath()));
-        } catch (IOException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
             logger.warn("%s.properties file is missing in the %s directory. The dataFormat and mainModule is defaulted to json and main.sjs" +
                 "If the default values are inappropriate, change the values in steps/%s file", stepName, stepName, stepPayLoad.get("name").asText());
             properties.put("mainModule", "main.sjs");
@@ -614,30 +614,31 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         ObjectNode optionsNode = mapper.createObjectNode();
         optionsNode.put("flow", stepName);
         optionsNode.put("entity", "");
-        optionsNode.put("dataFormat", properties.get("dataFormat").toString());
-        optionsNode.put("mainModuleUri", mainModulePath.concat("/").concat(properties.get("mainModule").toString()));
+        optionsNode.put("dataFormat", properties.getOrDefault("dataFormat", "json").toString());
+        optionsNode.put("mainModuleUri", mainModulePath.concat("/").concat(properties.getOrDefault("mainModule", "main.sjs").toString()));
 
         if(step.get("stepDefinitionType").asText().equals("custom")) {
-            step.put("sourceDatabase", "data-hub-STAGING");
-            step.put("targetDatabase", "data-hub-FINAL");
+            step.put("sourceDatabase", sourceDb);
+            step.put("targetDatabase", finalDb);
             step.put("sourceQueryIsModule", true);
-            mainModulePath = mainModulePath.concat("/").concat(properties.get("collectorModule").toString());
+            mainModulePath = mainModulePath.concat("/").concat(properties.getOrDefault("collectorModule", "collector.sjs").toString());
             ObjectNode sourceModuleNode = (ObjectNode) step.get("sourceModule");
             sourceModuleNode.put("modulePath", mainModulePath);
             sourceModuleNode.put("functionName", "collect");
 
             optionsNode.put("entity", entityType);
         } else {
-            step.put("targetDatabase", "data-hub-STAGING");
+            step.put("targetDatabase", sourceDb);
+            step.put("inputFilePath", "");
         }
-        step.put("options", optionsNode);
+        step.putIfAbsent("options", optionsNode);
 
         step.putArray("collections").add(stepPayLoad.get("name").asText()).add(entityType);
         step.put("permissions", "data-hub-common,read,data-hub-common,update");
         step.put("stepId", step.get("name").asText().concat("-").concat(step.get("stepDefinitionType").asText()));
         step.put("isUpgradedLegacyFlow", true);
-        step.put("sourceFormat", properties.get("dataFormat").toString());
-        step.put("targetFormat", properties.get("dataFormat").toString());
+        step.put("sourceFormat", properties.getOrDefault("dataFormat", "json").toString());
+        step.put("targetFormat", properties.getOrDefault("dataFormat", "json").toString());
     }
 
     private JsonNode retrieveEntityFromCommunityNode(String modelName, JsonNode modelNodes, Map<String, JsonNode> entityModels) throws IOException {

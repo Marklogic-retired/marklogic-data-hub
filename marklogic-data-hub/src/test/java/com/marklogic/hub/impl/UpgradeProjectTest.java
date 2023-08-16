@@ -81,7 +81,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         File mappingDir = new File(projectDir, "mappings");
         File entitiesDir = new File(projectDir, "entities");
         verifyDirContents(mappingDir, 1);
-        verifyDirContents(entitiesDir, 3);
+        verifyDirContents(entitiesDir, 4);
 
         File finalDbFile = hubProject.getUserConfigDir().resolve("databases").resolve("final-database.json").toFile();
         ObjectNode db = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(finalDbFile);
@@ -228,7 +228,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowNames = new ArrayList<>();
         legacyEntities.add("Customer");
         legacyEntities.add("Product");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_CustomerFlow.flow.json").toFile().exists());
         assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_ProductFlow.flow.json").toFile().exists());
         assertFalse(hubProject.getFlowsDir().resolve("dh_Upgrade_OrderFlow.flow.json").toFile().exists());
@@ -241,7 +241,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
         legacyFlowTypes.add("input");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).toFile().exists());
     }
@@ -254,7 +254,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowNames = new ArrayList<>();
         legacyFlowNames.add("Load Customers");
         legacyFlowNames.add("Harmonize Products");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadOrders.step.json").toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
@@ -270,7 +270,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         legacyEntities.add("Customer");
         legacyFlowNames.add("Load Customers");
         legacyFlowNames.add("Harmonize Products");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadCustomers.step.json").toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
     }
@@ -283,7 +283,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowNames = new ArrayList<>();
         legacyEntities.add("Product");
         legacyFlowTypes.add("input");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).resolve("LoadProducts.step.json").toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("HarmonizeProducts.step.json").toFile().exists());
     }
@@ -295,7 +295,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
         legacyFlowNames.add("NonExistentFlow");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         assertEquals(0, hubProject.getFlowsDir().toFile().listFiles().length);
     }
 
@@ -307,13 +307,13 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         List<String> legacyFlowTypes = new ArrayList<>();
         List<String> legacyFlowNames = new ArrayList<>();
         legacyFlowTypes.add("input");
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
 
         assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.INGESTION).toFile().exists());
         assertFalse(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).toFile().exists());
 
         legacyFlowTypes = new ArrayList<>();
-        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames);
+        hubProject.upgradeLegacyFlows(flowManager, legacyEntities, legacyFlowTypes, legacyFlowNames, getHubConfig().getStagingDbName(), getHubConfig().getFinalDbName());
         verify4xUpgradedFlows();
     }
 
@@ -520,6 +520,18 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertEquals("Product", node.get("options").get("entity").asText());
         assertEquals("json", node.get("options").get("dataFormat").asText());
         assertEquals("/entities/Product/harmonize/Harmonize Products/main.sjs", node.get("options").get("mainModuleUri").asText());
+
+        // validate the step default configuration when properties file is missing
+        assertTrue(hubProject.getFlowsDir().resolve("dh_Upgrade_EmployeeFlow.flow.json").toFile().exists());
+        assertTrue(hubProject.getStepsPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("NoProperties.step.json").toFile().exists());
+        assertTrue(hubProject.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("NoProperties").toFile().exists());
+        assertNotNull(hubProject.getCustomModuleDir("NoProperties", StepDefinition.StepDefinitionType.CUSTOM.toString()));
+        JsonNode noPropertiesStep = mapper.readTree(hubProject.getStepFile(StepDefinition.StepDefinitionType.CUSTOM, "NoProperties"));
+        assertEquals("json", noPropertiesStep.get("sourceFormat").asText());
+        assertEquals("json", noPropertiesStep.get("targetFormat").asText());
+        assertEquals("json", noPropertiesStep.get("options").get("dataFormat").asText());
+        assertEquals("/entities/Employee/harmonize/NoProperties/main.sjs", noPropertiesStep.get("options").get("mainModuleUri").asText());
+        assertEquals("/entities/Employee/harmonize/NoProperties/collector.sjs", noPropertiesStep.get("sourceModule").get("modulePath").asText());
     }
 
     private HubProjectImpl setUpProject(String sourceProjectName, String destProjectName) throws IOException {

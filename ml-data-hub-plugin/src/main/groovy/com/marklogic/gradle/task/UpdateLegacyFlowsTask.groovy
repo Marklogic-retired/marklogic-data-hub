@@ -17,6 +17,7 @@
 
 package com.marklogic.gradle.task
 
+import com.marklogic.hub.impl.HubConfigImpl
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -51,7 +52,8 @@ class UpdateLegacyFlowsTask extends HubTask {
         }
 
         println "start upgradeLegacyFlows task ."
-        int flowsUpdated = getHubProject().upgradeLegacyFlows(getFlowManager(), legacyEntities, legacyFlowTypes, legacyFlowNames)
+        HubConfigImpl config = (HubConfigImpl) getHubConfig()
+        int flowsUpdated = getHubProject().upgradeLegacyFlows(getFlowManager(), legacyEntities, legacyFlowTypes, legacyFlowNames, config.getStagingDbName(), config.getFinalDbName())
         if(flowsUpdated == 0) {
             println("No legacy Flows found in plugins/entities directory to upgrade")
         }
