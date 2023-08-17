@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {Modal} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import {UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {QueryOptions} from "../../../../types/query-types";
 import {HCButton, HCModal} from "@components/common";
 
@@ -33,7 +33,7 @@ const DiscardChangesModal: React.FC<Props> = props => {
 
   const getSaveQueryWithId = async key => {
     try {
-      const response = await axios.get(`/api/entitySearch/savedQueries/query`, {params: {id: key.savedQuery.id}});
+      const response = await axiosInstance.get(`/api/entitySearch/savedQueries/query`, {params: {id: key.savedQuery.id}});
       if (response.data) {
         let options: QueryOptions = {
           searchText: response.data.savedQuery.query.searchText,

@@ -180,7 +180,7 @@ const MatchingStepDetail: React.FC = () => {
       handleMatchingActivity(matchingStepArtifact.name);
     } else {
       setTimeout(() => {
-        history.push("/tiles/curate");
+        history.push("/tiles-curate");
         setViewSettings({...storage, curate: {}, match: {}});
       }, 300);
     }
@@ -1004,7 +1004,7 @@ const MatchingStepDetail: React.FC = () => {
       <CustomPageHeader
         title={matchingStep.name}
         handleOnBack={() => {
-          history.push("/tiles/curate");
+          history.push("/tiles-curate");
           setViewSettings({...storage, curate: {}, match: {}});
         }}
       />

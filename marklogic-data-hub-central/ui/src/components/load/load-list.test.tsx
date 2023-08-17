@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, wait, within, cleanup, waitForElement} from "@testing-library/react";
 import LoadList from "./load-list";
 import data from "../../assets/mock-data/curation/common.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import loadData from "../../assets/mock-data/curation/ingestion.data";
 import {MemoryRouter} from "react-router-dom";
@@ -12,7 +12,7 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
 import dayjs from "dayjs";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -25,7 +25,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("Load data component", () => {
   beforeEach(() => {
-    mocks.loadAPI(axiosMock);
+    mocks.loadAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -296,7 +296,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
   });
@@ -375,7 +375,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -412,7 +412,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/run-step route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-run-step");
     });
   });
 
@@ -451,7 +451,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -491,7 +491,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
 
     //Verify run step in a new flow
@@ -507,7 +507,7 @@ describe("Load data component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 

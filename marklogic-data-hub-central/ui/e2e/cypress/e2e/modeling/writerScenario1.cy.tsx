@@ -200,7 +200,7 @@ describe("Entity Modeling Scenario 1: Writer Role", () => {
   it("Validate the entity in explore page", () => {
     explorePage.navigate();
     tiles.getExploreTile();
-    cy.url().should("include", "/tiles/explore");
+    cy.url().should("include", "/tiles-explore");
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
     modelPage.switchTableView();

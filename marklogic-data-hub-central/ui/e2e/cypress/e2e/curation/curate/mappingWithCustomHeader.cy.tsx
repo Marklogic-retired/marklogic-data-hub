@@ -89,7 +89,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Edit Map step", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
 
@@ -123,7 +123,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Add Map step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
 
@@ -150,7 +150,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   });
 
   it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
 

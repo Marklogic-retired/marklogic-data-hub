@@ -159,7 +159,7 @@ const MatchingCard: React.FC<Props> = props => {
     setRunNoFlowsDialogVisible(false);
 
     history.push({
-      pathname: "/tiles/run/add-run",
+      pathname: "/tiles-run-add-run",
       state: {
         flowName: flowName,
         flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
@@ -173,7 +173,7 @@ const MatchingCard: React.FC<Props> = props => {
 
   const onContinueRun = () => {
     history.push({
-      pathname: "/tiles/run/run-step",
+      pathname: "/tiles-run-run-step",
       state: {
         flowName: flowsWithStep[0],
         stepToAdd: matchingArtifactName,
@@ -188,7 +188,7 @@ const MatchingCard: React.FC<Props> = props => {
     await props.addStepToFlow(lName, fName, "matching");
     setAddToFlowVisible(false);
     history.push({
-      pathname: "/tiles/run/add",
+      pathname: "/tiles-run-add",
       state: {
         flowName: fName,
         addFlowDirty: true,
@@ -241,7 +241,7 @@ const MatchingCard: React.FC<Props> = props => {
         entityType,
       },
     });
-    history.push({pathname: "/tiles/curate/match"});
+    history.push({pathname: "/tiles-curate-match"});
   };
 
   const renderAddConfirmation = (
@@ -339,7 +339,7 @@ const MatchingCard: React.FC<Props> = props => {
               data-testid="link"
               id="tiles-add-run-new-flow"
               to={{
-                pathname: "/tiles/run/add-run",
+                pathname: "/tiles-run-add-run",
                 state: {
                   stepToAdd: matchingArtifactName,
                   stepDefinitionType: "matching",
@@ -405,7 +405,7 @@ const MatchingCard: React.FC<Props> = props => {
                 id="tiles-run-step"
                 key={i}
                 to={{
-                  pathname: "/tiles/run/run-step",
+                  pathname: "/tiles-run-run-step",
                   state: {
                     flowName: flowName,
                     stepToAdd: matchingArtifactName,
@@ -621,7 +621,7 @@ const MatchingCard: React.FC<Props> = props => {
                       <Link
                         id="tiles-run-add"
                         to={{
-                          pathname: "/tiles/run/add",
+                          pathname: "/tiles-run-add",
                           state: {
                             stepToAdd: step.name,
                             stepDefinitionType: "matching",

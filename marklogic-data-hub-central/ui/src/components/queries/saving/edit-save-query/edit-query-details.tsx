@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "../save-query-modal/save-query-modal.module.scss";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
 import {HCInput, HCButton, HCModal} from "@components/common";
@@ -49,7 +49,7 @@ const EditQueryDetails: React.FC<Props> = props => {
     try {
       currentQuery.savedQuery.name = queryName.trim();
       currentQuery.savedQuery.description = queryDescription;
-      const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
+      const response = await axiosInstance.put(`/api/entitySearch/savedQueries`, currentQuery);
       if (response.data) {
         props.setEditQueryDetailVisibility();
         setSelectedQuery(queryName);

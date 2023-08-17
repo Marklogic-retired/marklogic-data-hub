@@ -139,7 +139,7 @@ describe("Mapping", () => {
   });
 
   it("Reload page and navigate to mapping details, verify persistence of expressions", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     cy.log("**Open Person mapping step details**");
@@ -233,7 +233,7 @@ describe("Mapping", () => {
   });
 
   it("Edit advanced settings for each entity", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});
@@ -265,7 +265,7 @@ describe("Mapping", () => {
   });
 
   it("Delete related entity from mapping via filter", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.getEntityTypePanel("Person").should("be.visible").click({force: true});

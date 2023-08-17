@@ -15,7 +15,7 @@ import Spinner from "react-bootstrap/Spinner";
 import StepsConfig from "@config/steps.config";
 import {Typeahead} from "react-bootstrap-typeahead";
 import {UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {getEnvironment} from "@util/environment";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
 import styles from "./system-info.module.scss";
@@ -135,7 +135,7 @@ const SystemInfo = props => {
 
   const downloadHubCentralFiles = () => {
     setMessage({show: false});
-    axios({
+    axiosInstance({
       url: "/api/environment/downloadHubCentralFiles",
       method: "GET",
       responseType: "blob",
@@ -153,7 +153,7 @@ const SystemInfo = props => {
 
   const downloadProjectFiles = () => {
     setMessage({show: false});
-    axios({
+    axiosInstance({
       url: "/api/environment/downloadProjectFiles",
       method: "GET",
       responseType: "blob",
@@ -197,7 +197,7 @@ const SystemInfo = props => {
           "targetCollection": sourceName,
         };
       }
-      let response = await axios.post("/api/environment/clearUserData", payload);
+      let response = await axiosInstance.post("/api/environment/clearUserData", payload);
       if (response.status === 200) {
         setIsLoading(false);
         setMessage({show: true});

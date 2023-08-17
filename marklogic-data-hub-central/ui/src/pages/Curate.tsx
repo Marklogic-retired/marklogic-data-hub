@@ -5,7 +5,7 @@ import {AuthoritiesContext} from "@util/authorities";
 import EntityTiles from "@components/entities/entity-tiles";
 import {ErrorMessageContext} from "@util/error-message-context";
 import {MissingPagePermission} from "@config/messages.config";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import styles from "./Curate.module.scss";
 import tiles from "@config/tiles.config";
 import {useHistory} from "react-router-dom";
@@ -47,18 +47,18 @@ const Curate: React.FC = () => {
     if (storedCurateArtifact !== undefined && storedCurateModel !== undefined && storedCurateType !== undefined) {
       const stepDefinitionType = storedCurateArtifact["stepDefinitionType"];
       if (stepDefinitionType === "mapping") {
-        history.push({pathname: "/tiles/curate/map"});
+        history.push({pathname: "/tiles-curate-map"});
       } else if (stepDefinitionType === "MATCHING" || stepDefinitionType === "matching") {
-        history.push({pathname: "/tiles/curate/match"});
+        history.push({pathname: "/tiles-curate-match"});
       } else if (stepDefinitionType === "MERGING" || stepDefinitionType === "merging") {
-        history.push({pathname: "/tiles/curate/merge"});
+        history.push({pathname: "/tiles-curate-merge"});
       }
     }
   }, []);
 
   const getEntityModels = async () => {
     try {
-      let response = await axios.get(`/api/models/primaryEntityTypes`);
+      let response = await axiosInstance.get(`/api/models/primaryEntityTypes`);
       if (response.status === 200) {
         let models: any = {};
         response.data.forEach(model => {
@@ -79,7 +79,7 @@ const Curate: React.FC = () => {
   //GET all the flow artifacts
   const getFlows = async () => {
     try {
-      let response = await axios.get("/api/flows");
+      let response = await axiosInstance.get("/api/flows");
       if (response.status === 200) {
         setFlows(response.data);
       }
@@ -115,7 +115,7 @@ const Curate: React.FC = () => {
       // setIsLoading(true);
       let url = "/api/flows/" + flowName + "/steps";
       let body = stepToAdd;
-      let response = await axios.post(url, body);
+      let response = await axiosInstance.post(url, body);
       if (response.status === 200) {
         // setIsLoading(false);
       }

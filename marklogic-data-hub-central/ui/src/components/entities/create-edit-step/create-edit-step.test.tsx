@@ -2,13 +2,13 @@ import React from "react";
 import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import CreateEditStep from "./create-edit-step";
 import data from "../../../assets/mock-data/curation/create-edit-step.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import {SecurityTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {StepType} from "../../../types/curation-types";
 import userEvent from "@testing-library/user-event";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 describe("Create Edit Step Dialog component", () => {
   afterEach(() => {
     cleanup();
@@ -247,7 +247,7 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByLabelText, getByPlaceholderText} = render(
       <CreateEditStep
         {...data.newMerging}
@@ -292,8 +292,8 @@ describe("Create Edit Step Dialog component", () => {
       "dataType": "string",
       "pattern": "ada",
     };
-    await (() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
-    await (() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await (() => expect(axiosInstance.post).toHaveBeenCalledWith(url, payload));
+    await (() => expect(axiosInstance.post).toHaveBeenCalledTimes(1));
     await (() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
@@ -311,7 +311,7 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, getByLabelText, getByPlaceholderText} = render(
       <CreateEditStep
         {...data.newMerging}
@@ -357,8 +357,8 @@ describe("Create Edit Step Dialog component", () => {
       "dataType": "string",
       "pattern": "ada",
     };
-    await (() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
-    await (() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await (() => expect(axiosInstance.post).toHaveBeenCalledWith(url, payload));
+    await (() => expect(axiosInstance.post).toHaveBeenCalledTimes(1));
     await (() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
@@ -380,7 +380,7 @@ describe("Create Edit Step Dialog component", () => {
   });
 
   test("Verify able to type in input fields and typeahead search in collections field", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
     const {getByText, queryByText, getByPlaceholderText} = render(
       <CreateEditStep
         {...data.newMerging}

@@ -21,7 +21,7 @@ const Overview: React.FC<Props> = props => {
   const goToTile = id => {
     if (props.enabled && props.enabled.includes(id)) {
       history.push({
-        pathname: `/tiles/${id}`,
+        pathname: `/tiles-${id}`,
         state: {
           tileIconClicked: true,
         },

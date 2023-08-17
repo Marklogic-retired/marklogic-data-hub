@@ -52,7 +52,7 @@ describe("Entity Modeling: Graph View", () => {
   it("Login as entity model reader role and verify that the publish button that should be disabled", () => {
     cy.log("**Logging into the app as a hub-central-entity-model-reader**");
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader").withRequest();
-    cy.visit("tiles/model");
+    cy.visit("tiles-model");
     cy.waitForAsyncRequest();
 
     modelPage.switchTableView();

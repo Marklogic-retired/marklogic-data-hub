@@ -3,15 +3,15 @@ import {BrowserRouter as Router} from "react-router-dom";
 import {fireEvent, render} from "@testing-library/react";
 
 import EntityTiles from "./entity-tiles";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import data from "../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Entity Tiles component", () => {
   beforeEach(() => {
-    axiosMock.get["mockImplementation"](url => {
+    axiosInstance.get["mockImplementation"](url => {
       switch (url) {
       case "/api/flows":
         return Promise.resolve(data.flows);

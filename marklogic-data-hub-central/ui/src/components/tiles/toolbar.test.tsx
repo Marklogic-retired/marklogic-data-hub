@@ -29,7 +29,7 @@ describe("Toolbar component", () => {
     tools.forEach((tool, i) => {
       expect(getByLabelText("tool-" + tool)).toBeInTheDocument();
       fireEvent.click(getByLabelText("tool-" + tool));
-      expect(history.location.pathname).toEqual(`/tiles/${tool}`);
+      expect(history.location.pathname).toEqual(`/tiles-${tool}`);
     });
   });
 

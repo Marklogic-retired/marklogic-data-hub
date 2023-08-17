@@ -410,7 +410,7 @@ const StepCard: React.FC<Props> = ({
               id={"tiles-step-view-" + viewStepId}
               tabIndex={0}
               to={{
-                pathname: `/tiles/${stepDefinitionType.toLowerCase() === "ingestion" ? "load" : "curate"}`,
+                pathname: `/tiles-${stepDefinitionType.toLowerCase() === "ingestion" ? "load" : "curate"}`,
                 state: {
                   stepToView: step.stepId,
                   stepDefinitionType: stepDefinitionType,

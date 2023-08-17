@@ -38,7 +38,7 @@ import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authoriti
 import userEvent from "@testing-library/user-event";
 import StepsConfig from "../../../../config/steps.config";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 jest.mock("../../../../api/mapping");
 jest.mock("../../../../util/search-service");
 jest.mock("../../../../util/manageArtifacts-service");

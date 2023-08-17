@@ -184,7 +184,7 @@ const MappingCard: React.FC<Props> = props => {
         entityType,
       },
     });
-    history.push({pathname: "/tiles/curate/map"});
+    history.push({pathname: "/tiles-curate-map"});
   };
 
   function handleSelect(obj) {
@@ -238,7 +238,7 @@ const MappingCard: React.FC<Props> = props => {
     setRunNoFlowsDialogVisible(false);
 
     history.push({
-      pathname: "/tiles/run/add-run",
+      pathname: "/tiles-run-add-run",
       state: {
         flowName: flowName,
         flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
@@ -252,7 +252,7 @@ const MappingCard: React.FC<Props> = props => {
 
   const onContinueRun = () => {
     history.push({
-      pathname: "/tiles/run/run-step",
+      pathname: "/tiles-run-run-step",
       state: {
         flowName: flowsWithStep[0],
         stepToAdd: mappingArtifactName,
@@ -273,7 +273,7 @@ const MappingCard: React.FC<Props> = props => {
     setAddDialogVisible(false);
 
     history.push({
-      pathname: "/tiles/run/add",
+      pathname: "/tiles-run-add",
       state: {
         flowName: fName,
         addFlowDirty: true,
@@ -380,7 +380,7 @@ const MappingCard: React.FC<Props> = props => {
               data-testid="link"
               id="tiles-add-run-new-flow"
               to={{
-                pathname: "/tiles/run/add-run",
+                pathname: "/tiles-run-add-run",
                 state: {
                   stepToAdd: mappingArtifactName,
                   stepDefinitionType: "mapping",
@@ -447,7 +447,7 @@ const MappingCard: React.FC<Props> = props => {
                 id="tiles-run-step"
                 key={i}
                 to={{
-                  pathname: "/tiles/run/run-step",
+                  pathname: "/tiles-run-run-step",
                   state: {
                     flowName: flowName,
                     stepToAdd: mappingArtifactName,
@@ -660,7 +660,7 @@ const MappingCard: React.FC<Props> = props => {
                       <Link
                         id="tiles-run-add"
                         to={{
-                          pathname: "/tiles/run/add",
+                          pathname: "/tiles-run-add",
                           state: {
                             stepToAdd: elem.name,
                             targetEntityType: props.entityModel.entityTypeId,

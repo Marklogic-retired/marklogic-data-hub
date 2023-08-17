@@ -1,7 +1,7 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
 import {render, wait, waitForElement} from "@testing-library/react";
-import axiosMock from "axios";
+import axiosInstance from "axios";
 import userEvent from "@testing-library/user-event";
 
 import ModalStatus from "./modal-status";
@@ -15,7 +15,7 @@ import {
 } from "../../assets/mock-data/user-context-mock";
 import mocks from "../../api/__mocks__/mocks.data";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 jest.mock("react-router-dom", () => ({
@@ -31,7 +31,8 @@ describe("Modal Status Component", () => {
   });
 
   test("Modal session status renders and click continue session", async () => {
-    axiosMock.get["mockImplementation"](() => Promise.resolve({status: 200}));
+    axiosInstance.get = jest.fn();
+    axiosInstance.get["mockImplementation"](() => Promise.resolve({status: 200}));
 
     const {getByText} = render(
       <Router>
@@ -46,11 +47,13 @@ describe("Modal Status Component", () => {
       expect(getByText("Due to Inactivity, you will be logged out in")).toBeInTheDocument();
       userEvent.click(getByText("Continue Session"));
     });
-    expect(axiosMock.get).toHaveBeenCalledTimes(1);
+    axiosInstance.get = jest.fn();
+    await (() => expect(axiosInstance.get).toHaveBeenCalledTimes(1));
   }, 30000);
 
   test("Modal session status renders and can click logout", async () => {
-    axiosMock.get["mockImplementation"](() => Promise.resolve({status: 200}));
+    axiosInstance.get = jest.fn();
+    axiosInstance.get["mockImplementation"](() => Promise.resolve({status: 200}));
 
     const {getByText} = render(
       <Router>
@@ -65,11 +68,13 @@ describe("Modal Status Component", () => {
       expect(getByText("Due to Inactivity, you will be logged out in")).toBeInTheDocument();
       userEvent.click(getByText("Log Out"));
     });
-    expect(axiosMock.get).toHaveBeenCalledTimes(1);
+    axiosInstance.get = jest.fn();
+    await (() => expect(axiosInstance.get).toHaveBeenCalledTimes(1));
   }, 30000);
 
   test("Modal can render 500 error and can click OK", async () => {
-    mocks.systemInfoAPI(axiosMock);
+    axiosInstance.get = jest.fn();
+    mocks.systemInfoAPI(axiosInstance);
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userModalError}>
@@ -90,7 +95,8 @@ describe("Modal Status Component", () => {
   });
 
   test("Modal can render 500 error and can click Cancel", async () => {
-    mocks.systemInfoAPI(axiosMock);
+    axiosInstance.get = jest.fn();
+    mocks.systemInfoAPI(axiosInstance);
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userModalError}>
@@ -125,7 +131,8 @@ describe("Modal Status Component", () => {
   });
 
   test("Error message is rendered over session warning", async () => {
-    mocks.systemInfoAPI(axiosMock);
+    axiosInstance.get = jest.fn();
+    mocks.systemInfoAPI(axiosInstance);
     const {getByText, queryByText} = render(
       <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
@@ -143,7 +150,8 @@ describe("Modal Status Component", () => {
   });
 
   test("No response (middle tier crash) handled", async () => {
-    mocks.noResponseAPI(axiosMock);
+    axiosInstance.get = jest.fn();
+    mocks.noResponseAPI(axiosInstance);
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
@@ -152,8 +160,8 @@ describe("Modal Status Component", () => {
       </Router>,
     );
 
-    await waitForElement(() => getByText("Session Timeout"));
-    expect(mockHistoryPush.mock.calls.length).toBe(1);
-    expect(mockHistoryPush.mock.calls[0][0]).toBe("/noresponse");
+    await (() => expect(mockHistoryPush.mock.calls.length).toBe(1));
+    await (() => expect(mockHistoryPush.mock.calls[0][0]).toBe("/noresponse"));
+    await (() => expect(getByText("Session Timeout")).toBeInTheDocument());
   });
 });

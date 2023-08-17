@@ -20,7 +20,7 @@ describe("Graph Validations", {defaultCommandTimeout: 40000}, () => {
   });
 
   beforeEach(() => {
-    cy.visit("tiles/model");
+    cy.visit("tiles-model");
     cy.waitForAsyncRequest();
     modelPage.switchTableView();
   });
