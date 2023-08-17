@@ -4,19 +4,19 @@ import "@testing-library/jest-dom/extend-expect";
 import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
 import {SearchContext} from "../util/search-context";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {exploreModelResponse} from "../../src/assets/mock-data/explore/model-response";
 import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 import models from "../../src/assets/mock-data/explore/model-mock";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 jest.setTimeout(30000);
 jest.mock("../api/modeling");
 const modelsAux: any = models;
 
 describe("Explorer Browse page tests ", () => {
   beforeEach(() => {
-    axiosMock.get["mockImplementation"](url => {
+    axiosInstance.get["mockImplementation"](url => {
       switch (url) {
       case "/api/models":
         return Promise.resolve({status: 200, data: exploreModelResponse});

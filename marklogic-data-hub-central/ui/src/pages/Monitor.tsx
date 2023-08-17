@@ -3,7 +3,7 @@ import styles from "./Monitor.module.scss";
 import {AuthoritiesContext} from "@util/authorities";
 import tiles from "@config/tiles.config";
 import {MissingPagePermission} from "@config/messages.config";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import JobResultsTableView from "@components/job-results-table-view/job-results-table-view";
 import SearchPagination from "@components/search-pagination/search-pagination";
@@ -35,7 +35,7 @@ const Monitor: React.FC = () => {
   const getJobResults = async () => {
     try {
       setIsLoading(true);
-      const response = await axios({
+      const response = await axiosInstance({
         method: "POST",
         url: `/api/jobs/stepResponses`,
         data: {

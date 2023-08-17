@@ -5,13 +5,13 @@ import {AuthoritiesContext, AuthoritiesService} from "../../../util/authorities"
 import {BrowserRouter as Router} from "react-router-dom";
 import {ClearDataMessages} from "@config/messages.config";
 import data from "../../../assets/mock-data/system-info.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import userEvent from "@testing-library/user-event";
 import curateData from "../../../assets/mock-data/curation/flows.data";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
@@ -28,7 +28,7 @@ Object.assign(navigator, {
 
 describe("Update data load settings component", () => {
   beforeEach(() => {
-    axiosMock.get["mockImplementation"](url => {
+    axiosInstance.get["mockImplementation"](url => {
       switch (url) {
       case "/api/models/primaryEntityTypes":
         return Promise.resolve({status: 200, data: curateData.primaryEntityTypes.data});
@@ -107,7 +107,7 @@ describe("Update data load settings component", () => {
   });
 
   test("Verify project info display, user with \"Clear\" button enabled and deletes all data", async () => {
-    mocks.clearUserDataAPI(axiosMock);
+    mocks.clearUserDataAPI(axiosInstance);
 
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
@@ -130,7 +130,7 @@ describe("Update data load settings component", () => {
     expect(getByLabelText("clear-all-data-confirm")).toBeInTheDocument();
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {});
+    expect(axiosInstance.post).toBeCalledWith("/api/environment/clearUserData", {});
 
     expect(
       await waitForElement(() =>
@@ -142,7 +142,7 @@ describe("Update data load settings component", () => {
   });
 
   test("Verify project info display, user with \"Clear\" button enabled and options work correctly", async () => {
-    mocks.clearUserDataAPI(axiosMock);
+    mocks.clearUserDataAPI(axiosInstance);
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
 
@@ -154,7 +154,7 @@ describe("Update data load settings component", () => {
       </Router>,
     );
 
-    await (() => expect(axiosMock.get).toHaveBeenCalledTimes(1));
+    await (() => expect(axiosInstance.get).toHaveBeenCalledTimes(1));
 
     expect(getByTestId("clearUserData")).toBeEnabled();
     expect(getByTestId("deleteAll")).toBeChecked();
@@ -208,7 +208,7 @@ describe("Update data load settings component", () => {
 
     let confirm = getByLabelText("Yes");
     fireEvent.click(confirm);
-    expect(axiosMock.post).toBeCalledWith("/api/environment/clearUserData", {
+    expect(axiosInstance.post).toBeCalledWith("/api/environment/clearUserData", {
       targetCollection: "Customer",
       targetDatabase: "data-hub-STAGING",
     });

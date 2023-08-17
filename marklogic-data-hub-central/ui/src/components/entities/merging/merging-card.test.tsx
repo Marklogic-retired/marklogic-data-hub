@@ -198,7 +198,7 @@ describe("Merging cards view component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -228,7 +228,7 @@ describe("Merging cards view component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -265,7 +265,7 @@ describe("Merging cards view component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -301,7 +301,7 @@ describe("Merging cards view component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -337,7 +337,7 @@ describe("Merging cards view component", () => {
 
     //Check if the /tiles/run/run-step route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-run-step");
     });
   });
 
@@ -373,7 +373,7 @@ describe("Merging cards view component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -409,7 +409,7 @@ describe("Merging cards view component", () => {
     userEvent.click(getByTestId("mergeCustomers-stepDetails"));
 
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/merge");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-curate-merge");
     });
   });
 });

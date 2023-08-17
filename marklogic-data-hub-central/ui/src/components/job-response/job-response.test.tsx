@@ -1,5 +1,5 @@
 import React from "react";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {render, waitForElement, act, cleanup, wait, fireEvent, screen} from "@testing-library/react";
 import mocks from "../../api/__mocks__/mocks.data";
 import JobResponse from "./job-response";
@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import curateData from "../../assets/mock-data/curation/flows.data";
 import userEvent from "@testing-library/user-event";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -32,7 +32,7 @@ const getSubElements = (content, node, title) => {
 
 describe("Job response modal", () => {
   beforeEach(() => {
-    mocks.advancedAPI(axiosMock);
+    mocks.advancedAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe("Job response modal", () => {
   });
 
   test("Verify successful job response information displays", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
     let getByText;
     let getAllByText;
     let getByTestId;
@@ -87,24 +87,24 @@ describe("Job response modal", () => {
     let exploreButton = await waitForElement(() => getByTestId(`merge-customer-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles-explore"});
     });
     // checks Mapping1 explore button
     exploreButton = await waitForElement(() => getByTestId(`Mapping1-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles-explore"});
     });
     // checks Ingestion1 explore button
     exploreButton = await waitForElement(() => getByTestId(`Ingestion1-explorer-link`));
     fireEvent.click(exploreButton);
     await wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore"});
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles-explore"});
     });
   });
 
   test("Verify failed job response information displays", async () => {
-    mocks.runXMLAPI(axiosMock);
+    mocks.runXMLAPI(axiosInstance);
     let getByText, queryByText, getByTestId;
     act(() => {
       ({getByText, queryByText, getByTestId} = render(
@@ -143,7 +143,7 @@ describe("Job response modal", () => {
   });
 
   test("Verify stop run button when step is running", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
     let getByText;
     let getByLabelText;
     const stopRun = jest.fn();
@@ -183,7 +183,7 @@ describe("Job response modal", () => {
   });
 
   test("Verify canceled job response", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
     let getByText;
     const stopRun = jest.fn();
     act(() => {
@@ -218,7 +218,7 @@ describe("Job response modal", () => {
   });
 
   test("Verify that action tooltip apears when hover on the info icon", async () => {
-    mocks.runAPI(axiosMock);
+    mocks.runAPI(axiosInstance);
 
     let getByText;
     let getByLabelText;

@@ -2,14 +2,14 @@ import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
 import {fireEvent, render, wait, waitForElement} from "@testing-library/react";
 import CustomCard from "./custom-card";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
 import {CustomStepTooltips} from "../../../config/tooltips.config";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -22,7 +22,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("Custom Card component", () => {
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -272,7 +272,7 @@ describe("Custom Card component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 });

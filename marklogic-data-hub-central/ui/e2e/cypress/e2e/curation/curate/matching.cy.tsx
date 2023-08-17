@@ -342,7 +342,7 @@ describe("Matching", () => {
   });
 
   it("Edit test match URIs", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     cy.log("**Open Person mapping steps**");
@@ -407,7 +407,7 @@ describe("Matching", () => {
   });
 
   it("Show matched results for test match", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
@@ -599,7 +599,7 @@ describe("Matching", () => {
 
 
   it("Check collection Typeahead request when source  database is changed", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Order");

@@ -41,7 +41,7 @@ const ToolbarIcon: FC<Props> = ({tile, tileRef, tileId, i, isActive, enabled, on
       >
         <Link
           to={{
-            pathname: `/tiles/${tileId}`,
+            pathname: `/tiles-${tileId}`,
             state: {
               tileIconClicked: true,
             },

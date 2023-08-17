@@ -77,7 +77,7 @@ const NewFlowDialog: React.FC<Props> = ({
     //add information about mapping step, load card, load list, pagination.
     if (newStepToFlowOptions && !newStepToFlowOptions.existingFlow) {
       history.push({
-        pathname: `/tiles/${newStepToFlowOptions.stepDefinitionType === "ingestion" ? "load" : "curate"}`,
+        pathname: `/tiles-${newStepToFlowOptions.stepDefinitionType === "ingestion" ? "load" : "curate"}`,
         state: {
           stepDefinitionType: newStepToFlowOptions.stepDefinitionType,
           targetEntityType: newStepToFlowOptions.targetEntityType,

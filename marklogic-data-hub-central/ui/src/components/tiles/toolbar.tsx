@@ -41,7 +41,7 @@ const Toolbar: React.FC<Props> = props => {
 
   const tileOnClickHandler = (id: TileId, index: number) => {
     if (modelingOptions.isModified) {
-      let previousRouteId = location.pathname.split("/").pop();
+      let previousRouteId = location.pathname.split("-").pop();
       if (id !== ("model" as TileId) && previousRouteId === ("model" as TileId)) {
         setTileInfo({id: id, index: index});
         toggleConfirmModal(true);

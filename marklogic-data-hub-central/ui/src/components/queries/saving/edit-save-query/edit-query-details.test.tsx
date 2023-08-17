@@ -1,11 +1,11 @@
 import React from "react";
 import {fireEvent, render, wait} from "@testing-library/react";
 import EditQueryDetails from "./edit-query-details";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import userEvent from "@testing-library/user-event";
 import {putQueryResponse} from "../../../../assets/mock-data/explore/query";
 import {duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/explore/query";
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("<EditQueryDetails/>", () => {
   afterEach(() => {
@@ -47,7 +47,7 @@ describe("<EditQueryDetails/>", () => {
   });
 
   test("Verify Edit Query Details can be saved", async () => {
-    axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
+    axiosInstance.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
 
     const {getByPlaceholderText, getByText} = render(
       <EditQueryDetails
@@ -83,12 +83,12 @@ describe("<EditQueryDetails/>", () => {
         },
       },
     };
-    expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.put).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.put).toHaveBeenCalledTimes(1);
   });
 
   test("Verify Edit Query Details with duplicate name throws error", async () => {
-    axiosMock.put["mockImplementationOnce"](
+    axiosInstance.put["mockImplementationOnce"](
       jest.fn(() => Promise.reject({response: {status: 400, data: duplicateQueryNameErrorResponse}})),
     );
 
@@ -124,8 +124,8 @@ describe("<EditQueryDetails/>", () => {
         },
       },
     };
-    expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.put).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.put).toHaveBeenCalledTimes(1);
     expect(getByText("You already have a saved query with a name of edit new query")).toBeInTheDocument();
   });
 });

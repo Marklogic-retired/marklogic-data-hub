@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, wait, waitForElement, act, cleanup} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../api/__mocks__/mocks.data";
 import Load from "./Load";
 import {MemoryRouter} from "react-router-dom";
@@ -11,14 +11,14 @@ import {getViewSettings} from "../util/user-context";
 import dayjs from "dayjs";
 import loadData from "../assets/mock-data/curation/ingestion.data";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 jest.setTimeout(30000);
 
 const DEFAULT_VIEW = "card";
 
 describe("Load component", () => {
   beforeEach(() => {
-    mocks.loadAPI(axiosMock);
+    mocks.loadAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -42,7 +42,7 @@ describe("Load component", () => {
     expect(await waitForElement(() => getByLabelText("switch-view-list"))).toBeInTheDocument();
 
     // Check for steps to be populated
-    expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
+    expect(axiosInstance.get).toBeCalledWith("/api/steps/ingestion");
     expect(getByText("testLoad")).toBeInTheDocument();
 
     // Check list view
@@ -108,7 +108,7 @@ describe("Load component", () => {
     expect(await waitForElement(() => getByLabelText("switch-view-list"))).toBeInTheDocument();
 
     // Check for steps to be populated
-    expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
+    expect(axiosInstance.get).toBeCalledWith("/api/steps/ingestion");
     expect(getByText("testLoad")).toBeInTheDocument();
 
     // Check list view
@@ -189,7 +189,7 @@ describe("Load component", () => {
     await act(async () => {
       fireEvent.click(getByText("Yes"));
     });
-    expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/ingestion/testLoad");
+    expect(axiosInstance.delete).toHaveBeenNthCalledWith(1, "/api/steps/ingestion/testLoad");
   });
 
   test("Verify list and card views", async () => {
@@ -210,7 +210,7 @@ describe("Load component", () => {
     if (intro) expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated in default view
-    expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion");
+    expect(axiosInstance.get).toBeCalledWith("/api/steps/ingestion");
     expect(getByText("testLoad")).toBeInTheDocument();
     expect(getByLabelText("load-" + DEFAULT_VIEW)).toBeInTheDocument();
 

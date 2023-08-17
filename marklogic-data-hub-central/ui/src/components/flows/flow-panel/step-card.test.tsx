@@ -64,7 +64,7 @@ describe("Flow Card test suite", () => {
     const flowName = flow.name;
 
     // Curate link
-    const pathname = `http://localhost/tiles/curate`;
+    const pathname = `http://localhost/tiles-curate`;
     // @ts-ignore
     expect(getByLabelText(`${flowName}-${step.stepNumber}-cardlink`).firstChild?.href).toBe(pathname);
   });
@@ -79,7 +79,7 @@ describe("Flow Card test suite", () => {
     const flowName = flow.name;
 
     // Load link
-    const pathname = `http://localhost/tiles/load`;
+    const pathname = `http://localhost/tiles-load`;
     // @ts-ignore
     expect(getByLabelText(`${flowName}-${newStep.stepNumber}-cardlink`).firstChild?.href).toBe(pathname);
   });

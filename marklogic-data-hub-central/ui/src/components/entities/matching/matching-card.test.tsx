@@ -229,7 +229,7 @@ describe("Matching cards view component", () => {
     fireEvent.click(getByTestId("matchCustomers-toNewFlow"));
 
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -263,7 +263,7 @@ describe("Matching cards view component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -301,7 +301,7 @@ describe("Matching cards view component", () => {
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -338,7 +338,7 @@ describe("Matching cards view component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -375,7 +375,7 @@ describe("Matching cards view component", () => {
 
     //Check if the /tiles/run/run-step route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-run-step");
     });
   });
 
@@ -412,7 +412,7 @@ describe("Matching cards view component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -449,7 +449,7 @@ describe("Matching cards view component", () => {
     userEvent.click(getByTestId("matchCustomers-stepDetails"));
 
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/curate/match");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-curate-match");
     });
   });
 });

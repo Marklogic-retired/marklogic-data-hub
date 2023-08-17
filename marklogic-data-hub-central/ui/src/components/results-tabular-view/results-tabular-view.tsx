@@ -421,7 +421,7 @@ const ResultsTabularView = props => {
     let primaryKeyValue = item.primaryKey?.propertyValue;
     let isUri = item.primaryKey?.propertyPath === "uri";
     let path = {
-      pathname: "/tiles/explore/detail",
+      pathname: "/tiles-explore-detail",
       primaryKey: isUri ? "" : primaryKeyValue,
     };
     let options = {};

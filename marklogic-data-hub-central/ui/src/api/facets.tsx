@@ -1,7 +1,7 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 export const rangeFacet = async (props, database) => {
-  return await axios({
+  return await axiosInstance({
     method: "POST",
     url: `/api/entitySearch/facet-values/range?database=${database}`,
     data: {
@@ -13,7 +13,7 @@ export const rangeFacet = async (props, database) => {
 };
 
 export const stringSearch = async data => {
-  return await axios({
+  return await axiosInstance({
     method: "POST",
     url: `/api/entitySearch/facet-values`,
     data: data,
@@ -21,5 +21,5 @@ export const stringSearch = async data => {
 };
 
 export const getRelatedConcepts = async (database: string) => {
-  return await axios.post(`/api/entitySearch/getEntitiesWithConceptsTypes?database=${database}`);
+  return await axiosInstance.post(`/api/entitySearch/getEntitiesWithConceptsTypes?database=${database}`);
 };

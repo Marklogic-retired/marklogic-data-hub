@@ -1,6 +1,6 @@
 import React from "react";
 import {render} from "@testing-library/react";
-import axios from "axios";
+import axiosInstance from "@config/axios";
 import TableViewGroupNodes from "./table-view-group-nodes";
 import {SearchContext} from "../../../util/search-context";
 import {groupNodeSearchPayload, groupNodeSearchResponse} from "../../../assets/mock-data/explore/entity-search";
@@ -9,8 +9,7 @@ import {
   defaultSearchOptions as defaultSearchOptionAux,
 } from "@util/uiTestCommonInterface";
 
-jest.mock("axios");
-const axiosMock = axios as jest.Mocked<typeof axios>;
+jest.mock("@config/axios");
 jest.setTimeout(30000);
 
 let defaultProps = {
@@ -25,7 +24,7 @@ describe("Table view for group nodes modal component", () => {
   });
 
   it("can view the table view for group nodes modal and click close", async () => {
-    axiosMock.post["mockImplementationOnce"](
+    axiosInstance.post["mockImplementationOnce"](
       jest.fn(() => Promise.resolve({status: 200, data: groupNodeSearchResponse})),
     );
     let url = "/api/entitySearch?database=final";
@@ -69,7 +68,7 @@ describe("Table view for group nodes modal component", () => {
     expect(getByLabelText("title-Product")).toBeInTheDocument();
     expect(getByLabelText("baseEntity-BabyRegistry")).toBeInTheDocument();
     expect(getByLabelText("baseRecordLabel-3039")).toBeInTheDocument();
-    expect(axiosMock.post).toHaveBeenCalledWith(url, groupNodeSearchPayload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, groupNodeSearchPayload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
   });
 });
