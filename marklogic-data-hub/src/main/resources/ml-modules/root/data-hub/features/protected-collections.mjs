@@ -25,25 +25,30 @@ const INFO_EVENT = consts.TRACE_CORE;
 const DEBUG_EVENT = consts.TRACE_CORE_DEBUG;
 const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
 
-function protectCollections(collections, permissions) {
+function protectCollections(collections, permissions, targetDb) {
   collections.forEach(coll => {
+    xdmp.invokeFunction(() => {
+      declareUpdate();
       try {
-          if (DEBUG_ENABLED) {
-              hubUtils.hubTrace(DEBUG_EVENT, `Protecting collection ${coll}`);
+        if (DEBUG_ENABLED) {
+          hubUtils.hubTrace(DEBUG_EVENT, `Protecting collection ${coll}`);
+        }
+        let permissionsSplit = permissions.split(",");
+        if (permissionsSplit.length % 2 !== 0) {
+          hubUtils.hubTrace(INFO_EVENT, `While adding protected collections, cannot protect collection ${coll}. Invalid permissions: ${permissions}`);
+        } else {
+          let permissionsSec = [];
+          for (let i = 0; i < permissionsSplit.length; i++) {
+            permissionsSec.push(xdmp.permission(permissionsSplit[i], permissionsSplit[++i], "element"));
           }
-          let permissionsSplit = permissions.split(",");
-          if (permissionsSplit.length % 2 !== 0) {
-              hubUtils.hubTrace(INFO_EVENT, `While adding protected collections, cannot protect collection ${coll}. Invalid permissions: ${permissions}`);
-          } else {
-              let permissionsSec = [];
-              for (let i = 0; i < permissionsSplit.length; i++) {
-                  permissionsSec.push(xdmp.permission(permissionsSplit[i], permissionsSplit[++i], "element"));
-              }
-              sec.protectCollection(coll, permissionsSec);
-          }
+          sec.protectCollection(coll, permissionsSec);
+        }
       } catch(e) {
-          hubUtils.hubTrace(INFO_EVENT, `Could not protect collection ${coll}; Reason: ${e.message}`);
+        hubUtils.hubTrace(INFO_EVENT, `Could not protect collection ${coll}; Reason: ${e.message}`);
       }
+    },{
+      database: xdmp.securityDatabase(xdmp.database(targetDb))
+    });
   })
 }
 
@@ -82,7 +87,7 @@ function onInstanceSave(context, model, contentArray) {
     if (feature.collections) {
         collections = feature.collections;
     }
-    addCollectionsToObject(collections, permissions, contentArray);
+    addCollectionsToObject(collections, permissions, contentArray, stepContext.options.targetDatabase);
   }
 
   hubUtils.hubTrace(INFO_EVENT, `Finished processing protected collections feature for an instance of ${modelName} while running ${stepContext.name}`);
@@ -98,7 +103,7 @@ function featureEnabled(artifact) {
   return false;
 }
 
-function addCollectionsToObject(collections, permissions, contentArray) {
+function addCollectionsToObject(collections, permissions, contentArray, targetDb) {
   if(Array.isArray(collections) && collections.length > 0) {
 
       // add collections to the contentObject if it doesn't have them
@@ -117,8 +122,14 @@ function addCollectionsToObject(collections, permissions, contentArray) {
           }
       });
       //confirm that the collections are protected
-      protectCollections(collections, permissions);
+    let protectCollectionsFunc = getProtectedCollection();
+    protectCollectionsFunc(collections, permissions, targetDb);
   }
+}
+
+function getProtectedCollection() {
+  let protectCollectionsFunc = import.meta.amp(protectCollections);
+  return protectCollectionsFunc;
 }
 
 export default {

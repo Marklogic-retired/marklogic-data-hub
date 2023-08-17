@@ -1,6 +1,7 @@
 'use strict';
 
 import protectedCollections from "/data-hub/features/protected-collections.mjs";
+import hubTest from "/test/data-hub-test-helper.mjs";
 const test = require("/test/test-helper.xqy");
 
 
@@ -12,17 +13,12 @@ const stepContext1 = {
     "stepDefinitionName": "my-protected",
     "stepDefinitionType": "MAPPING",
     "collections": ["noProtected"],
-    "sourceDatabase": "data-hub-FINAL",
-    "targetDatabase": "data-hub-FINAL",
+    "options": {
+      "sourceDatabase": "data-hub-FINAL",
+      "targetDatabase": "data-hub-FINAL",
+    },
     "targetEntityType":"Person",
-    "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-    "features": {
-      "protectedCollections": {
-        "enabled": true,
-        "collections": ["customerCollection"],
-        "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
-      }
-    }
+    "sourceQuery": "cts.collectionQuery('doesnt-matter')"
   }
 };
 const modelCustomer = {
@@ -42,7 +38,7 @@ const modelCustomer = {
         "protectedCollections": {
           "enabled": true,
           "collections": ["myCustomerCollection"],
-          "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
+          "permissions": "data-hub-common,read,data-hub-common-writer,update"
         }
       }
     }
@@ -55,11 +51,19 @@ const contentArray1 = [{
   }
 }];
 
-const result2 = protectedCollections.onInstanceSave(stepContext1, modelCustomer, contentArray1);
+let result1 = protectedCollections.onInstanceSave(stepContext1, modelCustomer, contentArray1)[0];
 
-// assert
-//assertions.push(test.assertEqual(4, result2.context.collections.length));
-//assertions.push(test.assertTrue(result2.context.collections.includes("myCustomerCollection")));
+hubTest.runWithRolesAndPrivileges(['data-hub-developer'], ['http://marklogic.com/xdmp/privileges/unprotect-collection'], function () {
+  const protectedCollection = xdmp.invokeFunction(() => {
+    const sec = require("/MarkLogic/security.xqy");
+    let collectionDetails = sec.getCollection("myCustomerCollection")
+    return collectionDetails.xpath("/*:collection/*:uri/text()").toString();
+  }, {database: xdmp.securityDatabase(xdmp.database("data-hub-FINAL"))});
+  assertions.push(test.assertEqual("myCustomerCollection", protectedCollection));
+});
+
+assertions.push(test.assertEqual(3, result1.context.collections.length));
+assertions.push(test.assertTrue(result1.context.collections.includes("myCustomerCollection")));
 
 //Instance with protected collections in false
 const stepContext2 = {
@@ -70,14 +74,7 @@ const stepContext2 = {
       "sourceDatabase": "data-hub-FINAL",
       "targetDatabase": "data-hub-FINAL",
       "targetEntityType": "Person",
-      "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-      "features": {
-          "protectedCollections": {
-              "enabled": false,
-              "collections": ["myCollection"],
-              "permissions": "data-hub-common-reader,read,data-hub-common-writer,update"
-          }
-      }
+      "sourceQuery": "cts.collectionQuery('doesnt-matter')"
   }
 };
 const modelPerson = {
@@ -108,8 +105,7 @@ const contentObject2 = [{
   }
 }];
 
-//const result3 = protectedCollections.onInstanceSave(stepContext2, modelPerson, contentObject2);
-// assert
-//assertions.push(test.assertEqual(2, result3.context.collections.length));
+const result2 = protectedCollections.onInstanceSave(stepContext2, modelPerson, contentObject2)[0];
+assertions.push(test.assertEqual(2, result2.context.collections.length));
 
 assertions;

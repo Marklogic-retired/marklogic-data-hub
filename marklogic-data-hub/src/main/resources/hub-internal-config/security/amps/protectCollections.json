@@ -1,0 +1,6 @@
+{
+  "local-name" : "protectCollections",
+  "document-uri" : "/data-hub/features/protected-collections.mjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-collection-protector" ]
+}
