@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-collection-protector",
+  "description": "Permits user to create a protected collection",
+  "privilege": [
+    {
+      "privilege-name": "protect-collection",
+      "action": "http://marklogic.com/xdmp/privileges/protect-collection",
+      "kind": "execute"
+    }
+  ]
+}
