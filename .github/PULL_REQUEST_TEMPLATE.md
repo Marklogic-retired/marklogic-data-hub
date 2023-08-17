@@ -13,6 +13,8 @@
 - [ ] Squashed all commits into a single commit
 - [ ] Added Tests
 - [ ] Ran newly added/edited cypress tests on Firefox locally
+- [ ] Review and remove any PII info and customer data
+
   
 
 - ##### Reviewer:
