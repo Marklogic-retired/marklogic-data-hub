@@ -1,5 +1,5 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 export const getSystemInfo = async () => {
-  return await axios.get(`/api/environment/systemInfo`);
+  return await axiosInstance.get(`/api/environment/systemInfo`);
 };

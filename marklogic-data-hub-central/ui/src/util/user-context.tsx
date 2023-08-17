@@ -8,7 +8,8 @@ import {AuthoritiesContext} from "./authorities";
 import {MAX_SESSION_TIME} from "@config/application.config";
 import {Subscription} from "rxjs";
 import {ViewSettingsType} from "../types/view-types";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
+import {getSystemInfo} from "@api/environment";
 import {useHistory} from "react-router-dom";
 
 const defaultUserData = {
@@ -83,7 +84,7 @@ const UserProvider: React.FC<{children: any}> = ({children}) => {
     return CryptoJS.SHA256(`${config.method}:${config.url}:${config.data}`).toString();
   };
 
-  axios.interceptors.request.use(
+  axiosInstance.interceptors.request.use(
     request => {
       if (request) {
         const requestHash = getConfigHash(request);
@@ -165,7 +166,7 @@ const UserProvider: React.FC<{children: any}> = ({children}) => {
   };
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
-    let session = await axios("/api/environment/systemInfo");
+    let session = await getSystemInfo();
     setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
 
     localStorage.setItem("serviceName", session.data.serviceName);
@@ -403,7 +404,7 @@ const UserProvider: React.FC<{children: any}> = ({children}) => {
   };
 
   const resetSessionTime = async () => {
-    let session = await axios("/api/environment/systemInfo");
+    let session = await getSystemInfo();
     setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
   };
 

@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import axiosInstance from "@config/axios";
 import {render, wait} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import EntityTypeModal from "./entity-type-modal";
@@ -12,8 +12,7 @@ import {
 } from "../../../assets/mock-data/modeling/modeling";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 
-jest.mock("axios");
-const axiosMock = axios as jest.Mocked<typeof axios>;
+jest.mock("@config/axios");
 
 const placeholders = {
   name: "Enter name",
@@ -49,7 +48,7 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Valid Entity name is used", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
       <EntityTypeModal {...defaultModalOptions} color="" icon="" />,
@@ -73,8 +72,8 @@ describe("EntityTypeModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("Add"));
     });
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
 
     //Verify the hubCentral payload
     hubCentralConfig.modeling.entities["AnotherModel"] = {color: "#cee0ed"};
@@ -116,7 +115,7 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Creating duplicate entity shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](
+    axiosInstance.post["mockImplementationOnce"](
       jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponse}})),
     );
 
@@ -134,8 +133,8 @@ describe("EntityTypeModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("Add"));
     });
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
 
     await wait(() => {
       expect(getByLabelText("entity-name-error")).toBeInTheDocument();
@@ -173,7 +172,7 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Entity description, namespace, prefix, color and icon selection are updated", async () => {
-    axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200})));
+    axiosInstance.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
       <EntityTypeModal
@@ -208,8 +207,8 @@ describe("EntityTypeModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("OK"));
     });
-    expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.put).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.put).toHaveBeenCalledTimes(1);
 
     //Verify the hubCentral payload
     hubCentralConfig.modeling.entities["ModelName"] = {color: "#f8f8de"};
@@ -219,7 +218,7 @@ describe("EntityTypeModal Component", () => {
   });
 
   test("Submitting invalid namespace shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](
+    axiosInstance.post["mockImplementationOnce"](
       jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponseNamespace}})),
     );
 
@@ -237,14 +236,14 @@ describe("EntityTypeModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("Add"));
     });
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
 
     expect(getByText(createModelErrorResponseNamespace.message)).toBeInTheDocument();
   });
 
   test("Submitting invalid namespace prefix shows error message", async () => {
-    axiosMock.post["mockImplementationOnce"](
+    axiosInstance.post["mockImplementationOnce"](
       jest.fn(() => Promise.reject({response: {status: 400, data: createModelErrorResponsePrefix}})),
     );
 
@@ -267,8 +266,8 @@ describe("EntityTypeModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("Add"));
     });
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
 
     expect(getByText(createModelErrorResponsePrefix.message)).toBeInTheDocument();
   });

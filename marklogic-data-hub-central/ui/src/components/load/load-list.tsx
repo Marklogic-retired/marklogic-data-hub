@@ -182,7 +182,7 @@ const LoadList: React.FC<Props> = props => {
     setRunNoFlowsDialogVisible(false);
 
     history.push({
-      pathname: "/tiles/run/add-run",
+      pathname: "/tiles-run-add-run",
       state: {
         flowName: flowName,
         flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
@@ -196,7 +196,7 @@ const LoadList: React.FC<Props> = props => {
 
   const onContinueRun = () => {
     history.push({
-      pathname: "/tiles/run/run-step",
+      pathname: "/tiles-run-run-step",
       state: {
         flowName: flowsWithStep[0],
         stepToAdd: loadArtifactName,
@@ -211,7 +211,7 @@ const LoadList: React.FC<Props> = props => {
     await props.addStepToFlow(lName, fName);
     setAddDialogVisible(false);
     history.push({
-      pathname: "/tiles/run/add",
+      pathname: "/tiles-run-add",
       state: {
         flowName: fName,
         addFlowDirty: true,
@@ -309,7 +309,7 @@ const LoadList: React.FC<Props> = props => {
               data-testid="link"
               id="tiles-add-run-new-flow"
               to={{
-                pathname: "/tiles/run/add-run",
+                pathname: "/tiles-run-add-run",
                 state: {
                   stepToAdd: loadArtifactName,
                   stepDefinitionType: "ingestion",
@@ -375,7 +375,7 @@ const LoadList: React.FC<Props> = props => {
                 id="tiles-run-step"
                 key={i}
                 to={{
-                  pathname: "/tiles/run/run-step",
+                  pathname: "/tiles-run-run-step",
                   state: {
                     flowName: flowName,
                     stepToAdd: loadArtifactName,
@@ -434,7 +434,7 @@ const LoadList: React.FC<Props> = props => {
               data-testid="link"
               id="tiles-run-add"
               to={{
-                pathname: "/tiles/run/add",
+                pathname: "/tiles-run-add",
                 state: {
                   stepToAdd: name,
                   stepDefinitionType: "ingestion",

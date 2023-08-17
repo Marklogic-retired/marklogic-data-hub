@@ -322,7 +322,7 @@ const EntityTypeTable: React.FC<Props> = props => {
               <HCTooltip text={ModelingTooltips.instanceNumber} id="explore-instances-tooltip" placement="top">
                 <Link
                   to={{
-                    pathname: "/tiles/explore",
+                    pathname: "/tiles-explore",
                     state: {entity: parseText[0]},
                   }}
                   data-testid={parseText[0] + "-instance-count"}
@@ -374,7 +374,7 @@ const EntityTypeTable: React.FC<Props> = props => {
             >
               <Link
                 to={{
-                  pathname: "/tiles/explore",
+                  pathname: "/tiles-explore",
                   state: {entityName: parseText[0], jobId: parseText[1]},
                 }}
                 data-testid={parseText[0] + "-last-processed"}

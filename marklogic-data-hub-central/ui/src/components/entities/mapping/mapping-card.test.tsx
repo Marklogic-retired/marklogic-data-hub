@@ -2,7 +2,7 @@ import React from "react";
 import {BrowserRouter as Router, MemoryRouter} from "react-router-dom";
 import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import MappingCard from "./mapping-card";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
@@ -10,7 +10,7 @@ import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import dayjs from "dayjs";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -41,7 +41,7 @@ describe("Mapping Card component", () => {
   };
 
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -140,7 +140,7 @@ describe("Mapping Card component", () => {
       await fireEvent.click(getByTestId("Mapping1-stepDetails"));
     });
 
-    expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/curate/map"});
+    expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles-curate-map"});
 
     wait(async () => {
       const orderDetailsNode = await screen.findByText("OrderDetails");
@@ -260,7 +260,7 @@ describe("Mapping Card component", () => {
 
     // Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
     // TODO- E2E test to check if the Run tile is loaded or not.
 
@@ -277,7 +277,7 @@ describe("Mapping Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -309,7 +309,7 @@ describe("Mapping Card component", () => {
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
@@ -326,7 +326,7 @@ describe("Mapping Card component", () => {
 
     //Check if the /tiles/run/run-step route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-run-step");
     });
   });
 
@@ -364,7 +364,7 @@ describe("Mapping Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -402,7 +402,7 @@ describe("Mapping Card component", () => {
 
     //Wait for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 
@@ -436,7 +436,7 @@ describe("Mapping Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 

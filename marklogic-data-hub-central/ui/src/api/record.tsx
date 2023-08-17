@@ -1,8 +1,8 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 export const getRecord = async (uri, database) => {
   let encodedUri = encodeURIComponent(uri);
-  return await axios({
+  return await axiosInstance({
     url: `/api/record/download?docUri=${encodedUri}&database=${database}`,
     method: "GET",
     responseType: "blob",
@@ -11,7 +11,7 @@ export const getRecord = async (uri, database) => {
 
 export const getDetails = async (uri, database) => {
   let encodedUri = encodeURIComponent(uri);
-  return await axios({
+  return await axiosInstance({
     url: `/api/entitySearch?docUri=${encodedUri}&database=${database}`,
     method: "GET",
   });

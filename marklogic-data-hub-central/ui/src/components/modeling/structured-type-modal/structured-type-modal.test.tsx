@@ -7,11 +7,11 @@ import {ModelingTooltips} from "../../../config/tooltips.config";
 import {entityDefinitionsArray} from "../../../assets/mock-data/modeling/modeling";
 import {ModelingContext} from "../../../util/modeling-context";
 import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 beforeEach(() => {
-  axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
+  axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
 });
 
 afterEach(() => {

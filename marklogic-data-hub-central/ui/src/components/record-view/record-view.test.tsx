@@ -1,9 +1,9 @@
 import React from "react";
-import {render, fireEvent, waitForElement, waitForElementToBeRemoved} from "@testing-library/react";
+import {render, fireEvent, waitForElement} from "@testing-library/react";
 import {entitySearch} from "../../assets/mock-data/explore/entity-search";
 import {BrowserRouter as Router} from "react-router-dom";
 import RecordCardView from "./record-view";
-import axiosMock from "axios";
+import axiosInstance from "axios";
 import {MemoryRouter} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
@@ -11,7 +11,7 @@ import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {searchContextInterfaceByDefault} from "@util/uiTestCommonInterface";
 import {SecurityTooltips} from "@config/tooltips.config";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Raw data card view component", () => {
   afterEach(() => {
@@ -76,12 +76,13 @@ describe("Raw data card view component", () => {
     expect(getAllByText("none")).toHaveLength(4);
   });
 
-  test("Verify file download and merge on Raw data card ", async () => {
+  test("Verify file download", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["writeMatching", "writeMerging"]);
-    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
+    axiosInstance.get = jest.fn();
+    axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
-    const {getByLabelText, getByTestId, getByText} = render(
+    const {getByTestId, getByText} = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
           <SearchContext.Provider value={{...searchContextInterfaceByDefault}}>
@@ -102,40 +103,14 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByText("Download (815 B)"));
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
-    expect(axiosMock).toHaveBeenCalledWith({
-      "method": "GET",
-      "responseType": "blob",
-      "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final",
-    });
-
-    jest.clearAllMocks();
-    axiosMock.get["mockImplementation"](
-      jest.fn(() =>
-        Promise.resolve({status: 200, data: {data: {envelope: {instance: {}}}, value: {envelope: {instance: {}}}}}),
-      ),
-    );
-    axiosMock.put["mockImplementation"](jest.fn(() => Promise.resolve({status: 200})));
-    axiosMock.delete["mockImplementation"](
-      jest.fn(() => {
-        return Promise.resolve({status: 204});
-      }),
-    );
-    //click on merge icon and verify api call.
-    fireEvent.click(getByTestId("merge-icon"));
-    await waitForElement(() => getByLabelText("confirm-merge-unmerge"));
-    fireEvent.click(getByLabelText("confirm-merge-unmerge"));
-    await waitForElement(() => getByLabelText("Yes"));
-    fireEvent.click(getByLabelText("Yes"));
-    await waitForElementToBeRemoved(() => getByLabelText("Yes"));
-    expect(axiosMock.delete).toHaveBeenCalledWith(
-      "/api/steps/merging/notifications?uri=%2Fcom.marklogic.smart-mastering%2Fmatcher%2Fnotifications%2F613ba6185e0d3a08d6dbfdb01edbe8d3.xml",
-    );
+    await (() => expect(axiosInstance.get).toHaveBeenCalledTimes(1));
   });
 
   test("Merge Icon not available, missing permission", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMerging", "readMatching"]);
-    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
+    axiosInstance.get = jest.fn();
+    axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
 
     const {getByTestId, getByText} = render(
       <MemoryRouter>

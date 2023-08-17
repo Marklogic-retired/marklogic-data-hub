@@ -95,7 +95,7 @@ const CustomCard: React.FC<Props> = props => {
     setAddDialogVisible(false);
 
     history.push({
-      pathname: "/tiles/run/add",
+      pathname: "/tiles-run-add",
       state: {
         flowName: fName,
         addFlowDirty: true,
@@ -227,7 +227,7 @@ const CustomCard: React.FC<Props> = props => {
                       <Link
                         id="tiles-run-add"
                         to={{
-                          pathname: "/tiles/run/add",
+                          pathname: "/tiles-run-add",
                           state: {
                             stepToAdd: elem.name,
                             targetEntityType: props.entityModel.entityTypeId,

@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios, {AxiosInstance} from "axios";
 
 let mlAuthentication = window.localStorage.getItem("dataHubEnvironmentSettings");
 let mlBasePathURL =  window.localStorage.getItem("dataHubBasePath");
 
-const instance = mlAuthentication === "cloud" ? 
+const axiosInstance: AxiosInstance = mlAuthentication && mlAuthentication === "cloud" ? 
   axios.create({
     baseURL: `${mlBasePathURL}`
   }) :
   axios.create({});
 
-export default instance;
+export default axiosInstance;

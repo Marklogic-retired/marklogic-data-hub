@@ -9,7 +9,7 @@ import {
   mockHubCentralConfig,
 } from "../../../../assets/mock-data/modeling/modeling";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 describe("Add Edit Relationship component", () => {
   afterEach(() => {
     cleanup();

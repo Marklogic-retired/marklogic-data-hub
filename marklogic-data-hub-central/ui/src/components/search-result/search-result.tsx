@@ -228,7 +228,7 @@ const SearchResult: React.FC<Props> = props => {
           <div className={`ms-auto ${styles.redirectIcons}`}>
             <Link
               to={{
-                pathname: "/tiles/explore/detail",
+                pathname: "/tiles-explore-detail",
                 state: {
                   selectedValue: "instance",
                   entity: searchOptions.entityTypeIds,
@@ -256,7 +256,7 @@ const SearchResult: React.FC<Props> = props => {
             </Link>
             <Link
               to={{
-                pathname: "/tiles/explore/detail",
+                pathname: "/tiles-explore-detail",
                 state: {
                   selectedValue: "source",
                   entity: searchOptions.entityTypeIds,

@@ -8,10 +8,9 @@ import {
   searchContextInterfaceByDefault,
   defaultSearchOptions as defaultSearchOptions,
 } from "@util/uiTestCommonInterface";
-import axios from "axios";
+import axiosInstance from "@config/axios";
 
-jest.mock("axios");
-const axiosMock = axios as jest.Mocked<typeof axios>;
+jest.mock("@config/axios");
 
 describe("Graph view side panel", () => {
   afterEach(cleanup);
@@ -116,7 +115,7 @@ describe("Graph view side panel", () => {
       isConcept: true,
       id: "http://www.example.com/Category/Sneakers",
     };
-    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: semanticConceptInfo})));
+    axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: semanticConceptInfo})));
     let url = `/api/entitySearch/graph/semanticConceptInfo?semanticConceptIRI=${semanticConceptIRI}&database=final`;
     const {getByTestId, findByLabelText, queryByLabelText} = render(
       <SearchContext.Provider
@@ -141,7 +140,7 @@ describe("Graph view side panel", () => {
     expect(queryByLabelText("graphViewRightArrow")).not.toBeInTheDocument();
     expect((await findByLabelText("Product-entityType")).textContent).toBe("Product");
     expect((await findByLabelText("Product-relatedInstances")).textContent).toBe("1");
-    expect(axiosMock.get).toHaveBeenCalledWith(url);
-    expect(axiosMock.get).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.get).toHaveBeenCalledWith(url);
+    expect(axiosInstance.get).toHaveBeenCalledTimes(1);
   });
 });

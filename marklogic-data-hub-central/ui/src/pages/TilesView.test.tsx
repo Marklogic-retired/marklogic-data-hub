@@ -6,7 +6,7 @@ import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import TilesView from "./TilesView";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../api/__mocks__/mocks.data";
 import authorities from "../assets/mock-data/authorities.testutils";
 import tiles from "../config/tiles.config";
@@ -17,7 +17,7 @@ import {
   setViewRunFunction,
 } from "../assets/mock-data/explore/search-context-mock";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 jest.setTimeout(30000);
 
 const mockDevRolesService = authorities.DeveloperRolesService;
@@ -25,7 +25,7 @@ const testWithOperator = authorities.OperatorRolesService;
 
 describe("Tiles View component tests for Developer user", () => {
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -379,7 +379,7 @@ describe("Tiles View component tests for Developer user", () => {
 
 describe("Tiles View component tests for Operator user", () => {
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {

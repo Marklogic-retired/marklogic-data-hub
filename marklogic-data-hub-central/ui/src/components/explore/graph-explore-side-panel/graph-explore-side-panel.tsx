@@ -176,7 +176,7 @@ const GraphExploreSidePanel: React.FC<Props> = props => {
     }
   };
 
-  const pathname = "/tiles/explore/detail";
+  const pathname = "/tiles-explore-detail";
   let primaryKeyValue;
   if (primaryKey && Object.keys(primaryKey).length) {
     primaryKeyValue = primaryKey.propertyValue;

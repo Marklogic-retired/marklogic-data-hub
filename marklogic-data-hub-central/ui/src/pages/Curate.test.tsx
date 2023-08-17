@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, waitForElement, cleanup, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {AuthoritiesContext, AuthoritiesService} from "../util/authorities";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../api/__mocks__/mocks.data";
 import Curate from "./Curate";
 import {MemoryRouter} from "react-router-dom";
@@ -13,11 +13,11 @@ import {customerMappingStep} from "../assets/mock-data/curation/curation-context
 import userEvent from "@testing-library/user-event";
 import {getViewSettings} from "../util/user-context";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Curate component", () => {
   beforeEach(() => {
-    mocks.curateAPI(axiosMock);
+    mocks.curateAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -45,7 +45,7 @@ describe("Curate component", () => {
     if (intro) expect(getByText(intro)).toBeInTheDocument(); // tile intro text
 
     // Check for steps to be populated
-    expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
+    expect(axiosInstance.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
     //Mapping tab should show. Match/Merge should not
     expect(getByText("Mapping (1)")).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe("Curate component", () => {
 
     expect(await waitForElement(() => getByText("Customer"))).toBeInTheDocument();
     // Check for steps to be populated
-    expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
+    expect(axiosInstance.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
     //Mapping tab should show. Match/Merge should not
     expect(getByText("Mapping (1)")).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe("Curate component", () => {
     await wait(() => {
       fireEvent.click(getByText("Yes"));
     });
-    expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
+    expect(axiosInstance.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
   });
 
   test("Verify user with no authorities cannot access page", async () => {

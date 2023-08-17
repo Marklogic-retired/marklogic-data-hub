@@ -4,9 +4,9 @@ import {BrowserRouter as Router} from "react-router-dom";
 import DetailPageNonEntity from "./detail-page-non-entity";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
 import userEvent from "@testing-library/user-event";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Detail page for non-entity view component", () => {
   afterEach(() => {
@@ -136,7 +136,7 @@ describe("Detail page for non-entity view component", () => {
   });
 
   test("Verify file download on Detail page", async () => {
-    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.detailRecordDownloadResponse)));
+    axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.detailRecordDownloadResponse)));
 
     const {getByTestId} = render(
       <Router>
@@ -148,7 +148,7 @@ describe("Detail page for non-entity view component", () => {
     expect(getByTestId("download-link")).toBeInTheDocument();
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("download-link"));
-    expect(axiosMock).toHaveBeenCalledWith({
+    expect(axiosInstance).toHaveBeenCalledWith({
       "method": "GET",
       "responseType": "blob",
       "url": "/api/record/download?docUri=%2FloadCustomers.json&database=staging",

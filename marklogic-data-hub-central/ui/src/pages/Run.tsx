@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "@components/flows/flows";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {AuthoritiesContext} from "@util/authorities";
 import {UserContext} from "@util/user-context";
 import tiles from "../config/tiles.config";
@@ -61,7 +61,7 @@ const Run = props => {
   const getFlows = async () => {
     try {
       setFetchLoad(true);
-      let response = await axios.get("/api/flows");
+      let response = await axiosInstance.get("/api/flows");
       if (response.status === 200) {
         if (newFlowName) {
           let key = [response.data.findIndex(el => el.name === newFlowName)];
@@ -85,7 +85,7 @@ const Run = props => {
   const getSteps = async () => {
     try {
       setFetchLoad(true);
-      let response = await axios.get("/api/steps");
+      let response = await axiosInstance.get("/api/steps");
       if (response.status === 200) {
         setSteps(response.data);
       }
@@ -105,7 +105,7 @@ const Run = props => {
         name: payload.name,
         description: payload.description,
       };
-      let response = await axios.post(`/api/flows`, newFlow);
+      let response = await axiosInstance.post(`/api/flows`, newFlow);
       if (response.status === 201) {
         setIsLoading(false);
         setNewFlowName(payload.name);
@@ -140,7 +140,7 @@ const Run = props => {
         steps: steps,
         description: description,
       };
-      let response = await axios.put(`/api/flows/` + name, updatedFlow);
+      let response = await axiosInstance.put(`/api/flows/` + name, updatedFlow);
       if (response.status === 200) {
         setIsLoading(false);
       }
@@ -161,7 +161,7 @@ const Run = props => {
       setIsLoading(true);
       let url = "/api/flows/" + flowName + "/steps";
       let body = step;
-      let response = await axios.post(url, body);
+      let response = await axiosInstance.post(url, body);
       if (response.status === 200) {
         setIsLoading(false);
         return 1;
@@ -180,7 +180,7 @@ const Run = props => {
   const deleteFlow = async name => {
     try {
       setIsLoading(true);
-      let response = await axios.delete(`/api/flows/${name}`);
+      let response = await axiosInstance.delete(`/api/flows/${name}`);
       if (response.status === 200) {
         setIsLoading(false);
       }
@@ -261,21 +261,21 @@ const Run = props => {
     try {
       setIsLoading(true);
       if (formData) {
-        response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`, formData, {
+        response = await axiosInstance.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`, formData, {
           headers: {
             "Content-Type": "multipart/form-data; boundary=${formData._boundary}",
             crossorigin: true,
           },
         });
       } else {
-        response = await axios.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`);
+        response = await axiosInstance.post("/api/flows/" + flowName + `/run?stepNames=${stepNames}`);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
         showStepRunResponse(jobId);
         await setTimeout(function () {
           poll(async function () {
-            const res = await axios.get("/api/jobs/" + jobId);
+            const res = await axiosInstance.get("/api/jobs/" + jobId);
             return res;
           }, pollConfig.interval)
             .then(function (response: any) {
@@ -323,21 +323,21 @@ const Run = props => {
     try {
       setUploadError("");
       if (formData) {
-        response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName, formData, {
+        response = await axiosInstance.post("/api/flows/" + flowName + "/steps/" + step.stepName, formData, {
           headers: {
             "Content-Type": "multipart/form-data; boundary=${formData._boundary}",
             crossorigin: true,
           },
         });
       } else {
-        response = await axios.post("/api/flows/" + flowName + "/steps/" + step.stepName);
+        response = await axiosInstance.post("/api/flows/" + flowName + "/steps/" + step.stepName);
       }
       if (response.status === 200) {
         let jobId = response.data.jobId;
         showStepRunResponse(jobId);
         await setTimeout(function () {
           poll(function () {
-            const res = axios.get("/api/jobs/" + jobId);
+            const res = axiosInstance.get("/api/jobs/" + jobId);
             return res;
           }, pollConfig.interval)
             .then(function (response: any) {
@@ -374,7 +374,7 @@ const Run = props => {
     let url = "/api/flows/" + flowId + "/steps/" + stepNumber;
     try {
       setIsLoading(true);
-      let response = await axios.delete(url);
+      let response = await axiosInstance.delete(url);
       if (response.status === 200) {
         setIsLoading(false);
       }
@@ -387,7 +387,7 @@ const Run = props => {
 
   const stopRun = async () => {
     try {
-      let response = await axios.post("/api/flows/stopJob/" + jobId);
+      let response = await axiosInstance.post("/api/flows/stopJob/" + jobId);
       if (response.status === 200) {
         setIsStepRunning(false);
       }

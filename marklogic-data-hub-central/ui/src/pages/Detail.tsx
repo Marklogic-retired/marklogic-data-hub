@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import dayjs from "dayjs";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "@util/user-context";
@@ -101,7 +101,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
     if (!entityDefinitionsArray || entityDefinitionsArray?.length === 0) {
       (async () => {
         try {
-          const modelsResponse = await axios.get(`/api/models`);
+          const modelsResponse = await axiosInstance.get(`/api/models`);
           const parsedModelData = entityFromJSON(modelsResponse.data);
           const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
           if (loaded) {
@@ -123,12 +123,12 @@ const Detail: React.FC<Props> = ({history, location}) => {
     const fetchData = async () => {
       // When Detail URI is undefined, redirect to Explore
       if (!uri) {
-        history.push("/tiles/explore");
+        history.push("/tiles-explore");
         return;
       }
       try {
         let encodedUri = encodeURIComponent(uri);
-        const result = await axios(`/api/entitySearch?docUri=${encodedUri}&database=${database}`);
+        const result = await axiosInstance(`/api/entitySearch?docUri=${encodedUri}&database=${database}`);
         if (!result.data) {
           history.push("/error");
         }
@@ -435,7 +435,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const selectedSearchOptions = {
-    pathname: "/tiles/explore",
+    pathname: "/tiles-explore",
     state: {
       entity: state && state.hasOwnProperty("entity") ? state["entity"] : parentPagePreferences["entity"],
       pageNumber:

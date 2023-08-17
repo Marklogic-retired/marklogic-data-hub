@@ -124,7 +124,7 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("Merge icon disabled in all Data, missing permission", () => {
     cy.loginAsOperator().withRequest();
-    cy.visit("tiles/explore");
+    cy.visit("tiles-explore");
     cy.waitForAsyncRequest();
 
     browsePage.getClearAllFacetsButton().then(($ele) => {
@@ -149,7 +149,7 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("unMerge icon disabled on SnippetView/TableView and  when user doesn't have writeMatching and writeMerging rights ", () => {
     cy.loginAsOperator().withRequest();
-    cy.visit("tiles/explore");
+    cy.visit("tiles-explore");
     cy.waitForAsyncRequest();
 
     graphExplore.getGraphVisCanvas().should("be.visible");
@@ -206,7 +206,7 @@ describe("Test '/Explore' graph right panel", () => {
 
   it("Navigate to Table View and Filter Person entity", () => {
     cy.loginAsDeveloperV2().withRequest();
-    cy.visit("tiles/explore");
+    cy.visit("tiles-explore");
     cy.waitForAsyncRequest();
 
     browsePage.switchToTableView();

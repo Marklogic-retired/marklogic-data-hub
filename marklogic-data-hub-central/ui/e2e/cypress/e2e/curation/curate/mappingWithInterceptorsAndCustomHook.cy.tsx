@@ -167,7 +167,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
 
   it("Edit Map step", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Order");

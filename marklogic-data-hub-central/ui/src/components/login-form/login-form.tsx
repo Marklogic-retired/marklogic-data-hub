@@ -4,7 +4,7 @@ import {Lock, Person} from "react-bootstrap-icons";
 import React, {useContext, useState, useEffect, useRef} from "react";
 import {Spinner} from "react-bootstrap";
 import {UserContext} from "@util/user-context";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import styles from "./login-form.module.scss";
 
 const LoginForm: React.FC = () => {
@@ -24,13 +24,19 @@ const LoginForm: React.FC = () => {
     } else {
       window.localStorage.setItem("dataHubEnvironmentSettings", "");
     }
+    // setUsername('hc-developer')
+    // setPassword('password')
   }, []);
+
+  // useEffect(() => {
+  //   formRef.current.dispatchEvent(new Event("submit", {cancelable: true}));
+  // }, [username])
 
   const handleSubmit = async (event: {preventDefault: () => void}) => {
     if (event) event.preventDefault();
     try {
       setIsLoading(true);
-      let response = await axios.post("/api/login", {
+      let response = await axiosInstance.post("/api/login", {
         username,
         password,
       });
