@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import Select, {components as SelectComponents} from "react-select";
 import CreatableSelect from "react-select/creatable";
 import reactSelectThemeConfig from "@config/react-select-theme.config";
@@ -313,7 +313,7 @@ const AdvancedSettings: React.FC<Props> = props => {
         const targetEntityType = String(props.stepData.targetEntityType || props.stepData.targetEntity);
         const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
         const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURIComponent(targetEntityTitle)}`;
-        const defaultCollectionsResp = await axios.get(defaultCollectionsURL);
+        const defaultCollectionsResp = await axiosInstance.get(defaultCollectionsURL);
         if (defaultCollectionsResp.status === 200) {
           setDefaultTargetCollections(defaultCollectionsResp.data);
         }

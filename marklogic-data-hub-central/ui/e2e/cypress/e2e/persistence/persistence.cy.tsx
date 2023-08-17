@@ -379,7 +379,7 @@ describe("Validate persistence across Hub Central", () => {
 
   it("Validate persistence for search and facets on sidebar when toggling database in explore tile", () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.visit("/tiles/explore");
+    cy.visit("/tiles-explore");
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     browsePage.databaseSwitch("final");
@@ -404,7 +404,7 @@ describe("Validate persistence across Hub Central", () => {
 
   it("MatchingStepDetails: Retain state in 'Test and review matched entities' section when switch Tile", () => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");

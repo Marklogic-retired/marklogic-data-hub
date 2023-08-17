@@ -6,7 +6,7 @@ import {SearchContext} from "@util/search-context";
 import {canStopFlow, isFlowRunning} from "@util/run-utils";
 import {dateConverter, renderDuration, durationFromDateTime} from "@util/date-conversion";
 import styles from "./job-response.module.scss";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
@@ -72,7 +72,7 @@ const JobResponse: React.FC<Props> = ({
     try {
       clearTimeout(timeoutId);
       clearInterval(intervalId);
-      let response = await axios.get("/api/jobs/" + jobId);
+      let response = await axiosInstance.get("/api/jobs/" + jobId);
       if (response.status === 200) {
         setJobResponse(response.data);
         const _canStopFlow = canStopFlow(response.data);
@@ -470,7 +470,7 @@ const JobResponse: React.FC<Props> = ({
     } else {
       setLatestDatabase(targetDatabase, jobId, openExploreFromExternalView);
     }
-    history.push({pathname: "/tiles/explore"});
+    history.push({pathname: "/tiles-explore"});
   };
 
   return (

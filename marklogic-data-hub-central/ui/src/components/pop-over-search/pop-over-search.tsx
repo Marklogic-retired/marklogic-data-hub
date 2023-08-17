@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./pop-over-search.module.scss";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import {SearchContext} from "@util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
@@ -35,7 +35,7 @@ const PopOverSearch: React.FC<Props> = props => {
           "dataType": "string",
           "pattern": e.target.value,
         };
-        const response = await axios.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data);
+        const response = await axiosInstance.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data);
         setOptions(response.data);
       } catch (error) {
         console.error(error);
@@ -53,7 +53,7 @@ const PopOverSearch: React.FC<Props> = props => {
           "facetName": props.facetName,
           "searchTerm": e.target.value,
         };
-        const response = await axios.post(`/api/jobs/stepResponses/facetValues`, data);
+        const response = await axiosInstance.post(`/api/jobs/stepResponses/facetValues`, data);
         setOptions(response.data);
       } catch (error) {
         console.error(error);

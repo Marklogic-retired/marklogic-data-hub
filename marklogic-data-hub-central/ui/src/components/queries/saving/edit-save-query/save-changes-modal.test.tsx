@@ -1,14 +1,14 @@
 import React from "react";
 import {fireEvent, render, wait} from "@testing-library/react";
 import SaveChangesModal from "./save-changes-modal";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import {
   saveQueryResponse,
   putQueryResponse,
   duplicateQueryNameErrorResponse,
 } from "../../../../assets/mock-data/explore/query";
 import userEvent from "@testing-library/user-event";
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("<SaveChangesModal/>", () => {
   afterEach(() => {
@@ -55,7 +55,7 @@ describe("<SaveChangesModal/>", () => {
   });
 
   test("Verify save changes modal details can be edited and saved", async () => {
-    axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
+    axiosInstance.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: putQueryResponse})));
 
     const {getByPlaceholderText, getByText} = render(
       <SaveChangesModal
@@ -105,12 +105,12 @@ describe("<SaveChangesModal/>", () => {
     };
 
     let url = "/api/entitySearch/savedQueries";
-    expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.put).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.put).toHaveBeenCalledTimes(1);
   });
 
   test("Verify save changes modal throws error with duplicate query name", async () => {
-    axiosMock.put["mockImplementationOnce"](
+    axiosInstance.put["mockImplementationOnce"](
       jest.fn(() => Promise.reject({response: {status: 400, data: duplicateQueryNameErrorResponse}})),
     );
 
@@ -161,8 +161,8 @@ describe("<SaveChangesModal/>", () => {
     };
 
     let url = "/api/entitySearch/savedQueries";
-    expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.put).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.put).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.put).toHaveBeenCalledTimes(1);
     expect(getByText("You already have a saved query with a name of edit new query")).toBeInTheDocument();
   });
 });

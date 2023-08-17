@@ -33,7 +33,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Tests matching preview with values to ignore", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Person");
@@ -85,7 +85,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Should merge when values do not match", () => {
-    cy.visit("/tiles/run");
+    cy.visit("/tiles-run");
     cy.waitForAsyncRequest();
     runPage.toggleExpandFlow("testValuesToIgnore");
     runPage.openStepsSelectDropdown("testValuesToIgnore");
@@ -134,7 +134,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Should not merge when values do match with multiple lists", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Person");
@@ -165,7 +165,7 @@ describe("Verify values to ignore feature", () => {
 
 
   it("Create new List in values to ignore", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
@@ -242,7 +242,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Values to Ignore list tooltip", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tilescurate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Person");
@@ -264,7 +264,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Select and save values to ignore", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Person");
@@ -337,7 +337,7 @@ describe("Verify values to ignore feature", () => {
   });
 
   it("Try to delete an excludeList that is used in another step", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     curatePage.toggleEntityTypeId("Person");

@@ -54,11 +54,11 @@ const TilesView = props => {
   const location: any = useLocation();
 
   const setCurateView = () => {
-    if (location.pathname.startsWith("/tiles/curate/match")) {
+    if (location.pathname.startsWith("/tiles-curate-match")) {
       return <MatchingDetailStep />;
-    } else if (location.pathname.startsWith("/tiles/curate/merge")) {
+    } else if (location.pathname.startsWith("/tiles-curate-merge")) {
       return <MergingStepDetail />;
-    } else if (location.pathname.startsWith("/tiles/curate/map")) {
+    } else if (location.pathname.startsWith("/tiles-curate-map")) {
       return <MappingStepDetail />;
     } else {
       return <Curate />;

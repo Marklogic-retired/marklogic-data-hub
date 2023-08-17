@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef} from "react";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
 import {UserContext} from "@util/user-context";
@@ -286,7 +286,7 @@ const CreateEditStep: React.FC<Props> = props => {
           "dataType": "string",
           "pattern": value,
         };
-        const response = await axios.post(`/api/entitySearch/facet-values?database=${database}`, data);
+        const response = await axiosInstance.post(`/api/entitySearch/facet-values?database=${database}`, data);
         if (response.status === 200) {
           setCollectionOptions(response.data);
         }

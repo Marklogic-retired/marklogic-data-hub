@@ -37,7 +37,7 @@ const ExpandableTableView: React.FC<Props> = props => {
           view: (
             <Link
               to={{
-                pathname: "/tiles/explore/detail",
+                pathname: "/tiles-explore-detail",
                 state: {
                   id: obj[i],
                   entity: searchOptions.entityTypeIds,

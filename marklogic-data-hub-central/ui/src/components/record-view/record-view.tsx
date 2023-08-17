@@ -177,7 +177,7 @@ const RecordCardView = props => {
     let sources = elem.hubMetadata && elem.hubMetadata.hasOwnProperty("sources") ? elem.hubMetadata["sources"] : [];
 
     let linkObject = {
-      pathname: "/tiles/explore/detail",
+      pathname: "/tiles-explore-detail",
       state: {
         selectedValue: "instance",
         entity: searchOptions.entityTypeIds,

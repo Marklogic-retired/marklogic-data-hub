@@ -51,7 +51,7 @@ describe("Verify numeric/date facet can be applied", () => {
 
   it("Verify functionality of clear and apply facet buttons", () => {
     cy.log("**Go to explore page and click on table view**");
-    cy.visit("tiles/explore");
+    cy.visit("tiles-explore");
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     browsePage.switchToTableView();

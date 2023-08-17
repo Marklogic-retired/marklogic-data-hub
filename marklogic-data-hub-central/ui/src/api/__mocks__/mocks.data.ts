@@ -333,7 +333,7 @@ const advancedAPI = axiosMock => {
 };
 
 const systemInfoAPI = axiosMock => {
-  return axiosMock["mockImplementation"](url => {
+  return axiosMock.get["mockImplementation"](url => {
     switch (url) {
     case "/api/environment/systemInfo":
       return Promise.resolve({status: 200, data: systemInfoData.environment});

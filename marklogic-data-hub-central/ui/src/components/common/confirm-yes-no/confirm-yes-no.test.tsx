@@ -3,7 +3,7 @@ import {render, cleanup, fireEvent} from "@testing-library/react";
 import ConfirmYesNo from "./confirm-yes-no";
 import {ConfirmYesNoMessages} from "../../../config/messages.config";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Confirm yes/no component", () => {
   afterEach(cleanup);

@@ -968,7 +968,7 @@ const MappingStepDetail: React.FC = () => {
       setMappingStepDetailPageData(mappingStepArtifact);
     } else {
       setTimeout(() => {
-        history.push("/tiles/curate");
+        history.push("/tiles-curate");
         setViewSettings({...storage, curate: {}, match: {}});
       }, 300);
     }
@@ -1065,7 +1065,7 @@ const MappingStepDetail: React.FC = () => {
   );
 
   const onBack = () => {
-    history.push("/tiles/curate");
+    history.push("/tiles-curate");
     setExpandedSourceFlag(false);
     setExpandedEntityFlag(false);
     setUriIndex(0);

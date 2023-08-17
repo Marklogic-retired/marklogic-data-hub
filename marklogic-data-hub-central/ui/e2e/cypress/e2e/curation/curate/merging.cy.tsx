@@ -355,7 +355,7 @@ describe("Merging", () => {
   });
 
   it("Check collection Typeahead request when source  database is changed", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
     curatePage.selectMergeTab("Order");

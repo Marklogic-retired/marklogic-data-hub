@@ -1,4 +1,4 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {getStep, updateStep} from "./steps";
 
 export const updateMappingArtifact = async mapping => {
@@ -36,9 +36,9 @@ export const getMappingFunctions = async (excludeMLMappingFunctions?: boolean) =
   let response;
   try {
     if (!excludeMLMappingFunctions) {
-      response = await axios.get(`/api/artifacts/mapping/functions`);
+      response = await axiosInstance.get(`/api/artifacts/mapping/functions`);
     } else {
-      response = await axios.get(
+      response = await axiosInstance.get(
         `/api/artifacts/mapping/functions?excludeMLMappingFunctions=${excludeMLMappingFunctions}`,
       );
     }
@@ -54,7 +54,7 @@ export const getMappingFunctions = async (excludeMLMappingFunctions?: boolean) =
 
 export const getMappingRefs = async stepName => {
   try {
-    let response = await axios.get(`/api/steps/mapping/${stepName}/references`);
+    let response = await axiosInstance.get(`/api/steps/mapping/${stepName}/references`);
     if (response && response.status === 200) {
       return response;
     }

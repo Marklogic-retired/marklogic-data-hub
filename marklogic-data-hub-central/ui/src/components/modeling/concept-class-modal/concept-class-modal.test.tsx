@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import axiosInstance from "@config/axios";
 import {render, wait} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ConceptClassModal from "./concept-class-modal";
@@ -7,8 +7,7 @@ import {ModelingTooltips} from "../../../config/tooltips.config";
 import {createConceptsResponse} from "../../../assets/mock-data/modeling/modeling";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 
-jest.mock("axios");
-const axiosMock = axios as jest.Mocked<typeof axios>;
+jest.mock("@config/axios");
 
 const placeholders = {
   name: "Enter name",
@@ -40,7 +39,7 @@ describe("ConceptClassModal Component", () => {
   });
 
   test("Valid Concept Class name is used", async () => {
-    axiosMock.post["mockImplementationOnce"](
+    axiosInstance.post["mockImplementationOnce"](
       jest.fn(() => Promise.resolve({status: 201, data: createConceptsResponse})),
     );
 
@@ -66,8 +65,8 @@ describe("ConceptClassModal Component", () => {
     await wait(() => {
       userEvent.click(getByText("Add"));
     });
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
 
     //Verify the hubCentral payload
     hubCentralConfig.modeling.concepts["ShoeTypes"] = {color: "#cee0ed", icon: "FaLightbulb"};

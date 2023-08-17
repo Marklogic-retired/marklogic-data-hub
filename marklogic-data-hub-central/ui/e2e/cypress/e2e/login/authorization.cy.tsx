@@ -378,7 +378,7 @@ describe("Login", () => {
     loginPage.getUsername().type("hc-test-user");
     loginPage.getPassword().type("password");
     loginPage.getLoginButton().click();
-    cy.location("pathname").should("include", "/tiles/explore");
+    cy.location("pathname").should("include", "/tiles-explore");
     tiles.getExploreTile().should("exist");
   });
 
@@ -389,7 +389,7 @@ describe("Login", () => {
     loginPage.getUsername().type("hc-developer");
     loginPage.getPassword().type("password");
     loginPage.getLoginButton().click();
-    cy.location("pathname").should("include", "/tiles/curate");
+    cy.location("pathname").should("include", "/tiles-curate");
     cy.contains("Customer");
     cy.contains("Person");
     cy.contains("No Entity Type");
@@ -406,7 +406,7 @@ describe("Login", () => {
     toolbar.getHomePageInfoPopover().should("exist");
 
     toolbar.getModelToolbarIcon().should("be.visible").trigger("mouseover", {force: true}).click({force: true});
-    cy.url().should("include", "/tiles/model");
+    cy.url().should("include", "/tiles-model");
     tiles.getModelTile().should("exist");
     cy.get(`#user-dropdown`).click();
     cy.get("#logOut").should("be.visible").click();

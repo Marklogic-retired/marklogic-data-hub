@@ -4,12 +4,12 @@ import {MemoryRouter} from "react-router-dom";
 import LoadCard from "./load-card";
 import data from "../../assets/mock-data/curation/common.data";
 import ingestionData from "../../assets/mock-data/curation/ingestion.data";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {SecurityTooltips} from "../../config/tooltips.config";
 import dayjs from "dayjs";
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const mockHistoryPush = jest.fn();
 
@@ -22,7 +22,7 @@ jest.mock("react-router-dom", () => ({
 
 describe("Load Card component", () => {
   beforeEach(() => {
-    mocks.loadAPI(axiosMock);
+    mocks.loadAPI(axiosInstance);
   });
 
   afterEach(() => {
@@ -79,7 +79,7 @@ describe("Load Card component", () => {
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
   });
@@ -120,7 +120,7 @@ describe("Load Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -194,7 +194,7 @@ describe("Load Card component", () => {
 
     //Check if the /tiles/run/run-step route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-run-step");
     });
   });
 
@@ -234,7 +234,7 @@ describe("Load Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -284,7 +284,7 @@ describe("Load Card component", () => {
 
     //Wait for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
@@ -301,7 +301,7 @@ describe("Load Card component", () => {
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run");
+      expect(mockHistoryPush).toHaveBeenCalledWith("/tiles-run-add-run");
     });
   });
 
@@ -401,7 +401,7 @@ describe("Load Card component", () => {
     fireEvent.mouseOver(getByText(loadStepName));
     fireEvent.click(getByTestId(`${loadStepName}-toNewFlow`));
     await wait(() => {
-      expect(mockHistoryPush).not.toHaveBeenCalledWith("/tiles/run/add");
+      expect(mockHistoryPush).not.toHaveBeenCalledWith("/tiles-run-add");
     });
   });
 });

@@ -12,7 +12,7 @@ describe(("relationBetweenEntities"), () => {
 
   beforeEach(() => {
     cy.setupHubCentralConfig();
-    cy.visit("tiles/model");
+    cy.visit("tiles-model");
     cy.waitForAsyncRequest();
   });
 

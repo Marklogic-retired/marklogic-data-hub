@@ -1,10 +1,10 @@
 import React from "react";
 import {render, fireEvent, wait} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import LoginForm from "./login-form";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Login page test", () => {
   let userField, passField, loginBtn;
@@ -52,7 +52,7 @@ describe("Login page test", () => {
   });
 
   test("Verify login with status==200", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: {}})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: {}})));
     const {container, getByPlaceholderText, getByText} = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");
     passField = getByPlaceholderText("Enter password");
@@ -65,13 +65,13 @@ describe("Login page test", () => {
     });
     let url = "/api/login";
     let payload = {"password": "pass", "username": "validUser"};
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledWith(url, payload);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
     expect(container.querySelector("div .alert")).not.toHaveValue();
   });
 
   test("Verify login with error status 401", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.reject({response: {status: 401}})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.reject({response: {status: 401}})));
 
     const {getByPlaceholderText, getByText} = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");
@@ -83,12 +83,12 @@ describe("Login page test", () => {
     await wait(() => {
       fireEvent.submit(loginBtn);
     });
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
     expect(getByText("The username and password combination is not recognized by MarkLogic.")).toBeInTheDocument();
   });
 
   test("Verify login with error status 403", async () => {
-    axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.reject({response: {status: 403}})));
+    axiosInstance.post["mockImplementationOnce"](jest.fn(() => Promise.reject({response: {status: 403}})));
 
     const {getByPlaceholderText, getByText} = await render(<LoginForm />);
     userField = getByPlaceholderText("Enter username");
@@ -101,7 +101,7 @@ describe("Login page test", () => {
     await wait(() => {
       fireEvent.submit(loginBtn);
     });
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
+    expect(axiosInstance.post).toHaveBeenCalledTimes(1);
     expect(getByText("User does not have the required permissions to run Data Hub.")).toBeInTheDocument();
   });
 });

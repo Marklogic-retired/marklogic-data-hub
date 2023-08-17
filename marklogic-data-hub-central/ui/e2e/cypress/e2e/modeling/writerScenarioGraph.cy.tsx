@@ -368,7 +368,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.navigate();
     cy.publishDataModel();
 
-    cy.visit("tiles/curate");
+    cy.visit("tiles-curate");
     cy.waitForAsyncRequest();
     confirmationModal.getNavigationWarnText().should("not.exist");
 

@@ -16,7 +16,7 @@ const emptyNotificationData = {
   runUpdated: false,
 };
 
-jest.mock("axios");
+jest.mock("@config/axios");
 describe("Update data load settings component", () => {
   afterEach(() => {
     jest.clearAllMocks();

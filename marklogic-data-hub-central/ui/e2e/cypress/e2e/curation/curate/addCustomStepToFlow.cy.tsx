@@ -79,7 +79,7 @@ describe("Add Custom step to a flow", () => {
 
 describe("Check spinner", () => {
   it("Check Spinner when page is loading", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.findByTestId("spinner");
     browsePage.waitForSpinnerToDisappear();
   });

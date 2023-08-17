@@ -2,7 +2,7 @@ import React, {useState, useContext, useEffect} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "@util/search-context";
 import styles from "../save-query-modal/save-query-modal.module.scss";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
 import {HCInput, HCButton, HCModal} from "@components/common";
@@ -93,7 +93,7 @@ const SaveChangesModal: React.FC<Props> = props => {
       currentQuery.savedQuery.propertiesToDisplay = searchOptions.selectedTableProperties;
       currentQuery.savedQuery.sortOrder = searchOptions.sortOrder;
 
-      const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
+      const response = await axiosInstance.put(`/api/entitySearch/savedQueries`, currentQuery);
       if (response.data) {
         props.setSaveChangesModalVisibility();
         if (props.currentQueryName && !props.entityQueryUpdate) {

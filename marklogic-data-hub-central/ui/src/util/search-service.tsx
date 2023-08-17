@@ -1,12 +1,12 @@
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 
 const getUris = async (stepName: string, count: number) => {
-  let resp = await axios.get(`/api/steps/mapping/${stepName}/uris?limit=${count}`);
+  let resp = await axiosInstance.get(`/api/steps/mapping/${stepName}/uris?limit=${count}`);
   return resp;
 };
 
 const getDoc = async (stepName: string, docUri: string) => {
-  let resp = await axios.get(`/api/steps/mapping/${stepName}/doc?docUri=${encodeURIComponent(docUri)}`);
+  let resp = await axiosInstance.get(`/api/steps/mapping/${stepName}/doc?docUri=${encodeURIComponent(docUri)}`);
   return resp;
 };
 

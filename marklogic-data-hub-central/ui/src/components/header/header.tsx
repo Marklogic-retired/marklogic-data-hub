@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect, createRef} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import {UserContext} from "@util/user-context";
 import {parseVersion} from "@util/environment";
 import logo from "./logo.svg";
@@ -22,6 +22,7 @@ import {entityFromJSON, entityParser} from "@util/data-conversion";
 
 interface Props extends RouteComponentProps<any> {
   environment: any;
+  isCloudEnvironment?: boolean;
 }
 
 const Header: React.FC<Props> = props => {
@@ -42,7 +43,7 @@ const Header: React.FC<Props> = props => {
   const notificationBellRef = createRef<HTMLAnchorElement>();
 
   const fetchModels = async () => {
-    await axios.get(`/api/models`).then(modelsResponse => {
+    await axiosInstance.get(`/api/models`).then(modelsResponse => {
       const parsedModelData = entityFromJSON(modelsResponse.data);
       const parsedEntityDef = entityParser(parsedModelData).filter(entity => entity.name && entity);
       setEntityDefArray(parsedEntityDef);
@@ -90,7 +91,7 @@ const Header: React.FC<Props> = props => {
 
   const confirmLogout = async () => {
     try {
-      let response = await axios(`/api/logout`);
+      let response = await axiosInstance(`/api/logout`);
       if (response.status === 200) {
         userNotAuthenticated();
       }
@@ -102,7 +103,7 @@ const Header: React.FC<Props> = props => {
 
   const handleSystemInfoDisplay = () => {
     toggleUserDropdown(false);
-    axios
+    axiosInstance
       .get("/api/environment/systemInfo")
       .then(res => {
         setSystemInfoVisible(true);
@@ -136,17 +137,19 @@ const Header: React.FC<Props> = props => {
       <div className={styles.username} tabIndex={-1}>
         {localStorage.getItem("dataHubUser")}
       </div>
-      <div className={styles.logout} tabIndex={-1}>
-        <HCButton
-          id="logOut"
-          variant="outline-light"
-          onClick={confirmLogout}
-          onKeyDown={logoutKeyDownHandler}
-          tabIndex={0}
-        >
+      {props.isCloudEnvironment ? null :
+        <div className={styles.logout} tabIndex={-1}>
+          <HCButton
+            id="logOut"
+            variant="outline-light"
+            onClick={confirmLogout}
+            onKeyDown={logoutKeyDownHandler}
+            tabIndex={0}
+          >
           Log Out
-        </HCButton>
-      </div>
+          </HCButton>
+        </div>
+      }
     </div>
   );
 

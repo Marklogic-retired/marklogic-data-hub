@@ -44,7 +44,7 @@ describe("Overview component", () => {
     enabled.forEach((card, i) => {
       expect(getByLabelText(card + "-card")).toHaveClass(`enabled`);
       fireEvent.click(getByLabelText(card + "-card"));
-      expect(history.location.pathname).toEqual(`/tiles/${card}`);
+      expect(history.location.pathname).toEqual(`/tiles-${card}`);
     });
     // NO cards have permissions warning
     expect(queryAllByText("*additional permissions required")).toHaveLength(0);
@@ -86,7 +86,7 @@ describe("Overview component", () => {
       card.focus();
       expect(card).toHaveFocus();
       fireEvent.keyDown(card, {key: "Enter", code: "Enter"});
-      expect(history.location.pathname).toEqual(`/tiles/${id}`);
+      expect(history.location.pathname).toEqual(`/tiles-${id}`);
     });
   });
 

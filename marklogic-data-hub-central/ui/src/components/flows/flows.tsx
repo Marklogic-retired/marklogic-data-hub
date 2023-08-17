@@ -7,7 +7,7 @@ import {getViewSettings, setViewSettings} from "@util/user-context";
 import {getUserPreferences, updateUserPreferences} from "../../../src/services/user-preferences";
 import {Flow} from "../../types/run-types";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
-import axios from "@config/axios";
+import axiosInstance from "@config/axios.ts";
 import styles from "./flows.module.scss";
 import {useDropzone} from "react-dropzone";
 import {
@@ -512,7 +512,7 @@ const Flows: React.FC<Props> = ({
 
     if (currentFlow["steps"].length > 0) {
       try {
-        let response = await axios.get("/api/flows/" + currentFlow.name + "/latestJobInfo");
+        let response = await axiosInstance.get("/api/flows/" + currentFlow.name + "/latestJobInfo");
         if (response.status === 200 && response.data) {
           let currentFlowJobInfo = {};
           currentFlowJobInfo[currentFlow["name"]] = response.data["steps"];

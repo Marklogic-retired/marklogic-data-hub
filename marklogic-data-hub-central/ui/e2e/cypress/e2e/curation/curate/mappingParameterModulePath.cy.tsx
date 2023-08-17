@@ -51,7 +51,7 @@ describe("Create and Edit Mapping Steps with Parameter Module Path", () => {
   });
 
   it("Edit Mapping step with parameter module path", () => {
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
     curatePage.toggleEntityTypeId("Order");
 

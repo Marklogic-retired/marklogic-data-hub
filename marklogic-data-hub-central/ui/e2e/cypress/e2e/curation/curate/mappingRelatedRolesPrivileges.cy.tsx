@@ -91,7 +91,7 @@ describe("Mapping", () => {
     cy.loginAsOperator().withRequest();
 
     cy.log("**Go to Curate Tile**");
-    cy.visit("/tiles/curate");
+    cy.visit("/tiles-curate");
     cy.waitForAsyncRequest();
 
     cy.log("**Open Order to see steps**");

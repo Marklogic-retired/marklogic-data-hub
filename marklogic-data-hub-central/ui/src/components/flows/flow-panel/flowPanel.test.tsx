@@ -8,7 +8,7 @@ import data from "../../../assets/mock-data/curation/flows.data";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 const defaultProps: Props = {
   flow: data.flows.data[0],

@@ -6,13 +6,13 @@ import "@testing-library/jest-dom/extend-expect";
 import {createMemoryHistory} from "history";
 const history = createMemoryHistory();
 import {Flow} from "../../types/run-types";
-import axiosMock from "axios";
+import axiosInstance from "@config/axios";
 import data from "../../assets/mock-data/curation/flows.data";
 import Flows, {Props} from "./flows";
 import {SecurityTooltips} from "../../config/tooltips.config";
 // import {getViewSettings} from "../../util/user-context";
 
-jest.mock("axios");
+jest.mock("@config/axios");
 
 describe("Flows component", () => {
   let flowsProps: Props = {
@@ -45,7 +45,7 @@ describe("Flows component", () => {
   const addStepName = data.steps.data["ingestionSteps"][0].name;
 
   beforeEach(() => {
-    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
+    axiosInstance.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
   });
 
   afterEach(() => {
