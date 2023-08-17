@@ -27,9 +27,9 @@ const {populateContentObjects, getContentObject} = common;
 const previewMatchingActivityLib = require("/data-hub/5/mastering/preview-matching-activity-lib.xqy");
 
 const stepName = external.stepName;
-const uris = external.uris;
-const sampleSize = external.sampleSize;
+const sampleSize = external.sampleSize || 100;
 const restrictToUris = external.restrictToUris;
+const uris = external.uris && (restrictToUris || external.uris.length > 0) ? external.uris: null;
 const nonMatches = external.nonMatches;
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
@@ -50,38 +50,51 @@ let resultFunction = function() {
       score: minMatchRuleWeight
     });
   }
-  const urisSelection = uris ? uris: cts.uris(null, ["score-zero", "concurrent", `limit=${sampleSize}`], sourceQuery, 0);
-  populateContentObjects(uris);
-  const urisQuery = cts.documentQuery(urisSelection);
-
-  if (restrictToUris) {
-    step.filterQuery = step.filterQuery ? cts.andQuery([cts.query(step.filterQuery), urisQuery]) : urisQuery;
-  }
-  const matchable = new Matchable(step);
-  const output = [];
-  const content = Sequence.from(hubUtils.queryToContentDescriptorArray(urisQuery));
-  const results = fn.exists(content) ? matcher.buildMatchSummary(matchable, content)[0]: {matchSummary: {actionDetails: {}}};
+  
   const allUris = new Set();
+  const encounteredPairs = new Set();
+  const matchable = new Matchable(step);
+  
   let pairCount = 0;
-  for (const [actionUri,  actionDetails] of Object.entries(results.matchSummary.actionDetails)) {
-    if (nonMatches && actionDetails.thresholdName !== "Not Matched") {
-      continue;
+  const output = [];
+  const maxPages = uris && uris.length >= 0 ? 1: 5;
+  const originalFilterQuery = step.filterQuery;
+  for (let i = 0; i < maxPages; i++) {
+    const urisSelection = uris ? uris: cts.uris(null, ["score-zero", "concurrent", `skip=${sampleSize * i}`, `truncate=${sampleSize}`], sourceQuery, 0);
+    if (!urisSelection || fn.empty(urisSelection)) {
+      break;
     }
-    const uris = actionDetails.uris;
-    uris.forEach(uri => allUris.add(uri));
-    populateContentObjects(uris);
-    const referenceMatchResult = actionDetails.matchResults.find(matchingResult => matchingResult.score === "referenceDocument");
-    if (referenceMatchResult && referenceMatchResult.uri) {
-      const comparingURI = referenceMatchResult.uri;
+    populateContentObjects(urisSelection);
+    const urisQuery = cts.documentQuery(urisSelection);
+
+    if (restrictToUris) {
+      step.filterQuery = originalFilterQuery ? cts.andQuery([cts.query(originalFilterQuery), urisQuery]) : urisQuery;
+    }
+    const content = Sequence.from(hubUtils.queryToContentDescriptorArray(urisQuery));
+    const results = fn.exists(content) ? matcher.buildMatchSummary(matchable, content)[0]: {matchSummary: {actionDetails: {}}};
+    for (const [actionUri,  actionDetails] of Object.entries(results.matchSummary.actionDetails)) {
+      if (nonMatches && actionDetails.thresholdName !== "Not Matched") {
+        continue;
+      }
+      const uris = actionDetails.uris;
+      uris.forEach(uri => allUris.add(uri));
+      populateContentObjects(uris);
+      let comparingUri = actionDetails.uris[0];
+      const referenceMatchResult = actionDetails.matchResults.find(matchingResult => matchingResult.score === "referenceDocument");
+      if (referenceMatchResult && referenceMatchResult.uri) {
+        comparingUri = referenceMatchResult.uri;
+      }
       for (const matchingResult of actionDetails.matchResults) {
-        if (matchingResult.uri === comparingURI) {
+        const pairKey = [matchingResult.uri, comparingUri].sort().join(":");
+        if (matchingResult.uri === comparingUri || encounteredPairs.has(pairKey)) {
           continue;
         }
+        encounteredPairs.add(pairKey);
         output.push({
           name: actionDetails.thresholdName,
           action: actionDetails.action,
           score: matchingResult.score,
-          uris: [comparingURI, matchingResult.uri],
+          uris: [comparingUri, matchingResult.uri],
           matchRulesets: matchingResult.matchedRulesets.map(matched => matched.rulesetName)
         });
         if (++pairCount === sampleSize) {
@@ -91,6 +104,9 @@ let resultFunction = function() {
       if (pairCount === sampleSize) {
         break;
       }
+    }
+    if (pairCount >= sampleSize) {
+      break;
     }
   }
   return {

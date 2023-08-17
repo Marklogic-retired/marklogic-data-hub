@@ -57,23 +57,24 @@ function gatherThresholdQueryFunctions(thresholdDefinitions) {
 
 function addHashesToTripleArray(contentObject, matchRulesetDefinitions, triplesByUri, inMemoryTriples) {
   for (const matchRuleset of matchRulesetDefinitions) {
-    const queryHashes = matchRuleset.queryHashes(contentObject, matchRuleset.fuzzyMatch());
+    const queryHashes = matchRuleset.queryHashes(contentObject);
     for (const queryHash of queryHashes) {
       let uriTriples = triplesByUri.get(contentObject.uri);
       if (!uriTriples) {
         uriTriples = [];
         triplesByUri.set(contentObject.uri, uriTriples);
       }
-      const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash);
-      const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name());
+      const uriToHashTriple = sem.triple(contentObject.uri, queryHashPredicate, queryHash, fuzzyMatchHashesCollection);
+      const hashToRulesetTriple = sem.triple(queryHash, hashBelongToPredicate, matchRuleset.name(), fuzzyMatchHashesCollection);
       inMemoryTriples.push(uriToHashTriple, hashToRulesetTriple);
-      uriTriples.push(uriToHashTriple, hashToRulesetTriple);
+      //uriTriples.push(uriToHashTriple, hashToRulesetTriple);
     }
   }
 }
 
 function getMatchingURIs(matchable, contentObject, baselineQuery, filterQuery, thresholdQueryFunctions) {
   let allMatchingBatchUris = [];
+
   for (const thresholdQueryFunction of thresholdQueryFunctions) {
     const thresholdQuery = thresholdQueryFunction(contentObject);
     if (!thresholdQuery) {
@@ -273,37 +274,37 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
         ?originalUri <http://marklogic.com/data-hub/mastering#hasMatchingHash> ?uriHash.
         FILTER (?matchingUri = $uris)
     }`, {uris}, [], [sem.inMemoryStore(inMemoryTriples), sem.store(["document"], cts.collectionQuery(fuzzyMatchHashesCollection))]).toArray().reduce((hashMatches, triple) => {
-    let {originalUri, matchingUri, matchRuleset} = triple;
-    originalUri = fn.string(originalUri), matchingUri = fn.string(matchingUri), matchRuleset = fn.string(matchRuleset);
-    let currentHashMatch = hashMatches.get(originalUri);
-    if (!currentHashMatch) {
-      currentHashMatch = {matches: new Map()};
-      hashMatches.set(originalUri, currentHashMatch);
-    }
-    const uriMatches = currentHashMatch.matches;
-    if (matchingUri === originalUri) {
+      let {originalUri, matchingUri, matchRuleset} = triple;
+      originalUri = fn.string(originalUri), matchingUri = fn.string(matchingUri), matchRuleset = fn.string(matchRuleset);
+      let currentHashMatch = hashMatches[originalUri];
+      if (!currentHashMatch) {
+        currentHashMatch = {matches: {}};
+        hashMatches[originalUri] = currentHashMatch;
+      }
+      const uriMatches = currentHashMatch.matches;
+      if (matchingUri === originalUri) {
+        return hashMatches;
+      }
+      let match = uriMatches[matchingUri];
+      if (!match) {
+        match = {matchedRulesets: []};
+        uriMatches[matchingUri] = match;
+      }
+      match.matchedRulesets.push(matchRuleset);
       return hashMatches;
-    }
-    let match = uriMatches.get(matchingUri);
-    if (!match) {
-      match = {matchedRulesets: []};
-      uriMatches.set(matchingUri, match);
-    }
-    match.matchedRulesets.push(matchRuleset);
-    return hashMatches;
-  }, new Map());
-  populateContentObjects(results.keys());
-  for (const resultEntry of results.entries()) {
-    const matchUri = resultEntry[0];
-    const matches = resultEntry[1];
+    }, {});
+  const contentUris = Object.keys(results);
+  populateContentObjects(contentUris);
+  for (const matchUri of contentUris) {
+    const matches = results[matchUri];
     const currentContentObject = getContentObject(matchUri);
     if (!currentContentObject) {
       continue;
     }
     const groupByThreshold = {};
-    for (const matchesEntry of matches.matches.entries()) {
-      const matchedUri = matchesEntry[0];
-      const match = matchesEntry[1];
+    const matchedUris = Object.keys(matches.matches);
+    for (const matchedUri of matchedUris) {
+      const match = matches.matches[matchedUri];
       if (!(match && match.matchedRulesets)) {
         continue;
       }
@@ -341,7 +342,7 @@ function addHashMatchesToMatchSummary(matchable, matchSummary, uris, inMemoryTri
         continue;
       }
       const thresholdDefinition = thresholdDefinitionsByName[thresholdName];
-      const matchDocSet = thresholdMatches.map((uri) => getContentObject(uri)).filter((content) => {
+      const matchDocSet = [matchUri, ...thresholdMatches].map((uri) => getContentObject(uri)).filter((content) => {
         return content && (matchable.scoreDocument(currentContentObject, content) >= thresholdDefinition.score());
       });
       thresholdMatches = matchDocSet.map(content => content.uri);

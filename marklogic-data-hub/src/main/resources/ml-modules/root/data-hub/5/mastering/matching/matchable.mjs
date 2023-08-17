@@ -404,6 +404,9 @@ class MatchRulesetDefinition {
         }
       }
     }
+    if (matchingTraceEnabled) {
+      xdmp.trace(matchingTraceEvent, `Excluded values: ${xdmp.toJsonString([...this.excludedValues])}`);
+    }
   }
 
   name() {
@@ -422,7 +425,7 @@ class MatchRulesetDefinition {
     if (!matchRule._valueFunction) {
       const pathKey = matchRule.documentXPath || matchRule.entityPropertyPath;
       matchRule._valueFunction = (contentObject) => {
-        const key = `${contentObject.uri}:${pathKey}`;
+        const key = `${contentObject.uri}:${this.exclusionListNames.sort().join(":")}:${pathKey}`;
         if (!cachedPropertyValues.has(key)) {
           let values;
           if (matchRule.documentXPath) {
@@ -489,7 +492,7 @@ class MatchRulesetDefinition {
     let matchRule = passMatchRule.toObject();
     let dictionary = matchRule.options.dictionaryURI;
     let spellOption = {
-      distanceThreshold: matchRule.options.distanceThreshold
+      distanceThreshold: matchRule.options.distanceThreshold || 100
     };
     let results;
     try {
@@ -680,7 +683,7 @@ class MatchRulesetDefinition {
       if (query) {
         hashes = [...matchingXqy.queryToHashes(query, this.fuzzyMatch())];
       }
-      this._cachedQueryHashes.set(uri, new Set(hashes));
+      this._cachedQueryHashes.set(uri, hashes);
     }
     return this._cachedQueryHashes.get(uri);
   }
