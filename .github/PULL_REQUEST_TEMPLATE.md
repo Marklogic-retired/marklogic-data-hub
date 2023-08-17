@@ -13,10 +13,12 @@
 - [ ] Squashed all commits into a single commit
 - [ ] Added Tests
 - [ ] Ran newly added/edited cypress tests on Firefox locally
+- [ ] Remove any PII info and customer data
   
 
 - ##### Reviewer:
 
 - [ ] Reviewed Tests
 - [ ] Added to Release Wiki
+- [ ] Review any PII info and customer data
 
