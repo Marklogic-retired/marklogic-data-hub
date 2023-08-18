@@ -156,6 +156,19 @@
   }
 }
 
+.mappingSettingRowError {
+    border: none;
+}
+.mappingSettingRowErrorContext {
+    border: 2px solid red;
+    border-bottom: none;
+}
+.mappingSettingRowErrorURI {
+    border: 2px solid red;
+    border-top: none;
+
+}
+
 .document-table-demo, .expandable-table-view {
     .table {
         thead {
@@ -242,7 +255,7 @@
     }
 }
 
-//To recover outside borders in explore table comment this style ".resultTableMain table" 
+//To recover outside borders in explore table comment this style ".resultTableMain table"
 //and uncomment styles inside ".resultTableMain"
 .resultTableMain table {
         border: none !important;

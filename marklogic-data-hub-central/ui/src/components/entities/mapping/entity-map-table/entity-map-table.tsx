@@ -119,6 +119,25 @@ const EntityMapTable: React.FC<Props> = props => {
   //Text for related entities help icon
   const [showDocPopover, setShowDocPopover] = useState(false);
   const [targetDocPopover, setTargetDocPopover] = useState(null);
+  const CONTEXT_URI_ERROR_MESSAGE =  "The Context or URI expression is inapplicable to the respective source document and will lead to null outputs for the remaining fields below.";
+
+  function contextAndUriValidation() {
+    let index = props.savedMappingArt.relatedEntityMappings?.findIndex(
+      entity => entity["relatedEntityMappingId"] === props?.entityMappingId,
+    );
+    if (
+      props.mapResp &&
+      props.mapResp.relatedEntityMappings &&
+      props.mapResp.relatedEntityMappings[index] &&
+      props.mapResp.relatedEntityMappings[index].uriExpression
+    ) {
+      let prop = props.mapResp.relatedEntityMappings[index].uriExpression;
+      if (prop && prop["errorMessage"] && prop["errorMessage"] === CONTEXT_URI_ERROR_MESSAGE) {
+        return true;
+      }
+      return false;
+    }
+  }
   const relatedInfo = (
     <Overlay show={showDocPopover} target={targetDocPopover} placement="right">
       <Popover
@@ -150,6 +169,7 @@ const EntityMapTable: React.FC<Props> = props => {
       </Popover>
     </Overlay>
   );
+
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
@@ -463,12 +483,16 @@ const EntityMapTable: React.FC<Props> = props => {
     }
   }, [props.labelRemoved]);
 
+  const borderColorError = (propName, isProperty) => {
+    return contextAndUriValidation() && propName === "URI" ? "none" : checkFieldInErrors(propName, isProperty) ? "red" : "";
+  };
+
   const mapExpressionStyle = (propName, isProperty) => {
     const mapStyle: CSSProperties = {
       width: "100%",
       verticalAlign: "top",
       justifyContent: "top",
-      borderColor: checkFieldInErrors(propName, isProperty) ? "red" : "",
+      borderColor: borderColorError(propName, isProperty),
     };
     return mapStyle;
   };
@@ -2758,7 +2782,7 @@ const EntityMapTable: React.FC<Props> = props => {
           <HCTable
             pagination={false}
             className={tableCSS}
-            rowClassName={"mappingSettingRow"}
+            rowClassName={contextAndUriValidation() ? "mappingSettingRowError" : "mappingSettingRow"}
             onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
             expandedRowKeys={props.entityExpandedKeys}
             columns={getColumnsForEntityTable("upper")}

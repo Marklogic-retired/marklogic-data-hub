@@ -19,6 +19,6 @@ let result = datahub.flow.runFlow('customerFlow', 'mapWithUriExpressionEvaluates
   test.assertEqual(1, result.failedItems.length),
   test.assertEqual("/content/customerInfo.json", result.failedItems[0]),
   test.assertEqual("400", result.errors[0].data[0], "HTTP error code is 400"),
-  test.assertEqual("Unable to write mapped instance for entity model 'Order'; cause: The URI xpath expression for the mapping evaluates to null", result.errors[0].data[1])
+  test.assertEqual("Unable to write mapped instance for entity model 'Order'; cause: The Context or URI expression is inapplicable to the respective source document and will lead to null outputs for the remaining fields below.", result.errors[0].data[1])
 
 ];
