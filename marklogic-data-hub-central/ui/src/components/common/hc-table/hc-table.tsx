@@ -422,13 +422,17 @@ function HCTable({
   });
 
   const rowClasses = (row, rowIndex) => {
-    let classes;
+    let classes = `hc-table_row ${rowClassName || ""}`;
     if (rowClassName === "mappingSettingRow") {
-      if (row.name === "URI" || row.name === "Context") {
-        classes = "mappingSettingRow";
+      classes = "mappingSettingRow";
+    }
+    if (rowClassName === "mappingSettingRowError") {
+      if (row.name === "URI") {
+        classes = "mappingSettingRowErrorURI";
       }
-    } else {
-      classes = `hc-table_row ${rowClassName || ""}`;
+      if (row.name === "Context") {
+        classes = "mappingSettingRowErrorContext";
+      }
     }
     return classes;
   };

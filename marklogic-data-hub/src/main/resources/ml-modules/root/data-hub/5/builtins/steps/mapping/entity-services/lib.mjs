@@ -548,7 +548,7 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
     }
     if (!errorEvaluatingExpression && !response) {
       errorEvaluatingExpression = true;
-      response = "The URI XPath expression for the mapping evaluates to null";
+      response = "The Context or URI expression is inapplicable to the respective source document and will lead to null outputs for the remaining fields below.";
     }
 
     if (mappingIndex == 0) {

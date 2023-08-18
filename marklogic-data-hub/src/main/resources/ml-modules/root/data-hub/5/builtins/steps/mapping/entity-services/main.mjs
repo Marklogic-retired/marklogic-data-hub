@@ -147,7 +147,7 @@ function buildUri(entityInstance, entityName, outputFormat) {
   if (String(entityInstance.uri)) {
     return flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
   } else {
-    httpUtils.throwBadRequest(`Unable to write mapped instance for entity model '${entityName}'; cause: The URI xpath expression for the mapping evaluates to null`);
+    httpUtils.throwBadRequest(`Unable to write mapped instance for entity model '${entityName}'; cause: The Context or URI expression is inapplicable to the respective source document and will lead to null outputs for the remaining fields below.`);
   }
 }
 
