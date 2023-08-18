@@ -238,14 +238,22 @@ const Run = props => {
     const _stepsRunning = flow?.steps?.filter(step => {
       return stepNumbers.includes(step.stepNumber);
     });
-    flow && _stepsRunning ? setFlowRunning({...flow, steps: _stepsRunning}) : setFlowRunning(InitialFlow);
+    flow && _stepsRunning
+      ? setFlowRunning({...flow, steps: _stepsRunning, description: flowName})
+      : setFlowRunning(InitialFlow);
   };
 
-  const finishRun = (flowName: string) => {
+  const finishRun = () => {
     setIsLoading(false);
     let InitialFlowAux = {...InitialFlow};
-    InitialFlowAux.description = flowName;
     setFlowRunning(InitialFlowAux);
+  };
+
+  const handleStepRun = (isRunning: boolean, stepId) => {
+    if (!isRunning) {
+      finishRun();
+    }
+    setIsStepRunning(isRunning);
   };
 
   const runFlowSteps = async (flowName: string, steps: Step[], formData: any) => {
@@ -295,7 +303,6 @@ const Run = props => {
               }
             });
         }, pollConfig.interval);
-        finishRun(flowName);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -348,7 +355,6 @@ const Run = props => {
               setRunEnded({flowId: flowName, stepId: step.stepNumber});
             });
         }, pollConfig.interval);
-        finishRun(flowName);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -445,7 +451,7 @@ const Run = props => {
       {openJobResponse && (
         <JobResponse
           setUserCanStopFlow={setUserCanStopFlow}
-          setIsStepRunning={setIsStepRunning}
+          setIsStepRunning={handleStepRun}
           stopRun={stopRun}
           jobId={jobId}
           setOpenJobResponse={setOpenJobResponse}
