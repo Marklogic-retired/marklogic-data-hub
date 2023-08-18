@@ -67,9 +67,7 @@ const StepCard: React.FC<Props> = ({
   let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase() : "";
   let stepDefinitionTypeTitle = StepDefinitionTypeTitles[stepDefinitionType];
   let stepWithJobDetail =
-    latestJobData && latestJobData[flow.name] && latestJobData[flow.name]
-      ? latestJobData[flow.name].find(el => el.stepId === step.stepId)
-      : null;
+    latestJobData && latestJobData[flow.name] ? latestJobData[flow.name].find(el => el.stepId === step.stepId) : null;
 
   const reorderFlowKeyDownHandler = (event, index, flowName, direction) => {
     if (event.key === "Enter") {
@@ -106,23 +104,23 @@ const StepCard: React.FC<Props> = ({
     return result !== undefined;
   };
 
-  const lastRunResponse = (step, flow) => {
+  const lastRunResponse = (_step, _flow) => {
     let stepEndTime;
-    if (step.stepEndTime) {
-      stepEndTime = new Date(step.stepEndTime).toLocaleString();
+    if (_step.stepEndTime) {
+      stepEndTime = new Date(_step.stepEndTime).toLocaleString();
     }
 
-    const flowLastRun = latestJobData[flow];
+    const flowLastRun = latestJobData[_flow];
 
     let canceled = flowLastRun?.some(function (stepObj) {
       return stepObj.lastRunStatus?.includes("canceled");
     });
 
-    if (!step.lastRunStatus && !canceled) {
+    if (!_step.lastRunStatus && !canceled) {
       return null;
     }
 
-    if (isRunning(flow.name, step.stepNumber)) {
+    if (isRunning(_flow, _step.stepId)) {
       return (
         <HCTooltip text={RunToolTips.stepRunning} id="running-tooltip" placement="bottom">
           <span tabIndex={0}>
@@ -132,13 +130,13 @@ const StepCard: React.FC<Props> = ({
                 icon={faClock}
                 className={styles.runningIcon}
                 size="lg"
-                data-testid={`running-${step.stepName}`}
+                data-testid={`running-${_step.stepName}`}
               />
             </i>
           </span>
         </HCTooltip>
       );
-    } else if (step.lastRunStatus?.includes("canceled") || (!step.lastRunStatus && canceled)) {
+    } else if (_step.lastRunStatus?.includes("canceled") || (!_step.lastRunStatus && canceled)) {
       return (
         <span>
           <HCTooltip text={RunToolTips.stepCanceled(stepEndTime)} id="canceled-tooltip" placement="bottom">
@@ -150,7 +148,7 @@ const StepCard: React.FC<Props> = ({
           </HCTooltip>
         </span>
       );
-    } else if (step.lastRunStatus?.includes("completed step")) {
+    } else if (_step.lastRunStatus?.includes("completed step")) {
       return (
         <span>
           <HCTooltip text={RunToolTips.stepCompleted(stepEndTime)} id="success-tooltip" placement="bottom">
@@ -161,14 +159,14 @@ const StepCard: React.FC<Props> = ({
                   icon={faCheckCircle}
                   className={styles.successfulRun}
                   size="lg"
-                  data-testid={`check-circle-${step.stepName}`}
+                  data-testid={`check-circle-${_step.stepName}`}
                 />
               </i>
             </span>
           </HCTooltip>
         </span>
       );
-    } else if (step.lastRunStatus?.includes("completed with errors step")) {
+    } else if (_step.lastRunStatus?.includes("completed with errors step")) {
       return (
         <span>
           <HCTooltip
