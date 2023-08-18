@@ -358,9 +358,7 @@ const ConfirmationModal: React.FC<Props> = props => {
             <p aria-label="delete-step-text">
               Are you sure you want to delete the
               <b>
-                <AddTooltipWhenTextOverflow
-                  text={props.boldTextArray[0]}
-                />
+                <AddTooltipWhenTextOverflow text={props.boldTextArray[0]} />
               </b>
               step?
             </p>

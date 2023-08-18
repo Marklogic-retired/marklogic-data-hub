@@ -7,7 +7,6 @@ import {ModelingContext} from "@util/modeling-context";
 import {getEntityTypes, hubCentralConfig} from "../../../../assets/mock-data/modeling/modeling";
 import {primaryEntityTypes} from "../../../../api/modeling";
 
-
 jest.mock("../../../../api/modeling");
 jest.mock("../../../../api/environment");
 
@@ -79,6 +78,5 @@ describe("Graph View sidepanel", () => {
     // Verifies namespace field is is with disabled style
     const deleteConceptField = getByTestId("isCategory-delete-disabled");
     expect(deleteConceptField).toBeInTheDocument();
-
   });
 });

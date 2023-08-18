@@ -6,7 +6,8 @@ import ListModal from "./list-modal";
 
 const errorTextNoTitle = "A title for this list is required.";
 const errorTextNoValues = "Values to ignore in this list are required.";
-const errorText = "Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.";
+const errorText =
+  "Names must start with a letter or number and can contain letters, numbers, hyphens, and underscores.";
 
 describe("Test input validation values to ignore", () => {
   const globalAny: any = global;

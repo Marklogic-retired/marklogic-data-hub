@@ -13,7 +13,10 @@ export const deleteConfirmationModal = (isVisible: boolean, flowName: string, on
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4 ${styles.confirmationText}`}>
           Are you sure you want to delete the{" "}
-          <strong><AddTooltipWhenTextOverflow text={flowName} /></strong> {itemType}
+          <strong>
+            <AddTooltipWhenTextOverflow text={flowName} />
+          </strong>{" "}
+          {itemType}
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
@@ -44,7 +47,10 @@ export const deleteStepConfirmationModal = (
       <Modal.Body className={"text-center pt-0 pb-4"}>
         <div className={`mb-4 ${styles.confirmationText}`}>
           Are you sure you want to remove the <strong>{stepName}</strong> step from the{" "}
-          <strong><AddTooltipWhenTextOverflow text={flowName} /></strong> flow?
+          <strong>
+            <AddTooltipWhenTextOverflow text={flowName} />
+          </strong>{" "}
+          flow?
         </div>
         <div>
           <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
@@ -84,7 +90,10 @@ export const addStepConfirmationModal = (
           ) : (
             <p>
               Are you sure you want to add step <b>{stepName}</b> to flow{" "}
-              <b><AddTooltipWhenTextOverflow text={flowName} /></b>?
+              <b>
+                <AddTooltipWhenTextOverflow text={flowName} />
+              </b>
+              ?
             </p>
           )}
         </div>
@@ -117,7 +126,10 @@ export const addExistingStepConfirmationModal = (isVisible: boolean, stepName, f
           {
             <p>
               The step <b>{stepName}</b> is already in the flow{" "}
-              <b><AddTooltipWhenTextOverflow text={flowName} /></b>.
+              <b>
+                <AddTooltipWhenTextOverflow text={flowName} />
+              </b>
+              .
             </p>
           }
         </div>

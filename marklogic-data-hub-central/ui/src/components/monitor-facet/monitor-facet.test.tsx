@@ -1,6 +1,11 @@
 import React from "react";
 import {render, fireEvent, waitForElement, wait} from "@testing-library/react";
-import {flowNameFacetProps, stepNameFacetProps, stepTypeFacetProps, statusFacetProps} from "../../assets/mock-data/monitor/facet-props";
+import {
+  flowNameFacetProps,
+  stepNameFacetProps,
+  stepTypeFacetProps,
+  statusFacetProps,
+} from "../../assets/mock-data/monitor/facet-props";
 import MonitorFacet from "./monitor-facet";
 import userEvent from "@testing-library/user-event";
 

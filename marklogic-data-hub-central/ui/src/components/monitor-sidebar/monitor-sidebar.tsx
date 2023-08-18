@@ -290,7 +290,7 @@ export const MonitorSidebar: React.FC<Props> = props => {
 
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
   const keyForSelectTime = () => {
-    let value  = selectTimeOptions.find(oItem => oItem.value === dateRangeValue);
+    let value = selectTimeOptions.find(oItem => oItem.value === dateRangeValue);
     if (typeof value === "object") {
       return value;
     }

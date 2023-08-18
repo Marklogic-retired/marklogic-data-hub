@@ -3,10 +3,7 @@ export const mockEntityMapTable = {
   "executeScroll": () => {},
   "mapResp": {},
   "mapData": {
-    "collections": [
-      "mapOfficeStep",
-      "Office"
-    ],
+    "collections": ["mapOfficeStep", "Office"],
     "additionalCollections": [],
     "permissions": "data-hub-common,read,data-hub-common,update",
     "batchSize": 100,
@@ -17,9 +14,7 @@ export const mockEntityMapTable = {
     "name": "mapOfficeStep",
     "targetEntityType": "http://example.org/Office-0.0.1/Office",
     "description": "",
-    "collection": [
-      "loadOffice"
-    ],
+    "collection": ["loadOffice"],
     "selectedSource": "collection",
     "sourceQuery": "cts.collectionQuery(['loadOffice'])",
     "targetDatabase": "data-hub-FINAL",
@@ -35,17 +30,17 @@ export const mockEntityMapTable = {
     "lastUpdated": "2023-05-23T13:12:44.2896624-05:00",
     "properties": {
       "officeId": {
-        "sourcedFrom": "OfficeId"
+        "sourcedFrom": "OfficeId",
       },
       "name": {
-        "sourcedFrom": "Name"
+        "sourcedFrom": "Name",
       },
       "productId": {
-        "sourcedFrom": "productList/productId"
+        "sourcedFrom": "productList/productId",
       },
       "category": {
-        "sourcedFrom": "category"
-      }
+        "sourcedFrom": "category",
+      },
     },
     "namespaces": {},
     "relatedEntityMappings": [
@@ -53,20 +48,17 @@ export const mockEntityMapTable = {
         "relatedEntityMappingId": "Office.productId:Product",
         "properties": {
           "productId": {
-            "sourcedFrom": "productList/productId"
+            "sourcedFrom": "productList/productId",
           },
           "productName": {
-            "sourcedFrom": "productList/name"
-          }
+            "sourcedFrom": "productList/name",
+          },
         },
         "targetEntityType": "http://example.org/Product-1.0.0/Product",
-        "collections": [
-          "mapOfficeStep",
-          "Product"
-        ],
-        "permissions": "data-hub-common,read,data-hub-common,update"
-      }
-    ]
+        "collections": ["mapOfficeStep", "Product"],
+        "permissions": "data-hub-common,read,data-hub-common,update",
+      },
+    ],
   },
   "setMapResp": () => {},
   "mapExpTouched": false,
@@ -75,137 +67,137 @@ export const mockEntityMapTable = {
     {
       "value": "OfficeId",
       "key": "OfficeId",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Name",
       "key": "Name",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "FirstName",
       "key": "Name/FirstName",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "LastName",
       "key": "Name/LastName",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "category",
       "key": "category",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "nicknames",
       "key": "nicknames",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "Email",
       "key": "Email",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Address",
       "key": "Address",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "Shipping",
       "key": "Address/Shipping",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "Street",
       "key": "Address/Shipping/Street",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Street2",
       "key": "Address/Shipping/Street2",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "City",
       "key": "Address/Shipping/City",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "State",
       "key": "Address/Shipping/State",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Postal",
       "key": "Address/Shipping/Postal",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Billing",
       "key": "Address/Billing",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "Street",
       "key": "Address/Billing/Street",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "City",
       "key": "Address/Billing/City",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "State",
       "key": "Address/Billing/State",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Postal",
       "key": "Address/Billing/Postal",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Phone",
       "key": "Phone",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "PIN",
       "key": "PIN",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "officeSince",
       "key": "officeSince",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "Status",
       "key": "Status",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "productList",
       "key": "productList",
-      "struct": true
+      "struct": true,
     },
     {
       "value": "productId",
       "key": "productList/productId",
-      "struct": false
+      "struct": false,
     },
     {
       "value": "name",
       "key": "productList/name",
-      "struct": false
-    }
+      "struct": false,
+    },
   ],
   "saveMapping": () => {},
   "dummyNode": {
-    "current": "<div />"
+    "current": "<div />",
   },
   "getInitialChars": () => {},
   "canReadWrite": true,
@@ -214,31 +206,31 @@ export const mockEntityMapTable = {
     "info": {
       "title": "Product",
       "version": "1.0.0",
-      "baseUri": "http://example.org/"
+      "baseUri": "http://example.org/",
     },
     "definitions": {
       "Product": {
         "properties": {
           "productId": {
-            "datatype": "integer"
+            "datatype": "integer",
           },
           "productName": {
             "datatype": "string",
-            "collation": "http://marklogic.com/collation/codepoint"
+            "collation": "http://marklogic.com/collation/codepoint",
           },
           "category": {
             "datatype": "string",
-            "collation": "http://marklogic.com/collation/codepoint"
-          }
-        }
-      }
-    }
+            "collation": "http://marklogic.com/collation/codepoint",
+          },
+        },
+      },
+    },
   },
   "checkedEntityColumns": {
     "name": true,
     "type": true,
     "key": true,
-    "value": true
+    "value": true,
   },
   "entityTypeProperties": [
     {
@@ -248,7 +240,7 @@ export const mockEntityMapTable = {
       "isProperty": false,
       "filterName": "Context",
       "filterMatch": false,
-      "parentVal": ""
+      "parentVal": "",
     },
     {
       "key": 127,
@@ -257,7 +249,7 @@ export const mockEntityMapTable = {
       "isProperty": false,
       "filterName": "URI",
       "filterMatch": false,
-      "parentVal": ""
+      "parentVal": "",
     },
     {
       "key": 128,
@@ -266,7 +258,7 @@ export const mockEntityMapTable = {
       "filterMatch": false,
       "isProperty": true,
       "type": "integer",
-      "parentVal": ""
+      "parentVal": "",
     },
     {
       "key": 129,
@@ -275,7 +267,7 @@ export const mockEntityMapTable = {
       "filterMatch": false,
       "isProperty": true,
       "type": "string",
-      "parentVal": ""
+      "parentVal": "",
     },
     {
       "key": 130,
@@ -284,231 +276,30 @@ export const mockEntityMapTable = {
       "filterMatch": false,
       "isProperty": true,
       "type": "string",
-      "parentVal": ""
-    }
+      "parentVal": "",
+    },
   ],
   "entityMappingId": "Office.productId:Product",
   "entityExpandedKeys": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-    32,
-    33,
-    34,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    41,
-    42,
-    43,
-    44,
-    45,
-    46,
-    47,
-    48,
-    49,
-    50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57,
-    58,
-    59,
-    60,
-    61,
-    62,
-    63,
-    64,
-    65,
-    66,
-    67,
-    68,
-    69,
-    70,
-    71,
-    72,
-    73,
-    74,
-    75,
-    76,
-    77,
-    78,
-    79,
-    80,
-    81,
-    82,
-    83,
-    84,
-    85,
-    86,
-    87,
-    88,
-    89,
-    90,
-    91,
-    92,
-    93,
-    94,
-    95,
-    96,
-    97,
-    98,
-    99,
-    108,
-    115
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+    89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 108, 115,
   ],
   "setEntityExpandedKeys": () => {},
-  "allEntityKeys": [
-    108,
-    112,
-    115,
-    119
-  ],
+  "allEntityKeys": [108, 112, 115, 119],
   "setExpandedEntityFlag": () => {},
   "initialEntityKeys": [
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23,
-    24,
-    25,
-    26,
-    27,
-    28,
-    29,
-    30,
-    31,
-    32,
-    33,
-    34,
-    35,
-    36,
-    37,
-    38,
-    39,
-    40,
-    41,
-    42,
-    43,
-    44,
-    45,
-    46,
-    47,
-    48,
-    49,
-    50,
-    51,
-    52,
-    53,
-    54,
-    55,
-    56,
-    57,
-    58,
-    59,
-    60,
-    61,
-    62,
-    63,
-    64,
-    65,
-    66,
-    67,
-    68,
-    69,
-    70,
-    71,
-    72,
-    73,
-    74,
-    75,
-    76,
-    77,
-    78,
-    79,
-    80,
-    81,
-    82,
-    83,
-    84,
-    85,
-    86,
-    87,
-    88,
-    89,
-    90,
-    91,
-    92,
-    93,
-    94,
-    95,
-    96,
-    97,
-    98,
-    99,
-    108,
-    115
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+    60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+    89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 108, 115,
   ],
   "tooltipsData": {
     "sourceDatabase": "The database where the input data is read from. For mapping, the default is data-hub-STAGING.",
     "targetDatabase": "The database where to store the processed data. For mapping, the default is data-hub-FINAL.",
     "provGranularity": "<Fragment />",
-    "missingPermission": "Contact your security administrator for access."
+    "missingPermission": "Contact your security administrator for access.",
   },
   "updateStep": () => {},
   "relatedEntityTypeProperties": [
@@ -518,25 +309,25 @@ export const mockEntityMapTable = {
         "info": {
           "title": "Product",
           "version": "1.0.0",
-          "baseUri": "http://example.org/"
+          "baseUri": "http://example.org/",
         },
         "definitions": {
           "Product": {
             "properties": {
               "productId": {
-                "datatype": "integer"
+                "datatype": "integer",
               },
               "productName": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "category": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
-              }
-            }
-          }
-        }
+                "collation": "http://marklogic.com/collation/codepoint",
+              },
+            },
+          },
+        },
       },
       "entityLabel": "Product (Office productId)",
       "entityMappingId": "Office.productId:Product",
@@ -548,7 +339,7 @@ export const mockEntityMapTable = {
           "isProperty": false,
           "filterName": "Context",
           "filterMatch": false,
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 127,
@@ -557,7 +348,7 @@ export const mockEntityMapTable = {
           "isProperty": false,
           "filterName": "URI",
           "filterMatch": false,
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 128,
@@ -566,7 +357,7 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "integer",
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 129,
@@ -575,7 +366,7 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "string",
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 130,
@@ -584,9 +375,9 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "string",
-          "parentVal": ""
-        }
-      ]
+          "parentVal": "",
+        },
+      ],
     },
     {
       "entityType": "Customer",
@@ -595,81 +386,81 @@ export const mockEntityMapTable = {
           "title": "Customer",
           "version": "0.0.1",
           "baseUri": "http://example.org/",
-          "draft": false
+          "draft": false,
         },
         "definitions": {
           "Customer": {
             "properties": {
               "customerId": {
                 "datatype": "integer",
-                "sortable": true
+                "sortable": true,
               },
               "name": {
                 "datatype": "string",
                 "description": "This has a case-insensitive collation for the match queries that use range indexes",
                 "collation": "http://marklogic.com/collation//S2",
                 "facetable": true,
-                "sortable": true
+                "sortable": true,
               },
               "email": {
                 "datatype": "string",
                 "description": "This has a case-insensitive collation for the match queries that use range indexes",
                 "collation": "http://marklogic.com/collation//S2",
-                "facetable": true
+                "facetable": true,
               },
               "pin": {
                 "datatype": "integer",
                 "facetable": true,
-                "sortable": true
+                "sortable": true,
               },
               "nicknames": {
                 "datatype": "array",
                 "description": "Example of a multi-value property of simple values",
                 "items": {
-                  "datatype": "string"
-                }
+                  "datatype": "string",
+                },
               },
               "hasOffice": {
                 "datatype": "integer",
                 "relatedEntityType": "http://example.org/Office-0.0.1/Office",
-                "joinPropertyName": "officeId"
+                "joinPropertyName": "officeId",
               },
               "shipping": {
                 "datatype": "array",
                 "description": "Example of a multi-value property of structured values",
                 "items": {
-                  "$ref": "#/definitions/Address"
+                  "$ref": "#/definitions/Address",
                 },
                 "subProperties": {
                   "street": {
                     "datatype": "array",
                     "items": {
                       "datatype": "string",
-                      "collation": "http://marklogic.com/collation/codepoint"
-                    }
+                      "collation": "http://marklogic.com/collation/codepoint",
+                    },
                   },
                   "city": {
                     "datatype": "string",
-                    "collation": "http://marklogic.com/collation/codepoint"
+                    "collation": "http://marklogic.com/collation/codepoint",
                   },
                   "state": {
                     "datatype": "string",
-                    "collation": "http://marklogic.com/collation/codepoint"
+                    "collation": "http://marklogic.com/collation/codepoint",
                   },
                   "zip": {
                     "$ref": "#/definitions/Zip",
                     "subProperties": {
                       "fiveDigit": {
                         "datatype": "string",
-                        "collation": "http://marklogic.com/collation/codepoint"
+                        "collation": "http://marklogic.com/collation/codepoint",
                       },
                       "plusFour": {
                         "datatype": "string",
-                        "collation": "http://marklogic.com/collation/codepoint"
-                      }
-                    }
-                  }
-                }
+                        "collation": "http://marklogic.com/collation/codepoint",
+                      },
+                    },
+                  },
+                },
               },
               "billing": {
                 "description": "Example of a single-value structured property",
@@ -679,49 +470,49 @@ export const mockEntityMapTable = {
                     "datatype": "array",
                     "items": {
                       "datatype": "string",
-                      "collation": "http://marklogic.com/collation/codepoint"
-                    }
+                      "collation": "http://marklogic.com/collation/codepoint",
+                    },
                   },
                   "city": {
                     "datatype": "string",
-                    "collation": "http://marklogic.com/collation/codepoint"
+                    "collation": "http://marklogic.com/collation/codepoint",
                   },
                   "state": {
                     "datatype": "string",
-                    "collation": "http://marklogic.com/collation/codepoint"
+                    "collation": "http://marklogic.com/collation/codepoint",
                   },
                   "zip": {
                     "$ref": "#/definitions/Zip",
                     "subProperties": {
                       "fiveDigit": {
                         "datatype": "string",
-                        "collation": "http://marklogic.com/collation/codepoint"
+                        "collation": "http://marklogic.com/collation/codepoint",
                       },
                       "plusFour": {
                         "datatype": "string",
-                        "collation": "http://marklogic.com/collation/codepoint"
-                      }
-                    }
-                  }
-                }
+                        "collation": "http://marklogic.com/collation/codepoint",
+                      },
+                    },
+                  },
+                },
               },
               "birthDate": {
                 "datatype": "date",
-                "facetable": true
+                "facetable": true,
               },
               "status": {
-                "datatype": "string"
+                "datatype": "string",
               },
               "customerSince": {
-                "datatype": "date"
+                "datatype": "date",
               },
               "hasShoe": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
-              }
-            }
-          }
-        }
+                "collation": "http://marklogic.com/collation/codepoint",
+              },
+            },
+          },
+        },
       },
       "entityLabel": "Customer (hasOffice Office)",
       "entityMappingId": "Office.officeId:Customer",
@@ -732,7 +523,7 @@ export const mockEntityMapTable = {
           "type": "",
           "isProperty": false,
           "filterName": "Context",
-          "filterMatch": false
+          "filterMatch": false,
         },
         {
           "key": 132,
@@ -740,7 +531,7 @@ export const mockEntityMapTable = {
           "type": "",
           "isProperty": false,
           "filterName": "URI",
-          "filterMatch": false
+          "filterMatch": false,
         },
         {
           "key": 133,
@@ -748,7 +539,7 @@ export const mockEntityMapTable = {
           "filterName": "customerId",
           "filterMatch": false,
           "isProperty": true,
-          "type": "integer"
+          "type": "integer",
         },
         {
           "key": 134,
@@ -756,7 +547,7 @@ export const mockEntityMapTable = {
           "filterName": "name",
           "filterMatch": false,
           "isProperty": true,
-          "type": "string"
+          "type": "string",
         },
         {
           "key": 135,
@@ -764,7 +555,7 @@ export const mockEntityMapTable = {
           "filterName": "email",
           "filterMatch": false,
           "isProperty": true,
-          "type": "string"
+          "type": "string",
         },
         {
           "key": 136,
@@ -772,7 +563,7 @@ export const mockEntityMapTable = {
           "filterName": "pin",
           "filterMatch": false,
           "isProperty": true,
-          "type": "integer"
+          "type": "integer",
         },
         {
           "key": 137,
@@ -780,7 +571,7 @@ export const mockEntityMapTable = {
           "filterName": "nicknames",
           "filterMatch": false,
           "isProperty": true,
-          "type": "parent-string [ ]"
+          "type": "parent-string [ ]",
         },
         {
           "key": 138,
@@ -790,7 +581,7 @@ export const mockEntityMapTable = {
           "isProperty": true,
           "type": "integer",
           "relatedEntityType": "http://example.org/Office-0.0.1/Office",
-          "joinPropertyName": "officeId"
+          "joinPropertyName": "officeId",
         },
         {
           "key": 139,
@@ -806,7 +597,7 @@ export const mockEntityMapTable = {
               "filterName": "street",
               "filterMatch": false,
               "isProperty": true,
-              "type": "parent-string [ ]"
+              "type": "parent-string [ ]",
             },
             {
               "key": 141,
@@ -814,7 +605,7 @@ export const mockEntityMapTable = {
               "filterName": "city",
               "filterMatch": false,
               "isProperty": true,
-              "type": "string"
+              "type": "string",
             },
             {
               "key": 142,
@@ -822,7 +613,7 @@ export const mockEntityMapTable = {
               "filterName": "state",
               "filterMatch": false,
               "isProperty": true,
-              "type": "string"
+              "type": "string",
             },
             {
               "key": 143,
@@ -838,7 +629,7 @@ export const mockEntityMapTable = {
                   "filterName": "fiveDigit",
                   "filterMatch": false,
                   "isProperty": true,
-                  "type": "string"
+                  "type": "string",
                 },
                 {
                   "key": 145,
@@ -846,11 +637,11 @@ export const mockEntityMapTable = {
                   "filterName": "plusFour",
                   "filterMatch": false,
                   "isProperty": true,
-                  "type": "string"
-                }
-              ]
-            }
-          ]
+                  "type": "string",
+                },
+              ],
+            },
+          ],
         },
         {
           "key": 146,
@@ -866,7 +657,7 @@ export const mockEntityMapTable = {
               "filterName": "street",
               "filterMatch": false,
               "isProperty": true,
-              "type": "parent-string [ ]"
+              "type": "parent-string [ ]",
             },
             {
               "key": 148,
@@ -874,7 +665,7 @@ export const mockEntityMapTable = {
               "filterName": "city",
               "filterMatch": false,
               "isProperty": true,
-              "type": "string"
+              "type": "string",
             },
             {
               "key": 149,
@@ -882,7 +673,7 @@ export const mockEntityMapTable = {
               "filterName": "state",
               "filterMatch": false,
               "isProperty": true,
-              "type": "string"
+              "type": "string",
             },
             {
               "key": 150,
@@ -898,7 +689,7 @@ export const mockEntityMapTable = {
                   "filterName": "fiveDigit",
                   "filterMatch": false,
                   "isProperty": true,
-                  "type": "string"
+                  "type": "string",
                 },
                 {
                   "key": 152,
@@ -906,11 +697,11 @@ export const mockEntityMapTable = {
                   "filterName": "plusFour",
                   "filterMatch": false,
                   "isProperty": true,
-                  "type": "string"
-                }
-              ]
-            }
-          ]
+                  "type": "string",
+                },
+              ],
+            },
+          ],
         },
         {
           "key": 153,
@@ -918,7 +709,7 @@ export const mockEntityMapTable = {
           "filterName": "birthDate",
           "filterMatch": false,
           "isProperty": true,
-          "type": "date"
+          "type": "date",
         },
         {
           "key": 154,
@@ -926,7 +717,7 @@ export const mockEntityMapTable = {
           "filterName": "status",
           "filterMatch": false,
           "isProperty": true,
-          "type": "string"
+          "type": "string",
         },
         {
           "key": 155,
@@ -934,7 +725,7 @@ export const mockEntityMapTable = {
           "filterName": "customerSince",
           "filterMatch": false,
           "isProperty": true,
-          "type": "date"
+          "type": "date",
         },
         {
           "key": 156,
@@ -942,10 +733,10 @@ export const mockEntityMapTable = {
           "filterName": "hasShoe",
           "filterMatch": false,
           "isProperty": true,
-          "type": "string"
-        }
-      ]
-    }
+          "type": "string",
+        },
+      ],
+    },
   ],
   "relatedEntitiesSelected": [
     {
@@ -954,25 +745,25 @@ export const mockEntityMapTable = {
         "info": {
           "title": "Product",
           "version": "1.0.0",
-          "baseUri": "http://example.org/"
+          "baseUri": "http://example.org/",
         },
         "definitions": {
           "Product": {
             "properties": {
               "productId": {
-                "datatype": "integer"
+                "datatype": "integer",
               },
               "productName": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
+                "collation": "http://marklogic.com/collation/codepoint",
               },
               "category": {
                 "datatype": "string",
-                "collation": "http://marklogic.com/collation/codepoint"
-              }
-            }
-          }
-        }
+                "collation": "http://marklogic.com/collation/codepoint",
+              },
+            },
+          },
+        },
       },
       "entityLabel": "Product (Office productId)",
       "entityMappingId": "Office.productId:Product",
@@ -984,7 +775,7 @@ export const mockEntityMapTable = {
           "isProperty": false,
           "filterName": "Context",
           "filterMatch": false,
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 127,
@@ -993,7 +784,7 @@ export const mockEntityMapTable = {
           "isProperty": false,
           "filterName": "URI",
           "filterMatch": false,
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 128,
@@ -1002,7 +793,7 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "integer",
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 129,
@@ -1011,7 +802,7 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "string",
-          "parentVal": ""
+          "parentVal": "",
         },
         {
           "key": 130,
@@ -1020,10 +811,10 @@ export const mockEntityMapTable = {
           "filterMatch": false,
           "isProperty": true,
           "type": "string",
-          "parentVal": ""
-        }
-      ]
-    }
+          "parentVal": "",
+        },
+      ],
+    },
   ],
   "setRelatedEntitiesSelected": () => {},
   "isRelatedEntity": true,
@@ -1032,561 +823,530 @@ export const mockEntityMapTable = {
   "filterStr": "",
   "setFilterStr": () => {},
   "allRelatedEntitiesKeys": [
-    101,
-    102,
-    103,
-    104,
-    105,
-    106,
-    107,
-    108,
-    109,
-    110,
-    111,
-    112,
-    113,
-    114,
-    115,
-    116,
-    117,
-    118,
-    119,
-    120,
-    121,
-    122,
-    123,
-    124,
-    125,
-    126,
-    127,
-    128,
-    129,
-    130
+    101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123,
+    124, 125, 126, 127, 128, 129, 130,
   ],
   "setAllRelatedEntitiesKeys": () => {},
   "mapFunctions": [
     {
       "signature": "abs(xs:numeric?) as xs:numeric?",
       "functionName": "abs",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "adjust-date-to-timezone(xs:date?, [xs:dayTimeDuration?]) as xs:date?",
       "functionName": "adjust-date-to-timezone",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "adjust-dateTime-to-timezone(xs:dateTime?, [xs:dayTimeDuration?]) as xs:dateTime?",
       "functionName": "adjust-dateTime-to-timezone",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "adjust-time-to-timezone(xs:time?, [xs:dayTimeDuration?]) as xs:time?",
       "functionName": "adjust-time-to-timezone",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "avg(xs:anyAtomicType*) as xs:anyAtomicType?",
       "functionName": "avg",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "boolean(xs:anyAtomicType?) as xs:boolean?",
       "functionName": "boolean",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "ceiling(xs:numeric?) as xs:numeric?",
       "functionName": "ceiling",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "cleanPrefix",
       "signature": "cleanPrefix(input)",
-      "category": "custom"
+      "category": "custom",
     },
     {
       "signature": "codepoint-equal(xs:string?, xs:string?) as xs:boolean?",
       "functionName": "codepoint-equal",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "codepoints-to-string(xs:integer*) as xs:string",
       "functionName": "codepoints-to-string",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "compare(xs:string?, xs:string?, [xs:string]) as xs:integer?",
       "functionName": "compare",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "concat(xs:anyAtomicType?) as xs:string?",
       "functionName": "concat",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "contains(xs:string?, xs:string?, [xs:string]) as xs:boolean",
       "functionName": "contains",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "count(item()*, [xs:double?]) as xs:integer",
       "functionName": "count",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "current-date() as xs:date",
       "functionName": "current-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "current-dateTime() as xs:dateTime",
       "functionName": "current-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "current-time() as xs:time",
       "functionName": "current-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "data([item()*]) as xs:anyAtomicType*",
       "functionName": "data",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "day-from-date(xs:date?) as xs:integer?",
       "functionName": "day-from-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "day-from-dateTime(xs:dateTime?) as xs:integer?",
       "functionName": "day-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "days-from-duration(xs:duration?) as xs:integer?",
       "functionName": "days-from-duration",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "documentLookup",
       "signature": "documentLookup(key,dictionary-uri)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "signature": "empty(item()*) as xs:boolean",
       "functionName": "empty",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "encode-for-uri(xs:string?) as xs:string",
       "functionName": "encode-for-uri",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "ends-with(xs:string?, xs:string?, [xs:string]) as xs:boolean",
       "functionName": "ends-with",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "escape-html-uri(xs:string?) as xs:string",
       "functionName": "escape-html-uri",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "escape-uri(xs:string, xs:boolean) as xs:string",
       "functionName": "escape-uri",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "exists(item()*) as xs:boolean",
       "functionName": "exists",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "false() as xs:boolean",
       "functionName": "false",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "floor(xs:double) as xs:double",
       "functionName": "floor",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "format-date(xs:date?, xs:string, xs:string?, xs:string?, [xs:string?]) as xs:string",
       "functionName": "format-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "format-dateTime(xs:dateTime?, xs:string, xs:string?, xs:string?, [xs:string?]) as xs:string",
       "functionName": "format-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "format-number(xs:numeric*, xs:string, [xs:string]) as xs:string",
       "functionName": "format-number",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "format-time(xs:time?, xs:string, xs:string?, xs:string?, [xs:string?]) as xs:string",
       "functionName": "format-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "generate-id([node()?]) as xs:string",
       "functionName": "generate-id",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "head(item()*) as item()?",
       "functionName": "head",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "hours-from-dateTime(xs:dateTime?) as xs:integer?",
       "functionName": "hours-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "hours-from-duration(xs:duration?) as xs:integer?",
       "functionName": "hours-from-duration",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "hours-from-time(xs:time?) as xs:integer?",
       "functionName": "hours-from-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "hubURI",
       "signature": "hubURI(entity-type)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "signature": "implicit-timezone() as xs:dayTimeDuration",
       "functionName": "implicit-timezone",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "insert-before(item()*, xs:integer, item()*) as item()*",
       "functionName": "insert-before",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "iri-to-uri(xs:string?) as xs:string",
       "functionName": "iri-to-uri",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "lang(xs:string?, [node()?]) as xs:boolean",
       "functionName": "lang",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "last() as xs:integer",
       "functionName": "last",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "local-name([node()?]) as xs:string",
       "functionName": "local-name",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "lookup",
       "signature": "lookup(key,object)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "signature": "lower-case(xs:string?) as xs:string?",
       "functionName": "lower-case",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "matches(xs:string?, xs:string, [xs:string]) as xs:boolean?",
       "functionName": "matches",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "max(xs:anyAtomicType*, [xs:string]) as xs:anyAtomicType?",
       "functionName": "max",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "memoryLookup",
       "signature": "memoryLookup(key,dictionary)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "signature": "min(xs:anyAtomicType*, [xs:string]) as xs:anyAtomicType?",
       "functionName": "min",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "minutes-from-dateTime(xs:dateTime?) as xs:integer?",
       "functionName": "minutes-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "minutes-from-duration(xs:duration?) as xs:integer?",
       "functionName": "minutes-from-duration",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "minutes-from-time(xs:time?) as xs:integer?",
       "functionName": "minutes-from-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "month-from-date(xs:date?) as xs:integer?",
       "functionName": "month-from-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "month-from-dateTime(xs:dateTime?) as xs:integer?",
       "functionName": "month-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "months-from-duration(xs:duration?) as xs:integer?",
       "functionName": "months-from-duration",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "name([node()?]) as xs:string",
       "functionName": "name",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "namespace-uri([node()?]) as xs:anyURI",
       "functionName": "namespace-uri",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "namespace-uri-for-prefix(xs:string?, element()) as xs:anyURI?",
       "functionName": "namespace-uri-for-prefix",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "node-name([node()?]) as xs:QName?",
       "functionName": "node-name",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "normalize-space([xs:string?]) as xs:string?",
       "functionName": "normalize-space",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "normalize-unicode(xs:string?, [xs:string]) as xs:string?",
       "functionName": "normalize-unicode",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "not(item()*) as xs:boolean",
       "functionName": "not",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "number([xs:anyAtomicType?]) as xs:double",
       "functionName": "number",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "parseDate",
       "signature": "parseDate(value,pattern)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "functionName": "parseDateTime",
       "signature": "parseDateTime(value,pattern)",
-      "category": "builtin"
+      "category": "builtin",
     },
     {
       "signature": "position() as xs:integer",
       "functionName": "position",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "remove(item()*, xs:integer) as item()*",
       "functionName": "remove",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "functionName": "remove-hyphens",
       "signature": "remove-hyphens(val)",
-      "category": "custom"
+      "category": "custom",
     },
     {
       "functionName": "removeCommas",
       "signature": "removeCommas(input)",
-      "category": "custom"
+      "category": "custom",
     },
     {
       "signature": "replace(xs:string?, xs:string?, xs:string?, [xs:string?]) as xs:string?",
       "functionName": "replace",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "resolve-QName(xs:string?, element()) as xs:QName?",
       "functionName": "resolve-QName",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "reverse(item()*) as item()*",
       "functionName": "reverse",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "root([node()?]) as node()?",
       "functionName": "root",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "round(xs:numeric?) as xs:numeric?",
       "functionName": "round",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "round-half-to-even(xs:numeric?, [xs:integer]) as xs:numeric?",
       "functionName": "round-half-to-even",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "seconds-from-dateTime(xs:dateTime?) as xs:decimal?",
       "functionName": "seconds-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "seconds-from-duration(xs:duration?) as xs:decimal?",
       "functionName": "seconds-from-duration",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "seconds-from-time(xs:time?) as xs:decimal?",
       "functionName": "seconds-from-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "starts-with(xs:string?, xs:string?, [xs:string]) as xs:boolean",
       "functionName": "starts-with",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "string([xs:anyAtomicType?]) as xs:string?",
       "functionName": "string",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "string-join(xs:string*, [xs:string]) as xs:string",
       "functionName": "string-join",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "string-length([xs:string?]) as xs:integer?",
       "functionName": "string-length",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "string-to-codepoints(xs:string?) as xs:integer*",
       "functionName": "string-to-codepoints",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "subsequence(item()*, xs:numeric, [xs:numeric]) as item()*",
       "functionName": "subsequence",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "substring(xs:string?, xs:numeric?, [xs:numeric?]) as xs:string?",
       "functionName": "substring",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "substring-after(xs:string?, xs:string?, [xs:string]) as xs:string?",
       "functionName": "substring-after",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "substring-before(xs:string?, xs:string?, [xs:string]) as xs:string?",
       "functionName": "substring-before",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "sum(xs:anyAtomicType*, [xs:anyAtomicType?]) as xs:anyAtomicType?",
       "functionName": "sum",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "tail(item()*) as item()*",
       "functionName": "tail",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "timezone-from-date(xs:date?) as xs:dayTimeDuration?",
       "functionName": "timezone-from-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "timezone-from-dateTime(xs:dateTime?) as xs:dayTimeDuration?",
       "functionName": "timezone-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "timezone-from-time(xs:time?) as xs:dayTimeDuration?",
       "functionName": "timezone-from-time",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "tokenize(xs:string?, xs:string?, [xs:string?]) as xs:string*",
       "functionName": "tokenize",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "translate(xs:string?, xs:string, xs:string) as xs:string?",
       "functionName": "translate",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "true() as xs:boolean",
       "functionName": "true",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "upper-case(xs:string?) as xs:string?",
       "functionName": "upper-case",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "year-from-date(xs:date?) as xs:integer?",
       "functionName": "year-from-date",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "year-from-dateTime(xs:dateTime?) as xs:integer?",
       "functionName": "year-from-dateTime",
-      "category": "xpath"
+      "category": "xpath",
     },
     {
       "signature": "years-from-duration(xs:duration?) as xs:integer?",
       "functionName": "years-from-duration",
-      "category": "xpath"
-    }
+      "category": "xpath",
+    },
   ],
   "mapRefs": [
     {
       "name": "$URI",
-      "description": "The URI of the source document"
-    }
+      "description": "The URI of the source document",
+    },
   ],
   "savedMappingArt": {
-    "collections": [
-      "mapOfficeStep",
-      "Office"
-    ],
+    "collections": ["mapOfficeStep", "Office"],
     "additionalCollections": [],
     "permissions": "data-hub-common,read,data-hub-common,update",
     "batchSize": 100,
@@ -1597,9 +1357,7 @@ export const mockEntityMapTable = {
     "name": "mapOfficeStep",
     "targetEntityType": "http://example.org/Office-0.0.1/Office",
     "description": "",
-    "collection": [
-      "loadOffice"
-    ],
+    "collection": ["loadOffice"],
     "selectedSource": "collection",
     "sourceQuery": "cts.collectionQuery(['loadOffice'])",
     "targetDatabase": "data-hub-FINAL",
@@ -1615,17 +1373,17 @@ export const mockEntityMapTable = {
     "lastUpdated": "2023-05-23T13:12:44.2896624-05:00",
     "properties": {
       "officeId": {
-        "sourcedFrom": "OfficeId"
+        "sourcedFrom": "OfficeId",
       },
       "name": {
-        "sourcedFrom": "Name"
+        "sourcedFrom": "Name",
       },
       "productId": {
-        "sourcedFrom": "productList/productId"
+        "sourcedFrom": "productList/productId",
       },
       "category": {
-        "sourcedFrom": "category"
-      }
+        "sourcedFrom": "category",
+      },
     },
     "namespaces": {},
     "relatedEntityMappings": [
@@ -1633,24 +1391,22 @@ export const mockEntityMapTable = {
         "relatedEntityMappingId": "Office.productId:Product",
         "properties": {
           "productId": {
-            "sourcedFrom": "productList/productId"
+            "sourcedFrom": "productList/productId",
           },
           "productName": {
-            "sourcedFrom": "productList/name"
-          }
+            "sourcedFrom": "productList/name",
+          },
         },
         "targetEntityType": "http://example.org/Product-1.0.0/Product",
-        "collections": [
-          "mapOfficeStep",
-          "Product"
-        ],
-        "permissions": "data-hub-common,read,data-hub-common,update"
-      }
-    ]
+        "collections": ["mapOfficeStep", "Product"],
+        "permissions": "data-hub-common,read,data-hub-common,update",
+      },
+    ],
   },
   "deleteRelatedEntity": () => {},
   "labelRemoved": "",
-  "entityLoaded": true
+  "entityLoaded": true,
 };
 
-export const environmentMock = "{\"serviceName\":\"en2010542.endava.net-cluster\",\"dataHubVersion\":\"6.0-SNAPSHOT\",\"marklogicVersion\":\"10.0-9\",\"hubCentralVersion\":\"6.0-SNAPSHOT\",\"host\":\"localhost\",\"stagingDb\":\"data-hub-STAGING\",\"finalDb\":\"data-hub-FINAL\",\"jobsDb\":\"data-hub-JOBS\",\"sessionTimeout\":\"1200\",\"sessionToken\":\"306d03b6-6957-4df8-8839-f979f04cb053\",\"pendoKey\":null,\"supportConcepts\":true}";
+export const environmentMock =
+  "{\"serviceName\":\"en2010542.endava.net-cluster\",\"dataHubVersion\":\"6.0-SNAPSHOT\",\"marklogicVersion\":\"10.0-9\",\"hubCentralVersion\":\"6.0-SNAPSHOT\",\"host\":\"localhost\",\"stagingDb\":\"data-hub-STAGING\",\"finalDb\":\"data-hub-FINAL\",\"jobsDb\":\"data-hub-JOBS\",\"sessionTimeout\":\"1200\",\"sessionToken\":\"306d03b6-6957-4df8-8839-f979f04cb053\",\"pendoKey\":null,\"supportConcepts\":true}";

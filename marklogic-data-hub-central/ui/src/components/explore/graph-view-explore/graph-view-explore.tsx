@@ -189,12 +189,14 @@ const GraphViewExplore: React.FC<Props> = props => {
     const allNodes = Object.values(expandedNodes)
       .map((val: any) => val?.nodes)
       .reduce((prev, current) => prev.concat(current), props.entityTypeInstances.nodes);
-    const filteredData = allNodes.filter(item => (item["id"] === nodeId || item["docUri"] === nodeId));
+    const filteredData = allNodes.filter(item => item["id"] === nodeId || item["docUri"] === nodeId);
     if (filteredData.length === 0) {
       return false;
     }
-    return filteredData.some(node => node.unmerge) ||
-        props.data.some(item => item.uri === filteredData[0].docUri && item.unmerge);
+    return (
+      filteredData.some(node => node.unmerge) ||
+      props.data.some(item => item.uri === filteredData[0].docUri && item.unmerge)
+    );
   };
 
   const openUnmergeCompare = async (uri, item) => {

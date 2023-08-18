@@ -26,7 +26,7 @@ type SearchContextInterface = {
   database: string;
   datasource: string;
   preselectedFacets: string[];
-  updateFromExternalView?:boolean
+  updateFromExternalView?: boolean;
 };
 
 const defaultSearchOptions = {
@@ -52,7 +52,7 @@ const defaultSearchOptions = {
   database: "final",
   datasource: "entities",
   preselectedFacets: [],
-  updateFromExternalView: false
+  updateFromExternalView: false,
 };
 
 interface ISearchContextInterface {
@@ -76,7 +76,7 @@ interface ISearchContextInterface {
     stepName: string,
     targetDatabase?: string,
     collectionVals?: string,
-    updateFromExternalView?:boolean
+    updateFromExternalView?: boolean,
   ) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
@@ -113,7 +113,7 @@ interface ISearchContextInterface {
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
   setDatabase: (option: string) => void;
-  setLatestDatabase: (option: string, jobId: string, updateFromExternalView?:boolean) => void;
+  setLatestDatabase: (option: string, jobId: string, updateFromExternalView?: boolean) => void;
   entityDefinitionsArray: any;
   setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
   setGraphViewOptions: (entityInstanceId: string | undefined) => void;
@@ -352,7 +352,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     stepName: string,
     targetDatabase?: string,
     collectionValues?: string,
-    updateFromExternalView:boolean = false
+    updateFromExternalView: boolean = false,
   ) => {
     let facets = {};
     facets = {
@@ -381,12 +381,12 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       pageLength: searchOptions.pageSize,
       database: targetDatabase ? targetDatabase : "final",
       stepName: stepName,
-      updateFromExternalView: updateFromExternalView
+      updateFromExternalView: updateFromExternalView,
     };
     setSearchOptions(NEWOPTIONS);
   };
 
-  const setLatestDatabase = (targetDatabase: string, jobId: string, updateFromExternalView:boolean = false) => {
+  const setLatestDatabase = (targetDatabase: string, jobId: string, updateFromExternalView: boolean = false) => {
     let facets = {};
     facets = {createdByJob: {dataType: "string", stringValues: [jobId]}};
     const NEWOPTIONS = {
@@ -399,7 +399,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       pageNumber: 1,
       selectedTableProperties: [],
       database: targetDatabase,
-      updateFromExternalView: updateFromExternalView
+      updateFromExternalView: updateFromExternalView,
     };
     setSearchOptions(NEWOPTIONS);
   };

@@ -46,7 +46,7 @@ const Monitor: React.FC = () => {
         },
       });
       if (response.data && mountedRef.current) {
-        const dataFixed = response.data.results.map((dataItem) => {
+        const dataFixed = response.data.results.map(dataItem => {
           if (dataItem.entityName === null) {
             dataItem.entityName = "";
           }

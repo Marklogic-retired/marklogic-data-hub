@@ -16,7 +16,6 @@ export const updateMatchingArtifact = async matching => {
 };
 
 export const validateURI = async (uriValue, database) => {
-
   try {
     let srcDocResp = await axios.get(`/api/entitySearch?docUri=${encodeURIComponent(uriValue)}&database=${database}`);
     if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {

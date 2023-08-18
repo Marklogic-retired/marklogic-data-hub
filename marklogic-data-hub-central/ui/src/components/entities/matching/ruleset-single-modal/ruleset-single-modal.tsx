@@ -17,7 +17,7 @@ import {
   getAllExcludeValuesList,
   updateMatchingArtifact,
   getReferencesExcludeValuesList,
-  validateURI
+  validateURI,
 } from "@api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {QuestionCircleFill} from "react-bootstrap-icons";
@@ -359,7 +359,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
     return selectedProperty ? selectedProperty.split(" > ").join(".") : "";
   };
 
-  const onSubmit = async(event) => {
+  const onSubmit = async event => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let matchErrorMessage = "";
@@ -447,12 +447,11 @@ const MatchRulesetModal: React.FC<Props> = props => {
       let distanceThresholdErrorMessage = "";
       if (distanceThresholdValue === "") {
         distanceThresholdErrorMessage = "A distance threshold is required";
-      } else  if (dictionaryValue !== "") {
+      } else if (dictionaryValue !== "") {
         const uriError = await validateURI(dictionaryValue, sourceDatabase);
         if (uriError) {
           dictionaryUriErrorMessage = uriError;
         }
-
       }
 
       rulesetName = `${propertyName} - Double Metaphone`;
@@ -689,10 +688,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
               </div>
             </Col>
             <Col xs={12} className={styles.validationError}>
-              <span
-                data-testid={"thesaurus-uri-err"}>
-                {thesaurusErrorMessage}
-              </span>
+              <span data-testid={"thesaurus-uri-err"}>{thesaurusErrorMessage}</span>
             </Col>
           </Row>
         </Col>
@@ -778,10 +774,7 @@ const MatchRulesetModal: React.FC<Props> = props => {
               </div>
             </Col>
             <Col xs={12} className={styles.validationError}>
-              <span
-                data-testid={"dictionary-uri-err"}>
-                {dictionaryErrorMessage}
-              </span>
+              <span data-testid={"dictionary-uri-err"}>{dictionaryErrorMessage}</span>
             </Col>
           </Row>
         </Col>

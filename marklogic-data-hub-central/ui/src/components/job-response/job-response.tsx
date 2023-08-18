@@ -458,13 +458,20 @@ const JobResponse: React.FC<Props> = ({
     stepType: string,
     stepName: string,
   ) => {
-    const openExploreFromExternalView:boolean = true;
+    const openExploreFromExternalView: boolean = true;
     if (stepType === "mapping") {
       let mapArtifacts = await getMappingArtifactByStepName(stepName);
       let entityView = mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName;
       setLatestJobFacet(jobId, entityView, stepName, targetDatabase, undefined, openExploreFromExternalView);
     } else if (stepType === "merging") {
-      setLatestJobFacet(jobId, entityName, stepName, targetDatabase, `sm-${entityName}-merged`, openExploreFromExternalView);
+      setLatestJobFacet(
+        jobId,
+        entityName,
+        stepName,
+        targetDatabase,
+        `sm-${entityName}-merged`,
+        openExploreFromExternalView,
+      );
     } else if (entityName) {
       setLatestJobFacet(jobId, entityName, stepName, targetDatabase, undefined, openExploreFromExternalView);
     } else {

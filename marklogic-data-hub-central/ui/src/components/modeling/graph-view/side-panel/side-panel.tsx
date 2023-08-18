@@ -601,7 +601,9 @@ const GraphViewSidePanel: React.FC<Props> = ({
               <i
                 key="last"
                 role="delete-relationship button"
-                data-testid={row?.predicate + "-delete" + (!canWriteEntityModel && canReadEntityModel ? "-disabled" : "")}
+                data-testid={
+                  row?.predicate + "-delete" + (!canWriteEntityModel && canReadEntityModel ? "-disabled" : "")
+                }
                 onClick={event => {
                   if (!canWriteEntityModel && canReadEntityModel) {
                     return event.preventDefault();

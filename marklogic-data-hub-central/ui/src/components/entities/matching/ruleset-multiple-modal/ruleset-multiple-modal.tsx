@@ -425,7 +425,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
     }
   };
 
-  const onSubmit = async(event) => {
+  const onSubmit = async event => {
     event.preventDefault();
     setSaveClicked(true);
     let rulesetNameErrorMsg = "";
@@ -797,7 +797,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
     </span>
   );
 
-  const renderErrorThesaurus = (propertyPath) => {
+  const renderErrorThesaurus = propertyPath => {
     if (!thesaurusValues[propertyPath]) {
       return "A thesaurus URI is required";
     }
@@ -807,7 +807,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = props => {
     return "";
   };
 
-  const renderErrorDictionary = (propertyPath) => {
+  const renderErrorDictionary = propertyPath => {
     if (!dictionaryValues[propertyPath]) {
       return "A dictionary URI is required";
     }
