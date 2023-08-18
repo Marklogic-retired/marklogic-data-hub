@@ -184,6 +184,17 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
                 stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.mjs");
                 if(legacyUpgrade) {
+                    Map<String, Object> options = stepDefinition.getOptions();
+                    HubConfigImpl config = (HubConfigImpl) hubConfig;
+                    if(stepDefinition.getType().toString().equalsIgnoreCase("custom")) {
+                        options.put("sourceDatabase", config.getStagingDbName());
+                        options.put("targetDatabase", config.getFinalDbName());
+                    }
+
+                    if(stepDefinition.getType().toString().equalsIgnoreCase("ingestion")) {
+                        options.put("targetDatabase", config.getStagingDbName());
+                    }
+                    stepDefinition.setOptions(options);
                     stepDefinitionManager.saveLocalStepDefinition(stepDefinition);
                 } else {
                     stepDefinitionManager.saveStepDefinition(stepDefinition);
