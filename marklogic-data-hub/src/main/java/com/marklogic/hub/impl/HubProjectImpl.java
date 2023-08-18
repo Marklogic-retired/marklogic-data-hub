@@ -500,7 +500,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return upgradeLegacyFlows(flowManager, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "data-hub-STAGING", "data-hub-FINAL");
     }
 
-    public int upgradeLegacyFlows(FlowManager flowManager, List<String> legacyEntities, List<String> legacyFlowTypes, List<String> legacyFlowNames, String sourceDb, String targetDb) {
+    public int upgradeLegacyFlows(FlowManager flowManager, List<String> legacyEntities, List<String> legacyFlowTypes, List<String> legacyFlowNames, String stagingDb, String finalDb) {
         Set<String> legacyEntitiesSet = new HashSet<>(legacyEntities);
         Set<String> legacyFlowTypesSet = new HashSet<>(legacyFlowTypes);
         Set<String> legacyFlowNamesSet = new HashSet<>(legacyFlowNames);
@@ -579,7 +579,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                             JsonNode stepPayLoad = scaffolding.getStepConfig(newStepName, stepType, newStepName, null, acceptSourceModule);
                             // Save StepDefinition to local file
                             scaffolding.saveStepDefinition(newStepName, newStepName, stepType, true);
-                            updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName(), sourceDb, targetDb);
+                            updateStepOptionsFor4xFlow(stepName, stepFile, stepPayLoad, mainModulePath, legacyEntityDir.getName(), stagingDb, finalDb);
                             // Save Step to local file
                             scaffolding.saveLocalStep(stepType, stepPayLoad);
                             // Add step to local Flow
@@ -598,7 +598,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return flowsUpdated;
     }
 
-    private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType, String sourceDb, String finalDb) {
+    private void updateStepOptionsFor4xFlow(String stepName, File stepFile, JsonNode stepPayLoad, String mainModulePath, String entityType, String stagingDb, String finalDb) {
         ObjectNode step = (ObjectNode) stepPayLoad;
         ObjectMapper mapper = new ObjectMapper();
         Properties properties = new Properties();
@@ -618,7 +618,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         optionsNode.put("mainModuleUri", mainModulePath.concat("/").concat(properties.getOrDefault("mainModule", "main.sjs").toString()));
 
         if(step.get("stepDefinitionType").asText().equals("custom")) {
-            step.put("sourceDatabase", sourceDb);
+            step.put("sourceDatabase", stagingDb);
             step.put("targetDatabase", finalDb);
             step.put("sourceQueryIsModule", true);
             mainModulePath = mainModulePath.concat("/").concat(properties.getOrDefault("collectorModule", "collector.sjs").toString());
@@ -628,7 +628,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
             optionsNode.put("entity", entityType);
         } else {
-            step.put("targetDatabase", sourceDb);
+            step.put("targetDatabase", stagingDb);
             step.put("inputFilePath", "");
         }
         step.putIfAbsent("options", optionsNode);
