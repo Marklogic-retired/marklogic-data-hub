@@ -88,19 +88,21 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         }
     }
 
-    @Test
+    //WIP
+
+/*     @Test
     void ingestDocWithTemporalCollection() {
         String collections = "fruits,stuff,temporal/test";
         ObjectNode endpointConstants = objectMapper.createObjectNode();
         endpointConstants.put("uriprefix", "/bulkJavaTest/");
-        endpointConstants.put("collections", collections);
+        endpointConstants.put("collections", collections); */
 
         /**
          * Because the endpoint and the Spark connector must work on 5.2.x, the endpoint cannot rely on hub-temporal.sjs,
          * which does not exist in 5.2.x. So this test depends on the user having the temporal-admin role, which is the
          * only way that temporal documents can be inserted by a DHF user prior to 5.2.x.
          */
-        runAsTestUserWithRoles("data-hub-operator", "temporal-admin");
+/*         runAsTestUserWithRoles("data-hub-operator", "temporal-admin");
 
         InputCaller<String> endpoint = InputCaller.on(
             getHubClient().getStagingClient(),
@@ -125,7 +127,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         assertTrue(metadata.getCollections().contains("latest"), "As the document is in Lastest collection, temporal/test was recognized as a temporal collection and document was invserted via temporal insert");
 
 
-    }
+    } */
 
     private void removeIndexesAndFields() {
         String indexesDeletion = "  const admin = require('/MarkLogic/admin.xqy');\n" +

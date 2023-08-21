@@ -10,6 +10,4 @@ marklogic-data-hub-central/src/* @ryanjdew @rahulvudutala
 
 marklogic-data-hub-central/ui/* @wooldridge @briantang @Sanjeevani19 @rahulvudutala @aniamy
 
-marklogic-data-hub-spark-connector/* @anu3990 @SameeraPriyathamTadikonda
-
 specs/* @ryanjdew
