@@ -208,6 +208,7 @@ public class HubClientConfig {
             config.setCloudApiKey(cloudApiKey);
             config.setBasePath(stagingBasePath);
             config.setPort(443);
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
@@ -232,6 +233,7 @@ public class HubClientConfig {
             config.setCloudApiKey(cloudApiKey);
             config.setBasePath(finalBasePath);
             config.setPort(443);
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
@@ -254,6 +256,7 @@ public class HubClientConfig {
             config.setCloudApiKey(cloudApiKey);
             config.setBasePath(jobBasePath);
             config.setPort(443);
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
         }
         if (isHostLoadBalancer) {
             config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);

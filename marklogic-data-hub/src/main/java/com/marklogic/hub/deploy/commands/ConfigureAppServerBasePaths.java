@@ -7,7 +7,9 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,10 +35,12 @@ import java.util.List;
 public class ConfigureAppServerBasePaths extends AbstractCommand {
 
     private final HubConfigImpl hubConfig;
+    private final HubClientImpl hubClient;
     private ObjectMapper mapper = new ObjectMapper();
 
-    public ConfigureAppServerBasePaths(HubConfig hubConfig) {
+    public ConfigureAppServerBasePaths(HubConfig hubConfig, HubClient hubClient) {
         this.hubConfig = (HubConfigImpl) hubConfig;
+        this.hubClient = (HubClientImpl) hubClient;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_SERVERS + 1);
     }
 
@@ -53,9 +57,10 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
         try (CloseableHttpClient httpClient = clientBuilder.build()) {
             String url = "https://" + hubConfig.getHost() + "/api/service/dataHubEndpoints";
             HttpPost postRequest = new HttpPost(url);
-            StringEntity entity = new StringEntity(getBastPathConfig());
+            StringEntity entity = new StringEntity(getBasePathConfig());
             postRequest.setHeader("Content-Type", "application/json");
-            postRequest.setHeader("Authorization", "bearer " + getAccessToken());
+            String accessToken = getAccessToken();
+            postRequest.setHeader("Authorization", "bearer " + accessToken);
             postRequest.setEntity(entity);
             httpClient.execute(postRequest);
         } catch (IOException e) {
@@ -65,12 +70,13 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
 
     private String getAccessToken() {
         String tokenRequestURL = "https://".concat(hubConfig.getHost()).concat("/token");
+        logger.info("tokenRequestURL: " + tokenRequestURL);
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
         try (CloseableHttpClient httpClient = clientBuilder.build()) {
             {
                 List<NameValuePair> postParams = new ArrayList<>();
                 postParams.add(new BasicNameValuePair("grant_type", "apikey"));
-                postParams.add(new BasicNameValuePair("key", hubConfig.getCloudApiKey()));
+                postParams.add(new BasicNameValuePair("key", hubConfig.getCloudApiKey().trim()));
 
                 HttpPost postRequest = new HttpPost(tokenRequestURL);
                 postRequest.setHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -88,7 +94,7 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
         }
     }
 
-    private String getBastPathConfig() {
+    private String getBasePathConfig() {
         ObjectNode baseConfig = mapper.createObjectNode();
         ObjectNode appServers = mapper.createObjectNode();
         ObjectNode jobServer = mapper.createObjectNode();
@@ -105,11 +111,11 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
         String jobBasePath = jobBasePathArray[jobBasePathArray.length - 1];
 
         baseConfig.put("adminPath", hubConfig.getAdminConfig().getBasePath());
-        baseConfig.put("appServers", appServers);
+        baseConfig.putIfAbsent("appServers", appServers);
 
-        appServers.put("staging", stagingServer);
-        appServers.put("final", finalServer);
-        appServers.put("jobs", jobServer);
+        appServers.putIfAbsent("staging", stagingServer);
+        appServers.putIfAbsent("final", finalServer);
+        appServers.putIfAbsent("jobs", jobServer);
 
         stagingServer.put("name", hubConfig.getStagingDbName());
         stagingServer.put("path", stagingBasePath.concat("/"));
@@ -124,19 +130,29 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
     }
 
     private void waitForGateWayToRestart() {
-        DatabaseClient databaseClient = hubConfig.newStagingClient();
+        DatabaseClient databaseClient = hubClient.getStagingClient();
         int maxTimeToWaitInMs = 90000;
         int maxRetries = 15;
         int sleepTime = maxTimeToWaitInMs/maxRetries;
-        while(!databaseClient.checkConnection().isConnected() && maxRetries > 0) {
-            logger.info("Checking gateway status: " + databaseClient.checkConnection().isConnected());
+
+        while(maxRetries > 0) {
             try {
-                Thread.sleep(sleepTime);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                if(databaseClient.checkConnection().isConnected()) {
+                    logger.info("Checking gateway status: " + databaseClient.checkConnection().isConnected());
+                    break;
+                } else {
+                    logger.info("Checking gateway status: " + databaseClient.checkConnection().isConnected());
+                    Thread.sleep(sleepTime);
+                    maxRetries --;
+                }
+            } catch (Exception e) {
+                if(e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                logger.info(e.getMessage());
+                logger.info("waitForGateWayToRestart catch block");
+                maxRetries --;
             }
-            maxRetries --;
         }
-        logger.info("Checking gateway status: " + databaseClient.checkConnection().isConnected());
     }
 }
