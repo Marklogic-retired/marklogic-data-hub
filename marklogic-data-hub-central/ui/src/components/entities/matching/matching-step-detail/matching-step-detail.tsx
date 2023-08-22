@@ -1494,8 +1494,9 @@ const MatchingStepDetail: React.FC = () => {
               </HCTooltip>
             </span>
             <div aria-label="allDataContent" className={styles.allDataContent}>
-              Select All Data in your source query in order to preview matching activity against all URIs up to 100
-              displayed pair matches. It is best practice to test with a smaller-sized source query.
+              Select All Data in your source query in order to
+              preview matching activity against 100 randomly selected URIs
+              and display their pair matches. It is best practice to test with a smaller-sized source query.
             </div>
           </label>
           {thresholdItems.length === 0 ? (
