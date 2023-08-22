@@ -88,45 +88,6 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         }
     }
 
-    @Test
-    void ingestDocWithTemporalCollection() {
-        String collections = "fruits,stuff,temporal/test";
-        ObjectNode endpointConstants = objectMapper.createObjectNode();
-        endpointConstants.put("uriprefix", "/bulkJavaTest/");
-        endpointConstants.put("collections", collections);
-
-        /**
-         * Because the endpoint and the Spark connector must work on 5.2.x, the endpoint cannot rely on hub-temporal.sjs,
-         * which does not exist in 5.2.x. So this test depends on the user having the temporal-admin role, which is the
-         * only way that temporal documents can be inserted by a DHF user prior to 5.2.x.
-         */
-        runAsTestUserWithRoles("data-hub-operator", "temporal-admin");
-
-        InputCaller<String> endpoint = InputCaller.on(
-            getHubClient().getStagingClient(),
-            getHubClient().getModulesClient().newTextDocumentManager()
-                .read("/marklogic-data-hub-spark-connector/writeRecords.api", new StringHandle()),
-            new StringHandle().withFormat(Format.JSON)
-        );
-        InputCaller.BulkInputCaller<String> bulkInputCaller = endpoint.bulkCaller(endpoint.newCallContext()
-            .withEndpointConstants(new JacksonHandle(endpointConstants)));
-
-        List<String> input = new ArrayList<>();
-        input.add("{\"fruitName\":\"pineapple\", \"fruitColor\":\"green\"}");
-
-        input.forEach(bulkInputCaller::accept);
-        bulkInputCaller.awaitCompletion();
-
-        DocumentMetadataHandle metadata = getDocumentMetadata();
-        assertEquals(collections.split(",").length + 2, metadata.getCollections().size(), "documents inserted via temporal collection has 2 new collections 'latest and uri'");
-        assertTrue(metadata.getCollections().contains("fruits"));
-        assertTrue(metadata.getCollections().contains("stuff"));
-        assertTrue(metadata.getCollections().contains("temporal/test"));
-        assertTrue(metadata.getCollections().contains("latest"), "As the document is in Lastest collection, temporal/test was recognized as a temporal collection and document was invserted via temporal insert");
-
-
-    }
-
     private void removeIndexesAndFields() {
         String indexesDeletion = "  const admin = require('/MarkLogic/admin.xqy');\n" +
             "        var config = admin.getConfiguration();\n" +

@@ -185,12 +185,6 @@ task generateDataServiceInterfaces {
     }
 }
 
-task generateSparkInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
-    description = "Must run this from the ./marklogic-data-hub directory"
-    serviceDeclarationFile = "src/main/resources/ml-modules/root/marklogic-data-hub-spark-connector/service.json"
-    javaBaseDirectory = "../marklogic-data-hub-spark-connector/src/main/java"
-}
-
 jar{
     enabled = true
 }
