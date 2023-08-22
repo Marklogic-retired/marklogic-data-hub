@@ -231,7 +231,9 @@ Cypress.Commands.add("deleteFiles", (dataBase, ...files) => {
 });
 
 Cypress.Commands.add("waitForAsyncRequest", () => {
-  cy.window().then(win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve, {timeout: 60000})));
+  cy.window().then({timeout: 60000},
+    win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve, {timeout: 60000}))
+  );
 });
 
 function setTestUserRoles(roles) {
