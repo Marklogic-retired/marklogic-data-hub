@@ -5,14 +5,14 @@
  */
 
 function main(content, options) {
-  const value = content.value.toObject();
+  const value = content.value;
 
   // Concatenating latitude and longitude allows for a geospatial element index to be easily added
-  value.geoPoint = value.latitude + " " + value.longitude;
+  value.geoPoint = value.root.latitude + " " + value.root.longitude;
 
   // "zipCode" is a bit more descriptive than "zip"
-  value.zipCode = value.zip;
-  delete value.zip;
+  value.zipCode = value.root.zip;
+  delete value.root.zip;
 
   content.value = value;
   return content;

@@ -495,16 +495,17 @@ function evalSubstituteVal(value) {
 }
 
 function createHeaders(options) {
+  const newOptions = JSON.parse(JSON.stringify(options));
   let headers = {};
-  for (let key in options.headers) {
-    headers[key] = evalSubstituteVal(options.headers[key]);
+  for (let key in newOptions.headers) {
+    headers[key] = evalSubstituteVal(newOptions.headers[key]);
   }
-  if (options.file) {
-    headers["createdUsingFile"] = options.file;
+  if (newOptions.file) {
+    headers["createdUsingFile"] = newOptions.file;
   }
 
-  const sourceName = options.sourceName ? options.sourceName : null;
-  const sourceType = options.sourceType ? options.sourceType : null;
+  const sourceName = newOptions.sourceName ? newOptions.sourceName : null;
+  const sourceType = newOptions.sourceType ? newOptions.sourceType : null;
 
   if (headers["sources"] && !Array.isArray(headers["sources"])) {
     headers.sources = [headers.sources];

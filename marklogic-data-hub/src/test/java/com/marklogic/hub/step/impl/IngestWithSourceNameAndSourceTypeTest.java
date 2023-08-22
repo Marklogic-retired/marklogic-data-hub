@@ -26,7 +26,7 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
 
     @Test
     void runDefaultIngestionWithSourceNameAndSourceType(){
-        String path = "entity-reference-model/data/customers";
+        String path = "entity-reference-model/data/employees";
         ObjectNode info = new ObjectMapper().createObjectNode();
         info.put("name", "sources-test");
         info.put("description", "step to test source name and source type");
@@ -49,14 +49,18 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
         RunFlowResponse response = flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
-        JsonNode sourceDoc = getStagingDoc("customer1.json");
-        assertNotNull(sourceDoc);
-        JsonNode sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(0);
-        assertEquals("sources-test", sourcesNode.get("name").asText());
 
-        sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(1);
-        assertEquals("sample-source", sourcesNode.get("datahubSourceName").asText());
-        assertEquals("employee", sourcesNode.get("datahubSourceType").asText());
+        for(int i=1; i<=3; i++) {
+            JsonNode sourceDoc = getStagingDoc("employee" + i + ".json");
+            assertNotNull(sourceDoc);
+            assertEquals(2, sourceDoc.get("envelope").get("headers").get("sources").size(), "sources should contain name and only 1 object of sourceName and sourceType");
+            JsonNode sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(0);
+            assertEquals("sources-test", sourcesNode.get("name").asText());
+
+            sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(1);
+            assertEquals("sample-source", sourcesNode.get("datahubSourceName").asText());
+            assertEquals("employee", sourcesNode.get("datahubSourceType").asText());
+        }
     }
 
     @Test
