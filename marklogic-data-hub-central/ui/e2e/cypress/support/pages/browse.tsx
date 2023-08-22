@@ -22,6 +22,18 @@ class BrowsePage {
     return cy.get(".hc-table_row");
   }
 
+  get clearStepFacetsButton() {
+    return cy.get("[data-cy='step-clear']");
+  }
+
+  get statusSelectedCount() {
+    return cy.get("[data-testid='status-selected-count']");
+  }
+
+  get stepSelectedCount() {
+    return cy.get("[data-testid='step-selected-count']");
+  }
+
   // common spinners
   // Can be moved to a common components
   getSpinner() {
@@ -841,6 +853,11 @@ class BrowsePage {
 
   verifyCardExist(name: string) {
     cy.get("div.card-body").contains(name).should("be.visible");
+  }
+
+  applyFacet() {
+    this.getFacetApplyButton().scrollIntoView().click({force: true});
+    cy.waitForAsyncRequest();
   }
 }
 

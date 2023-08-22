@@ -146,5 +146,19 @@ declare namespace Cypress {
        * cy.get("input").typeTab()
        */
       typeTab(): Chainable<Element>
+      
+      /**
+       * Create Flow using API
+       * @example
+       * cy.createFlowWithApi(flowName);
+       */
+      createFlowWithApi(flowName: string): Chainable<Element>
+
+      /**
+       * Add a step to a Flow using API
+       * @example
+       * cy.addStepToFlowWithApi(flowName, "loadPersonJSON", "ingestion");
+       */
+      addStepToFlowWithApi(flowName:string, stepName:string, stepType:string): Chainable<Element>     
     }
   }

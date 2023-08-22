@@ -326,3 +326,25 @@ Cypress.Commands.add("restoreLocalStorage", () => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
 });
+
+Cypress.Commands.add("createFlowWithApi", (flowName) => {
+  return cy.request({
+    method: "POST",
+    url: `/api/flows`,
+    body: {
+      name: flowName,
+      description: ""
+    }
+  });
+});
+
+Cypress.Commands.add("addStepToFlowWithApi", (flowName, stepName, stepType) => {
+  return cy.request({
+    method: "POST",
+    url: `/api/flows/${flowName}/steps`,
+    body: {
+      "stepName": stepName,
+      "stepDefinitionType": stepType
+    }
+  });
+});

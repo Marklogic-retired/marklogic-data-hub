@@ -1,6 +1,7 @@
 import {toolbar} from "../components/common";
 import "cypress-wait-until";
 import homePage from "./home";
+import browsePage from "./browse";
 class MonitorPage {
   getMonitorContainer() {
     return cy.get(`#monitorContent`);
@@ -49,13 +50,23 @@ class MonitorPage {
     cy.get(`[data-testid="facet-apply-button"]`).click();
     cy.wait(1000);
   }
+
   getFacetCheckbox(facetType: string, facetName: string) {
     return cy.get(`[data-testid=${facetType}-${facetName}-checkbox]`);
   }
 
   clickFacetCheckbox(facetType: string, facetName: string) {
-    this.getFacetCheckbox(facetType, facetName).scrollIntoView().click({force: true});
-    cy.waitForAsyncRequest();
+    cy.get("body").then(($body) => {
+      if ($body.find(`[data-testid=${facetType}-${facetName}-checkbox]`)) {
+        this.getFacetCheckbox(facetType, facetName).scrollIntoView().click({force: true});
+      } else {
+        browsePage.clickPopoverSearch(facetType);
+        browsePage.setInputField(facetType, facetName);
+        browsePage.getPopoverFacetCheckbox(facetName).should("be.visible").click({force: true});
+        browsePage.confirmPopoverFacets();
+      }
+      cy.waitForAsyncRequest();
+    });
   }
 
   validateAppliedFacetTableRows(facetType: string, index: number, facetName: string) {
