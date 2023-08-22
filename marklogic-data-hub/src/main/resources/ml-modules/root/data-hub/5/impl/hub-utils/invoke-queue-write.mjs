@@ -81,6 +81,9 @@ if(writerQueue != null && Object.keys(writerQueue).length !== 0) {
       const quality = context.quality || 0;
 
       if (temporalCollection) {
+        if (!content.value) {
+          content.value = cts.doc(content.uri);
+        }
         // temporalDocURI is managed by the temporal package and must not be carried forward.
         if (metadata) {
           delete metadata.temporalDocURI;

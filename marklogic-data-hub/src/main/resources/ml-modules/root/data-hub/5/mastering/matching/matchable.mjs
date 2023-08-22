@@ -4,6 +4,7 @@ import httpUtils from "/data-hub/5/impl/http-utils.mjs";
 import hubUtils from "/data-hub/5/impl/hub-utils.mjs";
 import common from "/data-hub/5/mastering/common.mjs";
 import {getEntityModel} from "/data-hub/core/models/entities.mjs";
+import temporalLib from "/data-hub/5/temporal/hub-temporal.mjs";
 
 // matching XQuery module for performance
 const matchingXqy = require("/data-hub/5/mastering/matching/matching.xqy");
@@ -113,7 +114,12 @@ export class Matchable {
    */
   baselineQuery() {
     if (!this._baselineQuery) {
-      const firstBaseline = this._model.instanceQuery();
+      let firstBaseline = this._model.instanceQuery();
+      const temporalCollections = temporalLib.getTemporalCollections().toArray();
+      const includesTemporalDocuments = temporalCollections.some(collection => cts.exists(cts.andQuery([firstBaseline, cts.collectionQuery(collection)])));
+      if (includesTemporalDocuments) {
+        firstBaseline = cts.andQuery([firstBaseline, cts.collectionQuery("latest")]);
+      }
       this._baselineQuery = common.applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
       if (matchingTraceEnabled) {
         xdmp.trace(matchingTraceEvent, `Initializing the baseline match query: ${xdmp.describe(this._baselineQuery, Sequence.from([]), Sequence.from([]))}`);
