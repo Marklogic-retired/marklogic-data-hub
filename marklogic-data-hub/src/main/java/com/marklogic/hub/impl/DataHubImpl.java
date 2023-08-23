@@ -708,8 +708,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             }
             newCommands.add(c);
         }
-        hubClient = hubClient == null ? hubConfig.newHubClient() : hubClient;
-        newCommands.add(new ConfigureAppServerBasePaths(hubConfig, hubClient));
+        newCommands.add(new ConfigureAppServerBasePaths(hubConfig));
         commandMap.put(key, newCommands);
     }
 
