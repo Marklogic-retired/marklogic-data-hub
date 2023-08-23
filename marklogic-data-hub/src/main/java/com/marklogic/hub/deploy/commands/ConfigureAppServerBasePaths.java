@@ -35,12 +35,10 @@ import java.util.List;
 public class ConfigureAppServerBasePaths extends AbstractCommand {
 
     private final HubConfigImpl hubConfig;
-    private final HubClientImpl hubClient;
     private ObjectMapper mapper = new ObjectMapper();
 
-    public ConfigureAppServerBasePaths(HubConfig hubConfig, HubClient hubClient) {
+    public ConfigureAppServerBasePaths(HubConfig hubConfig) {
         this.hubConfig = (HubConfigImpl) hubConfig;
-        this.hubClient = (HubClientImpl) hubClient;
         setExecuteSortOrder(SortOrderConstants.DEPLOY_OTHER_SERVERS + 1);
     }
 
@@ -130,13 +128,17 @@ public class ConfigureAppServerBasePaths extends AbstractCommand {
     }
 
     private void waitForGateWayToRestart() {
-        DatabaseClient databaseClient = hubClient.getStagingClient();
         int maxTimeToWaitInMs = 90000;
         int maxRetries = 15;
         int sleepTime = maxTimeToWaitInMs/maxRetries;
+        HubClientImpl hubClient = null;
 
         while(maxRetries > 0) {
             try {
+                if(hubClient == null) {
+                    hubClient = (HubClientImpl) hubConfig.newHubClient();
+                }
+                DatabaseClient databaseClient = hubClient.getStagingClient();
                 if(databaseClient.checkConnection().isConnected()) {
                     logger.info("Checking gateway status: " + databaseClient.checkConnection().isConnected());
                     break;
