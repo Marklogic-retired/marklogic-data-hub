@@ -138,6 +138,7 @@ class MonitorPage {
 
   clearFacets() {
     cy.get(`[aria-label="clear-facets-button"]`).click();
+    cy.waitForAsyncRequest();
   }
 
   getStartTimeDropDown() {
@@ -296,6 +297,13 @@ class MonitorPage {
     });
     toolbar.getMonitorToolbarIcon().should("be.visible").click();
     cy.waitForAsyncRequest();
+  }
+
+  reloadOnRetry() {
+    if (cy.state("runnable").currentRetry() >= 1) {
+      cy.visit("/tiles-monitor");
+      cy.waitForAsyncRequest();
+    }
   }
 }
 const monitorPage = new MonitorPage();
