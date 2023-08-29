@@ -82,6 +82,6 @@ public class VersionInfo {
         }
 
         String version = properties.getProperty("version");
-        return "${project.version}".equals(version) ? "6.0-SNAPSHOT" : version;
+        return "${project.version}".equals(version) ? "6.0.0" : version;
     }
 }
