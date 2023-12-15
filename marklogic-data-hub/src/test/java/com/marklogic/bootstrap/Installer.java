@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 @EnableAutoConfiguration
 public class Installer extends HubTestBase {
 
-    private static Logger logger = LoggerFactory.getLogger(Installer.class);
+    private static final Logger logger = LoggerFactory.getLogger(Installer.class);
 
     public void setupProject() {
         createProjectDir();

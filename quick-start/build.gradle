@@ -19,17 +19,17 @@ import java.util.concurrent.Executors
 
 plugins {
     id 'java'
+    id 'java-test-fixtures'
     id 'eclipse'
     id 'idea'
-    id 'com.moowork.node' version '1.2.0'
-    id 'org.springframework.boot' version '2.0.2.RELEASE'
-  id "io.spring.dependency-management" version "1.0.5.RELEASE"
+    id 'com.github.node-gradle.node' version '7.0.1'
+    id "io.spring.dependency-management" version "1.1.4"
 }
 
 apply plugin: 'war'
 
 war {
-    baseName = 'quick-start'
+    archiveBaseName = 'quick-start'
     version = "${version}"
     manifest {
         attributes("Implementation-Title": "QuickStart",
@@ -39,78 +39,77 @@ war {
 }
 
 repositories {
-    jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    mavenCentral()
+    maven {url 'https://developer.marklogic.com/maven2/'}
+    maven {url 'https://repo.spring.io/plugins-release/'}
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-ext.junit4Version        = '4.12'
-ext.junitVintageVersion  = '4.12.0-RC3'
-ext.junitPlatformVersion = '1.3.1'
-ext.junitJupiterVersion  = '5.3.1'
+ext.junitJupiterVersion  = '5.7.2'
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-websocket")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    compile("org.aspectj:aspectjweaver:1.8.9")
-    compile("org.springframework:spring-messaging")
-    compile project(":marklogic-data-hub")
-    compile("org.apache.commons:commons-csv:1.4")
+    implementation('org.springframework.boot:spring-boot-starter:2.7.18')
+    implementation('org.springframework.boot:spring-boot-starter-actuator:2.7.18')
+    implementation('org.springframework.boot:spring-boot-starter-web:2.7.18')
+    implementation('org.springframework.boot:spring-boot-starter-websocket:2.7.18')
+    implementation('org.springframework.boot:spring-boot-starter-security:2.7.18')
+    implementation('org.springframework.boot:spring-boot-starter-thymeleaf:2.7.18')
+    implementation('org.aspectj:aspectjweaver:1.9.19')
+    implementation('org.springframework:spring-messaging:5.3.31')
+    implementation project(":marklogic-data-hub")
+    implementation('org.apache.commons:commons-csv:1.10.0')
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
-    compile("org.springframework.boot:spring-boot-devtools")
+    implementation('org.springframework.boot:spring-boot-devtools:2.7.18')
+
+    implementation('com.marklogic:ml-app-deployer:4.6.0'){
+      exclude group: 'org.springframework', module: 'spring-context'
+    }
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.10") {
+    implementation("com.marklogic:mlcp:11.0.3") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
-    compile("com.marklogic:marklogic-spring-web:1.0")
+    implementation 'org.jdom:jdom2:2.0.6.1'
+    implementation 'com.marklogic:marklogic-xcc:11.0.2'
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
 
-    // JUnit Jupiter API and TestEngine implementation
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testFixturesApi "org.junit.jupiter:junit-jupiter:5.10.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.1"
 
-
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
-
-    // If you also want to support JUnit 3 and JUnit 4 tests
-    testCompile "junit:junit:${junit4Version}"
-    testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
-
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("io.rest-assured:rest-assured:3.0.3")
-    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.7.18')
+    testImplementation("io.rest-assured:rest-assured:5.4.0")
+    testImplementation files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
 evaluationDependsOn(':marklogic-data-hub')
 compileTestJava.dependsOn tasks.getByPath(':marklogic-data-hub:testClasses')
 
-configurations {
-    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+configurations.configureEach {
+    exclude group: "org.apache.logging.log4j", module: "log4j-to-slf4j"
+    exclude group: "ch.qos.logback", module: "logback-classic"
+    exclude group: 'ch.qos.reload4j', module: 'reload4j'
 }
 
 node {
   // Version of node to use.
-  version = '8.10.0'
+  version = '18.19.0'
 
-  // // Version of npm to use.
-  npmVersion = '6.9.0'
+  // Version of npm to use.
+  npmVersion = ''
 
   download = true
 
   // Set the work directory for unpacking node
-  workDir = file("${project.buildDir}/nodejs")
+  workDir = file("${project.projectDir}/build/nodejs")
 
   // Set the work directory where node_modules should be located
-  nodeModulesDir = file("${project.projectDir}")
+  nodeProjectDir = file("${project.projectDir}")
 }
 
+/*
 task cleanUI(type: Delete) {
   delete 'src/main/resources/static', 'src/main/resources/templates'
 }
@@ -143,36 +142,36 @@ task runUI(type: NpmTask) {
     args = ['start']
     dependsOn tasks.npmInstallUI
 }
-
-task startRest {
+*/
+tasks.register('startRest') {
   doFirst {
     def executorService = Executors.newSingleThreadExecutor()
     executorService.submit({
-        tasks.findMainClass.execute()
-        pid = tasks.bootRun.execute()
+      tasks.findMainClass.execute()
+      pid = tasks.bootRun.execute()
 
     } as Runnable)
   }
 }
 
-task e2eLaunch(type: NpmTask) {
-    args = ['run', 'e2e']
-    dependsOn compileJava, buildUI, startRest
+tasks.register('e2eLaunch', NpmTask) {
+  args = ['run', 'e2e']
+  dependsOn compileJava, /*buildUI,*/ startRest
 }
 
-task e2eUI {
-    dependsOn tasks.e2eLaunch
+tasks.register('e2eUI') {
+  dependsOn tasks.e2eLaunch
 }
 
-task stopBootrun {
-    doLast {
-        println("STOPPING Spring Boot")
-        def connection = new URL("http://localhost:8080/shutdown").openConnection()
-        connection.setRequestMethod("POST")
-        connection.connect()
-        println 'Shutting down application...'
-        println connection.inputStream.text
-    }
+tasks.register('stopBootrun') {
+  doLast {
+    println("STOPPING Spring Boot")
+    def connection = new URL("http://localhost:8080/shutdown").openConnection()
+    connection.setRequestMethod("POST")
+    connection.connect()
+    println 'Shutting down application...'
+    println connection.inputStream.text
+  }
 }
 
 e2eUI.finalizedBy stopBootrun
@@ -186,24 +185,10 @@ if (!(
     project.hasProperty('skipui')
     )
    ) {
-  processResources.dependsOn copyIndexHtml
-}
-
-//removing test dependency on e2e tests
-//test.dependsOn e2eUI
-
-bootRun {
-    // this is not in spring boot 2 addResources = true
-    environment 'spring.profiles.active', 'dev'
-}
-
-springBoot {
-    // not in spring boot 2 executable = true
-    mainClassName = "com.marklogic.quickstart.DataHubApiConfiguration"
-    buildInfo()
+  //processResources.dependsOn copyIndexHtml
 }
 
 test {
     exclude 'com/marklogic/quickstart/integrationtests/**'
-    useJUnitPlatform()   
+    useJUnitPlatform()
 }

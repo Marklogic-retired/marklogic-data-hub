@@ -23,8 +23,8 @@ subprojects {
 
 
     dependencies {
-        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
-		testCompile 'org.apache.httpcomponents:httpclient:4.3.5'
+        implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.1'
     }
 
     test{
@@ -37,7 +37,7 @@ subprojects {
 }
 
 wrapper {
-    gradleVersion = '4.10'
+    gradleVersion = '8.5'
 }
 
 //Task to update versions in files they are hardcoded. If version is hardcoded in any other files in the future,it has to be added to the list

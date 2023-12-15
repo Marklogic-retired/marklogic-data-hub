@@ -69,13 +69,13 @@ public class DataHubTest extends HubTestBase {
         serverManager = EasyMock.mock(ServerManager.class);
 
         dh = EasyMock.createMockBuilder(DataHubImpl.class)
-            .withConstructor()
+            .withConstructor(hubConfig)
             .createMock();
         dh.setServerManager(serverManager);
         dh.setHubConfig(hubConfig);
 
         versions = EasyMock.createMockBuilder(Versions.class)
-            .withConstructor()
+            .withConstructor(hubConfig)
             .addMockedMethod("getMarkLogicVersion")
             .createMock();
         dh.setVersions(versions);

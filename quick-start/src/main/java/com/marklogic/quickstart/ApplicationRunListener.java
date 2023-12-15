@@ -23,6 +23,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
+import java.time.Duration;
+
 public class ApplicationRunListener implements SpringApplicationRunListener {
 
     @Autowired
@@ -31,26 +33,17 @@ public class ApplicationRunListener implements SpringApplicationRunListener {
     public ApplicationRunListener(SpringApplication application, String[] args) { }
 
     @Override
-    public void starting() {}
-
-    @Override
-    public void environmentPrepared(ConfigurableEnvironment environment) {}
-
-    @Override
     public void contextPrepared(ConfigurableApplicationContext context) {}
 
     @Override
     public void contextLoaded(ConfigurableApplicationContext context) {}
 
     @Override
-    public void started(ConfigurableApplicationContext context) {
+    public void started(ConfigurableApplicationContext context, Duration timeTaken) {
         String port = context.getEnvironment().getProperty("local.server.port");
         System.out.println("QuickStart UI is Ready and Listening on port " + port + ".\n");
         System.out.println("Open your browser to http://localhost:" + port + ".\t(We recommend you use Chrome or FireFox.)");
     }
-
-    @Override
-    public void running(ConfigurableApplicationContext context) { }
 
     @Override
     public void failed(ConfigurableApplicationContext context, Throwable exception) {

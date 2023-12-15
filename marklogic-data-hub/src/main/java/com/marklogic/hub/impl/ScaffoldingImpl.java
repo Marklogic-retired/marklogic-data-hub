@@ -53,17 +53,18 @@ import java.util.regex.Pattern;
 @Component
 public class ScaffoldingImpl implements Scaffolding {
 
-    @Autowired
-    private HubProject project;
-
-    @Autowired
+    private final HubProject project;
     HubConfig hubConfig;
 
-    @Autowired
-    private ScaffoldingValidator validator;
+    private final ScaffoldingValidator validator;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public ScaffoldingImpl(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        this.project = hubConfig.getHubProject();
+        this.validator = new ScaffoldingValidator(this.project);
+    }
     public static String getAbsolutePath(String first, String... more) {
         StringBuilder absolutePath = new StringBuilder(first);
         for (String path : more) {

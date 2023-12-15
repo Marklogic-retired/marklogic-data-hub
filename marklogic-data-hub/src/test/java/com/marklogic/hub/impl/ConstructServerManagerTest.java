@@ -10,8 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConstructServerManagerTest {
 
-    private DataHubImpl dataHub = new DataHubImpl();
     private HubConfigImpl hubConfig = new HubConfigImpl();
+    private DataHubImpl dataHub = new DataHubImpl(hubConfig);
 
     // A valid ManageClient isn't needed for the purposes of this test class
     private ManageClient manageClient = null;

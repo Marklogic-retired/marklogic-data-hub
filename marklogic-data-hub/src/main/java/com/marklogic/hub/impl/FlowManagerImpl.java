@@ -50,23 +50,19 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
     private static final String NAME = "ml:flow";
 
-    private DatabaseClient stagingClient;
+    private HubConfig hubConfig = null;
 
+    private final Scaffolding scaffolding;
 
-    @Autowired
-    private HubConfig hubConfig;
-
-    @Autowired
-    private Scaffolding scaffolding;
-
-    public FlowManagerImpl() {
+    public FlowManagerImpl(HubConfig hubConfig) {
         super();
+        this.hubConfig = hubConfig;
+        this.scaffolding = new ScaffoldingImpl(hubConfig);
     }
 
-    
     public void setupClient() {
-        this.stagingClient = hubConfig.newStagingClient();
-        this.stagingClient.init(NAME, this);
+        DatabaseClient stagingClient = hubConfig.newStagingClient();
+        stagingClient.init(NAME, this);
     }
 
     @Override public List<Flow> getLocalFlows() {
@@ -138,8 +134,8 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
          * input|harmonize/<flowName>/flowName.properties
          */
-        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
-                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator
+                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";
         FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
                 ? FlowType.INPUT : FlowType.HARMONIZE;
 

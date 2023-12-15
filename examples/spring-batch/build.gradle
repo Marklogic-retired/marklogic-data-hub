@@ -8,16 +8,16 @@ plugins {
 
 repositories {
     jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    maven {url 'https://developer.marklogic.com/maven2/'}
 }
 
 dependencies {
-    compile 'com.marklogic:marklogic-data-hub:4.0.3'
-    compile "com.marklogic:marklogic-spring-batch-core:1.7.0"
-    compile 'com.marklogic:spring-batch-rdbms:1.7.0'
+    implementation 'com.marklogic:marklogic-data-hub:4.0.3'
+    implementation "com.marklogic:marklogic-spring-batch-core:1.7.0"
+    implementation 'com.marklogic:spring-batch-rdbms:1.7.0'
 
-    testCompile "com.h2database:h2:1.4.193"
-    testCompile "com.marklogic:marklogic-spring-batch-test:1.7.0"
+    testImplementation "com.h2database:h2:1.4.193"
+    testImplementation "com.marklogic:marklogic-spring-batch-test:1.7.0"
 
     runtime "com.h2database:h2:1.4.193"
     runtime "ch.qos.logback:logback-classic:1.1.8"

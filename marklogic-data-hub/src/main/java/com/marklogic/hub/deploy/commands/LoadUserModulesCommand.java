@@ -25,8 +25,6 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.client.ext.modulesloader.ModulesManager;
 import com.marklogic.client.ext.modulesloader.impl.*;
-import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
-import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
@@ -64,8 +62,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
     @Autowired
     private FlowManager flowManager;
-
-    private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     private boolean watchingModules = false;

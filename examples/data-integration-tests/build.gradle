@@ -1,6 +1,6 @@
 buildscript {
   repositories {
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    maven {url 'https://developer.marklogic.com/maven2/'}
   }
 }
 
@@ -28,21 +28,21 @@ apply plugin: 'kotlin'
 
 repositories {
     jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+    maven {url 'https://developer.marklogic.com/maven2/'}
 }
 
 dependencies {
     // this allows you to write custom java code that depends
     // on the Data Hub Framework library
-    compile 'com.marklogic:marklogic-data-hub:4.0.3'
-    compile 'com.marklogic:marklogic-xcc:9.0.7'
-    compile 'com.marklogic:marklogic-client-api:4.1.1'
+    implementation 'com.marklogic:marklogic-data-hub:4.0.3'
+    implementation 'com.marklogic:marklogic-xcc:9.0.7'
+    implementation 'com.marklogic:marklogic-client-api:4.1.1'
     // prototyping with kotlin tests
-    compile 'io.github.microutils:kotlin-logging:1.4.6'
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
-    compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-xml-provider', version: '2.9.0'
-    compile 'io.github.microutils:kotlin-logging:1.4.6'
+    implementation 'io.github.microutils:kotlin-logging:1.4.6'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
+    implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-xml-provider', version: '2.9.0'
+    implementation 'io.github.microutils:kotlin-logging:1.4.6'
 
 }
 

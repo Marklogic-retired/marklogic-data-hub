@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BuildPatternForDatabasesToUpdateIndexesForTest {
 
-    DataHubImpl dataHub = new DataHubImpl();
+    DataHubImpl dataHub = new DataHubImpl(new HubConfigImpl());
 
     @Test
     public void test() {

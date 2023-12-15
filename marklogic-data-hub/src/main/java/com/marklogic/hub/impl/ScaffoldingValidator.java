@@ -32,9 +32,11 @@ public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
 
    private static String UNIQUE_KEY = "unique";
 
-   // can be autowired instead
-   @Autowired
-   private HubProject project;
+   private final HubProject project;
+
+   public ScaffoldingValidator(HubProject hubProject) {
+    this.project = hubProject;
+   }
 
    public boolean isUniqueRestServiceExtension(String name) {
        HashMap<String, Boolean> result = new HashMap<>();

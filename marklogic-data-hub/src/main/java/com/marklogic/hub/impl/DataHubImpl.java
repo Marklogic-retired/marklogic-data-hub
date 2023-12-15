@@ -22,10 +22,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
-import com.marklogic.appdeployer.command.databases.DeployContentDatabasesCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
-import com.marklogic.appdeployer.command.databases.DeploySchemasDatabaseCommand;
-import com.marklogic.appdeployer.command.databases.DeployTriggersDatabaseCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
 import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
@@ -64,7 +61,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -79,8 +75,7 @@ public class DataHubImpl implements DataHub {
     private DatabaseManager _databaseManager;
     private ServerManager _serverManager;
 
-    @Autowired
-    private HubConfigImpl hubConfig;
+    private HubConfig hubConfig;
 
     @Autowired
     private HubProject project;
@@ -93,10 +88,10 @@ public class DataHubImpl implements DataHub {
 
     @Autowired
     private LoadUserArtifactsCommand loadUserArtifactsCommand;
-    
+
     @Autowired
     private Versions versions;
-    
+
     @Autowired
     private FlowManagerImpl flowManager;
 
@@ -104,10 +99,15 @@ public class DataHubImpl implements DataHub {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @PostConstruct
+    public DataHubImpl(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+        wireClient();
+    }
     public void wireClient() {
-        this._manageClient = hubConfig.getManageClient();
-        this._adminManager = hubConfig.getAdminManager();
+        if (hubConfig instanceof HubConfigImpl) {
+            this._manageClient = ((HubConfigImpl) hubConfig).getManageClient();
+            this._adminManager = ((HubConfigImpl) hubConfig).getAdminManager();
+        }
         this._databaseManager = new DatabaseManager(_manageClient);
         this._serverManager = constructServerManager(_manageClient, hubConfig);
     }
@@ -133,6 +133,9 @@ public class DataHubImpl implements DataHub {
     }
 
     private AdminManager getAdminManager() {
+        if (hubConfig instanceof HubConfigImpl && _adminManager == null) {
+            _adminManager = ((HubConfigImpl)hubConfig).getAdminManager();
+        }
         return this._adminManager;
     }
 
@@ -141,6 +144,9 @@ public class DataHubImpl implements DataHub {
     }
 
     private ManageClient getManageClient() {
+        if (hubConfig instanceof HubConfigImpl && _manageClient == null) {
+            _manageClient = ((HubConfigImpl)hubConfig).getManageClient();
+        }
         return _manageClient;
     }
 
@@ -638,11 +644,9 @@ public class DataHubImpl implements DataHub {
     private void updateDatabaseCommandList(Map<String, List<Command>> commandMap) {
         List<Command> dbCommands = new ArrayList<>();
         for (Command c : commandMap.get("mlDatabaseCommands")) {
-            if (!(c instanceof DeployContentDatabasesCommand || c instanceof DeployTriggersDatabaseCommand || c instanceof DeploySchemasDatabaseCommand)) {
-                dbCommands.add(c);
-                if (c instanceof DeployOtherDatabasesCommand) {
-                    ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
-                }
+            dbCommands.add(c);
+            if (c instanceof DeployOtherDatabasesCommand) {
+                ((DeployOtherDatabasesCommand)c).setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
             }
         }
         commandMap.put("mlDatabaseCommands", dbCommands);
@@ -679,9 +683,11 @@ public class DataHubImpl implements DataHub {
      *
      */
     private void updateSchemaCommandList(Map<String, List<Command>> commandMap) {
-        List<Command> commands = commandMap.get("mlSchemaCommands");
-        final String hubSchemasPath = hubConfig.getHubConfigDir().resolve("schemas").toString();
-        commands.add(new LoadHubSchemasCommand(hubSchemasPath, hubConfig.getStagingSchemasDbName()));
+        if (hubConfig instanceof HubConfigImpl) {
+            List<Command> commands = commandMap.get("mlSchemaCommands");
+            final String hubSchemasPath = hubConfig.getHubConfigDir().resolve("schemas").toString();
+            commands.add(new LoadHubSchemasCommand(hubSchemasPath, ((HubConfigImpl) hubConfig).getStagingSchemasDbName()));
+        }
     }
 
     /**
@@ -691,8 +697,10 @@ public class DataHubImpl implements DataHub {
      *
      */
     private void updateTriggersCommandList(Map<String, List<Command>> commandMap) {
-        List<Command> commands = commandMap.get("mlTriggerCommands");
-        commands.add(new DeployHubTriggersCommand(hubConfig.getStagingTriggersDbName()));
+        if (hubConfig instanceof HubConfigImpl) {
+            List<Command> commands = commandMap.get("mlTriggerCommands");
+            commands.add(new DeployHubTriggersCommand(((HubConfigImpl) hubConfig).getStagingTriggersDbName()));
+        }
     }
 
     /**
@@ -862,11 +870,11 @@ public class DataHubImpl implements DataHub {
             throw new CantUpgradeException(currentVersion, MIN_UPGRADE_VERSION);
         }
         boolean result = false;
-        boolean alreadyInitialized = project.isInitialized();                
+        boolean alreadyInitialized = project.isInitialized();
         try {
             /*Ideally this should move to HubProject.upgradeProject() method
-             * But since it requires 'hubConfig' and 'versions', for now 
-             * leaving it here 
+             * But since it requires 'hubConfig' and 'versions', for now
+             * leaving it here
              */
 
             File oldGradlePropsFile = new File(Paths.get(project.getProjectDirString(),"gradle.properties.old").toString());
@@ -877,12 +885,12 @@ public class DataHubImpl implements DataHub {
                 // The version provided in "mlDHFVersion" property in gradle.properties.
                 String gradleVersion = versions.getDHFVersion();
                 File buildGradle = Paths.get(project.getProjectDirString(), "build.gradle").toFile();
-                
+
                 // Back up the hub-internal-config and user-config directories in versions > 4.0
                 FileUtils.copyDirectory(project.getHubConfigDir().toFile(), project.getProjectDir().resolve(HubProject.HUB_CONFIG_DIR+"-"+gradleVersion).toFile());
                 FileUtils.copyDirectory(project.getUserConfigDir().toFile(), project.getProjectDir().resolve(HubProject.USER_CONFIG_DIR+"-"+gradleVersion).toFile());
-                  
-                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin. 
+
+                // Gradle plugin uses a logging framework that is different from java api. Hence writing it to stdout as it is done in gradle plugin.
                 System.out.println("The "+ gradleVersion + " "+ HubProject.HUB_CONFIG_DIR +" is now moved to "+ HubProject.HUB_CONFIG_DIR+"-"+gradleVersion);
                 System.out.println("The "+ gradleVersion + " "+ HubProject.USER_CONFIG_DIR +" is now moved to "+ HubProject.USER_CONFIG_DIR+"-"+gradleVersion);
                 System.out.println("Please copy the custom database, server configuration files from " + HubProject.HUB_CONFIG_DIR+"-"+gradleVersion
@@ -899,13 +907,13 @@ public class DataHubImpl implements DataHub {
 
             // Back up the gradle.properties to .old so hubUpdate will generate new gradle.properties to compare against
             gradlePropsFile.renameTo(oldGradlePropsFile);
-            
+
             hubConfig.initHubProject();
 
             //Renaming gradle.properties to gradle-GENERATED.properties which is the properties file generated after hubUpdate
             gradlePropsFile.renameTo(genGradlePropsFile);
             oldGradlePropsFile.renameTo(gradlePropsFile);
-            
+
             //now let's try to upgrade the directory structure
             hubConfig.getHubProject().upgradeProject();
             List<String> flows = flowManager.updateLegacyFlows(currentVersion);

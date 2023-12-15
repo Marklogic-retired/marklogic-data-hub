@@ -54,10 +54,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
@@ -76,11 +73,8 @@ public class HubConfigImpl implements HubConfig
     // a set of properties to use for legacy token replacement.
     Properties projectProperties = null;
 
-    @Autowired
     FlowManagerImpl flowManager;
-    @Autowired
     DataHubImpl dataHub;
-    @Autowired
     Versions versions;
 
 
@@ -187,6 +181,9 @@ public class HubConfigImpl implements HubConfig
     public HubConfigImpl() {
         objmapper = new ObjectMapper();
         projectProperties = new Properties();
+        flowManager = new FlowManagerImpl(this);
+        dataHub = new DataHubImpl(this);
+        versions = new Versions(this);
     }
 
 
@@ -826,7 +823,7 @@ public class HubConfigImpl implements HubConfig
     public String getMlPassword() {
         return mlPassword;
     }
-    
+
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
     }
@@ -1314,7 +1311,7 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlFlowOperatorRole", flowOperatorRoleName);
         }
-        
+
         if (dataHubAdminRoleName == null) {
             dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
         }
@@ -1790,7 +1787,7 @@ public class HubConfigImpl implements HubConfig
 
         initializeModulePaths(config);
 
-        config.setSchemasPath(getUserSchemasDir().toString());
+        config.setSchemaPaths(Collections.singletonList(getUserSchemasDir().toString()));
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
@@ -1807,7 +1804,7 @@ public class HubConfigImpl implements HubConfig
      *
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
-     * 
+     *
      * @param config
      */
     protected void initializeConfigDirs(AppConfig config) {

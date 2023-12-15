@@ -16,10 +16,8 @@
  */
 package com.marklogic.quickstart.auth;
 
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.quickstart.service.EnvironmentConfig;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
