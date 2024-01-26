@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/extensions/scaffold-content";
+module namespace service = "http://marklogic.com/rest-api/resource/ml-scaffoldContent";
 
 import module namespace consts = "http://marklogic.com/data-hub/consts"
 at "/data-hub/4/impl/consts.xqy";
@@ -338,9 +338,9 @@ service:generate-lets($model, $entity-type-name, $mapping, $entity)
     let $properties := map:get($entity-type, "properties")
     let $required-properties := (
       map:get($entity-type, "primaryKey"),
-    if (fn:empty(map:get($entity-type, "required"))) then 
+    if (fn:empty(map:get($entity-type, "required"))) then
       ()
-    else 
+    else
       json:array-values(map:get($entity-type, "required"))
     )
     for $property-name in map:keys($properties)

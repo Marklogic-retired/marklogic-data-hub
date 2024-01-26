@@ -1,15 +1,35 @@
 <!-- Copyright 2011-2019 MarkLogic Corporation.  All Rights Reserved. -->
 <rewriter xmlns="http://marklogic.com/xdmp/rewriter" xmlns:xi="http://www.w3.org/2001/XInclude">
-    <!-- DHF -->
-    <match-path matches="^/(v1|LATEST)/internal/hubcollector/?$">
-        <match-method any-of="GET">
-            <match-query-param name="database">
-                <set-database checked="true">$0</set-database>
-            </match-query-param>
-            <dispatch>/data-hub/4/endpoints/collector.xqy</dispatch>
-        </match-method>
-    </match-path>
-    <!-- DHF -->
+  <!-- DHF -->
+  <match-path matches="^/(v1|LATEST)/internal/hubcollector/?$">
+      <match-method any-of="GET">
+          <match-query-param name="database">
+              <set-database checked="true">$0</set-database>
+          </match-query-param>
+          <dispatch>/data-hub/4/endpoints/collector.xqy</dispatch>
+      </match-method>
+  </match-path>
+  <match-path matches="^/(v1|LATEST)/resources/ml:([^/]+)/?$">
+    <match-query-param name="database">
+      <set-database checked="true">$0</set-database>
+    </match-query-param>
+    <add-query-param name="name">ml-$2</add-query-param>
+    <match-method any-of="GET HEAD POST">
+      <match-query-param name="txid">
+        <set-transaction>$0</set-transaction>
+        <set-transaction-mode>query</set-transaction-mode>
+      </match-query-param>
+      <dispatch>/MarkLogic/rest-api/endpoints/resource-service-query.xqy</dispatch>
+    </match-method>
+    <match-method any-of="PUT DELETE">
+      <match-query-param name="txid">
+        <set-transaction>$0</set-transaction>
+        <set-transaction-mode>update</set-transaction-mode>
+      </match-query-param>
+      <dispatch>/MarkLogic/rest-api/endpoints/resource-service-update.xqy</dispatch>
+    </match-method>
+  </match-path>
+  <!-- DHF -->
   <!-- XDBC -->
   <match-path  any-of="/eval /invoke /spawn /insert">
     <dispatch xdbc="true">$0</dispatch>

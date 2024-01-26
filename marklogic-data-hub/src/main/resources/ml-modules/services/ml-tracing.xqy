@@ -15,16 +15,15 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/extensions/hubversion";
-
-import module namespace config = "http://marklogic.com/data-hub/config"
-  at "/com.marklogic.hub/config.xqy";
+module namespace service = "http://marklogic.com/rest-api/resource/ml-tracing";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/data-hub/4/impl/debug-lib.xqy";
 
-import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-  at "/data-hub/4/impl/perflog-lib.xqy";
+import module namespace trace = "http://marklogic.com/data-hub/trace"
+  at "/data-hub/4/impl/trace-lib.xqy";
+
+declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare option xdmp:mapping "false";
 
@@ -34,10 +33,20 @@ declare function get(
   ) as document-node()*
 {
   debug:dump-env(),
-  perf:log('/v1/resources/hubversion:get', function() {
-    xdmp:set-response-content-type("text/plain"),
-    document {
-      $config:HUB-VERSION
-    }
-  })
+
+  document { trace:enabled() }
+};
+
+declare %rapi:transaction-mode("update") function post(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
+{
+  debug:dump-env(),
+
+  let $enable := map:get($params, "enable") = ("true", "yes")
+  let $_ := trace:enable-tracing($enable)
+  return
+    document { () }
 };

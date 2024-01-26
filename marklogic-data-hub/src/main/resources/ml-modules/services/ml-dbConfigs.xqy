@@ -15,7 +15,7 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/extensions/search-options-generator";
+module namespace service = "http://marklogic.com/rest-api/resource/ml-dbConfigs";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
   at "/data-hub/4/impl/debug-lib.xqy";
@@ -26,19 +26,30 @@ import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
   at "/data-hub/4/impl/perflog-lib.xqy";
 
+declare namespace rapi = "http://marklogic.com/rest-api";
+
+declare namespace hub = "http://marklogic.com/data-hub";
+
 declare option xdmp:mapping "false";
 
+(:~
+ : Entry point for java to get entity(s).
+ :
+ : if the "entity-name" param is given then return a entity. Otherwise
+ : return all entities.
+ :
+ :)
 declare function post(
   $context as map:map,
   $params  as map:map,
   $input   as document-node()*
   ) as document-node()*
 {
-  debug:dump-env(),
+  debug:dump-env("GET ENTITY(s)"),
 
-  perf:log('/v1/resources/validate:get', function() {
+  perf:log('/v1/resources/entity:get', function() {
     document {
-      hent:dump-search-options($input)
+      hent:dump-indexes($input)
     }
   })
 };

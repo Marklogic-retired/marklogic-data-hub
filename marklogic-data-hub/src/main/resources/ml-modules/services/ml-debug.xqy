@@ -15,32 +15,36 @@
 :)
 xquery version "1.0-ml";
 
-module namespace service = "http://marklogic.com/rest-api/extensions/pii-generator";
+module namespace service = "http://marklogic.com/rest-api/resource/ml-debug";
 
 import module namespace debug = "http://marklogic.com/data-hub/debug"
-at "/data-hub/4/impl/debug-lib.xqy";
+  at "/data-hub/4/impl/debug-lib.xqy";
 
-import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
-at "/data-hub/4/impl/hub-entities.xqy";
-
-import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
-at "/data-hub/4/impl/perflog-lib.xqy";
+declare namespace rapi = "http://marklogic.com/rest-api";
 
 declare option xdmp:mapping "false";
 
-declare function post(
-$context as map:map,
-$params  as map:map,
-$input   as document-node()*
-) as document-node()*
+declare function get(
+  $context as map:map,
+  $params  as map:map
+  ) as document-node()*
 {
-    debug:dump-env(),
+  debug:dump-env(),
 
-    perf:log('/v1/resources/validate:get', function() {
-    document {
-        hent:dump-pii($input)
-    }
-    })
+  document { debug:on() }
 };
 
+declare %rapi:transaction-mode("update") function post(
+  $context as map:map,
+  $params  as map:map,
+  $input   as document-node()*
+  ) as document-node()*
+{
+  debug:dump-env(),
 
+  let $enable := map:get($params, "enable") = ("true", "yes")
+  let $_ := debug:enable($enable)
+  return
+    (),
+  document { () }
+};
