@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 16,
+    "name": "William",
+    "type": "llama",
+    "birthDate": "2002-08-15",
+    "farm": 3,
+    "pasture": 1
+  },
+  "geometry": {
+    "coordinates": [-121.97714739498474, 37.37532785544573],
+    "type": "Point"
+  }
+}

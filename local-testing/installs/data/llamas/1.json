@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 1,
+    "name": "George",
+    "type": "llama",
+    "birthDate": "2007-06-01",
+    "farm": 3,
+    "pasture": 4
+  },
+  "geometry": {
+    "coordinates": [-121.97416315360529, 37.37726523951736],
+    "type": "Point"
+  }
+}

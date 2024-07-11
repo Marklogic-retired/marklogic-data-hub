@@ -190,17 +190,17 @@ public class DataHubTest extends HubTestBase {
 
     @Test
     public void testValidateServerBeyond10() {
-        assertFalse(dh.isServerVersionValid("10.0-1"));
+        assertTrue(dh.isServerVersionValid("10.0-1"));
     }
 
     @Test
     public void testValidateServer10Nightly() {
-        assertFalse(dh.isServerVersionValid("10.0-20170801"));
+        assertTrue(dh.isServerVersionValid("10.0-20170801"));
     }
 
     @Test
     public void testValidateServer10NightlyValid() {
-        assertFalse(dh.isServerVersionValid("10.0-20190602"));
+        assertTrue(dh.isServerVersionValid("10.0-20190602"));
     }
 
     @Test

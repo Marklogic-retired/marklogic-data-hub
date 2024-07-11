@@ -19,9 +19,15 @@ package com.marklogic.gradle
 
 
 import com.marklogic.appdeployer.command.Command
+import com.marklogic.appdeployer.command.CommandContext
 import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
+import com.marklogic.gradle.task.client.WatchTask
+import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
+import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.hub.ApplicationConfig
+import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
+import com.marklogic.hub.deploy.commands.ClearDHFModulesCommand
 import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import com.marklogic.hub.deploy.commands.LoadHubModulesCommand
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
@@ -82,7 +88,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubPreInstallCheck", group: deployGroup, type: PreinstallCheckTask,
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
         project.task("hubInfo", group: deployGroup, type: HubInfoTask)
-        project.task("hubUpdate", group: deployGroup, type: UpdateHubTask)
+        project.task("hubUpdate", group: deployGroup, type: UpdateHubTask,
+            description: "hubUpdate command is not supported for DHF 4.3.3")
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"
         project.task("hubInit", group: scaffoldGroup, type: InitProjectTask)
@@ -104,10 +111,10 @@ class DataHubPlugin implements Plugin<Project> {
          * strips out all "non-index" properties from the payload. But it's not certain that that behavior is desirable
          * here - within the context of DHF, this is really used as a way to say "I need to update each of the databases".
          */
-        project.tasks.replace("mlUpdateIndexes", HubUpdateIndexesTask);
+        ((UpdateIndexesTask) project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)
 
         // DHF has custom logic for clearing the modules database
-        project.tasks.replace("mlClearModulesDatabase", ClearDHFModulesTask)
+        ((ClearModulesDatabaseTask) project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
         project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
         /*
@@ -129,7 +136,14 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Installs user artifacts such as entities and mappings.")
 
         // HubWatchTask extends ml-gradle's WatchTask to ensure that modules are loaded from the hub-specific locations.
-        project.tasks.replace("mlWatch", HubWatchTask)
+        //project.tasks.replace("mlWatch", HubWatchTask)
+        WatchTask watchTask = project.tasks.getByName("mlWatch")
+        CommandContext commandContext= new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
+        watchTask.afterModulesLoadedCallback = { s ->
+            loadUserModulesCommand.setWatchingModules(true)
+            loadUserModulesCommand.execute(commandContext)
+        }
+
 
         // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
         project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: deployGroup)
@@ -190,7 +204,7 @@ class DataHubPlugin implements Plugin<Project> {
         else {
 
             // If the user called hubInit, only load the configuration. Refreshing the project will fail because
-            // gradle.properties doesn't exist yet. 
+            // gradle.properties doesn't exist yet.
             if (calledHubInit) {
                 hubConfig.loadConfigurationFromProperties(new ProjectPropertySource(project).getProperties(), false)
             }

@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 20,
+    "name": "Jenny",
+    "type": "llama",
+    "birthDate": "2000-08-11",
+    "farm": 1,
+    "pasture": 2
+  },
+  "geometry": {
+    "coordinates": [-121.97588624137967, 37.37635627758419],
+    "type": "Point"
+  }
+}

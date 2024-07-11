@@ -24,10 +24,12 @@ import com.marklogic.hub.flow.DataFormat
 import com.marklogic.hub.flow.FlowType
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 abstract class CreateFlowTask extends HubTask {
 
     @Input
+    @Optional
     public Boolean useES
 
 
@@ -75,5 +77,9 @@ abstract class CreateFlowTask extends HubTask {
         Scaffolding scaffolding = getScaffolding()
         println "Creating an " + pluginFormat + " " + flowType + " flow named " + flowName + " for entity " + entityName + withMapping
         scaffolding.createFlow(entityName, flowName, flowType, pluginFormat, dataFormat, useES, mappingName)
+    }
+
+    Boolean getUseES() {
+        return useES
     }
 }

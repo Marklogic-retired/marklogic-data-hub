@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 4,
+    "name": "Loretta",
+    "type": "llama",
+    "birthDate": "1996-11-14",
+    "farm": 3,
+    "pasture": 4
+  },
+  "geometry": {
+    "coordinates": [-121.97352891065863, 37.37674375308745],
+    "type": "Point"
+  }
+}

@@ -27,33 +27,42 @@ import com.marklogic.gradle.exception.HubNotInstalledException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.flow.*
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 
 class RunFlowTask extends HubTask {
 
     @Input
+    @Optional
     public String entityName
 
     @Input
+    @Optional
     public String flowName
 
     @Input
+    @Optional
     public Integer batchSize
 
     @Input
+    @Optional
     public Integer threadCount
 
     @Input
+    @Optional
     public String sourceDB
 
     @Input
+    @Optional
     public String destDB
 
     @Input
+    @Optional
     public Boolean showOptions
 
     @Input
+    @Optional
     public Boolean failHard
 
     @TaskAction
@@ -172,5 +181,37 @@ class RunFlowTask extends HubTask {
             println("\n\nOutput:")
             println(prettyPrint(job))
         }
+    }
+
+    String getEntityName() {
+        return entityName
+    }
+
+    String getFlowName() {
+        return flowName
+    }
+
+    Integer getBatchSize() {
+        return batchSize
+    }
+
+    Integer getThreadCount() {
+        return threadCount
+    }
+
+    String getSourceDB() {
+        return sourceDB
+    }
+
+    String getDestDB() {
+        return destDB
+    }
+
+    Boolean getShowOptions() {
+        return showOptions
+    }
+
+    Boolean getFailHard() {
+        return failHard
     }
 }

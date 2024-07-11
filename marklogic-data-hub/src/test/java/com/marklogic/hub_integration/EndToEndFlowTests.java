@@ -360,6 +360,7 @@ public class EndToEndFlowTests extends HubTestBase {
                     FinalCounts finalCounts = new FinalCounts(1, 0, 1, 1, 0, 0, 1, 0, 0, 0, "FINISHED");
                     testInputFlowViaMlcp(prefix, useEs ? "-es" : "", flowRunnerClient, codeFormat, dataFormat, useEs, options, finalCounts);
                 }));
+
                 tests.add(DynamicTest.dynamicTest(flowName + " REST", () -> {
                     Map<String, Object> options = new HashMap<>();
                     options.put("extraPlugin", true);
@@ -1054,7 +1055,7 @@ public class EndToEndFlowTests extends HubTestBase {
         		optionString = toJsonString(options).replace("\"", "\\\\\\\"");
         	}
         	else {
-        		optionString = toJsonString(options).replace("\"", "\\\"");
+                optionString = toJsonString(options).replace("\"", "\\\"");
         	}
             String optionsJson =
                 "{" +

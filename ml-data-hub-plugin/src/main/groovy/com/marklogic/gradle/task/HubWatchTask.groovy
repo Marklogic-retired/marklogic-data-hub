@@ -19,6 +19,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.gradle.task.client.WatchTask
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
+import org.gradle.api.tasks.Input
 
 /**
  * Extends ml-gradle's WatchTask so that after WatchTask loads modules, this task can invoke the custom DHF command for
@@ -28,6 +29,7 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand
  */
 class HubWatchTask extends WatchTask {
 
+    @Input
     LoadUserModulesCommand command
 
     @Override
@@ -40,5 +42,9 @@ class HubWatchTask extends WatchTask {
         }
 
         command.execute(getCommandContext())
+    }
+
+    LoadUserModulesCommand getCommand() {
+        return command
     }
 }

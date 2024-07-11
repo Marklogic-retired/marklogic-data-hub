@@ -12,18 +12,20 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Paths
 
 class ExportJobsTask extends HubTask {
     @Input
+    @Optional
     public String[] jobIds
     public String filename
 
@@ -55,4 +57,7 @@ class ExportJobsTask extends HubTask {
         print jobExportResponse
     }
 
+    String[] getJobIds() {
+        return jobIds
+    }
 }

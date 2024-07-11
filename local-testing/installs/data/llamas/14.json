@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 14,
+    "name": "Ruby",
+    "type": "llama",
+    "birthDate": "2000-06-04",
+    "farm": 2,
+    "pasture": 3
+  },
+  "geometry": {
+    "coordinates": [-121.97337126645787, 37.37549391889877],
+    "type": "Point"
+  }
+}

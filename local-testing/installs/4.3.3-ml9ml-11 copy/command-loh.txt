@@ -1,0 +1,6 @@
+Script started on 2024-06-24 23:19:39+02:00 [TERM="xterm-256color" TTY="/dev/pts/3" COLUMNS="95" LINES="21"]
+[?2004h]0;david@david-Latitude-5480: ~/work/dhf/cleverllamas/marklogic-data-hub/local-testing/installs/4.3.3-ml9ml-11[01;32mdavid@david-Latitude-5480[00m:[01;34m~/work/dhf/cleverllamas/marklogic-data-hub/local-testing/installs/4.3.3-ml9ml-11[00m$ ^C[?2004l[?2004h[?2004l
+[?2004h]0;david@david-Latitude-5480: ~/work/dhf/cleverllamas/marklogic-data-hub/local-testing/installs/4.3.3-ml9ml-11[01;32mdavid@david-Latitude-5480[00m:[01;34m~/work/dhf/cleverllamas/marklogic-data-hub/local-testing/installs/4.3.3-ml9ml-11[00m$ [?2004l
+exit
+
+Script done on 2024-06-24 23:19:44+02:00 [COMMAND_EXIT_CODE="130"]

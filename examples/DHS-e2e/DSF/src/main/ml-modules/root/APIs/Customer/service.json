@@ -1,4 +1,0 @@
-{
-  "endpointDirectory" : "/APIs/Customer/",
-  "$javaClass"        : "com.marklogic.APIs.Customer"
-}

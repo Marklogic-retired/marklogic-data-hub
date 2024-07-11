@@ -1,0 +1,19 @@
+{
+  "info" : {
+    "title" : "llama",
+    "version" : "2.0.1",
+    "baseUri" : "http://example.com/",
+    "description" : "An llama entity"
+  },
+  "definitions" : {
+    "llama" : {
+      "description" : "The llama entity root.",
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "elementRangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "pii" : [ ],
+      "properties" : { }
+    }
+  }
+}

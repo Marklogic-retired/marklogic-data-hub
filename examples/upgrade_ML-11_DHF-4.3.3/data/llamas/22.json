@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 22,
+    "name": "Lizzy",
+    "type": "llama",
+    "birthDate": "2005-03-22",
+    "farm": 1,
+    "pasture": 2
+  },
+  "geometry": {
+    "coordinates": [-121.97576504912091, 37.37653998535161],
+    "type": "Point"
+  }
+}

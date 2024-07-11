@@ -116,7 +116,8 @@ public class JobManagerImpl implements JobManager {
 
         // Build a query that will match everything
         StringQueryDefinition emptyQuery = qm.newStringDefinition();
-        emptyQuery.setCriteria("");
+        // criteria can no longer be empty string, so use "()"
+        emptyQuery.setCriteria("()");
 
         // Get the job(s) document(s)
         StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
@@ -129,6 +130,10 @@ public class JobManagerImpl implements JobManager {
         else {
             batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
         }
+        // threadCount must be 1 or greater
+        batcher.withThreadCount(1);
+        // batchSize must be 1 or greater
+        batcher.withBatchSize(1);
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
         JobTicket jobTicket = dmm.startJob(batcher);
 
@@ -150,6 +155,12 @@ public class JobManagerImpl implements JobManager {
             else {
                 batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
             }
+
+            // threadCount must be 1 or greater
+            batcher.withThreadCount(1);
+            // batchSize must be 1 or greater
+            batcher.withBatchSize(1);
+
             batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
             jobTicket = dmm.startJob(batcher);
 

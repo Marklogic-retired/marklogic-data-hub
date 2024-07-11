@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 18,
+    "name": "Ben",
+    "type": "llama",
+    "birthDate": "2004-01-22",
+    "farm": 3,
+    "pasture": 4
+  },
+  "geometry": {
+    "coordinates": [-121.97329061128559, 37.37680201990919],
+    "type": "Point"
+  }
+}

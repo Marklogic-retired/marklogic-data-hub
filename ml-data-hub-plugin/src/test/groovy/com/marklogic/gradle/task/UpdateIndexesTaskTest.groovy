@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -38,7 +38,7 @@ class UpdateIndexesTaskTest extends BaseTest {
         createGradleFiles()
         println(runTask("hubInit"))
     }
-	
+
 	def setup() {
 		// Creating an Order Entity
 		propertiesFile << """
@@ -53,43 +53,43 @@ class UpdateIndexesTaskTest extends BaseTest {
 		// Copying Order.entity.json file to plugins/entities/my-unique-order-entity directory
 		String entityStream = new File("src/test/resources/update-indexes/my-unique-order-entity.entity.json").getAbsolutePath()
 		Files.copy(new File(entityStream).toPath(), entityDir.toPath().resolve("my-unique-order-entity.entity.json"), StandardCopyOption.REPLACE_EXISTING)
-		
+
 		// Loading modules to databases
 		runTask('mlLoadModules')
-		
+
 		// Copying Staging and Final database Index info files to src/main/entity-config dir
 		Path dir = hubConfig().getEntityDatabaseDir()
 		if (!dir.toFile().exists()) {
 			dir.toFile().mkdirs()
 		}
-		
+
 		File dstFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile()
 		String entityConfigStream = new File("src/test/resources/update-indexes/staging-database.json").getAbsolutePath()
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-		
+
 		dstFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
 		entityConfigStream = new File("src/test/resources/update-indexes/final-database.json").getAbsolutePath()
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-		
+
 		dir = hubConfig().getHubConfigDir()
 		dstFile = Paths.get(dir.toString(), "databases", "job-database.json").toFile()
 		entityConfigStream = new File("src/test/resources/update-indexes/job-database.json").getAbsolutePath();
 		Files.copy(new File(entityConfigStream).toPath(), dstFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	}
-	
+
 	def "test to deploy indexes to STAGING/FINAL/JOBS Database"() {
 		given:
 		int stagingIndexCount = getStagingRangePathIndexSize()
 		int finalIndexCount = getFinalRangePathIndexSize()
 		int jobIndexCount = getJobsRangePathIndexSize()
-		
+
 		when:
 		def result = runTask('mlUpdateIndexes')
 
 		then:
 		notThrown(UnexpectedBuildFailure)
 		result.task(":mlUpdateIndexes").outcome == SUCCESS
-		
+
 		assert (getStagingRangePathIndexSize() == stagingIndexCount+1)
 		assert (getFinalRangePathIndexSize() == finalIndexCount+1)
 		assert (getJobsRangePathIndexSize() == jobIndexCount+1)

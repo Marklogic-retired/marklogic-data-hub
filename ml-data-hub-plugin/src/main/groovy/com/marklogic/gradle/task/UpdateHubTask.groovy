@@ -24,6 +24,7 @@ class UpdateHubTask extends HubTask {
 
     @TaskAction
     void updateHub() {
+        /*
         if (getFlowManager().getLegacyFlows().size() > 0) {
             def updatedFlows = new ArrayList<String>()
             getDataHub().upgradeHub(updatedFlows)
@@ -34,5 +35,8 @@ class UpdateHubTask extends HubTask {
             getDataHub().upgradeHub()
             println "No Legacy Flows to Update"
         }
+         */
+        println "hubUpdate command is not supported for DHF 4.3.3."
+        println "For details on how to proceed, check the documentation."
     }
 }

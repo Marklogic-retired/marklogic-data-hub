@@ -14,6 +14,7 @@ releases/
 .classpath
 .project
 gradle-local.properties
+gradle-aws.properties
 environment.properties
 assetInstallTime.properties
 /quick-start/input
@@ -29,3 +30,7 @@ node_modules/
 *.db
 ye-olde-project
 /bin/
+local-testing/test1
+local-testing/mnt
+gradle-aws2.properties
+.java-version

@@ -826,7 +826,7 @@ public class HubConfigImpl implements HubConfig
     public String getMlPassword() {
         return mlPassword;
     }
-    
+
     public void setMlUsername(String mlUsername) {
         this.mlUsername = mlUsername;
     }
@@ -1314,7 +1314,7 @@ public class HubConfigImpl implements HubConfig
         else {
             projectProperties.setProperty("mlFlowOperatorRole", flowOperatorRoleName);
         }
-        
+
         if (dataHubAdminRoleName == null) {
             dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
         }
@@ -1641,7 +1641,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "4.1-SNAPSHOT";
+            version = "4.3.2";
         }
         return version;
     }
@@ -1790,7 +1790,9 @@ public class HubConfigImpl implements HubConfig
 
         initializeModulePaths(config);
 
-        config.setSchemasPath(getUserSchemasDir().toString());
+        List<String> paths = new ArrayList<>();
+        paths.add(getUserSchemasDir().toString());
+        config.setSchemaPaths(paths);
 
         Map<String, String> customTokens = getCustomTokens(config, config.getCustomTokens());
 
@@ -1807,8 +1809,8 @@ public class HubConfigImpl implements HubConfig
      *
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
-     * 
-     * @param config
+     *
+     * @param config The AppConfig object to update
      */
     protected void initializeConfigDirs(AppConfig config) {
         final String defaultConfigPath = String.join(File.separator, "src", "main", "ml-config");
@@ -1839,7 +1841,7 @@ public class HubConfigImpl implements HubConfig
     /**
      * Need to initialize every module path as being relative to the current project directory.
      *
-     * @param config
+     * @param config The appconfig to initialize
      */
     protected void initializeModulePaths(AppConfig config) {
         List<String> modulePaths = new ArrayList<>();
@@ -1940,8 +1942,8 @@ public class HubConfigImpl implements HubConfig
      * properties plugin does. But it is being preserved for backwards compatibility in case any clients prior to
      * 4.1 were using HubConfigBuilder.withPropertiesFromEnvironment.
      *
-     * @param environment
-     * @return
+     * @param environment Environment name
+     * @return HubConfig
      */
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {

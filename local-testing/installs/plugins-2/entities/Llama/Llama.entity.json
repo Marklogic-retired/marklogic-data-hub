@@ -1,0 +1,32 @@
+{
+  "info" : {
+    "title" : "Llama",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.com/",
+    "description" : "An Llama entity"
+  },
+  "definitions" : {
+    "Llama" : {
+      "description" : "The Llama entity root.",
+      "required" : [ "id"],
+      "rangeIndex" : [ "pasture" ],
+      "elementRangeIndex" : [ "birthDate" ],
+      "wordLexicon" : [ "name" ],
+      "pii" : [ "birthDate" ],
+      "properties" : {
+        "id": {
+          "datatype": "int"
+        },
+        "name": {
+          "datatype": "string"
+        },
+        "birthDate": {
+          "datatype": "date"
+        },
+        "pasture": {
+          "datatype": "int"
+        }
+      }
+    }
+  }
+}

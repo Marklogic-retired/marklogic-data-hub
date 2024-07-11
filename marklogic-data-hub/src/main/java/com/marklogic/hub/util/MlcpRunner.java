@@ -92,7 +92,7 @@ public class MlcpRunner extends ProcessRunner {
             File file = new File(mlcpOptions.get("input_file_path").asText());
             String canonicalPath = file.getCanonicalPath();
             bean.setInput_file_path(canonicalPath);
-            bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
+            bean.setTransform_param(bean.getTransform_param() + ",job-id=" + jobId );
             bean.setModules_root("/");
 
             if (hubConfig.getIsHostLoadBalancer()) {
@@ -211,7 +211,9 @@ public class MlcpRunner extends ProcessRunner {
                                     u.contains("guava") ||
                                     u.contains("apache") ||
                                     u.contains("commons") ||
-                                    u.contains("hadoop"))
+                                    u.contains("hadoop") ||
+                                    u.contains("stax2-api") ||
+                                    u.contains("re2j"))
                             ).collect(Collectors.joining(File.pathSeparator));
 
             //logger.warn("Classpath filtered to: " + filteredClasspathEntries);

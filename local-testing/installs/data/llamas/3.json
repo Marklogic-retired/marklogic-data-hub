@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 3,
+    "name": "Winnie",
+    "type": "llama",
+    "birthDate": "1998-11-22",
+    "farm": 3,
+    "pasture": 4
+  },
+  "geometry": {
+    "coordinates": [-121.97345925391895, 37.37734098584815],
+    "type": "Point"
+  }
+}

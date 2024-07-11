@@ -1,9 +1,0 @@
-{
-  "functionName" : "customerDocsCount",
-  "params" : [{
-	"name": "collectionName",
-	"datatype" : "string" }],
-  "return" : {
-	"datatype" : "int" }
-	
-}
