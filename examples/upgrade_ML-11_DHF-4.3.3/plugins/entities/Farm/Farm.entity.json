@@ -1,0 +1,26 @@
+{
+  "info" : {
+    "title" : "Farm",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.com/",
+    "description" : "An Farm entity"
+  },
+  "definitions" : {
+    "Farm" : {
+      "description" : "The Farm entity root.",
+      "required" : [ ],
+      "rangeIndex" : [ ],
+      "elementRangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "pii" : [ ],
+      "properties" : {
+        "id": {
+          "datatype": "int"
+        },
+        "name": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

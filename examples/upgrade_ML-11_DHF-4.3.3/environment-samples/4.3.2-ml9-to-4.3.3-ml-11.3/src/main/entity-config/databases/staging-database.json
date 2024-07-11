@@ -1,0 +1,26 @@
+{
+  "lang" : "zxx",
+  "path-namespace" : [ {
+    "prefix" : "es",
+    "namespace-uri" : "http://marklogic.com/entity-services"
+  } ],
+  "element-word-lexicon" : [ {
+    "collation" : "http://marklogic.com/collation/",
+    "localname" : "name",
+    "namespace-uri" : ""
+  } ],
+  "range-path-index" : [ {
+    "invalid-values" : "reject",
+    "path-expression" : "//*:instance/Llama/pasture",
+    "range-value-positions" : false,
+    "scalar-type" : "int"
+  } ],
+  "range-element-index" : [ {
+    "invalid-values" : "reject",
+    "localname" : "birthDate",
+    "namespace-uri" : null,
+    "range-value-positions" : false,
+    "scalar-type" : "date"
+  } ],
+  "database-name" : "%%mlStagingDbName%%"
+}

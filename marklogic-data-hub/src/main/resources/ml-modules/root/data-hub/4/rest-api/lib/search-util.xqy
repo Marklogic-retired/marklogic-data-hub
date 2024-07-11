@@ -31,6 +31,9 @@ import module namespace dec = "http://marklogic.com/rest-api/lib/href-decorator"
 import module namespace qbemod = "http://marklogic.com/rest-api/models/qbe-model"
     at "/MarkLogic/rest-api/models/qbe-model.xqy";
 
+import module namespace qbelib = "http://marklogic.com/appservices/querybyexample-impl"
+    at "/MarkLogic/appservices/search/qbe-impl.xqy";
+
 import module namespace lid = "http://marklogic.com/util/log-id"
     at "/MarkLogic/appservices/utils/log-id.xqy";
 
@@ -386,7 +389,7 @@ declare function sut:make-structured-query(
         sut:handle-query($sq,$params,$qtext)
     case element(qbe:query) return
         sut:handle-cts(
-            document {qbemod:xml-to-cts-query($sq)}/*, $params, $qtext, $options
+            document {qbelib:xml-to-cts-query($sq)}/*, $params, $qtext, $options
             )
     case element(search:search) return
         let $queries := $sq/* except $sq/(search:options|search:qtext|search:sparql)
@@ -406,7 +409,7 @@ declare function sut:make-structured-query(
             )
     case object-node("$query") return
         sut:handle-cts(
-            document {qbemod:json-to-cts-query($sq)}/*, $params, $qtext, $options
+            document {qbelib:json-to-cts-query($sq)}/*, $params, $qtext, $options
             )
     case object-node("search") return
         let $queries := $sq/(* except (options|qtext|sparql))

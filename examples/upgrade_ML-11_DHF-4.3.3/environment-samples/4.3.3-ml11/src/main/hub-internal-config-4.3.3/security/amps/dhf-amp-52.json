@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/models/config-query",
+  "local-name" : "get-child",
+  "document-uri" : "/MarkLogic/rest-api/models/config-query-model.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

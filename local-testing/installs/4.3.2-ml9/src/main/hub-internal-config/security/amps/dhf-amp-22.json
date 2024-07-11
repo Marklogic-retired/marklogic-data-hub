@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/models/document-model-query-get",
+  "local-name" : "get",
+  "document-uri" : "/data-hub/4/rest-api/models/document-model-query-get.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

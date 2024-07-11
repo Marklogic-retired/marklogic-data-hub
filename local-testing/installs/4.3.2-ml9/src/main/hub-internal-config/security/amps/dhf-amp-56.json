@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/rest-api/forestinfo",
+  "local-name" : "get-forest-info",
+  "document-uri" : "/data-hub/4/rest-api/models/forest-info-model.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

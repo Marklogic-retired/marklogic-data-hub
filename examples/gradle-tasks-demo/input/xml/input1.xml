@@ -1,9 +1,0 @@
-<Product>
-<ProductID>2</ProductID>
-<title>1</title>
-<price>24</price>
-<UnitsInStock>17</UnitsInStock>
-<UnitPrice>25</UnitPrice>
-<SupplierID>21</SupplierID>
-<Discontinued>false</Discontinued>
-</Product>

@@ -1,1 +1,0 @@
-{"path-namespace":[{"prefix":"es", "namespace-uri":"http://marklogic.com/entity-services"}], "range-path-index":[{"collation":"http://marklogic.com/collation/codepoint", "invalid-values":"reject", "path-expression":"//*:instance/Example/name", "range-value-positions":false, "scalar-type":"string"}]}

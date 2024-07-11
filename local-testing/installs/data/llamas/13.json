@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 13,
+    "name": "Beth",
+    "type": "llama",
+    "birthDate": "1999-10-19",
+    "farm": 2,
+    "pasture": 3
+  },
+  "geometry": {
+    "coordinates": [-121.97371588401279, 37.375706596117254],
+    "type": "Point"
+  }
+}

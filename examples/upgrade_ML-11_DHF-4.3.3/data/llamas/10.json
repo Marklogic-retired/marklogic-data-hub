@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 10,
+    "name": "Duke",
+    "type": "llama",
+    "birthDate": "2005-09-28",
+    "farm": 2,
+    "pasture": 3
+  },
+  "geometry": {
+    "coordinates": [-121.97479373040784, 37.37533659563674],
+    "type": "Point"
+  }
+}

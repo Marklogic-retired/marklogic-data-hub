@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 11,
+    "name": "Elle",
+    "type": "llama",
+    "birthDate": "2005-03-24",
+    "farm": 2,
+    "pasture": 3
+  },
+  "geometry": {
+    "coordinates": [-121.97382220219458, 37.375418170702574],
+    "type": "Point"
+  }
+}

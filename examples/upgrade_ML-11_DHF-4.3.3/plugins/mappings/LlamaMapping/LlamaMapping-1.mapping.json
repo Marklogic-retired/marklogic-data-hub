@@ -1,0 +1,23 @@
+{
+  "language" : "zxx",
+  "name" : "LlamaMapping",
+  "description" : "Mapping for Llama",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Llama-0.0.1/Llama",
+  "sourceContext" : "//",
+  "sourceURI" : "/llamas/1.json",
+  "properties" : {
+    "id" : {
+      "sourcedFrom" : "id"
+    },
+    "name" : {
+      "sourcedFrom" : "name"
+    },
+    "birthDate" : {
+      "sourcedFrom" : "birthDate"
+    },
+    "pasture" : {
+      "sourcedFrom" : "pasture"
+    }
+  }
+}

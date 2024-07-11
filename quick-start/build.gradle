@@ -39,8 +39,8 @@ war {
 }
 
 repositories {
-    jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
+  mavenCentral()
+  maven {url 'https://developer.marklogic.com/maven2/'}
 }
 
 sourceCompatibility = 1.8
@@ -52,40 +52,40 @@ ext.junitPlatformVersion = '1.3.1'
 ext.junitJupiterVersion  = '5.3.1'
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-websocket")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
-    compile("org.aspectj:aspectjweaver:1.8.9")
-    compile("org.springframework:spring-messaging")
-    compile project(":marklogic-data-hub")
-    compile("org.apache.commons:commons-csv:1.4")
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.aspectj:aspectjweaver:1.8.9")
+    implementation("org.springframework:spring-messaging")
+    implementation project(":marklogic-data-hub")
+    implementation("org.apache.commons:commons-csv:1.4")
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
-    compile("org.springframework.boot:spring-boot-devtools")
+    implementation("org.springframework.boot:spring-boot-devtools")
 
     // Needed for the Upload feature using mlcp
-    compile("com.marklogic:mlcp:9.0.10") {
+    implementation("com.marklogic:mlcp:9.0.10") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
     }
-    compile("com.marklogic:marklogic-spring-web:1.0")
+    implementation("com.marklogic:marklogic-spring-web:1.0")
 
     // JUnit Jupiter API and TestEngine implementation
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
 
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+    testImplementation "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     // If you also want to support JUnit 3 and JUnit 4 tests
-    testCompile "junit:junit:${junit4Version}"
-    testRuntime "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
+    testImplementation "junit:junit:${junit4Version}"
+    testImplementation "org.junit.vintage:junit-vintage-engine:${junitVintageVersion}"
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("io.rest-assured:rest-assured:3.0.3")
-    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.rest-assured:rest-assured:3.0.3")
+    testImplementation files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
 evaluationDependsOn(':marklogic-data-hub')
@@ -205,5 +205,5 @@ springBoot {
 
 test {
     exclude 'com/marklogic/quickstart/integrationtests/**'
-    useJUnitPlatform()   
+    useJUnitPlatform()
 }

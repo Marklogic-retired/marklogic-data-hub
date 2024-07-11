@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 19,
+    "name": "Adam",
+    "type": "llama",
+    "birthDate": "2004-12-10",
+    "farm": 1,
+    "pasture": 2
+  },
+  "geometry": {
+    "coordinates": [-121.97639583542347, 37.37706130670982],
+    "type": "Point"
+  }
+}

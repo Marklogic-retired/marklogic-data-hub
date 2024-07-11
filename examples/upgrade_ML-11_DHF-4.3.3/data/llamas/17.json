@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 17,
+    "name": "Haley",
+    "type": "llama",
+    "birthDate": "2003-06-22",
+    "farm": 3,
+    "pasture": 4
+  },
+  "geometry": {
+    "coordinates": [-121.97340426175577, 37.37689816006372],
+    "type": "Point"
+  }
+}

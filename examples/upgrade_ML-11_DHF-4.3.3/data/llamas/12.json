@@ -1,0 +1,15 @@
+{
+  "type": "Feature",
+  "properties": {
+    "id": 12,
+    "name": "Chip",
+    "type": "llama",
+    "birthDate": "1999-04-12",
+    "farm": 2,
+    "pasture": 3
+  },
+  "geometry": {
+    "coordinates": [-121.97337859874628, 37.37568328905425],
+    "type": "Point"
+  }
+}

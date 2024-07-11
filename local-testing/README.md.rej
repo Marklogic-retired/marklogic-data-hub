@@ -1,0 +1,69 @@
+diff a/local-testing/README.md b/local-testing/README.md	(rejected hunks)
+@@ -14,7 +14,7 @@ Uses `hubPreinstallCheck` to deploy your DHF project.
+ Extends ml-gradle's WatchTask by ensuring that modules in DHF-specific folders (`plugins` and `entity-config`) are monitored.
+ | MarkLogic | DHF | Result | Notes |
+ | --- | --- | --- | --- |
+-| ML 9 | 4.3.2 | - | |
++| ML 9 | 4.3.2 | FAIL | Changes to flows (`plugins` folder) or search options (`entity-config` folder) don't get deployed while running `mlWatch` |
+ | ML 11 | 4.3.3 | - | |
+ 
+ #### mlUpdateIndexes
+@@ -119,7 +119,20 @@ Then changed to:
+ }
+ ````
+ 
+-Mapping added:
++
++| MarkLogic | DHF | Result | Notes |
++| --- | --- | --- | --- |
++| ML 9 | 4.3.2 | PASS | |
++| ML 11 | 4.3.3 | - | |
++
++#### hubCreateMapping
++Creates a boilerplate mapping.
++
++````
++gradlew hubCreateMapping -PmappingName=Foo
++````
++
++Then changed to:
+ ````json
+ {
+   "language" : "zxx",
+@@ -145,18 +158,6 @@ Mapping added:
+ | ML 9 | 4.3.2 | PASS | |
+ | ML 11 | 4.3.3 | - | |
+ 
+-#### hubCreateMapping
+-Creates a boilerplate mapping.
+-
+-````
+-gradlew hubCreateMapping -PmappingName=Foo
+-````
+-
+-| MarkLogic | DHF | Result | Notes |
+-| --- | --- | --- | --- |
+-| ML 9 | 4.3.2 | PASS | |
+-| ML 11 | 4.3.3 | - | |
+-
+ #### hubCreateInputFlow
+ Creates an input flow.
+ 
+@@ -200,6 +201,17 @@ gradlew hubGenerateTDETemplates -PentityNames=FooBar
+ | ML 9 | 4.3.2 | PASS | |
+ | ML 11 | 4.3.3 | - | |
+ 
++#### hubSaveIndexes
++Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory
++
++````
++gradlew hubSaveIndexes
++````
++| MarkLogic | DHF | Result | Notes |
++| --- | --- | --- | --- |
++| ML 9 | 4.3.2 | PASS | |
++| ML 11 | 4.3.3 | - | |
++
+ #### hubGeneratePii
+ Generates security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see Managing
+ Personally Identifiable Information.
