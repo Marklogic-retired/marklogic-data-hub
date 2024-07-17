@@ -19,7 +19,7 @@ pipeline{
   	skipStagesAfterUnstable()
 	}
 	environment{
-	JAVA_HOME_DIR="~/java/jdk1.8.0_72"
+	JAVA_HOME_DIR="/home/builder/java/openjdk-1.8.0-262"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
 	DMC_USER     = credentials('MLBUILD_USER')
@@ -59,12 +59,13 @@ pipeline{
                   }
                   }
 		}
-		stage('Unit-Tests'){
+        parallel{
+		stage('Unit-Tests-11.3.0'){
 		agent { label 'dhfLinuxAgent'}
 			steps{
 				copyRPM 'Release','11.3.0'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test;sleep 10s;./gradlew ml-data-hub:test;sleep 10s;./gradlew quick-start:test;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew quick-start:test || true;'
 				junit '**/TEST-*.xml'
 				script{
 				if(env.CHANGE_TITLE){
@@ -107,6 +108,55 @@ pipeline{
                   }
                   }
 		}
+        stage('Unit-Tests-9.0-11'){
+		agent { label 'dhfLinuxAgent'}
+			steps{
+				copyRPM 'Release','9.0-11'
+				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew quick-start:test || true;'
+				junit '**/TEST-*.xml'
+				script{
+				if(env.CHANGE_TITLE){
+				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+				}
+				}
+			}
+			post{
+				  always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("Unit Tests Completed")
+                    script{
+                    def email;
+                    if(env.CHANGE_AUTHOR){
+                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                     email=getEmailFromGITUser author
+                    }else{
+                    	email=Email
+                    }
+                    sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the Unit Tests Passed on $BRANCH_NAME and the next stage is Code-review.',false,'Unit Tests for  $BRANCH_NAME Passed'
+                    }
+                   }
+                   failure {
+                      println("Unit Tests Failed")
+                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                      archiveArtifacts artifacts: 'MLLogs/**/*'
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	 email=getEmailFromGITUser author
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the  Unit Tests Failed on  $BRANCH_NAME. Please look into the issues and fix it.',false,'Unit Tests for $BRANCH_NAME Failed'
+                      }
+                  }
+                  }
+		}
+        }
 		stage('code-review'){
 		when {
   			 allOf {
