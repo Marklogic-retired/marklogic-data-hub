@@ -59,6 +59,7 @@ pipeline{
                   }
                   }
 		}
+        stage('tests'){
         parallel{
 		stage('Unit-Tests-11.3.0'){
 		agent { label 'dhfLinuxAgent'}
@@ -156,6 +157,7 @@ pipeline{
                   }
                   }
 		}
+        }
         }
 		stage('code-review'){
 		when {
