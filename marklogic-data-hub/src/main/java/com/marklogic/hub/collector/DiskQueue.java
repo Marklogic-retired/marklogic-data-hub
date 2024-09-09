@@ -1,31 +1,39 @@
 /*
-  * * Copyright (c) 2004-2019 MarkLogic Corporation
-  * *
-  * * Licensed under the Apache License, Version 2.0 (the "License");
-  * * you may not use this file except in compliance with the License.
-  * * You may obtain a copy of the License at
-  * *
-  * * http://www.apache.org/licenses/LICENSE-2.0
-  * *
-  * * Unless required by applicable law or agreed to in writing, software
-  * * distributed under the License is distributed on an "AS IS" BASIS,
-  * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * * See the License for the specific language governing permissions and
-  * * limitations under the License.
-  * *
-  * * The use of the Apache License does not indicate that this project is
-  * * affiliated with the Apache Software Foundation.
-  * *
-  * * Code adapted from Bixio DiskQueue
-  * * https://github.com/bixo/bixo/blob/master/src/main/java/bixo/utils/DiskQueue.java
-  * * Original work Copyright 2009-2015 Scale Unlimited
-  * * Modifications copyright (c) 2016 MarkLogic Corporation
-  *
+ * * Copyright (c) 2004-2019 MarkLogic Corporation
+ * *
+ * * Licensed under the Apache License, Version 2.0 (the "License");
+ * * you may not use this file except in compliance with the License.
+ * * You may obtain a copy of the License at
+ * *
+ * * http://www.apache.org/licenses/LICENSE-2.0
+ * *
+ * * Unless required by applicable law or agreed to in writing, software
+ * * distributed under the License is distributed on an "AS IS" BASIS,
+ * * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * * See the License for the specific language governing permissions and
+ * * limitations under the License.
+ * *
+ * * The use of the Apache License does not indicate that this project is
+ * * affiliated with the Apache Software Foundation.
+ * *
+ * * Code adapted from Bixio DiskQueue
+ * * https://github.com/bixo/bixo/blob/master/src/main/java/bixo/utils/DiskQueue.java
+ * * Original work Copyright 2009-2015 Scale Unlimited
+ * * Modifications copyright (c) 2016 MarkLogic Corporation
+ *
  */
 package com.marklogic.hub.collector;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.AbstractQueue;
@@ -37,7 +45,7 @@ import java.util.logging.Logger;
 
 /**
  * A queue that writes extra elements to disk, and reads them in as needed.
- *
+ * <p>
  * This implementation is optimized for being filled once (ie by the iterator in
  * a reducer) and then incrementally read. So it wouldn't work very well if
  * reads/writes were happening simultaneously, once anything had spilled to
@@ -92,7 +100,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
      * <code>maxInMemorySize</code> elements in memory.
      *
      * @param maxInMemorySize Maximum number of elements to keep in memory.
-     * @param tempDir Directory where queue temporary files will be written to.
+     * @param tempDir         Directory where queue temporary files will be written to.
      */
     public DiskQueue(int maxInMemorySize, File tempDir) {
         super();
@@ -166,13 +174,13 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
             fileQueue = File.createTempFile(DiskQueue.class.getSimpleName() + "-backingstore-", null, tempDir);
             fileQueue.deleteOnExit();
             LOG.log(Level.INFO, "created backing store {0}", fileQueue.getAbsolutePath());
-            fileOut = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileQueue), StandardCharsets.UTF_8));
+            fileOut = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(fileQueue.toPath()), StandardCharsets.UTF_8));
 
             // Flush output file, so there's something written when we open the input stream.
             fileOut.flush();
 
-            fileIn = new BufferedReader( new InputStreamReader(
-                new FileInputStream(fileQueue), StandardCharsets.UTF_8)
+            fileIn = new BufferedReader(new InputStreamReader(
+                Files.newInputStream(fileQueue.toPath()), StandardCharsets.UTF_8)
             );
         }
     }
@@ -300,6 +308,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
         public Itr() {
             memoryIterator = memoryQueue.iterator();
         }
+
         public boolean hasNext() {
             return memoryIterator.hasNext() || fileElementCount > 0 || cachedElement != null;
         }

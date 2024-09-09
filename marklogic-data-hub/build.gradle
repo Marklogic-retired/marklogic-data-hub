@@ -29,7 +29,6 @@ dependencies {
         exclude group: 'org.springframework', module: 'spring-context'
     }*/
     implementation 'xerces:xercesImpl:2.12.2'
-    implementation 'xml-apis:xml-apis:1.4.01'
 
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.0.6.RELEASE'
 
@@ -39,8 +38,8 @@ dependencies {
     implementation 'com.marklogic:ml-javaclient-util:4.8.0'
     implementation 'com.marklogic:ml-app-deployer:4.8.0'
 
-    implementation 'commons-io:commons-io:2.4'
-    implementation 'org.apache.commons:commons-text:1.1'
+    implementation 'commons-io:commons-io:2.16.1'
+    implementation 'org.apache.commons:commons-text:1.12.0'
     implementation 'org.apache.httpcomponents:httpclient:4.5.14'
     implementation "com.squareup.okhttp3:okhttp:4.12.0"
 
@@ -51,7 +50,7 @@ dependencies {
     //testImplementation "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
 
     testImplementation "com.fasterxml.jackson.module:jackson-module-kotlin"
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:1.3.70"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.20"
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.0.6.RELEASE'
 
     //testImplementation 'com.marklogic:mlcp-util:1.0.1'
@@ -62,7 +61,7 @@ dependencies {
     }
 
     testImplementation 'org.jdom:jdom2:2.0.6.1'
-    testImplementation 'xmlunit:xmlunit:1.6'
+    testImplementation 'org.xmlunit:xmlunit-legacy:2.10.0'
     testImplementation 'org.skyscreamer:jsonassert:1.5.0'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'org.easymock:easymock:3.4'
@@ -79,12 +78,12 @@ configurations.all {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
+    archiveClassifier = 'sources'
     from sourceSets.main.allSource
 }
 

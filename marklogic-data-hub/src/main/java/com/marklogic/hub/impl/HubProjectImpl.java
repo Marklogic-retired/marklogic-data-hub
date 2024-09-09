@@ -22,13 +22,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.rest.util.JsonNodeUtil;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -67,7 +66,7 @@ public class HubProjectImpl implements HubProject {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public HubProjectImpl(){
+    public HubProjectImpl() {
     }
 
     public String getProjectDirString() {
@@ -80,83 +79,108 @@ public class HubProjectImpl implements HubProject {
         this.pluginsDir = this.projectDir.resolve("plugins");
     }
 
-    @Override public Path getHubPluginsDir() {
+    @Override
+    public Path getHubPluginsDir() {
         return this.pluginsDir;
     }
 
-    @Override public Path getHubEntitiesDir() {
+    @Override
+    public Path getHubEntitiesDir() {
         return this.pluginsDir.resolve("entities");
     }
 
-    @Override public Path getHubMappingsDir() {
+    @Override
+    public Path getHubMappingsDir() {
         return this.pluginsDir.resolve("mappings");
     }
 
-    @Override public Path getHubConfigDir() {
+    @Override
+    public Path getHubConfigDir() {
         return this.projectDir.resolve(HUB_CONFIG_DIR);
     }
 
-    @Override public Path getHubDatabaseDir() {
+    @Override
+    public Path getHubDatabaseDir() {
         return getHubConfigDir().resolve("databases");
     }
 
-    @Override public Path getHubServersDir() {
+    @Override
+    public Path getHubServersDir() {
         return getHubConfigDir().resolve("servers");
     }
 
-    @Override public Path getHubSecurityDir() {
+    @Override
+    public Path getHubSecurityDir() {
         return getHubConfigDir().resolve("security");
     }
 
-    @Override public Path getHubSchemasDir() { return getHubConfigDir().resolve("schemas"); }
-
-    @Override public Path getHubTriggersDir() {
-    	return getHubConfigDir().resolve("triggers"); 
+    @Override
+    public Path getHubSchemasDir() {
+        return getHubConfigDir().resolve("schemas");
     }
 
-    @Override public Path getUserConfigDir() {
+    @Override
+    public Path getHubTriggersDir() {
+        return getHubConfigDir().resolve("triggers");
+    }
+
+    @Override
+    public Path getUserConfigDir() {
         return this.projectDir.resolve(USER_CONFIG_DIR);
     }
 
-    @Override public Path getUserSecurityDir() { return getUserConfigDir().resolve("security"); }
+    @Override
+    public Path getUserSecurityDir() {
+        return getUserConfigDir().resolve("security");
+    }
 
-    @Override public Path getUserDatabaseDir() {
+    @Override
+    public Path getUserDatabaseDir() {
         return getUserConfigDir().resolve("databases");
     }
 
-    @Override public Path getUserSchemasDir() {
+    @Override
+    public Path getUserSchemasDir() {
         return this.projectDir.resolve(USER_SCHEMAS_DIR);
     }
 
-    @Override public Path getUserServersDir() {
+    @Override
+    public Path getUserServersDir() {
         return getUserConfigDir().resolve("servers");
     }
 
-    @Override public Path getEntityConfigDir() {
+    @Override
+    public Path getEntityConfigDir() {
         return this.projectDir.resolve(ENTITY_CONFIG_DIR);
     }
 
-    @Override public Path getEntityDatabaseDir() {
+    @Override
+    public Path getEntityDatabaseDir() {
         return getEntityConfigDir().resolve("databases");
     }
 
-    @Override public Path getHubStagingModulesDir() {
+    @Override
+    public Path getHubStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
-    @Override public Path getUserStagingModulesDir() {
+    @Override
+    public Path getUserStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
-    @Override public Path getModulesDir() {
+    @Override
+    public Path getModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
-    @Override public Path getUserFinalModulesDir() {
+    @Override
+    public Path getUserFinalModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
-    @Override public boolean isInitialized() {
+    @Override
+    public boolean isInitialized() {
         File buildGradle = this.projectDir.resolve("build.gradle").toFile();
         File gradleProperties = this.projectDir.resolve("gradle.properties").toFile();
 
@@ -183,7 +207,8 @@ public class HubProjectImpl implements HubProject {
             newConfigInitialized;
     }
 
-    @Override public void init(Map<String, String> customTokens) {
+    @Override
+    public void init(Map<String, String> customTokens) {
         this.pluginsDir.toFile().mkdirs();
 
         Path userModules = this.projectDir.resolve(MODULES_DIR);
@@ -221,7 +246,7 @@ public class HubProjectImpl implements HubProject {
         Path usersDir = hubSecurityDir.resolve("users");
         Path ampsDir = hubSecurityDir.resolve("amps");
         Path privilegesDir = hubSecurityDir.resolve("privileges");
-        
+
         Path userRolesDir = userSecurityDir.resolve("roles");
         Path userUsersDir = userSecurityDir.resolve("users");
         Path userPrivilegesDir = userSecurityDir.resolve("privileges");
@@ -229,7 +254,7 @@ public class HubProjectImpl implements HubProject {
         rolesDir.toFile().mkdirs();
         usersDir.toFile().mkdirs();
         privilegesDir.toFile().mkdirs();
-        
+
         userRolesDir.toFile().mkdirs();
         userUsersDir.toFile().mkdirs();
         userPrivilegesDir.toFile().mkdirs();
@@ -259,8 +284,7 @@ public class HubProjectImpl implements HubProject {
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-data-hub.json", privilegesDir.resolve("dhf-internal-data-hub.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-entities.json", privilegesDir.resolve("dhf-internal-entities.json"), true);
         writeResourceFile("hub-internal-config/security/privileges/dhf-internal-mappings.json", privilegesDir.resolve("dhf-internal-mappings.json"), true);
-        writeResourceFile("hub-internal-config/security/privileges/dhf-internal-trace-ui.json", privilegesDir.resolve("dhf-internal-trace-ui.json"), true);
-        
+
         getUserServersDir().toFile().mkdirs();
         getUserDatabaseDir().toFile().mkdirs();
 
@@ -269,14 +293,14 @@ public class HubProjectImpl implements HubProject {
         getUserSchemasDir().toFile().mkdirs();
 
         //create hub triggers
-        Path hubTriggersDir = getHubTriggersDir();        
+        Path hubTriggersDir = getHubTriggersDir();
         hubTriggersDir.toFile().mkdirs();
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-create.json", hubTriggersDir.resolve("ml-dh-entity-create.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-modify.json", hubTriggersDir.resolve("ml-dh-entity-modify.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-delete.json", hubTriggersDir.resolve("ml-dh-entity-delete.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-create.json", hubTriggersDir.resolve("ml-dh-entity-validate-create.json"), true);
         writeResourceFile("hub-internal-config/triggers/ml-dh-entity-validate-modify.json", hubTriggersDir.resolve("ml-dh-entity-validate-modify.json"), true);
-               
+
         Path gradlew = projectDir.resolve("gradlew");
         writeResourceFile("scaffolding/gradlew", gradlew);
         makeExecutable(gradlew);
@@ -343,8 +367,7 @@ public class HubProjectImpl implements HubProject {
                 writer.write(fileContents);
                 writer.close();
             }
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -361,19 +384,19 @@ public class HubProjectImpl implements HubProject {
         Path oldEntityConfigDir = this.projectDir.resolve("entity-config.old");
         Path oldHubInternalConfigDir = this.projectDir.resolve("hub-internal-config.old");
         Path oldUserConfigDir = this.projectDir.resolve("user-config.old");
-        
+
         //obsolete database/server/role names in hub-internal-config from 3.0
-        Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json", 
-                "schemas-database.json", "trace-server.json", "data-hub-role.json", "data-hub-user.json").collect(Collectors.toSet());
-                
+        Set<String> obsoleteFiles = Stream.of("trace-database.json", "triggers-database.json",
+            "schemas-database.json", "trace-server.json", "data-hub-role.json", "data-hub-user.json").collect(Collectors.toSet());
+
         //if the entity-config directory exists, we'll copy it to the src/main/entity-config
         upgradeProjectDir(entityConfigDir, getEntityConfigDir(), oldEntityConfigDir);
-        
-        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles );
-        
+
+        upgradeHubInternalConfig(hubInternalConfigDir, oldHubInternalConfigDir, obsoleteFiles);
+
         upgradeUserConfig(userConfigDir, oldUserConfigDir, obsoleteFiles);
-       
-        /*If the upgrade path is 3.0 -> 4.0.x -> 4.1.0 or 4.0.0 -> 4.1.0, the obsolete files have to be removed, 
+
+        /*If the upgrade path is 3.0 -> 4.0.x -> 4.1.0 or 4.0.0 -> 4.1.0, the obsolete files have to be removed,
          * else, they will cause deployment to fail
          */
         deleteObsoleteDatabaseFilesFromHubInternalConfig();
@@ -383,11 +406,13 @@ public class HubProjectImpl implements HubProject {
 
     }
 
-    @Override  public String getHubModulesDeployTimestampFile() {
+    @Override
+    public String getHubModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
     }
 
-    @Override public String getUserModulesDeployTimestampFile() {
+    @Override
+    public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile).toString();
     }
 
@@ -403,128 +428,126 @@ public class HubProjectImpl implements HubProject {
         if (Files.exists(sourceDir)) {
             logger.info("Upgrading hub-internal-config dir");
             Files.walk(Paths.get(sourceDir.toUri()))
-            .filter( f -> !Files.isDirectory(f))
-            .forEach(f -> {
-                String path = f.toFile().getName();
-                //copy jobs,staging db to hub-internal-config
-                if(path.toLowerCase().equals("job-database.json")
-                || path.toLowerCase().equals("staging-database.json")) {
-                    logger.info("Processing "+ f.toFile().getAbsolutePath());
-                    ObjectMapper mapper = new ObjectMapper();
-                    ObjectNode rootNode;
-                    File jsonFile = f.toFile();
-                    try {
-                        rootNode = (ObjectNode)mapper.readTree(jsonFile);
-                        rootNode.put("schema-database", "%%mlStagingSchemasDbName%%");
-                        logger.info("Setting \"schema-database\" to \"%%mlStagingSchemasDbName%%\"");
-                        rootNode.put("triggers-database", "%%mlStagingTriggersDbName%%");
-                        logger.info("Setting \"triggers-database\" to \"%%mlStagingTriggersDbName%%\"");
+                .filter(f -> !Files.isDirectory(f))
+                .forEach(f -> {
+                    String path = f.toFile().getName();
+                    //copy jobs,staging db to hub-internal-config
+                    if (path.toLowerCase().equals("job-database.json")
+                        || path.toLowerCase().equals("staging-database.json")) {
+                        logger.info("Processing " + f.toFile().getAbsolutePath());
+                        ObjectMapper mapper = new ObjectMapper();
+                        ObjectNode rootNode;
+                        File jsonFile = f.toFile();
+                        try {
+                            rootNode = (ObjectNode) mapper.readTree(jsonFile);
+                            rootNode.put("schema-database", "%%mlStagingSchemasDbName%%");
+                            logger.info("Setting \"schema-database\" to \"%%mlStagingSchemasDbName%%\"");
+                            rootNode.put("triggers-database", "%%mlStagingTriggersDbName%%");
+                            logger.info("Setting \"triggers-database\" to \"%%mlStagingTriggersDbName%%\"");
 
-                        if (path.toLowerCase().equals("job-database.json")) {
-                            addPathRangeIndexesToJobDatabase(rootNode);
-                        }
-
-                        String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                        +getHubDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getHubDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }
-    
-                }
-                //copy modules,final db to ml-config
-                else if(path.toLowerCase().equals("modules-database.json")
-                || path.toLowerCase().equals("final-database.json")) {
-                    try {
-                        if (path.toLowerCase().equals("modules-database.json")) {
-                            logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                    +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                            FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
-                        }
-                        else {
-                            logger.info("Processing "+ f.toFile().getAbsolutePath());
-                            ObjectMapper mapper = new ObjectMapper();
-                            ObjectNode rootNode;
-                            File jsonFile = f.toFile();
-                            try {
-                                rootNode = (ObjectNode)mapper.readTree(jsonFile);
-                                rootNode.put("schema-database", "%%mlFinalSchemasDbName%%");
-                                logger.info("Setting \"schema-database\" to \"%%mlFinalSchemasDbName%%\"");
-                                rootNode.put("triggers-database", "%%mlFinalTriggersDbName%%");
-                                logger.info("Setting \"triggers-database\" to \"%%mlFinalTriggersDbName%%\"");                              
-                                String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                                logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                                FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
-                            } catch (IOException e) {
-                                logger.error("Unable to update "+f.getFileName());
-                                throw new RuntimeException(e);
+                            if (path.toLowerCase().equals("job-database.json")) {
+                                addPathRangeIndexesToJobDatabase(rootNode);
                             }
-                            
+
+                            String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                            logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                + getHubDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                            FileUtils.writeStringToFile(getHubDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
                         }
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
+
                     }
-                }
-                //copy jobs,staging server to hub-internal-config
-                else if(path.toLowerCase().equals("job-server.json")
-                || path.toLowerCase().equals("staging-server.json")) {
-                    logger.info("Processing "+ f.toFile().getAbsolutePath());
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode rootNode = null;
-                    File jsonFile = f.toFile();
-                    try {
-                        rootNode = mapper.readTree(jsonFile);
-                        //set the url-rewriter and error-handler
-                        if(path.toLowerCase().equals("staging-server.json")) {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/4/rest-api/rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/rest-api/rewriter.xml");
-                            logger.info("Setting \"error-handler\" to \"/data-hub/4/rest-api/error-handler.xqy\"");
-                            ((ObjectNode) rootNode).put("error-handler", "/data-hub/4/rest-api/error-handler.xqy");
+                    //copy modules,final db to ml-config
+                    else if (path.toLowerCase().equals("modules-database.json")
+                        || path.toLowerCase().equals("final-database.json")) {
+                        try {
+                            if (path.toLowerCase().equals("modules-database.json")) {
+                                logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                    + getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                FileUtils.copyFile(f.toFile(), getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                            } else {
+                                logger.info("Processing " + f.toFile().getAbsolutePath());
+                                ObjectMapper mapper = new ObjectMapper();
+                                ObjectNode rootNode;
+                                File jsonFile = f.toFile();
+                                try {
+                                    rootNode = (ObjectNode) mapper.readTree(jsonFile);
+                                    rootNode.put("schema-database", "%%mlFinalSchemasDbName%%");
+                                    logger.info("Setting \"schema-database\" to \"%%mlFinalSchemasDbName%%\"");
+                                    rootNode.put("triggers-database", "%%mlFinalTriggersDbName%%");
+                                    logger.info("Setting \"triggers-database\" to \"%%mlFinalTriggersDbName%%\"");
+                                    String dbFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                                    logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                        + getUserDatabaseDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                                    FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+                                } catch (IOException e) {
+                                    logger.error("Unable to update " + f.getFileName());
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
                         }
-                        else {
-                            logger.info("Setting \"url-rewriter\" to \"/data-hub/4/tracing/tracing-rewriter.xml\"");
-                            ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");                            
-                        }
-                        String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getHubServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
-                    }        
-                }
-                //copy final server to ml-config
-                else if(path.toLowerCase().equals("final-server.json")) {
-                    try {
-                        logger.info("Writing "+ f.toFile().getAbsolutePath() +" to "
-                                +getUserServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
-                        FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
                     }
-                }
-                //move the rest of the payloads that are not part of the set to 
-                // hub-internal-config
-                else if(! obsoleteFiles.contains(path.toLowerCase())) {
-                    try {
-                        FileUtils.copyInputStreamToFile(
+                    //copy jobs,staging server to hub-internal-config
+                    else if (path.toLowerCase().equals("job-server.json")
+                        || path.toLowerCase().equals("staging-server.json")) {
+                        logger.info("Processing " + f.toFile().getAbsolutePath());
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode rootNode = null;
+                        File jsonFile = f.toFile();
+                        try {
+                            rootNode = mapper.readTree(jsonFile);
+                            //set the url-rewriter and error-handler
+                            if (path.toLowerCase().equals("staging-server.json")) {
+                                logger.info("Setting \"url-rewriter\" to \"/data-hub/4/rest-api/rewriter.xml\"");
+                                ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/rest-api/rewriter.xml");
+                                logger.info("Setting \"error-handler\" to \"/data-hub/4/rest-api/error-handler.xqy\"");
+                                ((ObjectNode) rootNode).put("error-handler", "/data-hub/4/rest-api/error-handler.xqy");
+                            } else {
+                                logger.info("Setting \"url-rewriter\" to \"/data-hub/4/tracing/tracing-rewriter.xml\"");
+                                ((ObjectNode) rootNode).put("url-rewriter", "/data-hub/4/tracing/tracing-rewriter.xml");
+                            }
+                            String serverFile = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
+                            logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                + getHubServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                            FileUtils.writeStringToFile(getHubServersDir().resolve(f.getFileName()).toFile(), serverFile);
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    //copy final server to ml-config
+                    else if (path.toLowerCase().equals("final-server.json")) {
+                        try {
+                            logger.info("Writing " + f.toFile().getAbsolutePath() + " to "
+                                + getUserServersDir().resolve(f.getFileName()).toFile().getAbsolutePath());
+                            FileUtils.copyFile(f.toFile(), getUserServersDir().resolve(f.getFileName()).toFile());
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    //move the rest of the payloads that are not part of the set to
+                    // hub-internal-config
+                    else if (!obsoleteFiles.contains(path.toLowerCase())) {
+                        try {
+                            FileUtils.copyInputStreamToFile(
                                 Files.newInputStream(f),
                                 getHubConfigDir().resolve(sourceDir.relativize(f)).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to copy file "+f.getFileName());
-                        throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            logger.error("Unable to copy file " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-            });                        
-           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+                });
+            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
-        }       
+        }
     }
 
     /**
@@ -538,7 +561,7 @@ public class HubProjectImpl implements HubProject {
             if (logger.isInfoEnabled()) {
                 logger.info("Adding path range indexes to job-database.json");
             }
-            
+
             ArrayNode indexes = rootNode.putArray("range-path-index");
             addStringPathRangeIndex(indexes, "/trace/hasError");
             addStringPathRangeIndex(indexes, "/trace/flowType");
@@ -568,105 +591,105 @@ public class HubProjectImpl implements HubProject {
      *  deployed after hub-internal-config. But we don't want to blindly copy all these files to ml-config
      *  as they would overwrite existing "final-server.json" (or database file)
      *  So merging the user-config files with the one copied to ml-config already and copying rest
-     *  ml-config      
-    */
+     *  ml-config
+     */
     private void upgradeUserConfig(Path sourceDir, Path renamedSourceDir, Set<String> obsoleteFiles) throws IOException {
         if (Files.exists(sourceDir)) {
             logger.info("Upgrading user-config dir");
             Files.walk(Paths.get(sourceDir.toUri()))
-            .filter( f -> !Files.isDirectory(f))
-            .forEach(f -> {
-                String path = f.toFile().getName();
-                List<File> filesToMerge = new ArrayList<>();             
-                //copy modules,final db to ml-config
-                if(path.toLowerCase().equals("modules-database.json")
-                || path.toLowerCase().equals("final-database.json")) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        //File copied to src/main/ml-config/databases earlier
-                        filesToMerge.add(getUserDatabaseDir().resolve(f.getFileName()).toFile());
-                        //File from user-config/databases
-                        filesToMerge.add(f.toFile());
-                        // write merged file back
-                        logger.info("Merging "+ path + "from hub-internal-config and user-config");
-                        String dbFile = mapper.writerWithDefaultPrettyPrinter().
+                .filter(f -> !Files.isDirectory(f))
+                .forEach(f -> {
+                    String path = f.toFile().getName();
+                    List<File> filesToMerge = new ArrayList<>();
+                    //copy modules,final db to ml-config
+                    if (path.toLowerCase().equals("modules-database.json")
+                        || path.toLowerCase().equals("final-database.json")) {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            //File copied to src/main/ml-config/databases earlier
+                            filesToMerge.add(getUserDatabaseDir().resolve(f.getFileName()).toFile());
+                            //File from user-config/databases
+                            filesToMerge.add(f.toFile());
+                            // write merged file back
+                            logger.info("Merging " + path + "from hub-internal-config and user-config");
+                            String dbFile = mapper.writerWithDefaultPrettyPrinter().
                                 writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
-                        logger.info("Writing merged "+ path + "to "+getUserDatabaseDir().toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
-                       
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
+                            logger.info("Writing merged " + path + "to " + getUserDatabaseDir().toFile().getAbsolutePath());
+                            FileUtils.writeStringToFile(getUserDatabaseDir().resolve(f.getFileName()).toFile(), dbFile);
+
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-                //copy final server to ml-config
-                else if(path.toLowerCase().equals("final-server.json")) {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        //File copied to src/main/hub-internal-config/servers earlier
-                        filesToMerge.add(getUserServersDir().resolve(f.getFileName()).toFile());
-                        //File from user-config/servers
-                        filesToMerge.add(f.toFile());
-                        // write merged file back
-                        logger.info("Merging "+ path + "from hub-internal-config and user-config");
-                        String serverFile = mapper.writerWithDefaultPrettyPrinter().
+                    //copy final server to ml-config
+                    else if (path.toLowerCase().equals("final-server.json")) {
+                        try {
+                            ObjectMapper mapper = new ObjectMapper();
+                            //File copied to src/main/hub-internal-config/servers earlier
+                            filesToMerge.add(getUserServersDir().resolve(f.getFileName()).toFile());
+                            //File from user-config/servers
+                            filesToMerge.add(f.toFile());
+                            // write merged file back
+                            logger.info("Merging " + path + "from hub-internal-config and user-config");
+                            String serverFile = mapper.writerWithDefaultPrettyPrinter().
                                 writeValueAsString(JsonNodeUtil.mergeJsonFiles(filesToMerge));
-                        logger.info("Writing merged "+ path + "to "+getUserServersDir().toFile().getAbsolutePath());
-                        FileUtils.writeStringToFile(getUserServersDir().resolve(f.getFileName()).toFile(),
-                                serverFile);                       
-                    } catch (IOException e) {
-                        logger.error("Unable to update "+f.getFileName());
-                        throw new RuntimeException(e);
+                            logger.info("Writing merged " + path + "to " + getUserServersDir().toFile().getAbsolutePath());
+                            FileUtils.writeStringToFile(getUserServersDir().resolve(f.getFileName()).toFile(),
+                                serverFile);
+                        } catch (IOException e) {
+                            logger.error("Unable to update " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-                //copy all other files in user-config to ml-config except the obsolete ones 
-                else if(! obsoleteFiles.contains(path.toLowerCase())) {
-                    try {
-                        FileUtils.copyInputStreamToFile(
+                    //copy all other files in user-config to ml-config except the obsolete ones
+                    else if (!obsoleteFiles.contains(path.toLowerCase())) {
+                        try {
+                            FileUtils.copyInputStreamToFile(
                                 Files.newInputStream(f),
                                 getUserConfigDir().resolve(sourceDir.relativize(f)).toFile());
-                    } catch (IOException e) {
-                        logger.error("Unable to copy "+f.getFileName());
-                        throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            logger.error("Unable to copy " + f.getFileName());
+                            throw new RuntimeException(e);
+                        }
                     }
-                }
-                               
-            });                        
-           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+
+                });
+            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
-        }       
+        }
     }
-    
+
     private void upgradeProjectDir(Path sourceDir, Path destDir, Path renamedSourceDir) throws IOException {
         if (Files.exists(sourceDir)) {
             logger.info("Upgrading entity-config dir");
             FileUtils.copyDirectory(sourceDir.toFile(), destDir.toFile(), false);
-           // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
+            // Files.copy(sourceDir, destDir, StandardCopyOption.REPLACE_EXISTING);
             FileUtils.moveDirectory(sourceDir.toFile(), renamedSourceDir.toFile());
         }
     }
-    
+
     /**
      * When upgrading to 4.1.0 or later, obsolete files may need to be delete from hub internal config
      * directory because they were left there by the 3.0 to 4.0.x upgrade. "staging-modules-database.json"
-     * is an obsolete file from 4.0.0 
+     * is an obsolete file from 4.0.0
      */
     private void deleteObsoleteDatabaseFilesFromHubInternalConfig() {
         File dir = getHubDatabaseDir().toFile();
         Set<String> filenames = Stream.of("final-database.json", "modules-database.json", "schemas-database.json",
-                                          "trace-database.json", "triggers-database.json", "staging-modules-database.json").collect(Collectors.toSet());
+            "trace-database.json", "triggers-database.json", "staging-modules-database.json").collect(Collectors.toSet());
         deleteObsoleteFiles(dir, filenames);
 
     }
-    
+
     private void deleteObsoleteDatabaseFilesFromMlConfig() {
         File dir = getUserDatabaseDir().toFile();
         Set<String> filenames = Stream.of("final-modules-database.json").collect(Collectors.toSet());
         deleteObsoleteFiles(dir, filenames);
 
     }
-    
-     private void deleteObsoleteServerFilesFromHubInternalConfig() {
+
+    private void deleteObsoleteServerFilesFromHubInternalConfig() {
         File dir = getHubServersDir().toFile();
         Set<String> filenames = Stream.of("final-server.json", "trace-server.json").collect(Collectors.toSet());
         deleteObsoleteFiles(dir, filenames);
@@ -676,7 +699,7 @@ public class HubProjectImpl implements HubProject {
     private void deleteObsoleteSecurityFilesFromHubInternalConfig() {
         File dir = getHubSecurityDir().toFile();
         Set<String> filenames = Stream.of("roles/data-hub-role.json", "roles/hub-admin-role.json",
-                                          "users/data-hub-user.json", "users/hub-admin-user.json").collect(Collectors.toSet());
+            "users/data-hub-user.json", "users/hub-admin-user.json").collect(Collectors.toSet());
         deleteObsoleteFiles(dir, filenames);
     }
 

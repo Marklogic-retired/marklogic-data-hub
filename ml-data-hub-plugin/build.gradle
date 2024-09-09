@@ -44,14 +44,14 @@ repositories {
 
 dependencies {
     implementation gradleApi()
-    implementation (project(':marklogic-data-hub')) {
+    implementation(project(':marklogic-data-hub')) {
         exclude group: 'ch.qos.logback'
     }
-    implementation ('com.marklogic:ml-gradle:4.5.2') {
+    implementation('com.marklogic:ml-gradle:4.5.2') {
         exclude group: 'ch.qos.logback'
     }
-    implementation 'org.apache.commons:commons-io:1.3.2'
-    implementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation 'commons-io:commons-io:2.16.1'
+    implementation "org.apache.commons:commons-lang3:3.17.0"
     //implementation "com.fasterxml.jackson.core:jackson-databind"
     implementation 'org.springframework.boot:spring-boot-autoconfigure:2.7.18'
 
@@ -60,7 +60,7 @@ dependencies {
     testImplementation 'xmlunit:xmlunit:1.6'
 
 
-    testImplementation ('org.spockframework:spock-spring:2.0-M3-groovy-3.0'){
+    testImplementation('org.spockframework:spock-spring:2.0-M3-groovy-3.0') {
         exclude module: 'groovy-all'
         exclude module: 'groovy-json'
         exclude module: 'groovy-macro'
@@ -83,14 +83,14 @@ dependencies {
         exclude module: 'groovy'
     }
 
-    testImplementation ('org.springframework.boot:spring-boot-starter-test:2.1.8.RELEASE') {
+    testImplementation('org.springframework.boot:spring-boot-starter-test:2.1.8.RELEASE') {
         exclude module: "logback-classic"
     }
     testImplementation 'org.jdom:jdom2:2.0.6.1'
 
 }
 
-tasks.named("bootJar"){
+tasks.named("bootJar") {
     mainClass = 'com.marklogic.hub.ApplicationConfig'
 }
 

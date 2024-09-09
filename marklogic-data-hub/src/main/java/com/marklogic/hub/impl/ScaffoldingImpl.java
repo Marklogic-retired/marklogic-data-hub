@@ -24,7 +24,11 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowBuilder;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
@@ -38,11 +42,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -73,40 +85,46 @@ public class ScaffoldingImpl implements Scaffolding {
         return absolutePath.toString();
     }
 
-    @Override public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
+    @Override
+    public Path getFlowDir(String entityName, String flowName, FlowType flowType) {
         Path entityDir = project.getEntityDir(entityName);
         Path typeDir = entityDir.resolve(flowType.toString());
         Path flowDir = typeDir.resolve(flowName);
         return flowDir;
     }
 
-    @Override public void createEntity(String entityName) {
+    @Override
+    public void createEntity(String entityName) {
         Path entityDir = project.getEntityDir(entityName);
         entityDir.toFile().mkdirs();
-        if(entityDir.toFile().exists()){
+        if (entityDir.toFile().exists()) {
             String fileContents = getFileContent("scaffolding/Entity.json", entityName);
             writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
         }
     }
 
-    @Override public void createMappingDir(String mappingName) {
+    @Override
+    public void createMappingDir(String mappingName) {
         Path mappingDir = project.getMappingDir(mappingName);
         mappingDir.toFile().mkdirs();
     }
 
-    @Override public void createFlow(String entityName, String flowName,
-                                       FlowType flowType, CodeFormat codeFormat,
-                                       DataFormat dataFormat) {
+    @Override
+    public void createFlow(String entityName, String flowName,
+                           FlowType flowType, CodeFormat codeFormat,
+                           DataFormat dataFormat) {
         createFlow(entityName, flowName, flowType, codeFormat, dataFormat, true);
     }
 
-    @Override public void createFlow(String entityName, String flowName,
-                                     FlowType flowType, CodeFormat codeFormat,
-                                     DataFormat dataFormat, boolean useEsModel) {
+    @Override
+    public void createFlow(String entityName, String flowName,
+                           FlowType flowType, CodeFormat codeFormat,
+                           DataFormat dataFormat, boolean useEsModel) {
         createFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel, null);
     }
 
-    @Override public void createFlow(String entityName, String flowName,
+    @Override
+    public void createFlow(String entityName, String flowName,
                            FlowType flowType, CodeFormat codeFormat,
                            DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
         try {
@@ -152,8 +170,7 @@ public class ScaffoldingImpl implements Scaffolding {
             FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
             flow.toProperties().store(fw, "");
             fw.close();
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -165,13 +182,13 @@ public class ScaffoldingImpl implements Scaffolding {
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(is);
-        }
-        catch(IOException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override public List<String> updateLegacyFlows(String fromVersion, String entityName) {
+    @Override
+    public List<String> updateLegacyFlows(String fromVersion, String entityName) {
         Path entityDir = project.getHubEntitiesDir().resolve(entityName);
         Path inputDir = entityDir.resolve("input");
         Path harmonizeDir = entityDir.resolve("harmonize");
@@ -185,8 +202,7 @@ public class ScaffoldingImpl implements Scaffolding {
             for (File inputFlow : inputFlows) {
                 if (updateLegacyFlow(fromVersion, entityName, inputFlow.getName(), FlowType.INPUT)) {
                     updatedFlows.add(entityName + " => " + inputFlow.getName());
-                }
-                else if(update2xFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
+                } else if (update2xFlow(entityName, inputFlow.getName(), FlowType.INPUT)) {
                     updatedFlows.add(entityName + " => " + inputFlow.getName());
                 }
             }
@@ -195,10 +211,9 @@ public class ScaffoldingImpl implements Scaffolding {
         File[] harmonizeFlows = harmonizeDir.toFile().listFiles((pathname) -> pathname.isDirectory() && !pathname.getName().equals("REST"));
         if (harmonizeFlows != null) {
             for (File harmonizeFlow : harmonizeFlows) {
-                if(updateLegacyFlow(fromVersion, entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
+                if (updateLegacyFlow(fromVersion, entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
                     updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
-                }
-                else if(update2xFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
+                } else if (update2xFlow(entityName, harmonizeFlow.getName(), FlowType.HARMONIZE)) {
                     updatedFlows.add(entityName + " => " + harmonizeFlow.getName());
                 }
             }
@@ -207,7 +222,8 @@ public class ScaffoldingImpl implements Scaffolding {
         return updatedFlows;
     }
 
-    @Override public void updateLegacyEntity(String entityName) {
+    @Override
+    public void updateLegacyEntity(String entityName) {
         Path entityDir = project.getHubEntitiesDir().resolve(entityName);
 
         File[] entityFiles = entityDir.toFile().listFiles((dir, name) -> name.matches("[^.]+\\.entity\\.json"));
@@ -217,7 +233,8 @@ public class ScaffoldingImpl implements Scaffolding {
         }
     }
 
-    @Override public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) {
+    @Override
+    public boolean updateLegacyFlow(String fromVersion, String entityName, String flowName, FlowType flowType) {
         boolean updated = false;
 
         Path flowDir = getFlowDir(entityName, flowName, flowType);
@@ -226,65 +243,65 @@ public class ScaffoldingImpl implements Scaffolding {
             File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
 
             for (File file : files) {
-                    Document doc = readLegacyFlowXml(file);
-                    if (doc.getDocumentElement().getLocalName().equals("flow")) {
-                        DataFormat dataFormat = null;
-                        CodeFormat codeFormat = null;
-                        NodeList nodes = doc.getElementsByTagName("data-format");
-                        if (nodes.getLength() == 1) {
-                            String format = nodes.item(0).getTextContent();
-                            if (format.equals("application/json")) {
-                                dataFormat = DataFormat.JSON;
-                            } else if (format.equals("application/xml")) {
-                                dataFormat = DataFormat.XML;
-                            } else {
-                                throw new RuntimeException("Invalid Data Format");
-                            }
-                        }
-
-                        if (flowDir.resolve("content").resolve("content.sjs").toFile().exists()) {
-                            codeFormat = CodeFormat.JAVASCRIPT;
-                        } else if (flowDir.resolve("content").resolve("content.xqy").toFile().exists()) {
-                            codeFormat = CodeFormat.XQUERY;
+                Document doc = readLegacyFlowXml(file);
+                if (doc.getDocumentElement().getLocalName().equals("flow")) {
+                    DataFormat dataFormat = null;
+                    CodeFormat codeFormat = null;
+                    NodeList nodes = doc.getElementsByTagName("data-format");
+                    if (nodes.getLength() == 1) {
+                        String format = nodes.item(0).getTextContent();
+                        if (format.equals("application/json")) {
+                            dataFormat = DataFormat.JSON;
+                        } else if (format.equals("application/xml")) {
+                            dataFormat = DataFormat.XML;
                         } else {
-                            throw new RuntimeException("Invalid Code Format");
+                            throw new RuntimeException("Invalid Data Format");
                         }
-
-                        String suffix = "";
-                        if (fromVersion.startsWith("1.")) {
-                            suffix = "-1x";
-                        }
-                        writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy" + suffix + "." + codeFormat,
-                            flowDir.resolve("main." + codeFormat));
-
-                        file.delete();
-
-                        FlowBuilder flowBuilder = FlowBuilder.newFlow()
-                            .withEntityName(entityName)
-                            .withName(flowName)
-                            .withType(flowType)
-                            .withCodeFormat(codeFormat)
-                            .withDataFormat(dataFormat)
-                            .withMain(new MainPluginImpl("main." + codeFormat, codeFormat));
-
-                        if (flowType.equals(FlowType.HARMONIZE)) {
-                            flowBuilder.withCollector(new CollectorImpl("collector/collector." + codeFormat, codeFormat));
-
-                            if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
-                                updateLegacySjsWriter(flowDir);
-                            }
-                        }
-
-                        Flow flow = flowBuilder.build();
-                        try {
-                            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-                            flow.toProperties().store(fw, "");
-                            fw.close();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        updated = true;
                     }
+
+                    if (flowDir.resolve("content").resolve("content.sjs").toFile().exists()) {
+                        codeFormat = CodeFormat.JAVASCRIPT;
+                    } else if (flowDir.resolve("content").resolve("content.xqy").toFile().exists()) {
+                        codeFormat = CodeFormat.XQUERY;
+                    } else {
+                        throw new RuntimeException("Invalid Code Format");
+                    }
+
+                    String suffix = "";
+                    if (fromVersion.startsWith("1.")) {
+                        suffix = "-1x";
+                    }
+                    writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy" + suffix + "." + codeFormat,
+                        flowDir.resolve("main." + codeFormat));
+
+                    file.delete();
+
+                    FlowBuilder flowBuilder = FlowBuilder.newFlow()
+                        .withEntityName(entityName)
+                        .withName(flowName)
+                        .withType(flowType)
+                        .withCodeFormat(codeFormat)
+                        .withDataFormat(dataFormat)
+                        .withMain(new MainPluginImpl("main." + codeFormat, codeFormat));
+
+                    if (flowType.equals(FlowType.HARMONIZE)) {
+                        flowBuilder.withCollector(new CollectorImpl("collector/collector." + codeFormat, codeFormat));
+
+                        if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
+                            updateLegacySjsWriter(flowDir);
+                        }
+                    }
+
+                    Flow flow = flowBuilder.build();
+                    try {
+                        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+                        flow.toProperties().store(fw, "");
+                        fw.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    updated = true;
+                }
             }
         }
         return updated;
@@ -367,7 +384,7 @@ public class ScaffoldingImpl implements Scaffolding {
         logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
             InputStream inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             FileUtil.copy(inputStream, dstFile.toFile());
         }
     }
@@ -380,11 +397,12 @@ public class ScaffoldingImpl implements Scaffolding {
         }
     }
 
-    @Override public void createRestExtension(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+    @Override
+    public void createRestExtension(String entityName, String extensionName,
+                                    FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(extensionName);
 
-        if(!validator.isUniqueRestServiceExtension(extensionName)) {
+        if (!validator.isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
         String scaffoldRestServicesPath = "scaffolding/rest/services/";
@@ -394,10 +412,11 @@ public class ScaffoldingImpl implements Scaffolding {
         writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
     }
 
-    @Override public void createRestTransform(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
+    @Override
+    public void createRestTransform(String entityName, String transformName,
+                                    FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(transformName);
-        if(!validator.isUniqueRestTransform(transformName)) {
+        if (!validator.isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
         String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
@@ -415,8 +434,7 @@ public class ScaffoldingImpl implements Scaffolding {
             fw = new FileWriter(dstFile);
             bw = new BufferedWriter(fw);
             bw.write(fileContent);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             if (bw != null) {
@@ -426,7 +444,7 @@ public class ScaffoldingImpl implements Scaffolding {
                     throw new RuntimeException(e);
                 }
             }
-            if( fw != null) {
+            if (fw != null) {
                 try {
                     fw.close();
                 } catch (IOException e) {
@@ -437,20 +455,20 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private File createEmptyRestExtensionFile(String entityName, String extensionName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
     }
 
     private File createEmptyRestTransformFile(String entityName, String transformName,
-            FlowType flowType, CodeFormat codeFormat) {
+                                              FlowType flowType, CodeFormat codeFormat) {
         Path restDir = getRestDirectory(entityName, flowType);
         return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
     }
 
     private File createEmptyFile(Path directory, String subDirectoryName, String fileName) {
         Path fileDirectory = directory;
-        if(subDirectoryName != null) {
+        if (subDirectoryName != null) {
             fileDirectory = directory.resolve(subDirectoryName);
         }
         fileDirectory.toFile().mkdirs();
@@ -492,11 +510,11 @@ public class ScaffoldingImpl implements Scaffolding {
         BufferedReader rdr = null;
         try {
             inputStream = Scaffolding.class.getClassLoader()
-                    .getResourceAsStream(srcFile);
+                .getResourceAsStream(srcFile);
             rdr = new BufferedReader(new InputStreamReader(inputStream));
             String bufferedLine = null;
             while ((bufferedLine = rdr.readLine()) != null) {
-                if(bufferedLine.contains("placeholder")) {
+                if (bufferedLine.contains("placeholder")) {
                     bufferedLine = bufferedLine.replace("placeholder", placeholder);
                 }
                 output.append(bufferedLine);
@@ -528,11 +546,11 @@ public class ScaffoldingImpl implements Scaffolding {
             params.add("entity", entityName);
             params.add("codeFormat", codeFormat.toString());
             params.add("flowType", flowType.toString());
-            if(mappingName != null) {
+            if (mappingName != null) {
                 params.add("mapping", mappingName);
             }
             ResourceServices.ServiceResultIterator resultItr = this.getServices().get(params);
-            if (resultItr == null || ! resultItr.hasNext()) {
+            if (resultItr == null || !resultItr.hasNext()) {
                 throw new RuntimeException("Unable to get Content Plugin scaffold");
             }
             ResourceServices.ServiceResult res = resultItr.next();
