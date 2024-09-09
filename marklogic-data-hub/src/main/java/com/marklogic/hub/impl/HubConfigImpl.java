@@ -50,9 +50,9 @@ import org.springframework.stereotype.Component;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +65,7 @@ import java.util.Properties;
     setterVisibility = JsonAutoDetect.Visibility.ANY)
 @Component
 @PropertySource({"classpath:dhf-defaults.properties"})
-public class HubConfigImpl implements HubConfig
-{
+public class HubConfigImpl implements HubConfig {
     @Autowired
     private HubProject hubProject;
 
@@ -194,9 +193,12 @@ public class HubConfigImpl implements HubConfig
         hubProject.createProject(projectDirString);
     }
 
-    public String getHost() { return appConfig.getHost(); }
+    public String getHost() {
+        return appConfig.getHost();
+    }
 
-    @Override public String getDbName(DatabaseKind kind){
+    @Override
+    public String getDbName(DatabaseKind kind) {
         String name;
         switch (kind) {
             case STAGING:
@@ -238,7 +240,8 @@ public class HubConfigImpl implements HubConfig
         return name;
     }
 
-    @Override public void setDbName(DatabaseKind kind, String dbName){
+    @Override
+    public void setDbName(DatabaseKind kind, String dbName) {
         switch (kind) {
             case STAGING:
                 stagingDbName = dbName;
@@ -278,7 +281,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getHttpName(DatabaseKind kind){
+    @Override
+    public String getHttpName(DatabaseKind kind) {
         String name;
         switch (kind) {
             case STAGING:
@@ -299,7 +303,8 @@ public class HubConfigImpl implements HubConfig
         return name;
     }
 
-    @Override public void setHttpName(DatabaseKind kind, String httpName){
+    @Override
+    public void setHttpName(DatabaseKind kind, String httpName) {
         switch (kind) {
             case STAGING:
                 stagingHttpName = httpName;
@@ -318,7 +323,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public Integer getForestsPerHost(DatabaseKind kind){
+    @Override
+    public Integer getForestsPerHost(DatabaseKind kind) {
         Integer forests;
         switch (kind) {
             case STAGING:
@@ -360,7 +366,8 @@ public class HubConfigImpl implements HubConfig
         return forests;
     }
 
-    @Override public void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost){
+    @Override
+    public void setForestsPerHost(DatabaseKind kind, Integer forestsPerHost) {
         switch (kind) {
             case STAGING:
                 stagingForestsPerHost = forestsPerHost;
@@ -400,7 +407,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public Integer getPort(DatabaseKind kind){
+    @Override
+    public Integer getPort(DatabaseKind kind) {
         Integer port;
         switch (kind) {
             case STAGING:
@@ -421,7 +429,8 @@ public class HubConfigImpl implements HubConfig
         return port;
     }
 
-    @Override public void setPort(DatabaseKind kind, Integer port){
+    @Override
+    public void setPort(DatabaseKind kind, Integer port) {
         switch (kind) {
             case STAGING:
                 stagingPort = port;
@@ -441,7 +450,8 @@ public class HubConfigImpl implements HubConfig
     }
 
 
-    @Override public SSLContext getSslContext(DatabaseKind kind) {
+    @Override
+    public SSLContext getSslContext(DatabaseKind kind) {
         SSLContext sslContext;
         switch (kind) {
             case STAGING:
@@ -462,7 +472,8 @@ public class HubConfigImpl implements HubConfig
         return sslContext;
     }
 
-    @Override public void setSslContext(DatabaseKind kind, SSLContext sslContext) {
+    @Override
+    public void setSslContext(DatabaseKind kind, SSLContext sslContext) {
         switch (kind) {
             case STAGING:
                 this.stagingSslContext = sslContext;
@@ -481,7 +492,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind) {
+    @Override
+    public DatabaseClientFactory.SSLHostnameVerifier getSslHostnameVerifier(DatabaseKind kind) {
         DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier;
         switch (kind) {
             case STAGING:
@@ -502,7 +514,8 @@ public class HubConfigImpl implements HubConfig
         return sslHostnameVerifier;
     }
 
-    @Override public void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier) {
+    @Override
+    public void setSslHostnameVerifier(DatabaseKind kind, DatabaseClientFactory.SSLHostnameVerifier sslHostnameVerifier) {
         switch (kind) {
             case STAGING:
                 this.stagingSslHostnameVerifier = sslHostnameVerifier;
@@ -521,7 +534,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getAuthMethod(DatabaseKind kind){
+    @Override
+    public String getAuthMethod(DatabaseKind kind) {
         String authMethod;
         switch (kind) {
             case STAGING:
@@ -542,7 +556,8 @@ public class HubConfigImpl implements HubConfig
         return authMethod;
     }
 
-    @Override public void setAuthMethod(DatabaseKind kind, String authMethod) {
+    @Override
+    public void setAuthMethod(DatabaseKind kind, String authMethod) {
         switch (kind) {
             case STAGING:
                 this.stagingAuthMethod = authMethod;
@@ -591,7 +606,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getScheme(DatabaseKind kind){
+    @Override
+    public String getScheme(DatabaseKind kind) {
         String scheme;
         switch (kind) {
             case STAGING:
@@ -612,7 +628,8 @@ public class HubConfigImpl implements HubConfig
         return scheme;
     }
 
-    @Override public void setScheme(DatabaseKind kind, String scheme) {
+    @Override
+    public void setScheme(DatabaseKind kind, String scheme) {
         switch (kind) {
             case STAGING:
                 this.stagingScheme = scheme;
@@ -631,7 +648,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public boolean getSimpleSsl(DatabaseKind kind){
+    @Override
+    public boolean getSimpleSsl(DatabaseKind kind) {
         boolean simple;
         switch (kind) {
             case STAGING:
@@ -652,7 +670,8 @@ public class HubConfigImpl implements HubConfig
         return simple;
     }
 
-    @Override public void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl) {
+    @Override
+    public void setSimpleSsl(DatabaseKind kind, Boolean simpleSsl) {
         switch (kind) {
             case STAGING:
                 this.stagingSimpleSsl = simpleSsl;
@@ -671,7 +690,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getCertFile(DatabaseKind kind){
+    @Override
+    public String getCertFile(DatabaseKind kind) {
         String certFile;
         switch (kind) {
             case STAGING:
@@ -692,7 +712,8 @@ public class HubConfigImpl implements HubConfig
         return certFile;
     }
 
-    @Override public void setCertFile(DatabaseKind kind, String certFile) {
+    @Override
+    public void setCertFile(DatabaseKind kind, String certFile) {
         switch (kind) {
             case STAGING:
                 this.stagingCertFile = certFile;
@@ -711,7 +732,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getCertPassword(DatabaseKind kind){
+    @Override
+    public String getCertPassword(DatabaseKind kind) {
         String certPass;
         switch (kind) {
             case STAGING:
@@ -732,7 +754,8 @@ public class HubConfigImpl implements HubConfig
         return certPass;
     }
 
-    @Override public void setCertPass(DatabaseKind kind, String certPassword) {
+    @Override
+    public void setCertPass(DatabaseKind kind, String certPassword) {
         switch (kind) {
             case STAGING:
                 this.stagingCertPassword = certPassword;
@@ -751,7 +774,8 @@ public class HubConfigImpl implements HubConfig
         }
     }
 
-    @Override public String getExternalName(DatabaseKind kind){
+    @Override
+    public String getExternalName(DatabaseKind kind) {
         String name;
         switch (kind) {
             case STAGING:
@@ -772,7 +796,8 @@ public class HubConfigImpl implements HubConfig
         return name;
     }
 
-    @Override public void setExternalName(DatabaseKind kind, String externalName) {
+    @Override
+    public void setExternalName(DatabaseKind kind, String externalName) {
         switch (kind) {
             case STAGING:
                 this.stagingExternalName = externalName;
@@ -792,29 +817,43 @@ public class HubConfigImpl implements HubConfig
     }
 
     // roles and users
-    @Override public String getFlowDeveloperRoleName() {
-    return flowDeveloperRoleName;
-}
-    @Override public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
+    @Override
+    public String getFlowDeveloperRoleName() {
+        return flowDeveloperRoleName;
+    }
+
+    @Override
+    public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
         this.flowDeveloperRoleName = flowDeveloperRoleName;
     }
-    @Override public String getFlowDeveloperUserName() {
+
+    @Override
+    public String getFlowDeveloperUserName() {
         return flowDeveloperUserName;
     }
-    @Override  public void setFlowDeveloperUserName(String flowDeveloperUserName) {
+
+    @Override
+    public void setFlowDeveloperUserName(String flowDeveloperUserName) {
         this.flowDeveloperUserName = flowDeveloperUserName;
     }
 
-    @Override public String getFlowOperatorRoleName() {
+    @Override
+    public String getFlowOperatorRoleName() {
         return flowOperatorRoleName;
     }
-    @Override public void setFlowOperatorRoleName(String flowOperatorRoleName) {
+
+    @Override
+    public void setFlowOperatorRoleName(String flowOperatorRoleName) {
         this.flowOperatorRoleName = flowOperatorRoleName;
     }
-    @Override public String getFlowOperatorUserName() {
+
+    @Override
+    public String getFlowOperatorUserName() {
         return flowOperatorUserName;
     }
-    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
+
+    @Override
+    public void setFlowOperatorUserName(String flowOperatorUserName) {
         this.flowOperatorUserName = flowOperatorUserName;
     }
 
@@ -822,6 +861,7 @@ public class HubConfigImpl implements HubConfig
     public String getMlUsername() {
         return mlUsername;
     }
+
     // impl only pending refactor to Flow Component
     public String getMlPassword() {
         return mlPassword;
@@ -836,19 +876,19 @@ public class HubConfigImpl implements HubConfig
     }
 
 
-
     @JsonIgnore
-    @Override  public String getLoadBalancerHost() {
+    @Override
+    public String getLoadBalancerHost() {
         return loadBalancerHost;
     }
 
     @Override
-    public Boolean getIsHostLoadBalancer(){
+    public Boolean getIsHostLoadBalancer() {
         return isHostLoadBalancer;
     }
 
     @Override
-    public Boolean getIsProvisionedEnvironment(){
+    public Boolean getIsProvisionedEnvironment() {
         return isProvisionedEnvironment;
     }
 
@@ -856,14 +896,17 @@ public class HubConfigImpl implements HubConfig
         this.loadBalancerHost = loadBalancerHost;
     }
 
-    @Override public String getCustomForestPath() {
+    @Override
+    public String getCustomForestPath() {
         return customForestPath;
     }
+
     public void setCustomForestPath(String customForestPath) {
         this.customForestPath = customForestPath;
     }
 
-    @Override public String getModulePermissions() {
+    @Override
+    public String getModulePermissions() {
         return modulePermissions;
     }
 
@@ -884,11 +927,13 @@ public class HubConfigImpl implements HubConfig
     }
 
     @JsonIgnore
-    @Override  public HubProject getHubProject() {
+    @Override
+    public HubProject getHubProject() {
         return this.hubProject;
     }
 
-    @Override  public void initHubProject() {
+    @Override
+    public void initHubProject() {
         this.hubProject.init(getCustomTokens());
     }
 
@@ -921,42 +966,37 @@ public class HubConfigImpl implements HubConfig
             jobSslHostnameVerifier = DatabaseClientFactory.SSLHostnameVerifier.ANY;
             jobTrustManager = new SimpleX509TrustManager();
         }
-        if (isHostLoadBalancer != null){
+        if (isHostLoadBalancer != null) {
             if (isHostLoadBalancer) {
-                if (host != null && loadBalancerHost != null){
+                if (host != null && loadBalancerHost != null) {
                     logger.warn("\"mlLoadBalancerHosts\" is a deprecated property. When \"mlIsHostLoadBalancer\" is set to \"true\"properties, the value specified for \"mlHost\" will be used as the load balancer.");
                     if (!host.equals(loadBalancerHost)) {
                         throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                    }
-                    else {
+                    } else {
                         loadBalancerHost = host;
                     }
                 }
-            }
-            else {
-                if (loadBalancerHost != null){
+            } else {
+                if (loadBalancerHost != null) {
                     throw new DataHubConfigurationException("\"mlIsHostLoadBalancer\" must not be false if you are using \"mlLoadBalancerHosts\"");
                 }
             }
-        }
-        else{
-            if (host != null && loadBalancerHost != null){
+        } else {
+            if (host != null && loadBalancerHost != null) {
                 if (!host.equals(loadBalancerHost)) {
                     throw new DataHubConfigurationException("\"mlLoadBalancerHosts\" must be the same as \"mlHost\"");
-                }
-                else {
+                } else {
                     isHostLoadBalancer = true;
                     loadBalancerHost = host;
                 }
-            }
-            else {
+            } else {
                 isHostLoadBalancer = false;
             }
         }
     }
 
 
-    public void loadConfigurationFromProperties(){
+    public void loadConfigurationFromProperties() {
         loadConfigurationFromProperties(null, true);
     }
 
@@ -988,337 +1028,290 @@ public class HubConfigImpl implements HubConfig
             }
         }
 
-        if (properties != null){
-            properties.forEach(projectProperties::put);
+        if (properties != null) {
+            projectProperties.putAll(properties);
         }
 
         if (host == null) {
             host = getEnvPropString(projectProperties, "mlHost", environment.getProperty("mlHost"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlHost", host);
         }
 
         if (stagingDbName == null) {
             stagingDbName = getEnvPropString(projectProperties, "mlStagingDbName", environment.getProperty("mlStagingDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingDbName", stagingDbName);
         }
 
         if (stagingHttpName == null) {
             stagingHttpName = getEnvPropString(projectProperties, "mlStagingAppserverName", environment.getProperty("mlStagingAppserverName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingAppserverName", stagingHttpName);
         }
 
         if (stagingForestsPerHost == null) {
             stagingForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingForestsPerHost", stagingForestsPerHost.toString());
         }
 
         if (stagingPort == null) {
             stagingPort = getEnvPropInteger(projectProperties, "mlStagingPort", Integer.parseInt(environment.getProperty("mlStagingPort")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingPort", stagingPort.toString());
         }
 
         if (stagingAuthMethod == null) {
             stagingAuthMethod = getEnvPropString(projectProperties, "mlStagingAuth", environment.getProperty("mlStagingAuth"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingAuth", stagingAuthMethod);
         }
 
         if (stagingScheme == null) {
             stagingScheme = getEnvPropString(projectProperties, "mlStagingScheme", environment.getProperty("mlStagingScheme"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingScheme", stagingScheme);
         }
 
         if (stagingSimpleSsl == null) {
             stagingSimpleSsl = getEnvPropBoolean(projectProperties, "mlStagingSimpleSsl", false);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingSimpleSsl", stagingSimpleSsl.toString());
         }
 
         if (stagingCertFile == null) {
             stagingCertFile = getEnvPropString(projectProperties, "mlStagingCertFile", stagingCertFile);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingCertFile", stagingCertFile);
         }
 
         if (stagingCertPassword == null) {
             stagingCertPassword = getEnvPropString(projectProperties, "mlStagingCertPassword", stagingCertPassword);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingCertPassword", stagingCertPassword);
         }
 
         if (stagingExternalName == null) {
             stagingExternalName = getEnvPropString(projectProperties, "mlStagingExternalName", stagingExternalName);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingExternalName", stagingExternalName);
         }
 
 
         if (finalDbName == null) {
             finalDbName = getEnvPropString(projectProperties, "mlFinalDbName", environment.getProperty("mlFinalDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalDbName", finalDbName);
         }
 
         if (finalHttpName == null) {
             finalHttpName = getEnvPropString(projectProperties, "mlFinalAppserverName", environment.getProperty("mlFinalAppserverName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalAppserverName", finalHttpName);
         }
 
         if (finalForestsPerHost == null) {
             finalForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalForestsPerHost", finalForestsPerHost.toString());
         }
 
         if (finalPort == null) {
             finalPort = getEnvPropInteger(projectProperties, "mlFinalPort", Integer.parseInt(environment.getProperty("mlFinalPort")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalPort", finalPort.toString());
         }
 
         if (finalAuthMethod == null) {
             finalAuthMethod = getEnvPropString(projectProperties, "mlFinalAuth", environment.getProperty("mlFinalAuth"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalAuth", finalAuthMethod);
         }
 
         if (finalScheme == null) {
             finalScheme = getEnvPropString(projectProperties, "mlFinalScheme", environment.getProperty("mlFinalScheme"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalScheme", finalScheme);
         }
 
         if (finalSimpleSsl == null) {
             finalSimpleSsl = getEnvPropBoolean(projectProperties, "mlFinalSimpleSsl", false);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalSimpleSsl", finalSimpleSsl.toString());
         }
 
         if (finalCertFile == null) {
             finalCertFile = getEnvPropString(projectProperties, "mlFinalCertFile", finalCertFile);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalCertFile", finalCertFile);
         }
 
         if (finalCertPassword == null) {
             finalCertPassword = getEnvPropString(projectProperties, "mlFinalCertPassword", finalCertPassword);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalCertPassword", finalCertPassword);
         }
 
         if (finalExternalName == null) {
             finalExternalName = getEnvPropString(projectProperties, "mlFinalExternalName", finalExternalName);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalExternalName", finalExternalName);
         }
 
         if (jobDbName == null) {
             jobDbName = getEnvPropString(projectProperties, "mlJobDbName", environment.getProperty("mlJobDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobDbName", jobDbName);
         }
 
         if (jobHttpName == null) {
             jobHttpName = getEnvPropString(projectProperties, "mlJobAppserverName", environment.getProperty("mlJobAppserverName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobAppserverName", jobHttpName);
         }
 
         if (jobForestsPerHost == null) {
             jobForestsPerHost = getEnvPropInteger(projectProperties, "mlJobForestsPerHost", Integer.parseInt(environment.getProperty("mlJobForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobForestsPerHost", jobForestsPerHost.toString());
         }
 
         if (jobPort == null) {
             jobPort = getEnvPropInteger(projectProperties, "mlJobPort", Integer.parseInt(environment.getProperty("mlJobPort")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobPort", jobPort.toString());
         }
 
         if (jobAuthMethod == null) {
             jobAuthMethod = getEnvPropString(projectProperties, "mlJobAuth", environment.getProperty("mlJobAuth"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobAuth", jobAuthMethod);
         }
 
         if (jobScheme == null) {
             jobScheme = getEnvPropString(projectProperties, "mlJobScheme", environment.getProperty("mlJobScheme"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobScheme", jobScheme);
         }
 
         if (jobSimpleSsl == null) {
             jobSimpleSsl = getEnvPropBoolean(projectProperties, "mlJobSimpleSsl", false);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobSimpleSsl", jobSimpleSsl.toString());
         }
 
         if (jobCertFile == null) {
             jobCertFile = getEnvPropString(projectProperties, "mlJobCertFile", jobCertFile);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobCertFile", jobCertFile);
         }
 
         if (jobCertPassword == null) {
             jobCertPassword = getEnvPropString(projectProperties, "mlJobCertPassword", jobCertPassword);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobCertPassword", jobCertPassword);
         }
 
         if (jobExternalName == null) {
             jobExternalName = getEnvPropString(projectProperties, "mlJobExternalName", jobExternalName);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlJobExternalName", jobExternalName);
         }
 
         if (customForestPath == null) {
             customForestPath = getEnvPropString(projectProperties, "mlCustomForestPath", environment.getProperty("mlCustomForestPath"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlCustomForestPath", customForestPath);
         }
 
         if (modulesDbName == null) {
             modulesDbName = getEnvPropString(projectProperties, "mlModulesDbName", environment.getProperty("mlModulesDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlModulesDbName", modulesDbName);
         }
 
         if (modulesForestsPerHost == null) {
             modulesForestsPerHost = getEnvPropInteger(projectProperties, "mlModulesForestsPerHost", Integer.parseInt(environment.getProperty("mlModulesForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlModulesForestsPerHost", modulesForestsPerHost.toString());
         }
 
         if (stagingTriggersDbName == null) {
             stagingTriggersDbName = getEnvPropString(projectProperties, "mlStagingTriggersDbName", environment.getProperty("mlStagingTriggersDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingTriggersDbName", stagingTriggersDbName);
         }
 
         if (stagingTriggersForestsPerHost == null) {
             stagingTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingTriggersForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingTriggersForestsPerHost", stagingTriggersForestsPerHost.toString());
         }
 
         if (finalTriggersDbName == null) {
             finalTriggersDbName = getEnvPropString(projectProperties, "mlFinalTriggersDbName", environment.getProperty("mlFinalTriggersDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalTriggersDbName", finalTriggersDbName);
         }
 
         if (finalTriggersForestsPerHost == null) {
             finalTriggersForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalTriggersForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalTriggersForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalTriggersForestsPerHost", finalTriggersForestsPerHost.toString());
         }
 
         if (stagingSchemasDbName == null) {
             stagingSchemasDbName = getEnvPropString(projectProperties, "mlStagingSchemasDbName", environment.getProperty("mlStagingSchemasDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingSchemasDbName", stagingSchemasDbName);
         }
 
         if (stagingSchemasForestsPerHost == null) {
             stagingSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlStagingSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlStagingSchemasForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlStagingSchemasForestsPerHost", stagingSchemasForestsPerHost.toString());
         }
 
         if (finalSchemasDbName == null) {
             finalSchemasDbName = getEnvPropString(projectProperties, "mlFinalSchemasDbName", environment.getProperty("mlFinalSchemasDbName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalSchemasDbName", finalSchemasDbName);
         }
 
         if (finalSchemasForestsPerHost == null) {
             finalSchemasForestsPerHost = getEnvPropInteger(projectProperties, "mlFinalSchemasForestsPerHost", Integer.parseInt(environment.getProperty("mlFinalSchemasForestsPerHost")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFinalSchemasForestsPerHost", finalSchemasForestsPerHost.toString());
         }
 
         if (flowDeveloperUserName == null) {
             flowDeveloperUserName = getEnvPropString(projectProperties, "mlFlowDeveloperUserName", environment.getProperty("mlFlowDeveloperUserName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFlowDeveloperUserName", flowDeveloperUserName);
         }
 
         if (flowDeveloperRoleName == null) {
             flowDeveloperRoleName = getEnvPropString(projectProperties, "mlFlowDeveloperRole", environment.getProperty("mlFlowDeveloperRole"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFlowDeveloperRole", flowDeveloperRoleName);
         }
 
         if (flowOperatorUserName == null) {
             flowOperatorUserName = getEnvPropString(projectProperties, "mlFlowOperatorUserName", environment.getProperty("mlFlowOperatorUserName"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFlowOperatorUserName", flowOperatorUserName);
         }
 
         if (flowOperatorRoleName == null) {
             flowOperatorRoleName = getEnvPropString(projectProperties, "mlFlowOperatorRole", environment.getProperty("mlFlowOperatorRole"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlFlowOperatorRole", flowOperatorRoleName);
         }
 
         if (dataHubAdminRoleName == null) {
             dataHubAdminRoleName = getEnvPropString(projectProperties, "mlDataHubAdminRole", environment.getProperty("mlDataHubAdminRole"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlDataHubAdminRole", dataHubAdminRoleName);
         }
 
@@ -1331,8 +1324,7 @@ public class HubConfigImpl implements HubConfig
 
         if (modulePermissions == null) {
             modulePermissions = getEnvPropString(projectProperties, "mlModulePermissions", environment.getProperty("mlModulePermissions"));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlModulePermissions", modulePermissions);
         }
 
@@ -1342,36 +1334,31 @@ public class HubConfigImpl implements HubConfig
         // could be factored away with FlowRunner
         if (mlUsername == null) {
             mlUsername = getEnvPropString(projectProperties, "mlUsername", mlUsername);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlUsername", mlUsername);
         }
 
         if (mlPassword == null) {
             mlPassword = getEnvPropString(projectProperties, "mlPassword", mlPassword);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlPassword", mlPassword);
         }
 
         if (loadBalancerHost == null) {
             loadBalancerHost = getEnvPropString(projectProperties, "mlLoadBalancerHosts", null);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlLoadBalancerHosts", loadBalancerHost);
         }
 
         if (isHostLoadBalancer == null) {
             isHostLoadBalancer = getEnvPropBoolean(projectProperties, "mlIsHostLoadBalancer", Boolean.parseBoolean(environment.getProperty("mlIsHostLoadBalancer")));
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlIsHostLoadBalancer", isHostLoadBalancer.toString());
         }
 
         if (isProvisionedEnvironment == null) {
             isProvisionedEnvironment = getEnvPropBoolean(projectProperties, "mlIsProvisionedEnvironment", false);
-        }
-        else {
+        } else {
             projectProperties.setProperty("mlIsProvisionedEnvironment", isProvisionedEnvironment.toString());
         }
         // Need to do this first so that objects like the final SSL objects are set before hydrating AppConfig
@@ -1393,36 +1380,31 @@ public class HubConfigImpl implements HubConfig
     private void hydrateAppConfigs(com.marklogic.mgmt.util.PropertySource propertySource) {
         if (appConfig != null) {
             setAppConfig(appConfig);
-        }
-        else {
+        } else {
             setAppConfig(new DefaultAppConfigFactory(propertySource).newAppConfig());
         }
 
         if (adminConfig != null) {
             setAdminConfig(adminConfig);
-        }
-        else {
+        } else {
             setAdminConfig(new DefaultAdminConfigFactory(propertySource).newAdminConfig());
         }
 
         if (adminManager != null) {
             setAdminManager(adminManager);
-        }
-        else {
+        } else {
             setAdminManager(new AdminManager(getAdminConfig()));
         }
 
         if (manageConfig != null) {
             setManageConfig(manageConfig);
-        }
-        else {
+        } else {
             setManageConfig(new DefaultManageConfigFactory(propertySource).newManageConfig());
         }
 
         if (manageClient != null) {
             setManageClient(manageClient);
-        }
-        else {
+        } else {
             setManageClient(new ManageClient(getManageConfig()));
         }
     }
@@ -1431,6 +1413,7 @@ public class HubConfigImpl implements HubConfig
     public ManageConfig getManageConfig() {
         return manageConfig;
     }
+
     public void setManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
     }
@@ -1439,19 +1422,28 @@ public class HubConfigImpl implements HubConfig
     public ManageClient getManageClient() {
         return manageClient;
     }
+
     public void setManageClient(ManageClient manageClient) {
         this.manageClient = manageClient;
     }
 
     @JsonIgnore
-    public AdminConfig getAdminConfig() { return adminConfig; }
-    public void setAdminConfig(AdminConfig adminConfig) { this.adminConfig = adminConfig; }
+    public AdminConfig getAdminConfig() {
+        return adminConfig;
+    }
+
+    public void setAdminConfig(AdminConfig adminConfig) {
+        this.adminConfig = adminConfig;
+    }
 
     @JsonIgnore
     public AdminManager getAdminManager() {
         return adminManager;
     }
-    public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
+
+    public void setAdminManager(AdminManager adminManager) {
+        this.adminManager = adminManager;
+    }
 
     public DatabaseClient newAppServicesClient() {
         return getAppConfig().newAppServicesDatabaseClient(stagingDbName);
@@ -1545,99 +1537,124 @@ public class HubConfigImpl implements HubConfig
     }
 
     @JsonIgnore
-    @Override public Path getModulesDir() {
+    @Override
+    public Path getModulesDir() {
         return hubProject.getModulesDir();
     }
 
     @JsonIgnore
-    public Path getHubProjectDir() { return hubProject.getProjectDir(); }
+    public Path getHubProjectDir() {
+        return hubProject.getProjectDir();
+    }
 
     @JsonIgnore
-    @Override public Path getHubPluginsDir() {
+    @Override
+    public Path getHubPluginsDir() {
         return hubProject.getHubPluginsDir();
     }
 
     @JsonIgnore
-    @Override public Path getHubEntitiesDir() { return hubProject.getHubEntitiesDir(); }
+    @Override
+    public Path getHubEntitiesDir() {
+        return hubProject.getHubEntitiesDir();
+    }
 
     @JsonIgnore
-    @Override public Path getHubMappingsDir() { return hubProject.getHubMappingsDir(); }
+    @Override
+    public Path getHubMappingsDir() {
+        return hubProject.getHubMappingsDir();
+    }
 
     @JsonIgnore
-    @Override public Path getHubConfigDir() {
+    @Override
+    public Path getHubConfigDir() {
         return hubProject.getHubConfigDir();
     }
 
     @JsonIgnore
-    @Override public Path getHubDatabaseDir() {
+    @Override
+    public Path getHubDatabaseDir() {
         return hubProject.getHubDatabaseDir();
     }
 
     @JsonIgnore
-    @Override public Path getHubServersDir() {
+    @Override
+    public Path getHubServersDir() {
         return hubProject.getHubServersDir();
     }
 
     @JsonIgnore
-    @Override public Path getHubSecurityDir() {
+    @Override
+    public Path getHubSecurityDir() {
         return hubProject.getHubSecurityDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserSecurityDir() {
+    @Override
+    public Path getUserSecurityDir() {
         return hubProject.getUserSecurityDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserConfigDir() {
+    @Override
+    public Path getUserConfigDir() {
         return hubProject.getUserConfigDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserDatabaseDir() {
+    @Override
+    public Path getUserDatabaseDir() {
         return hubProject.getUserDatabaseDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserSchemasDir() { return hubProject.getUserSchemasDir(); }
+    @Override
+    public Path getUserSchemasDir() {
+        return hubProject.getUserSchemasDir();
+    }
 
     @JsonIgnore
-    @Override public Path getEntityDatabaseDir() {
+    @Override
+    public Path getEntityDatabaseDir() {
         return hubProject.getEntityDatabaseDir();
     }
 
     @JsonIgnore
-    @Override public Path getUserServersDir() {
+    @Override
+    public Path getUserServersDir() {
         return hubProject.getUserServersDir();
     }
 
     @JsonIgnore
-    @Override public AppConfig getAppConfig() {
+    @Override
+    public AppConfig getAppConfig() {
         return appConfig;
     }
 
 
-    @Override public void setAppConfig(AppConfig config) {
+    @Override
+    public void setAppConfig(AppConfig config) {
         setAppConfig(config, false);
     }
 
-    @Override public void setAppConfig(AppConfig config, boolean skipUpdate) {
+    @Override
+    public void setAppConfig(AppConfig config, boolean skipUpdate) {
         this.appConfig = config;
         if (!skipUpdate) {
             updateAppConfig(this.appConfig);
         }
     }
 
-    @Override public String getJarVersion() {
+    @Override
+    public String getJarVersion() {
         Properties properties = new Properties();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
         try {
             properties.load(inputStream);
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        String version = (String)properties.get("version");
+        String version = (String) properties.get("version");
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
@@ -1646,7 +1663,8 @@ public class HubConfigImpl implements HubConfig
         return version;
     }
 
-    @Override public String getDHFVersion() {
+    @Override
+    public String getDHFVersion() {
 
         return this.DHFVersion;
     }
@@ -1806,7 +1824,7 @@ public class HubConfigImpl implements HubConfig
      * ml-app-deployer defaults to a single config path of src/main/ml-config. If that's still the only path present,
      * it's overridden with the DHF defaults - src/main/hub-internal-config first, then src/main/ml-config second, with
      * both of those being relative to the DHF project directory.
-     *
+     * <p>
      * But if the config paths have been customized - most likely via mlConfigPaths in gradle.properties - then this
      * method just ensures that they're relative to the DHF project directory.
      *
@@ -1822,8 +1840,7 @@ public class HubConfigImpl implements HubConfig
             configDirs.add(new ConfigDir(getHubConfigDir().toFile()));
             configDirs.add(new ConfigDir(getUserConfigDir().toFile()));
             config.setConfigDirs(configDirs);
-        }
-        else {
+        } else {
             // Need to make each custom config dir relative to the project dir
             List<ConfigDir> configDirs = new ArrayList<>();
             for (ConfigDir configDir : config.getConfigDirs()) {
@@ -1889,8 +1906,7 @@ public class HubConfigImpl implements HubConfig
         int res;
         if (value != null) {
             res = Integer.parseInt(value);
-        }
-        else {
+        } else {
             res = fallback;
         }
         return res;
@@ -1901,22 +1917,18 @@ public class HubConfigImpl implements HubConfig
         boolean res;
         if (value != null) {
             res = Boolean.parseBoolean(value);
-        }
-        else {
+        } else {
             res = fallback;
         }
         return res;
     }
 
     @JsonIgnore
-    public String getInfo()
-    {
+    public String getInfo() {
 
         try {
             return objmapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             throw new DataHubConfigurationException("Your datahub configuration could not serialize");
 
         }
@@ -1961,12 +1973,11 @@ public class HubConfigImpl implements HubConfig
         InputStream is;
         try {
             if (propertiesFile.exists()) {
-                is = new FileInputStream(propertiesFile);
+                is = Files.newInputStream(propertiesFile.toPath());
                 loadedProperties.load(is);
                 is.close();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
         }
     }

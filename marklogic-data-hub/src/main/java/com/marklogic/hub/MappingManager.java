@@ -16,7 +16,6 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
 
 import java.io.IOException;
@@ -38,18 +37,20 @@ public interface MappingManager {
      * @return A mapping manager instance
      */
     //static MappingManager getMappingManager(HubConfig hubConfig) {
-        //return MappingManagerImpl.getInstance(hubConfig);
+    //return MappingManagerImpl.getInstance(hubConfig);
     //};
 
     /**
      * Creates a mapping given a string name
+     *
      * @param mappingName - the base name of the mapping you want to create
      * @return - a Mapping object
      */
     Mapping createMapping(String mappingName);
 
-     /**
+    /**
      * Creates a mapping from a given JSON string
+     *
      * @param json - string representation of json
      * @return - a Mapping object
      * @throws IOException - thrown if mapping file cannot be found/read off disk
@@ -58,6 +59,7 @@ public interface MappingManager {
 
     /**
      * Creates a mapping from a given JsonNode
+     *
      * @param json - JsonNode
      * @return - a Mapping object
      * @throws IOException - thrown if mapping file cannot be found/read off disk
@@ -67,37 +69,43 @@ public interface MappingManager {
 
     /**
      * Saves a map to disk
+     *
      * @param mapping - the mapping object to be saved
      */
     void saveMapping(Mapping mapping);
 
     /**
      * Saves a map to disk, incrementing its version by 1
-     * @param mapping the mapping object to be saved
+     *
+     * @param mapping          the mapping object to be saved
      * @param incrementVersion - true to increment version, false if not to
      */
     void saveMapping(Mapping mapping, boolean incrementVersion);
 
     /**
      * Deletes a defined mapping by string name
+     *
      * @param mappingName - the base-name of the mapping you want to delete as a string
      */
     void deleteMapping(String mappingName);
 
     /**
      * Returns a list of all mappings currently defined
+     *
      * @return - an arraylist of ALL mapping objects from disk
      */
     ArrayList<Mapping> getMappings();
 
     /**
      * Returns a string list of names for all mappings currently defined
+     *
      * @return - A list of strings that represent mapping names
      */
     ArrayList<String> getMappingsNames();
 
     /**
      * Returns a mapping based on the provided name
+     *
      * @param mappingName - the basename of the mapping
      * @return Mapping object for the defined map
      */
@@ -105,14 +113,16 @@ public interface MappingManager {
 
     /**
      * Returns a mapping based on the provided name
+     *
      * @param mappingName - name of the map
-     * @param version - the version of the mapping
+     * @param version     - the version of the mapping
      * @return Mapping object for the defined map
      */
     Mapping getMapping(String mappingName, int version);
 
     /**
      * Returns a mapping based on the provided name as JSON string
+     *
      * @param mappingName - name of the mapping
      * @return string json respresentation of the mapping object
      */
@@ -120,8 +130,9 @@ public interface MappingManager {
 
     /**
      * Returns a mapping based on the provided name as JSON string
+     *
      * @param mappingName - name of the mapping
-     * @param version - the version number of the mapping
+     * @param version     - the version number of the mapping
      * @return string json respresentation of the mapping object
      */
     String getMappingAsJSON(String mappingName, int version);

@@ -16,16 +16,13 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.impl.HubProjectImpl;
-import org.springframework.core.io.ProtocolResolver;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
 /**
  * Creates and gathers information about a hub project.
- *
+ * <p>
  * This handles what is initially created on disk for the project.
  */
 public interface HubProject {
@@ -219,6 +216,7 @@ public interface HubProject {
 
     /**
      * Returns the base directory for this project
+     *
      * @return the project's directory as a Path
      */
     Path getProjectDir();

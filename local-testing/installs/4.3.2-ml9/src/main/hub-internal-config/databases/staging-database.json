@@ -1,8 +1,0 @@
-{
-  "database-name": "%%mlStagingDbName%%",
-  "schema-database": "%%mlStagingSchemasDbName%%",
-  "triggers-database": "%%mlStagingTriggersDbName%%",
-  "triple-index": true,
-  "collection-lexicon": true,
-  "uri-lexicon": true
-}

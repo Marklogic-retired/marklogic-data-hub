@@ -28,7 +28,7 @@ public class ProcessRunner extends Thread {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private HubConfig hubConfig;
-    private ArrayList<String> processOutput = new ArrayList<>();
+    private final ArrayList<String> processOutput = new ArrayList<>();
 
     private List<String> args;
     private Consumer<String> consumer;
