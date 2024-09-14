@@ -38,7 +38,9 @@ public class ProcessRunner extends Thread {
     }
 
     public String getProcessOutput() {
-        return String.join("\n", processOutput);
+        synchronized (processOutput) {
+            return String.join("\n", processOutput);
+        }
     }
 
     public static ProcessRunner newRunner() {

@@ -33,7 +33,13 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,13 +69,13 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
         CodeGenerationRequest request = createCodeGenerationRequest();
 
-        List<File> entityFiles  = findEntityFiles();
+        List<File> entityFiles = findEntityFiles();
 
         if (!entityFiles.isEmpty()) {
             //create map of entity name -> entity definition file
-            Map<String,File> entityNameFileMap = createEntityNameFileMap(entityFiles);
+            Map<String, File> entityNameFileMap = createEntityNameFileMap(entityFiles);
 
-            logger.debug("Found the following entities->files: {} " + entityNameFileMap);
+            logger.debug("Found the following entities->files: {} ", entityNameFileMap);
 
             //filterEntities(entityNameFileMap);
 
@@ -87,7 +93,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                         modelName = EntityServicesManager.extractEntityNameFromURI(fileName).get();
                         esModel = new File(tempDir, fileName);
                         String modelString = generateModel(f);
-                        if(modelString == null) {
+                        if (modelString == null) {
                             logger.warn(f.getName() + " is not deployed to the database");
                             continue;
                         }
@@ -101,15 +107,14 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                         code = loadModelDefinition(request, esModel, mgr);
                     } catch (RuntimeException e) {
                         throw new RuntimeException("Unable to read model definition from file: " + f.getAbsolutePath(), e);
-                    }
-                    finally {
+                    } finally {
                         FileUtils.deleteQuietly(esModel);
                     }
                     if (this.entityNamesList.isEmpty() || this.entityNamesList.contains(modelName)) {
                         generatedCodes.add(code);
                     }
                 }
-                for (GeneratedCode code: generatedCodes) {
+                for (GeneratedCode code : generatedCodes) {
                     generateExtractionTemplate(appConfig, code);
                 }
             }
@@ -127,10 +132,12 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
             "at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
             String.format("hent:get-model(\"%s\")", extractEntityNameFromFilename(f.getName()).get());
         EvalResultIterator resp = hubConfig.newStagingClient().newServerEval().xquery(xquery).eval();
+        String result = null;
         if (resp.hasNext()) {
-            return resp.next().getString();
+            result = resp.next().getString();
         }
-        return null ;
+        resp.close();
+        return result;
     }
 
     public String getEntityNames() {
@@ -144,29 +151,29 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         }
     }
 
-    protected void filterEntities(Map<String,File> entityNameFileMap) {
+    protected void filterEntities(Map<String, File> entityNameFileMap) {
         Set<String> entityNameFileMapKeys = entityNameFileMap.keySet();
 
         //filter on entityNames parameter if specified
-        if (entityNames!=null&&!entityNames.isEmpty()) {
+        if (entityNames != null && !entityNames.isEmpty()) {
             List<String> entityNamesAsList = Arrays.asList(entityNames.split(","));
-            logger.info("Entities specified for TDE Generation: {} " + entityNamesAsList);
+            logger.info("Entities specified for TDE Generation: {} ", entityNamesAsList);
 
             //this will only keep keys in the map that are also in the entityNamesAsList
             entityNameFileMapKeys.retainAll(entityNamesAsList);
 
             if (entityNameFileMapKeys.isEmpty()) {
-                logger.warn("No entities files found under {} or its sub-directories with the entity name(s) {}", hubConfig.getHubEntitiesDir(),entityNamesAsList);
+                logger.warn("No entities files found under {} or its sub-directories with the entity name(s) {}", hubConfig.getHubEntitiesDir(), entityNamesAsList);
             }
         }
     }
 
-    protected static Map<String,File> createEntityNameFileMap(List<File> entityFiles) {
-        if (entityFiles==null) {
+    protected static Map<String, File> createEntityNameFileMap(List<File> entityFiles) {
+        if (entityFiles == null) {
             return Collections.emptyMap();
         }
         return entityFiles.stream().collect(
-            toMap(extractEntityNameFunction(),Function.identity()));
+            toMap(extractEntityNameFunction(), Function.identity()));
     }
 
     protected List<File> findEntityFiles() {
@@ -180,7 +187,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
                 .collect(Collectors.toList());
             for (String entityName : entityNames) {
                 File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
-                if (entityDefs!=null) {
+                if (entityDefs != null) {
                     entities.addAll(Arrays.asList(entityDefs));
                 }
             }
@@ -194,7 +201,9 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
         String template = code.getExtractionTemplate();
         if (template != null) {
             File dir = userFinalSchemasTDEs.toFile();
-            dir.mkdirs();
+            if (!dir.mkdirs()) {
+                logger.warn("Unable to create directory: {}", dir.getAbsolutePath());
+            }
             File out = new File(dir, code.getTitle() + "-" + code.getVersion() + ".tdex");
             String logMessage = "Wrote extraction template to: ";
             if (out.exists()) {

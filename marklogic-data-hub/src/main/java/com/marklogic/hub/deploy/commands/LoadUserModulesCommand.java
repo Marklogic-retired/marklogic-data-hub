@@ -24,7 +24,11 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.ext.file.CacheBusterDocumentFileProcessor;
 import com.marklogic.client.ext.modulesloader.ModulesManager;
-import com.marklogic.client.ext.modulesloader.impl.*;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
+import com.marklogic.client.ext.modulesloader.impl.UserModulesFinder;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.Format;
@@ -41,7 +45,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 import java.util.List;
@@ -93,8 +101,10 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
         if (forceLoad) {
             pmm.deletePropertiesFile();
-            if (defaultTimestampFile.exists()){
-                defaultTimestampFile.delete();
+            if (defaultTimestampFile.exists()) {
+                if (!defaultTimestampFile.delete()) {
+                    logger.warn("Unable to delete properties file: {}", defaultTimestampFile.getAbsolutePath());
+                }
             }
         }
         return pmm;
@@ -148,11 +158,11 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
      * Ask the parent class to load modules first, which should consist of reading from every path defined by
      * mlModulePaths / appConfig.getModulePaths. By default, that's just src/main/ml-modules. If any mlRestApi
      * dependencies are included, those will be in the set of module paths as well.
-     *
+     * <p>
      * The one catch here is that if any REST extensions under ./plugins have dependencies on mlRestApi libraries or
      * library modules in ml-modules, those extensions will fail to load. However, REST extensions under ./plugins
      * aren't technically supported anymore, so this should not be an issue.
-     *
+     * <p>
      * The loadAllModules bit is included solely to preserve the functionality of the DeployUserModulesTask - i.e.
      * only load from the hub-specific module locations.
      */
@@ -179,7 +189,6 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         Path userModulesPath = hubConfig.getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
-        Path mappingPath = userModulesPath.resolve("mappings");
 
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
@@ -195,7 +204,9 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
 
         Path dir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
         if (!dir.toFile().exists()) {
-            dir.toFile().mkdirs();
+            if (!dir.toFile().mkdirs()) {
+                throw new RuntimeException("Could not create directory: " + dir.toString());
+            }
         }
 
         // deploy the auto-generated ES search options
@@ -223,18 +234,19 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
                         else if (isHarmonizeRestDir(dir)) {
                             modulesLoader.loadModules(currentDir, allButAssetsModulesFinder, finalClient);
                             return FileVisitResult.SKIP_SUBTREE;
-                        }
-                        else {
+                        } else {
                             return FileVisitResult.CONTINUE;
                         }
                     }
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
-                        throws IOException
-                    {
+                        throws IOException {
                         if (isFlowPropertiesFile(file) && modulesManager.hasFileBeenModifiedSinceLastLoaded(file.toFile())) {
                             Flow flow = flowManager.getFlowFromProperties(file);
+                            if (flow == null) {
+                                throw new RuntimeException("Unable to read flow from " + file.toAbsolutePath().toString());
+                            }
                             StringHandle handle = new StringHandle(flow.serialize());
                             handle.setFormat(Format.XML);
                             documentWriteSet.add(flow.getFlowDbPath(), handle);

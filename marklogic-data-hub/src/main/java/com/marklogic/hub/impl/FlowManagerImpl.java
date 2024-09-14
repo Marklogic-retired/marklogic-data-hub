@@ -24,7 +24,12 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.impl.CollectorImpl;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowBuilder;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
@@ -63,13 +68,14 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         super();
     }
 
-    
+
     public void setupClient() {
         this.stagingClient = hubConfig.newStagingClient();
         this.stagingClient.init(NAME, this);
     }
 
-    @Override public List<Flow> getLocalFlows() {
+    @Override
+    public List<Flow> getLocalFlows() {
         List<Flow> flows = new ArrayList<>();
 
         Path entitiesDir = hubConfig.getHubEntitiesDir();
@@ -83,11 +89,13 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return flows;
     }
 
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName) {
+    @Override
+    public List<Flow> getLocalFlowsForEntity(String entityName) {
         return getLocalFlowsForEntity(entityName, null);
     }
 
-    @Override public List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
+    @Override
+    public List<Flow> getLocalFlowsForEntity(String entityName, FlowType flowType) {
 
         List<Flow> flows = new ArrayList<>();
         Path entitiesDir = hubConfig.getHubEntitiesDir();
@@ -98,11 +106,9 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         boolean getHarmonizeFlows = false;
         if (flowType == null) {
             getInputFlows = getHarmonizeFlows = true;
-        }
-        else if (flowType.equals(FlowType.INPUT)) {
+        } else if (flowType.equals(FlowType.INPUT)) {
             getInputFlows = true;
-        }
-        else if (flowType.equals(FlowType.HARMONIZE)) {
+        } else if (flowType.equals(FlowType.HARMONIZE)) {
             getHarmonizeFlows = true;
         }
 
@@ -133,15 +139,16 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return flows;
     }
 
-    @Override public Flow getFlowFromProperties(Path propertiesFile) {
+    @Override
+    public Flow getFlowFromProperties(Path propertiesFile) {
         String quotedSeparator = Pattern.quote(File.separator);
         /* Extract flowName and entityName from ..../plugins/entities/<entityName>/
          * input|harmonize/<flowName>/flowName.properties
          */
-        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)"+ quotedSeparator 
-                +"(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";        
+        String floweRegex = ".+" + "plugins" + quotedSeparator + "entities" + quotedSeparator + "(.+)" + quotedSeparator
+            + "(input|harmonize)" + quotedSeparator + "(.+)" + quotedSeparator + ".+";
         FlowType flowType = propertiesFile.toString().replaceAll(floweRegex, "$2").equals("input")
-                ? FlowType.INPUT : FlowType.HARMONIZE;
+            ? FlowType.INPUT : FlowType.HARMONIZE;
 
         String entityName = propertiesFile.toString().replaceAll(floweRegex, "$1");
         return getLocalFlow(entityName, propertiesFile.getParent(), flowType);
@@ -153,14 +160,13 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
             File propertiesFile = flowDir.resolve(flowName + ".properties").toFile();
             if (propertiesFile.exists()) {
                 Properties properties = new Properties();
-                FileInputStream fis = new FileInputStream(propertiesFile);
-                properties.load(fis);
-
+                try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+                    properties.load(fis);
+                }
                 // trim trailing whitespaces for properties.
-                for (String key : properties.stringPropertyNames()){
+                for (String key : properties.stringPropertyNames()) {
                     properties.put(key, properties.get(key).toString().trim());
                 }
-                fis.close();
 
                 FlowBuilder flowBuilder = FlowBuilder.newFlow()
                     .withEntityName(entityName)
@@ -176,45 +182,42 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
 
                 return flowBuilder.build();
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    @Override public List<Flow> getFlows(String entityName) {
+    @Override
+    public List<Flow> getFlows(String entityName) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return null;
         }
         ServiceResult res = resultItr.next();
         DOMHandle handle = new DOMHandle();
         Document parent = res.getContent(handle).get();
         NodeList children = parent.getDocumentElement().getChildNodes();
-
-        ArrayList<Flow> flows = null;
-        if (children.getLength() > 0) {
-            flows = new ArrayList<>();
-        }
-
+        ArrayList<Flow> flows = new ArrayList<>();
         Node node;
         for (int i = 0; i < children.getLength(); i++) {
             node = children.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                flows.add(FlowManager.flowFromXml((Element)children.item(i)));
+            if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+                flows.add(FlowManager.flowFromXml((Element) node));
             }
         }
         return flows;
     }
 
-    @Override public Flow getFlow(String entityName, String flowName) {
+    @Override
+    public Flow getFlow(String entityName, String flowName) {
         return getFlow(entityName, flowName, null);
     }
 
-    @Override public Flow getFlow(String entityName, String flowName, FlowType flowType) {
+    @Override
+    public Flow getFlow(String entityName, String flowName, FlowType flowType) {
         RequestParameters params = new RequestParameters();
         params.add("entity-name", entityName);
         params.add("flow-name", flowName);
@@ -222,7 +225,7 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
             params.add("flow-type", flowType.toString());
         }
         ServiceResultIterator resultItr = this.getServices().get(params);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return null;
         }
         ServiceResult res = resultItr.next();
@@ -231,7 +234,8 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return FlowManager.flowFromXml(parent.getDocumentElement());
     }
 
-    @Override public List<String> getLegacyFlows() {
+    @Override
+    public List<String> getLegacyFlows() {
         List<String> oldFlows = new ArrayList<>();
         Path entitiesDir = hubConfig.getHubEntitiesDir();
 
@@ -257,22 +261,23 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
             for (File flow : flows) {
                 File[] mainFiles = flow.listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
                 File[] flowFiles = flow.listFiles((dir, name) -> name.matches(flow.getName() + "\\.xml"));
-                if (mainFiles.length < 1 && flowFiles.length == 1) {
+                if ((mainFiles == null || mainFiles.length < 1) && (flowFiles != null && flowFiles.length == 1)) {
                     oldFlows.add(entityDir.getName() + " => " + flow.getName());
-                } else if (mainFiles.length == 1 && mainFiles[0].getName().contains(".sjs")) {
+                } else if (mainFiles != null && mainFiles.length == 1 && mainFiles[0].getName().contains(".sjs")) {
                     try {
                         String mainFile = FileUtils.readFileToString(mainFiles[0]);
                         if (mainFile.contains("dhf.xqy")) {
                             oldFlows.add(entityDir.getName() + " => " + flow.getName());
                         }
+                    } catch (IOException e) {
                     }
-                    catch(IOException e) {}
                 }
             }
         }
     }
 
-    @Override public List<String> updateLegacyFlows(String fromVersion) {
+    @Override
+    public List<String> updateLegacyFlows(String fromVersion) {
 
         List<String> updatedFlows = new ArrayList<>();
         File[] entityDirs = hubConfig.getHubEntitiesDir().toFile().listFiles(pathname -> pathname.isDirectory());
@@ -285,7 +290,8 @@ public class FlowManagerImpl extends ResourceManager implements FlowManager {
         return updatedFlows;
     }
 
-    @Override public FlowRunner newFlowRunner() {
+    @Override
+    public FlowRunner newFlowRunner() {
         return new FlowRunnerImpl(hubConfig);
     }
 

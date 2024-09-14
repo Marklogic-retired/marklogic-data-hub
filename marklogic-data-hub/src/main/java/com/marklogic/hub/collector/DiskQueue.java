@@ -150,7 +150,9 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
 
         fileElementCount = 0;
 
-        fileQueue.delete();
+        if (!fileQueue.delete()) {
+            LOG.warning(MessageFormat.format("{0} is unable to be deleted", fileQueue.getAbsolutePath()));
+        }
         fileQueue = null;
         return true;
     }
@@ -180,7 +182,7 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
             fileOut.flush();
 
             fileIn = new BufferedReader(new InputStreamReader(
-                Files.newInputStream(fileQueue.toPath()), StandardCharsets.UTF_8)
+                    Files.newInputStream(fileQueue.toPath()), StandardCharsets.UTF_8)
             );
         }
     }

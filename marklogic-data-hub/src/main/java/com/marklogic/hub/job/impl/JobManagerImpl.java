@@ -21,7 +21,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.Transaction;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.ExportListener;
+import com.marklogic.client.datamovement.JobReport;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatcher;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.datamovement.consumer.WriteToZipConsumer;
@@ -40,10 +45,13 @@ import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobDeleteResponse;
 import com.marklogic.hub.job.JobExportResponse;
 import com.marklogic.hub.job.JobManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,31 +63,37 @@ import java.util.zip.ZipFile;
 
 public class JobManagerImpl implements JobManager {
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     private DatabaseClient jobClient;
     private JSONDocumentManager docMgr;
     private JobDeleteResource jobDeleteRunner = null;
 
     private static final String ISO_8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     private static SimpleDateFormat simpleDateFormat8601;
+
     static {
         try {
             simpleDateFormat8601 = new SimpleDateFormat(ISO_8601_FORMAT);
             // Java 1.6 doesn't yet know about X (ISO 8601 format)
         } catch (IllegalArgumentException e) {
-            if ( "Illegal pattern character 'X'".equals(e.getMessage()) ) {
+            if ("Illegal pattern character 'X'".equals(e.getMessage())) {
                 simpleDateFormat8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             }
         }
     }
-    static { simpleDateFormat8601.setTimeZone(TimeZone.getTimeZone("UTC")); }
+
+    static {
+        simpleDateFormat8601.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     private ObjectMapper objectMapper = new ObjectMapper()
-        // if we don't do the next two lines Jackson will automatically close our streams which is undesirable
-        .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
-        .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false)
-        // we do the next two so dates are written in xs:dateTime format
-        // which makes them ready for range indexes in MarkLogic Server
-        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        .setDateFormat(simpleDateFormat8601);
+            // if we don't do the next two lines Jackson will automatically close our streams which is undesirable
+            .configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false)
+            .configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false)
+            // we do the next two so dates are written in xs:dateTime format
+            // which makes them ready for range indexes in MarkLogic Server
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .setDateFormat(simpleDateFormat8601);
 
     public JobManagerImpl(DatabaseClient jobClient) {
         this.jobClient = jobClient;
@@ -87,11 +101,13 @@ public class JobManagerImpl implements JobManager {
         this.jobDeleteRunner = new JobDeleteResource(jobClient);
     }
 
-    @Override public void saveJob(Job job) {
+    @Override
+    public void saveJob(Job job) {
         saveJob(job, null);
     }
 
-    @Override public void saveJob(Job job, Transaction transaction) {
+    @Override
+    public void saveJob(Job job, Transaction transaction) {
         JacksonDatabindHandle<Job> contentHandle = new JacksonDatabindHandle<>(job);
         contentHandle.setMapper(objectMapper);
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
@@ -101,11 +117,13 @@ public class JobManagerImpl implements JobManager {
         docMgr.write(writeSet, transaction);
     }
 
-    @Override public JobDeleteResponse deleteJobs(String jobIds) {
+    @Override
+    public JobDeleteResponse deleteJobs(String jobIds) {
         return this.jobDeleteRunner.deleteJobs(jobIds);
     }
 
-    @Override public JobExportResponse exportJobs(Path exportFilePath, String[] jobIds) {
+    @Override
+    public JobExportResponse exportJobs(Path exportFilePath, String[] jobIds) {
         JobExportResponse response = new JobExportResponse();
         response.fullPath = exportFilePath.toAbsolutePath().toString();
 
@@ -126,8 +144,7 @@ public class JobManagerImpl implements JobManager {
         StructuredQueryDefinition query = null;
         if (jobIds == null) {
             batcher = dmm.newQueryBatcher(emptyQuery);
-        }
-        else {
+        } else {
             batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
         }
         // threadCount must be 1 or greater
@@ -151,8 +168,7 @@ public class JobManagerImpl implements JobManager {
             dmm = this.jobClient.newDataMovementManager();
             if (jobIds == null) {
                 batcher = dmm.newQueryBatcher(emptyQuery);
-            }
-            else {
+            } else {
                 batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
             }
 
@@ -173,81 +189,85 @@ public class JobManagerImpl implements JobManager {
             response.totalTraces = traceCount;
 
             zipConsumer.close();
-        }
-        else {
+        } else {
             // there were no jobs, so don't produce an empty zip file
             zipConsumer.close();
-            zipFile.delete();
+            if (!zipFile.delete()) {
+                logger.info("Unable to delete empty zip file: {}", zipFile.getAbsolutePath());
+            }
         }
 
         return response;
     }
 
-    @Override public void importJobs(Path importFilePath) throws IOException {
-        ZipFile importZip = new ZipFile(importFilePath.toFile());
-        Enumeration<? extends ZipEntry> entries = importZip.entries();
+    @Override
+    public void importJobs(Path importFilePath) throws IOException {
+        try (ZipFile importZip = new ZipFile(importFilePath.toFile())) {
+            Enumeration<? extends ZipEntry> entries = importZip.entries();
 
-        DataMovementManager dmm = jobClient.newDataMovementManager();
-        WriteBatcher writer = dmm
-            .newWriteBatcher()
-            .withJobName("Load jobs")
-            .withBatchSize(50);
-        JobTicket ticket = dmm.startJob(writer);
+            DataMovementManager dmm = jobClient.newDataMovementManager();
+            WriteBatcher writer = dmm
+                    .newWriteBatcher()
+                    .withJobName("Load jobs")
+                    .withBatchSize(50);
+            JobTicket ticket = dmm.startJob(writer);
 
-        // Add each Job entry to the writer; set aside the Trace entries.
-        ArrayList<ZipEntry> traceEntries = new ArrayList<ZipEntry>();
-        DocumentMetadataHandle jobMetadata = new DocumentMetadataHandle().withCollections("job");
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
+            // Add each Job entry to the writer; set aside the Trace entries.
+            ArrayList<ZipEntry> traceEntries = new ArrayList<ZipEntry>();
+            DocumentMetadataHandle jobMetadata = new DocumentMetadataHandle().withCollections("job");
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
 
-            if (entry.getName().startsWith("/jobs/")) {
-                // Delimiter = \A, which is the beginning of the input
-                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
-                String entryText = s.hasNext() ? s.next() : "";
+                if (entry.getName().startsWith("/jobs/")) {
+                    // Delimiter = \A, which is the beginning of the input
+                    try (InputStream entryInputStream = importZip.getInputStream(entry)) {
+                        Scanner s = new Scanner(entryInputStream).useDelimiter("\\A");
+                        String entryText = s.hasNext() ? s.next() : "";
 
-                writer.add(
-                    entry.getName(),
-                    jobMetadata,
-                    new StringHandle(entryText).withFormat(Format.JSON)
-                );
+                        writer.add(
+                                entry.getName(),
+                                jobMetadata,
+                                new StringHandle(entryText).withFormat(Format.JSON)
+                        );
+                    }
+                } else {
+                    traceEntries.add(entry);
+                }
             }
-            else {
-                traceEntries.add(entry);
-            }
-        }
 
-        writer.flushAndWait();
-        dmm.stopJob(ticket);
-        dmm.release();
-
-        if (traceEntries.size() > 0) {
-            dmm = this.jobClient.newDataMovementManager();
-            writer = dmm
-                .newWriteBatcher()
-                .withJobName("Load traces");
-            ticket = dmm.startJob(writer);
-
-            DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");
-
-            for (ZipEntry entry: traceEntries) {
-                // Delimiter = \A, which is the beginning of the input
-                Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
-                String entryText = s.hasNext() ? s.next() : "";
-
-                writer.add(
-                    entry.getName(),
-                    traceMetadata,
-                    new StringHandle(entryText)
-                        .withFormat(entry.getName().endsWith(".json") ? Format.JSON : Format.XML)
-                );
-            }
             writer.flushAndWait();
             dmm.stopJob(ticket);
             dmm.release();
+
+            if (!traceEntries.isEmpty()) {
+                dmm = this.jobClient.newDataMovementManager();
+                writer = dmm
+                        .newWriteBatcher()
+                        .withJobName("Load traces");
+                ticket = dmm.startJob(writer);
+
+                DocumentMetadataHandle traceMetadata = new DocumentMetadataHandle().withCollections("trace");
+
+                for (ZipEntry entry : traceEntries) {
+                    // Delimiter = \A, which is the beginning of the input
+                    Scanner s = new Scanner(importZip.getInputStream(entry)).useDelimiter("\\A");
+                    String entryText = s.hasNext() ? s.next() : "";
+
+                    writer.add(
+                            entry.getName(),
+                            traceMetadata,
+                            new StringHandle(entryText)
+                                    .withFormat(entry.getName().endsWith(".json") ? Format.JSON : Format.XML)
+                    );
+                }
+                writer.flushAndWait();
+                dmm.stopJob(ticket);
+                dmm.release();
+            }
         }
     }
 
-    public class JobDeleteResource extends ResourceManager {
+    public static class JobDeleteResource extends ResourceManager {
         private static final String DELETE_SERVICE = "ml:deleteJobs";
 
         private DatabaseClient srcClient;
@@ -267,11 +287,10 @@ public class JobManagerImpl implements JobManager {
 
                 ResourceServices services = this.getServices();
                 ResourceServices.ServiceResultIterator resultItr =
-                    services.post(params, new StringHandle("{}").withFormat(Format.JSON));
-                if (resultItr == null || ! resultItr.hasNext()) {
+                        services.post(params, new StringHandle("{}").withFormat(Format.JSON));
+                if (resultItr == null || !resultItr.hasNext()) {
                     resp = new JobDeleteResponse();
-                }
-                else {
+                } else {
                     ResourceServices.ServiceResult res = resultItr.next();
                     StringHandle handle = new StringHandle();
                     ObjectMapper objectMapper = new ObjectMapper();

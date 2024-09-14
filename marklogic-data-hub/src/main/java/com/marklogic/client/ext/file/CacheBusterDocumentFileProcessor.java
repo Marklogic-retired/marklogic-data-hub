@@ -15,8 +15,6 @@
  */
 package com.marklogic.client.ext.file;
 
-import com.marklogic.client.ext.file.DocumentFile;
-import com.marklogic.client.ext.file.DocumentFileProcessor;
 import com.marklogic.client.ext.helper.FilenameUtil;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.Format;
@@ -46,15 +44,17 @@ public class CacheBusterDocumentFileProcessor extends LoggingObject implements D
             }
             if (text != null) {
                 Resource resource = documentFile.getResource();
-                String comment = "";
-                if (FilenameUtil.isJavascriptFile(resource.getFilename())) {
-                    comment = "// cache buster: " + UUID.randomUUID().toString() + "\n";
-                } else if (FilenameUtil.isXqueryFile(resource.getFilename())) {
-                    comment = "(: cache buster: " + UUID.randomUUID().toString() + " :)\n";
-                }
+                if (resource != null) {
+                    String comment = "";
+                    if (FilenameUtil.isJavascriptFile(resource.getFilename())) {
+                        comment = "// cache buster: " + UUID.randomUUID().toString() + "\n";
+                    } else if (FilenameUtil.isXqueryFile(resource.getFilename())) {
+                        comment = "(: cache buster: " + UUID.randomUUID().toString() + " :)\n";
+                    }
 
-                text = comment + text;
-                documentFile.setModifiedContent(text);
+                    text = comment + text;
+                    documentFile.setModifiedContent(text);
+                }
             }
             return documentFile;
         }

@@ -29,8 +29,7 @@ public class FileUtil {
     public static void copy(InputStream source, File destination) {
         try {
             FileUtils.copyInputStreamToFile(source, destination);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -39,17 +38,21 @@ public class FileUtil {
         List<String> folders = new ArrayList<>();
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             File[] files = rootDirectory.listFiles();
-            for (File file : files) {
-                if (file.isDirectory() && !file.isHidden()) {
-                    folders.add(file.getName());
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory() && !file.isHidden()) {
+                        folders.add(file.getName());
+                    }
                 }
             }
         }
         return folders;
     }
+
     public static List<String> listDirectFolders(String rootDirectoryName) {
         return listDirectFolders(new File(rootDirectoryName));
     }
+
     public static List<String> listDirectFolders(Path rootDirectoryPath) {
         return listDirectFolders(rootDirectoryPath.toFile());
     }
@@ -58,17 +61,21 @@ public class FileUtil {
         List<String> filenames = new ArrayList<>();
         if (rootDirectory.exists() && rootDirectory.isDirectory()) {
             File[] files = rootDirectory.listFiles();
-            for (File file : files) {
-                if (!file.isDirectory() && !file.isHidden()) {
-                    filenames.add(file.getName());
+            if (files != null) {
+                for (File file : files) {
+                    if (!file.isDirectory() && !file.isHidden()) {
+                        filenames.add(file.getName());
+                    }
                 }
             }
         }
         return filenames;
     }
+
     public static List<String> listDirectFiles(String rootDirectoryName) {
         return listDirectFiles(new File(rootDirectoryName));
     }
+
     public static List<String> listDirectFiles(Path rootDirectoryPath) {
         return listDirectFiles(rootDirectoryPath.toFile());
     }

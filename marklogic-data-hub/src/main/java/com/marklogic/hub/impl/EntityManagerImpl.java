@@ -48,7 +48,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -73,7 +77,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         try {
             Path dir = hubProject.getEntityConfigDir();
             if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
+                if (!dir.toFile().mkdirs()) {
+                    throw new EntityServicesGenerationException("Unable to create entity config directory");
+                }
             }
 
             File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
@@ -145,12 +151,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
             File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
             if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
+                if (!dir.toFile().mkdirs()) {
+                    throw new EntityServicesGenerationException("Unable to create entity database directory");
+                }
             }
 
             List<JsonNode> entities = getAllEntities();
 
-            if (entities.size() > 0) {
+            if (!entities.isEmpty()) {
                 DbIndexGenerator generator = new DbIndexGenerator(hubConfig.newReverseFlowClient());
                 String indexes = generator.getIndexes(entities);
 
@@ -190,10 +198,13 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             try {
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    if (entityDefs == null) {
+                        continue;
+                    }
                     for (File entityDef : entityDefs) {
-                        FileInputStream fileInputStream = new FileInputStream(entityDef);
-                        entities.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
+                        try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
+                            entities.add(objectMapper.readTree(fileInputStream));
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -224,13 +235,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 boolean hasOneChanged = false;
                 for (String entityName : entityNames) {
                     File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+                    if (entityDefs == null) {
+                        continue;
+                    }
                     for (File entityDef : entityDefs) {
                         if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
                             hasOneChanged = true;
                         }
-                        FileInputStream fileInputStream = new FileInputStream(entityDef);
-                        tempEntities.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
+                        try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
+                            tempEntities.add(objectMapper.readTree(fileInputStream));
+                        }
                     }
                 }
                 // all or nothing
@@ -252,14 +266,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         ObjectMapper objectMapper = new ObjectMapper();
         for (String entityName : entityNames) {
             File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
+            if (entityDefs == null) {
+                continue;
+            }
             for (File entityDef : entityDefs) {
-                try {
-                    FileInputStream fileInputStream = new FileInputStream(entityDef);
+                try (FileInputStream fileInputStream = new FileInputStream(entityDef)) {
                     JsonNode node = objectMapper.readTree(fileInputStream);
                     entities.add(HubEntity.fromJson(entityDef.getAbsolutePath(), node));
-                    fileInputStream.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -276,23 +290,34 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         if (rename) {
             String filename = new File(fullpath).getName();
-            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
+            int extensionIndex = filename.indexOf(ENTITY_FILE_EXTENSION);
+            if (extensionIndex == -1) {
+                throw new RuntimeException("Invalid entity filename: " + filename);
+            }
+            String entityFromFilename = filename.substring(0, extensionIndex);
             if (!entityFromFilename.equals(entity.getInfo().getTitle())) {
                 // The entity name was changed since the files were created. Update
                 // the path.
 
                 // Update the name of the entity definition file
                 File origFile = new File(fullpath);
-                File newFile = new File(origFile.getParent() + File.separator + title + ENTITY_FILE_EXTENSION);
+                String parentFileName = origFile.getParent();
+                if (parentFileName == null) {
+                    throw new RuntimeException("Unable to determine parent directory of " + origFile.getAbsolutePath());
+                }
+                File newFile = new File(parentFileName + File.separator + title + ENTITY_FILE_EXTENSION);
                 if (!origFile.renameTo(newFile)) {
                     throw new IOException("Unable to rename " + origFile.getAbsolutePath() + " to " +
                         newFile.getAbsolutePath());
                 }
-                ;
 
                 // Update the directory name
-                File origDirectory = new File(origFile.getParent());
-                File newDirectory = new File(origDirectory.getParent() + File.separator + title);
+                File origDirectory = new File(parentFileName);
+                String directoryParent = origDirectory.getParent();
+                if (directoryParent == null) {
+                    throw new RuntimeException("Unable to determine parent directory of " + origDirectory.getAbsolutePath());
+                }
+                File newDirectory = new File(directoryParent + File.separator + title);
                 if (!origDirectory.renameTo(newDirectory)) {
                     throw new IOException("Unable to rename " + origDirectory.getAbsolutePath() + " to " +
                         newDirectory.getAbsolutePath());
@@ -301,11 +326,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 fullpath = newDirectory.getAbsolutePath() + File.separator + title + ENTITY_FILE_EXTENSION;
                 entity.setFilename(fullpath);
             }
-        }
-        else {
+        } else {
             Path dir = hubConfig.getHubEntitiesDir().resolve(title);
             if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
+                if (!dir.toFile().mkdirs()) {
+                    throw new EntityServicesGenerationException("Unable to create entity directory");
+                }
             }
             fullpath = Paths.get(dir.toString(), title + ENTITY_FILE_EXTENSION).toString();
         }
@@ -324,7 +350,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
-    private class PiiGenerator extends ResourceManager {
+    private static class PiiGenerator extends ResourceManager {
         private static final String NAME = "ml:piiGenerator";
         private RequestParameters params = new RequestParameters();
 
@@ -346,7 +372,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     }
 
-    private class QueryOptionsGenerator extends ResourceManager {
+    private static class QueryOptionsGenerator extends ResourceManager {
         private static final String NAME = "ml:searchOptionsGenerator";
 
         private RequestParameters params = new RequestParameters();
@@ -373,7 +399,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
-    private class DbIndexGenerator extends ResourceManager {
+    private static class DbIndexGenerator extends ResourceManager {
         private static final String NAME = "ml:dbConfigs";
 
         private RequestParameters params = new RequestParameters();
@@ -407,10 +433,14 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             Path protectedPaths = hubConfig.getUserSecurityDir().resolve("protected-paths");
             Path queryRolesets = hubConfig.getUserSecurityDir().resolve("query-rolesets");
             if (!protectedPaths.toFile().exists()) {
-                protectedPaths.toFile().mkdirs();
+                if (!protectedPaths.toFile().mkdirs()) {
+                    throw new EntityServicesGenerationException("Unable to create protected paths directory");
+                }
             }
             if (!queryRolesets.toFile().exists()) {
-                queryRolesets.toFile().mkdirs();
+                if (!queryRolesets.toFile().mkdirs()) {
+                    throw new EntityServicesGenerationException("Unable to create query rolesets directory");
+                }
             }
             File queryRolesetsConfig = queryRolesets.resolve(HubConfig.PII_QUERY_ROLESET_FILE).toFile();
 
@@ -418,12 +448,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
             // get all the entities.
             List<JsonNode> entities = getAllEntities();
-            if (entities.size() > 0) {
+            if (!entities.isEmpty()) {
                 PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newReverseFlowClient());
 
                 String v3Config = piiGenerator.piiGenerate(entities);
-                JsonNode v3ConfigAsJson = null;
-                v3ConfigAsJson = mapper.readTree(v3Config);
+                JsonNode v3ConfigAsJson = mapper.readTree(v3Config);
 
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
                 int i = 0;

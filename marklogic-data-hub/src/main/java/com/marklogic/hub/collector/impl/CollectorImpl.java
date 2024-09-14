@@ -32,6 +32,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -261,8 +262,15 @@ public class CollectorImpl implements Collector {
         }
 
         @Override
-        public void verify(String hostname, SSLSocket ssl) throws IOException {
-            Certificate[] certificates = ssl.getSession().getPeerCertificates();
+        public void verify(String hostname, @NotNull SSLSocket ssl) throws IOException {
+            SSLSession session = ssl.getSession();
+            if (session == null) {
+                throw new SSLException("No session");
+            }
+            Certificate[] certificates = session.getPeerCertificates();
+            if (certificates == null) {
+                throw new SSLException("No certificates");
+            }
             verify(hostname, (X509Certificate) certificates[0]);
         }
 
@@ -274,7 +282,13 @@ public class CollectorImpl implements Collector {
         @Override
         public boolean verify(String hostname, SSLSession session) {
             try {
+                if (session == null) {
+                    throw new SSLException("No session");
+                }
                 Certificate[] certificates = session.getPeerCertificates();
+                if (certificates == null) {
+                    throw new SSLException("No certificates");
+                }
                 verify(hostname, (X509Certificate) certificates[0]);
                 return true;
             } catch (SSLException e) {
