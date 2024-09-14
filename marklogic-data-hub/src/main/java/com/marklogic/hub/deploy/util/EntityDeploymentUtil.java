@@ -29,13 +29,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * on modules deploy and inserting entity JSON models in the database after triggers are created.
  */
 public class EntityDeploymentUtil {
-	private ConcurrentHashMap<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
-	private ConcurrentHashMap<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
+    private ConcurrentHashMap<String, DocumentMetadataHandle> metaMap = new ConcurrentHashMap<String, DocumentMetadataHandle>();
+    private ConcurrentHashMap<String, JSONWriteHandle> contentMap = new ConcurrentHashMap<String, JSONWriteHandle>();
 
-	private static EntityDeploymentUtil instance;
-    
+    private static EntityDeploymentUtil instance;
+
     public static synchronized EntityDeploymentUtil getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new EntityDeploymentUtil();
         }
         return instance;
@@ -43,59 +43,59 @@ public class EntityDeploymentUtil {
 
     public Set<String> getEntityURIs() {
         return contentMap.keySet();
-	}
-	
-	public void enqueueEntity(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
+    }
+
+    public void enqueueEntity(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
         metaMap.put(uri, meta);
-		contentMap.put(uri, content);
-	}
+        contentMap.put(uri, content);
+    }
 
-	public WriteEvent dequeueEntity(String uri) {
-		DocumentMetadataHandle meta = metaMap.get(uri);
-		JSONWriteHandle content = contentMap.get(uri);
-		return new WriteEventImpl(uri, meta, content);
-	}
-	
-	public void reset() {
-		metaMap.clear();
-		contentMap.clear();
-	}
-	
-	private class WriteEventImpl implements WriteEvent {
-		private String uri;
-		private DocumentMetadataHandle meta;
-		private JSONWriteHandle content;
+    public WriteEvent dequeueEntity(String uri) {
+        DocumentMetadataHandle meta = metaMap.get(uri);
+        JSONWriteHandle content = contentMap.get(uri);
+        return new WriteEventImpl(uri, meta, content);
+    }
 
-		public WriteEventImpl(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
-			this.uri = uri;
-			this.meta = meta;
-			this.content = content;
-		}
+    public void reset() {
+        metaMap.clear();
+        contentMap.clear();
+    }
 
-		@Override
-		public String getTargetUri() {
-			return uri;
-		}
+    private static class WriteEventImpl implements WriteEvent {
+        private String uri;
+        private DocumentMetadataHandle meta;
+        private JSONWriteHandle content;
 
-		@Override
-		public AbstractWriteHandle getContent() {
-			return content;
-		}
+        public WriteEventImpl(String uri, DocumentMetadataHandle meta, JSONWriteHandle content) {
+            this.uri = uri;
+            this.meta = meta;
+            this.content = content;
+        }
 
-		@Override
-		public DocumentMetadataWriteHandle getMetadata() {
-			return meta;
-		}
+        @Override
+        public String getTargetUri() {
+            return uri;
+        }
 
-		@Override
-		public long getJobRecordNumber() {
-			return 0;
-		}
+        @Override
+        public AbstractWriteHandle getContent() {
+            return content;
+        }
 
-		@Override
-		public long getBatchRecordNumber() {
-			return 0;
-		}		
-	}
-	
+        @Override
+        public DocumentMetadataWriteHandle getMetadata() {
+            return meta;
+        }
+
+        @Override
+        public long getJobRecordNumber() {
+            return 0;
+        }
+
+        @Override
+        public long getBatchRecordNumber() {
+            return 0;
+        }
+    }
+
 }

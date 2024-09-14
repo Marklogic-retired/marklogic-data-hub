@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -61,6 +62,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 
 @Component
 public class ScaffoldingImpl implements Scaffolding {
@@ -96,7 +99,9 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override
     public void createEntity(String entityName) {
         Path entityDir = project.getEntityDir(entityName);
-        entityDir.toFile().mkdirs();
+        if (!entityDir.toFile().mkdirs()) {
+            logger.warn("Unable to create entity directory");
+        }
         if (entityDir.toFile().exists()) {
             String fileContents = getFileContent("scaffolding/Entity.json", entityName);
             writeToFile(fileContents, entityDir.resolve(entityName + ".entity.json").toFile());
@@ -106,7 +111,9 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override
     public void createMappingDir(String mappingName) {
         Path mappingDir = project.getMappingDir(mappingName);
-        mappingDir.toFile().mkdirs();
+        if (!mappingDir.toFile().mkdirs()) {
+            logger.warn("Unable to create mapping directory");
+        }
     }
 
     @Override
@@ -129,7 +136,9 @@ public class ScaffoldingImpl implements Scaffolding {
                            DataFormat dataFormat, boolean useEsModel, String mappingNameWithVersion) {
         try {
             Path flowDir = getFlowDir(entityName, flowName, flowType);
-            flowDir.toFile().mkdirs();
+            if (!flowDir.toFile().mkdirs() && !flowDir.toFile().exists()) {
+                throw new RuntimeException("Unable to create flow directory");
+            }
 
             if (useEsModel) {
                 ContentPlugin cp = new ContentPlugin(hubConfig.newStagingClient());
@@ -167,18 +176,22 @@ public class ScaffoldingImpl implements Scaffolding {
                 .withMapping(mappingNameWithVersion)
                 .build();
 
-            FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
-            flow.toProperties().store(fw, "");
-            fw.close();
+            try (FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile())) {
+                flow.toProperties().store(fw, "");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private Document readLegacyFlowXml(File file) {
-        try {
-            FileInputStream is = new FileInputStream(file);
+        try (FileInputStream is = new FileInputStream(file)) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setAttribute("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setAttribute("http://xml.org/sax/features/external-general-entities", false);
+            factory.setAttribute("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature(FEATURE_SECURE_PROCESSING, true);
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(is);
@@ -239,17 +252,20 @@ public class ScaffoldingImpl implements Scaffolding {
 
         Path flowDir = getFlowDir(entityName, flowName, flowType);
         File[] mainFiles = flowDir.toFile().listFiles((dir, name) -> name.matches("main\\.(sjs|xqy)"));
-        if (mainFiles.length < 1 || !flowDir.resolve(flowName + ".properties").toFile().exists()) {
+        if (mainFiles == null || mainFiles.length < 1 || !flowDir.resolve(flowName + ".properties").toFile().exists()) {
             File[] files = flowDir.toFile().listFiles((dir, name) -> name.endsWith(".xml"));
-
+            if (files == null) {
+                return false;
+            }
             for (File file : files) {
                 Document doc = readLegacyFlowXml(file);
                 if (doc.getDocumentElement().getLocalName().equals("flow")) {
                     DataFormat dataFormat = null;
                     CodeFormat codeFormat = null;
                     NodeList nodes = doc.getElementsByTagName("data-format");
-                    if (nodes.getLength() == 1) {
-                        String format = nodes.item(0).getTextContent();
+                    if (nodes != null && nodes.getLength() == 1) {
+                        Node node = nodes.item(0);
+                        String format = node != null ? node.getTextContent() : "";
                         if (format.equals("application/json")) {
                             dataFormat = DataFormat.JSON;
                         } else if (format.equals("application/xml")) {
@@ -274,7 +290,9 @@ public class ScaffoldingImpl implements Scaffolding {
                     writeFile("scaffolding/" + flowType + "/" + codeFormat + "/main-legacy" + suffix + "." + codeFormat,
                         flowDir.resolve("main." + codeFormat));
 
-                    file.delete();
+                    if (!file.delete()) {
+                        logger.info("Unable to delete legacy flow file: {}", file.getAbsolutePath());
+                    }
 
                     FlowBuilder flowBuilder = FlowBuilder.newFlow()
                         .withEntityName(entityName)
@@ -293,10 +311,8 @@ public class ScaffoldingImpl implements Scaffolding {
                     }
 
                     Flow flow = flowBuilder.build();
-                    try {
-                        FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile());
+                    try (FileWriter fw = new FileWriter(flowDir.resolve(flowName + ".properties").toFile())) {
                         flow.toProperties().store(fw, "");
-                        fw.close();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -333,9 +349,9 @@ public class ScaffoldingImpl implements Scaffolding {
                         mainFile = mainFile.replaceFirst("dhf\\.runWriter\\(([^;]*)\\);", "dhf.runWriter(writerPlugin, id, envelope, options);");
                     }
 
-                    FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
-                    IOUtils.write(mainFile, fileOutputStream);
-                    fileOutputStream.close();
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile())) {
+                        IOUtils.write(mainFile, fileOutputStream);
+                    }
                     updated = true;
                 }
             } catch (Exception e) {
@@ -348,14 +364,14 @@ public class ScaffoldingImpl implements Scaffolding {
                 mainPath = xqyMainPath;
             }
             try {
-                String mainFile = FileUtils.readFileToString(mainPath.toFile());
+                String mainFile = FileUtils.readFileToString(mainPath.toFile(), StandardCharsets.UTF_8);
                 // 2.x upgrade
                 mainFile = mainFile.replaceFirst("com\\.marklogic\\.hub", "data-hub/4");
                 // 3.0.0 upgrade
                 mainFile = mainFile.replaceFirst("MarkLogic/data-hub-framework", "data-hub/4");
-                FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile());
-                IOUtils.write(mainFile, fileOutputStream);
-                fileOutputStream.close();
+                try (FileOutputStream fileOutputStream = new FileOutputStream(mainPath.toFile())) {
+                    IOUtils.write(mainFile, fileOutputStream, StandardCharsets.UTF_8);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -368,12 +384,12 @@ public class ScaffoldingImpl implements Scaffolding {
         Path writerFile = flowDir.resolve("writer").resolve("writer.sjs");
         if (writerFile.toFile().exists()) {
             try {
-                String contents = FileUtils.readFileToString(writerFile.toFile());
+                String contents = FileUtils.readFileToString(writerFile.toFile(), StandardCharsets.UTF_8);
                 Pattern pattern = Pattern.compile("module.exports[^;]+;", Pattern.MULTILINE);
                 contents = pattern.matcher(contents).replaceAll("module.exports = write;");
-                FileOutputStream fileOutputStream = new FileOutputStream(writerFile.toFile());
-                IOUtils.write(contents, fileOutputStream);
-                fileOutputStream.close();
+                try (FileOutputStream fileOutputStream = new FileOutputStream(writerFile.toFile())) {
+                    IOUtils.write(contents, fileOutputStream, StandardCharsets.UTF_8);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -383,17 +399,26 @@ public class ScaffoldingImpl implements Scaffolding {
     private void writeFile(String srcFile, Path dstFile) {
         logger.info("writing: " + srcFile + " => " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
-            InputStream inputStream = Scaffolding.class.getClassLoader()
-                .getResourceAsStream(srcFile);
-            FileUtil.copy(inputStream, dstFile.toFile());
+            ClassLoader classLoader = Scaffolding.class.getClassLoader();
+            if (classLoader == null) {
+                throw new RuntimeException("Unable to get classloader");
+            }
+            try (InputStream inputStream = classLoader.getResourceAsStream(srcFile)) {
+                FileUtil.copy(inputStream, dstFile.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     private void writeBuffer(String buffer, Path dstFile) {
         logger.info("writing: " + dstFile.toString());
         if (!dstFile.toFile().exists()) {
-            InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8));
-            FileUtil.copy(inputStream, dstFile.toFile());
+            try (InputStream inputStream = new ByteArrayInputStream(buffer.getBytes(StandardCharsets.UTF_8))) {
+                FileUtil.copy(inputStream, dstFile.toFile());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -427,30 +452,12 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     private void writeToFile(String fileContent, File dstFile) {
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-
-        try {
-            fw = new FileWriter(dstFile);
-            bw = new BufferedWriter(fw);
-            bw.write(fileContent);
+        try (FileWriter fw = new FileWriter(dstFile)) {
+            try (BufferedWriter bw = new BufferedWriter(fw)) {
+                bw.write(fileContent);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -471,10 +478,14 @@ public class ScaffoldingImpl implements Scaffolding {
         if (subDirectoryName != null) {
             fileDirectory = directory.resolve(subDirectoryName);
         }
-        fileDirectory.toFile().mkdirs();
+        if (!fileDirectory.toFile().mkdirs()) {
+            throw new RuntimeException("Unable to create directory");
+        }
         File file = fileDirectory.resolve(fileName).toFile();
         try {
-            file.createNewFile();
+            if (!file.createNewFile()) {
+                throw new RuntimeException("Unable to create file as it already exists");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -494,10 +505,14 @@ public class ScaffoldingImpl implements Scaffolding {
 
     private File createEmptyMetadataForFile(File file, String metadataName) {
         File metadataDir = new File(file.getParentFile(), "metadata");
-        metadataDir.mkdir();
+        if (!metadataDir.mkdir()) {
+            throw new RuntimeException("Unable to create metadata directory");
+        }
         File metadataFile = new File(metadataDir, metadataName + ".xml");
         try {
-            metadataFile.createNewFile();
+            if (!metadataFile.createNewFile()) {
+                throw new RuntimeException("Unable to create metadata file as it already exists");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -506,11 +521,12 @@ public class ScaffoldingImpl implements Scaffolding {
 
     private String getFileContent(String srcFile, String placeholder) {
         StringBuilder output = new StringBuilder();
-        InputStream inputStream = null;
+        ClassLoader classLoader = Scaffolding.class.getClassLoader();
+        if (classLoader == null) {
+            throw new RuntimeException("Unable to get classloader");
+        }
         BufferedReader rdr = null;
-        try {
-            inputStream = Scaffolding.class.getClassLoader()
-                .getResourceAsStream(srcFile);
+        try (InputStream inputStream = classLoader.getResourceAsStream(srcFile)) {
             rdr = new BufferedReader(new InputStreamReader(inputStream));
             String bufferedLine = null;
             while ((bufferedLine = rdr.readLine()) != null) {
@@ -520,7 +536,6 @@ public class ScaffoldingImpl implements Scaffolding {
                 output.append(bufferedLine);
                 output.append("\n");
             }
-            inputStream.close();
             rdr.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -528,7 +543,7 @@ public class ScaffoldingImpl implements Scaffolding {
         return output.toString();
     }
 
-    public class ContentPlugin extends ResourceManager {
+    public static class ContentPlugin extends ResourceManager {
         private static final String NAME = "ml:scaffoldContent";
 
         private RequestParameters params = new RequestParameters();

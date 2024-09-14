@@ -50,9 +50,9 @@ import org.springframework.stereotype.Component;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -1648,8 +1648,11 @@ public class HubConfigImpl implements HubConfig {
     @Override
     public String getJarVersion() {
         Properties properties = new Properties();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("version.properties");
-        try {
+        ClassLoader classLoader = getClass().getClassLoader();
+        if (classLoader == null) {
+            throw new RuntimeException("Unable to get classloader");
+        }
+        try (InputStream inputStream = classLoader.getResourceAsStream("version.properties")) {
             properties.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -1970,15 +1973,13 @@ public class HubConfigImpl implements HubConfig {
 
     // loads properties from a .properties file
     private void loadPropertiesFromFile(File propertiesFile, Properties loadedProperties) {
-        InputStream is;
-        try {
-            if (propertiesFile.exists()) {
-                is = Files.newInputStream(propertiesFile.toPath());
-                loadedProperties.load(is);
-                is.close();
+        if (propertiesFile.exists()) {
+            InputStream is;
+            try (FileInputStream fis = new FileInputStream(propertiesFile)) {
+                loadedProperties.load(fis);
+            } catch (IOException e) {
+                throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
             }
-        } catch (IOException e) {
-            throw new DataHubProjectException("No properties file found in project " + hubProject.getProjectDirString());
         }
     }
 

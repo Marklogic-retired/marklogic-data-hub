@@ -40,23 +40,21 @@ public class HubModuleManager extends LoggingObject implements ModulesManager {
     @Override
     public void initialize() {
         File propertiesFile = new File(propertiesFilePath);
-        propertiesFile.getParentFile().mkdirs();
+        File parentDir = propertiesFile.getParentFile();
+        if (parentDir == null) {
+            throw new RuntimeException("Unable to get parent directory for: " + propertiesFilePath);
+        }
+        if (!parentDir.mkdirs()) {
+            logger.warn("Unable to create parent directories for: {}", propertiesFilePath);
+        }
         if (propertiesFile.exists()) {
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(propertiesFile);
+            try (FileInputStream fis = new FileInputStream(propertiesFile)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading properties from: " + propertiesFile.getAbsolutePath());
                 }
                 props.load(fis);
             } catch (Exception e) {
                 logger.warn("Unable to load properties, cause: " + e.getMessage());
-            } finally {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    logger.warn(e.getMessage());
-                }
             }
         }
     }
@@ -64,7 +62,9 @@ public class HubModuleManager extends LoggingObject implements ModulesManager {
     public void deletePropertiesFile() {
         File propertiesFile = new File(propertiesFilePath);
         if (propertiesFile.exists()) {
-            propertiesFile.delete();
+            if (!propertiesFile.delete()) {
+                logger.warn("Unable to delete properties file: {}", propertiesFile.getAbsolutePath());
+            }
             props.clear();
         }
     }
@@ -73,7 +73,7 @@ public class HubModuleManager extends LoggingObject implements ModulesManager {
         if (minimumFileTimestampToLoad > 0 && file.lastModified() <= minimumFileTimestampToLoad) {
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("lastModified for file '%s' is %d, which is before the minimumFileTimestampToLoad of %d",
-                    file.getAbsolutePath(), file.lastModified(), minimumFileTimestampToLoad));
+                        file.getAbsolutePath(), file.lastModified(), minimumFileTimestampToLoad));
             }
             return false;
         }
@@ -98,18 +98,10 @@ public class HubModuleManager extends LoggingObject implements ModulesManager {
 
     public void saveLastLoadedTimestamp(String key, Date date) {
         props.setProperty(key, date.getTime() + "");
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(new File(propertiesFilePath));
+        try (FileWriter fw = new FileWriter(new File(propertiesFilePath))) {
             props.store(fw, "");
         } catch (Exception e) {
             logger.warn("Unable to store properties, cause: " + e.getMessage());
-        } finally {
-            try {
-                fw.close();
-            } catch (Exception e) {
-                logger.warn(e.getMessage());
-            }
         }
     }
 

@@ -25,7 +25,7 @@ import com.marklogic.hub.error.DataHubProjectException;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({ "language", "name", "description", "version",  "targetEntityType", "sourceContext", "sourceURI", "properties"})
+@JsonPropertyOrder({"language", "name", "description", "version", "targetEntityType", "sourceContext", "sourceURI", "properties"})
 public class MappingImpl implements Mapping {
 
     private String name;
@@ -52,40 +52,40 @@ public class MappingImpl implements Mapping {
     @Override
     public Mapping deserialize(JsonNode json) {
         ObjectMapper mapper = new ObjectMapper();
-        HashMap<String, ObjectNode> jsonProperties = new HashMap<>();
+        HashMap<String, ObjectNode> jsonProperties;
         try {
             jsonProperties = mapper.treeToValue(json.get("properties"), HashMap.class);
         } catch (JsonProcessingException e) {
             throw new DataHubProjectException("Could not parse mapper properties");
         }
 
-        if(json.has("version")) {
+        if (json.has("version")) {
             setVersion(json.get("version").asInt());
         }
-        if(json.has("name")) {
+        if (json.has("name")) {
             setName(json.get("name").asText());
         }
-        if(json.has("sourceContext")) {
+        if (json.has("sourceContext")) {
             setSourceContext(json.get("sourceContext").asText());
         }
 
-        if(json.has("description")) {
+        if (json.has("description")) {
             setDescription(json.get("description").asText());
         }
 
-        if(json.has("targetEntityType")) {
+        if (json.has("targetEntityType")) {
             setTargetEntityType(json.get("targetEntityType").asText());
         }
 
-        if(json.has("language")) {
+        if (json.has("language")) {
             setLanguage(json.get("language").asText());
         }
 
-        if(json.has("sourceURI")) {
+        if (json.has("sourceURI")) {
             setSourceURI(json.get("sourceURI").asText());
         }
 
-        if(json.has("properties")) {
+        if (json.has("properties")) {
             setProperties(jsonProperties);
         }
 
@@ -185,12 +185,12 @@ public class MappingImpl implements Mapping {
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-        throw new DataHubProjectException("Unable to serialize mapping object.");
-    }
+            throw new DataHubProjectException("Unable to serialize mapping object.");
+        }
     }
 
     @Override
     public void incrementVersion() {
-        setVersion(getVersion()+1);
+        setVersion(getVersion() + 1);
     }
 }

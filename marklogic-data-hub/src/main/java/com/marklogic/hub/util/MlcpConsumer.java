@@ -33,8 +33,7 @@ public class MlcpConsumer implements Consumer<String> {
     private String jobId;
 
     public MlcpConsumer(AtomicLong successfulEvents, AtomicLong failedEvents, FlowStatusListener statusListener,
-                        String jobId)
-    {
+                        String jobId) {
         this.successfulEvents = successfulEvents;
         this.failedEvents = failedEvents;
         this.statusListener = statusListener;
@@ -45,22 +44,30 @@ public class MlcpConsumer implements Consumer<String> {
     public void accept(String status) {
         Matcher m = COMPLETED_PATTERN.matcher(status);
         if (m.matches()) {
-            int pc = Integer.parseInt(m.group(1));
-
-            // don't send 100% because more stuff happens after 100% is reported here
-            if (pc > currentPc && pc != 100) {
-                currentPc = pc;
+            String group1 = m.group(1);
+            if (group1 != null) {
+                int pc = Integer.parseInt(group1);
+                // don't send 100% because more stuff happens after 100% is reported here
+                if (pc > currentPc && pc != 100) {
+                    currentPc = pc;
+                }
             }
         }
 
         m = SUCCESSFUL_EVENTS_PATTERN.matcher(status);
         if (m.matches()) {
-            successfulEvents.addAndGet(Long.parseLong(m.group(1)));
+            String group1 = m.group(1);
+            if (group1 != null) {
+                successfulEvents.addAndGet(Long.parseLong(group1));
+            }
         }
 
         m = FAILED_EVENTS_PATTERN.matcher(status);
         if (m.matches()) {
-            failedEvents.addAndGet(Long.parseLong(m.group(1)));
+            String group1 = m.group(1);
+            if (group1 != null) {
+                failedEvents.addAndGet(Long.parseLong(group1));
+            }
         }
 
         if (statusListener != null) {

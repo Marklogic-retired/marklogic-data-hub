@@ -18,7 +18,11 @@ package com.marklogic.hub.flow.impl;
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.impl.CollectorImpl;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.DataFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowBuilder;
+import com.marklogic.hub.flow.FlowType;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.main.impl.MainPluginImpl;
 import org.w3c.dom.Document;
@@ -36,8 +40,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Properties;
+
+import static javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD;
+import static javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA;
+import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 
 public class FlowImpl implements Flow {
 
@@ -50,7 +63,8 @@ public class FlowImpl implements Flow {
     private MainPlugin main;
     private String mappingName;
 
-    public FlowImpl() {}
+    public FlowImpl() {
+    }
 
     @Override
     public void setEntityName(String entityName) {
@@ -165,7 +179,7 @@ public class FlowImpl implements Flow {
             serializer.writeCharacters(this.type.toString());
             serializer.writeEndElement();
 
-            if(this.type == FlowType.HARMONIZE && this.mappingName != null) {
+            if (this.type == FlowType.HARMONIZE && this.mappingName != null) {
                 serializer.writeStartElement("mapping");
                 serializer.writeCharacters(this.mappingName);
                 serializer.writeEndElement();
@@ -200,18 +214,17 @@ public class FlowImpl implements Flow {
             serializer.close();
 
             StringWriter finalWriter = new StringWriter();
-
-            Transformer t = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory tf = TransformerFactory.newInstance();
+            tf.setFeature(FEATURE_SECURE_PROCESSING, true);
+            Transformer t = tf.newTransformer();
             t.setOutputProperty(OutputKeys.INDENT, "yes");
             t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             t.transform(new StreamSource(new StringReader(writer.toString())), new StreamResult(finalWriter));
 
             return finalWriter.toString().replaceFirst("<!--", "\n<!--").replaceFirst("-->", "-->\n");
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             throw new MarkLogicIOException("Invalid properties file", e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MarkLogicIOException(e);
         }
     }
@@ -221,7 +234,7 @@ public class FlowImpl implements Flow {
         Properties flowProperties = new Properties();
         flowProperties.setProperty("dataFormat", dataFormat.toString());
         flowProperties.setProperty("codeFormat", codeFormat.toString());
-        if(mappingName != null) {
+        if (mappingName != null) {
             flowProperties.setProperty("mapping", mappingName);
         }
         if (this.collector != null) {
@@ -239,10 +252,14 @@ public class FlowImpl implements Flow {
 
     public static Flow loadFromFile(File file) {
         Flow flow = null;
-        FileInputStream is = null;
-        try {
-            is = new FileInputStream(file);
+        try (FileInputStream is = new FileInputStream(file)) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setAttribute(ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(ACCESS_EXTERNAL_SCHEMA, "");
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(is);
@@ -256,15 +273,6 @@ public class FlowImpl implements Flow {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finally {
-            if (is != null) {
-                try {
-                    is.close();
-                }
-                catch(IOException e) {}
-            }
-
-        }
         return flow;
     }
 
@@ -274,12 +282,12 @@ public class FlowImpl implements Flow {
         NodeList children = xml.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node node = children.item(i);
-            if (node.getNodeType() != Node.ELEMENT_NODE) {
+            if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
 
             String nodeName = node.getLocalName();
-            switch(nodeName) {
+            switch (nodeName) {
                 case "name":
                     flowBuilder.withName(node.getTextContent());
                     break;

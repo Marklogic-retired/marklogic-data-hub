@@ -56,7 +56,7 @@ public class HubEntity extends JsonPojo {
         ObjectNode node = JsonNodeFactory.instance.objectNode();
         writeObjectIf(node, "info", info);
 
-        node.set("definitions",definitions.toJson());
+        node.set("definitions", definitions.toJson());
 
         return node;
     }
@@ -66,7 +66,6 @@ public class HubEntity extends JsonPojo {
         hubEntity.setFilename(filename);
         hubEntity.setInfo(InfoType.fromJson(node.get("info")));
 
-        String title = hubEntity.getInfo().getTitle();
         hubEntity.setDefinitions(DefinitionsType.fromJson(node.get("definitions")));
         return hubEntity;
     }

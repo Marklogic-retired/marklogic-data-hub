@@ -20,7 +20,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.datamovement.*;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.JobTicket;
+import com.marklogic.client.datamovement.QueryBatch;
+import com.marklogic.client.datamovement.QueryBatchException;
+import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.datamovement.impl.JobTicketImpl;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -31,7 +35,14 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.flow.*;
+import com.marklogic.hub.flow.CodeFormat;
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowFinishedListener;
+import com.marklogic.hub.flow.FlowItemCompleteListener;
+import com.marklogic.hub.flow.FlowItemFailureListener;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.FlowStatusListener;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.Job;
 import com.marklogic.hub.job.JobManager;
 import com.marklogic.hub.job.JobStatus;
@@ -40,7 +51,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -75,7 +92,8 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     //This constructor is only for unit testing purposes
-    protected FlowRunnerImpl(){}
+    protected FlowRunnerImpl() {
+    }
 
     @Override
     public FlowRunner withFlow(Flow flow) {
@@ -147,8 +165,8 @@ public class FlowRunnerImpl implements FlowRunner {
     public void awaitCompletion() {
         try {
             awaitCompletion(Long.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
         }
-        catch(InterruptedException e) {}
     }
 
     @Override
@@ -191,8 +209,7 @@ public class FlowRunnerImpl implements FlowRunner {
         final DiskQueue<String> uris;
         try {
             uris = c.run(jobId, this.flow.getEntityName(), this.flow.getName(), threadCount, options);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             job.setCounts(0, 0, 0, 0)
                 .withStatus(JobStatus.FAILED)
                 .withEndTime(new Date());
@@ -214,12 +231,11 @@ public class FlowRunnerImpl implements FlowRunner {
 
         int uriCount = uris.size();
 
-        double batchCount = Math.ceil((double)uris.size() / (double)batchSize);
+        double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
-
 
 
         QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
@@ -227,15 +243,20 @@ public class FlowRunnerImpl implements FlowRunner {
             .withThreadCount(threadCount)
             .withJobId(jobId)
             .onUrisReady((QueryBatch batch) -> {
+                if (batch == null) {
+                    return;
+                }
                 try {
                     FlowResource flowResource;
-
-                    if (databaseClientMap.containsKey(batch.getClient())){
-                        flowResource = databaseClientMap.get(batch.getClient());
+                    DatabaseClient databaseClient = batch.getClient();
+                    if (databaseClient == null) {
+                        databaseClient = stagingClient;
                     }
-                    else {
-                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
-                        databaseClientMap.put(batch.getClient(), flowResource);
+                    if (databaseClientMap.containsKey(databaseClient)) {
+                        flowResource = databaseClientMap.get(databaseClient);
+                    } else {
+                        flowResource = new FlowResource(databaseClient, destinationDatabase, flow);
+                        databaseClientMap.put(databaseClient, flowResource);
                     }
 
                     RunFlowResponse response = flowResource.run(jobId, batch.getItems(), options);
@@ -249,12 +270,11 @@ public class FlowRunnerImpl implements FlowRunner {
 
                     if (response.errorCount < response.totalCount) {
                         successfulBatches.addAndGet(1);
-                    }
-                    else {
+                    } else {
                         failedBatches.addAndGet(1);
                     }
 
-                    int percentComplete = (int) (((double)successfulBatches.get() / batchCount) * 100.0);
+                    int percentComplete = (int) (((double) successfulBatches.get() / batchCount) * 100.0);
 
                     if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
                         previousPercentComplete = percentComplete;
@@ -286,8 +306,7 @@ public class FlowRunnerImpl implements FlowRunner {
                         }
                     }
 
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                         errorMessages.add(e.toString());
                     }
@@ -317,18 +336,15 @@ public class FlowRunnerImpl implements FlowRunner {
             JobStatus status;
             if (failedEvents.get() > 0 && stopOnFailure) {
                 status = JobStatus.STOP_ON_ERROR;
-            }
-            else if (failedEvents.get() + successfulEvents.get() != uriCount) {
+            } else if (failedEvents.get() + successfulEvents.get() != uriCount) {
                 status = JobStatus.CANCELED;
-            }
-            else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+            } else if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
                 status = JobStatus.FINISHED_WITH_ERRORS;
             }
             //empty collector or no failure events => JobStatus.FINISHED
             else if ((failedEvents.get() == 0 && successfulEvents.get() > 0) || uriCount == 0) {
                 status = JobStatus.FINISHED;
-            }
-            else {
+            } else {
                 status = JobStatus.FAILED;
             }
 
@@ -391,37 +407,33 @@ public class FlowRunnerImpl implements FlowRunner {
                 try {
                     if (resultItr == null || !resultItr.hasNext()) {
                         resp = new RunFlowResponse();
-                    }
-                    else {
+                    } else {
                         ResourceServices.ServiceResult res = resultItr.next();
                         StringHandle handle = new StringHandle();
                         resp = objectMapper.readValue(res.getContent(handle).get(), RunFlowResponse.class);
                     }
-                }
-                finally {
+                } finally {
                     if (resultItr != null) {
                         resultItr.close();
                     }
                 }
-            }
-            catch(Exception e) {
-                resp = handleFlowRunnerException (e);
+            } catch (Exception e) {
+                resp = handleFlowRunnerException(e);
             }
             return resp;
         }
     }
 
-    protected RunFlowResponse handleFlowRunnerException (Exception e) {
+    protected RunFlowResponse handleFlowRunnerException(Exception e) {
         ObjectMapper objectMapper = new ObjectMapper();
         RunFlowResponse resp = null;
-        if(e instanceof FailedRequestException && StringUtils.containsIgnoreCase(((FailedRequestException) e).getFailedRequest().getStatus(), "Plugin error")){
+        if (e instanceof FailedRequestException && StringUtils.containsIgnoreCase(((FailedRequestException) e).getFailedRequest().getStatus(), "Plugin error")) {
             try {
-                resp = objectMapper.readValue(((FailedRequestException)e).getFailedRequest().getMessage(), RunFlowResponse.class);
+                resp = objectMapper.readValue(((FailedRequestException) e).getFailedRequest().getMessage(), RunFlowResponse.class);
             } catch (IOException ex) {
                 throw new RuntimeException("Unexpected IO error while parsing exception from running flow; original exception: " + e.getMessage());
             }
-        }
-        else{
+        } else {
             throw new RuntimeException(e);
         }
         return resp;

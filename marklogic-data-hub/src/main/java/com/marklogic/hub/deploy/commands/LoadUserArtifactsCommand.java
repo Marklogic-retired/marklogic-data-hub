@@ -25,6 +25,7 @@ import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
 import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -34,7 +35,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,8 +87,10 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
         if (forceLoad) {
             pmm.deletePropertiesFile();
-            if (defaultTimestampFile.exists()){
-                defaultTimestampFile.delete();
+            if (defaultTimestampFile.exists()) {
+                if (!defaultTimestampFile.delete()) {
+                    logger.warn("Unable to delete properties file: {}", defaultTimestampFile.getAbsolutePath());
+                }
             }
         }
         return pmm;
@@ -101,7 +104,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
-        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
         Path mappingPath = userModulesPath.resolve("mappings");
 
@@ -120,7 +122,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 Files.walkFileTree(startPath, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                        String currentDir = dir.normalize().toAbsolutePath().toString();
                         if (isArtifactDir(dir, startPath.toAbsolutePath())) {
                             Modules modules = new EntityDefModulesFinder().findModules(dir.toString());
                             DocumentMetadataHandle meta = new DocumentMetadataHandle();
@@ -157,12 +158,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                                 documentPermissionsParser.parsePermissions(hubConfig.getModulePermissions(), meta.getPermissions());
                                 for (Resource r : modules.getAssets()) {
                                     if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-                                        InputStream inputStream = r.getInputStream();
-                                        StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
-                                        inputStream.close();
-                                        finalMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        stagingMappingDocumentWriteSet.add("/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename(), meta, handle);
-                                        propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                        try (InputStream inputStream = r.getInputStream()) {
+                                            StringHandle handle = new StringHandle(IOUtils.toString(inputStream));
+                                            File parentFile = r.getFile().getParentFile();
+                                            if (parentFile == null) {
+                                                throw new RuntimeException("Unable to get parent file for resource: " + r.getFilename());
+                                            }
+                                            finalMappingDocumentWriteSet.add("/mappings/" + parentFile.getName() + "/" + r.getFilename(), meta, handle);
+                                            stagingMappingDocumentWriteSet.add("/mappings/" + parentFile.getName() + "/" + r.getFilename(), meta, handle);
+                                            propertiesModuleManager.saveLastLoadedTimestamp(r.getFile(), new Date());
+                                        }
                                     }
                                 }
                                 return FileVisitResult.CONTINUE;

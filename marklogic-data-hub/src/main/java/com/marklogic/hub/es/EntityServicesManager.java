@@ -1,6 +1,7 @@
 package com.marklogic.hub.es;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.eval.EvalResultIterator;
 
 import java.util.Optional;
 
@@ -23,14 +24,16 @@ public class EntityServicesManager extends com.marklogic.client.ext.es.EntitySer
                 "import module namespace hent = \"http://marklogic.com/data-hub/hub-entities\" at \"/data-hub/4/impl/hub-entities.xqy\";\n" +
                 "declare variable $entity-title external; \n" +
                 "hent:dump-tde(json:to-array(es:model-validate(hent:get-model($entity-title))))";
-            return client.newServerEval().xquery(xquery).addVariable("entity-title", extractEntityNameFromURI(modelUri).get()).eval().next().getString();
+            try (EvalResultIterator evalResultIterator = client.newServerEval().xquery(xquery).addVariable("entity-title", extractEntityNameFromURI(modelUri).get()).eval()) {
+                return evalResultIterator.next().getString();
+            }
         } else {
             return super.generateCode(modelUri, functionName);
         }
     }
 
     public static Optional<String> extractEntityNameFromURI(String filename) {
-        if (filename==null || filename.trim().isEmpty()) {
+        if (filename == null || filename.trim().isEmpty()) {
             return Optional.of(null);
         }
         int pathIndex = filename.lastIndexOf("/");
@@ -38,10 +41,10 @@ public class EntityServicesManager extends com.marklogic.client.ext.es.EntitySer
             filename = filename.substring(pathIndex + 1);
         }
         int index = filename.indexOf(ENTITY_FILE_EXTENSION);
-        if (index<0) {
+        if (index < 0) {
             //not found
             return Optional.of(null);
         }
-        return Optional.of(filename.substring(0,index));
+        return Optional.of(filename.substring(0, index));
     }
 }

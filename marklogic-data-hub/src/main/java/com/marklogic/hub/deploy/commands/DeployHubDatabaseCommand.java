@@ -7,6 +7,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,15 +24,15 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     /**
      * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
      * the parent getPayload method is able to find the correct File to read from.
-     *
+     * <p>
      * Otherwise, if this class only has a filename, the parent getPayload method will check every ConfigDir to find a
      * match, with the last one winning. In the case of DHF, that means the user config directory. This can be a problem,
      * as a user is not likely to define schema-database/triggers-database in e.g. a staging-database.json file in the
      * user config directory. That will then cause the ordering of database commands to be incorrect, which will
      * likely cause an error when databases are deployed and they don't yet exist.
      *
-     * @param hubConfig The HubConfig object
-     * @param databaseFile The Database file definition
+     * @param hubConfig        The HubConfig object
+     * @param databaseFile     The Database file definition
      * @param databaseFilename The name of the database file
      */
     public DeployHubDatabaseCommand(HubConfig hubConfig, File databaseFile, String databaseFilename) {
@@ -60,6 +61,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         if (payload != null) {
             try {
                 ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
+                if (payloadNode == null) {
+                    throw new DataHubConfigurationException("Unable to read payload from file: " + this.databaseFile);
+                }
                 payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
                 removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
                 return payloadNode.toString();
@@ -81,7 +85,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
      * @return
      * @throws IOException
      */
-    private ObjectNode mergePayloadWithEntityConfigFileIfItExists(ObjectNode payloadNode) throws IOException {
+    private @NotNull ObjectNode mergePayloadWithEntityConfigFileIfItExists(@NotNull ObjectNode payloadNode) throws IOException {
         if (hubConfig.getEntityDatabaseDir() != null && this.databaseFilename != null) {
             File entityDatabaseDir = hubConfig.getEntityDatabaseDir().toFile();
             if (entityDatabaseDir != null) {
@@ -98,7 +102,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         return payloadNode;
     }
 
-    private void removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(ObjectNode payload) {
+    private void removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(@NotNull ObjectNode payload) {
         if (hubConfig.getIsProvisionedEnvironment()) {
             // for DHS we have to remove some keys
             logger.warn("Deploying indexes only to a provisioned environment");

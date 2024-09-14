@@ -17,19 +17,19 @@ package com.marklogic.hub.job;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JobDeleteResponse {
     public long totalCount = 0;
     public long errorCount = 0;
-    public List<String> deletedJobs;
-    public List<String> deletedTraces;
-    public List<String> failedJobs;
-    public List<String> failedTraces;
-    public List<JsonNode> errors;
+    public List<String> deletedJobs = new ArrayList<>();
+    public List<String> deletedTraces = new ArrayList<>();
+    public List<String> failedJobs = new ArrayList<>();
+    public List<String> failedTraces = new ArrayList<>();
+    public List<JsonNode> errors = new ArrayList<>();
 
-    public String toString()
-    {
+    public String toString() {
         return
             "JobDeleteResponse:" +
                 "\n\ttotal jobs deleted: " + totalCount +
