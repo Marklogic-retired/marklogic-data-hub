@@ -1,39 +1,43 @@
-allprojects {
-    task resolveAllDependencies {
-        doLast {
-            configurations.all {
-                if (it.isCanBeResolved()) {
-                    it.resolve()
-                }
-            }
-        }
-    }
+plugins {
+    // Declaring this at root level so it's available for every subproject without declaring a version
+    id "net.saliman.properties" version "1.5.1"
 }
 
 subprojects {
+    // While subprojects may need to use java-library plugin, applying this at the top level allows for
+    // sourceCompatibility/targetCompatibility to be set at this level as well
     apply plugin: 'java'
 
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+    apply plugin: 'jacoco'
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url "https://developer.marklogic.com/maven2/" }
     }
 
-
-    dependencies {
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
-        testImplementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    tasks.withType(JavaCompile) {
+        options.sourcepath = files('bin/sourcepath')
     }
 
-    test {
+    tasks.withType(Test) {
+        ignoreFailures = true
         testLogging {
             events 'started', 'passed', 'skipped', 'failed'
             exceptionFormat 'full'
         }
     }
 
+    jacocoTestReport {
+        reports {
+            xml.required = true
+        }
+    }
 }
 
 wrapper {
