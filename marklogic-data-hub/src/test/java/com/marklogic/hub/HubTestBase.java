@@ -120,8 +120,6 @@ import java.util.stream.Stream;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.UPDATE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD;
-import static javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET;
 import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
 
 
@@ -1046,8 +1044,6 @@ public class HubTestBase {
     protected void debugOutput(Document xmldoc, OutputStream os) {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
-            tf.setAttribute(ACCESS_EXTERNAL_DTD, "");
-            tf.setAttribute(ACCESS_EXTERNAL_STYLESHEET, "");
             tf.setFeature(FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = tf.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
