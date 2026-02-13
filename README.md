@@ -1,3 +1,10 @@
+# Notice
+
+Open-source versions of MarkLogic Data Hub, including the one in this repository, are no longer maintained by Progress Software Corporation. This version is archived for reference purposes only. Note the following:
+* For the later versions of MarkLogic Data Hub, including the current, refer to [MarkLogic Data Hub Downloads](https://developer.marklogic.com/products/data-hub/).    
+* For instructions on upgrading MarkLogic Data Hub using Gradle, refer to [Upgrade to MarkLogic Data Hub 6.2](https://docs.marklogic.com/datahub/6.2/upgrade.html).
+* The examples in this repository might not work with later versions of MarkLogic Data Hub.  
+
 # MarkLogic Data Hub
 
 Go from nothing to an Operational Data Hub in a matter of minutes.
